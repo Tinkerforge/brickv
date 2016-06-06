@@ -2,7 +2,7 @@
 """
 Humidity Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 humidity.py: Humidity Plugin Implementation
 
@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
+from PyQt4.QtGui import QVBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_humidity import BrickletHumidity
@@ -31,11 +31,6 @@ from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class HumidityLabel(QLabel):
-    def setText(self, text):
-        text = "Humidity: " + text + " %RH (Relative Humidity)"
-        super(HumidityLabel, self).setText(text)
-    
 class Humidity(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletHumidity, *args)
@@ -46,20 +41,12 @@ class Humidity(PluginBase):
                                              self.cb_humidity,
                                              self.increase_error_count)
 
-        self.humidity_label = HumidityLabel('Humidity: ')
+        self.current_humidity = None # float, %RH
 
-        self.current_value = None
-
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Relative Humidity [%RH]', plot_list)
-
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(self.humidity_label)
-        layout_h.addStretch()
+        plots = [('Relative Humidity', Qt.red, lambda: self.current_humidity, '{} %RH'.format)]
+        self.plot_widget = PlotWidget('Relative Humidity [%RH]', plots)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
         layout.addWidget(self.plot_widget)
 
     def start(self):
@@ -82,10 +69,6 @@ class Humidity(PluginBase):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletHumidity.DEVICE_IDENTIFIER
-    
-    def get_current_value(self):
-        return self.current_value
 
     def cb_humidity(self, humidity):
-        self.current_value = humidity/10.0
-        self.humidity_label.setText(str(humidity/10.0))
+        self.current_humidity = humidity / 10.0

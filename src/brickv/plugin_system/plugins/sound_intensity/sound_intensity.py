@@ -2,7 +2,7 @@
 """
 Sound Intensity Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 sound_intensity.py: Sound Intensity Plugin Implementation
 
@@ -23,22 +23,22 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QWidget, \
-                        QLinearGradient, QPainter, QSizePolicy, QColor
+from PyQt4.QtGui import QVBoxLayout, QLabel, QWidget, QLinearGradient, \
+                        QPainter, QSizePolicy, QColor
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
 from brickv.async_call import async_call
-#from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget
 from brickv.callback_emulator import CallbackEmulator
 
 class TuningThermo(QWidget):
     def __init__(self, *args):
         QWidget.__init__(self, *args)
 
-        self.bar_width = 300 # px
+        self.bar_width = 200 # px
         self.bar_height = 10 # px
-        self.border = 4 # px
+        self.border = 3 # px
         self.value = 0
         self.max_value = 3200
 
@@ -69,11 +69,6 @@ class TuningThermo(QWidget):
 
         self.update()
 
-class IntensityLabel(QLabel):
-    def setText(self, text):
-        text = "Intensity Value: " + text
-        super(IntensityLabel, self).setText(text)
-
 class SoundIntensity(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletSoundIntensity, *args)
@@ -84,48 +79,30 @@ class SoundIntensity(PluginBase):
                                               self.cb_intensity,
                                               self.increase_error_count)
 
-        self.intensity_label = IntensityLabel()
-        self.current_value = None
+        self.current_intensity = None
         self.thermo = TuningThermo()
 
-        #plot_list = [['', Qt.red, self.get_current_value]]
-        #self.plot_widget = PlotWidget('Intensity Value', plot_list)
-
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(self.intensity_label)
-        layout_h.addStretch()
-
-        layout_h2 = QHBoxLayout()
-        layout_h2.addStretch()
-        layout_h2.addWidget(self.thermo)
-        layout_h2.addStretch()
+        plots = [('Intensity Value', Qt.red, lambda: self.current_intensity, str)]
+        self.plot_widget = PlotWidget('Intensity Value', plots, curve_motion_granularity=40,
+                                      update_interval=0.025, extra_key_widgets=[self.thermo])
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
-        layout.addLayout(layout_h2)
-        layout.addStretch()
-        #layout.addWidget(QLabel('')) # abuse a label as a fixed-size spacer
-        #layout.addWidget(self.plot_widget)
-
-    def get_current_value(self):
-        return self.current_value
+        layout.addWidget(self.plot_widget)
 
     def cb_intensity(self, intensity):
         self.thermo.set_value(intensity)
-        self.current_value = intensity
-        self.intensity_label.setText(str(intensity))
+        self.current_intensity = intensity
 
     def start(self):
         async_call(self.si.get_intensity, None, self.cb_intensity, self.increase_error_count)
         self.cbe_intensity.set_period(25)
 
-        #self.plot_widget.stop = False
+        self.plot_widget.stop = False
 
     def stop(self):
         self.cbe_intensity.set_period(0)
 
-        #self.plot_widget.stop = True
+        self.plot_widget.stop = True
 
     def destroy(self):
         pass

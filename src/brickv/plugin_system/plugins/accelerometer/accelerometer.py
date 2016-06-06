@@ -2,7 +2,7 @@
 """
 Accelerometer Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 accelerometer.py: Accelerometer Plugin Implementation
 
@@ -25,47 +25,40 @@ Boston, MA 02111-1307, USA.
 import math
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QCheckBox, QFont
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QCheckBox, \
+                        QFont, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, FixedSizeLabel
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class MonoSpaceLabel(QLabel):
-    def __init__(self):
-        super(MonoSpaceLabel, self).__init__()
-
-        font = QFont('monospace')
-        font.setStyleHint(QFont.TypeWriter)
-
-        self.setFont(font)
-
-class PitchRollLabel(MonoSpaceLabel):
+class PitchLabel(FixedSizeLabel):
     def setText(self, x, y, z):
         try:
-            text = u'Pitch: {0:+03d}°'.format(int(round(math.atan(x/(math.sqrt(y*y + z*z)))*180/math.pi, 0)))
-            text += u', Roll: {0:+03d}°'.format(int(round(math.atan(y/math.sqrt(x*x+z*z))*180/math.pi, 0)))
-            text = text.replace('-0', '- ')
-            text = text.replace('+0', '+ ')
-            super(PitchRollLabel, self).setText(text)
+            pitch = int(round(math.atan(x/(math.sqrt(y*y + z*z)))*180/math.pi, 0))
+            text = u'Pitch: {}°'.format(pitch)
+            super(PitchLabel, self).setText(text)
         except:
             # In case of division by 0 or similar we simply don't update the text
             pass
 
-class TemperatureLabel(MonoSpaceLabel):
+class RollLabel(FixedSizeLabel):
+    def setText(self, x, y, z):
+        try:
+            roll = int(round(math.atan(y/math.sqrt(x*x+z*z))*180/math.pi, 0))
+            text = u'Roll: {}°'.format(roll)
+            super(RollLabel, self).setText(text)
+        except:
+            # In case of division by 0 or similar we simply don't update the text
+            pass
+
+class TemperatureLabel(FixedSizeLabel):
     def setText(self, t):
         text = u'Temperature: {0}°C'.format(t)
         super(TemperatureLabel, self).setText(text)
 
-class AccelerationLabel(MonoSpaceLabel):
-    def setText(self, x, y, z):
-        text = u'Acceleration X: {0:+.3f}g'.format(round(x/1000.0, 3))
-        text += u', Y: {0:+.3f}g'.format(round(y/1000.0, 3))
-        text += u', Z: {0:+.3f}g'.format(round(z/1000.0, 3))
-        super(AccelerationLabel, self).setText(text)
-    
 class Accelerometer(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletAccelerometer, *args)
@@ -80,29 +73,18 @@ class Accelerometer(PluginBase):
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 
-        self.acceleration_label = AccelerationLabel()
-        self.current_acceleration = [None, None, None]
-        
-        plot_list = [['X', Qt.red, self.get_current_x],
-                     ['Y', Qt.darkGreen, self.get_current_y],
-                     ['Z', Qt.blue, self.get_current_z]]
-        self.plot_widget = PlotWidget('Acceleration [g]', plot_list)
-        
+        self.current_acceleration = [None, None, None] # float, g
+
+        self.pitch_label = PitchLabel()
+        self.roll_label = RollLabel()
         self.temperature_label = TemperatureLabel()
-        layout_ht = QHBoxLayout()
-        layout_ht.addStretch()
-        layout_ht.addWidget(self.temperature_label)
-        layout_ht.addStretch()
-        
-        self.pitch_roll_label = PitchRollLabel()
-        layout_hpr = QHBoxLayout()
-        layout_hpr.addStretch()
-        layout_hpr.addWidget(self.pitch_roll_label)
-        layout_hpr.addStretch()
-        
-        self.enable_led = QCheckBox("LED On")
-        self.enable_led.stateChanged.connect(self.enable_led_changed)
-        
+
+        plots = [('X', Qt.red, lambda: self.current_acceleration[0], '{:.3f} g'.format),
+                 ('Y', Qt.darkGreen, lambda: self.current_acceleration[1], '{:.3f} g'.format),
+                 ('Z', Qt.blue, lambda: self.current_acceleration[2], '{:.3f} g'.format)]
+        self.plot_widget = PlotWidget('Acceleration [g]', plots, extra_key_widgets=[self.pitch_label, self.roll_label, self.temperature_label],
+                                      curve_motion_granularity=20, update_interval=0.05)
+
         self.fs_label = QLabel('Full Scale:')
         self.fs_combo = QComboBox()
         self.fs_combo.addItem("2 g")
@@ -133,33 +115,31 @@ class Accelerometer(PluginBase):
         self.fb_combo.addItem("200 Hz")
         self.fb_combo.addItem("50 Hz")
         self.fb_combo.currentIndexChanged.connect(self.new_config)
-        
-        layout_hc = QHBoxLayout()
-        layout_hc.addStretch()
-        layout_hc.addWidget(self.fs_label)
-        layout_hc.addWidget(self.fs_combo)
-        layout_hc.addStretch()
-        layout_hc.addWidget(self.dr_label)
-        layout_hc.addWidget(self.dr_combo)
-        layout_hc.addStretch()
-        layout_hc.addWidget(self.fb_label)
-        layout_hc.addWidget(self.fb_combo)
-        layout_hc.addStretch()
-        layout_hc.addWidget(self.enable_led)
-        layout_hc.addStretch()
 
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(self.acceleration_label)
-        layout_h.addStretch()
+        self.enable_led = QCheckBox("Enable LED")
+        self.enable_led.stateChanged.connect(self.enable_led_changed)
+
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(self.fs_label)
+        hlayout.addWidget(self.fs_combo)
+        hlayout.addStretch()
+        hlayout.addWidget(self.dr_label)
+        hlayout.addWidget(self.dr_combo)
+        hlayout.addStretch()
+        hlayout.addWidget(self.fb_label)
+        hlayout.addWidget(self.fb_combo)
+        hlayout.addStretch()
+        hlayout.addWidget(self.enable_led)
+
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_ht)
-        layout.addLayout(layout_hpr)
-        layout.addLayout(layout_h)
         layout.addWidget(self.plot_widget)
-        layout.addLayout(layout_hc)
-        
+        layout.addWidget(line)
+        layout.addLayout(hlayout)
+
     def enable_led_changed(self, state):
         if state == Qt.Checked:
             self.accelerometer.led_on()
@@ -177,30 +157,21 @@ class Accelerometer(PluginBase):
 
     def cb_acceleration(self, data):
         x, y, z = data
-        self.acceleration_label.setText(x, y, z)
-        self.pitch_roll_label.setText(x, y, z)
-        self.current_acceleration = [x/1000.0, y/1000.0, z/1000.0]
-        
-    def cb_configuration(self, conf):
+        self.current_acceleration = [x / 1000.0, y / 1000.0, z / 1000.0]
+        self.pitch_label.setText(x, y, z)
+        self.roll_label.setText(x, y, z)
+
+    def get_configuration_async(self, conf):
         self.fs_combo.setCurrentIndex(conf.full_scale)
         self.fb_combo.setCurrentIndex(conf.filter_bandwidth)
         self.dr_combo.setCurrentIndex(conf.data_rate)
         
     def cb_temperature(self, temp):
         self.temperature_label.setText(temp)
-        
-    def get_current_x(self):
-        return self.current_acceleration[0]
-
-    def get_current_y(self):
-        return self.current_acceleration[1]
-
-    def get_current_z(self):
-        return self.current_acceleration[2]
 
     def start(self):
         async_call(self.accelerometer.is_led_on, None, self.is_led_on_async, self.increase_error_count)
-        async_call(self.accelerometer.get_configuration, None, self.cb_configuration, self.increase_error_count)
+        async_call(self.accelerometer.get_configuration, None, self.get_configuration_async, self.increase_error_count)
         async_call(self.accelerometer.get_acceleration, None, self.cb_acceleration, self.increase_error_count)
         async_call(self.accelerometer.get_temperature, None, self.cb_temperature, self.increase_error_count)
         self.cbe_acceleration.set_period(50)

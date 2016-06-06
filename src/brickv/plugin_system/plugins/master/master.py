@@ -2,7 +2,7 @@
 """
 Master Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 master.py: Master Plugin implementation
 
@@ -36,8 +36,8 @@ from brickv.plugin_system.plugins.master.wifi2 import Wifi2
 from brickv.bindings.brick_master import BrickMaster
 from brickv.async_call import async_call
 from brickv import infos
-from brickv.utils import get_main_window
-        
+from brickv.utils import get_main_window, format_current
+
 class Master(PluginBase, Ui_Master):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickMaster, *args)
@@ -109,7 +109,7 @@ class Master(PluginBase, Ui_Master):
         if present:
             wifi2 = Wifi2(self)
             self.extensions.append(wifi2)
-            self.tab_widget.addTab(wifi2, 'Wifi 2.0')
+            self.tab_widget.addTab(wifi2, 'WIFI 2.0')
             self.tab_widget.show()
             self.num_extensions += 1
             self.extension_label.setText(str(self.num_extensions) + " Present")
@@ -192,23 +192,18 @@ class Master(PluginBase, Ui_Master):
         return device_identifier == BrickMaster.DEVICE_IDENTIFIER
     
     def update_data(self):
-        async_call(self.master.get_stack_voltage, None, self.stack_voltage_update, self.increase_error_count)
-        async_call(self.master.get_stack_current, None, self.stack_current_update, self.increase_error_count)
-        
+        async_call(self.master.get_stack_voltage, None, self.get_stack_voltage_async, self.increase_error_count)
+        async_call(self.master.get_stack_current, None, self.get_stack_current_async, self.increase_error_count)
+
         for extension in self.extensions:
             extension.update_data()
-        
-    def stack_voltage_update(self, sv):
-        sv_str = "%gV"  % round(sv/1000.0, 1)
-        self.stack_voltage_label.setText(sv_str)
-        
-    def stack_current_update(self, sc):
-        if sc < 999:
-            sc_str = "%gmA" % sc
-        else:
-            sc_str = "%gA" % round(sc/1000.0, 1)   
-        self.stack_current_label.setText(sc_str)
-        
+
+    def get_stack_voltage_async(self, voltage):
+        self.stack_voltage_label.setText('{:g} V'.format(round(voltage / 1000.0, 1)))
+
+    def get_stack_current_async(self, current):
+        self.stack_current_label.setText(format_current(current / 1000.0))
+
     def extension_clicked(self):
         if self.extension_type is None:
             self.extension_type = ExtensionType(self)

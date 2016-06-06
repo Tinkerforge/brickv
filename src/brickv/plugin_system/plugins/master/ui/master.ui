@@ -26,7 +26,7 @@
      <item>
       <widget class="QLabel" name="stack_voltage_label">
        <property name="text">
-        <string>0V</string>
+        <string>0 V</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -56,7 +56,7 @@
      <item>
       <widget class="QLabel" name="stack_current_label">
        <property name="text">
-        <string>0A</string>
+        <string>0 mA</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

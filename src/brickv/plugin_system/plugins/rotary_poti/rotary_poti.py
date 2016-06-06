@@ -2,7 +2,7 @@
 """
 Rotary Poti Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014, 2016 Matthias Bolte <matthias@tinkerforge.com>
 
 poti.py: Rotary Poti Plugin implementation
 
@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
+from PyQt4.QtGui import QHBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
@@ -31,11 +31,6 @@ from brickv.plot_widget import PlotWidget
 from brickv.knob_widget import KnobWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
-
-class PositionLabel(QLabel):
-    def setText(self, text):
-        text = "Position: " + text + " degree"
-        super(PositionLabel, self).setText(text)
 
 class RotaryPoti(PluginBase):
     def __init__(self, *args):
@@ -54,27 +49,14 @@ class RotaryPoti(PluginBase):
         self.position_knob.set_scale(30, 3)
         self.position_knob.set_knob_radius(25)
 
-        self.position_label = PositionLabel('Position: ')
+        self.current_position = None
 
-        self.current_value = None
+        plots = [('Position', Qt.red, lambda: self.current_position, str)]
+        self.plot_widget = PlotWidget('Position', plots, curve_motion_granularity=40, update_interval=0.025)
 
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Position', plot_list)
-
-        layout_h1 = QHBoxLayout()
-        layout_h1.addStretch()
-        layout_h1.addWidget(self.position_label)
-        layout_h1.addStretch()
-
-        layout_h2 = QHBoxLayout()
-        layout_h2.addStretch()
-        layout_h2.addWidget(self.position_knob)
-        layout_h2.addStretch()
-
-        layout = QVBoxLayout(self)
-        layout.addLayout(layout_h1)
-        layout.addLayout(layout_h2)
+        layout = QHBoxLayout(self)
         layout.addWidget(self.plot_widget)
+        layout.addWidget(self.position_knob)
 
     def start(self):
         async_call(self.rp.get_position, None, self.cb_position, self.increase_error_count)
@@ -97,10 +79,6 @@ class RotaryPoti(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletRotaryPoti.DEVICE_IDENTIFIER
 
-    def get_current_value(self):
-        return self.current_value
-
     def cb_position(self, position):
-        self.current_value = position
+        self.current_position = position
         self.position_knob.set_value(position)
-        self.position_label.setText(str(position))

@@ -2,7 +2,7 @@
 """
 Industrial Dual Analog In Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 industrial_dual_analog_in.py: Industrial Dual Analog In Plugin Implementation
 
@@ -34,14 +34,10 @@ from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_modeless_dialog_flags
 from brickv.plugin_system.plugins.industrial_dual_analog_in.ui_calibration import Ui_Calibration
+from brickv.utils import format_voltage
 
 def is_int32(value):
     return value >= -2147483648 and value <= 2147483647
-
-class VoltageLabel(QLabel):
-    def setText(self, text):
-        text = text + " V"
-        super(VoltageLabel, self).setText(text)
 
 class Calibration(QDialog, Ui_Calibration):
     def __init__(self, parent):
@@ -87,7 +83,7 @@ class Calibration(QDialog, Ui_Calibration):
         
     def gain_clicked(self):
         try:
-            if self.parent.firmware_version >= (2, 0, 1): #fixed computation in 2.0.1
+            if self.parent.firmware_version >= (2, 0, 1): # fixed computation in 2.0.1
                 measured0 = (sum(self.values0)/10.0)*244/44983
                 measured1 = (sum(self.values1)/10.0)*244/44983
             else:
@@ -146,62 +142,44 @@ class IndustrialDualAnalogIn(PluginBase):
                                              functools.partial(self.cb_voltage, 1),
                                              self.increase_error_count)
 
-        self.voltage_label = [VoltageLabel(), VoltageLabel()]
-        
         self.calibration = None
-        
-        self.sample_rate_label1 = QLabel('Sample Rate:')
+
+        self.sample_rate_label = QLabel('Sample Rate:')
         self.sample_rate_combo = QComboBox()
-        self.sample_rate_combo.addItem('976')
-        self.sample_rate_combo.addItem('488')
-        self.sample_rate_combo.addItem('244')
-        self.sample_rate_combo.addItem('122')
-        self.sample_rate_combo.addItem('61')
-        self.sample_rate_combo.addItem('4')
-        self.sample_rate_combo.addItem('2')
-        self.sample_rate_combo.addItem('1')
-        self.sample_rate_label2 = QLabel('Samples per second')
-        
-        self.voltage_value = [None, None]
-        self.calibration_button = QPushButton('Show/Edit Calibration')
-        
+        self.sample_rate_combo.addItem('976 Hz')
+        self.sample_rate_combo.addItem('488 Hz')
+        self.sample_rate_combo.addItem('244 Hz')
+        self.sample_rate_combo.addItem('122 Hz')
+        self.sample_rate_combo.addItem('61 Hz')
+        self.sample_rate_combo.addItem('4 Hz')
+        self.sample_rate_combo.addItem('2 Hz')
+        self.sample_rate_combo.addItem('1 Hz')
+
+        self.current_voltage = [None, None] # float, V
+        self.calibration_button = QPushButton('Calibration...')
+
         self.sample_rate_combo.currentIndexChanged.connect(self.sample_rate_combo_index_changed)
         self.calibration_button.clicked.connect(self.calibration_button_clicked)
-        
-        plot_list = [['Channel 0', Qt.red, self.get_voltage_value0],
-                     ['Channel 1', Qt.blue, self.get_voltage_value1]]
-        self.plot_widget = PlotWidget('Voltage [V]', plot_list)
-        
+
+        plots = [('Channel 0', Qt.red, lambda: self.current_voltage[0], format_voltage),
+                 ('Channel 1', Qt.blue, lambda: self.current_voltage[1], format_voltage)]
+        self.plot_widget = PlotWidget('Voltage [V]', plots)
+
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(self.sample_rate_label)
+        hlayout.addWidget(self.sample_rate_combo)
+        hlayout.addStretch()
+        hlayout.addWidget(self.calibration_button)
+
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
-        
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(QLabel("Channel 0: "))
-        layout_h.addWidget(self.voltage_label[0])
-        layout_h.addStretch()
-
-        layout_h1 = QHBoxLayout()
-        layout_h1.addStretch()
-        layout_h1.addWidget(QLabel("Channel 1: "))
-        layout_h1.addWidget(self.voltage_label[1])
-        layout_h1.addStretch()
-        
-        layout_h2 = QHBoxLayout()
-        layout_h2.addWidget(self.sample_rate_label1)
-        layout_h2.addWidget(self.sample_rate_combo)
-        layout_h2.addWidget(self.sample_rate_label2)
-        layout_h2.addStretch()
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
-        layout.addLayout(layout_h1)
         layout.addWidget(self.plot_widget)
-        layout.addLayout(layout_h2)
         layout.addWidget(line)
-        layout.addWidget(self.calibration_button)
-        
+        layout.addLayout(hlayout)
+
     def start(self):
         async_call(self.analog_in.get_voltage, 0, lambda x: self.cb_voltage(0, x), self.increase_error_count)
         async_call(self.analog_in.get_voltage, 1, lambda x: self.cb_voltage(1, x), self.increase_error_count)
@@ -248,6 +226,4 @@ class IndustrialDualAnalogIn(PluginBase):
         self.sample_rate_combo.setCurrentIndex(rate)
 
     def cb_voltage(self, sensor, voltage):
-        value = voltage/1000.0
-        self.voltage_label[sensor].setText('%6.03f' % round(value, 3))
-        self.voltage_value[sensor] = value
+        self.current_voltage[sensor] = voltage / 1000.0

@@ -2,6 +2,7 @@
 """
 UV Light Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2016 Matthias Bolte <matthias@tinkerforge.com>
 
 uv_light.py: UV Light Bricklet Plugin Implementation
 
@@ -26,19 +27,13 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_uv_light import BrickletUVLight
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, FixedSizeLabel
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class UVLabel(QLabel):
+class IndexLabel(FixedSizeLabel):
     def setText(self, text):
-        text = u"UV Light: " + text + u'µW/cm²'
-        super(UVLabel, self).setText(text)
-
-class IndexLabel(QLabel):
-    def setText(self, text):
-        text = u"UV Index: " + text
-        super(IndexLabel, self).setText(text)
+        super(IndexLabel, self).setText('UV Index: ' + text)
 
 class UVLight(PluginBase):
     def __init__(self, *args):
@@ -50,39 +45,26 @@ class UVLight(PluginBase):
                                              self.cb_uv_light,
                                              self.increase_error_count)
 
-        self.uv_label = UVLabel(u'UV Light: ')
-        self.index_label = IndexLabel(u'UV Index: ')
+        self.index_label = IndexLabel('UV Index: ')
 
         self.current_uv_light = None
-        
-        plot_list = [['', Qt.red, self.get_current_uv_light]]
-        self.plot_widget_uv = PlotWidget(u'UV Light [µW/cm²]', plot_list)
-        
-        layout_h1 = QHBoxLayout()
-        layout_h1.addStretch()
-        layout_h1.addWidget(self.uv_label)
-        layout_h1.addStretch()
-        
-        layout_h2 = QHBoxLayout()
-        layout_h2.addStretch()
-        layout_h2.addWidget(self.index_label)
-        layout_h2.addStretch()
+
+        plots = [('UV Light', Qt.red, lambda: self.current_uv_light, u'{} µW/cm²'.format)]
+        self.plot_widget = PlotWidget(u'UV Light [µW/cm²]', plots, extra_key_widgets=[self.index_label])
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h1)
-        layout.addLayout(layout_h2)
-        layout.addWidget(self.plot_widget_uv)
+        layout.addWidget(self.plot_widget)
 
     def start(self):
         async_call(self.uv_light.get_uv_light, None, self.cb_uv_light, self.increase_error_count)
         self.cbe_uv_light.set_period(100)
 
-        self.plot_widget_uv.stop = False
+        self.plot_widget.stop = False
 
     def stop(self):
         self.cbe_uv_light.set_period(0)
 
-        self.plot_widget_uv.stop = True
+        self.plot_widget.stop = True
 
     def destroy(self):
         pass
@@ -94,12 +76,8 @@ class UVLight(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletUVLight.DEVICE_IDENTIFIER
 
-    def get_current_uv_light(self):
-        return self.current_uv_light
-
     def cb_uv_light(self, uv_light):
         self.current_uv_light = uv_light
-        self.uv_label.setText(unicode(uv_light))
         
         index = round(uv_light/250.0, 1)
         self.index_label.setText(unicode(index))

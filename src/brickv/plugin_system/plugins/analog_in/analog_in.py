@@ -2,7 +2,7 @@
 """
 Analog In Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 analog_in.py: Analog In Plugin Implementation
 
@@ -23,19 +23,15 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QSpinBox
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QSpinBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_analog_in import BrickletAnalogIn
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
-        
-class VoltageLabel(QLabel):
-    def setText(self, text):
-        text = "Voltage: " + text + " V"
-        super(VoltageLabel, self).setText(text)
-    
+from brickv.utils import format_voltage
+
 class AnalogIn(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletAnalogIn, *args)
@@ -46,37 +42,29 @@ class AnalogIn(PluginBase):
                                             self.cb_voltage,
                                             self.increase_error_count)
 
-        self.voltage_label = VoltageLabel('Voltage: ')
-        
-        self.current_value = None
-        
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Voltage [mV]', plot_list)
+        self.current_voltage = None # float, V
 
-        layout_h2 = QHBoxLayout()
-        layout_h2.addStretch()
-        layout_h2.addWidget(self.voltage_label)
-        layout_h2.addStretch()
+        plots = [('Voltage', Qt.red, lambda: self.current_voltage, format_voltage)]
+        self.plot_widget = PlotWidget('Voltage [V]', plots)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h2)
         layout.addWidget(self.plot_widget)
 
         if self.firmware_version >= (2, 0, 1):
             self.combo_range = QComboBox()
             self.combo_range.addItem('Automatic', BrickletAnalogIn.RANGE_AUTOMATIC)
             if self.firmware_version >= (2, 0, 3):
-                self.combo_range.addItem('0V - 3.30V', BrickletAnalogIn.RANGE_UP_TO_3V)
-            self.combo_range.addItem('0V - 6.05V', BrickletAnalogIn.RANGE_UP_TO_6V)
-            self.combo_range.addItem('0V - 10.32V', BrickletAnalogIn.RANGE_UP_TO_10V)
-            self.combo_range.addItem('0V - 36.30V', BrickletAnalogIn.RANGE_UP_TO_36V)
-            self.combo_range.addItem('0V - 45.00V', BrickletAnalogIn.RANGE_UP_TO_45V)
+                self.combo_range.addItem('0 - 3.30 V', BrickletAnalogIn.RANGE_UP_TO_3V)
+            self.combo_range.addItem('0 - 6.05 V', BrickletAnalogIn.RANGE_UP_TO_6V)
+            self.combo_range.addItem('0 - 10.32 V', BrickletAnalogIn.RANGE_UP_TO_10V)
+            self.combo_range.addItem('0 - 36.30 V', BrickletAnalogIn.RANGE_UP_TO_36V)
+            self.combo_range.addItem('0 - 45.00 V', BrickletAnalogIn.RANGE_UP_TO_45V)
             self.combo_range.currentIndexChanged.connect(self.range_changed)
 
-            layout_h1 = QHBoxLayout()
-            layout_h1.addStretch()
-            layout_h1.addWidget(QLabel('Range:'))
-            layout_h1.addWidget(self.combo_range)
+            hlayout = QHBoxLayout()
+            hlayout.addWidget(QLabel('Range:'))
+            hlayout.addWidget(self.combo_range)
+            hlayout.addStretch()
 
             if self.firmware_version >= (2, 0, 3):
                 self.spin_average = QSpinBox()
@@ -86,12 +74,15 @@ class AnalogIn(PluginBase):
                 self.spin_average.setValue(50)
                 self.spin_average.editingFinished.connect(self.spin_average_finished)
 
-                layout_h1.addStretch()
-                layout_h1.addWidget(QLabel('Average Length:'))
-                layout_h1.addWidget(self.spin_average)
+                hlayout.addWidget(QLabel('Average Length:'))
+                hlayout.addWidget(self.spin_average)
 
-            layout_h1.addStretch()
-            layout.addLayout(layout_h1)
+            line = QFrame()
+            line.setFrameShape(QFrame.HLine)
+            line.setFrameShadow(QFrame.Sunken)
+
+            layout.addWidget(line)
+            layout.addLayout(hlayout)
 
     def get_range_async(self, range_):
         self.combo_range.setCurrentIndex(self.combo_range.findData(range_))
@@ -102,8 +93,10 @@ class AnalogIn(PluginBase):
     def start(self):
         if self.firmware_version >= (2, 0, 1):
             async_call(self.ai.get_range, None, self.get_range_async, self.increase_error_count)
-        if self.firmware_version >= (2, 0, 3):
-            async_call(self.ai.get_averaging, None, self.get_averaging_async, self.increase_error_count)
+
+            if self.firmware_version >= (2, 0, 3):
+                async_call(self.ai.get_averaging, None, self.get_averaging_async, self.increase_error_count)
+
         async_call(self.ai.get_voltage, None, self.cb_voltage, self.increase_error_count)
         self.cbe_voltage.set_period(100)
         
@@ -124,12 +117,8 @@ class AnalogIn(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletAnalogIn.DEVICE_IDENTIFIER
 
-    def get_current_value(self):
-        return self.current_value
-
     def cb_voltage(self, voltage):
-        self.current_value = voltage
-        self.voltage_label.setText(str(voltage/1000.0))
+        self.current_voltage = voltage / 1000.0
 
     def range_changed(self, index):
         if index >= 0 and self.firmware_version >= (2, 0, 1):

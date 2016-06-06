@@ -2,7 +2,7 @@
 """
 Distance US Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 distance_us.py: Distance US Plugin Implementation
 
@@ -31,11 +31,6 @@ from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
         
-class DistanceLabel(QLabel):
-    def setText(self, text):
-        text = "Distance Value: " + text
-        super(DistanceLabel, self).setText(text)
-    
 class DistanceUS(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletDistanceUS, *args)
@@ -46,19 +41,12 @@ class DistanceUS(PluginBase):
                                              self.cb_distance,
                                              self.increase_error_count)
 
-        self.distance_label = DistanceLabel('Distance Value: ')
-        self.current_value = None
-        
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Distance', plot_list)
-        
-        layout_h1 = QHBoxLayout()
-        layout_h1.addStretch()
-        layout_h1.addWidget(self.distance_label)
-        layout_h1.addStretch()
+        self.current_distance = None
+
+        plots = [('Distance Value', Qt.red, lambda: self.current_distance, str)]
+        self.plot_widget = PlotWidget('Distance Value', plots)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h1)
         layout.addWidget(self.plot_widget)
 
     def start(self):
@@ -81,10 +69,6 @@ class DistanceUS(PluginBase):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletDistanceUS.DEVICE_IDENTIFIER
-    
-    def get_current_value(self):
-        return self.current_value
 
     def cb_distance(self, distance):
-        self.current_value = distance
-        self.distance_label.setText(str(distance)) 
+        self.current_distance = distance

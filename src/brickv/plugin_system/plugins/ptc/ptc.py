@@ -2,7 +2,7 @@
 """
 PTC Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 ptc.py: PTC Plugin Implementation
 
@@ -23,18 +23,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_ptc import BrickletPTC
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
-
-class TemperatureLabel(QLabel):
-    def setText(self, text):
-        text = "Temperature: " + text + " %cC" % 0xB0
-        super(TemperatureLabel, self).setText(text)
 
 #class ResistanceLabel(QLabel):
 #    def setText(self, text):
@@ -47,20 +42,19 @@ class PTC(PluginBase):
 
         self.ptc = self.device
         
-        self.str_connected = 'Sensor is currently <font color="green">connected</font>'
-        self.str_not_connected = 'Sensor is currently <font color="red">not connected</font>'
+        self.str_connected = 'Sensor is <font color="green">connected</font>'
+        self.str_not_connected = 'Sensor is <font color="red">not connected</font>'
 
         self.cbe_temperature = CallbackEmulator(self.ptc.get_temperature,
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 
-#        self.cbe_resistance = CallbackEmulator(self.ptc.get_resistance,
-#                                               self.cb_resistance,
-#                                               self.increase_error_count)
+        #self.cbe_resistance = CallbackEmulator(self.ptc.get_resistance,
+        #                                       self.cb_resistance,
+        #                                       self.increase_error_count)
 
-        self.temperature_label = TemperatureLabel()
-#        self.resistance_label = ResistanceLabel()
-        
+        #self.resistance_label = ResistanceLabel()
+
         self.wire_label = QLabel('Wire Type:')
         self.wire_combo = QComboBox()
         self.wire_combo.addItem('2-Wire')
@@ -69,47 +63,44 @@ class PTC(PluginBase):
         
         self.noise_label = QLabel('Noise Rejection Filter:')
         self.noise_combo = QComboBox()
-        self.noise_combo.addItem('50Hz')
-        self.noise_combo.addItem('60Hz')
-        
+        self.noise_combo.addItem('50 Hz')
+        self.noise_combo.addItem('60 Hz')
+
         self.connected_label = QLabel(self.str_connected)
-        
-        self.current_value = None
-        
+
+        self.current_temperature = None # float, °C
+
         self.wire_combo.currentIndexChanged.connect(self.wire_combo_index_changed)
         self.noise_combo.currentIndexChanged.connect(self.noise_combo_index_changed)
-        
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Temperature [%cC]' % 0xB0, plot_list)
-        
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(self.temperature_label)
-        layout_h.addStretch()
-        layout_h.addWidget(self.connected_label)
-        layout_h.addStretch()
-        
-        layout_h2 = QHBoxLayout()
-        layout_h2.addWidget(self.wire_label)
-        layout_h2.addWidget(self.wire_combo)
-        layout_h2.addStretch()
-        layout_h2.addWidget(self.noise_label)
-        layout_h2.addWidget(self.noise_combo)
+
+        plots = [('Temperature', Qt.red, lambda: self.current_temperature, u'{} °C'.format)]
+        self.plot_widget = PlotWidget(u'Temperature [°C]', plots, extra_key_widgets=[self.connected_label])
+
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(self.wire_label)
+        hlayout.addWidget(self.wire_combo)
+        hlayout.addStretch()
+        hlayout.addWidget(self.noise_label)
+        hlayout.addWidget(self.noise_combo)
+
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
         layout.addWidget(self.plot_widget)
-        layout.addLayout(layout_h2)
-        
+        layout.addWidget(line)
+        layout.addLayout(hlayout)
+
         self.connected_timer = QTimer()
         self.connected_timer.timeout.connect(self.update_connected)
         self.connected_timer.setInterval(1000)
 
     def start(self):
         async_call(self.ptc.get_temperature, None, self.cb_temperature, self.increase_error_count)
-#        async_call(self.ptc.get_resistance, None, self.cb_resistance, self.increase_error_count)
+        #async_call(self.ptc.get_resistance, None, self.cb_resistance, self.increase_error_count)
         self.cbe_temperature.set_period(100)
-#        self.cbe_resistance.set_period(100)
+        #self.cbe_resistance.set_period(100)
         
         async_call(self.ptc.is_sensor_connected, None, self.is_sensor_connected_async, self.increase_error_count)
         async_call(self.ptc.get_noise_rejection_filter, None, self.get_noise_rejection_filter_async, self.increase_error_count)
@@ -120,7 +111,7 @@ class PTC(PluginBase):
         
     def stop(self):
         self.cbe_temperature.set_period(0)
-#        self.cbe_resistance.set_period(0)
+        #self.cbe_resistance.set_period(0)
         
         self.connected_timer.stop()
         self.plot_widget.stop = True
@@ -135,9 +126,6 @@ class PTC(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletPTC.DEVICE_IDENTIFIER
 
-    def get_current_value(self):
-        return self.current_value
-    
     def update_connected(self):
         async_call(self.ptc.is_sensor_connected, None, self.is_sensor_connected_async, self.increase_error_count)
     
@@ -160,9 +148,8 @@ class PTC(PluginBase):
         self.wire_combo.setCurrentIndex(mode-2)
 
     def cb_temperature(self, temperature):
-        self.current_value = temperature/100.0
-        self.temperature_label.setText('%8.02f' % (temperature/100.0))
+        self.current_temperature = temperature / 100.0
         
     def cb_resistance(self, resistance):
-        resistance_str = str(round(resistance*3900.0/(1 << 15), 1))
+        resistance_str = str(round(resistance * 3900.0 / (1 << 15), 1))
         self.resistance_label.setText(resistance_str)

@@ -2,7 +2,7 @@
 """
 Line Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 line.py: Line Plugin Implementation
 
@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout, QFrame, QPainter, QBrush, QLinearGradient
+from PyQt4.QtGui import QLabel, QHBoxLayout, QFrame, QPainter, QLinearGradient
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_line import BrickletLine
@@ -31,39 +31,28 @@ from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class ReflectivityLabel(QLabel):
-    def setText(self, text):
-        text = "Reflectivity: " + text
-        super(ReflectivityLabel, self).setText(text)
-
 class ReflectivityFrame(QFrame):
-    SIZE_X = 400
-    SIZE_Y = 100
-
     def __init__(self, parent=None):
         QFrame.__init__(self, parent)
         self.reflectivity = 0
-        self.setMinimumSize(self.SIZE_X, self.SIZE_Y)
-        self.setMaximumSize(self.SIZE_X, self.SIZE_Y)
+        self.setMinimumSize(150, 150)
 
-        self.gradient = QLinearGradient(0.0, 0.0, 0.0, self.SIZE_Y)
-        self.gradient.setColorAt(0, Qt.white)
-        self.gradient.setColorAt(1, Qt.black)
-
-    def set_reflectivity(self, r):
-        self.reflectivity = self.SIZE_Y - r*self.SIZE_Y/4095.0
-        self.repaint()
+    def set_reflectivity(self, reflectivity):
+        self.reflectivity = reflectivity
+        self.update()
 
     def paintEvent(self, event):
-        qp = QPainter()
-        qp.begin(self)
-        qp.setBrush(self.gradient)
-        qp.setPen(Qt.transparent)
-        qp.drawRect(0, 0, self.SIZE_X, self.SIZE_Y)
-        qp.setBrush(QBrush(Qt.red))
+        qp = QPainter(self)
+
+        g = QLinearGradient(0.0, 0.0, 0.0, self.height())
+        g.setColorAt(0, Qt.white)
+        g.setColorAt(1, Qt.black)
+
+        y = self.height() - self.reflectivity * self.height() / 4095.0
+
+        qp.fillRect(0, 0, self.width(), self.height(), g)
         qp.setPen(Qt.red)
-        qp.drawLine(0, self.reflectivity, self.SIZE_X, self.reflectivity)
-        qp.end()
+        qp.drawLine(0, y, self.width(), y)
 
 class Line(PluginBase):
     def __init__(self, *args):
@@ -75,36 +64,20 @@ class Line(PluginBase):
                                                  self.cb_reflectivity,
                                                  self.increase_error_count)
 
-        self.reflectivity_label = ReflectivityLabel()
         self.rf = ReflectivityFrame()
 
-        self.current_value = None
+        self.current_reflectivity = None
 
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Reflectivity', plot_list)
+        plots = [('Reflectivity', Qt.red, lambda: self.current_reflectivity, str)]
+        self.plot_widget = PlotWidget('Reflectivity', plots)
 
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(self.reflectivity_label)
-        layout_h.addStretch()
-
-        layout_h2 = QHBoxLayout()
-        layout_h2.addStretch()
-        layout_h2.addWidget(self.rf)
-        layout_h2.addStretch()
-
-        layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
-        layout.addLayout(layout_h2)
+        layout = QHBoxLayout(self)
         layout.addWidget(self.plot_widget)
+        layout.addWidget(self.rf)
 
     def cb_reflectivity(self, reflectivity):
-        self.current_value = reflectivity
+        self.current_reflectivity = reflectivity
         self.rf.set_reflectivity(reflectivity)
-        self.reflectivity_label.setText(str(reflectivity))
-
-    def get_current_value(self):
-        return self.current_value
 
     def start(self):
         async_call(self.line.get_reflectivity, None, self.cb_reflectivity, self.increase_error_count)

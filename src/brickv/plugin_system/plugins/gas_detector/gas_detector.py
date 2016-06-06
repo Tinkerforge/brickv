@@ -2,7 +2,7 @@
 """
 Gas Detector Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 gas_detector.py: Gas Detector Plugin Implementation
 
@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QCheckBox, QComboBox
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QCheckBox, QComboBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_gas_detector import BrickletGasDetector
@@ -31,11 +31,6 @@ from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class GasDetectorLabel(QLabel):
-    def setText(self, text):
-        text = "Value: " + text
-        super(GasDetectorLabel, self).setText(text)
-    
 class GasDetector(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletGasDetector, *args)
@@ -46,13 +41,11 @@ class GasDetector(PluginBase):
                                           self.cb_value,
                                           self.increase_error_count)
 
-        self.gas_detector_label = GasDetectorLabel()
         self.current_value = None
-        
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Value', plot_list)
-        
-        
+
+        plots = [('Value', Qt.red, lambda: self.current_value, str)]
+        self.plot_widget = PlotWidget('Value', plots)
+
         self.heater_checkbox = QCheckBox()
         self.heater_checkbox.setText('Heater')
         
@@ -62,23 +55,22 @@ class GasDetector(PluginBase):
         
         self.type_combo.currentIndexChanged.connect(self.type_combo_index_changed)
         self.heater_checkbox.stateChanged.connect(self.heater_checkbox_state_changed)
-        
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(self.gas_detector_label)
-        layout_h.addStretch()
-        
-        layout_h1 = QHBoxLayout()
-        layout_h1.addWidget(QLabel('Detector Type:'))
-        layout_h1.addWidget(self.type_combo)
-        layout_h1.addStretch()
-        layout_h1.addWidget(self.heater_checkbox)
+
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(QLabel('Detector Type:'))
+        hlayout.addWidget(self.type_combo)
+        hlayout.addStretch()
+        hlayout.addWidget(self.heater_checkbox)
+
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
         layout.addWidget(self.plot_widget)
-        layout.addLayout(layout_h1)
-        
+        layout.addWidget(line)
+        layout.addLayout(hlayout)
+
     def heater_checkbox_state_changed(self, state):
         if state == Qt.Unchecked:
             self.gas_detector.heater_off()
@@ -96,13 +88,9 @@ class GasDetector(PluginBase):
             self.heater_checkbox.setChecked(True)
         else:
             self.heater_checkbox.setChecked(False)
-        
-    def get_current_value(self):
-        return self.current_value
 
     def cb_value(self, value):
         self.current_value = value
-        self.gas_detector_label.setText(str(value))
 
     def start(self):
         async_call(self.gas_detector.get_detector_type, None, self.get_detector_type_async, self.increase_error_count)

@@ -2,7 +2,7 @@
 """
 Voltage Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 voltage.py: Voltage Plugin Implementation
 
@@ -23,19 +23,15 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
+from PyQt4.QtGui import QVBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_voltage import BrickletVoltage
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
+from brickv.utils import format_voltage
 
-class CurrentLabel(QLabel):
-    def setText(self, text):
-        text = "Voltage: " + text + " V"
-        super(CurrentLabel, self).setText(text)
-    
 class Voltage(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletVoltage, *args)
@@ -46,20 +42,12 @@ class Voltage(PluginBase):
                                             self.cb_voltage,
                                             self.increase_error_count)
 
-        self.voltage_label = CurrentLabel('Voltage: ')
-        
-        self.current_value = None
-        
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Voltage [mV]', plot_list)
-        
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(self.voltage_label)
-        layout_h.addStretch()
+        self.current_voltage = None # float, V
+
+        plots = [('Voltage', Qt.red, lambda: self.current_voltage, format_voltage)]
+        self.plot_widget = PlotWidget('Voltage [V]', plots)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
         layout.addWidget(self.plot_widget)
         
     def start(self):
@@ -83,9 +71,5 @@ class Voltage(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletVoltage.DEVICE_IDENTIFIER
 
-    def get_current_value(self):
-        return self.current_value
-
     def cb_voltage(self, voltage):
-        self.current_value = voltage
-        self.voltage_label.setText(str(voltage/1000.0))
+        self.current_voltage = voltage / 1000.0

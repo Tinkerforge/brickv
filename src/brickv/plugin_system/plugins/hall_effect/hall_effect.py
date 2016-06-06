@@ -2,7 +2,7 @@
 """
 Hall Effect Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 hall_effect.py: Hall Effect Plugin Implementation
 
@@ -23,19 +23,23 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QFrame, QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, \
+                        QComboBox, QPushButton
 
 from brickv.plugin_system.plugin_base import PluginBase
-from brickv.plugin_system.plugins.hall_effect.ui_hall_effect import Ui_HallEffect
 from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
 from brickv.async_call import async_call
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, FixedSizeLabel
 from brickv.callback_emulator import CallbackEmulator
 
-class HallEffect(PluginBase, Ui_HallEffect):
+class CountLabel(FixedSizeLabel):
+    def setText(self, text):
+        text = 'Count: ' + str(text)
+        super(CountLabel, self).setText(text)
+
+class HallEffect(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletHallEffect, *args)
-
-        self.setupUi(self)
 
         self.hf = self.device
 
@@ -45,14 +49,45 @@ class HallEffect(PluginBase, Ui_HallEffect):
 
         self.current_value = None
 
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Value', plot_list)
+        self.label_count = CountLabel('Count')
+
+        plots = [('Value', Qt.red, lambda: self.current_value, str)]
+        self.plot_widget = PlotWidget('Value', plots, extra_key_widgets=[self.label_count],
+                                      curve_motion_granularity=20, update_interval=0.05)
         self.plot_widget.set_fixed_y_scale(0, 1, 1, 1)
 
+        self.combo_edge_type = QComboBox()
+        self.combo_edge_type.addItem('Rising')
+        self.combo_edge_type.addItem('Falling')
+        self.combo_edge_type.addItem('Both')
         self.combo_edge_type.currentIndexChanged.connect(self.edge_changed)
+
+        self.spin_debounce = QSpinBox()
+        self.spin_debounce.setMinimum(0)
+        self.spin_debounce.setMaximum(255)
+        self.spin_debounce.setValue(100)
         self.spin_debounce.editingFinished.connect(self.debounce_changed)
 
-        self.main_layout.insertWidget(1, self.plot_widget)
+        self.button_reset = QPushButton('Reset Count')
+        self.button_reset.clicked.connect(self.reset_count)
+
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(QLabel('Edge Type:'))
+        hlayout.addWidget(self.combo_edge_type)
+        hlayout.addStretch()
+        hlayout.addWidget(QLabel('Debounce Period [ms]:'))
+        hlayout.addWidget(self.spin_debounce)
+        hlayout.addStretch()
+        hlayout.addWidget(self.button_reset)
+
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.plot_widget)
+        layout.addWidget(line)
+        layout.addLayout(hlayout)
 
     def debounce_changed(self):
         self.hf.set_edge_count_config(self.combo_edge_type.currentIndex(), self.spin_debounce.value())
@@ -65,14 +100,13 @@ class HallEffect(PluginBase, Ui_HallEffect):
 
     def cb_edge_count(self, data):
         count, value = data
-        self.label_edge_count.setText(str(count))
+
         if value:
             self.current_value = 1
         else:
             self.current_value = 0
 
-    def get_current_value(self):
-        return self.current_value
+        self.label_count.setText(count)
 
     def cb_edge_count_config(self, conf):
         edge_type, debounce = conf
@@ -80,13 +114,16 @@ class HallEffect(PluginBase, Ui_HallEffect):
         self.spin_debounce.setValue(debounce)
 
     def get_edge_count_async(self, count):
-        self.label_edge_count.setText(str(count))
+        self.label_count.setText(count)
 
     def get_value_async(self, value):
         if value:
             self.current_value = 1
         else:
             self.current_value = 0
+
+    def reset_count(self):
+        self.hf.get_edge_count(True)
 
     def start(self):
         async_call(self.hf.get_edge_count_config, None, self.cb_edge_count_config, self.increase_error_count)

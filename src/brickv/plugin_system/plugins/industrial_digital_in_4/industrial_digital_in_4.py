@@ -152,15 +152,6 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
         for line in self.lines[num]:
             line.setVisible(False)
     
-    def get_current_value(self):
-        value = 0
-        i = 0
-        for b in self.pin_buttons:
-            if 'Low' in b.text():
-                value |= (1 << i) 
-            i += 1
-        return value
-    
     def set_group_clicked(self):
         group = ['n', 'n', 'n', 'n']
         for i in range(len(self.groups)):

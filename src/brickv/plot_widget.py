@@ -28,7 +28,7 @@ import functools
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
                         QPainter, QSizePolicy, QFontMetrics, QPixmap, \
-                        QIcon, QColor, QCursor, QPen, QPainterPath, QGridLayout
+                        QIcon, QColor, QCursor, QPen, QPainterPath, QLabel
 from PyQt4.QtCore import QTimer, Qt, QSize, QPointF
 
 EPSILON = 0.000001
@@ -302,14 +302,14 @@ class YScale(Scale):
         painter.restore()
 
 class Plot(QWidget):
-    def __init__(self, parent, y_scale_title_text, plots, scales_visible=True,
+    def __init__(self, parent, y_scale_title_text, configs, scales_visible=True,
                  curve_outer_border_visible=True, curve_motion_granularity=10,
                  canvas_color=QColor(245, 245, 245)):
         QWidget.__init__(self, parent)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
-        self.plots = plots
+        self.configs = configs
         self.scales_visible = scales_visible
         self.history_length_x = 20 # seconds
 
@@ -319,7 +319,7 @@ class Plot(QWidget):
             self.curve_outer_border = 0 # px, fixed
 
         if sys.platform == 'darwin':
-            # FIXME: there is a 1px vertical offset in the curve srawing on Mac OS X.
+            # FIXME: there is a 1px vertical offset in the curve drawing on Mac OS X.
             #        it's not clear what the reason is, just workaround it for now
             self.curve_y_offset = 1
         else:
@@ -452,7 +452,7 @@ class Plot(QWidget):
                 for i in xrange(1, len(curve_x)):
                     lineTo(curve_x[i], curve_y[i])
 
-                painter.setPen(self.plots[c][1])
+                painter.setPen(self.configs[c][1])
                 painter.drawPath(path)
 
             painter.restore()
@@ -665,7 +665,7 @@ class Plot(QWidget):
         self.update()
 
     def clear_graph(self):
-        count = len(self.plots)
+        count = len(self.configs)
 
         if not hasattr(self, 'curves_visible'):
             self.curves_visible = [True]*count # per curve visibility
@@ -687,87 +687,146 @@ class Plot(QWidget):
 
         self.update()
 
+class FixedSizeToolButton(QToolButton):
+    maximum_size_hint = None
+
+    def sizeHint(self):
+        hint = QToolButton.sizeHint(self)
+
+        if self.maximum_size_hint != None:
+            hint = QSize(max(hint.width(), self.maximum_size_hint.width()),
+                         max(hint.height(), self.maximum_size_hint.height()))
+
+        self.maximum_size_hint = hint
+
+        return hint
+
+class FixedSizeLabel(QLabel):
+    maximum_size_hint = None
+
+    def sizeHint(self):
+        hint = QLabel.sizeHint(self)
+
+        if self.maximum_size_hint != None:
+            hint = QSize(max(hint.width(), self.maximum_size_hint.width()),
+                         max(hint.height(), self.maximum_size_hint.height()))
+
+        self.maximum_size_hint = hint
+
+        return hint
+
 class PlotWidget(QWidget):
-    def __init__(self, y_scale_title_text, plots, clear_button=None, parent=None,
+    def __init__(self, y_scale_title_text, configs, clear_button=None, parent=None,
                  scales_visible=True, curve_outer_border_visible=True,
                  curve_motion_granularity=10, canvas_color=QColor(245, 245, 245),
-                 external_timer=None):
+                 external_timer=None, key='top-value', extra_key_widgets=None,
+                 update_interval=0.1):
         QWidget.__init__(self, parent)
 
         self.setMinimumSize(300, 250)
 
         self.stop = True
-        self.plot = Plot(self, y_scale_title_text, plots, scales_visible,
+        self.plot = Plot(self, y_scale_title_text, configs, scales_visible,
                          curve_outer_border_visible, curve_motion_granularity,
                          canvas_color)
         self.set_fixed_y_scale = self.plot.set_fixed_y_scale
-        self.plot_buttons = []
+        self.key = key
+        self.key_items = []
+        self.key_has_values = key.endswith('-value') if key != None else False
         self.first_show = True
+        self.timestamp = 0 # seconds
+        self.update_interval = update_interval # seconds
+        self.configs = configs
+
+        h1layout = QHBoxLayout()
+        h1layout.setContentsMargins(0, 0, 0, 0)
 
         if clear_button == None:
             self.clear_button = QToolButton()
             self.clear_button.setText('Clear Graph')
-
-            playout = QGridLayout()
-            playout.setContentsMargins(0, 0, 0, 0)
-            playout.setRowStretch(0, 1)
-            playout.setColumnStretch(0, 1)
-            playout.addWidget(self.clear_button, 1, 1)
-
-            self.plot.setLayout(playout)
+            h1layout.addWidget(self.clear_button)
         else:
             self.clear_button = clear_button
 
         self.clear_button.clicked.connect(self.clear_clicked)
 
-        vlayout = QVBoxLayout(self)
-        vlayout.setContentsMargins(0, 0, 0, 0)
+        h1layout.addStretch(1)
 
-        if len(plots) > 1:
-            hlayout = QHBoxLayout()
-            hlayout.setContentsMargins(0, 0, 0, 0)
+        v1layout = None
 
-            button_layout = QVBoxLayout()
-            button_layout.setContentsMargins(0, 0, 0, 0)
-            button_layout.addSpacing(self.plot.get_legend_offset_y())
+        if self.key != None:
+            if len(self.configs) == 1:
+                label = FixedSizeLabel(self)
+                label.setText(self.configs[0][0])
 
-            for i, plot in enumerate(plots):
-                pixmap = QPixmap(10, 1)
-                QPainter(pixmap).fillRect(0, 0, 10, 1, plot[1])
+                self.key_items.append(label)
+            else:
+                for i, config in enumerate(self.configs):
+                    pixmap = QPixmap(10, 1)
+                    QPainter(pixmap).fillRect(0, 0, 10, 1, config[1])
 
-                button = QToolButton(self)
-                button.setText(plot[0])
-                button.setIcon(QIcon(pixmap))
-                button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-                button.setCheckable(True)
-                button.setChecked(True)
-                button.toggled.connect(functools.partial(self.plot.show_curve, i))
+                    button = FixedSizeToolButton(self)
+                    button.setText(config[0])
+                    button.setIcon(QIcon(pixmap))
+                    button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+                    button.setCheckable(True)
+                    button.setChecked(True)
+                    button.toggled.connect(functools.partial(self.plot.show_curve, i))
 
-                self.plot_buttons.append(button)
+                    self.key_items.append(button)
 
-                button_layout.addWidget(button)
+            if self.key.startswith('top'):
+                for key_item in self.key_items:
+                    h1layout.addWidget(key_item)
+            elif self.key.startswith('right'):
+                v1layout = QVBoxLayout()
+                v1layout.setContentsMargins(0, 0, 0, 0)
+                v1layout.addSpacing(self.plot.get_legend_offset_y())
 
-            button_layout.addStretch(1)
+                for key_item in self.key_items:
+                    v1layout.addWidget(key_item)
 
-            hlayout.addWidget(self.plot)
-            hlayout.addLayout(button_layout)
+                v1layout.addStretch(1)
 
-            vlayout.addLayout(hlayout)
+        h1layout.addStretch(1)
+
+        if extra_key_widgets != None:
+            if self.key.startswith('top'):
+                for widget in extra_key_widgets:
+                    h1layout.addWidget(widget)
+            elif self.key.startswith('right'):
+                if v1layout == None:
+                    v1layout = QVBoxLayout()
+                    v1layout.setContentsMargins(0, 0, 0, 0)
+                    v1layout.addSpacing(self.plot.get_legend_offset_y())
+
+                if self.key.startswith('top'):
+                    for widget in extra_key_widgets:
+                        v1layout.addWidget(widget)
+
+        v2layout = QVBoxLayout(self)
+        v2layout.setContentsMargins(0, 0, 0, 0)
+
+        if h1layout.count() > 2:
+            v2layout.addLayout(h1layout)
+
+        if v1layout != None:
+            h2layout = QHBoxLayout()
+            h2layout.setContentsMargins(0, 0, 0, 0)
+
+            h2layout.addWidget(self.plot)
+            h2layout.addLayout(v1layout)
+
+            v2layout.addLayout(h2layout)
         else:
-            vlayout.addWidget(self.plot)
-
-        self.counter = 0
-        self.update_funcs = []
-
-        for plot in plots:
-            self.update_funcs.append(plot[2])
+            v2layout.addWidget(self.plot)
 
         if external_timer == None:
             self.timer = QTimer(self)
             self.timer.timeout.connect(self.add_new_data)
-            self.timer.start(100)
+            self.timer.start(self.update_interval * 1000)
         else:
-            # assuming that the external timer runs with 100ms interval
+            # assuming that the external timer runs with the configured interval
             external_timer.timeout.connect(self.add_new_data)
 
     # overrides QWidget.showEvent
@@ -777,33 +836,41 @@ class PlotWidget(QWidget):
         if self.first_show:
             self.first_show = False
 
-            if len(self.plot_buttons) > 0:
+            if len(self.key_items) > 1 and self.key.startswith('right'):
                 widths = []
 
-                for plot_button in self.plot_buttons:
-                    widths.append(plot_button.width())
+                for key_item in self.key_items:
+                    widths.append(key_item.width())
 
                 width = max(widths)
 
-                for plot_button in self.plot_buttons:
-                    size = plot_button.minimumSize()
+                for key_item in self.key_items:
+                    size = key_item.minimumSize()
 
                     size.setWidth(width)
 
-                    plot_button.setMinimumSize(size)
+                    key_item.setMinimumSize(size)
+
+    def get_key_item(self, i):
+        return self.key_items[i]
 
     # internal
     def add_new_data(self):
         if self.stop:
             return
 
-        for i, update_func in enumerate(self.update_funcs):
-            value = update_func()
+        for i, config in enumerate(self.configs):
+            value = config[2]()
 
             if value != None:
-                self.plot.add_data(i, self.counter / 10.0, value)
+                if len(self.key_items) > 0 and self.key_has_values:
+                    self.key_items[i].setText(config[0] + ': ' + config[3](value))
 
-        self.counter += 1
+                self.plot.add_data(i, self.timestamp, value)
+            elif len(self.key_items) > 0 and self.key_has_values:
+                self.key_items[i].setText(config[0])
+
+        self.timestamp += self.update_interval
 
     # internal
     def clear_clicked(self):

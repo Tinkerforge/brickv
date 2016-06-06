@@ -2,7 +2,7 @@
 """
 Temperature Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 temperature.py: Temperature Plugin Implementation
 
@@ -31,11 +31,6 @@ from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class TemperatureLabel(QLabel):
-    def setText(self, text):
-        text = "Temperature: " + text + " %cC" % 0xB0
-        super(TemperatureLabel, self).setText(text)
-    
 class Temperature(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletTemperature, *args)
@@ -46,20 +41,12 @@ class Temperature(PluginBase):
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 
-        self.temperature_label = TemperatureLabel()
-        
-        self.current_value = None
-        
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Temperature [%cC]' % 0xB0, plot_list)
-        
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(self.temperature_label)
-        layout_h.addStretch()
+        self.current_temperature = None # float, °C
+
+        plots = [('Temperature', Qt.red, lambda: self.current_temperature, u'{:.2f} °C'.format)]
+        self.plot_widget = PlotWidget(u'Temperature [°C]', plots)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
         layout.addWidget(self.plot_widget)
 
     def start(self):
@@ -83,9 +70,5 @@ class Temperature(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletTemperature.DEVICE_IDENTIFIER
 
-    def get_current_value(self):
-        return self.current_value
-
     def cb_temperature(self, temperature):
-        self.current_value = temperature/100.0
-        self.temperature_label.setText(str(temperature/100.0))
+        self.current_temperature = temperature / 100.0

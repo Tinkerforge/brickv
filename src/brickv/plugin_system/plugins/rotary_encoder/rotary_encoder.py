@@ -2,7 +2,7 @@
 """
 Rotary Encoder Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 rotary_encoder.py: Rotary Encoder Plugin Implementation
 
@@ -34,11 +34,6 @@ from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class CountLabel(QLabel):
-    def setText(self, text):
-        text = "Count: " + text
-        super(CountLabel, self).setText(text)
-
 class RotaryEncoder(PluginBase):
     qtcb_pressed = pyqtSignal()
     qtcb_released = pyqtSignal()
@@ -60,7 +55,6 @@ class RotaryEncoder(PluginBase):
         self.re.register_callback(self.re.CALLBACK_RELEASED,
                                   self.qtcb_released.emit)
 
-        self.count_label = CountLabel('Count: 0')
         self.reset_button = QPushButton('Reset Count')
         self.reset_button.clicked.connect(self.reset_clicked)
 
@@ -74,34 +68,20 @@ class RotaryEncoder(PluginBase):
         self.encoder_knob.set_knob_radius(25)
         self.encoder_knob.set_value(0)
 
-        self.current_value = None
+        self.current_count = None
 
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Count', plot_list)
+        plots = [('Count', Qt.red, lambda: self.current_count, str)]
+        self.plot_widget = PlotWidget('Count', plots, curve_motion_granularity=40, update_interval=0.025)
 
-        layout_h1 = QHBoxLayout()
-        layout_h1.addStretch()
-        layout_h1.addWidget(self.count_label)
-        layout_h1.addStretch()
+        vlayout = QVBoxLayout()
+        vlayout.addStretch()
+        vlayout.addWidget(self.encoder_knob)
+        vlayout.addWidget(self.reset_button)
+        vlayout.addStretch()
 
-        layout_h2 = QHBoxLayout()
-        layout_h2.addStretch()
-        layout_h2.addWidget(self.encoder_knob)
-        layout_h2.addStretch()
-
-        layout_h3 = QHBoxLayout()
-        layout_h3.addStretch()
-        layout_h3.addWidget(self.reset_button)
-        layout_h3.addStretch()
-
-        layout = QVBoxLayout(self)
-        layout.addLayout(layout_h1)
-        layout.addLayout(layout_h2)
-        layout.addLayout(layout_h3)
+        layout = QHBoxLayout(self)
         layout.addWidget(self.plot_widget)
-
-    def get_current_value(self):
-        return self.current_value
+        layout.addLayout(vlayout)
 
     def cb_released(self):
         self.encoder_knob.set_pressed(False)
@@ -110,8 +90,7 @@ class RotaryEncoder(PluginBase):
         self.encoder_knob.set_pressed(True)
 
     def cb_count(self, count):
-        self.current_value = count
-        self.count_label.setText(str(count))
+        self.current_count = count
         self.encoder_knob.set_value((count + 12) % 24)
 
     def reset_clicked(self):

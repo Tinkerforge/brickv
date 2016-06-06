@@ -31,22 +31,14 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
-        
-class CurrentLabel(QLabel):
-    def setText(self, text):
-        text = "Current: " + text + " mA"
-        super(CurrentLabel, self).setText(text)
-        
-class VoltageLabel(QLabel):
-    def setText(self, text):
-        text = "Voltage: " + text + " mV"
-        super(VoltageLabel, self).setText(text)
+from brickv.utils import format_voltage, format_current
 
-class PowerLabel(QLabel):
-    def setText(self, text):
-        text = "Power: " + text + " mW"
-        super(PowerLabel, self).setText(text)
-    
+def format_power(value): # float, W
+    if abs(value) < 1:
+        return str(int(round(value * 1000.0))) + ' mW'
+    else:
+        return format(value, '.3f') + ' W'
+
 class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
     def __init__ (self, *args):
         PluginBase.__init__(self, BrickletVoltageCurrent, *args)
@@ -65,55 +57,26 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
                                           self.cb_power,
                                           self.increase_error_count)
 
-        self.current_label = CurrentLabel('Current: ')
-        self.voltage_label = VoltageLabel('Voltage: ')
-        self.power_label = PowerLabel('Power: ')
+        self.current_voltage = None # float, V
+        self.current_current = None # float, A
+        self.current_power = None # float, W
         
-        self.current_value = 0
-        self.voltage_value = 0
-        self.power_value = 0
-        
-        plot_list_current = [['', Qt.red, self.get_current_value]]
-        plot_list_voltage = [['', Qt.blue, self.get_voltage_value]]
-        plot_list_power = [['', Qt.darkGreen, self.get_power_value]]
-        self.plot_widget_current = PlotWidget('Current [mA]', plot_list_current)
-        self.plot_widget_voltage = PlotWidget('Voltage [mV]', plot_list_voltage)
-        self.plot_widget_power = PlotWidget('Power [mW]', plot_list_power)
+        plots_voltage = [('Voltage', Qt.red, lambda: self.current_voltage, format_voltage)]
+        plots_current = [('Current', Qt.blue, lambda: self.current_current, format_current)]
+        plots_power = [('Power', Qt.darkGreen, lambda: self.current_power, format_power)]
+        self.plot_widget_voltage = PlotWidget('Voltage [V]', plots_voltage, self.button_clear_graphs)
+        self.plot_widget_current = PlotWidget('Current [A]', plots_current, self.button_clear_graphs)
+        self.plot_widget_power = PlotWidget('Power [W]', plots_power, self.button_clear_graphs)
         
         self.save_cal_button.clicked.connect(self.save_cal_clicked)
         self.save_conf_button.clicked.connect(self.save_conf_clicked)
+
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(self.plot_widget_voltage)
+        hlayout.addWidget(self.plot_widget_current)
+        hlayout.addWidget(self.plot_widget_power)
         
-        layout_plots = QHBoxLayout()
-        layout_current = QVBoxLayout()
-        layout_voltage = QVBoxLayout()
-        layout_power = QVBoxLayout()
-        
-        layout_label_current = QHBoxLayout()
-        layout_label_current.addStretch()
-        layout_label_current.addWidget(self.current_label)
-        layout_label_current.addStretch()
-        layout_current.addLayout(layout_label_current)
-        layout_current.addWidget(self.plot_widget_current)
-        
-        layout_label_voltage = QHBoxLayout()
-        layout_label_voltage.addStretch()
-        layout_label_voltage.addWidget(self.voltage_label)
-        layout_label_voltage.addStretch()
-        layout_voltage.addLayout(layout_label_voltage)
-        layout_voltage.addWidget(self.plot_widget_voltage)
-        
-        layout_label_power = QHBoxLayout()
-        layout_label_power.addStretch()
-        layout_label_power.addWidget(self.power_label)
-        layout_label_power.addStretch()
-        layout_power.addLayout(layout_label_power)
-        layout_power.addWidget(self.plot_widget_power)
-        
-        layout_plots.addLayout(layout_current)
-        layout_plots.addLayout(layout_voltage)
-        layout_plots.addLayout(layout_power)
-        
-        self.main_layout.insertLayout(0, layout_plots)
+        self.main_layout.insertLayout(0, hlayout)
         
     def get_configuration_async(self, conf):
         avg, vol, cur = conf
@@ -160,26 +123,14 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
     def get_url_part(self):
         return 'voltage_current'
 
-    def get_current_value(self):
-        return self.current_value
-    
-    def get_voltage_value(self):
-        return self.voltage_value
-    
-    def get_power_value(self):
-        return self.power_value
-
     def cb_current(self, current):
-        self.current_value = current
-        self.current_label.setText(str(current)) 
+        self.current_current = current / 1000.0
         
     def cb_voltage(self, voltage):
-        self.voltage_value = voltage
-        self.voltage_label.setText(str(voltage)) 
+        self.current_voltage = voltage / 1000.0
         
     def cb_power(self, power):
-        self.power_value = power
-        self.power_label.setText(str(power)) 
+        self.current_power = power / 1000.0
         
     def save_cal_clicked(self):
         gainmul = self.gainmul_spinbox.value()

@@ -703,7 +703,7 @@
          <item>
           <widget class="QCheckBox" name="checkbox_leds">
            <property name="text">
-            <string>LEDs On</string>
+            <string>Enable LEDs</string>
            </property>
            <property name="checked">
             <bool>true</bool>

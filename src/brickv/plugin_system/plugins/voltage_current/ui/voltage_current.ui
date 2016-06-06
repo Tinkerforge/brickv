@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>729</width>
+    <width>908</width>
     <height>130</height>
    </rect>
   </property>
@@ -30,7 +30,7 @@
          <item>
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>Averaging:</string>
+            <string>Averaging Length:</string>
            </property>
           </widget>
          </item>
@@ -238,26 +238,6 @@ Configuration</string>
       </spacer>
      </item>
      <item>
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
       <layout class="QHBoxLayout" name="layout_cal">
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -332,6 +312,27 @@ Calibration</string>
         </widget>
        </item>
       </layout>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_clear_graphs">
+       <property name="text">
+        <string>Clear
+Graphs</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

@@ -2,7 +2,7 @@
 """
 Heart Rate Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 heart_rate.py: Heart Rate Plugin Implementation
 
@@ -32,11 +32,6 @@ from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.load_pixmap import load_masked_pixmap
 
-class HeartRateLabel(QLabel):
-    def setText(self, text):
-        text = "Heart Rate: " + text + " BPM"
-        super(HeartRateLabel, self).setText(text)
-    
 class HeartRate(PluginBase):
     qtcb_beat_state_changed = pyqtSignal(int)
     
@@ -52,27 +47,19 @@ class HeartRate(PluginBase):
         # FIXME: add beat state getter to Heart Rate Bricklet API
         self.qtcb_beat_state_changed.connect(self.cb_beat_state_changed)
         self.hr.register_callback(self.hr.CALLBACK_BEAT_STATE_CHANGED,
-                                  self.qtcb_beat_state_changed.emit) 
-        
-        self.heart_rate_label = HeartRateLabel()
+                                  self.qtcb_beat_state_changed.emit)
+
         self.heart_white_bitmap = load_masked_pixmap('plugin_system/plugins/heart_rate/heart_white_small.bmp')
         self.heart_red_bitmap = load_masked_pixmap('plugin_system/plugins/heart_rate/heart_red_small.bmp')
         self.heart_icon = QLabel()
         self.heart_icon.setPixmap(self.heart_white_bitmap)
-        
-        self.current_value = None
-        
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Heart Rate [BPM]', plot_list)
-        
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(self.heart_rate_label)
-        layout_h.addWidget(self.heart_icon)
-        layout_h.addStretch()
+
+        self.current_heart_rate = None
+
+        plots = [('Heart Rate', Qt.red, lambda: self.current_heart_rate, '{} BPM'.format)]
+        self.plot_widget = PlotWidget('Heart Rate [BPM]', plots, extra_key_widgets=[self.heart_icon])
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
         layout.addWidget(self.plot_widget)
 
     def start(self):
@@ -98,12 +85,8 @@ class HeartRate(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletHeartRate.DEVICE_IDENTIFIER
 
-    def get_current_value(self):
-        return self.current_value
-
     def cb_heart_rate(self, heart_rate):
-        self.current_value = heart_rate
-        self.heart_rate_label.setText(str(heart_rate))
+        self.current_heart_rate = heart_rate
         
     def cb_beat_state_changed(self, state):
         if state == self.hr.BEAT_STATE_RISING:

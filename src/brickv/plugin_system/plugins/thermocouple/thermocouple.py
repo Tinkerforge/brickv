@@ -2,6 +2,7 @@
 """
 Thermocouple Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2016 Matthias Bolte <matthias@tinkerforge.com>
 
 thermocouple.py: Thermocouple Plugin Implementation
 
@@ -30,16 +31,7 @@ from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class TemperatureLabel(QLabel):
-    def setText(self, text):
-        text = "Temperature: " + text + " %cC" % 0xB0
-        super(TemperatureLabel, self).setText(text)
-    
 class Thermocouple(PluginBase):
-    AVERAGING = [BrickletThermocouple.AVERAGING_1, BrickletThermocouple.AVERAGING_2, BrickletThermocouple.AVERAGING_4, BrickletThermocouple.AVERAGING_8, BrickletThermocouple.AVERAGING_16]
-    THERMOCOUPLE_TYPE = [BrickletThermocouple.TYPE_B, BrickletThermocouple.TYPE_E, BrickletThermocouple.TYPE_J, BrickletThermocouple.TYPE_K, BrickletThermocouple.TYPE_N, BrickletThermocouple.TYPE_R, BrickletThermocouple.TYPE_S, BrickletThermocouple.TYPE_T, BrickletThermocouple.TYPE_G8, BrickletThermocouple.TYPE_G32]
-    FILTER_TYPE = [BrickletThermocouple.FILTER_OPTION_50HZ, BrickletThermocouple.FILTER_OPTION_60HZ]
-    
     qtcb_error_state = pyqtSignal(bool, bool)
     
     def __init__(self, *args):
@@ -55,71 +47,58 @@ class Thermocouple(PluginBase):
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 
-        self.temperature_label = TemperatureLabel()
-        
-        self.current_value = None
-        
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Temperature [%cC]' % 0xB0, plot_list)
+        self.current_temperature = None # float, °C
+
+        self.error_label = QLabel('Current Errors: None')
+        self.error_label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+
+        plots = [('Temperature', Qt.red, lambda: self.current_temperature, u'{:.2f} °C'.format)]
+        self.plot_widget = PlotWidget(u'Temperature [°C]', plots, extra_key_widgets=[self.error_label])
 
         self.averaging_label = QLabel('Averaging:')
         self.averaging_combo = QComboBox()
-        self.averaging_combo.addItem('1 sample')
-        self.averaging_combo.addItem('2 samples')
-        self.averaging_combo.addItem('4 samples')
-        self.averaging_combo.addItem('8 samples')
-        self.averaging_combo.addItem('16 samples')
+        self.averaging_combo.addItem('1', BrickletThermocouple.AVERAGING_1)
+        self.averaging_combo.addItem('2', BrickletThermocouple.AVERAGING_2)
+        self.averaging_combo.addItem('4', BrickletThermocouple.AVERAGING_4)
+        self.averaging_combo.addItem('8', BrickletThermocouple.AVERAGING_8)
+        self.averaging_combo.addItem('16', BrickletThermocouple.AVERAGING_16)
         
         self.type_label = QLabel('Thermocouple Type:')
         self.type_combo = QComboBox()
-        self.type_combo.addItem('B')
-        self.type_combo.addItem('E')
-        self.type_combo.addItem('J')
-        self.type_combo.addItem('K')
-        self.type_combo.addItem('N')
-        self.type_combo.addItem('R')
-        self.type_combo.addItem('S')
-        self.type_combo.addItem('T')
-        self.type_combo.addItem('Gain 8')
-        self.type_combo.addItem('Gain 32')
-        
+        self.type_combo.addItem('B', BrickletThermocouple.TYPE_B)
+        self.type_combo.addItem('E', BrickletThermocouple.TYPE_E)
+        self.type_combo.addItem('J', BrickletThermocouple.TYPE_J)
+        self.type_combo.addItem('K', BrickletThermocouple.TYPE_K)
+        self.type_combo.addItem('N', BrickletThermocouple.TYPE_N)
+        self.type_combo.addItem('R', BrickletThermocouple.TYPE_R)
+        self.type_combo.addItem('S', BrickletThermocouple.TYPE_S)
+        self.type_combo.addItem('T', BrickletThermocouple.TYPE_T)
+        self.type_combo.addItem('Gain 8', BrickletThermocouple.TYPE_G8)
+        self.type_combo.addItem('Gain 32', BrickletThermocouple.TYPE_G32)
+
         self.filter_label = QLabel('Noise Rejection Filter:')
         self.filter_combo = QComboBox()
-        self.filter_combo.addItem('50Hz')
-        self.filter_combo.addItem('60Hz')
-        
+        self.filter_combo.addItem('50 Hz', BrickletThermocouple.FILTER_OPTION_50HZ)
+        self.filter_combo.addItem('60 Hz', BrickletThermocouple.FILTER_OPTION_60HZ)
+
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(self.averaging_label)
+        hlayout.addWidget(self.averaging_combo)
+        hlayout.addStretch()
+        hlayout.addWidget(self.type_label)
+        hlayout.addWidget(self.type_combo)
+        hlayout.addStretch()
+        hlayout.addWidget(self.filter_label)
+        hlayout.addWidget(self.filter_combo)
+
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
-        
-        self.error_label = QLabel('Current errors: None')
-        
-        layout_conf = QHBoxLayout()
-        layout_conf.addWidget(self.averaging_label)
-        layout_conf.addWidget(self.averaging_combo)
-        layout_conf.addStretch()
-        layout_conf.addWidget(self.type_label)
-        layout_conf.addWidget(self.type_combo)
-        layout_conf.addStretch()
-        layout_conf.addWidget(self.filter_label)
-        layout_conf.addWidget(self.filter_combo)
-        
-        layout_error = QHBoxLayout()
-        layout_error.addStretch()
-        layout_error.addWidget(self.error_label)
-        layout_error.addStretch()
-        
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(self.temperature_label)
-        layout_h.addStretch()
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
         layout.addWidget(self.plot_widget)
-        layout.addLayout(layout_conf)
         layout.addWidget(line)
-        layout.addLayout(layout_error)
+        layout.addLayout(hlayout)
         
         self.averaging_combo.currentIndexChanged.connect(self.configuration_changed)
         self.type_combo.currentIndexChanged.connect(self.configuration_changed)
@@ -153,72 +132,40 @@ class Thermocouple(PluginBase):
         return self.current_value
     
     def configuration_changed(self, _):
-        conf_averaging = Thermocouple.AVERAGING[self.averaging_combo.currentIndex()]
-        conf_type = Thermocouple.THERMOCOUPLE_TYPE[self.type_combo.currentIndex()]
-        conf_filter = Thermocouple.FILTER_TYPE[self.filter_combo.currentIndex()]
+        conf_averaging = self.averaging_combo.itemData(self.averaging_combo.currentIndex())
+        conf_type = self.type_combo.itemData(self.type_combo.currentIndex())
+        conf_filter = self.filter_combo.itemData(self.filter_combo.currentIndex())
         
         self.thermo.set_configuration(conf_averaging, conf_type, conf_filter)
 
     def cb_temperature(self, temperature):
-        self.current_value = temperature/100.0
-        self.temperature_label.setText(str(temperature/100.0))
+        self.current_temperature = temperature / 100.0
 
     def cb_configuration(self, conf):
         self.averaging_combo.blockSignals(True)
-        if conf.averaging == self.thermo.AVERAGING_1:
-            self.averaging_combo.setCurrentIndex(0)
-        elif conf.averaging == self.thermo.AVERAGING_2:
-            self.averaging_combo.setCurrentIndex(1)
-        elif conf.averaging == self.thermo.AVERAGING_4:
-            self.averaging_combo.setCurrentIndex(2)
-        elif conf.averaging == self.thermo.AVERAGING_8:
-            self.averaging_combo.setCurrentIndex(3)
-        elif conf.averaging == self.thermo.AVERAGING_16:
-            self.averaging_combo.setCurrentIndex(4)
+        self.averaging_combo.setCurrentIndex(self.averaging_combo.findData(conf.averaging))
         self.averaging_combo.blockSignals(False)
             
         self.type_combo.blockSignals(True)
-        if conf.thermocouple_type == self.thermo.TYPE_B:
-            self.type_combo.setCurrentIndex(0)
-        elif conf.thermocouple_type == self.thermo.TYPE_E:
-            self.type_combo.setCurrentIndex(1)
-        elif conf.thermocouple_type == self.thermo.TYPE_J:
-            self.type_combo.setCurrentIndex(2)
-        elif conf.thermocouple_type == self.thermo.TYPE_K:
-            self.type_combo.setCurrentIndex(3)
-        elif conf.thermocouple_type == self.thermo.TYPE_N:
-            self.type_combo.setCurrentIndex(4)
-        elif conf.thermocouple_type == self.thermo.TYPE_R:
-            self.type_combo.setCurrentIndex(5)
-        elif conf.thermocouple_type == self.thermo.TYPE_S:
-            self.type_combo.setCurrentIndex(6)
-        elif conf.thermocouple_type == self.thermo.TYPE_T:
-            self.type_combo.setCurrentIndex(7)
-        elif conf.thermocouple_type == self.thermo.TYPE_G8:
-            self.type_combo.setCurrentIndex(8)
-        elif conf.thermocouple_type == self.thermo.TYPE_G32:
-            self.type_combo.setCurrentIndex(9)
+        self.type_combo.setCurrentIndex(self.type_combo.findData(conf.thermocouple_type))
         self.type_combo.blockSignals(False)
 
         self.filter_combo.blockSignals(True)
-        if conf.filter == self.thermo.FILTER_OPTION_50HZ:
-            self.filter_combo.setCurrentIndex(0)
-        elif conf.filter == self.thermo.FILTER_OPTION_60HZ:
-            self.filter_combo.setCurrentIndex(1)
+        self.filter_combo.setCurrentIndex(self.filter_combo.findData(conf.filter))
         self.filter_combo.blockSignals(False)
         
     def cb_error_state(self, over_under, open_circuit):
         if over_under or open_circuit:
-            text = 'Current errors: '
+            text = 'Current Errors: '
             if over_under:
                 text += 'Over/Under Voltage'
             if over_under and open_circuit:
                 text += ' and '
             if open_circuit:
-                text += 'Open Circuit (defective thermocouple or nothing connected)'
+                text += 'Open Circuit\n(defective thermocouple or nothing connected)'
                 
             self.error_label.setStyleSheet('QLabel { color : red }')
             self.error_label.setText(text)
         else:
             self.error_label.setStyleSheet('')
-            self.error_label.setText('Current errors: None')
+            self.error_label.setText('Current Errors: None')

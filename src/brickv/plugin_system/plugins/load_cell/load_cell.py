@@ -2,7 +2,7 @@
 """
 Load Cell Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 load_cell.py: Load Cell Plugin Implementation
 
@@ -34,13 +34,11 @@ from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_modeless_dialog_flags
 
-class WeightLabel(QLabel):
-    def setText(self, weight):
-        if abs(weight) < 1000:
-            text = "Weight: " + str(weight) + " g"
-        else:
-            text = "Weight: " + "{0:.3f}".format(round(weight/1000.0, 3)) + " kg"
-        super(WeightLabel, self).setText(text)
+def format_weight(value): # int, g
+    if abs(value) < 1000:
+        return '{} g'.format(value)
+    else:
+        return '{:.3f} kg'.format(round(value / 1000.0, 3))
 
 class Calibration(QDialog, Ui_Calibration):
     def __init__(self, parent):
@@ -87,22 +85,20 @@ class LoadCell(PluginBase):
                                            self.cb_weight,
                                            self.increase_error_count)
 
-        self.weight_label = WeightLabel()
-        
         self.gain = 0 # 128x
-        self.current_value = None
+        self.current_weight = None # int, g
         self.calibration = None
-        
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Weight [g]', plot_list)
 
-        self.button_calibration = QPushButton("Calibration")
+        plots = [('Weight', Qt.red, lambda: self.current_weight, format_weight)]
+        self.plot_widget = PlotWidget('Weight [g]', plots)
+
+        self.button_calibration = QPushButton("Calibration...")
         self.button_calibration.clicked.connect(self.button_calibration_clicked)
 
         self.button_tare = QPushButton("Tare")
         self.button_tare.clicked.connect(self.button_tare_clicked)
         
-        self.enable_led = QCheckBox("LED On")
+        self.enable_led = QCheckBox("Enable LED")
         self.enable_led.stateChanged.connect(self.enable_led_changed)
         
         self.spin_average = QSpinBox()
@@ -111,33 +107,32 @@ class LoadCell(PluginBase):
         self.spin_average.setSingleStep(1)
         self.spin_average.setValue(5)
         self.spin_average.editingFinished.connect(self.spin_average_finished)
-        self.label_average = QLabel('Length of moving average:')
+        self.label_average = QLabel('Moving Average Length:')
 
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(self.weight_label)
-        layout_h.addStretch()
-        
         self.rate_label = QLabel('Rate: ')
         self.rate_combo = QComboBox()
-        self.rate_combo.addItem("10Hz")
-        self.rate_combo.addItem("80Hz")
+        self.rate_combo.addItem("10 Hz")
+        self.rate_combo.addItem("80 Hz")
         self.rate_combo.currentIndexChanged.connect(self.new_config)
-        
-        layout_avg = QHBoxLayout()
-        layout_avg.addWidget(self.label_average)
-        layout_avg.addWidget(self.spin_average)
-        layout_avg.addWidget(self.rate_label)
-        layout_avg.addWidget(self.rate_combo)
-        layout_avg.addStretch()
-        layout_avg.addWidget(self.button_calibration)
-        layout_avg.addWidget(self.button_tare)
-        layout_avg.addWidget(self.enable_led)
+
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(self.label_average)
+        hlayout.addWidget(self.spin_average)
+        hlayout.addWidget(self.rate_label)
+        hlayout.addWidget(self.rate_combo)
+        hlayout.addStretch()
+        hlayout.addWidget(self.button_calibration)
+        hlayout.addWidget(self.button_tare)
+        hlayout.addWidget(self.enable_led)
+
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
         layout.addWidget(self.plot_widget)
-        layout.addLayout(layout_avg)
+        layout.addWidget(line)
+        layout.addLayout(hlayout)
 
     def start(self):
         async_call(self.lc.is_led_on, None, self.is_led_on_async, self.increase_error_count)
@@ -200,9 +195,5 @@ class LoadCell(PluginBase):
     def spin_average_finished(self):
         self.lc.set_moving_average(self.spin_average.value())
 
-    def get_current_value(self):
-        return self.current_value
-
     def cb_weight(self, weight):
-        self.current_value = weight
-        self.weight_label.setText(weight)
+        self.current_weight = weight

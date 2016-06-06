@@ -2,7 +2,7 @@
 """
 Current12 Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 current12.py: Current12 Plugin Implementation
 
@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import pyqtSignal, Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QPushButton, QHBoxLayout
+from PyQt4.QtGui import QVBoxLayout, QLabel, QPushButton, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
@@ -31,12 +31,8 @@ from brickv.bindings.bricklet_current12 import BrickletCurrent12
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
+from brickv.utils import format_current
 
-class CurrentLabel(QLabel):
-    def setText(self, text):
-        text = "Current: " + text + " A"
-        super(CurrentLabel, self).setText(text)
-    
 class Current12(PluginBase):
     qtcb_over = pyqtSignal()
     
@@ -51,32 +47,24 @@ class Current12(PluginBase):
 
         self.qtcb_over.connect(self.cb_over)
         self.cur.register_callback(self.cur.CALLBACK_OVER_CURRENT,
-                                   self.qtcb_over.emit) 
-        
-        self.current_label = CurrentLabel('Current: ')
-        self.over_label = QLabel('Over Current: No')
-        self.calibrate_button = QPushButton('Calibrate')
-        self.calibrate_button.clicked.connect(self.calibrate_clicked)
-        
-        self.current_value = None
-        
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Current [mA]', plot_list)
-        
-        layout_h1 = QHBoxLayout()
-        layout_h1.addStretch()
-        layout_h1.addWidget(self.current_label)
-        layout_h1.addStretch()
+                                   self.qtcb_over.emit)
 
-        layout_h2 = QHBoxLayout()
-        layout_h2.addStretch()
-        layout_h2.addWidget(self.over_label)
-        layout_h2.addStretch()
+        self.over_label = QLabel('Over Current: No')
+        self.calibrate_button = QPushButton('Calibrate Zero')
+        self.calibrate_button.clicked.connect(self.calibrate_clicked)
+
+        self.current_current = None # float, A
+
+        plots = [('Current', Qt.red, lambda: self.current_current, format_current)]
+        self.plot_widget = PlotWidget('Current [A]', plots, extra_key_widgets=[self.over_label])
+
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h1)
-        layout.addLayout(layout_h2)
         layout.addWidget(self.plot_widget)
+        layout.addWidget(line)
         layout.addWidget(self.calibrate_button)
 
     def start(self):
@@ -100,13 +88,9 @@ class Current12(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletCurrent12.DEVICE_IDENTIFIER
 
-    def get_current_value(self):
-        return self.current_value
-
     def cb_current(self, current):
-        self.current_value = current
-        self.current_label.setText(str(current/1000.0)) 
-        
+        self.current_current = current / 1000.0
+
     def cb_over(self):
         self.over_label.setText('Over Current: Yes')
         

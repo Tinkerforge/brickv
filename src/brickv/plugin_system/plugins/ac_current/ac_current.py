@@ -2,6 +2,7 @@
 """
 AC Current Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2016 Matthias Bolte <matthias@tinkerforge.com>
 
 ac_current.py: AC Current Plugin Implementation
 
@@ -22,18 +23,14 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBox
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_ac_current import BrickletACCurrent
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
-
-class CurrentLabel(QLabel):
-    def setText(self, text):
-        text = "Current: " + text + " A"
-        super(CurrentLabel, self).setText(text)
+from brickv.utils import format_current
 
 class ACCurrent(PluginBase):
     def __init__(self, *args):
@@ -45,52 +42,47 @@ class ACCurrent(PluginBase):
                                             self.cb_current,
                                             self.increase_error_count)
 
-        self.current_label = CurrentLabel('Current: ')
+        self.current_current = None # float, A
 
-        self.current_value = None
+        plots = [('Current', Qt.red, lambda: self.current_current, format_current)]
+        self.plot_widget = PlotWidget('Current [A]', plots)
 
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Current [A]', plot_list)
-
-        layout_h2 = QHBoxLayout()
-        layout_h2.addStretch()
-        layout_h2.addWidget(self.current_label)
-        layout_h2.addStretch()
-
-        layout = QVBoxLayout(self)
-        layout.addLayout(layout_h2)
-        layout.addWidget(self.plot_widget)
-
-        self.label_average = QLabel('Length of moving average:')
+        self.label_average = QLabel('Moving Average Length:')
         self.spin_average = QSpinBox()
         self.spin_average.setMinimum(1)
         self.spin_average.setMaximum(50)
         self.spin_average.setSingleStep(1)
         self.spin_average.setValue(50)
         self.spin_average.editingFinished.connect(self.spin_average_finished)
-        
+
         self.label_range = QLabel('Current Range: ')
         self.combo_range = QComboBox()
         self.combo_range.addItem("0") # TODO: Adjust ranges
         self.combo_range.addItem("1")
         self.combo_range.currentIndexChanged.connect(self.new_config)
 
-        layout_h1 = QHBoxLayout()
-        layout_h1.addStretch()
-        layout_h1.addWidget(self.label_average)
-        layout_h1.addWidget(self.spin_average)
-        layout_h1.addStretch()
-        layout_h1.addWidget(self.label_range)
-        layout_h1.addWidget(self.combo_range)
-        layout_h1.addStretch()
-        layout.addLayout(layout_h1)
-        
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(self.label_average)
+        hlayout.addWidget(self.spin_average)
+        hlayout.addStretch()
+        hlayout.addWidget(self.label_range)
+        hlayout.addWidget(self.combo_range)
+
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.plot_widget)
+        layout.addWidget(line)
+        layout.addLayout(hlayout)
+
     def get_configuration_async(self, conf):
         self.combo_range.setCurrentIndex(conf)
 
     def get_moving_average_async(self, average):
         self.spin_average.setValue(average)
-        
+
     def new_config(self, value):
         try:
             self.acc.set_configuration(value)
@@ -120,13 +112,8 @@ class ACCurrent(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletACCurrent.DEVICE_IDENTIFIER
 
-    def get_current_value(self):
-        return self.current_value
-
     def cb_current(self, current):
-        c = round(current/1000.0, 2)
-        self.current_value = c
-        self.current_label.setText('%6.02f' % c)
+        self.current_current = current / 1000.0
 
     def spin_average_finished(self):
         self.acc.set_moving_average(self.spin_average.value())

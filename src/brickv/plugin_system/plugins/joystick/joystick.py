@@ -2,7 +2,7 @@
 """
 Joystick Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 joystick.py: Joystick Plugin implementation
 
@@ -33,11 +33,6 @@ from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class PositionLabel(QLabel):
-    def setText(self, text):
-        text = "Position: " + text
-        super(PositionLabel, self).setText(text)
-        
 class JoystickFrame(QFrame):
     def __init__(self, parent = None):
         QFrame.__init__(self, parent)
@@ -55,8 +50,7 @@ class JoystickFrame(QFrame):
         self.repaint()
         
     def paintEvent(self, event):
-        qp = QPainter()
-        qp.begin(self)
+        qp = QPainter(self)
         if self.pressed:
             qp.setBrush(QBrush(Qt.red))
         else:
@@ -65,7 +59,6 @@ class JoystickFrame(QFrame):
         qp.drawLine(110, 10, 110, 210)
         qp.drawLine(10, 110, 210, 110)
         qp.drawEllipse(self.x-5, self.y-5, 10, 10)
-        qp.end()
         
 class Joystick(PluginBase):
     qtcb_pressed = pyqtSignal()
@@ -92,34 +85,26 @@ class Joystick(PluginBase):
         self.joystick_frame.setMinimumSize(220, 220)
         self.joystick_frame.setMaximumSize(220, 220)
         self.joystick_frame.set_position(0, 0)
-       
-        self.calibration_button = QPushButton('Calibrate (0, 0)')
-        self.position_label = PositionLabel('Position: (0, 0)')
         
-        self.calibration_button.clicked.connect(self.calibration_clicked)
-        
+        self.calibrate_button = QPushButton('Calibrate Zero')
+        self.calibrate_button.clicked.connect(self.calibrate_clicked)
+
         self.current_x = None
         self.current_y = None
-        
-        plot_list = [['X', Qt.darkGreen, self.get_current_x],
-                     ['Y', Qt.blue, self.get_current_y]]
-        self.plot_widget = PlotWidget('Position', plot_list)
-        
-        layout_h1 = QHBoxLayout()
-        layout_h1.addStretch()
-        layout_h1.addWidget(self.position_label)
-        layout_h1.addStretch()
 
-        layout_h2 = QHBoxLayout()
-        layout_h2.addStretch()
-        layout_h2.addWidget(self.joystick_frame)
-        layout_h2.addStretch()
+        plots = [('X', Qt.darkGreen, lambda: self.current_x, str),
+                 ('Y', Qt.blue, lambda: self.current_y, str)]
+        self.plot_widget = PlotWidget('Position', plots, curve_motion_granularity=40, update_interval=0.025)
 
-        layout = QVBoxLayout(self)
-        layout.addLayout(layout_h1)
-        layout.addLayout(layout_h2)
+        vlayout = QVBoxLayout()
+        vlayout.addStretch()
+        vlayout.addWidget(self.joystick_frame)
+        vlayout.addWidget(self.calibrate_button)
+        vlayout.addStretch()
+
+        layout = QHBoxLayout(self)
         layout.addWidget(self.plot_widget)
-        layout.addWidget(self.calibration_button)
+        layout.addLayout(vlayout)
 
     def start(self):
         async_call(self.js.get_position, None, self.cb_position, self.increase_error_count)
@@ -142,21 +127,15 @@ class Joystick(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletJoystick.DEVICE_IDENTIFIER
 
-    def calibration_clicked(self):
+    def calibrate_clicked(self):
         try:
             self.js.calibrate()
         except ip_connection.Error:
             return
-        
-    def get_current_x(self):
-        return self.current_x
-    
-    def get_current_y(self):
-        return self.current_y
 
     def cb_pressed(self):
         self.joystick_frame.set_pressed(True)
-        
+
     def cb_released(self):
         self.joystick_frame.set_pressed(False)
 
@@ -164,5 +143,4 @@ class Joystick(PluginBase):
         x, y = data
         self.current_x = x
         self.current_y = y
-        self.position_label.setText(str((x, y)))
         self.joystick_frame.set_position(x, y)

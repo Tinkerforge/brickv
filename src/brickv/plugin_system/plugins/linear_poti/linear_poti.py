@@ -2,7 +2,7 @@
 """
 Linear Poti Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 poti.py: Poti Plugin implementation
 
@@ -31,11 +31,6 @@ from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class PositionLabel(QLabel):
-    def setText(self, text):
-        text = "Position: " + text
-        super(PositionLabel, self).setText(text)
-
 class LinearPoti(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletLinearPoti, *args)
@@ -48,22 +43,15 @@ class LinearPoti(PluginBase):
 
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(0, 100)
-        
-        self.position_label = PositionLabel('Position: ')
-        
-        self.current_value = None
+        self.slider.setMinimumWidth(200)
 
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Position', plot_list)
-        
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(self.position_label)
-        layout_h.addWidget(self.slider)
-        layout_h.addStretch()
+        self.current_position = None
+
+        plots = [('Position', Qt.red, lambda: self.current_position, str)]
+        self.plot_widget = PlotWidget('Position', plots, extra_key_widgets=[self.slider],
+                                      curve_motion_granularity=40, update_interval=0.025)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
         layout.addWidget(self.plot_widget)
         
     def start(self):
@@ -87,10 +75,6 @@ class LinearPoti(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletLinearPoti.DEVICE_IDENTIFIER
 
-    def get_current_value(self):
-        return self.current_value
-
     def cb_position(self, position):
-        self.current_value = position
+        self.current_position = position
         self.slider.setValue(position)
-        self.position_label.setText(str(position))

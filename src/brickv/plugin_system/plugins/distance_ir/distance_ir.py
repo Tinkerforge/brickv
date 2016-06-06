@@ -2,7 +2,7 @@
 """
 Distance IR Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 distance_ir.py: Distance IR Plugin Implementation
 
@@ -26,12 +26,12 @@ import os
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
-                        QLineEdit, QApplication, QMessageBox
+                        QLineEdit, QApplication, QMessageBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, FixedSizeLabel
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_main_window, get_home_path, get_open_file_name
@@ -133,15 +133,10 @@ class NaturalSpline(object):
 
         return (((self.a[i] * delta) + self.b[i]) * delta + self.c[i]) * delta + self.points[i][1]
 
-class AnalogLabel(QLabel):
+class AnalogLabel(FixedSizeLabel):
     def setText(self, text):
-        text = "Analog value: " + text
+        text = "Analog Value: " + str(text)
         super(AnalogLabel, self).setText(text)
-
-class DistanceLabel(QLabel):
-    def setText(self, text):
-        text = "Distance: " + text + " cm"
-        super(DistanceLabel, self).setText(text)
 
 class DistanceIR(PluginBase):
     NUM_VALUES = 128
@@ -159,11 +154,8 @@ class DistanceIR(PluginBase):
                                                  self.cb_analog_value,
                                                  self.increase_error_count)
 
-        self.analog_value = 0
-
-        self.distance_label = DistanceLabel('Distance: ')
-        self.analog_label = AnalogLabel('Analog value: ')
-        self.sample_layout = QHBoxLayout()
+        self.analog_label = AnalogLabel('Analog Value: ')
+        hlayout = QHBoxLayout()
         self.sample_label = QLabel('Sample Points:')
         self.sample_edit = QLineEdit()
         self.sample_file = QPushButton("Browse")
@@ -172,31 +164,24 @@ class DistanceIR(PluginBase):
         self.sample_file.clicked.connect(self.sample_file_clicked)
         self.sample_save.clicked.connect(self.sample_save_clicked)
 
-        self.sample_layout.addWidget(self.sample_label)
-        self.sample_layout.addWidget(self.sample_edit)
-        self.sample_layout.addWidget(self.sample_file)
-        self.sample_layout.addWidget(self.sample_save)
+        hlayout.addWidget(self.sample_label)
+        hlayout.addWidget(self.sample_edit)
+        hlayout.addWidget(self.sample_file)
+        hlayout.addWidget(self.sample_save)
 
-        self.current_value = None
+        self.current_distance = None # float, cm
 
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Distance [cm]', plot_list)
+        plots = [('Distance', Qt.red, lambda: self.current_distance, '{} cm'.format)]
+        self.plot_widget = PlotWidget('Distance [cm]', plots, extra_key_widgets=[self.analog_label])
 
-        layout_h1 = QHBoxLayout()
-        layout_h1.addStretch()
-        layout_h1.addWidget(self.distance_label)
-        layout_h1.addStretch()
-
-        layout_h2 = QHBoxLayout()
-        layout_h2.addStretch()
-        layout_h2.addWidget(self.analog_label)
-        layout_h2.addStretch()
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h1)
-        layout.addLayout(layout_h2)
         layout.addWidget(self.plot_widget)
-        layout.addLayout(self.sample_layout)
+        layout.addWidget(line)
+        layout.addLayout(hlayout)
 
     def start(self):
         async_call(self.dist.get_distance, None, self.cb_distance, self.increase_error_count)
@@ -315,13 +300,8 @@ class DistanceIR(PluginBase):
 
         self.sample_interpolate(x, y)
 
-    def get_current_value(self):
-        return self.current_value
-
     def cb_distance(self, distance):
-        self.current_value = distance/10.0
-        self.distance_label.setText(str(distance/10.0))
+        self.current_distance = distance / 10.0
 
     def cb_analog_value(self, analog_value):
-        self.analog_value = analog_value
-        self.analog_label.setText(str(self.analog_value))
+        self.analog_label.setText(analog_value)

@@ -2,7 +2,7 @@
 """
 Ambient Light Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 ambientlight.py: Ambient Light Bricklet Plugin Implementation
 
@@ -44,20 +44,13 @@ class AmbientLightFrame(QFrame):
         self.repaint()
 
     def paintEvent(self, event):
-        qp = QPainter()
-        qp.begin(self)
+        qp = QPainter(self)
         qp.setBrush(QBrush(self.color))
         qp.setPen(self.color)
         qp.drawRect(0, 0, 25, 25)
         qp.setBrush(Qt.NoBrush)
         qp.setPen(Qt.black)
         qp.drawRect(1, 1, 24, 24)
-        qp.end()
-
-class IlluminanceLabel(QLabel):
-    def setText(self, text):
-        text = "Illuminance: " + text + " lx (Lux)"
-        super(IlluminanceLabel, self).setText(text)
 
 class AmbientLight(PluginBase):
     def __init__(self, *args):
@@ -69,22 +62,14 @@ class AmbientLight(PluginBase):
                                                 self.cb_illuminance,
                                                 self.increase_error_count)
 
-        self.illuminance_label = IlluminanceLabel('Illuminance: ')
         self.alf = AmbientLightFrame()
 
-        self.current_value = None
+        self.current_illuminance = None # float, lx
 
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Illuminance [lx]', plot_list)
-
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(self.illuminance_label)
-        layout_h.addWidget(self.alf)
-        layout_h.addStretch()
+        plots = [('Illuminance', Qt.red, lambda: self.current_illuminance, '{} lx (Lux)'.format)]
+        self.plot_widget = PlotWidget('Illuminance [lx]', plots, extra_key_widgets=[self.alf])
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
         layout.addWidget(self.plot_widget)
 
     def start(self):
@@ -108,12 +93,8 @@ class AmbientLight(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletAmbientLight.DEVICE_IDENTIFIER
 
-    def get_current_value(self):
-        return self.current_value
-
     def cb_illuminance(self, illuminance):
-        self.current_value = illuminance/10.0
-        self.illuminance_label.setText(str(self.current_value))
+        self.current_illuminance = illuminance / 10.0
 
-        value = illuminance*255/9000
+        value = illuminance * 255 / 9000
         self.alf.set_color(value, value, value)

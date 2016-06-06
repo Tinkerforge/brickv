@@ -2,6 +2,7 @@
 """
 Dust Detector Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2016 Matthias Bolte <matthias@tinkerforge.com>
 
 dust_detector.py: Dust Detector Plugin Implementation
 
@@ -30,11 +31,6 @@ from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class DustDensityLabel(QLabel):
-    def setText(self, text):
-        text = u'Dust Density: ' + text + u'µg/m³'
-        super(DustDensityLabel, self).setText(text)
-    
 class DustDetector(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletDustDetector, *args)
@@ -45,27 +41,16 @@ class DustDetector(PluginBase):
                                                  self.cb_dust_density,
                                                  self.increase_error_count)
 
-        self.dust_density_label = DustDensityLabel()
-        self.current_value = None
-        
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget(u'Dust Density [µg/m³]', plot_list)
-        
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addWidget(self.dust_density_label)
-        layout_h.addStretch()
+        self.current_dust_density = None
+
+        plots = [('Dust Density', Qt.red, lambda: self.current_dust_density, u'{} µg/m³'.format)]
+        self.plot_widget = PlotWidget(u'Dust Density [µg/m³]', plots)
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
         layout.addWidget(self.plot_widget)
-        
-    def get_current_value(self):
-        return self.current_value
 
     def cb_dust_density(self, dust_density):
-        self.current_value = dust_density
-        self.dust_density_label.setText(str(dust_density))
+        self.current_dust_density = dust_density
 
     def start(self):
         async_call(self.dust_detector.get_dust_density, None, self.cb_dust_density, self.increase_error_count)
