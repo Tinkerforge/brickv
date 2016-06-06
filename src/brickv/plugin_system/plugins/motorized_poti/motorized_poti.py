@@ -1,13 +1,14 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Motorized Poti Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2016 Matthias Bolte <matthias@tinkerforge.com>
 
 motorized_poti.py: Motorized Poti Plugin implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -38,7 +39,7 @@ class MotorPositionLabel(FixedSizeLabel):
 class MotorizedPoti(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletMotorizedPoti, *args)
-        
+
         self.mp = self.device
 
         self.cbe_position = CallbackEmulator(self.mp.get_position,
@@ -85,7 +86,7 @@ class MotorizedPoti(PluginBase):
 
         self.cbe_position.set_period(25)
         self.plot_widget.stop = False
-        
+
     def stop(self):
         self.cbe_position.set_period(0)
         self.plot_widget.stop = True
@@ -103,23 +104,22 @@ class MotorizedPoti(PluginBase):
     def cb_position(self, position):
         self.current_position = position
         self.slider.setValue(position)
-        
+
     def cb_motor_position(self, motor_position):
         self.motor_slider.setValue(motor_position.position)
         self.motor_slider_moved(motor_position.position)
-        
+
     def cb_is_motor_enabled(self, enabled):
         self.motor_enable.setChecked(enabled)
-        
+
     def motor_slider_moved(self, position):
         self.motor_position_label.setText(str(position))
 
     def motor_slider_released(self):
         self.mp.set_motor_position(self.motor_slider.value(), False)
-        
+
     def motor_enable_changed(self, state):
         if self.motor_enable.isChecked():
             self.mp.enable_motor()
         else:
             self.mp.disable_motor()
-        

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Industrial Dual Analog In Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
 industrial_dual_analog_in.py: Industrial Dual Analog In Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -43,44 +43,44 @@ class Calibration(QDialog, Ui_Calibration):
     def __init__(self, parent):
         QDialog.__init__(self, parent, get_modeless_dialog_flags())
         self.parent = parent
-        
+
         self.values0 = [0]*10
         self.values1 = [0]*10
         self.values_index = 0
 
         self.setupUi(self)
-        
+
         self.button_cal_remove.clicked.connect(self.remove_clicked)
         self.button_cal_offset.clicked.connect(self.offset_clicked)
         self.button_cal_gain.clicked.connect(self.gain_clicked)
-        
+
         self.cbe_adc = CallbackEmulator(self.parent.analog_in.get_adc_values,
                                         self.cb_adc_values,
                                         self.parent.increase_error_count)
 
     def show(self):
         QDialog.show(self)
-                
+
         self.cbe_adc.set_period(100)
-        
+
         self.current_offset0 = 0
         self.current_offset1 = 0
         self.current_gain0 = 0
         self.current_gain1 = 0
-        
+
         self.update_calibration()
-  
+
     def update_calibration(self):
         async_call(self.parent.analog_in.get_calibration, None, self.cb_get_calibration, self.parent.increase_error_count)
-        
+
     def remove_clicked(self):
         self.parent.analog_in.set_calibration((0, 0), (0, 0))
         self.update_calibration()
-        
+
     def offset_clicked(self):
         self.parent.analog_in.set_calibration((-sum(self.values0)/10, -sum(self.values1)/10), (self.current_gain0, self.current_gain1))
         self.update_calibration()
-        
+
     def gain_clicked(self):
         try:
             if self.parent.firmware_version >= (2, 0, 1): # fixed computation in 2.0.1
@@ -102,7 +102,7 @@ class Calibration(QDialog, Ui_Calibration):
 
         self.parent.analog_in.set_calibration((self.current_offset0, self.current_offset1), (gain0, gain1))
         self.update_calibration()
-        
+
     def cb_get_calibration(self, cal):
         self.current_offset0 = cal.offset[0]
         self.current_offset1 = cal.offset[1]
@@ -113,7 +113,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.label_offset1.setText(str(cal.offset[1]))
         self.label_gain0.setText(str(cal.gain[0]))
         self.label_gain1.setText(str(cal.gain[1]))
-        
+
     def cb_adc_values(self, values):
         self.values0[self.values_index] = values[0]
         self.values1[self.values_index] = values[1]
@@ -121,10 +121,10 @@ class Calibration(QDialog, Ui_Calibration):
         self.values_index += 1
         if self.values_index >= 10:
             self.values_index = 0
-        
+
         self.label_adc0.setText(str(sum(self.values0)/10))
         self.label_adc1.setText(str(sum(self.values1)/10))
-        
+
     def closeEvent(self, event):
         self.parent.calibration_button.setEnabled(True)
         self.cbe_adc.set_period(0)
@@ -185,14 +185,14 @@ class IndustrialDualAnalogIn(PluginBase):
         async_call(self.analog_in.get_voltage, 1, lambda x: self.cb_voltage(1, x), self.increase_error_count)
         self.cbe_voltage0.set_period(100)
         self.cbe_voltage1.set_period(100)
-        
+
         async_call(self.analog_in.get_sample_rate, None, self.get_sample_rate_async, self.increase_error_count)
         self.plot_widget.stop = False
-        
+
     def stop(self):
         self.cbe_voltage0.set_period(0)
         self.cbe_voltage1.set_period(0)
-        
+
         self.plot_widget.stop = True
 
     def destroy(self):
@@ -208,7 +208,7 @@ class IndustrialDualAnalogIn(PluginBase):
 
     def get_voltage_value0(self):
         return self.voltage_value[0]
-    
+
     def get_voltage_value1(self):
         return self.voltage_value[1]
 
@@ -218,10 +218,10 @@ class IndustrialDualAnalogIn(PluginBase):
 
         self.calibration_button.setEnabled(False)
         self.calibration.show()
-    
+
     def sample_rate_combo_index_changed(self, index):
         async_call(self.analog_in.set_sample_rate, index, None, self.increase_error_count)
-    
+
     def get_sample_rate_async(self, rate):
         self.sample_rate_combo.setCurrentIndex(rate)
 

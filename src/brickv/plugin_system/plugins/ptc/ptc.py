@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 PTC Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 ptc.py: PTC Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -35,13 +35,13 @@ from brickv.callback_emulator import CallbackEmulator
 #    def setText(self, text):
 #        text = "Resistance: " + text + " Ohm"
 #        super(ResistanceLabel, self).setText(text)
-    
+
 class PTC(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletPTC, *args)
 
         self.ptc = self.device
-        
+
         self.str_connected = 'Sensor is <font color="green">connected</font>'
         self.str_not_connected = 'Sensor is <font color="red">not connected</font>'
 
@@ -60,7 +60,7 @@ class PTC(PluginBase):
         self.wire_combo.addItem('2-Wire')
         self.wire_combo.addItem('3-Wire')
         self.wire_combo.addItem('4-Wire')
-        
+
         self.noise_label = QLabel('Noise Rejection Filter:')
         self.noise_combo = QComboBox()
         self.noise_combo.addItem('50 Hz')
@@ -101,18 +101,18 @@ class PTC(PluginBase):
         #async_call(self.ptc.get_resistance, None, self.cb_resistance, self.increase_error_count)
         self.cbe_temperature.set_period(100)
         #self.cbe_resistance.set_period(100)
-        
+
         async_call(self.ptc.is_sensor_connected, None, self.is_sensor_connected_async, self.increase_error_count)
         async_call(self.ptc.get_noise_rejection_filter, None, self.get_noise_rejection_filter_async, self.increase_error_count)
         async_call(self.ptc.get_wire_mode, None, self.get_wire_mode_async, self.increase_error_count)
-        
+
         self.connected_timer.start()
         self.plot_widget.stop = False
-        
+
     def stop(self):
         self.cbe_temperature.set_period(0)
         #self.cbe_resistance.set_period(0)
-        
+
         self.connected_timer.stop()
         self.plot_widget.stop = True
 
@@ -128,28 +128,28 @@ class PTC(PluginBase):
 
     def update_connected(self):
         async_call(self.ptc.is_sensor_connected, None, self.is_sensor_connected_async, self.increase_error_count)
-    
+
     def wire_combo_index_changed(self, index):
         async_call(self.ptc.set_wire_mode, index+2, None, self.increase_error_count)
-        
+
     def noise_combo_index_changed(self, index):
         async_call(self.ptc.set_noise_rejection_filter, index, None, self.increase_error_count)
-    
+
     def is_sensor_connected_async(self, connected):
         if connected:
             self.connected_label.setText(self.str_connected)
         else:
             self.connected_label.setText(self.str_not_connected)
-    
+
     def get_noise_rejection_filter_async(self, filter_option):
         self.noise_combo.setCurrentIndex(filter_option)
-        
+
     def get_wire_mode_async(self, mode):
         self.wire_combo.setCurrentIndex(mode-2)
 
     def cb_temperature(self, temperature):
         self.current_temperature = temperature / 100.0
-        
+
     def cb_resistance(self, resistance):
         resistance_str = str(round(resistance * 3900.0 / (1 << 15), 1))
         self.resistance_label.setText(resistance_str)

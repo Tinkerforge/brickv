@@ -89,7 +89,7 @@ class AmbientLightV2(PluginBase):
         self.range_combo.addItem("0 - 1300 lx", BrickletAmbientLightV2.ILLUMINANCE_RANGE_1300LUX)
         self.range_combo.addItem("0 - 600 lx", BrickletAmbientLightV2.ILLUMINANCE_RANGE_600LUX)
         self.range_combo.currentIndexChanged.connect(self.new_config)
-        
+
         self.time_label = QLabel('Integration Time: ')
         self.time_combo = QComboBox()
         self.time_combo.addItem("50 ms", BrickletAmbientLightV2.INTEGRATION_TIME_50MS)
@@ -139,11 +139,11 @@ class AmbientLightV2(PluginBase):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletAmbientLightV2.DEVICE_IDENTIFIER
-    
+
     def get_configucation_async(self, conf):
         self.range_combo.setCurrentIndex(self.range_combo.findData(conf.illuminance_range))
         self.time_combo.setCurrentIndex(self.time_combo.findData(conf.integration_time))
-        
+
     def new_config(self, value):
         try:
             self.al.set_configuration(self.range_combo.itemData(self.range_combo.currentIndex()),

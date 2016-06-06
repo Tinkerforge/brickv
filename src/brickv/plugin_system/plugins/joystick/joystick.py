@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Joystick Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 joystick.py: Joystick Plugin implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -39,16 +39,16 @@ class JoystickFrame(QFrame):
         self.x = 0
         self.y = 0
         self.pressed = False
-        
+
     def set_pressed(self, pressed):
         self.pressed = pressed
         self.repaint()
-        
+
     def set_position(self, x, y):
         self.x = x + 110
         self.y = 110 - y
         self.repaint()
-        
+
     def paintEvent(self, event):
         qp = QPainter(self)
         if self.pressed:
@@ -59,14 +59,14 @@ class JoystickFrame(QFrame):
         qp.drawLine(110, 10, 110, 210)
         qp.drawLine(10, 110, 210, 110)
         qp.drawEllipse(self.x-5, self.y-5, 10, 10)
-        
+
 class Joystick(PluginBase):
     qtcb_pressed = pyqtSignal()
     qtcb_released = pyqtSignal()
-    
+
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletJoystick, *args)
-        
+
         self.js = self.device
 
         self.cbe_position = CallbackEmulator(self.js.get_position,
@@ -76,16 +76,16 @@ class Joystick(PluginBase):
         self.qtcb_pressed.connect(self.cb_pressed)
         self.js.register_callback(self.js.CALLBACK_PRESSED,
                                   self.qtcb_pressed.emit)
-        
+
         self.qtcb_released.connect(self.cb_released)
         self.js.register_callback(self.js.CALLBACK_RELEASED,
                                   self.qtcb_released.emit)
-        
+
         self.joystick_frame = JoystickFrame(self)
         self.joystick_frame.setMinimumSize(220, 220)
         self.joystick_frame.setMaximumSize(220, 220)
         self.joystick_frame.set_position(0, 0)
-        
+
         self.calibrate_button = QPushButton('Calibrate Zero')
         self.calibrate_button.clicked.connect(self.calibrate_clicked)
 
@@ -109,12 +109,12 @@ class Joystick(PluginBase):
     def start(self):
         async_call(self.js.get_position, None, self.cb_position, self.increase_error_count)
         self.cbe_position.set_period(25)
-        
+
         self.plot_widget.stop = False
-        
+
     def stop(self):
         self.cbe_position.set_period(0)
-        
+
         self.plot_widget.stop = True
 
     def destroy(self):

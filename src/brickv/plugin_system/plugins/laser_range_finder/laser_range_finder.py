@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Laser Range Finder Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2016 Matthias Bolte <matthias@tinkerforge.com>
 laser_range_finder.py: Laser Range Finder Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -132,11 +132,11 @@ class LaserRangeFinder(PluginBase):
 
         self.plot_widget_distance.stop = False
         self.plot_widget_velocity.stop = False
-        
+
     def stop(self):
         self.cbe_distance.set_period(0)
         self.cbe_velocity.set_period(0)
-        
+
         self.plot_widget_distance.stop = True
         self.plot_widget_velocity.stop = True
 
@@ -155,13 +155,13 @@ class LaserRangeFinder(PluginBase):
             self.enable_laser.setChecked(True)
         else:
             self.enable_laser.setChecked(False)
-    
+
     def enable_laser_changed(self, state):
         if state == Qt.Checked:
             self.lrf.enable_laser()
         else:
             self.lrf.disable_laser()
-            
+
     def mode_changed(self, value):
         self.lrf.set_mode(value)
         if value == 0:
@@ -184,10 +184,10 @@ class LaserRangeFinder(PluginBase):
     def get_mode_async(self, value):
         self.mode_combo.setCurrentIndex(value)
         self.mode_changed(value)
-        
+
     def get_moving_average_async(self, avg):
         self.spin_average_distance.setValue(avg.distance_average_length)
         self.spin_average_velocity.setValue(avg.velocity_average_length)
-        
+
     def spin_average_finished(self):
         self.lrf.set_moving_average(self.spin_average_distance.value(), self.spin_average_velocity.value())

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Industrial Dual 0-20mA Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 industrial_dual_0_20ma.py: PTC Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -99,14 +99,14 @@ class IndustrialDual020mA(PluginBase):
         async_call(self.dual020.get_current, 1, lambda x: self.cb_current(1, x), self.increase_error_count)
         self.cbe_current0.set_period(100)
         self.cbe_current1.set_period(100)
-        
+
         async_call(self.dual020.get_sample_rate, None, self.get_sample_rate_async, self.increase_error_count)
         self.plot_widget.stop = False
-        
+
     def stop(self):
         self.cbe_current0.set_period(0)
         self.cbe_current1.set_period(0)
-        
+
         self.plot_widget.stop = True
 
     def destroy(self):
@@ -121,7 +121,7 @@ class IndustrialDual020mA(PluginBase):
 
     def sample_rate_combo_index_changed(self, index):
         async_call(self.dual020.set_sample_rate, index, None, self.increase_error_count)
-    
+
     def get_sample_rate_async(self, rate):
         self.sample_rate_combo.setCurrentIndex(rate)
 

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Load Cell Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
 load_cell.py: Load Cell Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -52,7 +52,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.button_zero.clicked.connect(self.button_zero_clicked)
         self.button_weight.clicked.connect(self.button_weight_clicked)
         self.button_weight.setEnabled(False)
-        
+
         self.label_step1.setStyleSheet('QLabel { color : red }')
         self.label_step2.setStyleSheet('')
         self.label_status.setText('Calibration in progress...')
@@ -74,11 +74,11 @@ class Calibration(QDialog, Ui_Calibration):
     def closeEvent(self, event):
         self.parent.button_calibration.setEnabled(True)
         self.parent.calibration = None
-    
+
 class LoadCell(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletLoadCell, *args)
-        
+
         self.lc = self.device
 
         self.cbe_weight = CallbackEmulator(self.lc.get_weight,
@@ -97,10 +97,10 @@ class LoadCell(PluginBase):
 
         self.button_tare = QPushButton("Tare")
         self.button_tare.clicked.connect(self.button_tare_clicked)
-        
+
         self.enable_led = QCheckBox("Enable LED")
         self.enable_led.stateChanged.connect(self.enable_led_changed)
-        
+
         self.spin_average = QSpinBox()
         self.spin_average.setMinimum(0)
         self.spin_average.setMaximum(40)
@@ -140,12 +140,12 @@ class LoadCell(PluginBase):
         async_call(self.lc.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
         async_call(self.lc.get_weight, None, self.cb_weight, self.increase_error_count)
         self.cbe_weight.set_period(100)
-        
+
         self.plot_widget.stop = False
-        
+
     def stop(self):
         self.cbe_weight.set_period(0)
-        
+
         self.plot_widget.stop = True
 
     def destroy(self):
@@ -161,11 +161,11 @@ class LoadCell(PluginBase):
 
     def get_moving_average_async(self, avg):
         self.spin_average.setValue(avg)
-        
+
     def get_configuration_async(self, conf):
         self.gain = conf.gain
         self.rate_combo.setCurrentIndex(conf.rate)
-        
+
     def is_led_on_async(self, value):
         if value:
             self.enable_led.setChecked(True)
@@ -178,20 +178,20 @@ class LoadCell(PluginBase):
 
         self.button_calibration.setEnabled(False)
         self.calibration.show()
-            
+
     def button_tare_clicked(self):
         self.lc.tare()
-    
+
     def enable_led_changed(self, state):
         if state == Qt.Checked:
             self.lc.led_on()
         else:
             self.lc.led_off()
-    
+
     def new_config(self, value):
         rate = self.rate_combo.currentIndex()
         self.lc.set_configuration(rate, self.gain)
-    
+
     def spin_average_finished(self):
         self.lc.set_moving_average(self.spin_average.value())
 

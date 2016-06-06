@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Accelerometer Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
 accelerometer.py: Accelerometer Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -68,7 +68,7 @@ class Accelerometer(PluginBase):
         self.cbe_acceleration = CallbackEmulator(self.accelerometer.get_acceleration,
                                                  self.cb_acceleration,
                                                  self.increase_error_count)
-        
+
         self.cbe_temperature = CallbackEmulator(self.accelerometer.get_temperature,
                                                 self.cb_temperature,
                                                 self.increase_error_count)
@@ -93,7 +93,7 @@ class Accelerometer(PluginBase):
         self.fs_combo.addItem("8 g")
         self.fs_combo.addItem("16 g")
         self.fs_combo.currentIndexChanged.connect(self.new_config)
-        
+
         self.dr_label = QLabel('Data Rate:')
         self.dr_combo = QComboBox()
         self.dr_combo.addItem("Off")
@@ -107,7 +107,7 @@ class Accelerometer(PluginBase):
         self.dr_combo.addItem("800 Hz")
         self.dr_combo.addItem("1600 Hz")
         self.dr_combo.currentIndexChanged.connect(self.new_config)
-        
+
         self.fb_label = QLabel('Filter Bandwidth:')
         self.fb_combo = QComboBox()
         self.fb_combo.addItem("800 Hz")
@@ -145,10 +145,10 @@ class Accelerometer(PluginBase):
             self.accelerometer.led_on()
         else:
             self.accelerometer.led_off()
-        
+
     def is_led_on_async(self, on):
         self.enable_led.setChecked(on)
-        
+
     def new_config(self):
         dr = self.dr_combo.currentIndex()
         fs = self.fs_combo.currentIndex()
@@ -165,7 +165,7 @@ class Accelerometer(PluginBase):
         self.fs_combo.setCurrentIndex(conf.full_scale)
         self.fb_combo.setCurrentIndex(conf.filter_bandwidth)
         self.dr_combo.setCurrentIndex(conf.data_rate)
-        
+
     def cb_temperature(self, temp):
         self.temperature_label.setText(temp)
 
@@ -176,13 +176,13 @@ class Accelerometer(PluginBase):
         async_call(self.accelerometer.get_temperature, None, self.cb_temperature, self.increase_error_count)
         self.cbe_acceleration.set_period(50)
         self.cbe_temperature.set_period(1000)
-        
+
         self.plot_widget.stop = False
-        
+
     def stop(self):
         self.cbe_acceleration.set_period(0)
         self.cbe_temperature.set_period(0)
-        
+
         self.plot_widget.stop = True
 
     def destroy(self):

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Gas Detector Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
 gas_detector.py: Gas Detector Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -48,11 +48,11 @@ class GasDetector(PluginBase):
 
         self.heater_checkbox = QCheckBox()
         self.heater_checkbox.setText('Heater')
-        
+
         self.type_combo = QComboBox()
         self.type_combo.addItem('Type 0 (MQ2, MQ5)')
         self.type_combo.addItem('Type 1 (MQ3)')
-        
+
         self.type_combo.currentIndexChanged.connect(self.type_combo_index_changed)
         self.heater_checkbox.stateChanged.connect(self.heater_checkbox_state_changed)
 
@@ -76,13 +76,13 @@ class GasDetector(PluginBase):
             self.gas_detector.heater_off()
         elif state == Qt.Checked:
             self.gas_detector.heater_on()
-        
+
     def type_combo_index_changed(self, index):
         async_call(self.gas_detector.set_detector_type, index, None, self.increase_error_count)
 
     def get_detector_type_async(self, detector_type):
         self.type_combo.setCurrentIndex(detector_type)
-        
+
     def is_heater_on_async(self, heater):
         if heater:
             self.heater_checkbox.setChecked(True)
@@ -95,15 +95,15 @@ class GasDetector(PluginBase):
     def start(self):
         async_call(self.gas_detector.get_detector_type, None, self.get_detector_type_async, self.increase_error_count)
         async_call(self.gas_detector.is_heater_on, None, self.is_heater_on_async, self.increase_error_count)
-        
+
         async_call(self.gas_detector.get_value, None, self.cb_value, self.increase_error_count)
         self.cbe_value.set_period(100)
-        
+
         self.plot_widget.stop = False
-        
+
     def stop(self):
         self.cbe_value.set_period(0)
-        
+
         self.plot_widget.stop = True
 
     def destroy(self):

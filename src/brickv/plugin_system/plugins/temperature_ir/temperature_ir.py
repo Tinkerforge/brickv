@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Temperature IR Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 temperature_ir.py: Temperature-IR Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -78,13 +78,13 @@ class TemperatureIR(PluginBase):
         async_call(self.tir.get_emissivity, None, self.get_emissivity_async, self.increase_error_count)
         self.cbe_ambient_temperature.set_period(250)
         self.cbe_object_temperature.set_period(250)
-        
+
         self.plot_widget.stop = False
-        
+
     def stop(self):
         self.cbe_ambient_temperature.set_period(0)
         self.cbe_object_temperature.set_period(0)
-        
+
         self.plot_widget.stop = True
 
     def destroy(self):

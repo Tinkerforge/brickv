@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Thermocouple Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2016 Matthias Bolte <matthias@tinkerforge.com>
 thermocouple.py: Thermocouple Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -33,12 +33,12 @@ from brickv.callback_emulator import CallbackEmulator
 
 class Thermocouple(PluginBase):
     qtcb_error_state = pyqtSignal(bool, bool)
-    
+
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletThermocouple, *args)
-        
+
         self.thermo = self.device
-        
+
         self.qtcb_error_state.connect(self.cb_error_state)
         self.thermo.register_callback(self.thermo.CALLBACK_ERROR_STATE,
                                       self.qtcb_error_state.emit)
@@ -62,7 +62,7 @@ class Thermocouple(PluginBase):
         self.averaging_combo.addItem('4', BrickletThermocouple.AVERAGING_4)
         self.averaging_combo.addItem('8', BrickletThermocouple.AVERAGING_8)
         self.averaging_combo.addItem('16', BrickletThermocouple.AVERAGING_16)
-        
+
         self.type_label = QLabel('Thermocouple Type:')
         self.type_combo = QComboBox()
         self.type_combo.addItem('B', BrickletThermocouple.TYPE_B)
@@ -99,23 +99,22 @@ class Thermocouple(PluginBase):
         layout.addWidget(self.plot_widget)
         layout.addWidget(line)
         layout.addLayout(hlayout)
-        
+
         self.averaging_combo.currentIndexChanged.connect(self.configuration_changed)
         self.type_combo.currentIndexChanged.connect(self.configuration_changed)
         self.filter_combo.currentIndexChanged.connect(self.configuration_changed)
-        
-        
+
     def start(self):
         async_call(self.thermo.get_temperature, None, self.cb_temperature, self.increase_error_count)
         async_call(self.thermo.get_configuration, None, self.cb_configuration, self.increase_error_count)
         async_call(self.thermo.get_error_state, None, lambda e: self.cb_error_state(e.over_under, e.open_circuit))
         self.cbe_temperature.set_period(100)
-        
+
         self.plot_widget.stop = False
-        
+
     def stop(self):
         self.cbe_temperature.set_period(0)
-        
+
         self.plot_widget.stop = True
 
     def destroy(self):
@@ -130,12 +129,12 @@ class Thermocouple(PluginBase):
 
     def get_current_value(self):
         return self.current_value
-    
+
     def configuration_changed(self, _):
         conf_averaging = self.averaging_combo.itemData(self.averaging_combo.currentIndex())
         conf_type = self.type_combo.itemData(self.type_combo.currentIndex())
         conf_filter = self.filter_combo.itemData(self.filter_combo.currentIndex())
-        
+
         self.thermo.set_configuration(conf_averaging, conf_type, conf_filter)
 
     def cb_temperature(self, temperature):
@@ -145,7 +144,7 @@ class Thermocouple(PluginBase):
         self.averaging_combo.blockSignals(True)
         self.averaging_combo.setCurrentIndex(self.averaging_combo.findData(conf.averaging))
         self.averaging_combo.blockSignals(False)
-            
+
         self.type_combo.blockSignals(True)
         self.type_combo.setCurrentIndex(self.type_combo.findData(conf.thermocouple_type))
         self.type_combo.blockSignals(False)
@@ -153,7 +152,7 @@ class Thermocouple(PluginBase):
         self.filter_combo.blockSignals(True)
         self.filter_combo.setCurrentIndex(self.filter_combo.findData(conf.filter))
         self.filter_combo.blockSignals(False)
-        
+
     def cb_error_state(self, over_under, open_circuit):
         if over_under or open_circuit:
             text = 'Current Errors: '
@@ -163,7 +162,7 @@ class Thermocouple(PluginBase):
                 text += ' and '
             if open_circuit:
                 text += 'Open Circuit\n(defective thermocouple or nothing connected)'
-                
+
             self.error_label.setStyleSheet('QLabel { color : red }')
             self.error_label.setText(text)
         else:

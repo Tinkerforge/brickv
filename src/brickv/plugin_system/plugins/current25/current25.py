@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Current25 Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 current25.py: Current25 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -35,16 +35,16 @@ from brickv.utils import format_current
 
 class Current25(PluginBase):
     qtcb_over = pyqtSignal()
-    
+
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletCurrent25, *args)
-        
+
         self.cur = self.device
-        
+
         self.cbe_current = CallbackEmulator(self.cur.get_current,
                                             self.cb_current,
                                             self.increase_error_count)
-        
+
         self.qtcb_over.connect(self.cb_over)
         self.cur.register_callback(self.cur.CALLBACK_OVER_CURRENT,
                                    self.qtcb_over.emit)
@@ -70,12 +70,12 @@ class Current25(PluginBase):
     def start(self):
         async_call(self.cur.get_current, None, self.cb_current, self.increase_error_count)
         self.cbe_current.set_period(100)
-        
+
         self.plot_widget.stop = False
-        
+
     def stop(self):
         self.cbe_current.set_period(0)
-        
+
         self.plot_widget.stop = True
 
     def destroy(self):
@@ -93,10 +93,9 @@ class Current25(PluginBase):
 
     def cb_over(self):
         self.over_label.setText('Over Current: Yes')
-        
+
     def calibrate_clicked(self):
         try:
             self.cur.calibrate()
         except ip_connection.Error:
             return
-        

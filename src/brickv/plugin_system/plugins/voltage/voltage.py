@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Voltage Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 voltage.py: Voltage Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -35,7 +35,7 @@ from brickv.utils import format_voltage
 class Voltage(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletVoltage, *args)
-        
+
         self.vol = self.device
 
         self.cbe_voltage = CallbackEmulator(self.vol.get_voltage,
@@ -49,16 +49,16 @@ class Voltage(PluginBase):
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)
-        
+
     def start(self):
         async_call(self.vol.get_voltage, None, self.cb_voltage, self.increase_error_count)
         self.cbe_voltage.set_period(100)
-        
+
         self.plot_widget.stop = False
-        
+
     def stop(self):
         self.cbe_voltage.set_period(0)
-        
+
         self.plot_widget.stop = True
 
     def destroy(self):

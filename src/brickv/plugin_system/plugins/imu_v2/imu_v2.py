@@ -73,30 +73,30 @@ during stabilization.</p>""")
         self.parent = parent
         self.ipcon = parent.ipcon
         self.imu = parent.imu
-        
+
         self.acc_color = ColorFrame()
         self.mag_color = ColorFrame()
         self.gyr_color = ColorFrame()
         self.sys_color = ColorFrame()
-        
+
         self.grid.addWidget(self.acc_color, 2, 2)
         self.grid.addWidget(self.mag_color, 3, 2)
         self.grid.addWidget(self.gyr_color, 4, 2)
         self.grid.addWidget(self.sys_color, 5, 2)
-        
+
         self.save_calibration.clicked.connect(self.save_calibration_clicked)
-        
+
     def save_calibration_clicked(self):
         async_call(self.imu.save_calibration, None, self.async_save_calibration, self.parent.increase_error_count)
-        
+
     def async_save_calibration(self, calibration_done):
         if calibration_done:
             self.save_calibration.setText('Save Calibration Again')
-        
+
     def closeEvent(self, event):
         self.parent.button_calibration.setEnabled(True)
         self.parent.calibration = None
-        
+
 class ColorFrame(QFrame):
     def __init__(self, parent = None):
         QFrame.__init__(self, parent)
@@ -179,15 +179,15 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.data_plot_widget = []
         self.sensor_data = [0]*23
 
-        self.data_labels = [self.label_acceleration_x, self.label_acceleration_y, self.label_acceleration_z, 
-                            self.label_magnetic_field_x, self.label_magnetic_field_y, self.label_magnetic_field_z, 
-                            self.label_angular_velocity_x, self.label_angular_velocity_y, self.label_angular_velocity_z, 
-                            self.label_euler_angle_heading, self.label_euler_angle_roll, self.label_euler_angle_pitch, 
-                            self.label_quaternion_w, self.label_quaternion_x, self.label_quaternion_y, self.label_quaternion_z, 
-                            self.label_linear_acceleration_x, self.label_linear_acceleration_y, self.label_linear_acceleration_z, 
-                            self.label_gravity_vector_x, self.label_gravity_vector_y, self.label_gravity_vector_z, 
+        self.data_labels = [self.label_acceleration_x, self.label_acceleration_y, self.label_acceleration_z,
+                            self.label_magnetic_field_x, self.label_magnetic_field_y, self.label_magnetic_field_z,
+                            self.label_angular_velocity_x, self.label_angular_velocity_y, self.label_angular_velocity_z,
+                            self.label_euler_angle_heading, self.label_euler_angle_roll, self.label_euler_angle_pitch,
+                            self.label_quaternion_w, self.label_quaternion_x, self.label_quaternion_y, self.label_quaternion_z,
+                            self.label_linear_acceleration_x, self.label_linear_acceleration_y, self.label_linear_acceleration_z,
+                            self.label_gravity_vector_x, self.label_gravity_vector_y, self.label_gravity_vector_z,
                             self.label_temperature]
-        
+
         self.data_rows = [[self.label_acceleration_11, self.label_acceleration_21, self.label_acceleration_22, self.label_acceleration_23, self.label_acceleration_41, self.label_acceleration_42, self.label_acceleration_43, self.label_acceleration_x, self.label_acceleration_y, self.label_acceleration_z],
                           [self.label_magnetic_field_11, self.label_magnetic_field_21, self.label_magnetic_field_22, self.label_magnetic_field_23, self.label_magnetic_field_41, self.label_magnetic_field_42, self.label_magnetic_field_43, self.label_magnetic_field_x, self.label_magnetic_field_y, self.label_magnetic_field_z],
                           [self.label_angular_velocity_11, self.label_angular_velocity_21, self.label_angular_velocity_22, self.label_angular_velocity_23, self.label_angular_velocity_41, self.label_angular_velocity_42, self.label_angular_velocity_43, self.label_angular_velocity_x, self.label_angular_velocity_y, self.label_angular_velocity_z],
@@ -195,12 +195,11 @@ class IMUV2(PluginBase, Ui_IMUV2):
                           [self.label_quaternion_11, self.label_quaternion_21, self.label_quaternion_22, self.label_quaternion_23, self.label_quaternion_24, self.label_quaternion_41, self.label_quaternion_42, self.label_quaternion_43, self.label_quaternion_44, self.label_quaternion_w, self.label_quaternion_x, self.label_quaternion_y, self.label_quaternion_z],
                           [self.label_linear_acceleration_11, self.label_linear_acceleration_21, self.label_linear_acceleration_22, self.label_linear_acceleration_23, self.label_linear_acceleration_41, self.label_linear_acceleration_42, self.label_linear_acceleration_43, self.label_linear_acceleration_x, self.label_linear_acceleration_y, self.label_linear_acceleration_z],
                           [self.label_gravity_vector_11, self.label_gravity_vector_21, self.label_gravity_vector_22, self.label_gravity_vector_23, self.label_gravity_vector_41, self.label_gravity_vector_42, self.label_gravity_vector_43, self.label_gravity_vector_x, self.label_gravity_vector_y, self.label_gravity_vector_z],
-                          [self.label_temperature_11, self.label_temperature_21, self.label_temperature_41, self.label_temperature],
-                         ]
-        
+                          [self.label_temperature_11, self.label_temperature_21, self.label_temperature_41, self.label_temperature]]
+
         even_color = QColor(240, 240, 240)
         odd_color = QColor(255, 255, 255)
-        
+
         self.data_color = [(Qt.red, even_color), (Qt.darkGreen, even_color), (Qt.blue, even_color),
                            (Qt.red, odd_color), (Qt.darkGreen, odd_color), (Qt.blue, odd_color),
                            (Qt.red, even_color), (Qt.darkGreen, even_color), (Qt.blue, even_color),
@@ -209,20 +208,20 @@ class IMUV2(PluginBase, Ui_IMUV2):
                            (Qt.red, odd_color), (Qt.darkGreen, odd_color), (Qt.blue, odd_color),
                            (Qt.red, even_color), (Qt.darkGreen, even_color), (Qt.blue, even_color),
                            (Qt.magenta, odd_color)]
-        
-        
+
+
         even_palette = QPalette()
         even_palette.setColor(QPalette.Window, even_color)
         odd_palette = QPalette()
         odd_palette.setColor(QPalette.Window, odd_color)
-        
+
         for i, row in enumerate(self.data_rows):
             for label in row:
                 if i % 2:
                     label.setPalette(odd_palette)
                 else:
                     label.setPalette(even_palette)
-                    
+
                 label.setAutoFillBackground(True)
 
         def get_lambda_data_getter(i):
@@ -234,8 +233,8 @@ class IMUV2(PluginBase, Ui_IMUV2):
         for i in range(23):
             self.data_plot_widget.append(PlotWidget("",
                                                     [("", self.data_color[i][0], get_lambda_data_getter(i), str)],
-                                                    self.clear_graphs, 
-                                                    scales_visible=False, 
+                                                    self.clear_graphs,
+                                                    scales_visible=False,
                                                     curve_outer_border_visible=False,
                                                     curve_motion_granularity=1,
                                                     canvas_color=self.data_color[i][1],
@@ -245,15 +244,15 @@ class IMUV2(PluginBase, Ui_IMUV2):
         for w in self.data_plot_widget:
             w.setMinimumHeight(15)
             w.setMaximumHeight(25)
-                    
+
         for i in range(23):
             self.data_grid.addWidget(self.data_plot_widget[i], i, 4)
-            
+
         self.data_grid.setColumnMinimumWidth(2, 75)
 
         self.gl_layout = QVBoxLayout()
         self.gl_layout.addWidget(self.imu_gl)
-        
+
         self.v_layout = QVBoxLayout()
         self.layout_bottom.addLayout(self.gl_layout)
 
@@ -301,7 +300,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickIMUV2.DEVICE_IDENTIFIER
-    
+
     def calibration_clicked(self):
         if self.calibration is None:
             self.calibration = Calibration(self)
@@ -361,7 +360,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
                                self.sensor_data[13],
                                self.sensor_data[14],
                                self.sensor_data[15])
-            
+
             cal_mag = data.calibration_status & 3;
             cal_acc = (data.calibration_status & (3 << 2)) >> 2
             cal_gyr = (data.calibration_status & (3 << 4)) >> 4
@@ -369,7 +368,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
 
             if self.calibration != None:
                 self.calibration.save_calibration.setEnabled(data.calibration_status == 0xFF)
-                    
+
                 self.calibration.mag_color.set_color(self.calibration_color[cal_mag])
                 self.calibration.acc_color.set_color(self.calibration_color[cal_acc])
                 self.calibration.gyr_color.set_color(self.calibration_color[cal_gyr])
@@ -385,6 +384,6 @@ class IMUV2(PluginBase, Ui_IMUV2):
             self.imu.leds_on()
         else:
             self.imu.leds_off()
-    
+
     def get_data(self, i):
         return self.sensor_data[i]

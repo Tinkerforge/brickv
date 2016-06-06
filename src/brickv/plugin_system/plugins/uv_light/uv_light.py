@@ -78,9 +78,10 @@ class UVLight(PluginBase):
 
     def cb_uv_light(self, uv_light):
         self.current_uv_light = uv_light
-        
+
         index = round(uv_light/250.0, 1)
         self.index_label.setText(unicode(index))
+
         if index < 2.5:
             color = 'green'
         elif index < 5.5:
@@ -93,4 +94,3 @@ class UVLight(PluginBase):
             color = 'magenta'
 
         self.index_label.setStyleSheet('QLabel {{ color : {0} }}'.format(color))
-        

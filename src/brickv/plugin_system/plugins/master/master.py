@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Master Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 master.py: Master Plugin implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -45,7 +45,7 @@ class Master(PluginBase, Ui_Master):
         self.setupUi(self)
 
         self.master = self.device
-        
+
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
 
@@ -134,7 +134,7 @@ class Master(PluginBase, Ui_Master):
             self.num_extensions += 1
             self.extension_label.setText(str(self.num_extensions) + " Present")
             self.label_no_extension.hide()
-            
+
     def is_rs485_present_async(self, present):
         if present:
             rs485 = RS485(self)
@@ -144,7 +144,7 @@ class Master(PluginBase, Ui_Master):
             self.num_extensions += 1
             self.extension_label.setText(str(self.num_extensions) + " Present")
             self.label_no_extension.hide()
-            
+
     def is_chibi_present_async(self, present):
         if present:
             chibi = Chibi(self)
@@ -190,7 +190,7 @@ class Master(PluginBase, Ui_Master):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickMaster.DEVICE_IDENTIFIER
-    
+
     def update_data(self):
         async_call(self.master.get_stack_voltage, None, self.get_stack_voltage_async, self.increase_error_count)
         async_call(self.master.get_stack_current, None, self.get_stack_current_async, self.increase_error_count)
