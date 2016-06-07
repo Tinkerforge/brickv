@@ -340,7 +340,7 @@ class CurveArea(QWidget):
             x_min = self.plot.x_min
             x_max = self.plot.x_max
 
-            if self.plot.scales_visible:
+            if self.plot.curve_start == 'left':
                 curve_x_offset = 0
             else:
                 curve_x_offset = round((self.plot.history_length_x - (x_max - x_min)) * factor_x)
@@ -352,9 +352,9 @@ class CurveArea(QWidget):
             transform.scale(factor_x, -factor_y)
             transform.translate(-x_min, -y_min_scale)
 
-            self.plot.partial_update_width = math.ceil(transform.map(QLineF(0, 0, 1.5, 0)).length())
-
-            inverted_event_rect = transform.inverted()[0].mapRect(QRectF(event.rect()))
+            if self.plot.curve_motion_granularity > 1:
+                self.plot.partial_update_width = math.ceil(transform.map(QLineF(0, 0, 1.5, 0)).length())
+                inverted_event_rect = transform.inverted()[0].mapRect(QRectF(event.rect()))
 
             painter.save()
             painter.setTransform(transform)
@@ -367,7 +367,11 @@ class CurveArea(QWidget):
                 curve_y = self.plot.curves_y[c]
                 path = QPainterPath()
                 lineTo = path.lineTo
-                start = max(min(bisect.bisect_left(curve_x, inverted_event_rect.left()), len(curve_x) - 1) - 1, 0)
+
+                if self.plot.curve_motion_granularity > 1:
+                    start = max(min(bisect.bisect_left(curve_x, inverted_event_rect.left()), len(curve_x) - 1) - 1, 0)
+                else:
+                    start = 0
 
                 path.moveTo(curve_x[start], curve_y[start])
 
@@ -382,7 +386,7 @@ class CurveArea(QWidget):
 class Plot(QWidget):
     def __init__(self, parent, y_scale_title_text, configs, scales_visible=True,
                  curve_outer_border_visible=True, curve_motion_granularity=10,
-                 canvas_color=QColor(245, 245, 245)):
+                 canvas_color=QColor(245, 245, 245), curve_start='left'):
         QWidget.__init__(self, parent)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -406,6 +410,7 @@ class Plot(QWidget):
         self.curve_motion_granularity = curve_motion_granularity
         self.curve_to_scale = 8 # px, fixed
         self.canvas_color = canvas_color
+        self.curve_start = curve_start
         self.partial_update_width = 50 # px, initial value, calculated in update
         self.partial_update_enabled = False
 
@@ -485,13 +490,13 @@ class Plot(QWidget):
                              Qt.cyan)
 
         # draw scales
-        y_min_scale = self.y_scale.value_min
-        y_max_scale = self.y_scale.value_max
-
-        factor_x = float(curve_width) / self.history_length_x
-        factor_y = float(curve_height - 1) / max(y_max_scale - y_min_scale, EPSILON) # -1 to accommodate the 1px width of the curve
-
         if self.scales_visible:
+            y_min_scale = self.y_scale.value_min
+            y_max_scale = self.y_scale.value_max
+
+            factor_x = float(curve_width) / self.history_length_x
+            factor_y = float(curve_height - 1) / max(y_max_scale - y_min_scale, EPSILON) # -1 to accommodate the 1px width of the curve
+
             self.draw_x_scale(painter, factor_x)
             self.draw_y_scale(painter, curve_height, factor_y)
 
@@ -624,7 +629,7 @@ class Plot(QWidget):
         if self.curves_visible[c] and (last_y_min != self.y_min or last_y_max != self.y_max):
             self.update_y_min_max_scale()
 
-        if self.partial_update_enabled:
+        if self.partial_update_enabled and self.curve_motion_granularity > 1:
             self.curve_area.update(self.curve_area.width() - self.partial_update_width, 0, self.partial_update_width, self.curve_area.height())
         else:
             self.curve_area.update()
@@ -795,7 +800,7 @@ class PlotWidget(QWidget):
                  scales_visible=True, curve_outer_border_visible=True,
                  curve_motion_granularity=10, canvas_color=QColor(245, 245, 245),
                  external_timer=None, key='top-value', extra_key_widgets=None,
-                 update_interval=0.1):
+                 update_interval=0.1, curve_start='left'):
         QWidget.__init__(self, parent)
 
         self.setMinimumSize(300, 250)
@@ -803,7 +808,7 @@ class PlotWidget(QWidget):
         self.stop = True
         self.plot = Plot(self, y_scale_title_text, configs, scales_visible,
                          curve_outer_border_visible, curve_motion_granularity,
-                         canvas_color)
+                         canvas_color, curve_start)
         self.set_fixed_y_scale = self.plot.set_fixed_y_scale
         self.key = key
         self.key_items = []

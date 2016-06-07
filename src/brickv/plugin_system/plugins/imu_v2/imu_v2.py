@@ -239,6 +239,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
                                                     curve_motion_granularity=1,
                                                     canvas_color=self.data_color[i][1],
                                                     external_timer=self.plot_timer,
+                                                    curve_start='right',
                                                     key=None))
 
         for w in self.data_plot_widget:
