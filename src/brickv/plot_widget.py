@@ -176,6 +176,7 @@ class YScale(Scale):
         self.title_text_pixmap = None
 
         self.total_width = None # set by update_total_width
+        self.total_width_changed = None
 
         self.update_title_text_height(1000)
         self.update_tick_config(-1.0, 1.0, 1.0, 5)
@@ -210,6 +211,8 @@ class YScale(Scale):
         self.update_total_width()
 
     def update_total_width(self):
+        old_total_width = self.total_width
+
         self.total_width = self.axis_line_thickness + \
                            self.tick_mark_size_large + \
                            self.tick_mark_to_tick_text + \
@@ -217,6 +220,9 @@ class YScale(Scale):
                            self.tick_text_to_title_text + \
                            self.title_text_height + \
                            self.title_text_to_border
+
+        if old_total_width != self.total_width and self.total_width_changed != None:
+            self.total_width_changed()
 
     def draw(self, painter, height, factor):
         # axis line
@@ -303,6 +309,76 @@ class YScale(Scale):
 
         painter.restore()
 
+class CurveArea(QWidget):
+    def __init__(self, plot):
+        QWidget.__init__(self, plot)
+
+        self.plot = plot
+
+        # FIXME: need to enable opaque painting to avoid that updates of other
+        #        widgets trigger a full update of the curve
+        self.setAttribute(Qt.WA_OpaquePaintEvent, True)
+
+    # override QWidget.paintEvent
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        width = self.width()
+        height = self.height()
+
+        if DEBUG:
+            painter.fillRect(0, 0, width, height, Qt.blue)
+        else:
+            painter.fillRect(event.rect(), self.plot.canvas_color)
+
+        y_min_scale = self.plot.y_scale.value_min
+        y_max_scale = self.plot.y_scale.value_max
+
+        factor_x = float(width) / self.plot.history_length_x
+        factor_y = float(height - 1) / max(y_max_scale - y_min_scale, EPSILON) # -1 to accommodate the 1px width of the curve
+
+        if self.plot.x_min != None and self.plot.x_max != None:
+            x_min = self.plot.x_min
+            x_max = self.plot.x_max
+
+            if self.plot.scales_visible:
+                curve_x_offset = 0
+            else:
+                curve_x_offset = round((self.plot.history_length_x - (x_max - x_min)) * factor_x)
+
+            transform = QTransform()
+
+            transform.translate(curve_x_offset,
+                                height - 1 + self.plot.curve_y_offset) # -1 to accommodate the 1px width of the curve
+            transform.scale(factor_x, -factor_y)
+            transform.translate(-x_min, -y_min_scale)
+
+            self.plot.partial_update_width = math.ceil(transform.map(QLineF(0, 0, 1.5, 0)).length())
+
+            inverted_event_rect = transform.inverted()[0].mapRect(QRectF(event.rect()))
+
+            painter.save()
+            painter.setTransform(transform)
+
+            for c in range(len(self.plot.curves_x)):
+                if not self.plot.curves_visible[c]:
+                    continue
+
+                curve_x = self.plot.curves_x[c]
+                curve_y = self.plot.curves_y[c]
+                path = QPainterPath()
+                lineTo = path.lineTo
+                start = max(min(bisect.bisect_left(curve_x, inverted_event_rect.left()), len(curve_x) - 1) - 1, 0)
+
+                path.moveTo(curve_x[start], curve_y[start])
+
+                for i in xrange(start + 1, len(curve_x)):
+                    lineTo(curve_x[i], curve_y[i])
+
+                painter.setPen(self.plot.configs[c][1])
+                painter.drawPath(path)
+
+            painter.restore()
+
 class Plot(QWidget):
     def __init__(self, parent, y_scale_title_text, configs, scales_visible=True,
                  curve_outer_border_visible=True, curve_motion_granularity=10,
@@ -310,10 +386,6 @@ class Plot(QWidget):
         QWidget.__init__(self, parent)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-
-        # FIXME: need to enable opaque painting to avoid that updates of other
-        #        widgets trigger a full update of the plot
-        self.setAttribute(Qt.WA_OpaquePaintEvent, True)
 
         self.configs = configs
         self.scales_visible = scales_visible
@@ -350,7 +422,11 @@ class Plot(QWidget):
         self.y_scale_fixed = False
         self.y_scale_height_offset = max(self.curve_outer_border, self.y_scale.tick_text_height_half) # px, from top
 
+        self.curve_area = CurveArea(self)
+        self.y_scale.total_width_changed = self.resize_curve_area
+
         self.clear_graph()
+        self.resize_curve_area()
 
     # override QWidget.sizeHint
     def sizeHint(self):
@@ -365,13 +441,13 @@ class Plot(QWidget):
 
         QWidget.resizeEvent(self, event)
 
+        self.resize_curve_area()
+
     # override QWidget.paintEvent
     def paintEvent(self, event):
         painter = QPainter(self)
         width = self.width()
         height = self.height()
-
-        painter.fillRect(event.rect(), self.palette().color(QPalette.Window)) # FIXME: this is slightly the wrong color on GNOME
 
         if self.scales_visible:
             curve_width = width - self.y_scale.total_width - self.curve_to_scale - self.curve_outer_border
@@ -432,49 +508,25 @@ class Plot(QWidget):
             self.draw_x_scale(painter, factor_x)
             self.draw_y_scale(painter, curve_height, factor_y)
 
-        # draw curves
-        if self.x_min != None and self.x_max != None:
-            x_min = self.x_min
-            x_max = self.x_max
+    def resize_curve_area(self):
+        if self.curve_area == None:
+            return
 
-            if self.scales_visible:
-                curve_x_offset = 0
-            else:
-                curve_x_offset = round((self.history_length_x - (x_max - x_min)) * factor_x)
+        width = self.width()
+        height = self.height()
 
-            transform = QTransform()
+        if self.scales_visible:
+            curve_x = self.y_scale.total_width + self.curve_to_scale
+            curve_y = self.y_scale_height_offset
+            curve_width = width - self.y_scale.total_width - self.curve_to_scale - self.curve_outer_border
+            curve_height = height - self.y_scale_height_offset - self.x_scale.total_height - self.curve_to_scale
+        else:
+            curve_x = self.curve_outer_border
+            curve_y = self.curve_outer_border
+            curve_width = width - self.curve_outer_border - self.curve_outer_border
+            curve_height = height - self.curve_outer_border - self.curve_outer_border
 
-            transform.translate(canvas_x + self.curve_outer_border + curve_x_offset,
-                                canvas_y + self.curve_outer_border + curve_height - 1 + self.curve_y_offset) # -1 to accommodate the 1px width of the curve
-            transform.scale(factor_x, -factor_y)
-            transform.translate(-x_min, -y_min_scale)
-
-            self.partial_update_width = math.ceil(transform.map(QLineF(0, 0, 1.5, 0)).length())
-
-            inverted_event_rect = transform.inverted()[0].mapRect(QRectF(event.rect()))
-
-            painter.save()
-            painter.setTransform(transform)
-
-            for c in range(len(self.curves_x)):
-                if not self.curves_visible[c]:
-                    continue
-
-                curve_x = self.curves_x[c]
-                curve_y = self.curves_y[c]
-                path = QPainterPath()
-                lineTo = path.lineTo
-                start = max(min(bisect.bisect_left(curve_x, inverted_event_rect.left()), len(curve_x) - 1) - 1, 0)
-
-                path.moveTo(curve_x[start], curve_y[start])
-
-                for i in xrange(start + 1, len(curve_x)):
-                    lineTo(curve_x[i], curve_y[i])
-
-                painter.setPen(self.configs[c][1])
-                painter.drawPath(path)
-
-            painter.restore()
+        self.curve_area.setGeometry(curve_x, curve_y, curve_width, curve_height)
 
     def set_fixed_y_scale(self, value_min, value_max, step_size, step_division_count):
         self.y_scale_fixed = True
@@ -586,9 +638,9 @@ class Plot(QWidget):
             self.update_y_min_max_scale()
 
         if self.partial_update_enabled:
-            self.update(self.width() - self.partial_update_width - self.curve_outer_border, 0, self.partial_update_width, self.height())
+            self.curve_area.update(self.curve_area.width() - self.partial_update_width, 0, self.partial_update_width, self.curve_area.height())
         else:
-            self.update()
+            self.curve_area.update()
 
     def update_x_min_max_y_min_max(self):
         last_x_min, last_x_max, last_y_min, last_y_max = self.x_min, self.x_max, self.y_min, self.y_max
@@ -605,6 +657,7 @@ class Plot(QWidget):
 
         if (last_x_min, last_x_max, last_y_min, last_y_max) != (self.x_min, self.x_max, self.y_min, self.y_max):
             self.update()
+            self.curve_area.update()
 
     def update_y_min_max_scale(self):
         if self.y_scale_fixed:
@@ -678,6 +731,7 @@ class Plot(QWidget):
                                         step_size, step_subdivision_count)
 
         self.update()
+        self.curve_area.update()
 
     def show_curve(self, c, show):
         if self.curves_visible[c] == show:
@@ -694,6 +748,7 @@ class Plot(QWidget):
             self.update_y_min_max_scale()
 
         self.update()
+        self.curve_area.update()
 
     def clear_graph(self):
         count = len(self.configs)
@@ -718,6 +773,7 @@ class Plot(QWidget):
         self.partial_update_enabled = False
 
         self.update()
+        self.curve_area.update()
 
 class FixedSizeToolButton(QToolButton):
     maximum_size_hint = None
