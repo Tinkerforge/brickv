@@ -405,7 +405,6 @@ class Plot(QWidget):
 
         self.curve_motion_granularity = curve_motion_granularity
         self.curve_to_scale = 8 # px, fixed
-        self.cross_hair_visible = False
         self.canvas_color = canvas_color
         self.partial_update_width = 50 # px, initial value, calculated in update
         self.partial_update_enabled = False
@@ -471,18 +470,6 @@ class Plot(QWidget):
         canvas_height = self.curve_outer_border + curve_height + self.curve_outer_border
 
         painter.fillRect(canvas_x, canvas_y, canvas_width, canvas_height, self.canvas_color)
-
-        # draw cross hair at cursor position
-        if self.cross_hair_visible:
-            p = self.mapFromGlobal(QCursor.pos())
-            p_x = p.x()
-            p_y = p.y()
-
-            if p_x >= canvas_x and p_x < canvas_x + canvas_width and \
-               p_y >= canvas_y and p_y < canvas_y + canvas_height:
-                painter.setPen(QPen(QColor(190, 190, 190), 1, Qt.DashLine))
-                painter.drawLine(canvas_x, p_y, canvas_x + canvas_width - 1, p_y)
-                painter.drawLine(p_x, canvas_y, p_x, canvas_y + canvas_height - 1)
 
         # draw canvas border
         if self.curve_outer_border > 0:
