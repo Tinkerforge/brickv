@@ -29,9 +29,16 @@ except:
     from StringIO import StringIO
 
 try:
-    import configparser
+    import ConfigParser as configparser
 except:
-    import ConfigParser as configparser # Python 2 fallback
+    import configparser # Python 3
+
+class NoFakeConfigParser(configparser.ConfigParser):
+    def get(self, section, option, fallback):
+        try:
+            return configparser.ConfigParser.get(self, section, option)
+        except:
+            return fallback
 
 class FakeSectionHeadAndFile(object):
     def __init__(self, string):
@@ -83,7 +90,7 @@ def parse_no_fake(data):
     else:
         return None
     
-    config = configparser.ConfigParser()
+    config = NoFakeConfigParser()
     config.readfp(StringIO(string.encode('utf-8')))
 
     return config
