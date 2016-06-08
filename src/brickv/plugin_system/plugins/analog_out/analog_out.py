@@ -1,14 +1,14 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Analog Out Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014, 2016 Matthias Bolte <matthias@tinkerforge.com>
 
 analog_out.py: Analog Out Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -32,9 +32,9 @@ from brickv.async_call import async_call
 class AnalogOut(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletAnalogOut, *args)
-        
+
         self.ao = self.device
-        
+
         self.voltage_label = QLabel('Output Voltage [mV]: ')
         self.voltage_box = QSpinBox()
         self.voltage_box.setMinimum(0)
@@ -46,13 +46,13 @@ class AnalogOut(PluginBase):
         self.mode_combo.addItem("1 kOhm Resistor to GND")
         self.mode_combo.addItem("100 kOhm resistor to GND")
         self.mode_combo.addItem("500 kOhm resistor to GND")
-        
+
         layout_h1 = QHBoxLayout()
         layout_h1.addStretch()
         layout_h1.addWidget(self.voltage_label)
         layout_h1.addWidget(self.voltage_box)
         layout_h1.addStretch()
-        
+
         layout_h2 = QHBoxLayout()
         layout_h2.addStretch()
         layout_h2.addWidget(self.mode_label)
@@ -63,14 +63,14 @@ class AnalogOut(PluginBase):
         layout.addLayout(layout_h2)
         layout.addLayout(layout_h1)
         layout.addStretch()
-        
+
         self.voltage_box.editingFinished.connect(self.voltage_finished)
         self.mode_combo.currentIndexChanged.connect(self.mode_changed)
-        
+
     def start(self):
         async_call(self.ao.get_voltage, None, self.voltage_box.setValue, self.increase_error_count)
         async_call(self.ao.get_mode, None, self.mode_combo.setCurrentIndex, self.increase_error_count)
-        
+
     def stop(self):
         pass
 
@@ -83,20 +83,20 @@ class AnalogOut(PluginBase):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletAnalogOut.DEVICE_IDENTIFIER
-    
+
     def voltage_finished(self):
         value = self.voltage_box.value()
         try:
             self.ao.set_voltage(value)
         except ip_connection.Error:
             return
-        
+
         self.mode_combo.setCurrentIndex(0)
-        
+
     def mode_changed(self, mode):
         try:
             self.ao.set_mode(mode)
         except ip_connection.Error:
             return
-        
+
         self.voltage_box.setValue(0)

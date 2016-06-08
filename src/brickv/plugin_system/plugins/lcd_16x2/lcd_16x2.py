@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-LCD16x2 Plugin
+LCD 16x2 Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014,2016 Matthias Bolte <matthias@tinkerforge.com>
 
-humidity.py: LCD 16x2 Plugin Implementation
+lcd_16x2.py: LCD 16x2 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

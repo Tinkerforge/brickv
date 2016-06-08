@@ -1,14 +1,14 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Piezo Speaker Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014, 2016 Matthias Bolte <matthias@tinkerforge.com>
 
-humidity.py: Piezo Speaker Plugin Implementation
+piezo_speaker.py: Piezo Speaker Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -33,21 +33,21 @@ from brickv.bindings.bricklet_piezo_speaker import BrickletPiezoSpeaker
 class PiezoSpeaker(PluginBase):
     qtcb_beep_finished = pyqtSignal()
     qtcb_morse_finished = pyqtSignal()
-    
+
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletPiezoSpeaker, *args)
-        
+
         self.ps = self.device
-        
+
         self.qtcb_beep_finished.connect(self.cb_beep)
         self.ps.register_callback(self.ps.CALLBACK_BEEP_FINISHED,
                                   self.qtcb_beep_finished.emit)
         self.qtcb_morse_finished.connect(self.cb_morse)
         self.ps.register_callback(self.ps.CALLBACK_MORSE_CODE_FINISHED,
                                   self.qtcb_morse_finished.emit)
-        
+
         self.has_stoppable_beep = self.firmware_version >= (2, 0, 2)
-        
+
         self.frequency_label = QLabel('Frequency (585 - 7100 Hz): ')
         self.frequency_box = QSpinBox()
         self.frequency_box.setMinimum(585)
@@ -57,7 +57,7 @@ class PiezoSpeaker(PluginBase):
         self.frequency_layout.addWidget(self.frequency_label)
         self.frequency_layout.addWidget(self.frequency_box)
         self.frequency_layout.addStretch()
-        
+
         self.beep_box = QSpinBox()
         self.beep_box.setMinimum(0)
         self.beep_box.setMaximum(2147483647)
@@ -69,7 +69,7 @@ class PiezoSpeaker(PluginBase):
         self.beep_layout.addWidget(self.beep_label)
         self.beep_layout.addWidget(self.beep_box)
         self.beep_layout.addWidget(self.beep_button)
-        
+
         self.morse_edit = QLineEdit()
         self.morse_edit.setText('- .. -. -.- . .-. ..-. --- .-. --. .')
         self.morse_edit.setMaxLength(60)
@@ -79,7 +79,7 @@ class PiezoSpeaker(PluginBase):
         self.morse_layout.addWidget(self.morse_label)
         self.morse_layout.addWidget(self.morse_edit)
         self.morse_layout.addWidget(self.morse_button)
-        
+
         self.calibrate_button = QPushButton('Calibrate')
         self.scale_button = QPushButton('Play Scale')
         self.scale_layout = QHBoxLayout()
@@ -98,7 +98,7 @@ class PiezoSpeaker(PluginBase):
         self.scale_button.clicked.connect(self.scale_clicked)
         self.scale_timer.timeout.connect(self.scale_timeout)
         self.calibrate_button.clicked.connect(self.calibrate_clicked)
-        
+
         layout = QVBoxLayout(self)
         layout.addLayout(self.frequency_layout)
         layout.addLayout(self.beep_layout)
@@ -109,7 +109,7 @@ class PiezoSpeaker(PluginBase):
 
     def start(self):
         pass
-        
+
     def stop(self):
         pass
 
@@ -122,38 +122,38 @@ class PiezoSpeaker(PluginBase):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletPiezoSpeaker.DEVICE_IDENTIFIER
-    
+
     def cb_beep(self):
         self.beep_button.setDisabled(False)
         self.morse_button.setDisabled(False)
         self.scale_button.setDisabled(False)
         self.status_label.setText('Status: Idle')
-        
+
     def cb_morse(self):
         self.beep_button.setDisabled(False)
         self.morse_button.setDisabled(False)
         self.scale_button.setDisabled(False)
         self.status_label.setText('Status: Idle')
-        
+
     def calibrate_clicked(self):
         self.status_label.setText('Status: Calibrating...')
         self.status_label.repaint()
         QApplication.processEvents()
         self.ps.calibrate()
         self.status_label.setText('Status: New calibration stored in EEPROM')
-        
+
     def scale_timeout(self):
         try:
             self.status_label.setText(str(self.scale_time) + 'Hz')
             self.ps.beep(40, self.scale_time)
         except ip_connection.Error:
             return
-        
+
         self.scale_time += 50
         if self.scale_time > 7100:
             self.scale_time = 585
             self.scale_timer.stop()
-        
+
     def scale_clicked(self):
         self.scale_time = 585
         self.scale_timeout()
@@ -184,7 +184,7 @@ class PiezoSpeaker(PluginBase):
             self.ps.morse_code(morse, freq)
         except ip_connection.Error:
             return
-        
+
         self.beep_button.setDisabled(True)
         self.morse_button.setDisabled(True)
         self.scale_button.setDisabled(True)

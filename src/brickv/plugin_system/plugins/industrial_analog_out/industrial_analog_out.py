@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Industrial Analog Out Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
@@ -6,8 +6,8 @@ Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
 industrial_analog_out.py: Industrial Analog Out Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -33,7 +33,7 @@ from brickv.slider_spin_syncer import SliderSpinSyncer
 class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletIndustrialAnalogOut, *args)
-        
+
         self.setupUi(self)
 
         self.ao = self.device
@@ -43,17 +43,17 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
                                                self.voltage_changed)
 
         self.current_syncer = SliderSpinSyncer(self.slider_current,
-                                              self.spin_current,
-                                              self.current_changed)
+                                               self.spin_current,
+                                               self.current_changed)
 
         self.radio_voltage.clicked.connect(self.radio_clicked)
         self.radio_current.clicked.connect(self.radio_clicked)
-        
+
         self.box_voltage_range.currentIndexChanged.connect(self.config_changed)
         self.box_current_range.currentIndexChanged.connect(self.config_changed)
-        
+
         self.checkbox_enable.clicked.connect(self.enable_changed)
-        
+
         self.last_voltage = 0
         self.last_current = 4000
         self.last_voltage_range = 0
@@ -62,13 +62,13 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
         self.new_voltage(self.last_voltage)
         self.new_current(self.last_current)
         self.mode_voltage()
-        
+
     def start(self):
         async_call(self.ao.get_voltage, None, self.new_voltage, self.increase_error_count)
         async_call(self.ao.get_current, None, self.new_current, self.increase_error_count)
         async_call(self.ao.get_configuration, None, self.cb_get_configuration, self.increase_error_count)
         async_call(self.ao.is_enabled, None, self.cb_is_enabled, self.increase_error_count)
-        
+
     def stop(self):
         pass
 
@@ -81,13 +81,13 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialAnalogOut.DEVICE_IDENTIFIER
-    
+
     def enable_changed(self, enabled):
         if enabled == True:
             self.ao.enable()
         else:
             self.ao.disable()
-    
+
     def new_voltage(self, voltage):
         try:
             self.last_voltage = voltage
@@ -95,7 +95,7 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
             self.slider_voltage.setValue(voltage)
         except:
             pass
-    
+
     def new_current(self, current):
         try:
             self.last_current = current
@@ -119,7 +119,7 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
         else:
             async_call(self.ao.get_current, None, self.new_current, self.increase_error_count)
             self.mode_current()
-    
+
     def voltage_changed(self, value):
         self.new_voltage(value)
         self.ao.set_voltage(value)
@@ -135,7 +135,7 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
         elif self.last_voltage_range == self.ao.VOLTAGE_RANGE_0_TO_10V:
             self.slider_voltage.setMaximum(10000)
             self.spin_voltage.setMaximum(10000)
-            
+
         if self.last_current_range == self.ao.CURRENT_RANGE_4_TO_20MA:
             self.slider_current.setMinimum(4000)
             self.spin_current.setMinimum(4000)
@@ -151,7 +151,7 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
             self.spin_current.setMinimum(0)
             self.slider_current.setMaximum(24000)
             self.spin_current.setMaximum(24000)
-    
+
     def config_changed(self, value):
         voltage_range = self.box_voltage_range.currentIndex()
         current_range = self.box_current_range.currentIndex()
@@ -164,13 +164,13 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
             self.new_configuration()
         except:
             pass
-    
+
     def cb_get_configuration(self, conf):
         self.last_voltage_range = conf.voltage_range
         self.last_current_range = conf.current_range
         self.box_voltage_range.setCurrentIndex(conf.voltage_range)
         self.box_current_range.setCurrentIndex(conf.current_range)
         self.new_configuration()
-        
+
     def cb_is_enabled(self, enabled):
         self.checkbox_enable.setChecked(enabled)

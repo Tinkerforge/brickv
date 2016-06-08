@@ -2,6 +2,7 @@
 """
 Analog Out 2.0 Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2016 Matthias Bolte <matthias@tinkerforge.com>
 
 analog_out_v2.py: Analog Out 2.0 Plugin Implementation
 

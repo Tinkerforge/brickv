@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-  
 """
-LCD20x4 Plugin
+LCD 20x4 Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014, 2016 Matthias Bolte <matthias@tinkerforge.com>
 
 lcd_20x4.py: LCD 20x4 Plugin Implementation
 
