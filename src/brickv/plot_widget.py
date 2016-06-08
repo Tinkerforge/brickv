@@ -29,9 +29,8 @@ import bisect
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
                         QPainter, QSizePolicy, QFontMetrics, QPixmap, \
-                        QIcon, QColor, QCursor, QPen, QPainterPath, QLabel, \
-                        QTransform, QPalette
-from PyQt4.QtCore import QTimer, Qt, QSize, QPointF, QRectF, QLineF
+                        QIcon, QColor, QPainterPath, QLabel, QTransform
+from PyQt4.QtCore import QTimer, Qt, QSize, QRectF, QLineF
 
 EPSILON = 0.000001
 DEBUG = False

@@ -21,10 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, Qt, QSize, QPoint
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
-                        QLineEdit, QComboBox, QFrame, QGridLayout, QToolButton, \
-                        QWidget, QImage, QPainter, QPen, QPushButton, QColor
+from PyQt4.QtCore import Qt, QSize, QPoint
+from PyQt4.QtGui import QWidget, QImage, QPainter, QPen, QColor
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection

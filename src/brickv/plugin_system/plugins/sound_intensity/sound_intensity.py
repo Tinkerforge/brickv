@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QWidget, QLinearGradient, \
+from PyQt4.QtGui import QVBoxLayout, QWidget, QLinearGradient, \
                         QPainter, QSizePolicy, QColor
 
 from brickv.plugin_system.plugin_base import PluginBase

@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QPushButton, \
-                        QLineEdit, QSpinBox, QFrame, QDoubleSpinBox
+                        QSpinBox, QFrame, QDoubleSpinBox
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection

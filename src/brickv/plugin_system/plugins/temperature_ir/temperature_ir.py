@@ -23,10 +23,9 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, QPushButton, QFrame
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
-from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
