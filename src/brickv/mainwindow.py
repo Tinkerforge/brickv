@@ -393,7 +393,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         position_index = index.sibling(index.row(), 2)
 
         if position_index.isValid() and position_index.data().startswith('Ext'):
-                index = index.parent()
+            index = index.parent()
 
         uid_index = index.sibling(index.row(), 1)
 
