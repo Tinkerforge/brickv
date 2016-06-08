@@ -53,7 +53,7 @@ class TemperatureIR(PluginBase):
         self.plot_widget = PlotWidget(u'Temperature [°C]', plots)
 
         self.spin_emissivity = QSpinBox()
-        self.spin_emissivity.setMinimum(0)
+        self.spin_emissivity.setMinimum(6553)
         self.spin_emissivity.setMaximum(65535)
         self.spin_emissivity.setValue(65535)
         self.spin_emissivity.editingFinished.connect(self.spin_emissivity_finished)
