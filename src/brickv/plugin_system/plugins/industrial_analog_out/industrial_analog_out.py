@@ -58,9 +58,7 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
         self.last_current = 4000
         self.last_voltage_range = 0
         self.last_current_range = 1
-        
-        self.ui_voltage = [self.label_voltage, self.label_mv, self.label_voltage_range, self.slider_voltage, self.spin_voltage, self.box_voltage_range]
-        self.ui_current = [self.label_current, self.label_ua, self.label_current_range, self.slider_current, self.spin_current, self.box_current_range]
+
         self.new_voltage(self.last_voltage)
         self.new_current(self.last_current)
         self.mode_voltage()
@@ -95,7 +93,6 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
             self.last_voltage = voltage
             self.spin_voltage.setValue(voltage)
             self.slider_voltage.setValue(voltage)
-            self.label_voltage.setText("Output Voltage: " + "{0:.3f}V".format(round(voltage/1000.0, 3)))
         except:
             pass
     
@@ -104,22 +101,17 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
             self.last_current = current
             self.spin_current.setValue(current)
             self.slider_current.setValue(current)
-            self.label_current.setText("Output Current: " + "{0:.3f}mA".format(round(current/1000.0, 3)))
         except:
             pass
 
     def mode_voltage(self):
-        for ui in self.ui_voltage:
-            ui.show()
-        for ui in self.ui_current:
-            ui.hide()
-        
+        self.widget_voltage.show()
+        self.widget_current.hide()
+
     def mode_current(self):
-        for ui in self.ui_voltage:
-            ui.hide()
-        for ui in self.ui_current:
-            ui.show()
-            
+        self.widget_voltage.hide()
+        self.widget_current.show()
+
     def radio_clicked(self):
         if self.radio_voltage.isChecked():
             async_call(self.ao.get_voltage, None, self.new_voltage, self.increase_error_count)
@@ -181,7 +173,4 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
         self.new_configuration()
         
     def cb_is_enabled(self, enabled):
-        if enabled:
-            self.checkbox_enable.setCheckState(Qt.Checked)
-        else:
-            self.checkbox_enable.setCheckState(Qt.Unchecked)
+        self.checkbox_enable.setChecked(enabled)

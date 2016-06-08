@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>586</width>
-    <height>370</height>
+    <width>642</width>
+    <height>387</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -129,9 +129,6 @@
          </item>
          <item>
           <widget class="QSpinBox" name="pulse_width_min_spin">
-           <property name="buttonSymbols">
-            <enum>QAbstractSpinBox::PlusMinus</enum>
-           </property>
            <property name="maximum">
             <number>65535</number>
            </property>
@@ -145,6 +142,12 @@
          </item>
          <item>
           <widget class="QLabel" name="pulse_width_label">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>/</string>
            </property>
@@ -155,9 +158,6 @@
          </item>
          <item>
           <widget class="QSpinBox" name="pulse_width_max_spin">
-           <property name="buttonSymbols">
-            <enum>QAbstractSpinBox::PlusMinus</enum>
-           </property>
            <property name="maximum">
             <number>65535</number>
            </property>
@@ -182,9 +182,6 @@
          </item>
          <item>
           <widget class="QSpinBox" name="degree_min_spin">
-           <property name="buttonSymbols">
-            <enum>QAbstractSpinBox::PlusMinus</enum>
-           </property>
            <property name="minimum">
             <number>-32767</number>
            </property>
@@ -202,7 +199,7 @@
          <item>
           <widget class="QLabel" name="degree_width_label">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -217,9 +214,6 @@
          </item>
          <item>
           <widget class="QSpinBox" name="degree_max_spin">
-           <property name="buttonSymbols">
-            <enum>QAbstractSpinBox::PlusMinus</enum>
-           </property>
            <property name="minimum">
             <number>-32767</number>
            </property>

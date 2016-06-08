@@ -38,7 +38,7 @@
      <item>
       <widget class="QPushButton" name="button_scan">
        <property name="text">
-        <string>Scan for tag</string>
+        <string>Scan for Tag</string>
        </property>
       </widget>
      </item>
@@ -60,7 +60,7 @@
      <item>
       <widget class="QLabel" name="label_read_page">
        <property name="text">
-        <string>Start Page</string>
+        <string>Start Page:</string>
        </property>
       </widget>
      </item>

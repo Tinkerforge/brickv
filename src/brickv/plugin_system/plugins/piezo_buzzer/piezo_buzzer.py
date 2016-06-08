@@ -47,7 +47,7 @@ class PiezoBuzzer(PluginBase):
         
         self.beep_edit = QLineEdit()
         self.beep_edit.setText(str(1000))
-        self.beep_label = QLabel('Duration (ms): ')
+        self.beep_label = QLabel('Duration [ms]: ')
         self.beep_button = QPushButton('Send Beep')
         self.beep_layout = QHBoxLayout()
         self.beep_layout.addWidget(self.beep_label)
@@ -64,8 +64,8 @@ class PiezoBuzzer(PluginBase):
         self.morse_layout.addWidget(self.morse_edit)
         self.morse_layout.addWidget(self.morse_button)
         
-        self.status_label = QLabel('')
         
+        self.status_label = QLabel('Status: Idle')
         self.beep_button.clicked.connect(self.beep_clicked)
         self.morse_button.clicked.connect(self.morse_clicked)
         
@@ -94,12 +94,12 @@ class PiezoBuzzer(PluginBase):
     def cb_beep(self):
         self.beep_button.setDisabled(False)
         self.morse_button.setDisabled(False)
-        self.status_label.setText('')
+        self.status_label.setText('Status: Idle')
         
     def cb_morse(self):
         self.beep_button.setDisabled(False)
         self.morse_button.setDisabled(False)
-        self.status_label.setText('')
+        self.status_label.setText('Status: Idle')
     
     def beep_clicked(self):
         duration = int(self.beep_edit.text())
@@ -110,7 +110,7 @@ class PiezoBuzzer(PluginBase):
         
         self.beep_button.setDisabled(True)
         self.morse_button.setDisabled(True)
-        self.status_label.setText('Beeping...')        
+        self.status_label.setText('Status: Beeping...')
         
     def morse_clicked(self):
         morse = self.morse_edit.text()
@@ -121,4 +121,4 @@ class PiezoBuzzer(PluginBase):
         
         self.beep_button.setDisabled(True)
         self.morse_button.setDisabled(True)
-        self.status_label.setText('Beeping...')
+        self.status_label.setText('Status: Beeping...')

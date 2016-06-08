@@ -39,7 +39,7 @@ class REDTabSettingsServerMonitoringAddHostDialog(QtGui.QDialog, Ui_REDTabSettin
         self.pbutton_sm_add_host_add.clicked.connect(self.slot_pbutton_sm_add_host_add_clicked)
         self.pbutton_sm_add_host_cancel.clicked.connect(self.slot_pbutton_sm_add_host_cancel_clicked)
 
-        if self.chkbox_sm_add_host_authentication.checkState() == QtCore.Qt.Checked:
+        if self.chkbox_sm_add_host_authentication.isChecked():
             self.label_sm_add_host_secret.show()
             self.ledit_sm_add_host_secret.show()
         else:

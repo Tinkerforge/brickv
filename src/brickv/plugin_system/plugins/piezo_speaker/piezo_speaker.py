@@ -48,7 +48,7 @@ class PiezoSpeaker(PluginBase):
         
         self.has_stoppable_beep = self.firmware_version >= (2, 0, 2)
         
-        self.frequency_label = QLabel('Frequency (585Hz-7100Hz): ')
+        self.frequency_label = QLabel('Frequency (585 - 7100 Hz): ')
         self.frequency_box = QSpinBox()
         self.frequency_box.setMinimum(585)
         self.frequency_box.setMaximum(7100)
@@ -63,7 +63,7 @@ class PiezoSpeaker(PluginBase):
         self.beep_box.setMaximum(2147483647)
         self.beep_box.setValue(1000)
         self.beep_box.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        self.beep_label = QLabel('Duration (ms): ')
+        self.beep_label = QLabel('Duration [ms]: ')
         self.beep_button = QPushButton('Send Beep')
         self.beep_layout = QHBoxLayout()
         self.beep_layout.addWidget(self.beep_label)
@@ -86,16 +86,13 @@ class PiezoSpeaker(PluginBase):
         self.scale_layout.addWidget(self.scale_button)
         self.scale_layout.addWidget(self.calibrate_button)
         self.scale_layout.addStretch()
-        
-        self.calibrate_layout = QHBoxLayout()
-        self.calibrate_layout.addStretch()
-        
+
         self.scale_timer = QTimer()
         self.scale_timer.setInterval(25)
         self.scale_time = 585
-        
-        self.status_label = QLabel('')
-        
+
+        self.status_label = QLabel('Status: Idle')
+
         self.beep_button.clicked.connect(self.beep_clicked)
         self.morse_button.clicked.connect(self.morse_clicked)
         self.scale_button.clicked.connect(self.scale_clicked)
@@ -108,7 +105,6 @@ class PiezoSpeaker(PluginBase):
         layout.addLayout(self.morse_layout)
         layout.addLayout(self.scale_layout)
         layout.addWidget(self.status_label)
-#        layout.addLayout(self.calibrate_layout)
         layout.addStretch()
 
     def start(self):
@@ -131,20 +127,20 @@ class PiezoSpeaker(PluginBase):
         self.beep_button.setDisabled(False)
         self.morse_button.setDisabled(False)
         self.scale_button.setDisabled(False)
-        self.status_label.setText('')
+        self.status_label.setText('Status: Idle')
         
     def cb_morse(self):
         self.beep_button.setDisabled(False)
         self.morse_button.setDisabled(False)
         self.scale_button.setDisabled(False)
-        self.status_label.setText('')
+        self.status_label.setText('Status: Idle')
         
     def calibrate_clicked(self):
-        self.status_label.setText('Calibrating')
+        self.status_label.setText('Status: Calibrating...')
         self.status_label.repaint()
         QApplication.processEvents()
         self.ps.calibrate()
-        self.status_label.setText('New calibration stored in EEPROM')
+        self.status_label.setText('Status: New calibration stored in EEPROM')
         
     def scale_timeout(self):
         try:
@@ -179,7 +175,7 @@ class PiezoSpeaker(PluginBase):
             self.beep_button.setDisabled(True)
             self.morse_button.setDisabled(True)
             self.scale_button.setDisabled(True)
-            self.status_label.setText('Beeping...')
+            self.status_label.setText('Status: Beeping...')
 
     def morse_clicked(self):
         freq = self.frequency_box.value()
@@ -192,4 +188,4 @@ class PiezoSpeaker(PluginBase):
         self.beep_button.setDisabled(True)
         self.morse_button.setDisabled(True)
         self.scale_button.setDisabled(True)
-        self.status_label.setText('Beeping...')
+        self.status_label.setText('Status: Beeping...')

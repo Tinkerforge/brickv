@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>429</width>
+    <width>453</width>
     <height>465</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
      <item>
       <widget class="QLabel" name="label_14">
        <property name="text">
-        <string>Type</string>
+        <string>Type:</string>
        </property>
       </widget>
      </item>
@@ -379,7 +379,7 @@
         <item>
          <widget class="QLabel" name="label_address">
           <property name="text">
-           <string>Address</string>
+           <string>Address:</string>
           </property>
          </widget>
         </item>
@@ -425,7 +425,7 @@
         <item>
          <widget class="QLabel" name="label_unit">
           <property name="text">
-           <string>Unit</string>
+           <string>Unit:</string>
           </property>
          </widget>
         </item>
@@ -475,7 +475,7 @@
         <item>
          <widget class="QLabel" name="label_12">
           <property name="text">
-           <string>Dim Value</string>
+           <string>Dim Value:</string>
           </property>
          </widget>
         </item>
@@ -525,7 +525,7 @@
         <item>
          <widget class="QLabel" name="label_13">
           <property name="text">
-           <string>System Code</string>
+           <string>System Code:</string>
           </property>
          </widget>
         </item>
@@ -642,7 +642,7 @@
         <item>
          <widget class="QLabel" name="label_15">
           <property name="text">
-           <string>Device Code</string>
+           <string>Device Code:</string>
           </property>
          </widget>
         </item>
@@ -686,7 +686,7 @@
      <item>
       <widget class="QLabel" name="label_11">
        <property name="text">
-        <string>Repeats</string>
+        <string>Repeats:</string>
        </property>
       </widget>
      </item>
