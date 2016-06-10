@@ -22,14 +22,14 @@ Boston, MA 02111-1307, USA.
 """
 
 class SliderSpinSyncer(object):
-    def __init__(self, slider, spin, changed_callback):
+    def __init__(self, slider, spin, changed_callback, spin_signal='editingFinished'):
         self.slider = slider
         self.spin = spin
         self.changed_callback = changed_callback
 
         self.slider.valueChanged.connect(self.set_spinbox_from_slider_value)
         self.slider.sliderMoved.connect(self.set_spinbox_from_slider_position)
-        self.spin.editingFinished.connect(self.set_slider_from_spinbox)
+        getattr(self.spin, spin_signal).connect(self.set_slider_from_spinbox)
 
     def set_spinbox_from_slider_value(self):
         value = self.slider.value()
