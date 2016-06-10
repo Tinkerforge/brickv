@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-05-31.      #
+# This file was automatically generated on 2016-06-10.      #
 #                                                           #
 # Python Bindings Version 2.1.9                             #
 #                                                           #
@@ -183,7 +183,30 @@ class BrickletRealTimeClock(Device):
 
     def set_alarm(self, month, day, hour, minute, second, weekday, interval):
         """
-        FIXME
+        Configures a repeatable alarm. The :func:`Alarm` callback is triggered if the
+        current date and time matches the configured alarm.
+        
+        Setting a parameter to -1 means that it should be disabled and doesn't take part
+        in the match. Setting all parameters to -1 disables the alarm completely.
+        
+        For example, to make the alarm trigger every day at 7:30 AM it can be
+        configured as (-1, -1, 7, 30, -1, -1, -1). The hour is set to match 7 and the
+        minute is set to match 30. The alarm is triggered if all enabled parameters
+        match.
+        
+        The interval has a special role. It allows to make the alarm reconfigure itself.
+        This is useful if you need a repeated alarm that cannot be expressed by matching
+        the current date and time. For example, to make the alarm trigger every 23
+        seconds it can be configured as (-1, -1, -1, -1, -1, -1, 23). Internally the
+        Bricklet will take the current date and time, add 23 seconds to it and set the
+        result as its alarm. The first alarm will be triggered 23 seconds after the
+        call. Because the interval is not -1, the Bricklet will do the same again
+        internally, take the current date and time, add 23 seconds to it and set that
+        as its alarm. This results in a repeated alarm that triggers every 23 seconds.
+        
+        The interval can also be used in combination with the other parameters. For
+        example, configuring the alarm as (-1, -1, 7, 30, -1, -1, 300) results in an
+        alarm that triggers every day at 7:30 AM and is then repeated every 5 minutes.
         
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
