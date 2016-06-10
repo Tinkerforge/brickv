@@ -2,6 +2,7 @@
 """
 RGB LED Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2016 Matthias Bolte <matthias@tinkerforge.com>
 
 rgb_led.py: RGB LED Plugin Implementation
 
@@ -33,25 +34,21 @@ class RGBLED(PluginBase):
         PluginBase.__init__(self, BrickletRGBLED, *args)
 
         self.rgb_led = self.device
-        
-        self.label_r = QLabel('R: 0')
-        self.label_g = QLabel('G: 0')
-        self.label_b = QLabel('B: 0')
-        
+
         self.color_dialog = QColorDialog()
         self.color_dialog.setWindowFlags(Qt.Widget)
         self.color_dialog.setOptions(QColorDialog.DontUseNativeDialog | QColorDialog.NoButtons)
         self.color_dialog.currentColorChanged.connect(self.color_changed)
-        
+
         layout = QVBoxLayout(self)
         layout.addStretch()
-        
-        h_layout = QHBoxLayout()
-        h_layout.addStretch()
-        h_layout.addWidget(self.color_dialog)
-        h_layout.addStretch()
-        
-        layout.addLayout(h_layout)
+
+        hlayout = QHBoxLayout()
+        hlayout.addStretch()
+        hlayout.addWidget(self.color_dialog)
+        hlayout.addStretch()
+
+        layout.addLayout(hlayout)
         layout.addStretch()
 
     def start(self):
