@@ -321,7 +321,7 @@ class SAMBA(object):
         # Erase All
         self.reset_progress('Erasing flash pages', 0)
         self.write_flash_command(EEFC_FCR_FCMD_EA, 0)
-        self.wait_for_flash_ready('while erasing flash pages', timeout=10000)
+        self.wait_for_flash_ready('while erasing flash pages', timeout=10000, update_progress=True)
 
         # Write firmware
         self.write_pages(firmware_pages, 0, 'Writing firmware')
@@ -574,7 +574,7 @@ class SAMBA(object):
         except:
             raise SAMBAException('Write error while executing code at address 0x%08X' % address)
 
-    def wait_for_flash_ready(self, message, timeout=2000, ready=True):
+    def wait_for_flash_ready(self, message, timeout=2000, ready=True, update_progress=False):
         for i in range(timeout):
             fsr = self.read_uint32(EEFC_FSR)
 
@@ -595,6 +595,9 @@ class SAMBA(object):
                     break
 
             time.sleep(0.001)
+
+            if update_progress:
+                self.update_progress(0)
         else:
             raise SAMBAException('Flash timeout ' + message)
 
