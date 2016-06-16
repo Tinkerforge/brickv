@@ -169,13 +169,6 @@ class IMUV2(PluginBase, Ui_IMUV2):
 
         self.imu_gl_wrapper = None
 
-        self.min_x = 0
-        self.min_y = 0
-        self.min_z = 0
-        self.max_x = 0
-        self.max_y = 0
-        self.max_z = 0
-
         self.data_plot_widget = []
         self.sensor_data = [0]*23
 
@@ -225,7 +218,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
                 label.setAutoFillBackground(True)
 
         def get_lambda_data_getter(i):
-            return lambda: self.get_data(i)
+            return lambda: self.sensor_data[i]
 
         self.plot_timer = QTimer(self)
         self.plot_timer.start(100)
@@ -385,6 +378,3 @@ class IMUV2(PluginBase, Ui_IMUV2):
             self.imu.leds_on()
         else:
             self.imu.leds_off()
-
-    def get_data(self, i):
-        return self.sensor_data[i]
