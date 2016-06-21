@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-05-31.      #
+# This file was automatically generated on 2016-06-21.      #
 #                                                           #
 # Python Bindings Version 2.1.9                             #
 #                                                           #
@@ -149,6 +149,10 @@ class BrickMaster(Device):
     FUNCTION_SET_WIFI2_AP_PASSWORD = 95
     FUNCTION_GET_WIFI2_AP_PASSWORD = 96
     FUNCTION_SAVE_WIFI2_CONFIGURATION = 97
+    FUNCTION_GET_WIFI2_FIRMWARE_VERSION = 98
+    FUNCTION_ENABLE_WIFI2_STATUS_LED = 99
+    FUNCTION_DISABLE_WIFI2_STATUS_LED = 100
+    FUNCTION_IS_WIFI2_STATUS_LED_ENABLED = 101
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -312,6 +316,10 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_SET_WIFI2_AP_PASSWORD] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_AP_PASSWORD] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SAVE_WIFI2_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_FIRMWARE_VERSION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_ENABLE_WIFI2_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_DISABLE_WIFI2_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_IS_WIFI2_STATUS_LED_ENABLED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_ENABLE_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_DISABLE_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_IS_STATUS_LED_ENABLED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -1278,7 +1286,7 @@ class BrickMaster(Device):
 
     def get_wifi2_authentication_secret(self):
         """
-        Returns the authentication secret as set by :func:`SetWifiAuthenticationSecret`.
+        Returns the authentication secret as set by :func:`SetWifi2AuthenticationSecret`.
         
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
@@ -1369,6 +1377,38 @@ class BrickMaster(Device):
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_SAVE_WIFI2_CONFIGURATION, (), '', 'B')
+
+    def get_wifi2_firmware_version(self):
+        """
+        Returns the current version of the WIFI Extension 2.0 firmware (major, minor, revision).
+        
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_FIRMWARE_VERSION, (), '', '3B')
+
+    def enable_wifi2_status_led(self):
+        """
+        Turns the green status LED of the WIFI Extension 2.0 on.
+        
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_ENABLE_WIFI2_STATUS_LED, (), '', '')
+
+    def disable_wifi2_status_led(self):
+        """
+        Turns the green status LED of the WIFI Extension 2.0 off.
+        
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_DISABLE_WIFI2_STATUS_LED, (), '', '')
+
+    def is_wifi2_status_led_enabled(self):
+        """
+        Returns *True* if the green status LED of the WIFI Extension 2.0 is turned on.
+        
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_WIFI2_STATUS_LED_ENABLED, (), '', '?')
 
     def enable_status_led(self):
         """

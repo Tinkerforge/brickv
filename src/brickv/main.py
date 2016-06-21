@@ -71,7 +71,7 @@ logging.basicConfig(level=config.LOGGING_LEVEL,
 
 class BrickViewer(QApplication):
     object_creator_signal = pyqtSignal(object)
-    infos_changed_signal = pyqtSignal(str, bool)
+    infos_changed_signal = pyqtSignal(str) # uid
 
     def __init__(self, *args, **kwargs):
         QApplication.__init__(self, *args, **kwargs)

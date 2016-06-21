@@ -35,7 +35,7 @@ from brickv.samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_por
 from brickv.infos import get_version_string
 from brickv.utils import get_main_window, get_home_path, get_open_file_name, \
                          get_modeless_dialog_flags
-from brickv.esp_flash import ESPROM
+from brickv.esp_flash import ESPFlash
 from brickv import infos
 
 import zipfile
@@ -97,6 +97,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.tool_infos = {}
         self.firmware_infos = {}
         self.plugin_infos = {}
+        self.extension_firmware_infos = {}
         self.brick_infos = []
         self.extension_infos = []
         self.refresh_updates_pending = False
@@ -120,6 +121,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.button_extension_firmware_browse.clicked.connect(self.extension_firmware_browse_clicked)
 
         infos.get_infos_changed_signal().connect(self.update_bricks)
+        infos.get_infos_changed_signal().connect(self.update_extensions)
 
         self.label_update_tool.hide()
         self.label_no_update_connection.hide()
@@ -130,15 +132,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.refresh_serial_ports()
 
         self.combo_firmware.addItem(CUSTOM)
-        self.combo_firmware.setDisabled(True)
+        self.combo_firmware.setEnabled(False)
         self.firmware_changed(0)
 
         self.combo_plugin.addItem(CUSTOM)
-        self.combo_plugin.setDisabled(True)
+        self.combo_plugin.setEnabled(False)
         self.plugin_changed(0)
 
         self.combo_extension_firmware.addItem(CUSTOM)
-        self.combo_extension_firmware.setDisabled(True)
+        self.combo_extension_firmware.setEnabled(False)
         self.extension_firmware_changed(0)
 
         self.brick_changed(0)
@@ -161,11 +163,14 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.tool_infos = {}
         self.firmware_infos = {}
         self.plugin_infos = {}
+        self.extension_firmware_infos = {}
 
         self.combo_firmware.clear()
         self.combo_plugin.clear()
-        self.combo_firmware.setDisabled(False)
-        self.combo_plugin.setDisabled(False)
+        self.combo_extension_firmware.clear()
+        self.combo_firmware.setEnabled(True)
+        self.combo_plugin.setEnabled(True)
+        self.combo_extension_firmware.setEnabled(True)
 
         progress.setLabelText('Discovering latest versions on tinkerforge.com')
         progress.setMaximum(0)
@@ -181,15 +186,17 @@ class FlashingWindow(QDialog, Ui_Flashing):
         except urllib2.URLError:
             okay = False
             progress.cancel()
-            self.combo_firmware.setDisabled(True)
-            self.combo_plugin.setDisabled(True)
+            self.combo_firmware.setEnabled(False)
+            self.combo_plugin.setEnabled(False)
+            self.combo_extension_firmware.setEnabled(False)
             self.popup_fail('Updates / Flashing', 'Latest version information on tinkerforge.com is not available (error code 1). Please report this to info@tinkerforge.com.\n\nFirmwares and plugins can be flashed from local files only.')
 
         if okay:
             def report_malformed(error_code):
                 progress.cancel()
-                self.combo_firmware.setDisabled(True)
-                self.combo_plugin.setDisabled(True)
+                self.combo_firmware.setEnabled(False)
+                self.combo_plugin.setEnabled(False)
+                self.combo_extension_firmware.setEnabled(False)
                 self.popup_fail('Updates / Flashing', 'Latest version information on tinkerforge.com is malformed (error code {0}). Please report this to info@tinkerforge.com.\n\nFirmwares and plugins can be flashed from local files only.'.format(error_code))
 
             for line in latest_versions_data.split('\n'):
@@ -228,6 +235,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     self.refresh_firmware_info(parts[1], latest_version)
                 elif parts[0] == 'bricklets':
                     self.refresh_plugin_info(parts[1], latest_version)
+                elif parts[0] == 'extensions':
+                    self.refresh_extension_firmware_info(parts[1], latest_version)
 
         if okay:
             # update combo_firmware
@@ -254,11 +263,26 @@ class FlashingWindow(QDialog, Ui_Flashing):
             if self.combo_plugin.count() > 0:
                 self.combo_plugin.insertSeparator(self.combo_plugin.count())
 
+            # update combo_extension_firmware
+            if len(self.extension_firmware_infos) > 0:
+                self.combo_extension_firmware.addItem(SELECT)
+                self.combo_extension_firmware.insertSeparator(self.combo_extension_firmware.count())
+
+            for extension_firmware_info in sorted(self.extension_firmware_infos.values(), key=lambda x: x.name):
+                name = '{0} ({1}.{2}.{3})'.format(extension_firmware_info.name, *extension_firmware_info.firmware_version_latest)
+                self.combo_extension_firmware.addItem(name, extension_firmware_info.url_part)
+
+            if self.combo_extension_firmware.count() > 0:
+                self.combo_extension_firmware.insertSeparator(self.combo_extension_firmware.count())
+
         self.combo_firmware.addItem(CUSTOM)
         self.firmware_changed(0)
 
         self.combo_plugin.addItem(CUSTOM)
         self.plugin_changed(0)
+
+        self.combo_extension_firmware.addItem(CUSTOM)
+        self.extension_firmware_changed(0)
 
         self.update_ui_state()
 
@@ -329,6 +353,30 @@ class FlashingWindow(QDialog, Ui_Flashing):
         plugin_info.firmware_version_latest = latest_version
 
         self.plugin_infos[url_part] = plugin_info
+
+    def refresh_extension_firmware_info(self, url_part, latest_version):
+        name = url_part
+
+        if name.endswith('_v2'):
+            name = name.replace('_v2', '_2.0')
+
+        if name in ['wifi_2.0']:
+            name = name.upper()
+
+        words = name.split('_')
+        parts = []
+
+        for word in words:
+            parts.append(word[0].upper() + word[1:])
+
+        name = ' '.join(parts)
+
+        extension_firmware_info = infos.ExtensionFirmwareInfo()
+        extension_firmware_info.name = name
+        extension_firmware_info.url_part = url_part
+        extension_firmware_info.firmware_version_latest = latest_version
+
+        self.extension_firmware_infos[url_part] = extension_firmware_info
 
     def update_bricks(self):
         self.brick_infos = []
@@ -1271,87 +1319,136 @@ There was an error during the auto-detection of Bricklets with Protocol 1.0 plug
             QMessageBox.critical(self, "Bricklet with Error", message, QMessageBox.Ok)
 
     def extension_changed(self, index):
-        # Since we currently only have one extension with a firmware
-        # there is nothing to do here.
-        pass
+        if index < 0:
+            self.combo_extension.setCurrentIndex(0)
+            return
+
+        url_part = self.combo_extension.itemData(index)
+
+        if url_part == None or len(url_part) == 0:
+            self.combo_extension_firmware.setCurrentIndex(0)
+            return
+
+        i = self.combo_extension_firmware.findData(url_part)
+
+        if i < 0:
+            self.combo_extension_firmware.setCurrentIndex(0)
+        else:
+            self.combo_extension_firmware.setCurrentIndex(i)
 
     def extension_firmware_changed(self, index):
         self.update_ui_state()
 
-    def extension_firmware_save_clicked(self):
-        current_text = self.combo_extension_firmware.currentText()
-        progress = ProgressWrapper(self.create_progress_bar('Extension Flashing'))
+    def download_extension_firmware(self, progress, url_part, name, version, popup=False):
+        progress.reset('Downloading {0} Extension firmware {1}.{2}.{3}'.format(name, *version), 0)
+
+        response = None
 
         try:
-            if current_text == SELECT:
-                return
-            elif current_text == CUSTOM:
-                firmware_file_name = self.edit_custom_extension_firmware.text()
+            response = urllib2.urlopen(FIRMWARE_URL + 'extensions/{0}/extension_{0}_firmware_{1}_{2}_{3}.zbin'.format(url_part, *version), timeout=10)
+        except urllib2.URLError:
+            pass
+
+        beta = 5
+
+        while response is None and beta > 0:
+            try:
+                response = urllib2.urlopen(FIRMWARE_URL + 'extensions/{0}/extension{0}_firmware_{2}_{3}_{4}_beta{1}.zbin'.format(url_part, beta, *version), timeout=10)
+            except urllib2.URLError:
+                beta -= 1
+
+        if response is None:
+            progress.cancel()
+            if popup:
+                self.popup_fail('Extension', 'Could not download {0} Extension firmware {1}.{2}.{3}'.format(name, *version))
+            return None
+
+        try:
+            length = int(response.headers['Content-Length'])
+            progress.reset('Downloading {0} Extension firmware {1}.{2}.{3}'.format(name, *version), length)
+            progress.update(0)
+            firmware = b''
+            chunk = response.read(256)
+
+            while len(chunk) > 0:
+                firmware += chunk
+                progress.update(len(firmware))
+                chunk = response.read(256)
+
+            response.close()
+        except urllib2.URLError:
+            progress.cancel()
+            if popup:
+                self.popup_fail('Extension', 'Could not download {0} Extension firmware {1}.{2}.{3}'.format(name, *version))
+            return None
+
+        return firmware
+
+    def extension_firmware_save_clicked(self):
+        # FIXME: check Master.get_connection_type()
+
+        current_text = self.combo_extension_firmware.currentText()
+        progress = ProgressWrapper(self.create_progress_bar('Flashing'))
+
+        if current_text == SELECT:
+            return
+        elif current_text == CUSTOM:
+            firmware_file_name = self.edit_custom_extension_firmware.text()
 
             if not zipfile.is_zipfile(firmware_file_name):
-                self.popup_fail('Extension Firmware', 'Firmware file does not have correct format')
                 progress.cancel()
+                self.popup_fail('Extension Firmware', 'Firmware file does not have correct format')
                 return
 
-            files = []
-            zf = zipfile.ZipFile(firmware_file_name, 'r')
-            for name in zf.namelist():
-                files.append((int(name.replace('.bin', ''), 0), name))
-
-            progress.reset('Connecting to bootloader of WIFI Extension 2.0', 0)
-            progress.update(0)
-
-            master_info = self.extension_infos[self.combo_extension.currentIndex()]
-            master = None
-
-            # Find master from infos again, our info object may be outdated at this point
-            for info in infos.get_brick_infos():
-                if info.uid == master_info.uid:
-                    master = info.plugin.device
-
-            if master == None:
-                self.popup_fail('Extension Firmware', 'Error during Extension flashing: Could not find choosen Master Brick')
+            try:
+                with open(firmware_file_name, 'rb') as f:
+                    firmware = f.read()
+            except IOError:
+                progress.cancel()
+                self.popup_fail('Extension Firmware', 'Could not read firmware file')
                 return
 
-            esp = ESPROM(master)
-            esp.connect()
+            name = None
+            version = None
+        else:
+            url_part = self.combo_extension_firmware.itemData(self.combo_extension_firmware.currentIndex())
+            name = self.extension_firmware_infos[url_part].name
+            version = self.extension_firmware_infos[url_part].firmware_version_latest
+            firmware = self.download_extension_firmware(progress, url_part, name, version)
 
-            flash_mode = 0
-            flash_size_freq = 64
-            flash_info = struct.pack('BB', flash_mode, flash_size_freq)
+            if not firmware:
+                return
 
-            for i, f in enumerate(files):
-                address = f[0]
-                image = zf.read(f[1])
-                progress.reset('Erasing flash ({0}/{1})'.format(i+1, len(files)), 0)
-                progress.update(0)
-                blocks = math.ceil(len(image)/float(esp.ESP_FLASH_BLOCK))
-                esp.flash_begin(blocks*esp.ESP_FLASH_BLOCK, address)
-                seq = 0
+        progress.reset('Connecting to bootloader', 0)
+        progress.update(0)
 
-                progress.reset('Writing flash ({0}/{1})'.format(i+1, len(files)), 100)
-                while len(image) > 0:
-                    progress.update(100*(seq+1)/blocks)
-                    block = image[0:esp.ESP_FLASH_BLOCK]
+        extension_info = self.extension_infos[self.combo_extension.currentIndex()]
+        master = None
 
-                    # Fix sflash config data
-                    if address == 0 and seq == 0 and block[0] == '\xe9':
-                        block = block[0:2] + flash_info + block[4:]
+        # Find master from infos again, our info object may be outdated at this point
+        for info in infos.get_brick_infos():
+            if info.uid == extension_info.master_info.uid:
+                master = info.plugin.device
 
-                    # Pad the last block
-                    block = block + '\xff' * (esp.ESP_FLASH_BLOCK-len(block))
-                    esp.flash_block(block, seq)
+        if master == None:
+            progress.cancel()
+            self.popup_fail('Extension Firmware', 'Error during Extension flashing: Could not find choosen Master Brick')
+            return
 
-                    image = image[esp.ESP_FLASH_BLOCK:]
-                    seq += 1
-            esp.flash_finish(False)
+        try:
+            ESPFlash(master, progress).flash(firmware)
         except:
             progress.cancel()
             self.popup_fail('Extension Firmware', 'Error during Extension flashing: ' + traceback.format_exc())
+            return
+
+        progress.cancel()
+        master.reset()
+
+        if name != None and version != None:
+            self.popup_ok('Extension Firmware', 'Successfully flashed {0} Extension firmware {1}.{2}.{3}.\nMaster Brick will now restart automatically.'.format(name, *version))
         else:
-            progress.cancel()
-            master.reset()
-            self.popup_ok('Extension Firmware', 'Successfully flashed Extension firmware.\nMaster Brick will now automatically restart.')
+            self.popup_ok('Extension Firmware', 'Successfully flashed Extension firmware.\nMaster Brick will now restart automatically.')
 
     def extension_firmware_browse_clicked(self):
         if len(self.edit_custom_extension_firmware.text()) > 0:
@@ -1365,17 +1462,19 @@ There was an error during the auto-detection of Bricklets with Protocol 1.0 plug
             self.edit_custom_extension_firmware.setText(filename)
 
     def update_extensions(self):
-        self.combo_extension.clear()
         self.extension_infos = []
+        self.combo_extension.clear()
+        items = {}
 
-        for info in infos.get_brick_infos():
-            if info.device_identifier == BrickMaster.DEVICE_IDENTIFIER:
-                if (info.extensions['ext0'] != None and info.extensions['ext0'].extension_type == BrickMaster.EXTENSION_TYPE_WIFI2) or \
-                   (info.extensions['ext1'] != None and info.extensions['ext1'].extension_type == BrickMaster.EXTENSION_TYPE_WIFI2):
-                    self.combo_extension.addItem(info.get_combo_item_extension())
-                    self.extension_infos.append(info)
+        for info in infos.get_extension_infos():
+            if info.extension_type == BrickMaster.EXTENSION_TYPE_WIFI2:
+                items[info.get_combo_item()] = info
 
-        if self.combo_brick.count() == 0:
-            self.combo_brick.addItem(NO_EXTENSION)
+        for item in sorted(items.keys()):
+            self.extension_infos.append(items[item])
+            self.combo_extension.addItem(item, items[item].url_part)
+
+        if self.combo_extension.count() == 0:
+            self.combo_extension.addItem(NO_EXTENSION)
 
         self.update_ui_state()

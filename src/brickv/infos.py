@@ -42,6 +42,9 @@ class FirmwareInfo(AbstractInfo):
 class PluginInfo(AbstractInfo):
     type = 'plugin'
 
+class ExtensionFirmwareInfo(AbstractInfo):
+    type = 'extension_firmware'
+
 class ToolInfo(AbstractInfo):
     type = 'tool'
 
@@ -57,9 +60,21 @@ class ExtensionInfo(AbstractInfo):
     type = 'extension'
     name = 'Unknown'
     extension_type = -1
+    position = ''
+    master_info = None
 
     def __repr__(self):
         return self.name
+
+    def get_combo_item(self):
+        version_str = get_version_string(self.firmware_version_installed)
+        master_version_str = get_version_string(self.master_info.firmware_version_installed)
+
+        return '{0} ({1}) @ {2} [{3}] ({4})'.format(self.name,
+                                                    version_str,
+                                                    self.master_info.name,
+                                                    self.master_info.uid,
+                                                    master_version_str)
 
 class DeviceInfo(AbstractInfo):
     uid = ''
@@ -90,9 +105,6 @@ class DeviceInfo(AbstractInfo):
            self.hardware_version, self.device_identifier,
            self.protocol_version, self.url_part,
            self.plugin, self.tab_window)
-
-    def get_combo_item_extension(self):
-        return 'WIFI Extension 2.0 on top of {0} [{1}]'.format(self.name, self.uid)
 
     def get_combo_item(self):
         version_str = get_version_string(self.firmware_version_installed)
@@ -177,11 +189,14 @@ if not '_infos' in globals():
 
 def add_info(info):
     _infos[info.uid] = info
-    get_infos_changed_signal().emit(info.uid, True)
+    get_infos_changed_signal().emit(info.uid)
 
 def remove_info(uid):
     _infos.pop(uid)
-    get_infos_changed_signal().emit(uid, False)
+    get_infos_changed_signal().emit(uid)
+
+def update_info(uid):
+    get_infos_changed_signal().emit(uid)
 
 def get_info(uid):
     try:
@@ -200,6 +215,15 @@ def get_brick_infos():
 
 def get_bricklet_infos():
     return sorted([info for info in _infos.values() if info.type == 'bricklet'], key=lambda x: x.name)
+
+def get_extension_infos():
+    extension_infos = []
+
+    for brick_info in get_brick_infos():
+        if brick_info.can_have_extension:
+            extension_infos += filter(lambda value: value != None, brick_info.extensions.values())
+
+    return sorted(extension_infos, key=lambda x: x.name)
 
 def get_infos_changed_signal():
     return QApplication.instance().infos_changed_signal

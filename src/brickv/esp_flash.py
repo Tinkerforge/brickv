@@ -7,8 +7,8 @@
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
 # Foundation; either version 2 of the License, or (at your option) any later version.
-# 
-# This program is distributed in the hope that it will be useful, but WITHOUT 
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 # FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
@@ -26,6 +26,9 @@
 
 import struct
 import time
+import math
+from zipfile import ZipFile
+from StringIO import StringIO
 
 class TFSerial:
     def __init__(self, master):
@@ -40,7 +43,7 @@ class TFSerial:
     def flushInput(self): pass
     def flushOutput(self): pass
 
-    # We misuse the setRTS call to start the bootloader mode (and flush everyting etc) 
+    # We misuse the setRTS call to start the bootloader mode (and flush everyting etc)
     def setRTS(self, value):
         if value:
             self.master.start_wifi2_bootloader()
@@ -312,3 +315,59 @@ class ESPROM:
 
         # Yup - there's no good way to detect if we succeeded.
         # It it on the other hand unlikely to fail.
+
+class ESPFlash:
+    def __init__(self, master, progress=None):
+        self.master = master
+        self.progress = progress
+
+    def reset_progress(self, title, length):
+        if self.progress != None:
+            self.progress.reset(title, length)
+
+    def update_progress(self, value):
+        if self.progress != None:
+            self.progress.update(value)
+
+    def flash(self, firmware):
+        files = []
+        zf = ZipFile(StringIO(firmware), 'r')
+
+        for name in zf.namelist():
+            files.append((int(name.replace('.bin', ''), 0), name))
+
+        esp = ESPROM(self.master)
+        esp.connect()
+
+        flash_mode = 0
+        flash_size_freq = 64
+        flash_info = struct.pack('BB', flash_mode, flash_size_freq)
+
+        for i, f in enumerate(files):
+            address = f[0]
+            image = zf.read(f[1])
+            self.reset_progress('Erasing flash ({0}/{1})'.format(i+1, len(files)), 0)
+            self.update_progress(0)
+            blocks = math.ceil(len(image)/float(esp.ESP_FLASH_BLOCK))
+            esp.flash_begin(blocks*esp.ESP_FLASH_BLOCK, address)
+            seq = 0
+
+            self.reset_progress('Writing flash ({0}/{1})'.format(i+1, len(files)), blocks)
+            while len(image) > 0:
+                self.update_progress(seq)
+                block = image[0:esp.ESP_FLASH_BLOCK]
+
+                # Fix sflash config data
+                if address == 0 and seq == 0 and block[0] == '\xe9':
+                    block = block[0:2] + flash_info + block[4:]
+
+                # Pad the last block
+                block = block + '\xff' * (esp.ESP_FLASH_BLOCK-len(block))
+                esp.flash_block(block, seq)
+
+                image = image[esp.ESP_FLASH_BLOCK:]
+                seq += 1
+
+            self.update_progress(blocks)
+
+        esp.flash_finish(False)

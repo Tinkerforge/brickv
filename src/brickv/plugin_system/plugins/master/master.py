@@ -74,34 +74,46 @@ class Master(PluginBase, Ui_Master):
         self.update_extensions_in_device_info()
 
     def update_extensions_in_device_info(self):
-        def is_present(present, extension_type, name):
+        def is_present_async(present, extension_type, name):
             self.extension_type_preset[extension_type] = present
+
             if present:
                 if self.device_info.extensions['ext0'] == None:
-                    self.device_info.extensions['ext0'] = infos.ExtensionInfo()
-                    self.device_info.extensions['ext0'].name = name
-                    self.device_info.extensions['ext0'].extension_type = extension_type
+                    ext = 'ext0'
                 elif self.device_info.extensions['ext1'] == None:
-                    self.device_info.extensions['ext1'] = infos.ExtensionInfo()
-                    self.device_info.extensions['ext1'].name = name
-                    self.device_info.extensions['ext1'].extension_type = extension_type
+                    ext = 'ext1'
                 else:
-                    pass # This should never be the case
+                    return # This should never be the case
+
+                self.device_info.extensions[ext] = infos.ExtensionInfo()
+                self.device_info.extensions[ext].name = name
+                self.device_info.extensions[ext].extension_type = extension_type
+                self.device_info.extensions[ext].position = ext
+                self.device_info.extensions[ext].master_info = self.device_info
+                infos.update_info(self.uid)
+
+                def get_wifi2_firmware_version_async(version, ext):
+                    self.device_info.extensions[ext].firmware_version_installed = version
+                    infos.update_info(self.uid)
+
+                if extension_type == self.master.EXTENSION_TYPE_WIFI2:
+                    self.device_info.extensions[ext].url_part = 'wifi_v2'
+                    async_call(self.master.get_wifi2_firmware_version, None, lambda v: get_wifi2_firmware_version_async(v, ext), self.increase_error_count)
 
         if self.firmware_version >= (1, 1, 0):
-            async_call(self.master.is_chibi_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_CHIBI, 'Chibi Extension'), self.increase_error_count)
+            async_call(self.master.is_chibi_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_CHIBI, 'Chibi Extension'), self.increase_error_count)
 
         if self.firmware_version >= (1, 2, 0):
-            async_call(self.master.is_rs485_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_RS485, 'RS485 Extension'), self.increase_error_count)
+            async_call(self.master.is_rs485_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_RS485, 'RS485 Extension'), self.increase_error_count)
 
         if self.firmware_version >= (1, 3, 0):
-            async_call(self.master.is_wifi_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_WIFI, 'WIFI Extension'), self.increase_error_count)
+            async_call(self.master.is_wifi_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_WIFI, 'WIFI Extension'), self.increase_error_count)
 
         if self.firmware_version >= (2, 1, 0):
-            async_call(self.master.is_ethernet_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_ETHERNET, 'Ethernet Extension'), self.increase_error_count)
+            async_call(self.master.is_ethernet_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_ETHERNET, 'Ethernet Extension'), self.increase_error_count)
 
         if self.firmware_version >= (2, 4, 0):
-            async_call(self.master.is_wifi2_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_WIFI2, 'WIFI Extension 2.0'), self.increase_error_count)
+            async_call(self.master.is_wifi2_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_WIFI2, 'WIFI Extension 2.0'), self.increase_error_count)
 
         async_call(lambda: None, None, lambda: get_main_window().update_tree_view(), None)
 

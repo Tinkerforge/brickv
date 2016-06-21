@@ -353,7 +353,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
             <string>Firmware:</string>
@@ -363,27 +363,27 @@
          <item row="0" column="1" colspan="2">
           <widget class="QComboBox" name="combo_extension"/>
          </item>
-         <item row="1" column="1">
+         <item row="2" column="1">
           <widget class="QComboBox" name="combo_extension_firmware"/>
          </item>
-         <item row="1" column="2">
+         <item row="2" column="2">
           <widget class="QPushButton" name="button_extension_firmware_save">
            <property name="text">
             <string>Save</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
+         <item row="3" column="2">
           <widget class="QPushButton" name="button_extension_firmware_browse">
            <property name="text">
             <string>Browse</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="3" column="1">
           <widget class="QLineEdit" name="edit_custom_extension_firmware"/>
          </item>
-         <item row="3" column="1" colspan="2">
+         <item row="4" column="1" colspan="2">
           <widget class="QLabel" name="label_no_extension_firmware_connection">
            <property name="palette">
             <palette>
@@ -481,6 +481,13 @@
            </property>
            <property name="wordWrap">
             <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="3">
+          <widget class="Line" name="line_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
