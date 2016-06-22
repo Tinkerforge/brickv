@@ -128,6 +128,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.label_no_firmware_connection.hide()
         self.label_no_plugin_connection.hide()
         self.label_no_extension_firmware_connection.hide()
+        self.label_extension_firmware_usb_hint.hide()
 
         self.refresh_serial_ports()
 
@@ -483,10 +484,22 @@ class FlashingWindow(QDialog, Ui_Flashing):
         is_extension_firmware_select = self.combo_extension_firmware.currentText() == SELECT
         is_extension_firmware_custom = self.combo_extension_firmware.currentText() == CUSTOM
         is_no_extension = self.combo_extension.currentText() == NO_EXTENSION
+
+        try:
+            extension_connection_type = self.extension_infos[self.combo_extension.currentIndex()].master_info.connection_type
+        except:
+            extension_connection_type = None
+
+        if extension_connection_type == None:
+            is_extension_connection_type_usb = False
+        else:
+            is_extension_connection_type_usb = extension_connection_type == BrickMaster.CONNECTION_TYPE_USB
+
         self.combo_extension.setEnabled(not is_no_extension)
-        self.button_extension_firmware_save.setEnabled(not is_extension_firmware_select and not is_no_extension)
+        self.button_extension_firmware_save.setEnabled(not is_extension_firmware_select and not is_no_extension and is_extension_connection_type_usb)
         self.edit_custom_extension_firmware.setEnabled(is_extension_firmware_custom)
         self.button_extension_firmware_browse.setEnabled(is_extension_firmware_custom)
+        self.label_extension_firmware_usb_hint.setVisible(not is_extension_connection_type_usb)
 
         self.tab_widget.setTabEnabled(2, len(self.brick_infos) > 0)
         self.tab_widget.setTabEnabled(3, len(self.extension_infos) > 0)
@@ -1335,6 +1348,8 @@ There was an error during the auto-detection of Bricklets with Protocol 1.0 plug
             self.combo_extension_firmware.setCurrentIndex(0)
         else:
             self.combo_extension_firmware.setCurrentIndex(i)
+
+        self.update_ui_state()
 
     def extension_firmware_changed(self, index):
         self.update_ui_state()

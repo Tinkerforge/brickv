@@ -144,6 +144,8 @@ class BrickInfo(DeviceInfo):
 
 class BrickMasterInfo(BrickInfo):
     can_have_extension = True
+    connection_type = None
+
     def __init__(self):
         BrickInfo.__init__(self)
 

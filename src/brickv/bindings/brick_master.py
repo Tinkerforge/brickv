@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-06-21.      #
+# This file was automatically generated on 2016-06-22.      #
 #                                                           #
 # Python Bindings Version 2.1.9                             #
 #                                                           #
@@ -209,6 +209,14 @@ class BrickMaster(Device):
     THRESHOLD_OPTION_GREATER = '>'
     ETHERNET_CONNECTION_DHCP = 0
     ETHERNET_CONNECTION_STATIC_IP = 1
+    CONNECTION_TYPE_NONE = 0
+    CONNECTION_TYPE_USB = 1
+    CONNECTION_TYPE_SPI_STACK = 2
+    CONNECTION_TYPE_CHIBI = 3
+    CONNECTION_TYPE_RS485 = 4
+    CONNECTION_TYPE_WIFI = 5
+    CONNECTION_TYPE_ETHERNET = 6
+    CONNECTION_TYPE_WIFI2 = 7
 
     def __init__(self, uid, ipcon):
         """
@@ -354,7 +362,7 @@ class BrickMaster(Device):
     def set_extension_type(self, extension, exttype):
         """
         Writes the extension type to the EEPROM of a specified extension. 
-        The extension is either 0 or 1 (0 is the on the bottom, 1 is the on on top, 
+        The extension is either 0 or 1 (0 is the on the bottom, 1 is the one on top,
         if only one extension is present use 0).
         
         Possible extension types:
@@ -1225,15 +1233,6 @@ class BrickMaster(Device):
 
     def get_connection_type(self):
         """
-        COM_NONE      = 0,
-        	COM_USB       = 1,
-        	COM_SPI_STACK = 2,
-        	COM_CHIBI     = 3,
-        	COM_RS485     = 4,
-        	COM_WIFI      = 5,
-        	COM_ETHERNET  = 6,
-        	COM_WIFI2     = 7,
-        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CONNECTION_TYPE, (), '', 'B')

@@ -100,6 +100,10 @@ class Master(PluginBase, Ui_Master):
                     self.device_info.extensions[ext].url_part = 'wifi_v2'
                     async_call(self.master.get_wifi2_firmware_version, None, lambda v: get_wifi2_firmware_version_async(v, ext), self.increase_error_count)
 
+        def get_connection_type_async(connection_type):
+            self.device_info.connection_type = connection_type
+            infos.update_info(self.uid)
+
         if self.firmware_version >= (1, 1, 0):
             async_call(self.master.is_chibi_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_CHIBI, 'Chibi Extension'), self.increase_error_count)
 
@@ -114,6 +118,7 @@ class Master(PluginBase, Ui_Master):
 
         if self.firmware_version >= (2, 4, 0):
             async_call(self.master.is_wifi2_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_WIFI2, 'WIFI Extension 2.0'), self.increase_error_count)
+            async_call(self.master.get_connection_type, None, get_connection_type_async, self.increase_error_count)
 
         async_call(lambda: None, None, lambda: get_main_window().update_tree_view(), None)
 
