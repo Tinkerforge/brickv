@@ -27,8 +27,13 @@
 import struct
 import time
 import math
+import sys
 from zipfile import ZipFile
-from StringIO import StringIO
+
+try:
+    from StringIO import StringIO as FileLike
+except ImportError:
+    from io import BytesIO as FileLike
 
 class TFSerial:
     def __init__(self, master):
@@ -50,7 +55,11 @@ class TFSerial:
 
     def write(self, data):
         try:
-            data = map(ord, data)
+            if type(data) == str:
+                data = map(ord, data) # Python 2
+            else:
+                data = list(data) # Python 3
+
             while data != []:
                 data_chunk = data[:60]
                 length = len(data_chunk)
@@ -64,7 +73,10 @@ class TFSerial:
         if len(self.read_buffer) >= length:
             ret = self.read_buffer[:length]
             self.read_buffer = self.read_buffer[length:]
-            return ''.join(map(chr, ret))
+            if sys.hexversion < 0x03000000:
+                return ''.join(map(chr, ret))
+            else:
+                return bytes(ret)
 
         try:
             t = time.time()
@@ -82,7 +94,10 @@ class TFSerial:
 
         ret = self.read_buffer[:length]
         self.read_buffer = self.read_buffer[length:]
-        return ''.join(map(chr, ret))
+        if sys.hexversion < 0x03000000:
+            return ''.join(map(chr, ret))
+        else:
+            return bytes(ret)
 
 class ESPROM:
 
@@ -115,25 +130,25 @@ class ESPROM:
     ESP_OTP_MAC1    = 0x3ff00054
 
     # Sflash stub: an assembly routine to read from spi flash and send to host
-    SFLASH_STUB     = "\x80\x3c\x00\x40\x1c\x4b\x00\x40\x21\x11\x00\x40\x00\x80" \
-            "\xfe\x3f\xc1\xfb\xff\xd1\xf8\xff\x2d\x0d\x31\xfd\xff\x41\xf7\xff\x4a" \
-            "\xdd\x51\xf9\xff\xc0\x05\x00\x21\xf9\xff\x31\xf3\xff\x41\xf5\xff\xc0" \
-            "\x04\x00\x0b\xcc\x56\xec\xfd\x06\xff\xff\x00\x00"
+    SFLASH_STUB     = b"\x80\x3c\x00\x40\x1c\x4b\x00\x40\x21\x11\x00\x40\x00\x80" \
+            b"\xfe\x3f\xc1\xfb\xff\xd1\xf8\xff\x2d\x0d\x31\xfd\xff\x41\xf7\xff\x4a" \
+            b"\xdd\x51\xf9\xff\xc0\x05\x00\x21\xf9\xff\x31\xf3\xff\x41\xf5\xff\xc0" \
+            b"\x04\x00\x0b\xcc\x56\xec\xfd\x06\xff\xff\x00\x00"
 
     def __init__(self, master):
         self._port = TFSerial(master)
 
     """ Read bytes from the serial port while performing SLIP unescaping """
     def read(self, length = 1):
-        b = ''
+        b = b''
         while len(b) < length:
             c = self._port.read(1)
-            if c == '\xdb':
+            if c == b'\xdb':
                 c = self._port.read(1)
-                if c == '\xdc':
-                    b = b + '\xc0'
-                elif c == '\xdd':
-                    b = b + '\xdb'
+                if c == b'\xdc':
+                    b = b + b'\xc0'
+                elif c == b'\xdd':
+                    b = b + b'\xdb'
                 else:
                     raise Exception('Invalid SLIP escape')
             else:
@@ -142,14 +157,14 @@ class ESPROM:
 
     """ Write bytes to the serial port while performing SLIP escaping """
     def write(self, packet):
-        buf = '\xc0'+(packet.replace('\xdb','\xdb\xdd').replace('\xc0','\xdb\xdc'))+'\xc0'
+        buf = b'\xc0'+(packet.replace(b'\xdb',b'\xdb\xdd').replace(b'\xc0',b'\xdb\xdc'))+b'\xc0'
         self._port.write(buf)
 
     """ Calculate checksum of a blob, as it is defined by the ROM """
     @staticmethod
     def checksum(data, state = ESP_CHECKSUM_MAGIC):
         for b in data:
-            state ^= ord(b)
+            state ^= ord(b) if sys.hexversion < 0x03000000 else b
         return state
 
     """ Send a request and read the response """
@@ -160,7 +175,7 @@ class ESPROM:
             self.write(pkt)
 
         # Read header of response and parse
-        if self._port.read(1) != '\xc0':
+        if self._port.read(1) != b'\xc0':
             raise Exception('Invalid head of packet')
         hdr = self.read(8)
         (resp, op_ret, len_ret, val) = struct.unpack('<BBHI', hdr)
@@ -171,20 +186,20 @@ class ESPROM:
         body = self.read(len_ret)
 
         # Terminating byte
-        if self._port.read(1) != chr(0xc0):
+        if self._port.read(1) != b'\xc0':
             raise Exception('Invalid end of packet')
 
         return val, body
 
     """ Perform a connection test """
     def sync(self):
-        self.command(ESPROM.ESP_SYNC, '\x07\x07\x12\x20'+32*'\x55')
-        for i in xrange(7):
+        self.command(ESPROM.ESP_SYNC, b'\x07\x07\x12\x20'+32*b'\x55')
+        for _ in range(7):
             self.command()
 
     """ Try connecting repeatedly until successful, or giving up """
     def connect(self):
-        for _ in xrange(10):
+        for _ in range(10):
             # issue reset-to-bootloader:
             # RTS = either CH_PD or nRESET (both active low = chip in reset)
             # DTR = GPIO0 (active low = boot to flasher)
@@ -197,7 +212,7 @@ class ESPROM:
             self._port.setDTR(False)
 
             self._port.timeout = 0.3 # worst-case latency timer should be 255ms (probably <20ms)
-            for _ in xrange(3):
+            for _ in range(3):
                 try:
                     self._port.flushInput()
                     self._port.flushOutput()
@@ -218,47 +233,47 @@ class ESPROM:
     """ Write to memory address in target """
     def write_reg(self, addr, value, mask, delay_us = 0):
         if self.command(ESPROM.ESP_WRITE_REG,
-                struct.pack('<IIII', addr, value, mask, delay_us))[1] != "\0\0":
+                struct.pack('<IIII', addr, value, mask, delay_us))[1] != b"\0\0":
             raise Exception('Failed to write target memory')
 
     """ Start downloading an application image to RAM """
     def mem_begin(self, size, blocks, blocksize, offset):
         if self.command(ESPROM.ESP_MEM_BEGIN,
-                struct.pack('<IIII', size, blocks, blocksize, offset))[1] != "\0\0":
+                struct.pack('<IIII', size, blocks, blocksize, offset))[1] != b"\0\0":
             raise Exception('Failed to enter RAM download mode')
 
     """ Send a block of an image to RAM """
     def mem_block(self, data, seq):
         if self.command(ESPROM.ESP_MEM_DATA,
-                struct.pack('<IIII', len(data), seq, 0, 0)+data, ESPROM.checksum(data))[1] != "\0\0":
+                struct.pack('<IIII', len(data), seq, 0, 0)+data, ESPROM.checksum(data))[1] != b"\0\0":
             raise Exception('Failed to write to target RAM')
 
     """ Leave download mode and run the application """
     def mem_finish(self, entrypoint = 0):
         if self.command(ESPROM.ESP_MEM_END,
-                struct.pack('<II', int(entrypoint == 0), entrypoint))[1] != "\0\0":
+                struct.pack('<II', int(entrypoint == 0), entrypoint))[1] != b"\0\0":
             raise Exception('Failed to leave RAM download mode')
 
     """ Start downloading to Flash (performs an erase) """
     def flash_begin(self, size, offset):
         old_tmo = self._port.timeout
-        num_blocks = (size + ESPROM.ESP_FLASH_BLOCK - 1) / ESPROM.ESP_FLASH_BLOCK
+        num_blocks = (size + ESPROM.ESP_FLASH_BLOCK - 1) // ESPROM.ESP_FLASH_BLOCK
         self._port.timeout = 10
         if self.command(ESPROM.ESP_FLASH_BEGIN,
-                struct.pack('<IIII', size, num_blocks, ESPROM.ESP_FLASH_BLOCK, offset))[1] != "\0\0":
+                struct.pack('<IIII', size, num_blocks, ESPROM.ESP_FLASH_BLOCK, offset))[1] != b"\0\0":
             raise Exception('Failed to enter Flash download mode')
         self._port.timeout = old_tmo
 
     """ Write block to flash """
     def flash_block(self, data, seq):
         if self.command(ESPROM.ESP_FLASH_DATA,
-                struct.pack('<IIII', len(data), seq, 0, 0)+data, ESPROM.checksum(data))[1] != "\0\0":
+                struct.pack('<IIII', len(data), seq, 0, 0)+data, ESPROM.checksum(data))[1] != b"\0\0":
             raise Exception('Failed to write to target Flash')
 
     """ Leave flash mode and run/reboot """
     def flash_finish(self, reboot = False):
         pkt = struct.pack('<I', int(not reboot))
-        if self.command(ESPROM.ESP_FLASH_END, pkt)[1] != "\0\0":
+        if self.command(ESPROM.ESP_FLASH_END, pkt)[1] != b"\0\0":
             raise Exception('Failed to leave Flash mode')
 
     """ Run application code in flash """
@@ -282,13 +297,13 @@ class ESPROM:
 
         # Fetch the data
         data = ''
-        for _ in xrange(count):
-            if self._port.read(1) != '\xc0':
+        for _ in range(count):
+            if self._port.read(1) != b'\xc0':
                 raise Exception('Invalid head of packet (sflash read)')
 
             data += self.read(size)
 
-            if self._port.read(1) != chr(0xc0):
+            if self._port.read(1) != b'\xc0':
                 raise Exception('Invalid end of packet (sflash read)')
 
         return data
@@ -331,7 +346,7 @@ class ESPFlash:
 
     def flash(self, firmware):
         files = []
-        zf = ZipFile(StringIO(firmware), 'r')
+        zf = ZipFile(FileLike(firmware), 'r')
 
         for name in zf.namelist():
             files.append((int(name.replace('.bin', ''), 0), name))
@@ -358,11 +373,11 @@ class ESPFlash:
                 block = image[0:esp.ESP_FLASH_BLOCK]
 
                 # Fix sflash config data
-                if address == 0 and seq == 0 and block[0] == '\xe9':
+                if address == 0 and seq == 0 and block[0] == b'\xe9':
                     block = block[0:2] + flash_info + block[4:]
 
                 # Pad the last block
-                block = block + '\xff' * (esp.ESP_FLASH_BLOCK-len(block))
+                block = block + b'\xff' * (esp.ESP_FLASH_BLOCK-len(block))
                 esp.flash_block(block, seq)
 
                 image = image[esp.ESP_FLASH_BLOCK:]
