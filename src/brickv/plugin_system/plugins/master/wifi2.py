@@ -347,7 +347,6 @@ class Wifi2(QWidget, Ui_Wifi2):
                 self.popup_fail()
             else:
                 self.popup_ok()
-                self.master.reset()
         except:
             self.popup_fail()
 
@@ -459,4 +458,3 @@ class Wifi2(QWidget, Ui_Wifi2):
 
     def popup_fail(self, message='Could not save configuration.'):
         QMessageBox.critical(get_main_window(), 'Configuration', message, QMessageBox.Ok)
-    
