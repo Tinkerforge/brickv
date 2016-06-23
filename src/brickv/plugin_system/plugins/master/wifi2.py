@@ -164,7 +164,7 @@ class Wifi2(QWidget, Ui_Wifi2):
     def get_wifi2_client_configuration_async(self, data):
         self.client_enable = data.enable
         self.wifi_client_ssid.setText(data.ssid)
-        if data.ip == (0, 0, 0, 0):
+        if data.ip_address == (0, 0, 0, 0):
             self.wifi_client_ip_configuration.setCurrentIndex(0)
         else:
             self.wifi_client_ip_configuration.setCurrentIndex(1)
@@ -218,7 +218,7 @@ class Wifi2(QWidget, Ui_Wifi2):
     def get_wifi2_ap_configuration_async(self, data):
         self.ap_enable = data.enable
         self.wifi_ap_ssid.setText(data.ssid)
-        if data.ip == (0, 0, 0, 0):
+        if data.ip_address == (0, 0, 0, 0):
             self.wifi_ap_ip_configuration.setCurrentIndex(0)
         else:
             self.wifi_ap_ip_configuration.setCurrentIndex(1)
