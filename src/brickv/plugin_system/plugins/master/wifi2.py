@@ -160,7 +160,6 @@ class Wifi2(QWidget, Ui_Wifi2):
         self.wifi_websocket_port.setValue(data.websocket_port)
         self.wifi_website_port.setValue(data.website_port)
         self.wifi_phy_mode.setCurrentIndex(data.phy_mode)
-        
 
     def get_wifi2_client_configuration_async(self, data):
         self.client_enable = data.enable
@@ -169,10 +168,10 @@ class Wifi2(QWidget, Ui_Wifi2):
             self.wifi_client_ip_configuration.setCurrentIndex(0)
         else:
             self.wifi_client_ip_configuration.setCurrentIndex(1)
-        self.wifi_client_ip1.setValue(data.ip[3])
-        self.wifi_client_ip2.setValue(data.ip[2])
-        self.wifi_client_ip3.setValue(data.ip[1])
-        self.wifi_client_ip4.setValue(data.ip[0])
+        self.wifi_client_ip1.setValue(data.ip_address[3])
+        self.wifi_client_ip2.setValue(data.ip_address[2])
+        self.wifi_client_ip3.setValue(data.ip_address[1])
+        self.wifi_client_ip4.setValue(data.ip_address[0])
         self.wifi_client_sub1.setValue(data.subnet_mask[3])
         self.wifi_client_sub2.setValue(data.subnet_mask[2])
         self.wifi_client_sub3.setValue(data.subnet_mask[1])
@@ -223,10 +222,10 @@ class Wifi2(QWidget, Ui_Wifi2):
             self.wifi_ap_ip_configuration.setCurrentIndex(0)
         else:
             self.wifi_ap_ip_configuration.setCurrentIndex(1)
-        self.wifi_ap_ip1.setValue(data.ip[3])
-        self.wifi_ap_ip2.setValue(data.ip[2])
-        self.wifi_ap_ip3.setValue(data.ip[1])
-        self.wifi_ap_ip4.setValue(data.ip[0])
+        self.wifi_ap_ip1.setValue(data.ip_address[3])
+        self.wifi_ap_ip2.setValue(data.ip_address[2])
+        self.wifi_ap_ip3.setValue(data.ip_address[1])
+        self.wifi_ap_ip4.setValue(data.ip_address[0])
         self.wifi_ap_sub1.setValue(data.subnet_mask[3])
         self.wifi_ap_sub2.setValue(data.subnet_mask[2])
         self.wifi_ap_sub3.setValue(data.subnet_mask[1])
@@ -320,7 +319,6 @@ class Wifi2(QWidget, Ui_Wifi2):
 
         self.master.set_response_expected(self.master.FUNCTION_SET_WIFI2_AUTHENTICATION_SECRET, True)
         self.master.set_response_expected(self.master.FUNCTION_SET_WIFI2_CONFIGURATION,         True)
-        self.master.set_response_expected(self.master.FUNCTION_SET_WIFI2_CLIENT_CONFIGURATION,  True)
         self.master.set_response_expected(self.master.FUNCTION_SET_WIFI2_CLIENT_CONFIGURATION,  True)
         self.master.set_response_expected(self.master.FUNCTION_SET_WIFI2_CLIENT_HOSTNAME,       True)
         self.master.set_response_expected(self.master.FUNCTION_SET_WIFI2_CLIENT_PASSWORD,       True)
