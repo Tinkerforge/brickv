@@ -164,14 +164,14 @@ class Wifi2(QWidget, Ui_Wifi2):
     def get_wifi2_client_configuration_async(self, data):
         self.client_enable = data.enable
         self.wifi_client_ssid.setText(data.ssid)
-        if data.ip_address == (0, 0, 0, 0):
+        if data.ip == (0, 0, 0, 0):
             self.wifi_client_ip_configuration.setCurrentIndex(0)
         else:
             self.wifi_client_ip_configuration.setCurrentIndex(1)
-        self.wifi_client_ip1.setValue(data.ip_address[3])
-        self.wifi_client_ip2.setValue(data.ip_address[2])
-        self.wifi_client_ip3.setValue(data.ip_address[1])
-        self.wifi_client_ip4.setValue(data.ip_address[0])
+        self.wifi_client_ip1.setValue(data.ip[3])
+        self.wifi_client_ip2.setValue(data.ip[2])
+        self.wifi_client_ip3.setValue(data.ip[1])
+        self.wifi_client_ip4.setValue(data.ip[0])
         self.wifi_client_sub1.setValue(data.subnet_mask[3])
         self.wifi_client_sub2.setValue(data.subnet_mask[2])
         self.wifi_client_sub3.setValue(data.subnet_mask[1])
@@ -218,14 +218,14 @@ class Wifi2(QWidget, Ui_Wifi2):
     def get_wifi2_ap_configuration_async(self, data):
         self.ap_enable = data.enable
         self.wifi_ap_ssid.setText(data.ssid)
-        if data.ip_address == (0, 0, 0, 0):
+        if data.ip == (0, 0, 0, 0):
             self.wifi_ap_ip_configuration.setCurrentIndex(0)
         else:
             self.wifi_ap_ip_configuration.setCurrentIndex(1)
-        self.wifi_ap_ip1.setValue(data.ip_address[3])
-        self.wifi_ap_ip2.setValue(data.ip_address[2])
-        self.wifi_ap_ip3.setValue(data.ip_address[1])
-        self.wifi_ap_ip4.setValue(data.ip_address[0])
+        self.wifi_ap_ip1.setValue(data.ip[3])
+        self.wifi_ap_ip2.setValue(data.ip[2])
+        self.wifi_ap_ip3.setValue(data.ip[1])
+        self.wifi_ap_ip4.setValue(data.ip[0])
         self.wifi_ap_sub1.setValue(data.subnet_mask[3])
         self.wifi_ap_sub2.setValue(data.subnet_mask[2])
         self.wifi_ap_sub3.setValue(data.subnet_mask[1])

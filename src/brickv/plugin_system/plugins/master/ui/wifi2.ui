@@ -23,7 +23,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-312</y>
+        <y>0</y>
         <width>671</width>
         <height>1120</height>
        </rect>
@@ -592,7 +592,7 @@ WEP: 10 or 26 hexadecimal digits</string>
               <item row="2" column="0">
                <widget class="QLabel" name="wifi_client_ip_label">
                 <property name="text">
-                 <string>IP Address:</string>
+                 <string>IP:</string>
                 </property>
                 <property name="buddy">
                  <cstring>wifi_client_ip4</cstring>
@@ -769,7 +769,7 @@ WEP: 10 or 26 hexadecimal digits</string>
          <item row="1" column="0">
           <widget class="QLabel" name="wifi_websocket_port_label">
            <property name="text">
-            <string>Websocket Port:</string>
+            <string>WebSocket Port:</string>
            </property>
           </widget>
          </item>
@@ -1075,7 +1075,7 @@ WEP: 10 or 26 hexadecimal digits</string>
               <item row="1" column="0">
                <widget class="QLabel" name="wifi_ap_ip_label">
                 <property name="text">
-                 <string>IP Address:</string>
+                 <string>IP:</string>
                 </property>
                </widget>
               </item>

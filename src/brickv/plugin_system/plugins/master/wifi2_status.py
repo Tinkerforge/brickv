@@ -46,7 +46,7 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
         self.client_group = [
             (self.wifi_client_status_status, self.wifi_client_status_status_label),
             (self.wifi_client_status_signal_strength, self.wifi_client_status_signal_strength_label),
-            (self.wifi_client_status_ip_address, self.wifi_client_status_ip_address_label),
+            (self.wifi_client_status_ip, self.wifi_client_status_ip_label),
             (self.wifi_client_status_subnet_mask, self.wifi_client_status_subnet_mask_label),
             (self.wifi_client_status_gateway, self.wifi_client_status_gateway_label),
             (self.wifi_client_status_mac_address, self.wifi_client_status_mac_address_label),
@@ -56,7 +56,7 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
         
         self.ap_group = [
             (self.wifi_ap_status_connected_count, self.wifi_ap_status_connected_count_label),
-            (self.wifi_ap_status_ip_address, self.wifi_ap_status_ip_address_label),
+            (self.wifi_ap_status_ip, self.wifi_ap_status_ip_label),
             (self.wifi_ap_status_subnet_mask, self.wifi_ap_status_subnet_mask_label),
             (self.wifi_ap_status_gateway, self.wifi_ap_status_gateway_label),
             (self.wifi_ap_status_mac_address, self.wifi_ap_status_mac_address_label),
@@ -86,11 +86,11 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
         elif s.client_status == 4:
             client_status = 'Connect Failed'
         elif s.client_status == 5:
-            client_status = 'Got IP Address'
+            client_status = 'Got IP'
         
         self.wifi_client_status_enabled.setText(client_enabled)
         self.wifi_client_status_status.setText(client_status)
-        self.wifi_client_status_ip_address.setText("%d.%d.%d.%d" % s.client_ip_address)
+        self.wifi_client_status_ip.setText("%d.%d.%d.%d" % s.client_ip)
         self.wifi_client_status_subnet_mask.setText("%d.%d.%d.%d" % s.client_subnet_mask)
         self.wifi_client_status_gateway.setText("%d.%d.%d.%d" % s.client_gateway)
         self.wifi_client_status_mac_address.setText("%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x" % s.client_mac_address)
@@ -106,7 +106,7 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
             ap_enabled = 'No'
         
         self.wifi_ap_status_enabled.setText(ap_enabled)
-        self.wifi_ap_status_ip_address.setText("%d.%d.%d.%d" % s.ap_ip_address)
+        self.wifi_ap_status_ip.setText("%d.%d.%d.%d" % s.ap_ip)
         self.wifi_ap_status_subnet_mask.setText("%d.%d.%d.%d" % s.ap_subnet_mask)
         self.wifi_ap_status_gateway.setText("%d.%d.%d.%d" % s.ap_gateway)
         self.wifi_ap_status_mac_address.setText("%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x" % s.ap_mac_address)
