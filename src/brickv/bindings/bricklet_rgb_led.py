@@ -57,13 +57,13 @@ class BrickletRGBLED(Device):
 
     def set_rgb_value(self, r, g, b):
         """
-        TODO
+        Sets the *rgb* value for the LED.
         """
         self.ipcon.send_request(self, BrickletRGBLED.FUNCTION_SET_RGB_VALUE, (r, g, b), 'B B B', '')
 
     def get_rgb_value(self):
         """
-        TODO
+        Returns the *rgb* value of the LED as set by :func:`SetRGBValues`.
         """
         return GetRGBValue(*self.ipcon.send_request(self, BrickletRGBLED.FUNCTION_GET_RGB_VALUE, (), '', 'B B B'))
 

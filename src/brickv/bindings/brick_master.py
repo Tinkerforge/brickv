@@ -35,7 +35,7 @@ GetUSBVoltageCallbackThreshold = namedtuple('USBVoltageCallbackThreshold', ['opt
 GetEthernetConfiguration = namedtuple('EthernetConfiguration', ['connection', 'ip', 'subnet_mask', 'gateway', 'port'])
 GetEthernetStatus = namedtuple('EthernetStatus', ['mac_address', 'ip', 'subnet_mask', 'gateway', 'rx_count', 'tx_count', 'hostname'])
 GetEthernetWebsocketConfiguration = namedtuple('EthernetWebsocketConfiguration', ['sockets', 'port'])
-ReadWifi2Flash = namedtuple('ReadWifi2Flash', ['data', 'length_out'])
+ReadWifi2Flash = namedtuple('ReadWifi2Flash', ['data', 'result'])
 GetWifi2Configuration = namedtuple('Wifi2Configuration', ['port', 'websocket_port', 'website_port', 'phy_mode', 'sleep_mode', 'website'])
 GetWifi2Status = namedtuple('Wifi2Status', ['client_enabled', 'client_status', 'client_ip', 'client_subnet_mask', 'client_gateway', 'client_mac_address', 'client_rx_count', 'client_tx_count', 'client_rssi', 'ap_enabled', 'ap_ip', 'ap_subnet_mask', 'ap_gateway', 'ap_mac_address', 'ap_rx_count', 'ap_tx_count', 'ap_connected_count'])
 GetWifi2ClientConfiguration = namedtuple('Wifi2ClientConfiguration', ['enable', 'ssid', 'ip', 'subnet_mask', 'gateway', 'mac_address', 'bssid'])
@@ -1272,11 +1272,11 @@ class BrickMaster(Device):
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_WRITE_WIFI2_FLASH, (data, length), '60B B', 'b')
 
-    def read_wifi2_flash(self, length_in):
+    def read_wifi2_flash(self, length):
         """
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
-        return ReadWifi2Flash(*self.ipcon.send_request(self, BrickMaster.FUNCTION_READ_WIFI2_FLASH, (length_in,), 'B', '60B B'))
+        return ReadWifi2Flash(*self.ipcon.send_request(self, BrickMaster.FUNCTION_READ_WIFI2_FLASH, (length,), 'B', '60B B'))
 
     def set_wifi2_authentication_secret(self, secret):
         """

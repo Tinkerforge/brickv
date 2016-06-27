@@ -118,7 +118,7 @@ class BrickletLEDStrip(Device):
 
     def get_rgb_values(self, index, length):
         """
-        Returns the rgb with the given *length* starting from the
+        Returns *rgb* values with the given *length* starting from the
         given *index*.
         
         The values are the last values that were set by :func:`SetRGBValues`.
