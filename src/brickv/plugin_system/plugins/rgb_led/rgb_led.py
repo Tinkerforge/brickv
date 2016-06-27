@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import  Qt
-from PyQt4.QtGui import QLabel, QHBoxLayout, QVBoxLayout, QColorDialog, QColor
+from PyQt4.QtGui import QLabel, QHBoxLayout, QVBoxLayout, QColor
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_rgb_led import BrickletRGBLED
@@ -48,6 +48,23 @@ class RGBLED(PluginBase, Ui_RGBLED):
         self.h_syncer = SliderSpinSyncer(self.slider_h, self.spin_h, self.hsl_changed, spin_signal='valueChanged')
         self.s_syncer = SliderSpinSyncer(self.slider_s, self.spin_s, self.hsl_changed, spin_signal='valueChanged')
         self.l_syncer = SliderSpinSyncer(self.slider_l, self.spin_l, self.hsl_changed, spin_signal='valueChanged')
+
+        def set_color(r, g, b):
+            self.changing = True
+            self.spin_r.setValue(r)
+            self.spin_g.setValue(g)
+            self.spin_b.setValue(b)
+            self.changing = False
+            self.rgb_changed()
+
+        self.button_black.clicked.connect(lambda: set_color(0, 0, 0))
+        self.button_white.clicked.connect(lambda: set_color(255, 255, 255))
+        self.button_red.clicked.connect(lambda: set_color(255, 0, 0))
+        self.button_yellow.clicked.connect(lambda: set_color(255, 255, 0))
+        self.button_green.clicked.connect(lambda: set_color(0, 255, 0))
+        self.button_cyan.clicked.connect(lambda: set_color(0, 255, 255))
+        self.button_blue.clicked.connect(lambda: set_color(0, 0, 255))
+        self.button_magenta.clicked.connect(lambda: set_color(255, 0, 255))
 
     def start(self):
         async_call(self.rgb_led.get_rgb_value, None, self.get_rgb_value_async, self.increase_error_count)
