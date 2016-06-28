@@ -256,6 +256,42 @@ class Wifi2(QWidget, Ui_Wifi2):
         self.wifi_ap_password.setText(data)
 
     def save_clicked(self):
+        try:
+            secret = self.wifi_secret.text().encode('ascii')
+        except:
+            self.popup_fail('Secret cannot contain non-ASCII characters')
+            return
+
+        try:
+            secret = self.wifi_client_hostname.text().encode('ascii')
+        except:
+            self.popup_fail('Client hostname cannot contain non-ASCII characters')
+            return
+
+        try:
+            secret = self.wifi_client_ssid.text().encode('ascii')
+        except:
+            self.popup_fail('Client SSID cannot contain non-ASCII characters')
+            return
+
+        try:
+            secret = self.wifi_client_password.text().encode('ascii')
+        except:
+            self.popup_fail('Client password cannot contain non-ASCII characters')
+            return
+
+        try:
+            secret = self.wifi_ap_ssid.text().encode('ascii')
+        except:
+            self.popup_fail('Access point SSID cannot contain non-ASCII characters')
+            return
+
+        try:
+            secret = self.wifi_ap_password.text().encode('ascii')
+        except:
+            self.popup_fail('Access point password cannot contain non-ASCII characters')
+            return
+
         # Get current configuration
         general_port           = self.wifi_port.value()
         general_websocket_port = self.wifi_websocket_port.value()
