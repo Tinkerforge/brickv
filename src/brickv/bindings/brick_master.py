@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-06-27.      #
+# This file was automatically generated on 2016-06-28.      #
 #                                                           #
 # Python Bindings Version 2.1.9                             #
 #                                                           #
@@ -35,7 +35,7 @@ GetUSBVoltageCallbackThreshold = namedtuple('USBVoltageCallbackThreshold', ['opt
 GetEthernetConfiguration = namedtuple('EthernetConfiguration', ['connection', 'ip', 'subnet_mask', 'gateway', 'port'])
 GetEthernetStatus = namedtuple('EthernetStatus', ['mac_address', 'ip', 'subnet_mask', 'gateway', 'rx_count', 'tx_count', 'hostname'])
 GetEthernetWebsocketConfiguration = namedtuple('EthernetWebsocketConfiguration', ['sockets', 'port'])
-ReadWifi2Flash = namedtuple('ReadWifi2Flash', ['data', 'result'])
+ReadWifi2SerialPort = namedtuple('ReadWifi2SerialPort', ['data', 'result'])
 GetWifi2Configuration = namedtuple('Wifi2Configuration', ['port', 'websocket_port', 'website_port', 'phy_mode', 'sleep_mode', 'website'])
 GetWifi2Status = namedtuple('Wifi2Status', ['client_enabled', 'client_status', 'client_ip', 'client_subnet_mask', 'client_gateway', 'client_mac_address', 'client_rx_count', 'client_tx_count', 'client_rssi', 'ap_enabled', 'ap_ip', 'ap_subnet_mask', 'ap_gateway', 'ap_mac_address', 'ap_rx_count', 'ap_tx_count', 'ap_connected_count'])
 GetWifi2ClientConfiguration = namedtuple('Wifi2ClientConfiguration', ['enable', 'ssid', 'ip', 'subnet_mask', 'gateway', 'mac_address', 'bssid'])
@@ -131,8 +131,8 @@ class BrickMaster(Device):
     FUNCTION_GET_CONNECTION_TYPE = 77
     FUNCTION_IS_WIFI2_PRESENT = 78
     FUNCTION_START_WIFI2_BOOTLOADER = 79
-    FUNCTION_WRITE_WIFI2_FLASH = 80
-    FUNCTION_READ_WIFI2_FLASH = 81
+    FUNCTION_WRITE_WIFI2_SERIAL_PORT = 80
+    FUNCTION_READ_WIFI2_SERIAL_PORT = 81
     FUNCTION_SET_WIFI2_AUTHENTICATION_SECRET = 82
     FUNCTION_GET_WIFI2_AUTHENTICATION_SECRET = 83
     FUNCTION_SET_WIFI2_CONFIGURATION = 84
@@ -226,7 +226,7 @@ class BrickMaster(Device):
     WIFI2_CLIENT_STATUS_NO_AP_FOUND = 3
     WIFI2_CLIENT_STATUS_CONNECT_FAILED = 4
     WIFI2_CLIENT_STATUS_GOT_IP = 5
-    WIFI2_AP_ENCRYPTION_NO_ENCRYPTION = 0
+    WIFI2_AP_ENCRYPTION_OPEN = 0
     WIFI2_AP_ENCRYPTION_WEP = 1
     WIFI2_AP_ENCRYPTION_WPA_PSK = 2
     WIFI2_AP_ENCRYPTION_WPA2_PSK = 3
@@ -320,8 +320,8 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_GET_CONNECTION_TYPE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_IS_WIFI2_PRESENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_START_WIFI2_BOOTLOADER] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickMaster.FUNCTION_WRITE_WIFI2_FLASH] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickMaster.FUNCTION_READ_WIFI2_FLASH] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_WRITE_WIFI2_SERIAL_PORT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_READ_WIFI2_SERIAL_PORT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SET_WIFI2_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SET_WIFI2_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_FALSE
@@ -360,7 +360,7 @@ class BrickMaster(Device):
     def get_stack_voltage(self):
         """
         Returns the stack voltage in mV. The stack voltage is the
-        voltage that is supplied via the stack, i.e. it is given by a 
+        voltage that is supplied via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_STACK_VOLTAGE, (), '', 'H')
@@ -375,7 +375,7 @@ class BrickMaster(Device):
 
     def set_extension_type(self, extension, exttype):
         """
-        Writes the extension type to the EEPROM of a specified extension. 
+        Writes the extension type to the EEPROM of a specified extension.
         The extension is either 0 or 1 (0 is the on the bottom, 1 is the one on top,
         if only one extension is present use 0).
         
@@ -391,7 +391,7 @@ class BrickMaster(Device):
          "4",    "Ethernet"
          "5",    "WIFI 2.0"
         
-        The extension type is already set when bought and it can be set with the 
+        The extension type is already set when bought and it can be set with the
         Brick Viewer, it is unlikely that you need this function.
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_EXTENSION_TYPE, (extension, exttype), 'B I', '')
@@ -412,7 +412,7 @@ class BrickMaster(Device):
         """
         Sets the address (1-255) belonging to the Chibi Extension.
         
-        It is possible to set the address with the Brick Viewer and it will be 
+        It is possible to set the address with the Brick Viewer and it will be
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         """
@@ -429,7 +429,7 @@ class BrickMaster(Device):
         Sets the address (1-255) of the Chibi Master. This address is used if the
         Chibi Extension is used as slave (i.e. it does not have a USB connection).
         
-        It is possible to set the address with the Brick Viewer and it will be 
+        It is possible to set the address with the Brick Viewer and it will be
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         """
@@ -497,7 +497,7 @@ class BrickMaster(Device):
          "2",    "OQPSK 780MHz (China)"
          "3",    "BPSK40 915MHz"
         
-        It is possible to set the frequency with the Brick Viewer and it will be 
+        It is possible to set the frequency with the Brick Viewer and it will be
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         """
@@ -523,7 +523,7 @@ class BrickMaster(Device):
          "OQPSK 780MHz (China)",  "0, 1, 2, 3"
          "BPSK40 915MHz",         "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
         
-        It is possible to set the channel with the Brick Viewer and it will be 
+        It is possible to set the channel with the Brick Viewer and it will be
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         """
@@ -548,7 +548,7 @@ class BrickMaster(Device):
         Set to 0 if the RS485 Extension should be the RS485 Master (i.e.
         connected to a PC via USB).
         
-        It is possible to set the address with the Brick Viewer and it will be 
+        It is possible to set the address with the Brick Viewer and it will be
         saved in the EEPROM of the RS485 Extension, it does not
         have to be set on every startup.
         """
@@ -752,7 +752,7 @@ class BrickMaster(Device):
         """
         This function is used to set the certificate as well as password and username
         for WPA Enterprise. To set the username use index 0xFFFF,
-        to set the password use index 0xFFFE. The max length of username and 
+        to set the password use index 0xFFFE. The max length of username and
         password is 32.
         
         The certificate is written in chunks of size 32 and the index is used as
@@ -804,7 +804,7 @@ class BrickMaster(Device):
         receive buffer has a max size of 1500 byte and if data is transfered
         too fast, it might overflow.
         
-        The return values are the number of overflows, the low watermark 
+        The return values are the number of overflows, the low watermark
         (i.e. the smallest number of bytes that were free in the buffer) and
         the bytes that are currently used.
         
@@ -869,7 +869,7 @@ class BrickMaster(Device):
 
     def set_wifi_hostname(self, hostname):
         """
-        Sets the hostname of the WIFI Extension. The hostname will be displayed 
+        Sets the hostname of the WIFI Extension. The hostname will be displayed
         by access points as the hostname in the DHCP clients table.
         
         Setting an empty String will restore the default hostname.
@@ -880,7 +880,7 @@ class BrickMaster(Device):
 
     def get_wifi_hostname(self):
         """
-        Returns the hostname as set by :func:`GetWifiHostname`.
+        Returns the hostname as set by :func:`SetWifiHostname`.
         
         An empty String means, that the default hostname is used.
         
@@ -956,7 +956,7 @@ class BrickMaster(Device):
 
     def set_stack_current_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`StackCurrentReached` callback. 
+        Sets the thresholds for the :func:`StackCurrentReached` callback.
         
         The following options are possible:
         
@@ -986,7 +986,7 @@ class BrickMaster(Device):
 
     def set_stack_voltage_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`StackStackVoltageReached` callback. 
+        Sets the thresholds for the :func:`StackStackVoltageReached` callback.
         
         The following options are possible:
         
@@ -1016,7 +1016,7 @@ class BrickMaster(Device):
 
     def set_usb_voltage_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`USBVoltageReached` callback. 
+        Sets the thresholds for the :func:`USBVoltageReached` callback.
         
         The following options are possible:
         
@@ -1139,7 +1139,7 @@ class BrickMaster(Device):
 
     def set_ethernet_hostname(self, hostname):
         """
-        Sets the hostname of the Ethernet Extension. The hostname will be displayed 
+        Sets the hostname of the Ethernet Extension. The hostname will be displayed
         by access points as the hostname in the DHCP clients table.
         
         Setting an empty String will restore the default hostname.
@@ -1247,6 +1247,8 @@ class BrickMaster(Device):
 
     def get_connection_type(self):
         """
+        Returns the type of the connection over which this function was called.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CONNECTION_TYPE, (), '', 'B')
@@ -1262,36 +1264,67 @@ class BrickMaster(Device):
 
     def start_wifi2_bootloader(self):
         """
+        Starts the bootloader of the WIFI Extension 2.0. Returns 0 on success.
+        Afterwards the :func:`WriteWifi2SerialPort` and :func:`ReadWifi2SerialPort`
+        functions can be used to communicate with the bootloader to flash a new
+        firmware.
+        
+        The bootloader should only be started over a USB connection. It cannot be
+        started over a WIFI2 connection, see the :func:`GetConnectionType` function.
+        
+        It is recommended to use the Brick Viewer to update the firmware of the WIFI
+        Extension 2.0.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_START_WIFI2_BOOTLOADER, (), '', 'b')
 
-    def write_wifi2_flash(self, data, length):
+    def write_wifi2_serial_port(self, data, length):
         """
+        Writes up to 60 bytes (number of bytes to be written specified by ``length``)
+        to the serial port of the bootloader of the WIFI Extension 2.0. Returns 0 on
+        success.
+        
+        Before this function can be used the bootloader has to be started using the
+        :func:`StartWifi2Bootloader` function.
+        
+        It is recommended to use the Brick Viewer to update the firmware of the WIFI
+        Extension 2.0.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickMaster.FUNCTION_WRITE_WIFI2_FLASH, (data, length), '60B B', 'b')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_WRITE_WIFI2_SERIAL_PORT, (data, length), '60B B', 'b')
 
-    def read_wifi2_flash(self, length):
+    def read_wifi2_serial_port(self, length):
         """
+        Reads up to 60 bytes (number of bytes to be read specified by ``length``)
+        from the serial port of the bootloader of the WIFI Extension 2.0.
+        Returns the number of actually read bytes.
+        
+        Before this function can be used the bootloader has to be started using the
+        :func:`StartWifi2Bootloader` function.
+        
+        It is recommended to use the Brick Viewer to update the firmware of the WIFI
+        Extension 2.0.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
-        return ReadWifi2Flash(*self.ipcon.send_request(self, BrickMaster.FUNCTION_READ_WIFI2_FLASH, (length,), 'B', '60B B'))
+        return ReadWifi2SerialPort(*self.ipcon.send_request(self, BrickMaster.FUNCTION_READ_WIFI2_SERIAL_PORT, (length,), 'B', '60B B'))
 
     def set_wifi2_authentication_secret(self, secret):
         """
         Sets the WIFI authentication secret. The secret can be a string of up to 64
-        characters. An empty string disables the authentication.
+        characters. An empty string disables the authentication. The default value is
+        an empty string (authentication disabled).
         
         See the :ref:`authentication tutorial <tutorial_authentication>` for more
         information.
         
-        The secret is stored in the EEPROM and only applied on startup. That means
-        you have to restart the Master Brick after configuration.
+        To apply configuration changes to the WIFI Extension 2.0 the
+        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        has to be restarted afterwards.
         
         It is recommended to use the Brick Viewer to set the WIFI authentication secret.
-        
-        The default value is an empty string (authentication disabled).
         
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
@@ -1299,7 +1332,8 @@ class BrickMaster(Device):
 
     def get_wifi2_authentication_secret(self):
         """
-        Returns the authentication secret as set by :func:`SetWifi2AuthenticationSecret`.
+        Returns the WIFI authentication secret as set by
+        :func:`SetWifi2AuthenticationSecret`.
         
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
@@ -1307,85 +1341,214 @@ class BrickMaster(Device):
 
     def set_wifi2_configuration(self, port, websocket_port, website_port, phy_mode, sleep_mode, website):
         """
+        Sets the general configuration of the WIFI Extension 2.0.
+        
+        The ``port`` parameter sets the port number that your programm will connect
+        to. The default value is 4223.
+        
+        The ``websocket_port`` parameter sets the WebSocket port number that your
+        JavaScript programm will connect to. The default value is 4280.
+        
+        The ``website_port`` parameter sets the port number for the website of the
+        WIFI Extension 2.0. The default value is 80.
+        
+        The ``phy_mode`` parameter sets the specific wireless network mode to be used.
+        Possible values are B, G and N. The default value is G.
+        
+        The ``sleep_mode`` and ``website`` parameters are currently unused.
+        
+        To apply configuration changes to the WIFI Extension 2.0 the
+        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        has to be restarted afterwards.
+        
+        It is recommended to use the Brick Viewer to set the Ethernet configuration.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_CONFIGURATION, (port, websocket_port, website_port, phy_mode, sleep_mode, website), 'H H H B B B', '')
 
     def get_wifi2_configuration(self):
         """
+        Returns the general configuration as set by :func:`SetWifi2Configuration`.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         return GetWifi2Configuration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_CONFIGURATION, (), '', 'H H H B B B'))
 
     def get_wifi2_status(self):
         """
+        Returns the client and access point status of the WIFI Extension 2.0.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         return GetWifi2Status(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_STATUS, (), '', '? B 4B 4B 4B 6B I I b ? 4B 4B 4B 6B I I B'))
 
     def set_wifi2_client_configuration(self, enable, ssid, ip, subnet_mask, gateway, mac_address, bssid):
         """
+        Sets the client specific configuration of the WIFI Extension 2.0.
+        
+        The ``enable`` parameter enables or disables the client part fo the
+        WIFI Extension 2.0. The default value is *true*.
+        
+        The ``ssid`` parameter sets the SSID (up to 32 characters) of the access point
+        to connect to.
+        
+        If the ``ip``, ``subnet_mask`` and ``gateway`` parameters are set to all zero
+        then DHCP is used for IP address configuration. Otherwise those three
+        parameters can be used to configure a static IP address. The default
+        configuration is DHCP.
+        
+        If the ``mac_address`` parameter is set to all zero then the factory MAC
+        address is used. Otherwise this parameter can be used to set a custom MAC
+        address.
+        
+        If the ``bssid`` parameter is set to all zero then WIFI Extension 2.0 will
+        connect to any access point that matches the configured SSID. Otherwise this
+        parameter can be used to make the WIFI Extension 2.0 only connect to an
+        access point if SSID and BSSID match.
+        
+        To apply configuration changes to the WIFI Extension 2.0 the
+        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        has to be restarted afterwards.
+        
+        It is recommended to use the Brick Viewer to set the client configuration.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_CLIENT_CONFIGURATION, (enable, ssid, ip, subnet_mask, gateway, mac_address, bssid), '? 32s 4B 4B 4B 6B 6B', '')
 
     def get_wifi2_client_configuration(self):
         """
+        Returns the client configuration as set by :func:`SetWifi2ClientConfiguration`.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         return GetWifi2ClientConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_CLIENT_CONFIGURATION, (), '', '? 32s 4B 4B 4B 6B 6B'))
 
     def set_wifi2_client_hostname(self, hostname):
         """
+        Sets the client hostname (up to 32 characters) of the WIFI Extension 2.0. The
+        hostname will be displayed by access points as the hostname in the DHCP clients
+        table.
+        
+        To apply configuration changes to the WIFI Extension 2.0 the
+        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        has to be restarted afterwards.
+        
+        It is recommended to use the Brick Viewer to set the client hostname.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_CLIENT_HOSTNAME, (hostname,), '32s', '')
 
     def get_wifi2_client_hostname(self):
         """
+        Returns the client hostname as set by :func:`SetWifi2ClientHostname`.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_CLIENT_HOSTNAME, (), '', '32s')
 
     def set_wifi2_client_password(self, password):
         """
+        Sets the client password (up to 63 chars) for WPA/WPA2 encryption.
+        
+        To apply configuration changes to the WIFI Extension 2.0 the
+        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        has to be restarted afterwards.
+        
+        It is recommended to use the Brick Viewer to set the client password.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_CLIENT_PASSWORD, (password,), '64s', '')
 
     def get_wifi2_client_password(self):
         """
+        Returns the client password as set by :func:`SetWifi2ClientPassword`.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_CLIENT_PASSWORD, (), '', '64s')
 
     def set_wifi2_ap_configuration(self, enable, ssid, ip, subnet_mask, gateway, encryption, hidden, channel, mac_address):
         """
+        Sets the access point specific configuration of the WIFI Extension 2.0.
+        
+        The ``enable`` parameter enables or disables the access point part fo the
+        WIFI Extension 2.0. The default value is true.
+        
+        The ``ssid`` parameter sets the SSID (up to 32 characters) of the access point.
+        
+        If the ``ip``, ``subnet_mask`` and ``gateway`` parameters are set to all zero
+        then a DHCP server is enabled. Otherwise those three parameters can be used to
+        configure a static IP address for the access point. The default configuration
+        is DHCP.
+        
+        The ``encryption`` parameter sets the encryption mode to be used. Possible
+        values are Open (no encryption), WEP or WPA/WPA2 PSK. The default value is
+        WPA/WPA2 PSK. Use the :func:`SetWifi2APPassword` function to set the encryption
+        password.
+        
+        The ``hidden`` parameter makes the access point hide or show its SSID.
+        The default value is *false*.
+        
+        The ``channel`` parameter sets the channel (1 to 13) of the access point.
+        The default value is 1.
+        
+        If the ``mac_address`` parameter is set to all zero then the factory MAC
+        address is used. Otherwise this parameter can be used to set a custom MAC
+        address.
+        
+        To apply configuration changes to the WIFI Extension 2.0 the
+        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        has to be restarted afterwards.
+        
+        It is recommended to use the Brick Viewer to set the access point configuration.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_AP_CONFIGURATION, (enable, ssid, ip, subnet_mask, gateway, encryption, hidden, channel, mac_address), '? 32s 4B 4B 4B B ? B 6B', '')
 
     def get_wifi2_ap_configuration(self):
         """
+        Returns the access point configuration as set by :func:`SetWifi2APConfiguration`.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         return GetWifi2APConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_AP_CONFIGURATION, (), '', '? 32s 4B 4B 4B B ? B 6B'))
 
     def set_wifi2_ap_password(self, password):
         """
+        Sets the access point password (up to 63 chars) for the configured encryption
+        mode, see :func:`SetWifi2APConfiguration`.
+        
+        To apply configuration changes to the WIFI Extension 2.0 the
+        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        has to be restarted afterwards.
+        
+        It is recommended to use the Brick Viewer to set the access point password.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_AP_PASSWORD, (password,), '64s', '')
 
     def get_wifi2_ap_password(self):
         """
+        Returns the access point password as set by :func:`SetWifi2APPassword`.
+        
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_AP_PASSWORD, (), '', '64s')
 
     def save_wifi2_configuration(self):
         """
-        Call this function to actually save configuration
+        All configuration functions for the WIFI Extension 2.0 do not change the
+        values permanently. After configuration this function has to be called to
+        permanently store the values.
+        
+        The values are stored in the EEPROM and only applied on startup. That means
+        you have to restart the Master Brick after configuration.
         
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
@@ -1417,7 +1580,7 @@ class BrickMaster(Device):
 
     def is_wifi2_status_led_enabled(self):
         """
-        Returns *True* if the green status LED of the WIFI Extension 2.0 is turned on.
+        Returns *true* if the green status LED of the WIFI Extension 2.0 is turned on.
         
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """

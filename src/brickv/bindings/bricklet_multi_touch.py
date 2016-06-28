@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-05-31.      #
+# This file was automatically generated on 2016-06-28.      #
 #                                                           #
 # Python Bindings Version 2.1.9                             #
 #                                                           #
@@ -70,7 +70,7 @@ class BrickletMultiTouch(Device):
         Bits 0 to 11 represent the 12 electrodes and bit 12 represents
         the proximity.
         
-        If an electrode is touched, the corresponding bit is true. If
+        If an electrode is touched, the corresponding bit is *true*. If
         a hand or similar is in proximity to the electrodes, bit 12 is
         *true*.
         

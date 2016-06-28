@@ -64,7 +64,7 @@ class TFSerial:
                 data_chunk = data[:60]
                 length = len(data_chunk)
                 data_chunk.extend([0]*(60-length))
-                self.master.write_wifi2_flash(data_chunk, length)
+                self.master.write_wifi2_serial_port(data_chunk, length)
                 data = data[60:]
         except:
             raise Exception('Failed to write data')
@@ -81,7 +81,7 @@ class TFSerial:
         try:
             t = time.time()
             while len(self.read_buffer) < length:
-                data, l = self.master.read_wifi2_flash(60)
+                data, l = self.master.read_wifi2_serial_port(60)
                 data = data[:l]
                 self.read_buffer.extend(data)
                 if len(self.read_buffer) < length:
