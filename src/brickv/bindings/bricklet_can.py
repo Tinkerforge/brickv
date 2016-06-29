@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-05-31.      #
+# This file was automatically generated on 2016-06-28.      #
 #                                                           #
 # Python Bindings Version 2.1.9                             #
 #                                                           #
@@ -8,8 +8,6 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 try:
     from collections import namedtuple
@@ -56,14 +54,14 @@ class BrickletCAN(Device):
     FRAME_TYPE_STANDARD_REMOTE = 1
     FRAME_TYPE_EXTENDED_DATA = 2
     FRAME_TYPE_EXTENDED_REMOTE = 3
-    BAUD_RATE_10000 = 0
-    BAUD_RATE_20000 = 1
-    BAUD_RATE_50000 = 2
-    BAUD_RATE_125000 = 3
-    BAUD_RATE_250000 = 4
-    BAUD_RATE_500000 = 5
-    BAUD_RATE_800000 = 6
-    BAUD_RATE_1000000 = 7
+    BAUD_RATE_10KBPS = 0
+    BAUD_RATE_20KBPS = 1
+    BAUD_RATE_50KBPS = 2
+    BAUD_RATE_125KBPS = 3
+    BAUD_RATE_250KBPS = 4
+    BAUD_RATE_500KBPS = 5
+    BAUD_RATE_800KBPS = 6
+    BAUD_RATE_1000KBPS = 7
     TRANSCEIVER_MODE_NORMAL = 0
     TRANSCEIVER_MODE_LOOPBACK = 1
     TRANSCEIVER_MODE_READ_ONLY = 2
@@ -291,7 +289,7 @@ class BrickletCAN(Device):
           happens if the CAN transceiver receives more frames to be added to the read
           buffer than are removed from the read buffer using the :func:`ReadFrame`
           function. Using the :func:`FrameRead` callback ensures that the read buffer
-          can never overflow.
+          can not overflow.
         """
         return GetErrorLog(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_ERROR_LOG, (), '', 'B B ? I I I'))
 

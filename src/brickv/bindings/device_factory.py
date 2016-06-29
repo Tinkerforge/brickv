@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-05-31.      #
+# This file was automatically generated on 2016-06-27.      #
 #                                                           #
 # Python Bindings Version 2.1.9                             #
 #                                                           #
@@ -83,6 +83,11 @@ try:
     from .bricklet_barometer import BrickletBarometer
 except ValueError:
     from bricklet_barometer import BrickletBarometer
+
+try:
+    from .bricklet_can import BrickletCAN
+except ValueError:
+    from bricklet_can import BrickletCAN
 
 try:
     from .bricklet_co2 import BrickletCO2
@@ -280,6 +285,11 @@ except ValueError:
     from bricklet_remote_switch import BrickletRemoteSwitch
 
 try:
+    from .bricklet_rgb_led import BrickletRGBLED
+except ValueError:
+    from bricklet_rgb_led import BrickletRGBLED
+
+try:
     from .bricklet_rotary_encoder import BrickletRotaryEncoder
 except ValueError:
     from bricklet_rotary_encoder import BrickletRotaryEncoder
@@ -361,6 +371,7 @@ BrickletAnalogInV2.DEVICE_IDENTIFIER: BrickletAnalogInV2,
 BrickletAnalogOut.DEVICE_IDENTIFIER: BrickletAnalogOut,
 BrickletAnalogOutV2.DEVICE_IDENTIFIER: BrickletAnalogOutV2,
 BrickletBarometer.DEVICE_IDENTIFIER: BrickletBarometer,
+BrickletCAN.DEVICE_IDENTIFIER: BrickletCAN,
 BrickletCO2.DEVICE_IDENTIFIER: BrickletCO2,
 BrickletColor.DEVICE_IDENTIFIER: BrickletColor,
 BrickletCurrent12.DEVICE_IDENTIFIER: BrickletCurrent12,
@@ -400,6 +411,7 @@ BrickletPiezoSpeaker.DEVICE_IDENTIFIER: BrickletPiezoSpeaker,
 BrickletPTC.DEVICE_IDENTIFIER: BrickletPTC,
 BrickletRealTimeClock.DEVICE_IDENTIFIER: BrickletRealTimeClock,
 BrickletRemoteSwitch.DEVICE_IDENTIFIER: BrickletRemoteSwitch,
+BrickletRGBLED.DEVICE_IDENTIFIER: BrickletRGBLED,
 BrickletRotaryEncoder.DEVICE_IDENTIFIER: BrickletRotaryEncoder,
 BrickletRotaryPoti.DEVICE_IDENTIFIER: BrickletRotaryPoti,
 BrickletRS232.DEVICE_IDENTIFIER: BrickletRS232,
