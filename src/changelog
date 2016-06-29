@@ -328,12 +328,12 @@
 - Add support for WIFI Extension 2.0, CAN Bricklet and RGB LED Bricklet
 - Add synchronous rectification and decay controls to the Stepper Brick plugin
 - Reduce minimal height for several plugins to make Brick Viewer fit onto
-  smaller screens: IMU Brick 2.0, Industrial Digital in 4 Bricklet, Industrial
-  Digital Out 4 Bricklet, Industrial Quad Relay Bricklet
+  smaller screens: IMU Brick 2.0, Industrial Digital In 4 Bricklet, Industrial
+  Digital Out 4 Bricklet and Industrial Quad Relay Bricklet
 - Add edit buttons to RED Brick program wizard list editors
 - Add dialog to change RED Brick program file permissions
 - Make 3D view of IMU Brick 2.0 plugin detachable
-- Fix enumeration problem in Data Logger
+- Fix enumeration problem in Data Logger device dialog
 - Add support for Real-Time Clock Bricklet alarms
 - Unify GUI layout of plugins with a plot widget
 - Improve plot widget rendering performance by avoiding full updates
