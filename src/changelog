@@ -168,7 +168,7 @@
 
 2013-05-17: 2.0.5 (50c4f7d)
 - Add commandline tool for flashing bricks (thanks to Jan)
-- Try to avoid UI hang during connect
+- Try to avoid GUI hang during connect
 - Add plugin for Ethernet Extension
 - Show WIFI password/key with * characters by default
 - Add spin boxes for new averaging API in Barometer Bricklet plugin
@@ -212,7 +212,7 @@
   disconnect
 
 2014-07-03: 2.1.1 (77f61e6)
-- Force Qt to use a more recent UI style on Windows
+- Force Qt to use a more recent GUI style on Windows
 - Store port, authentication options and secret per host and double host
   history length
 - Use a signed Brick bootloader driver on Windows
@@ -228,10 +228,10 @@
 2014-12-09: 2.2.0 (a410d48)
 - Add RED Brick support
 - Allow to rearrange tabs and detach them from the main window
-- Improve UI for NFC/RFID Bricklet read and write operations
+- Improve GUI for NFC/RFID Bricklet read and write operations
 - Windows installer and drivers are signed now
 - Fix occasional bounce of the connect button
-- Fix UI font selection on Mac OS X 10.9 and 10.10
+- Fix GUI font selection on Mac OS X 10.9 and 10.10
 
 2014-12-18: 2.2.1 (86ca845)
 - Exclude file system cache from memory value on RED Brick overview tab
@@ -285,7 +285,7 @@
 
 2015-08-04: 2.2.7 (51b71f1)
 - Show status of web interface programs properly in the RED Brick program list
-- Fix exception in RED Brick PHP program info screen UI status logic
+- Fix exception in RED Brick PHP program info screen GUI status logic
 - Fix TLS checkbox on RED Brick server monitoring tab
 - Add support for changed Industrial Dual Analog In Bricklet calibration
 
@@ -309,7 +309,7 @@
 2015-11-04: 2.3.1 (0475a2d)
 - Add millisecond interval support for data logger
 - Add custom strftime format for data logger
-- Improve UI font selection on Mac OS X 10.11
+- Improve GUI font selection on Mac OS X 10.11
 - Sign Brickv.app on Mac OS X to silence the Gate Keeper
 
 2015-11-05: 2.3.2 (3d3df3e)
@@ -323,3 +323,17 @@
 2016-02-19: 2.3.4 (78c71a2)
 - Add support for Real-Time Clock Bricklet
 - Don't auto-update Thermocouple Bricket with Temperature Bricklet firmware
+
+2016-06-29: 2.3.5 (<unknown>)
+- Add support for WIFI Extension 2.0, CAN Bricklet and RGB LED Bricklet
+- Add synchronous rectification and decay controls to the Stepper Brick plugin
+- Reduce minimal height for several plugins to make Brick Viewer fit onto
+  smaller screens: IMU Brick 2.0, Industrial Digital in 4 Bricklet, Industrial
+  Digital Out 4 Bricklet, Industrial Quad Relay Bricklet
+- Add edit buttons to RED Brick program wizard list editors
+- Add dialog to change RED Brick program file permissions
+- Make 3D view of IMU Brick 2.0 plugin detachable
+- Fix enumeration problem in Data Logger
+- Add support for Real-Time Clock Bricklet alarms
+- Unify GUI layout of plugins with a plot widget
+- Improve plot widget rendering performance by avoiding full updates
