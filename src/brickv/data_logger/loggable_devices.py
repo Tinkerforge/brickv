@@ -34,6 +34,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2
     from brickv.bindings.bricklet_analog_out_v2 import BrickletAnalogOutV2
     from brickv.bindings.bricklet_barometer import BrickletBarometer
+    # from brickv.bindings.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
     from brickv.bindings.bricklet_co2 import BrickletCO2
     from brickv.bindings.bricklet_color import BrickletColor
     from brickv.bindings.bricklet_current12 import BrickletCurrent12
@@ -74,7 +75,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_ptc import BrickletPTC
     from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
     from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
-    # from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback to get all data
+    # from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
     from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
     from brickv.bindings.bricklet_temperature import BrickletTemperature
     from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
@@ -105,6 +106,7 @@ else:
     from tinkerforge.bricklet_analog_in_v2 import BrickletAnalogInV2
     from tinkerforge.bricklet_analog_out_v2 import BrickletAnalogOutV2
     from tinkerforge.bricklet_barometer import BrickletBarometer
+    # from brickv.bindings.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
     from tinkerforge.bricklet_co2 import BrickletCO2
     from tinkerforge.bricklet_color import BrickletColor
     from tinkerforge.bricklet_current12 import BrickletCurrent12
