@@ -324,7 +324,7 @@
 - Add support for Real-Time Clock Bricklet
 - Don't auto-update Thermocouple Bricket with Temperature Bricklet firmware
 
-2016-06-29: 2.3.5 (<unknown>)
+2016-06-29: 2.3.5 (71688d3)
 - Add support for WIFI Extension 2.0, CAN Bricklet and RGB LED Bricklet
 - Add synchronous rectification and decay controls to the Stepper Brick plugin
 - Reduce minimal height for several plugins to make Brick Viewer fit onto
