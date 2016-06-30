@@ -670,7 +670,7 @@ WEP: 10 or 26 hexadecimal digits</string>
          <item row="3" column="0">
           <widget class="QLabel" name="wifi_phy_mode_label">
            <property name="text">
-            <string>Phy Mode:</string>
+            <string>PHY Mode:</string>
            </property>
           </widget>
          </item>
