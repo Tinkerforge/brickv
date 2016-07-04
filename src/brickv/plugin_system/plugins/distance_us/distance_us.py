@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout
+from PyQt4.QtGui import QSpinBox, QVBoxLayout, QHBoxLayout, QFrame, QLabel
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_distance_us import BrickletDistanceUS
@@ -46,10 +46,29 @@ class DistanceUS(PluginBase):
         plots = [('Distance Value', Qt.red, lambda: self.current_distance, str)]
         self.plot_widget = PlotWidget('Distance Value', plots)
 
+        self.spin_average = QSpinBox()
+        self.spin_average.setMinimum(0)
+        self.spin_average.setMaximum(100)
+        self.spin_average.setSingleStep(1)
+        self.spin_average.setValue(20)
+        self.spin_average.editingFinished.connect(self.spin_average_finished)
+
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(QLabel('Moving Average Length:'))
+        hlayout.addWidget(self.spin_average)
+        hlayout.addStretch()
+
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)
+        layout.addWidget(line)
+        layout.addLayout(hlayout)
 
     def start(self):
+        async_call(self.dist.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
         async_call(self.dist.get_distance_value, None, self.cb_distance, self.increase_error_count)
         self.cbe_distance.set_period(100)
 
@@ -70,5 +89,11 @@ class DistanceUS(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletDistanceUS.DEVICE_IDENTIFIER
 
+    def get_moving_average_async(self, average):
+        self.spin_average.setValue(average)
+
     def cb_distance(self, distance):
         self.current_distance = distance
+
+    def spin_average_finished(self):
+        self.dist.set_moving_average(self.spin_average.value())
