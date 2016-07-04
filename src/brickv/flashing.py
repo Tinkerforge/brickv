@@ -72,21 +72,22 @@ class ProgressWrapper(object):
         self.progress = progress
 
     def reset(self, title, length):
-        self.progress.setLabelText(title)
+        if title != None:
+            self.progress.setLabelText(title)
+
         self.progress.setMaximum(length)
         self.progress.setValue(0)
         self.progress.show()
         QApplication.processEvents()
 
-    def update(self, value):
-        self.progress.setValue(value)
+    def update(self, value=None):
+        if value != None:
+            self.progress.setValue(value)
+
         QApplication.processEvents()
 
     def cancel(self):
         self.progress.cancel()
-
-    def setMaximum(self, value):
-        self.progress.setMaximum(value)
 
 class FlashingWindow(QDialog, Ui_Flashing):
     def __init__(self, parent):
@@ -585,7 +586,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             try:
                 length = int(response.headers['Content-Length'])
-                progress.setMaximum(length)
+                progress.reset(None, length)
                 progress.update(0)
                 QApplication.processEvents()
                 firmware = ''

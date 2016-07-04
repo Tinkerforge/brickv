@@ -69,8 +69,9 @@ class Progress:
         self.print_progress()
 
     def update(self, value):
-        self.value = value
-        self.print_progress()
+        if value != None:
+            self.value = value
+            self.print_progress()
 
     def cancel(self):
         print('')
