@@ -676,7 +676,7 @@ class ESPFlash:
 
                     flasher.flash_write(address, image, lambda value: q.put(('update', (value,))))
 
-                    q.put(('update', (len(image // esp.ESP_FLASH_BLOCK),)))
+                    q.put(('update', (len(image) // esp.ESP_FLASH_BLOCK,)))
 
                 flasher.boot_fw()
             except Exception as e:
