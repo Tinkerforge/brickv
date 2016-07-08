@@ -87,6 +87,8 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
             client_status = 'Connect Failed'
         elif s.client_status == 5:
             client_status = 'Got IP'
+        else:
+            client_status = 'Unknown'
         
         self.wifi_client_status_enabled.setText(client_enabled)
         self.wifi_client_status_status.setText(client_status)
