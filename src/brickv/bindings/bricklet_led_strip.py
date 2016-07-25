@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-07-21.      #
+# This file was automatically generated on 2016-07-25.      #
 #                                                           #
 # Python Bindings Version 2.1.9                             #
 #                                                           #
@@ -80,7 +80,7 @@ class BrickletLEDStrip(Device):
 
     def set_rgb_values(self, index, length, r, g, b):
         """
-        Sets the *rgb* values for the LEDs with the given *length* starting 
+        Sets the RGB values for the LEDs with the given *length* starting
         from *index*.
         
         The maximum length is 16, the index goes from 0 to 319 and the rgb values
@@ -101,10 +101,10 @@ class BrickletLEDStrip(Device):
         The colors will be transfered to actual LEDs when the next
         frame duration ends, see :func:`SetFrameDuration`.
         
-        Generic approach: 
+        Generic approach:
         
         * Set the frame duration to a value that represents
-          the number of frames per second you want to achieve. 
+          the number of frames per second you want to achieve.
         * Set all of the LED colors for one frame.
         * Wait for the :func:`FrameRendered` callback.
         * Set all of the LED colors for next frame.
@@ -123,7 +123,7 @@ class BrickletLEDStrip(Device):
 
     def get_rgb_values(self, index, length):
         """
-        Returns the rgb with the given *length* starting from the
+        Returns RGB value with the given *length* starting from the
         given *index*.
         
         The values are the last values that were set by :func:`SetRGBValues`.
@@ -135,7 +135,7 @@ class BrickletLEDStrip(Device):
         Sets the frame duration in ms.
         
         Example: If you want to achieve 20 frames per second, you should
-        set the frame duration to 50ms (50ms * 20 = 1 second). 
+        set the frame duration to 50ms (50ms * 20 = 1 second).
         
         For an explanation of the general approach see :func:`SetRGBValues`.
         
@@ -216,7 +216,45 @@ class BrickletLEDStrip(Device):
 
     def set_rgbw_values(self, index, length, r, g, b, w):
         """
-        FIXME
+        Sets the RGBW values for the LEDs with the given *length* starting
+        from *index*.
+        
+        The maximum length is 12, the index goes from 0 to 319 and the rgb values
+        have 8 bits each.
+        
+        Example: If you set
+        
+        * index to 5,
+        * length to 4,
+        * r to [255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        * g to [0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        * b to [0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0] and
+        * w to [0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0]
+        
+        the LED with index 5 will be red, 6 will be green, 7 will be blue and 8 will be white.
+        
+        .. note:: Depending on the LED circuitry colors can be permuted.
+        
+        The colors will be transfered to actual LEDs when the next
+        frame duration ends, see :func:`SetFrameDuration`.
+        
+        Generic approach:
+        
+        * Set the frame duration to a value that represents
+          the number of frames per second you want to achieve.
+        * Set all of the LED colors for one frame.
+        * Wait for the :func:`FrameRendered` callback.
+        * Set all of the LED colors for next frame.
+        * Wait for the :func:`FrameRendered` callback.
+        * and so on.
+        
+        This approach ensures that you can change the LED colors with
+        a fixed frame rate.
+        
+        The actual number of controllable LEDs depends on the number of free
+        Bricklet ports. See :ref:`here <led_strip_bricklet_ram_constraints>` for more
+        information. A call of :func:`SetRGBValues` with index + length above the
+        bounds is ignored completely.
         
         .. versionadded:: 2.0.6$nbsp;(Plugin)
         """
@@ -224,7 +262,7 @@ class BrickletLEDStrip(Device):
 
     def get_rgbw_values(self, index, length):
         """
-        Returns the rgbw with the given *length* starting from the
+        Returns RGBW values with the given *length* starting from the
         given *index*.
         
         The values are the last values that were set by :func:`SetRGBWValues`.
