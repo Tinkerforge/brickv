@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-05-31.      #
+# This file was automatically generated on 2016-07-21.      #
 #                                                           #
 # Python Bindings Version 2.1.9                             #
 #                                                           #
@@ -23,6 +23,7 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 GetRGBValues = namedtuple('RGBValues', ['r', 'g', 'b'])
+GetRGBWValues = namedtuple('RGBWValues', ['r', 'g', 'b', 'w'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletLEDStrip(Device):
@@ -44,6 +45,8 @@ class BrickletLEDStrip(Device):
     FUNCTION_GET_CLOCK_FREQUENCY = 8
     FUNCTION_SET_CHIP_TYPE = 9
     FUNCTION_GET_CHIP_TYPE = 10
+    FUNCTION_SET_RGBW_VALUES = 11
+    FUNCTION_GET_RGBW_VALUES = 12
     FUNCTION_GET_IDENTITY = 255
 
     CHIP_TYPE_WS2801 = 2801
@@ -57,7 +60,7 @@ class BrickletLEDStrip(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 2)
+        self.api_version = (2, 0, 3)
 
         self.response_expected[BrickletLEDStrip.FUNCTION_SET_RGB_VALUES] = BrickletLEDStrip.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_RGB_VALUES] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -69,6 +72,8 @@ class BrickletLEDStrip(Device):
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_CLOCK_FREQUENCY] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLEDStrip.FUNCTION_SET_CHIP_TYPE] = BrickletLEDStrip.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_CHIP_TYPE] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLEDStrip.FUNCTION_SET_RGBW_VALUES] = BrickletLEDStrip.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLEDStrip.FUNCTION_GET_RGBW_VALUES] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_IDENTITY] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletLEDStrip.CALLBACK_FRAME_RENDERED] = 'H'
@@ -118,7 +123,7 @@ class BrickletLEDStrip(Device):
 
     def get_rgb_values(self, index, length):
         """
-        Returns *rgb* values with the given *length* starting from the
+        Returns the rgb with the given *length* starting from the
         given *index*.
         
         The values are the last values that were set by :func:`SetRGBValues`.
@@ -208,6 +213,25 @@ class BrickletLEDStrip(Device):
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_CHIP_TYPE, (), '', 'H')
+
+    def set_rgbw_values(self, index, length, r, g, b, w):
+        """
+        FIXME
+        
+        .. versionadded:: 2.0.6$nbsp;(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_RGBW_VALUES, (index, length, r, g, b, w), 'H B 12B 12B 12B 12B', '')
+
+    def get_rgbw_values(self, index, length):
+        """
+        Returns the rgbw with the given *length* starting from the
+        given *index*.
+        
+        The values are the last values that were set by :func:`SetRGBWValues`.
+        
+        .. versionadded:: 2.0.6$nbsp;(Plugin)
+        """
+        return GetRGBWValues(*self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_RGBW_VALUES, (index, length), 'H B', '12B 12B 12B 12B'))
 
     def get_identity(self):
         """

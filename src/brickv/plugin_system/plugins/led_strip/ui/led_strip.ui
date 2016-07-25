@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>704</width>
-    <height>246</height>
+    <width>871</width>
+    <height>402</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -185,6 +185,27 @@
       <widget class="QSpinBox" name="box_b">
        <property name="maximum">
         <number>255</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>W:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="box_w">
+       <property name="maximum">
+        <number>255</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="check_white">
+       <property name="text">
+        <string>Enable White</string>
        </property>
       </widget>
      </item>

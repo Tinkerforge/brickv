@@ -20,6 +20,9 @@ You should have received a copy of the GNU General Public
 License along with this program; if not, write to the
 Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
+
+ToDo: The frame duration is set by the last set value. The displayed 100
+does not have to be correct!
 """
 
 import colorsys
@@ -49,6 +52,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
 
         self.has_clock_frequency = self.firmware_version >= (2, 0, 1)
         self.has_chip_type = self.firmware_version >= (2, 0, 2)
+        self.has_rgbw = self.firmware_version >= (2, 0, 6)
 
         self.qtcb_frame_rendered.connect(self.cb_frame_rendered)
 
@@ -57,6 +61,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.button_gradient.clicked.connect(self.gradient_clicked)
         self.button_dot.clicked.connect(self.dot_clicked)
         self.box_frame_duration.valueChanged.connect(self.frame_duration_changed)
+        self.check_white.toggled.connect(self.check_white_toggled)
 
         if self.has_clock_frequency:
             self.box_clock_frequency.valueChanged.connect(self.clock_frequency_changed)
@@ -70,6 +75,13 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             self.chip_type_label.setText("Chip Type (FW Version >= 2.0.2 required)")
             self.chip_type_combobox.setCurrentIndex(0)
             self.chip_type_combobox.setEnabled(False)
+            
+        if self.has_rgbw:
+           self.check_white.setDisabled(False)
+           self.box_w.setDisabled(True)
+        else:
+           self.check_white.setDisabled(True)
+           self.box_w.setDisabled(True)
 
         self.state = self.STATE_IDLE
 
@@ -89,14 +101,23 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             chip = 2801
             self.box_clock_frequency.show()
             self.label_clock_frequency.show()
+            self.check_white.hide()
+            self.box_w.hide()
+            self.label_7.hide()
         elif index == 1:
             chip = 2811
             self.box_clock_frequency.hide()
             self.label_clock_frequency.hide()
+            self.check_white.hide()
+            self.box_w.hide()
+            self.label_7.hide()
         elif index == 2:
             chip = 2812
             self.box_clock_frequency.hide()
             self.label_clock_frequency.hide()
+            self.check_white.show()
+            self.box_w.show()
+            self.label_7.show()
 
         if not only_config:
             self.led_strip.set_chip_type(chip)
@@ -163,61 +184,92 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         if old_state == self.STATE_IDLE:
             self.render_color_dot()
 
+    def check_white_toggled(self):
+        if self.check_white.checkState():
+           self.box_w.setDisabled(False)
+        else:
+           self.box_w.setDisabled(True)
+
     def render_color_single(self):
         num_leds = self.box_num_led.value()
+
+        if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+            ledBlock = 12
+        else:
+            ledBlock = 16
 
         r = self.box_r.value()
         g = self.box_g.value()
         b = self.box_b.value()
+        w = self.box_w.value()
 
         i = 0
 
         while num_leds > 0:
-            num_leds -= 16
+            num_leds -= ledBlock
             if num_leds < 0:
-                leds = 16 + num_leds
+                leds = ledBlock + num_leds
             else:
-                leds = 16
+                leds = ledBlock
 
             r_val = [r]*leds
-            r_val.extend([0]*(16 - leds))
+            r_val.extend([0]*(ledBlock - leds))
             g_val = [g]*leds
-            g_val.extend([0]*(16 - leds))
+            g_val.extend([0]*(ledBlock - leds))
             b_val = [b]*leds
-            b_val.extend([0]*(16 - leds))
+            b_val.extend([0]*(ledBlock - leds))
+            w_val = [w]*leds
+            w_val.extend([0]*(ledBlock - leds))
 
-            self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
+            if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
+            else:
+                self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
             i += leds
 
     def render_color_black(self):
         num_leds = self.box_num_led.value()
         i = 0
 
+        if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+           ledBlock = 12
+        else:
+           ledBlock = 16
+
         while num_leds > 0:
-            num_leds -= 16
+            num_leds -= ledBlock
             if num_leds < 0:
-                leds = 16 + num_leds
+                leds = ledBlock + num_leds
             else:
-                leds = 16
+                leds = ledBlock
 
             r_val = [0]*leds
-            r_val.extend([0]*(16 - leds))
+            r_val.extend([0]*(ledBlock - leds))
             g_val = [0]*leds
-            g_val.extend([0]*(16 - leds))
+            g_val.extend([0]*(ledBlock - leds))
             b_val = [0]*leds
-            b_val.extend([0]*(16 - leds))
+            b_val.extend([0]*(ledBlock - leds))
+            w_val = [0]*leds
+            w_val.extend([0]*(ledBlock - leds))
 
-            self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
+            if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
+            else:
+                self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
             i += leds
 
     def render_color_gradient(self):
         num_leds = self.box_num_led.value()
-        self.gradient_counter += max(num_leds, 16) * self.box_speed.value() / 100.0 / 4.0
+        if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+           ledBlock = 12
+        else:
+           ledBlock = 16
+        self.gradient_counter += max(num_leds, ledBlock) * self.box_speed.value() / 100.0 / 4.0
         ra = []
         ga = []
         ba = []
 
-        range_leds_len = max(num_leds, 16)
+        range_leds_len = max(num_leds, ledBlock)
         range_leds = range(range_leds_len)
         range_leds = range_leds[int(self.gradient_counter) % range_leds_len:] + range_leds[:int(self.gradient_counter) % range_leds_len]
         range_leds = reversed(range_leds)
@@ -230,23 +282,24 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
 
         i = 0
         while num_leds > 0:
-            num_leds -= 16
+            num_leds -= ledBlock
+            
             if num_leds < 0:
-                leds = 16 + num_leds
+                leds = ledBlock + num_leds
             else:
-                leds = 16
+                leds = ledBlock
 
             r_val = ra[:leds]
-            r_val.extend([0]*(16 - leds))
+            r_val.extend([0]*(ledBlock - leds))
             g_val = ga[:leds]
-            g_val.extend([0]*(16 - leds))
+            g_val.extend([0]*(ledBlock - leds))
             b_val = ba[:leds]
-            b_val.extend([0]*(16 - leds))
+            b_val.extend([0]*(ledBlock - leds))
 
-            try:
-                self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
-            except:
-                pass
+            if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+               self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, [0]*12)
+            else:
+               self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
 
             ra = ra[leds:]
             ga = ga[leds:]
@@ -257,32 +310,45 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         num_leds = self.box_num_led.value()
         self.dot_counter = self.dot_counter % num_leds
 
+        if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+           ledBlock = 12
+        else:
+           ledBlock = 16
+
         r = self.box_r.value()
         g = self.box_g.value()
         b = self.box_b.value()
+        w = self.box_w.value()
 
         i = 0
         while num_leds > 0:
-            num_leds -= 16
+            num_leds -= ledBlock
             if num_leds < 0:
-                leds = 16 + num_leds
+                leds = ledBlock + num_leds
             else:
-                leds = 16
+                leds = ledBlock
 
             r_val = [0]*leds
-            r_val.extend([0]*(16 - leds))
+            r_val.extend([0]*(ledBlock - leds))
             g_val = [0]*leds
-            g_val.extend([0]*(16 - leds))
+            g_val.extend([0]*(ledBlock - leds))
             b_val = [0]*leds
-            b_val.extend([0]*(16 - leds))
+            b_val.extend([0]*(ledBlock - leds))
+            w_val = [0]*leds
+            w_val.extend([0]*(ledBlock - leds))
 
-            if self.dot_counter >= i and self.dot_counter < i + 16:
-                k = self.dot_counter % 16
+            if self.dot_counter >= i and self.dot_counter < i + ledBlock:
+                k = self.dot_counter % ledBlock
                 r_val[k] = r
                 g_val[k] = g
                 b_val[k] = b
+                w_val[k] = w
 
-            self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
+            if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
+            else:
+                self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
+
             i += leds
 
         self.dot_counter += self.dot_direction * self.box_speed.value()
