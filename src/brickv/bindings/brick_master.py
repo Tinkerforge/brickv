@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-06-28.      #
+# This file was automatically generated on 2016-07-25.      #
 #                                                           #
 # Python Bindings Version 2.1.9                             #
 #                                                           #
@@ -226,6 +226,7 @@ class BrickMaster(Device):
     WIFI2_CLIENT_STATUS_NO_AP_FOUND = 3
     WIFI2_CLIENT_STATUS_CONNECT_FAILED = 4
     WIFI2_CLIENT_STATUS_GOT_IP = 5
+    WIFI2_CLIENT_STATUS_UNKNOWN = 255
     WIFI2_AP_ENCRYPTION_OPEN = 0
     WIFI2_AP_ENCRYPTION_WEP = 1
     WIFI2_AP_ENCRYPTION_WPA_PSK = 2

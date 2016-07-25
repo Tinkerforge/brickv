@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-06-28.      #
+# This file was automatically generated on 2016-07-25.      #
 #                                                           #
 # Python Bindings Version 2.1.9                             #
 #                                                           #
@@ -283,6 +283,8 @@ class BrickletCAN(Device):
           case the newly arrived frame is lost. This happens if the CAN transceiver
           receives more frames than the Bricklet can handle. Using the read filter
           (see :func:`SetReadFilter`) can help to reduce the amount of received frames.
+          This count is not exact, but a lower bound, because the Bricklet might not
+          able detect all overflows if they occur in rapid succession.
         * A read buffer overflow occurs if the read buffer of the Bricklet is already
           full when the next frame should be read from the read register of the CAN
           transceiver. In this case the frame in the read register is lost. This
