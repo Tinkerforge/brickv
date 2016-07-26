@@ -139,6 +139,9 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
     def cb_frequency(self, frequency):
         self.box_clock_frequency.setValue(frequency)
 
+    def cb_duration(self, duration):
+        self.box_frame_duration.setValue(duration)
+
     def cb_voltage(self, voltage):
         self.label_voltage.setText(str(voltage/1000.0) + 'V')
 
@@ -367,6 +370,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         if self.has_clock_frequency:
             async_call(self.led_strip.get_clock_frequency, None, self.cb_frequency, self.increase_error_count)
         async_call(self.led_strip.get_supply_voltage, None, self.cb_voltage, self.increase_error_count)
+        async_call(self.led_strip.get_frame_duration, None, self.cb_duration, self.increase_error_count)
         self.voltage_timer.start()
         self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_RENDERED,
                                          self.qtcb_frame_rendered.emit)
