@@ -53,6 +53,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.has_clock_frequency = self.firmware_version >= (2, 0, 1)
         self.has_chip_type = self.firmware_version >= (2, 0, 2)
         self.has_rgbw = self.firmware_version >= (2, 0, 6)
+        self.has_more_chip_types = self.firmware_version >= (2, 0, 6)
 
         self.qtcb_frame_rendered.connect(self.cb_frame_rendered)
 
@@ -61,6 +62,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.button_gradient.clicked.connect(self.gradient_clicked)
         self.button_dot.clicked.connect(self.dot_clicked)
         self.box_frame_duration.valueChanged.connect(self.frame_duration_changed)
+        self.gradient_intensity.valueChanged.connect(self.gradient_intensity_changed)
         self.check_white.toggled.connect(self.check_white_toggled)
 
         if self.has_clock_frequency:
@@ -82,6 +84,12 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         else:
            self.check_white.setDisabled(True)
            self.box_w.setDisabled(True)
+
+        if self.has_more_chip_types:
+           self.label_chip_type_note.setText(" ")
+           self.chip_type_combobox.addItem("LPD8806")
+        else:
+           self.label_chip_type_note.setText("FW >= 2.0.6 required for more Chip Types")
 
         self.state = self.STATE_IDLE
 
@@ -118,6 +126,13 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             self.check_white.show()
             self.box_w.show()
             self.label_7.show()
+        elif index == 3:
+            chip = 8806
+            self.box_clock_frequency.show()
+            self.label_clock_frequency.show()
+            self.check_white.hide()
+            self.box_w.hide()
+            self.label_7.hide()
 
         if not only_config:
             self.led_strip.set_chip_type(chip)
@@ -135,6 +150,9 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         elif chip == 2812:
             self.chip_type_combobox.setCurrentIndex(2)
             self.chip_type_index_changed(2, True)
+        elif chip == 8806:
+            self.chip_type_combobox.setCurrentIndex(3)
+            self.chip_type_index_changed(3, True)
 
     def cb_frequency(self, frequency):
         self.box_clock_frequency.setValue(frequency)
@@ -192,6 +210,9 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
            self.box_w.setDisabled(False)
         else:
            self.box_w.setDisabled(True)
+
+    def gradient_intensity_changed(self):
+        self.label_gradient_intensity.setText(str(self.gradient_intensity.value()) + '%')
 
     def render_color_single(self):
         num_leds = self.box_num_led.value()
@@ -277,8 +298,11 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         range_leds = range_leds[int(self.gradient_counter) % range_leds_len:] + range_leds[:int(self.gradient_counter) % range_leds_len]
         range_leds = reversed(range_leds)
 
+        intensity = (self.gradient_intensity.value()/100.0)
+        self.label_gradient_intensity.setText(str(self.gradient_intensity.value()) + '%')
+
         for i in range_leds:
-            r, g, b = colorsys.hsv_to_rgb(1.0*i/range_leds_len, 1, 0.1)
+            r, g, b = colorsys.hsv_to_rgb(1.0*i/range_leds_len, 1, intensity)
             ra.append(int(r*255))
             ga.append(int(g*255))
             ba.append(int(b*255))

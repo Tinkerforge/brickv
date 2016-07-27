@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>871</width>
+    <width>908</width>
     <height>402</height>
    </rect>
   </property>
@@ -40,6 +40,13 @@
          <string>WS2812</string>
         </property>
        </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_chip_type_note">
+       <property name="text">
+        <string/>
+       </property>
       </widget>
      </item>
      <item>
@@ -258,6 +265,20 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="button_dot">
+       <property name="text">
+        <string>Show Moving Color Dot</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="button_gradient">
        <property name="text">
         <string>Show Moving Color Gradient</string>
@@ -265,9 +286,39 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="button_dot">
+      <widget class="QLabel" name="label_9">
        <property name="text">
-        <string>Show Moving Color Dot</string>
+        <string>Intensity:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="gradient_intensity">
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="value">
+        <number>10</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_gradient_intensity">
+       <property name="text">
+        <string>10%</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
@@ -287,13 +338,6 @@
     </layout>
    </item>
    <item>
-    <widget class="Line" name="line_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
       <widget class="QLabel" name="label_8">
@@ -306,6 +350,13 @@
       <widget class="QLabel" name="label_voltage">
        <property name="text">
         <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
