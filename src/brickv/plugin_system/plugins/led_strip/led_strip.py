@@ -88,6 +88,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         if self.has_more_chip_types:
            self.label_chip_type_note.setText(" ")
            self.chip_type_combobox.addItem("LPD8806")
+           self.chip_type_combobox.addItem("APA102")
         else:
            self.label_chip_type_note.setText("FW >= 2.0.6 required for more Chip Types")
 
@@ -133,6 +134,13 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             self.check_white.hide()
             self.box_w.hide()
             self.label_7.hide()
+        elif index == 4:
+            chip = 102
+            self.box_clock_frequency.show()
+            self.label_clock_frequency.show()
+            self.check_white.hide()
+            self.box_w.hide()
+            self.label_7.hide()
 
         if not only_config:
             self.led_strip.set_chip_type(chip)
@@ -153,6 +161,9 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         elif chip == 8806:
             self.chip_type_combobox.setCurrentIndex(3)
             self.chip_type_index_changed(3, True)
+        elif chip == 102:
+            self.chip_type_combobox.setCurrentIndex(4)
+            self.chip_type_index_changed(4, True)
 
     def cb_frequency(self, frequency):
         self.box_clock_frequency.setValue(frequency)
