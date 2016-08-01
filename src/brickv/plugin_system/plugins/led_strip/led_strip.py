@@ -79,18 +79,18 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             self.chip_type_combobox.setEnabled(False)
             
         if self.has_rgbw:
-           self.check_white.setDisabled(False)
-           self.box_w.setDisabled(True)
+            self.check_white.setDisabled(False)
+            self.box_w.setDisabled(True)
         else:
-           self.check_white.setDisabled(True)
-           self.box_w.setDisabled(True)
+            self.check_white.setDisabled(True)
+            self.box_w.setDisabled(True)
 
         if self.has_more_chip_types:
-           self.label_chip_type_note.setText(" ")
-           self.chip_type_combobox.addItem("LPD8806")
-           self.chip_type_combobox.addItem("APA102")
+            self.label_chip_type_note.setText(" ")
+            self.chip_type_combobox.addItem("LPD8806")
+            self.chip_type_combobox.addItem("APA102")
         else:
-           self.label_chip_type_note.setText("FW >= 2.0.6 required for more chip types")
+            self.label_chip_type_note.setText("FW >= 2.0.6 required for more chip types")
 
         self.state = self.STATE_IDLE
 
@@ -228,9 +228,9 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
 
     def check_white_toggled(self):
         if self.check_white.checkState():
-           self.box_w.setDisabled(False)
+            self.box_w.setDisabled(False)
         else:
-           self.box_w.setDisabled(True)
+            self.box_w.setDisabled(True)
 
     def gradient_intensity_changed(self):
         self.label_gradient_intensity.setText(str(self.gradient_intensity.value()) + '%')
