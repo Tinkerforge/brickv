@@ -217,6 +217,29 @@
       </widget>
      </item>
      <item>
+      <widget class="QLabel" name="brightness_label">
+       <property name="text">
+        <string>Brightness:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="brightness_slider">
+       <property name="maximum">
+        <number>31</number>
+       </property>
+       <property name="value">
+        <number>31</number>
+       </property>
+       <property name="sliderPosition">
+        <number>31</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="button_color">
        <property name="text">
         <string>Show Color</string>
@@ -349,7 +372,7 @@
      <item>
       <widget class="QLabel" name="label_voltage">
        <property name="text">
-        <string>0</string>
+        <string>-</string>
        </property>
       </widget>
      </item>
