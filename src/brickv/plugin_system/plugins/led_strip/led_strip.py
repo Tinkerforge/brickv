@@ -320,6 +320,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             ledBlock = 12
         elif self.chip_type_combobox.currentIndex() == 4:
             ledBlock = 12
+            brightness = self.brightness_slider.value()
         else:
             ledBlock = 16
 
@@ -357,11 +358,13 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             g_val.extend([0]*(ledBlock - leds))
             b_val = ba[:leds]
             b_val.extend([0]*(ledBlock - leds))
+            brightness_val = [brightness]*leds
+            brightness_val.extend([0]*(ledBlock - leds))
 
             if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
                 self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, [0]*12)
             elif self.chip_type_combobox.currentIndex() == 4:
-                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, [0b00011111]*12)
+                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, brightness_val)
             else:
                 self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
 
