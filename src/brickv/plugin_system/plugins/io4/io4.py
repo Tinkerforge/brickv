@@ -2,7 +2,7 @@
 """
 IO4 Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012, 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 humidity.py: IO4 Plugin Implementation
 
@@ -55,9 +55,6 @@ class IO4(PluginBase, Ui_IO4):
         self.monoflop_active = [False, False, False, False]
         self.monoflop_timebefore = [500, 500, 500, 500]
 
-        self.init_async_generator = self.init_async()
-        self.init_async_generator.next()
-        
         self.save_button.clicked.connect(self.save_clicked)
         self.pin_box.currentIndexChanged.connect(self.pin_changed)
         self.direction_box.currentIndexChanged.connect(self.direction_changed)
@@ -122,6 +119,9 @@ class IO4(PluginBase, Ui_IO4):
         async_call(self.io.get_debounce_period, None, get_debounce_period_async, self.increase_error_count)
         
     def start(self):
+        self.init_async_generator = self.init_async()
+        self.init_async_generator.next()
+
         self.cbe_value.set_period(50)
 
         if self.has_monoflop:

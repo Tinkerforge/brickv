@@ -2,7 +2,7 @@
 """
 IO-16 Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012, 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 io16.py: IO-16 Plugin Implementation
 
@@ -82,9 +82,6 @@ class IO16(PluginBase, Ui_IO16):
                                      'b': [500, 500, 500, 500,
                                            500, 500, 500, 500] }
 
-        self.init_async_generator = self.init_async()
-        self.init_async_generator.next()
-        
         self.save_button.clicked.connect(self.save_clicked)
         self.port_box.currentIndexChanged.connect(self.port_changed)
         self.pin_box.currentIndexChanged.connect(self.pin_changed)
@@ -153,6 +150,9 @@ class IO16(PluginBase, Ui_IO16):
         async_call(self.io.get_debounce_period, None, get_debounce_period_async, self.increase_error_count)
         
     def start(self):
+        self.init_async_generator = self.init_async()
+        self.init_async_generator.next()
+
         self.cbe_port_a.set_period(50)
         self.cbe_port_b.set_period(50)
         
