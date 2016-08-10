@@ -31,8 +31,12 @@ Boston, MA 02111-1307, USA.
 #       nsis
 #       win redistributables vcredist under winxp
 
-import os
 import sys
+if (sys.hexversion & 0xFF000000) != 0x02000000:
+    print 'Python 2.x required'
+    sys.exit(1)
+
+import os
 import base64
 import shutil
 import struct

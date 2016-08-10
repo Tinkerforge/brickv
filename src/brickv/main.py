@@ -27,8 +27,12 @@ import sip
 sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
 
-import os
 import sys
+if (sys.hexversion & 0xFF000000) != 0x02000000:
+    print('Python 2.x required')
+    sys.exit(1)
+
+import os
 import logging
 import locale
 

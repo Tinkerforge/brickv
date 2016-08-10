@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 import sys
+if (sys.hexversion & 0xFF000000) != 0x02000000:
+    print 'Python 2.x required'
+    sys.exit(1)
+
+import os
 
 def system(command):
     if os.system(command) != 0:
