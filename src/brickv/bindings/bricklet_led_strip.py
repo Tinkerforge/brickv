@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-07-25.      #
+# This file was automatically generated on 2016-08-11.      #
 #                                                           #
 # Python Bindings Version 2.1.9                             #
 #                                                           #
@@ -47,11 +47,45 @@ class BrickletLEDStrip(Device):
     FUNCTION_GET_CHIP_TYPE = 10
     FUNCTION_SET_RGBW_VALUES = 11
     FUNCTION_GET_RGBW_VALUES = 12
+    FUNCTION_SET_CHANNEL_MAPPING = 13
+    FUNCTION_GET_CHANNEL_MAPPING = 14
     FUNCTION_GET_IDENTITY = 255
 
     CHIP_TYPE_WS2801 = 2801
     CHIP_TYPE_WS2811 = 2811
     CHIP_TYPE_WS2812 = 2812
+    CHIP_TYPE_LPD8806 = 8806
+    CHIP_TYPE_APA102 = 102
+    CHANNEL_MAPPING_RGB = 0
+    CHANNEL_MAPPING_RBG = 1
+    CHANNEL_MAPPING_BRG = 2
+    CHANNEL_MAPPING_BGR = 3
+    CHANNEL_MAPPING_GRB = 4
+    CHANNEL_MAPPING_GBR = 5
+    CHANNEL_MAPPING_RGBW = 6
+    CHANNEL_MAPPING_RGWB = 7
+    CHANNEL_MAPPING_RBGW = 8
+    CHANNEL_MAPPING_RBWG = 9
+    CHANNEL_MAPPING_RWGB = 10
+    CHANNEL_MAPPING_RWBG = 11
+    CHANNEL_MAPPING_GRWB = 12
+    CHANNEL_MAPPING_GRBW = 13
+    CHANNEL_MAPPING_GBWR = 14
+    CHANNEL_MAPPING_GBRW = 15
+    CHANNEL_MAPPING_GWBR = 16
+    CHANNEL_MAPPING_GWRB = 17
+    CHANNEL_MAPPING_BRGW = 18
+    CHANNEL_MAPPING_BRWG = 19
+    CHANNEL_MAPPING_BGRW = 20
+    CHANNEL_MAPPING_BGWR = 21
+    CHANNEL_MAPPING_BWRG = 22
+    CHANNEL_MAPPING_BWGR = 23
+    CHANNEL_MAPPING_WRBG = 24
+    CHANNEL_MAPPING_WRGB = 25
+    CHANNEL_MAPPING_WGBR = 26
+    CHANNEL_MAPPING_WGRB = 27
+    CHANNEL_MAPPING_WBGR = 28
+    CHANNEL_MAPPING_WBRG = 29
 
     def __init__(self, uid, ipcon):
         """
@@ -74,6 +108,8 @@ class BrickletLEDStrip(Device):
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_CHIP_TYPE] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLEDStrip.FUNCTION_SET_RGBW_VALUES] = BrickletLEDStrip.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_RGBW_VALUES] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLEDStrip.FUNCTION_SET_CHANNEL_MAPPING] = BrickletLEDStrip.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLEDStrip.FUNCTION_GET_CHANNEL_MAPPING] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_IDENTITY] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletLEDStrip.CALLBACK_FRAME_RENDERED] = 'H'
@@ -194,11 +230,18 @@ class BrickletLEDStrip(Device):
         the chips
         
         * WS2801 (``chip`` = 2801),
-        * WS2811 (``chip`` = 2811) and
-        * WS2812 (``chip`` = 2812).
+        * WS2811 (``chip`` = 2811),
+        * WS2812 (``chip`` = 2812),
+        * LPD8806 (``chip`` = 8806) and
+        * APA102 (``chip`` = 102).
         
         The WS2812 is sometimes also called "NeoPixel", a name coined by
         Adafruit.
+        The APA102 is sometimes also called "DotStar", a name also coined by
+        Adafruit.
+        
+        The LPD8806 has only 7 Bit PWM for each channel. Nevertheless value can
+        be transfer from 0-255. They will be divided by two.
         
         The default value is WS2801 (``chip`` = 2801).
         
@@ -219,7 +262,7 @@ class BrickletLEDStrip(Device):
         Sets the RGBW values for the LEDs with the given *length* starting
         from *index*.
         
-        The maximum length is 12, the index goes from 0 to 319 and the rgb values
+        The maximum length is 12, the index goes from 0 to 319 and the rgbw values
         have 8 bits each.
         
         Example: If you set
@@ -270,6 +313,31 @@ class BrickletLEDStrip(Device):
         .. versionadded:: 2.0.6$nbsp;(Plugin)
         """
         return GetRGBWValues(*self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_RGBW_VALUES, (index, length), 'H B', '12B 12B 12B 12B'))
+
+    def set_channel_mapping(self, channel):
+        """
+        Sets the channel mapping that the transferred data match their identifiers.
+        The values 0 through 5 are designed for 3 channels (RGB) and values 6 through
+        29 for 4 channels (RGB + W). In each case, all permutations are available.
+        
+        Instructions:
+        - select 0 (if RGB) or 6 (if RGBW) and activate each channel individually
+        - write down the order of the illuminated colors. You have to set this order.
+        Example:
+          When the LED Strip shows the order blue, yellow, red in modus 0 (RGB). Then
+          you have to give the function the value of 3 (BGR).
+        
+        .. versionadded:: 2.0.6$nbsp;(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_CHANNEL_MAPPING, (channel,), 'H', '')
+
+    def get_channel_mapping(self):
+        """
+        Returns the currently used channel mapping table as set by :func:`SetChannelMapping`.
+        
+        .. versionadded:: 2.0.6$nbsp;(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_CHANNEL_MAPPING, (), '', 'H')
 
     def get_identity(self):
         """

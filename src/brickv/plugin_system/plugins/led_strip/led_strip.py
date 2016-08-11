@@ -54,6 +54,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.has_chip_type = self.firmware_version >= (2, 0, 2)
         self.has_rgbw = self.firmware_version >= (2, 0, 6)
         self.has_more_chip_types = self.firmware_version >= (2, 0, 6)
+        self.has_channel_mapping = self.firmware_version >= (2, 0, 6)
 
         self.qtcb_frame_rendered.connect(self.cb_frame_rendered)
 
@@ -63,7 +64,6 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.button_dot.clicked.connect(self.dot_clicked)
         self.box_frame_duration.valueChanged.connect(self.frame_duration_changed)
         self.gradient_intensity.valueChanged.connect(self.gradient_intensity_changed)
-        self.check_white.toggled.connect(self.check_white_toggled)
 
         if self.has_clock_frequency:
             self.box_clock_frequency.valueChanged.connect(self.clock_frequency_changed)
@@ -79,10 +79,8 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             self.chip_type_combobox.setEnabled(False)
             
         if self.has_rgbw:
-            self.check_white.setDisabled(False)
             self.box_w.setDisabled(True)
         else:
-            self.check_white.setDisabled(True)
             self.box_w.setDisabled(True)
 
         if self.has_more_chip_types:
@@ -91,6 +89,12 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             self.chip_type_combobox.addItem("APA102")
         else:
             self.label_chip_type_note.setText("FW >= 2.0.6 required for more chip types")
+
+        if self.has_channel_mapping:
+            self.channel_mapping_combobox.currentIndexChanged.connect(self.channel_mapping_changed)
+        else:
+            self.channel_mapping_combobox.setCurrentIndex(0)
+            self.channel_mapping_combobox.setEnabled(False)
 
         self.state = self.STATE_IDLE
 
@@ -104,13 +108,19 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.voltage_timer.timeout.connect(self.update_voltage)
         self.voltage_timer.setInterval(1000)
 
+    def channel_mapping_changed(self, index, only_config=False):
+        self.led_strip.set_channel_mapping(self.channel_mapping_combobox.currentIndex())
+        if self.channel_mapping_combobox.currentIndex() > 5:
+            self.box_w.setDisabled(False)
+        else:
+            self.box_w.setDisabled(True)
+
     def chip_type_index_changed(self, index, only_config=False):
         chip = 2801
         if index == 0:
             chip = 2801
             self.box_clock_frequency.show()
             self.label_clock_frequency.show()
-            self.check_white.hide()
             self.box_w.hide()
             self.label_7.hide()
             self.brightness_slider.hide()
@@ -119,7 +129,6 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             chip = 2811
             self.box_clock_frequency.hide()
             self.label_clock_frequency.hide()
-            self.check_white.hide()
             self.box_w.hide()
             self.label_7.hide()
             self.brightness_slider.hide()
@@ -128,7 +137,6 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             chip = 2812
             self.box_clock_frequency.hide()
             self.label_clock_frequency.hide()
-            self.check_white.show()
             self.box_w.show()
             self.label_7.show()
             self.brightness_slider.hide()
@@ -137,7 +145,6 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             chip = 8806
             self.box_clock_frequency.show()
             self.label_clock_frequency.show()
-            self.check_white.hide()
             self.box_w.hide()
             self.label_7.hide()
             self.brightness_slider.hide()
@@ -146,7 +153,6 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             chip = 102
             self.box_clock_frequency.show()
             self.label_clock_frequency.show()
-            self.check_white.hide()
             self.box_w.hide()
             self.label_7.hide()
             self.brightness_slider.show()
@@ -194,6 +200,9 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         elif self.state == self.STATE_COLOR_DOT:
             self.render_color_dot()
 
+    def cb_channel_mapping(self, channel_mapping):
+        self.channel_mapping_combobox.setCurrentIndex(channel_mapping)
+
     def clock_frequency_changed(self, frequency):
         self.led_strip.set_clock_frequency(frequency)
 
@@ -226,19 +235,13 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         if old_state == self.STATE_IDLE:
             self.render_color_dot()
 
-    def check_white_toggled(self):
-        if self.check_white.checkState():
-            self.box_w.setDisabled(False)
-        else:
-            self.box_w.setDisabled(True)
-
     def gradient_intensity_changed(self):
         self.label_gradient_intensity.setText(str(self.gradient_intensity.value()) + '%')
 
     def render_color_single(self):
         num_leds = self.box_num_led.value()
 
-        if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+        if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
             ledBlock = 12
         elif self.chip_type_combobox.currentIndex() == 4:
             ledBlock = 12
@@ -271,7 +274,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             w_val = [w]*leds
             w_val.extend([0]*(ledBlock - leds))
 
-            if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+            if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
                 self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
             elif self.chip_type_combobox.currentIndex() == 4:
                 self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
@@ -283,7 +286,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         num_leds = self.box_num_led.value()
         i = 0
 
-        if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+        if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
             ledBlock = 12
         elif self.chip_type_combobox.currentIndex() == 4:
             ledBlock = 12
@@ -306,7 +309,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             w_val = [0]*leds
             w_val.extend([0]*(ledBlock - leds))
 
-            if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+            if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
                 self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
             elif self.chip_type_combobox.currentIndex() == 4:
                 self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
@@ -316,7 +319,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
 
     def render_color_gradient(self):
         num_leds = self.box_num_led.value()
-        if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+        if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
             ledBlock = 12
         elif self.chip_type_combobox.currentIndex() == 4:
             ledBlock = 12
@@ -361,7 +364,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             brightness_val = [brightness]*leds
             brightness_val.extend([0]*(ledBlock - leds))
 
-            if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+            if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
                 self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, [0]*12)
             elif self.chip_type_combobox.currentIndex() == 4:
                 self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, brightness_val)
@@ -377,7 +380,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         num_leds = self.box_num_led.value()
         self.dot_counter = self.dot_counter % num_leds
 
-        if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+        if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
             ledBlock = 12
         elif self.chip_type_combobox.currentIndex() == 4:
             ledBlock = 12
@@ -420,7 +423,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
                 b_val[k] = b
                 w_val[k] = w
 
-            if self.check_white.isChecked() and self.chip_type_combobox.currentIndex() == 2:
+            if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
                 self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
             elif self.chip_type_combobox.currentIndex() == 4:
                 self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
@@ -443,6 +446,8 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             async_call(self.led_strip.get_chip_type, None, self.cb_chip_type, self.increase_error_count)
         if self.has_clock_frequency:
             async_call(self.led_strip.get_clock_frequency, None, self.cb_frequency, self.increase_error_count)
+        if self.has_channel_mapping:
+            async_call(self.led_strip.get_channel_mapping, None, self.cb_channel_mapping, self.increase_error_count)
         async_call(self.led_strip.get_supply_voltage, None, self.cb_voltage, self.increase_error_count)
         async_call(self.led_strip.get_frame_duration, None, self.cb_duration, self.increase_error_count)
         self.voltage_timer.start()

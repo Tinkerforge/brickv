@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>908</width>
+    <width>928</width>
     <height>402</height>
    </rect>
   </property>
@@ -151,6 +151,163 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
+      <widget class="QComboBox" name="channel_mapping_combobox">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>RGB</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>RBG</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>BRG</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>BGR</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>GRB</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>GBR</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>RGBW</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>RGWB</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>RBGW</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>RBWG</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>RWGB</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>RWBG</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>GRWB</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>GRBW</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>GBWR</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>GBRW</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>GWBR</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>GWRB</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>BRGW</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>BRWG</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>BGRW</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>BGWR</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>BWRG</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>BWGR</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>WRBG</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>WRGB</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>WGBR</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>WGRB</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>WBGR</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>WBRG</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Color R:</string>
@@ -206,13 +363,6 @@
       <widget class="QSpinBox" name="box_w">
        <property name="maximum">
         <number>255</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="check_white">
-       <property name="text">
-        <string>Enable White</string>
        </property>
       </widget>
      </item>
@@ -413,6 +563,24 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>chip_type_combobox</tabstop>
+  <tabstop>box_num_led</tabstop>
+  <tabstop>box_frame_duration</tabstop>
+  <tabstop>box_clock_frequency</tabstop>
+  <tabstop>channel_mapping_combobox</tabstop>
+  <tabstop>box_r</tabstop>
+  <tabstop>box_g</tabstop>
+  <tabstop>box_b</tabstop>
+  <tabstop>box_w</tabstop>
+  <tabstop>brightness_slider</tabstop>
+  <tabstop>button_color</tabstop>
+  <tabstop>button_black</tabstop>
+  <tabstop>box_speed</tabstop>
+  <tabstop>button_dot</tabstop>
+  <tabstop>button_gradient</tabstop>
+  <tabstop>gradient_intensity</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
