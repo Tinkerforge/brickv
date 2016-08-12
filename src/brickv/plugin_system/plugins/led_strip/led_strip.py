@@ -347,6 +347,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             ba.append(int(b*255))
 
         i = 0
+
         while num_leds > 0:
             num_leds -= ledBlock
             
@@ -361,8 +362,9 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             g_val.extend([0]*(ledBlock - leds))
             b_val = ba[:leds]
             b_val.extend([0]*(ledBlock - leds))
-            brightness_val = [brightness]*leds
-            brightness_val.extend([0]*(ledBlock - leds))
+            if self.chip_type_combobox.currentIndex() == 4:
+               brightness_val = [brightness]*leds
+               brightness_val.extend([0]*(ledBlock - leds))
 
             if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
                 self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, [0]*12)
