@@ -25,17 +25,32 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QLabel, QVBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
+from PyQt4.Qt import QHBoxLayout
 
 class Unknown(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, None, *args, override_base_name='Unknown')
 
-        layout = QVBoxLayout(self)
+        info = args[1]
+
+        layout = QVBoxLayout()
         layout.addStretch()
-        label = QLabel("This Brick or Bricklet is not yet supported. Please update Brick Viewer!")
-        label.setAlignment(Qt.AlignHCenter)
+        label = QLabel("""The Brick or Bricklet with
+   * device ID {0},
+   * UID {1},
+   * position {2},
+   * FW Version {3}.{4}.{5}
+is not yet supported.
+
+Please update Brick Viewer!""".format(info.device_identifier, info.uid, info.position, info.firmware_version_installed[0], info.firmware_version_installed[1], info.firmware_version_installed[2]))
+#        label.setAlignment(Qt.AlignHCenter)
         layout.addWidget(label)
         layout.addStretch()
+
+        hbox = QHBoxLayout(self)
+        hbox.addStretch()
+        hbox.addLayout(layout)
+        hbox.addStretch()
 
     def start(self):
         pass
