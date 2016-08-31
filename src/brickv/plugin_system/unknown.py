@@ -39,7 +39,7 @@ class Unknown(PluginBase):
    * device ID {0},
    * UID {1},
    * position {2},
-   * FW Version {3}.{4}.{5}
+   * firmware version {3}.{4}.{5}
 is not yet supported.
 
 Please update Brick Viewer!""".format(info.device_identifier, info.uid, info.position, info.firmware_version_installed[0], info.firmware_version_installed[1], info.firmware_version_installed[2]))
