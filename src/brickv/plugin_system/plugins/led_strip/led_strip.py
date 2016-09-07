@@ -118,8 +118,6 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
 
         channel_mapping = self.channel_mapping_combobox.itemData(index)
 
-        print 'channel_mapping', channel_mapping
-
         self.led_strip.set_channel_mapping(channel_mapping)
 
     def chip_type_changed(self, index, ui_only=False):
