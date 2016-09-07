@@ -24,30 +24,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="chip_type_combobox">
-       <item>
-        <property name="text">
-         <string>WS2801</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>WS2811</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>WS2812</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_chip_type_note">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
+      <widget class="QComboBox" name="chip_type_combobox"/>
      </item>
      <item>
       <spacer name="horizontalSpacer_5">
@@ -149,164 +126,41 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QLabel" name="channel_mapping_label">
+       <property name="text">
+        <string>Channel Mapping:</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QComboBox" name="channel_mapping_combobox">
        <property name="currentIndex">
-        <number>0</number>
+        <number>-1</number>
        </property>
-       <item>
-        <property name="text">
-         <string>RGB</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>RBG</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>BRG</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>BGR</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>GRB</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>GBR</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>RGBW</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>RGWB</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>RBGW</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>RBWG</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>RWGB</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>RWBG</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>GRWB</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>GRBW</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>GBWR</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>GBRW</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>GWBR</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>GWRB</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>BRGW</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>BRWG</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>BGRW</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>BGWR</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>BWRG</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>BWGR</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>WRBG</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>WRGB</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>WGBR</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>WGRB</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>WBGR</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>WBRG</string>
-        </property>
-       </item>
+       <property name="sizeAdjustPolicy">
+        <enum>QComboBox::AdjustToContents</enum>
+       </property>
       </widget>
      </item>
+     <item>
+      <spacer name="horizontalSpacer_6">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
@@ -353,7 +207,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_7">
+      <widget class="QLabel" name="label_w">
        <property name="text">
         <string>W:</string>
        </property>
@@ -369,7 +223,7 @@
      <item>
       <widget class="QLabel" name="brightness_label">
        <property name="text">
-        <string>Brightness:</string>
+        <string>Brightness b:</string>
        </property>
       </widget>
      </item>
@@ -379,9 +233,6 @@
         <number>31</number>
        </property>
        <property name="value">
-        <number>31</number>
-       </property>
-       <property name="sliderPosition">
         <number>31</number>
        </property>
        <property name="orientation">
@@ -489,13 +340,6 @@
       </widget>
      </item>
      <item>
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
       <spacer name="horizontalSpacer_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -568,12 +412,10 @@
   <tabstop>box_num_led</tabstop>
   <tabstop>box_frame_duration</tabstop>
   <tabstop>box_clock_frequency</tabstop>
-  <tabstop>channel_mapping_combobox</tabstop>
   <tabstop>box_r</tabstop>
   <tabstop>box_g</tabstop>
   <tabstop>box_b</tabstop>
   <tabstop>box_w</tabstop>
-  <tabstop>brightness_slider</tabstop>
   <tabstop>button_color</tabstop>
   <tabstop>button_black</tabstop>
   <tabstop>box_speed</tabstop>

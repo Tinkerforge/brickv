@@ -52,9 +52,11 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
 
         self.has_clock_frequency = self.firmware_version >= (2, 0, 1)
         self.has_chip_type = self.firmware_version >= (2, 0, 2)
-        self.has_rgbw = self.firmware_version >= (2, 0, 6)
         self.has_more_chip_types = self.firmware_version >= (2, 0, 6)
         self.has_channel_mapping = self.firmware_version >= (2, 0, 6)
+        self.has_configurable_rame_rendered_callback = self.firmware_version >= (2, 0, 6)
+
+        self.frame_read_callback_was_enabled = False
 
         self.qtcb_frame_rendered.connect(self.cb_frame_rendered)
 
@@ -65,35 +67,35 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.box_frame_duration.valueChanged.connect(self.frame_duration_changed)
         self.gradient_intensity.valueChanged.connect(self.gradient_intensity_changed)
 
+        self.chip_type_combobox.addItem('WS2801', (BrickletLEDStrip.CHIP_TYPE_WS2801, 3))
+        self.chip_type_combobox.addItem('WS2811', (BrickletLEDStrip.CHIP_TYPE_WS2811, 3))
+        self.chip_type_combobox.addItem('WS2812 / SK6812 / NeoPixel RGB (GRB)', (BrickletLEDStrip.CHIP_TYPE_WS2812, 3))
+
         if self.has_clock_frequency:
-            self.box_clock_frequency.valueChanged.connect(self.clock_frequency_changed)
+            self.box_clock_frequency.editingFinished.connect(self.clock_frequency_changed)
         else:
             self.box_clock_frequency.setValue(20000000)
             self.box_clock_frequency.setEnabled(False)
 
         if self.has_chip_type:
-            self.chip_type_combobox.currentIndexChanged.connect(self.chip_type_index_changed)
+            self.chip_type_combobox.currentIndexChanged.connect(self.chip_type_changed)
         else:
             self.chip_type_label.setText("Chip Type (FW Version >= 2.0.2 required)")
             self.chip_type_combobox.setCurrentIndex(0)
             self.chip_type_combobox.setEnabled(False)
-            
-        if self.has_rgbw:
-            self.box_w.setDisabled(True)
-        else:
-            self.box_w.setDisabled(True)
 
         if self.has_more_chip_types:
-            self.label_chip_type_note.setText(" ")
-            self.chip_type_combobox.addItem("LPD8806")
-            self.chip_type_combobox.addItem("APA102")
-        else:
-            self.label_chip_type_note.setText("FW >= 2.0.6 required for more chip types")
+            self.chip_type_combobox.addItem('SK6812RGBW / NeoPixel RGBW (GRBW)', (BrickletLEDStrip.CHIP_TYPE_WS2812, 4))
+            self.chip_type_combobox.addItem('LPD8806', (BrickletLEDStrip.CHIP_TYPE_LPD8806, 3))
+            self.chip_type_combobox.addItem('APA102 / DotStar (bBGR)', (BrickletLEDStrip.CHIP_TYPE_APA102, 4))
+        elif self.has_chip_type:
+            self.chip_type_label.setText("Chip Type (FW Version >= 2.0.6 required for more chip types)")
 
         if self.has_channel_mapping:
             self.channel_mapping_combobox.currentIndexChanged.connect(self.channel_mapping_changed)
         else:
-            self.channel_mapping_combobox.setCurrentIndex(0)
+            self.channel_mapping_label.setText("Channel Mapping (FW Version >= 2.0.6 required)")
+            self.channel_mapping_combobox.setCurrentIndex(3) # BGR
             self.channel_mapping_combobox.setEnabled(False)
 
         self.state = self.STATE_IDLE
@@ -108,86 +110,119 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.voltage_timer.timeout.connect(self.update_voltage)
         self.voltage_timer.setInterval(1000)
 
-    def channel_mapping_changed(self, index, only_config=False):
-        self.led_strip.set_channel_mapping(self.channel_mapping_combobox.currentIndex())
-        if self.channel_mapping_combobox.currentIndex() > 5:
-            self.box_w.setDisabled(False)
-        else:
-            self.box_w.setDisabled(True)
+        self.chip_type_changed(0, ui_only=True)
 
-    def chip_type_index_changed(self, index, only_config=False):
-        chip = 2801
-        if index == 0:
-            chip = 2801
-            self.box_clock_frequency.show()
-            self.label_clock_frequency.show()
-            self.box_w.hide()
-            self.label_7.hide()
+    def channel_mapping_changed(self, index):
+        if index < 0:
+            return
+
+        channel_mapping = self.channel_mapping_combobox.itemData(index)
+
+        print 'channel_mapping', channel_mapping
+
+        self.led_strip.set_channel_mapping(channel_mapping)
+
+    def chip_type_changed(self, index, ui_only=False):
+        chip_type, num_channels = self.chip_type_combobox.itemData(index)
+
+        has_clock = True
+
+        if chip_type == BrickletLEDStrip.CHIP_TYPE_WS2801:
             self.brightness_slider.hide()
             self.brightness_label.hide()
-        elif index == 1:
-            chip = 2811
-            self.box_clock_frequency.hide()
-            self.label_clock_frequency.hide()
-            self.box_w.hide()
-            self.label_7.hide()
+        elif chip_type == BrickletLEDStrip.CHIP_TYPE_WS2811:
+            has_clock = False
             self.brightness_slider.hide()
             self.brightness_label.hide()
-        elif index == 2:
-            chip = 2812
-            self.box_clock_frequency.hide()
-            self.label_clock_frequency.hide()
-            self.box_w.show()
-            self.label_7.show()
+        elif chip_type == BrickletLEDStrip.CHIP_TYPE_WS2812:
+            has_clock = False
             self.brightness_slider.hide()
             self.brightness_label.hide()
-        elif index == 3:
-            chip = 8806
-            self.box_clock_frequency.show()
-            self.label_clock_frequency.show()
-            self.box_w.hide()
-            self.label_7.hide()
+        elif chip_type == BrickletLEDStrip.CHIP_TYPE_LPD8806:
             self.brightness_slider.hide()
             self.brightness_label.hide()
-        elif index == 4:
-            chip = 102
-            self.box_clock_frequency.show()
-            self.label_clock_frequency.show()
-            self.box_w.hide()
-            self.label_7.hide()
+        elif chip_type == BrickletLEDStrip.CHIP_TYPE_APA102:
             self.brightness_slider.show()
             self.brightness_label.show();
 
-        if not only_config:
-            self.led_strip.set_chip_type(chip)
+        self.box_clock_frequency.setVisible(has_clock)
+        self.label_clock_frequency.setVisible(has_clock)
+        self.box_w.setVisible(chip_type != BrickletLEDStrip.CHIP_TYPE_APA102 and num_channels == 4)
+        self.label_w.setVisible(chip_type != BrickletLEDStrip.CHIP_TYPE_APA102 and num_channels == 4)
+
+        if not ui_only:
+            self.led_strip.set_chip_type(chip_type)
+
+        channel_mapping = self.channel_mapping_combobox.itemData(self.channel_mapping_combobox.currentIndex())
+
+        self.channel_mapping_combobox.blockSignals(True)
+        self.channel_mapping_combobox.clear()
+
+        if num_channels == 3:
+            self.channel_mapping_combobox.addItem('RGB', BrickletLEDStrip.CHANNEL_MAPPING_RGB)
+            self.channel_mapping_combobox.addItem('RBG', BrickletLEDStrip.CHANNEL_MAPPING_RBG)
+            self.channel_mapping_combobox.addItem('BRG', BrickletLEDStrip.CHANNEL_MAPPING_BRG)
+            self.channel_mapping_combobox.addItem('BGR', BrickletLEDStrip.CHANNEL_MAPPING_BGR)
+            self.channel_mapping_combobox.addItem('GRB', BrickletLEDStrip.CHANNEL_MAPPING_GRB)
+            self.channel_mapping_combobox.addItem('GBR', BrickletLEDStrip.CHANNEL_MAPPING_GBR)
+
+            self.channel_mapping_combobox.setCurrentIndex(3) # BGR, default for disabled
+        else:
+            if chip_type == BrickletLEDStrip.CHIP_TYPE_APA102:
+                self.channel_mapping_combobox.addItem('bRGB', BrickletLEDStrip.CHANNEL_MAPPING_WRGB)
+                self.channel_mapping_combobox.addItem('bRBG', BrickletLEDStrip.CHANNEL_MAPPING_WRBG)
+                self.channel_mapping_combobox.addItem('bBRG', BrickletLEDStrip.CHANNEL_MAPPING_WBRG)
+                self.channel_mapping_combobox.addItem('bBGR', BrickletLEDStrip.CHANNEL_MAPPING_WBGR)
+                self.channel_mapping_combobox.addItem('bGRB', BrickletLEDStrip.CHANNEL_MAPPING_WGRB)
+                self.channel_mapping_combobox.addItem('bGBR', BrickletLEDStrip.CHANNEL_MAPPING_WGBR)
+            else:
+                self.channel_mapping_combobox.addItem('RGBW', BrickletLEDStrip.CHANNEL_MAPPING_RGBW)
+                self.channel_mapping_combobox.addItem('RGWB', BrickletLEDStrip.CHANNEL_MAPPING_RGWB)
+                self.channel_mapping_combobox.addItem('RBGW', BrickletLEDStrip.CHANNEL_MAPPING_RBGW)
+                self.channel_mapping_combobox.addItem('RBWG', BrickletLEDStrip.CHANNEL_MAPPING_RBWG)
+                self.channel_mapping_combobox.addItem('RWGB', BrickletLEDStrip.CHANNEL_MAPPING_RWGB)
+                self.channel_mapping_combobox.addItem('RWBG', BrickletLEDStrip.CHANNEL_MAPPING_RWBG)
+                self.channel_mapping_combobox.addItem('GRWB', BrickletLEDStrip.CHANNEL_MAPPING_GRWB)
+                self.channel_mapping_combobox.addItem('GRBW', BrickletLEDStrip.CHANNEL_MAPPING_GRBW)
+                self.channel_mapping_combobox.addItem('GBWR', BrickletLEDStrip.CHANNEL_MAPPING_GBWR)
+                self.channel_mapping_combobox.addItem('GBRW', BrickletLEDStrip.CHANNEL_MAPPING_GBRW)
+                self.channel_mapping_combobox.addItem('GWBR', BrickletLEDStrip.CHANNEL_MAPPING_GWBR)
+                self.channel_mapping_combobox.addItem('GWRB', BrickletLEDStrip.CHANNEL_MAPPING_GWRB)
+                self.channel_mapping_combobox.addItem('BRGW', BrickletLEDStrip.CHANNEL_MAPPING_BRGW)
+                self.channel_mapping_combobox.addItem('BRWG', BrickletLEDStrip.CHANNEL_MAPPING_BRWG)
+                self.channel_mapping_combobox.addItem('BGRW', BrickletLEDStrip.CHANNEL_MAPPING_BGRW)
+                self.channel_mapping_combobox.addItem('BGWR', BrickletLEDStrip.CHANNEL_MAPPING_BGWR)
+                self.channel_mapping_combobox.addItem('BWRG', BrickletLEDStrip.CHANNEL_MAPPING_BWRG)
+                self.channel_mapping_combobox.addItem('BWGR', BrickletLEDStrip.CHANNEL_MAPPING_BWGR)
+                self.channel_mapping_combobox.addItem('WRBG', BrickletLEDStrip.CHANNEL_MAPPING_WRBG)
+                self.channel_mapping_combobox.addItem('WRGB', BrickletLEDStrip.CHANNEL_MAPPING_WRGB)
+                self.channel_mapping_combobox.addItem('WGBR', BrickletLEDStrip.CHANNEL_MAPPING_WGBR)
+                self.channel_mapping_combobox.addItem('WGRB', BrickletLEDStrip.CHANNEL_MAPPING_WGRB)
+                self.channel_mapping_combobox.addItem('WBGR', BrickletLEDStrip.CHANNEL_MAPPING_WBGR)
+                self.channel_mapping_combobox.addItem('WBRG', BrickletLEDStrip.CHANNEL_MAPPING_WBRG)
+
+        self.channel_mapping_combobox.blockSignals(False)
+
+        self.get_channel_mapping_async(channel_mapping)
 
     def update_voltage(self):
-        async_call(self.led_strip.get_supply_voltage, None, self.cb_voltage, self.increase_error_count)
+        async_call(self.led_strip.get_supply_voltage, None, self.get_supply_voltage_async, self.increase_error_count, log_exception=True)
 
-    def cb_chip_type(self, chip):
-        if chip == 2801:
-            self.chip_type_combobox.setCurrentIndex(0)
-            self.chip_type_index_changed(0, True)
-        elif chip == 2811:
-            self.chip_type_combobox.setCurrentIndex(1)
-            self.chip_type_index_changed(1, True)
-        elif chip == 2812:
-            self.chip_type_combobox.setCurrentIndex(2)
-            self.chip_type_index_changed(2, True)
-        elif chip == 8806:
-            self.chip_type_combobox.setCurrentIndex(3)
-            self.chip_type_index_changed(3, True)
-        elif chip == 102:
-            self.chip_type_combobox.setCurrentIndex(4)
-            self.chip_type_index_changed(4, True)
+    def get_chip_type_async(self, new_chip_type):
+        for index in range(self.chip_type_combobox.count()):
+            chip_type, num_channels = self.chip_type_combobox.itemData(index)
 
-    def cb_frequency(self, frequency):
+            if chip_type == new_chip_type:
+                self.chip_type_combobox.setCurrentIndex(index)
+                break
+
+    def get_clock_frequency_async(self, frequency):
         self.box_clock_frequency.setValue(frequency)
 
-    def cb_duration(self, duration):
+    def get_frame_duration_async(self, duration):
         self.box_frame_duration.setValue(duration)
 
-    def cb_voltage(self, voltage):
+    def get_supply_voltage_async(self, voltage):
         self.label_voltage.setText(str(voltage/1000.0) + 'V')
 
     def cb_frame_rendered(self):
@@ -200,11 +235,83 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         elif self.state == self.STATE_COLOR_DOT:
             self.render_color_dot()
 
-    def cb_channel_mapping(self, channel_mapping):
-        self.channel_mapping_combobox.setCurrentIndex(channel_mapping)
+    def get_channel_mapping_async(self, new_channel_mapping, fuzzy=True):
+        available = []
 
-    def clock_frequency_changed(self, frequency):
-        self.led_strip.set_clock_frequency(frequency)
+        for index in range(self.channel_mapping_combobox.count()):
+            channel_mapping = self.channel_mapping_combobox.itemData(index)
+            available.append(channel_mapping)
+
+            if channel_mapping == new_channel_mapping:
+                self.channel_mapping_combobox.setCurrentIndex(index)
+                return
+
+        if not fuzzy:
+            return
+
+        if new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_RGB:
+            if BrickletLEDStrip.CHANNEL_MAPPING_RGBW in available:
+                self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_RGBW, fuzzy=False)
+            else:
+                self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_WRGB, fuzzy=False)
+        elif new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_RBG:
+            if BrickletLEDStrip.CHANNEL_MAPPING_RBGW in available:
+                self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_RBGW, fuzzy=False)
+            else:
+                self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_WRBG, fuzzy=False)
+        elif new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_BRG:
+            if BrickletLEDStrip.CHANNEL_MAPPING_BRGW in available:
+                self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_BRGW, fuzzy=False)
+            else:
+                self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_WBRG, fuzzy=False)
+        elif new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_BGR:
+            if BrickletLEDStrip.CHANNEL_MAPPING_BGRW in available:
+                self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_BGRW, fuzzy=False)
+            else:
+                self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_WBGR, fuzzy=False)
+        elif new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_GRB:
+            if BrickletLEDStrip.CHANNEL_MAPPING_GRBW in available:
+                self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_GRBW, fuzzy=False)
+            else:
+                self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_WGRB, fuzzy=False)
+        elif new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_GBR:
+            if BrickletLEDStrip.CHANNEL_MAPPING_GBRW in available:
+                self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_GBRW, fuzzy=False)
+            else:
+                self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_WGBR, fuzzy=False)
+        elif new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_RGBW or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_RGWB or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_RWGB or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_WRGB:
+            self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_RGB, fuzzy=False)
+        elif new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_RBGW or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_RBWG or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_RWBG or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_WRBG:
+            self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_RBG, fuzzy=False)
+        elif new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_BRGW or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_BRWG or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_BWRG or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_WBRG:
+            self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_BRG, fuzzy=False)
+        elif new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_BGRW or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_BGWR or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_BWGR or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_WBGR:
+            self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_BGR, fuzzy=False)
+        elif new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_GRBW or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_GRWB or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_GWRB or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_WGRB:
+            self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_GRB, fuzzy=False)
+        elif new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_GBRW or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_GBWR or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_GWBR or \
+             new_channel_mapping == BrickletLEDStrip.CHANNEL_MAPPING_WGBR:
+            self.get_channel_mapping_async(BrickletLEDStrip.CHANNEL_MAPPING_GBR, fuzzy=False)
+
+    def clock_frequency_changed(self):
+        self.led_strip.set_clock_frequency(self.box_clock_frequency.value())
 
     def frame_duration_changed(self, duration):
         self.led_strip.set_frame_duration(duration)
@@ -238,106 +345,87 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
     def gradient_intensity_changed(self):
         self.label_gradient_intensity.setText(str(self.gradient_intensity.value()) + '%')
 
+    def render_leds(self, r, g, b, w):
+        num_leds = self.box_num_led.value()
+        _, num_channels = self.chip_type_combobox.itemData(self.chip_type_combobox.currentIndex())
+
+        if num_channels == 4:
+            led_block = 12
+        else:
+            led_block = 16
+
+        i = 0
+
+        while num_leds > 0:
+            num_leds -= led_block
+
+            if num_leds < 0:
+                leds = led_block + num_leds
+            else:
+                leds = led_block
+
+            r_val = r[:leds]
+            r_val.extend([0]*(led_block - leds))
+            g_val = g[:leds]
+            g_val.extend([0]*(led_block - leds))
+            b_val = b[:leds]
+            b_val.extend([0]*(led_block - leds))
+            w_val = w[:leds]
+            w_val.extend([0]*(led_block - leds))
+
+            if num_channels == 4:
+                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
+            else:
+                self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
+
+            i += leds
+
+            r = r[leds:]
+            g = g[leds:]
+            b = b[leds:]
+            w = w[leds:]
+
     def render_color_single(self):
         num_leds = self.box_num_led.value()
-
-        if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
-            ledBlock = 12
-        elif self.chip_type_combobox.currentIndex() == 4:
-            ledBlock = 12
-        else:
-            ledBlock = 16
+        chip_type, _ = self.chip_type_combobox.itemData(self.chip_type_combobox.currentIndex())
 
         r = self.box_r.value()
         g = self.box_g.value()
         b = self.box_b.value()
-        if self.chip_type_combobox.currentIndex() == 4:
-            w = self.brightness_slider.value()
+
+        if chip_type == BrickletLEDStrip.CHIP_TYPE_APA102:
+            w = self.brightness_slider.value() * 8
         else:
             w = self.box_w.value()
 
-        i = 0
-
-        while num_leds > 0:
-            num_leds -= ledBlock
-            if num_leds < 0:
-                leds = ledBlock + num_leds
-            else:
-                leds = ledBlock
-
-            r_val = [r]*leds
-            r_val.extend([0]*(ledBlock - leds))
-            g_val = [g]*leds
-            g_val.extend([0]*(ledBlock - leds))
-            b_val = [b]*leds
-            b_val.extend([0]*(ledBlock - leds))
-            w_val = [w]*leds
-            w_val.extend([0]*(ledBlock - leds))
-
-            if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
-                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
-            elif self.chip_type_combobox.currentIndex() == 4:
-                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
-            else:
-                self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
-            i += leds
+        self.render_leds([r]*num_leds, [g]*num_leds, [b]*num_leds, [w]*num_leds)
 
     def render_color_black(self):
         num_leds = self.box_num_led.value()
-        i = 0
 
-        if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
-            ledBlock = 12
-        elif self.chip_type_combobox.currentIndex() == 4:
-            ledBlock = 12
-        else:
-            ledBlock = 16
-
-        while num_leds > 0:
-            num_leds -= ledBlock
-            if num_leds < 0:
-                leds = ledBlock + num_leds
-            else:
-                leds = ledBlock
-
-            r_val = [0]*leds
-            r_val.extend([0]*(ledBlock - leds))
-            g_val = [0]*leds
-            g_val.extend([0]*(ledBlock - leds))
-            b_val = [0]*leds
-            b_val.extend([0]*(ledBlock - leds))
-            w_val = [0]*leds
-            w_val.extend([0]*(ledBlock - leds))
-
-            if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
-                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
-            elif self.chip_type_combobox.currentIndex() == 4:
-                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
-            else:
-                self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
-            i += leds
+        self.render_leds([0]*num_leds, [0]*num_leds, [0]*num_leds, [0]*num_leds)
 
     def render_color_gradient(self):
         num_leds = self.box_num_led.value()
-        if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
-            ledBlock = 12
-        elif self.chip_type_combobox.currentIndex() == 4:
-            ledBlock = 12
-            brightness = self.brightness_slider.value()
-        else:
-            ledBlock = 16
+        brightness = self.brightness_slider.value() * 8
+        chip_type, num_channels = self.chip_type_combobox.itemData(self.chip_type_combobox.currentIndex())
 
-        self.gradient_counter += max(num_leds, ledBlock) * self.box_speed.value() / 100.0 / 4.0
+        if num_channels == 4:
+            led_block = 12
+        else:
+            led_block = 16
+
+        self.gradient_counter += max(num_leds, led_block) * self.box_speed.value() / 100.0 / 4.0
         ra = []
         ga = []
         ba = []
 
-        range_leds_len = max(num_leds, ledBlock)
+        range_leds_len = max(num_leds, led_block)
         range_leds = range(range_leds_len)
         range_leds = range_leds[int(self.gradient_counter) % range_leds_len:] + range_leds[:int(self.gradient_counter) % range_leds_len]
         range_leds = reversed(range_leds)
 
-        intensity = (self.gradient_intensity.value()/100.0)
+        intensity = self.gradient_intensity.value() / 100.0
         self.label_gradient_intensity.setText(str(self.gradient_intensity.value()) + '%')
 
         for i in range_leds:
@@ -349,93 +437,67 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         i = 0
 
         while num_leds > 0:
-            num_leds -= ledBlock
-            
+            num_leds -= led_block
+
             if num_leds < 0:
-                leds = ledBlock + num_leds
+                leds = led_block + num_leds
             else:
-                leds = ledBlock
+                leds = led_block
 
             r_val = ra[:leds]
-            r_val.extend([0]*(ledBlock - leds))
+            r_val.extend([0]*(led_block - leds))
             g_val = ga[:leds]
-            g_val.extend([0]*(ledBlock - leds))
+            g_val.extend([0]*(led_block - leds))
             b_val = ba[:leds]
-            b_val.extend([0]*(ledBlock - leds))
-            if self.chip_type_combobox.currentIndex() == 4:
-               brightness_val = [brightness]*leds
-               brightness_val.extend([0]*(ledBlock - leds))
+            b_val.extend([0]*(led_block - leds))
 
-            if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
-                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, [0]*12)
-            elif self.chip_type_combobox.currentIndex() == 4:
-                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, brightness_val)
+            if chip_type == BrickletLEDStrip.CHIP_TYPE_APA102:
+                w_val = [brightness]*leds
+            else:
+                w_val = [0]*leds
+
+            w_val.extend([0]*(led_block - leds))
+
+            if num_channels == 4:
+                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
             else:
                 self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
 
             ra = ra[leds:]
             ga = ga[leds:]
             ba = ba[leds:]
+
             i += leds
 
     def render_color_dot(self):
         num_leds = self.box_num_led.value()
-        self.dot_counter = self.dot_counter % num_leds
-
-        if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
-            ledBlock = 12
-        elif self.chip_type_combobox.currentIndex() == 4:
-            ledBlock = 12
-        else:
-            ledBlock = 16
+        chip_type, _ = self.chip_type_combobox.itemData(self.chip_type_combobox.currentIndex())
 
         r = self.box_r.value()
         g = self.box_g.value()
         b = self.box_b.value()
-        if self.chip_type_combobox.currentIndex() == 4:
-            w = self.brightness_slider.value()
+
+        if chip_type == BrickletLEDStrip.CHIP_TYPE_APA102:
+            w = self.brightness_slider.value() * 8
         else:
             w = self.box_w.value()
 
-        i = 0
-        while num_leds > 0:
-            num_leds -= ledBlock
-            if num_leds < 0:
-                leds = ledBlock + num_leds
-            else:
-                leds = ledBlock
+        self.dot_counter = self.dot_counter % num_leds
 
-            r_val = [0]*leds
-            r_val.extend([0]*(ledBlock - leds))
-            g_val = [0]*leds
-            g_val.extend([0]*(ledBlock - leds))
-            b_val = [0]*leds
-            b_val.extend([0]*(ledBlock - leds))
-            if self.chip_type_combobox.currentIndex() == 4:
-                w_val = [w]*leds
-                w_val.extend([0]*(ledBlock - leds))
-            else:
-                w_val = [0]*leds
-                w_val.extend([0]*(ledBlock - leds))
+        r_val = [0]*num_leds
+        g_val = [0]*num_leds
+        b_val = [0]*num_leds
+        w_val = [0]*num_leds
 
-            if self.dot_counter >= i and self.dot_counter < i + ledBlock:
-                k = self.dot_counter % ledBlock
-                r_val[k] = r
-                g_val[k] = g
-                b_val[k] = b
-                w_val[k] = w
+        r_val[self.dot_counter] = r
+        g_val[self.dot_counter] = g
+        b_val[self.dot_counter] = b
+        w_val[self.dot_counter] = w
 
-            if self.channel_mapping_combobox.currentIndex() > 5 and self.chip_type_combobox.currentIndex() == 2:
-                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
-            elif self.chip_type_combobox.currentIndex() == 4:
-                self.led_strip.set_rgbw_values(i, leds, r_val, g_val, b_val, w_val)
-            else:
-                self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
+        self.render_leds(r_val, g_val, b_val, w_val)
 
-            i += leds
         self.dot_counter += self.dot_direction * self.box_speed.value()
 
-        num_leds = self.box_num_led.value()
         if self.dot_counter >= num_leds:
             self.dot_direction = -1
             self.dot_counter = num_leds - 1
@@ -443,15 +505,28 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             self.dot_direction = 1
             self.dot_counter = 0
 
+    def is_frame_rendered_callback_enabled_async(self, enabled):
+        self.frame_rendered_callback_was_enabled = enabled
+        self.led_strip.enable_frame_rendered_callback()
+
     def start(self):
+        self.frame_rendered_callback_was_enabled = False
+
         if self.has_chip_type:
-            async_call(self.led_strip.get_chip_type, None, self.cb_chip_type, self.increase_error_count)
+            async_call(self.led_strip.get_chip_type, None, self.get_chip_type_async, self.increase_error_count, log_exception=True)
+
         if self.has_clock_frequency:
-            async_call(self.led_strip.get_clock_frequency, None, self.cb_frequency, self.increase_error_count)
+            async_call(self.led_strip.get_clock_frequency, None, self.get_clock_frequency_async, self.increase_error_count, log_exception=True)
+
         if self.has_channel_mapping:
-            async_call(self.led_strip.get_channel_mapping, None, self.cb_channel_mapping, self.increase_error_count)
-        async_call(self.led_strip.get_supply_voltage, None, self.cb_voltage, self.increase_error_count)
-        async_call(self.led_strip.get_frame_duration, None, self.cb_duration, self.increase_error_count)
+            async_call(self.led_strip.get_channel_mapping, None, self.get_channel_mapping_async, self.increase_error_count, log_exception=True)
+
+        if self.has_configurable_rame_rendered_callback:
+            async_call(self.led_strip.is_frame_rendered_callback_enabled, None, self.is_frame_rendered_callback_enabled_async, self.increase_error_count)
+
+        async_call(self.led_strip.get_supply_voltage, None, self.get_supply_voltage_async, self.increase_error_count, log_exception=True)
+        async_call(self.led_strip.get_frame_duration, None, self.get_frame_duration_async, self.increase_error_count, log_exception=True)
+
         self.voltage_timer.start()
         self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_RENDERED,
                                          self.qtcb_frame_rendered.emit)
@@ -459,6 +534,12 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
     def stop(self):
         self.voltage_timer.stop()
         self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_RENDERED, None)
+
+        if self.has_configurable_rame_rendered_callback and not self.frame_rendered_callback_was_enabled:
+            try:
+                self.led_strip.disable_frame_rendered_callback()
+            except:
+                pass
 
     def destroy(self):
         pass
