@@ -37,6 +37,9 @@ class RS485(QWidget, Ui_RS485):
 
         self.setupUi(self)
 
+        self.label_type_warning.hide()
+        self.label_speed_warning.hide()
+
         self.parent = parent
         self.master = parent.master
         self.update_address = 0

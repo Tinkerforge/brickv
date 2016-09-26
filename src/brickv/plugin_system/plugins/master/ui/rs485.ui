@@ -38,42 +38,42 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="label_2">
            <property name="text">
             <string>Speed (baud):</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="label_3">
            <property name="text">
             <string>Parity:</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item row="5" column="0">
           <widget class="QLabel" name="label_4">
            <property name="text">
             <string>Stop Bits:</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
+         <item row="6" column="0">
           <widget class="QLabel" name="label_address">
            <property name="text">
             <string>Address:</string>
            </property>
           </widget>
          </item>
-         <item row="8" column="0" colspan="2">
+         <item row="10" column="0" colspan="2">
           <widget class="QPushButton" name="save_button">
            <property name="text">
             <string>Save RS485 Configuration</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="0" colspan="2">
+         <item row="9" column="0" colspan="2">
           <widget class="Line" name="line_3">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -100,7 +100,7 @@
            </item>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="2" column="1">
           <widget class="QSpinBox" name="speed_spinbox">
            <property name="minimum">
             <number>9000</number>
@@ -113,7 +113,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="4" column="1">
           <widget class="QComboBox" name="parity_combobox">
            <item>
             <property name="text">
@@ -132,7 +132,7 @@
            </item>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="5" column="1">
           <widget class="QSpinBox" name="stopbits_spinbox">
            <property name="minimum">
             <number>1</number>
@@ -142,7 +142,7 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="6" column="1">
           <widget class="QSpinBox" name="address_spinbox">
            <property name="minimum">
             <number>1</number>
@@ -152,10 +152,10 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
+         <item row="7" column="1">
           <widget class="QLineEdit" name="lineedit_slave_addresses"/>
          </item>
-         <item row="6" column="1">
+         <item row="8" column="1">
           <widget class="QLabel" name="label_slave_addresses_help">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
@@ -171,10 +171,36 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
+         <item row="7" column="0">
           <widget class="QLabel" name="label_slave_addresses">
            <property name="text">
             <string>Slave Addresses:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="label_speed_warning">
+           <property name="styleSheet">
+            <string notr="true">color: red;</string>
+           </property>
+           <property name="text">
+            <string>Only the following speeds are supported: 500000, 250000, 166666, 125000, 100000, 83333, 71428, 62500, 55555, 50000, 45454 and 41666 baud.</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="label_type_warning">
+           <property name="styleSheet">
+            <string notr="true">color:red;</string>
+           </property>
+           <property name="text">
+            <string>Slave type is not yet supported.</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

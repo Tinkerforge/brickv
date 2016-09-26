@@ -46,6 +46,8 @@ class RS485(QWidget, Ui_RS485):
     def __init__(self, parent, extension, config):
         QWidget.__init__(self)
 
+        self.supported_baudrates = [500000, 250000, 166666, 125000, 100000, 83333, 71428, 62500, 55555, 50000, 45454, 41666]
+
         self.setupUi(self)
 
         self.save_button.setDisabled(True)
@@ -64,12 +66,16 @@ class RS485(QWidget, Ui_RS485):
         self.address_spinbox.setValue(address)
         if address == 0:
             self.rs485_type.setCurrentIndex(1)
+            self.rs485_type_changed(1)
         else:
             self.rs485_type.setCurrentIndex(0)
+            self.rs485_type_changed(0)
 
         # Baudrate
         baudrate = int(self.config['baudrate'])
         self.speed_spinbox.setValue(baudrate)
+        self.speed_spinbox.valueChanged.connect(self.check_baudrate)
+        self.check_baudrate()
 
         # Parity
         parity = self.config['parity']
@@ -87,6 +93,12 @@ class RS485(QWidget, Ui_RS485):
         # Slave addresses
         slave_address = self.slave_text_to_int(self.config['slave_address'])
         self.lineedit_slave_addresses.setText(', '.join(map(str, slave_address)))
+
+    def check_baudrate(self):
+        supported = self.speed_spinbox.value() in self.supported_baudrates
+
+        self.label_speed_warning.setVisible(not supported)
+        self.save_button.setEnabled(supported and self.rs485_type.currentIndex() == 1)
 
     def save_clicked(self):
         new_config = {}
@@ -179,21 +191,23 @@ class RS485(QWidget, Ui_RS485):
 
     def rs485_type_changed(self, index):
         if index == 0:
+            self.label_type_warning.show()
             self.label_slave_addresses.hide()
             self.lineedit_slave_addresses.hide()
             self.label_slave_addresses_help.hide()
             self.label_address.show()
             self.address_spinbox.show()
-            self.save_button.setDisabled(True)
-            self.save_button.setText("RS485 Slave currently not supported on RED Brick")
+            self.save_button.setEnabled(False)
         else:
+            self.label_type_warning.hide()
             self.label_slave_addresses.show()
             self.lineedit_slave_addresses.show()
             self.label_slave_addresses_help.show()
             self.label_address.hide()
             self.address_spinbox.hide()
-            self.save_button.setDisabled(False)
-            self.save_button.setText("Save RS485 Configuration")
+            self.save_button.setEnabled(self.speed_spinbox.value() in self.supported_baudrates)
+
+        self.save_button.setText("Save RS485 Configuration")
 
     def slave_text_to_int(self, slave_text):
         slave_text = slave_text.replace(' ', '')
