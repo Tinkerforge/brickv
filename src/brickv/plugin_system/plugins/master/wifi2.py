@@ -32,7 +32,7 @@ from brickv.utils import get_main_window
 def show_group(group):
     for widget in group:
         widget.setVisible(True)
-        
+
 def hide_group(group):
     for widget in group:
         widget.setVisible(False)
@@ -58,16 +58,16 @@ class Wifi2(QWidget, Ui_Wifi2):
                                 self.wifi_client_ip4, self.wifi_client_ip3, self.wifi_client_ip2, self.wifi_client_ip1,
                                 self.wifi_client_sub4, self.wifi_client_sub3, self.wifi_client_sub2, self.wifi_client_sub1,
                                 self.wifi_client_gw4, self.wifi_client_gw3, self.wifi_client_gw2, self.wifi_client_gw1,
-                                self.wifi_client_dot1, self.wifi_client_dot2, self.wifi_client_dot3, 
-                                self.wifi_client_dot4, self.wifi_client_dot5, self.wifi_client_dot6, 
+                                self.wifi_client_dot1, self.wifi_client_dot2, self.wifi_client_dot3,
+                                self.wifi_client_dot4, self.wifi_client_dot5, self.wifi_client_dot6,
                                 self.wifi_client_dot7, self.wifi_client_dot8, self.wifi_client_dot9]
-        self.client_bssid_group = [self.wifi_client_bssid_label, 
-                                   self.wifi_client_bssid6, self.wifi_client_bssid5, self.wifi_client_bssid4, 
+        self.client_bssid_group = [self.wifi_client_bssid_label,
+                                   self.wifi_client_bssid6, self.wifi_client_bssid5, self.wifi_client_bssid4,
                                    self.wifi_client_bssid3, self.wifi_client_bssid2, self.wifi_client_bssid1,
                                    self.wifi_client_bssid_dot1, self.wifi_client_bssid_dot2, self.wifi_client_bssid_dot3,
                                    self.wifi_client_bssid_dot4, self.wifi_client_bssid_dot5]
-        self.client_mac_group = [self.wifi_client_mac_label, 
-                                 self.wifi_client_mac6, self.wifi_client_mac5, self.wifi_client_mac4, 
+        self.client_mac_group = [self.wifi_client_mac_label,
+                                 self.wifi_client_mac6, self.wifi_client_mac5, self.wifi_client_mac4,
                                  self.wifi_client_mac3, self.wifi_client_mac2, self.wifi_client_mac1,
                                  self.wifi_client_mac_dot1, self.wifi_client_mac_dot2, self.wifi_client_mac_dot3,
                                  self.wifi_client_mac_dot4, self.wifi_client_mac_dot5]
@@ -77,15 +77,18 @@ class Wifi2(QWidget, Ui_Wifi2):
                             self.wifi_ap_ip4, self.wifi_ap_ip3, self.wifi_ap_ip2, self.wifi_ap_ip1,
                             self.wifi_ap_sub4, self.wifi_ap_sub3, self.wifi_ap_sub2, self.wifi_ap_sub1,
                             self.wifi_ap_gw4, self.wifi_ap_gw3, self.wifi_ap_gw2, self.wifi_ap_gw1,
-                            self.wifi_ap_dot1, self.wifi_ap_dot2, self.wifi_ap_dot3, 
-                            self.wifi_ap_dot4, self.wifi_ap_dot5, self.wifi_ap_dot6, 
+                            self.wifi_ap_dot1, self.wifi_ap_dot2, self.wifi_ap_dot3,
+                            self.wifi_ap_dot4, self.wifi_ap_dot5, self.wifi_ap_dot6,
                             self.wifi_ap_dot7, self.wifi_ap_dot8, self.wifi_ap_dot9]
-        self.ap_mac_group = [self.wifi_ap_mac_label, 
-                             self.wifi_ap_mac6, self.wifi_ap_mac5, self.wifi_ap_mac4, 
+        self.ap_mac_group = [self.wifi_ap_mac_label,
+                             self.wifi_ap_mac6, self.wifi_ap_mac5, self.wifi_ap_mac4,
                              self.wifi_ap_mac3, self.wifi_ap_mac2, self.wifi_ap_mac1,
                              self.wifi_ap_mac_dot1, self.wifi_ap_mac_dot2, self.wifi_ap_mac_dot3,
                              self.wifi_ap_mac_dot4, self.wifi_ap_mac_dot5]
         self.ap_enc_group = [self.wifi_ap_password_label, self.wifi_ap_password, self.wifi_ap_password_show]
+
+        # Enable/disable web interface
+        self.wifi_disable_web_interface.stateChanged.connect(self.wifi_disable_web_interface_state_changed)
 
         # Passwords
         self.wifi_secret_show_state_changed(Qt.Unchecked)
@@ -124,10 +127,10 @@ class Wifi2(QWidget, Ui_Wifi2):
         # Save/Status
         self.wifi_save.clicked.connect(self.save_clicked)
         self.wifi_show_status.clicked.connect(self.show_status_clicked)
-        
+
         self.client_enable = None
         self.ap_enable = None
-        
+
         # Get Current state of WIFI Extension 2.0
         async_call(self.master.get_wifi2_authentication_secret, None, self.get_wifi2_authentication_secret_async, self.parent.increase_error_count)
         async_call(self.master.get_wifi2_configuration, None, self.get_wifi2_configuration_async, self.parent.increase_error_count)
@@ -145,7 +148,7 @@ class Wifi2(QWidget, Ui_Wifi2):
                 self.wifi_mode.setCurrentIndex(1)
             else:
                 self.wifi_mode.setCurrentIndex(0)
-            
+
 
     def get_wifi2_authentication_secret_async(self, data):
         if len(data) == 0:
@@ -158,7 +161,14 @@ class Wifi2(QWidget, Ui_Wifi2):
     def get_wifi2_configuration_async(self, data):
         self.wifi_port.setValue(data.port)
         self.wifi_websocket_port.setValue(data.websocket_port)
-        self.wifi_website_port.setValue(data.website_port)
+
+        if data.website_port < 2 or data.website_port > 65534:
+            self.wifi_website_port.setValue(80)
+            self.wifi_disable_web_interface.setChecked(True)
+        else:
+            self.wifi_website_port.setValue(data.website_port)
+            self.wifi_disable_web_interface.setChecked(False)
+
         self.wifi_phy_mode.setCurrentIndex(data.phy_mode)
 
     def get_wifi2_client_configuration_async(self, data):
@@ -180,7 +190,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         self.wifi_client_gw2.setValue(data.gateway[2])
         self.wifi_client_gw3.setValue(data.gateway[1])
         self.wifi_client_gw4.setValue(data.gateway[0])
-        
+
         if data.mac_address == (0, 0, 0, 0, 0, 0):
             self.wifi_client_use_mac.setChecked(False)
         else:
@@ -191,7 +201,7 @@ class Wifi2(QWidget, Ui_Wifi2):
             self.wifi_client_mac4.setValue(data.mac_address[2])
             self.wifi_client_mac5.setValue(data.mac_address[1])
             self.wifi_client_mac6.setValue(data.mac_address[0])
-            
+
         if data.bssid == (0, 0, 0, 0, 0, 0):
             self.wifi_client_use_bssid.setChecked(False)
         else:
@@ -202,7 +212,7 @@ class Wifi2(QWidget, Ui_Wifi2):
             self.wifi_client_bssid4.setValue(data.bssid[2])
             self.wifi_client_bssid5.setValue(data.bssid[1])
             self.wifi_client_bssid6.setValue(data.bssid[0])
-            
+
         self.check_ap_client()
 
     def get_wifi2_client_hostname_async(self, data):
@@ -234,11 +244,11 @@ class Wifi2(QWidget, Ui_Wifi2):
         self.wifi_ap_gw2.setValue(data.gateway[2])
         self.wifi_ap_gw3.setValue(data.gateway[1])
         self.wifi_ap_gw4.setValue(data.gateway[0])
-        
+
         self.wifi_ap_encryption.setCurrentIndex(data.encryption)
         self.wifi_ap_hide_ssid.setChecked(data.hidden)
         self.wifi_ap_channel.setValue(data.channel)
-        
+
         if data.mac_address == (0, 0, 0, 0, 0, 0):
             self.wifi_ap_use_mac.setChecked(False)
         else:
@@ -249,7 +259,7 @@ class Wifi2(QWidget, Ui_Wifi2):
             self.wifi_ap_mac4.setValue(data.mac_address[2])
             self.wifi_ap_mac5.setValue(data.mac_address[1])
             self.wifi_ap_mac6.setValue(data.mac_address[0])
-            
+
         self.check_ap_client()
 
     def get_wifi2_ap_password_async(self, data):
@@ -295,7 +305,12 @@ class Wifi2(QWidget, Ui_Wifi2):
         # Get current configuration
         general_port           = self.wifi_port.value()
         general_websocket_port = self.wifi_websocket_port.value()
-        general_website_port   = self.wifi_website_port.value()
+
+        if self.wifi_disable_web_interface.isChecked():
+            general_website_port   = 1
+        else:
+            general_website_port   = self.wifi_website_port.value()
+
         general_phy_mode       = self.wifi_phy_mode.currentIndex()
         general_use_auth       = self.wifi_use_auth.isChecked()
         if general_use_auth:
@@ -384,6 +399,12 @@ class Wifi2(QWidget, Ui_Wifi2):
         except:
             self.popup_fail()
 
+    def wifi_disable_web_interface_state_changed(self, state):
+        if state == Qt.Checked:
+            self.wifi_website_port.setDisabled(True)
+        else:
+            self.wifi_website_port.setDisabled(False)
+
     def wifi_mode_changed(self, index):
         if index == 0:
             self.wifi_groupbox_ap.setVisible(False)
@@ -470,7 +491,7 @@ class Wifi2(QWidget, Ui_Wifi2):
             self.wifi_ap_password.setEchoMode(QLineEdit.Normal)
         else:
             self.wifi_ap_password.setEchoMode(QLineEdit.Password)
-            
+
     def show_status_clicked(self):
         if self.wifi2_status is None:
             self.wifi2_status = Wifi2Status(self)
@@ -486,7 +507,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         if self.wifi2_status is not None:
             if self.wifi2_status.isVisible():
                 self.wifi2_status.update_status()
-    
+
     def popup_ok(self, message='Successfully saved configuration.\nNew configuration will be used after reset of the Master Brick.'):
         QMessageBox.information(get_main_window(), 'Configuration', message, QMessageBox.Ok)
 
