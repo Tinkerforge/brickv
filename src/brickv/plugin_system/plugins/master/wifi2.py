@@ -100,7 +100,7 @@ class Wifi2(QWidget, Ui_Wifi2):
 
         # Use passwords
         self.wifi_client_encryption_changed(1)
-        self.wifi_ap_encryption_changed(4)
+        self.wifi_ap_encryption_changed(3)
         self.wifi_use_auth_state_changed(Qt.Unchecked)
         self.wifi_client_encryption.currentIndexChanged.connect(self.wifi_client_encryption_changed)
         self.wifi_ap_encryption.currentIndexChanged.connect(self.wifi_ap_encryption_changed)
@@ -169,7 +169,7 @@ class Wifi2(QWidget, Ui_Wifi2):
             self.wifi_website_port.setValue(data.website_port)
             self.wifi_disable_web_interface.setChecked(False)
 
-        self.wifi_phy_mode.setCurrentIndex(data.phy_mode)
+        self.wifi_phy_mode.setCurrentIndex(data.phy_mode - 1)
 
     def get_wifi2_client_configuration_async(self, data):
         self.client_enable = data.enable
@@ -245,7 +245,11 @@ class Wifi2(QWidget, Ui_Wifi2):
         self.wifi_ap_gw3.setValue(data.gateway[1])
         self.wifi_ap_gw4.setValue(data.gateway[0])
 
-        self.wifi_ap_encryption.setCurrentIndex(data.encryption)
+        self.wifi_ap_encryption.setCurrentIndex(-1)
+        if data.encryption > 0:
+            self.wifi_ap_encryption.setCurrentIndex(data.encryption - 1)
+        else:
+            self.wifi_ap_encryption.setCurrentIndex(data.encryption)
         self.wifi_ap_hide_ssid.setChecked(data.hidden)
         self.wifi_ap_channel.setValue(data.channel)
 

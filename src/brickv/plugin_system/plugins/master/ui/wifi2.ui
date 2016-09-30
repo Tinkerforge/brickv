@@ -23,7 +23,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-350</y>
         <width>673</width>
         <height>1158</height>
        </rect>
@@ -965,16 +965,11 @@ WEP: 10 or 26 hexadecimal digits</string>
               <item row="5" column="1">
                <widget class="QComboBox" name="wifi_ap_encryption">
                 <property name="currentIndex">
-                 <number>4</number>
+                 <number>0</number>
                 </property>
                 <item>
                  <property name="text">
                   <string>Open (No Encryption)</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>WEP</string>
                  </property>
                 </item>
                 <item>
