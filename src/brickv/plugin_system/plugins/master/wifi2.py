@@ -169,7 +169,7 @@ class Wifi2(QWidget, Ui_Wifi2):
             self.wifi_website_port.setValue(data.website_port)
             self.wifi_disable_web_interface.setChecked(False)
 
-        self.wifi_phy_mode.setCurrentIndex(data.phy_mode - 1)
+        self.wifi_phy_mode.setCurrentIndex(data.phy_mode)
 
     def get_wifi2_client_configuration_async(self, data):
         self.client_enable = data.enable
@@ -246,10 +246,12 @@ class Wifi2(QWidget, Ui_Wifi2):
         self.wifi_ap_gw4.setValue(data.gateway[0])
 
         self.wifi_ap_encryption.setCurrentIndex(-1)
-        if data.encryption > 0:
-            self.wifi_ap_encryption.setCurrentIndex(data.encryption - 1)
+        if data.encryption == 0:
+            self.wifi_ap_encryption.setCurrentIndex(0)
+        elif data.encryption == 1:
+            self.wifi_ap_encryption.setCurrentIndex(3)
         else:
-            self.wifi_ap_encryption.setCurrentIndex(data.encryption)
+            self.wifi_ap_encryption.setCurrentIndex(data.encryption - 1)
         self.wifi_ap_hide_ssid.setChecked(data.hidden)
         self.wifi_ap_channel.setValue(data.channel)
 
@@ -268,6 +270,8 @@ class Wifi2(QWidget, Ui_Wifi2):
 
     def get_wifi2_ap_password_async(self, data):
         self.wifi_ap_password.setText(data)
+        if data == '':
+            self.wifi_ap_encryption.setCurrentIndex(0)
 
     def save_clicked(self):
         try:
@@ -363,6 +367,8 @@ class Wifi2(QWidget, Ui_Wifi2):
             ap_gw         = [self.wifi_ap_gw4.value(), self.wifi_ap_gw3.value(), self.wifi_ap_gw2.value(), self.wifi_ap_gw1.value()]
         ap_ssid       = self.wifi_ap_ssid.text()
         ap_encryption = self.wifi_ap_encryption.currentIndex()
+        if ap_encryption > 0:
+            ap_encryption = ap_encryption + 1
         ap_password   = self.wifi_ap_password.text()
         ap_hide_ssid  = self.wifi_ap_hide_ssid.isChecked()
         ap_channel    = self.wifi_ap_channel.value()
