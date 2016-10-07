@@ -95,6 +95,7 @@ class Master(PluginBase, Ui_Master):
                 def get_wifi2_firmware_version_async(version, ext):
                     self.device_info.extensions[ext].firmware_version_installed = version
                     infos.update_info(self.uid)
+                    get_main_window().update_tree_view() # FIXME: this is kind of a hack
 
                 if extension_type == self.master.EXTENSION_TYPE_WIFI2:
                     self.device_info.extensions[ext].url_part = 'wifi_v2'

@@ -155,7 +155,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not self.exit_logger():
             event.ignore()
             return
-            
+
         self.exit_brickv()
 
     def exit_brickv(self, signl=None, frme=None):
@@ -167,7 +167,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         config.set_host_infos(self.host_infos)
 
         self.do_disconnect()
-        
+
         if signl != None and frme != None:
             print("Received SIGINT or SIGTERM, shutting down.")
             sys.exit()
@@ -176,16 +176,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         exitBrickv = True
         if (self.data_logger_window is not None) and (self.data_logger_window.data_logger_thread is not None) and (not self.data_logger_window.data_logger_thread.stopped):
             quit_msg = "The Data Logger is running. Are you sure you want to exit the program?"
-            reply = QMessageBox.question(self, 'Message', 
+            reply = QMessageBox.question(self, 'Message',
                      quit_msg, QMessageBox.Yes, QMessageBox.No)
 
             if reply == QMessageBox.Yes:
                 self.data_logger_window.data_logger_thread.stop()
             else:
                 exitBrickv = False
-        
+
         return exitBrickv
-                
+
     def host_index_changed(self, i):
         if i < 0:
             return
@@ -364,11 +364,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.advanced_window = AdvancedWindow(self)
 
         self.advanced_window.show()
-        
+
     def data_logger_clicked(self):
         if self.data_logger_window is None:
             self.data_logger_window = DataLoggerWindow(self, self.host_infos)
-        
+
         self.data_logger_window.show()
 
     def connect_clicked(self):
@@ -812,10 +812,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     extensions.append((info.extensions['ext1'], 'Ext1'))
 
                 for extension in extensions:
+                    if extension[0].firmware_version_installed != (0, 0, 0):
+                        fw_version = '.'.join(map(str, extension[0].firmware_version_installed))
+                    else:
+                        fw_version = ''
+
                     child = [QStandardItem(extension[0].name),
                              QStandardItem(''),
                              QStandardItem(extension[1]),
-                             QStandardItem('')]
+                             QStandardItem(fw_version)]
                     for item in child:
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                     parent[0].appendRow(child)

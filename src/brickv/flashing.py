@@ -1185,6 +1185,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 except:
                     device_info.firmware_version_latest = (0, 0, 0)
 
+        for extension_info in infos.get_extension_infos():
+            if extension_info.type == 'extension':
+                try:
+                    extension_info.firmware_version_latest = self.extension_firmware_infos[extension_info.url_part].firmware_version_latest
+                except:
+                    extension_info.firmware_version_latest = (0, 0, 0)
+
         progress.cancel()
 
         self.update_tree_view_model.clear()
@@ -1255,6 +1262,21 @@ class FlashingWindow(QDialog, Ui_Flashing):
                                  QStandardItem(get_version_string(device_info.bricklets[port].firmware_version_latest))]
 
                         color, update = get_color_for_device(device_info.bricklets[port])
+                        if update:
+                            is_update = True
+                        for item in child:
+                            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                            item.setData(color, Qt.BackgroundRole)
+                        parent[0].appendRow(child)
+
+                for ext in device_info.extensions:
+                    if device_info.extensions[ext]:
+                        child = [QStandardItem(ext.capitalize() + ': ' + device_info.extensions[ext].name),
+                                 QStandardItem(''),
+                                 QStandardItem(get_version_string(device_info.extensions[ext].firmware_version_installed)),
+                                 QStandardItem(get_version_string(device_info.extensions[ext].firmware_version_latest))]
+
+                        color, update = get_color_for_device(device_info.extensions[ext])
                         if update:
                             is_update = True
                         for item in child:
