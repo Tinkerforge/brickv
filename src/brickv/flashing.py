@@ -1269,20 +1269,21 @@ class FlashingWindow(QDialog, Ui_Flashing):
                             item.setData(color, Qt.BackgroundRole)
                         parent[0].appendRow(child)
 
-                for ext in device_info.extensions:
-                    if device_info.extensions[ext]:
-                        child = [QStandardItem(ext.capitalize() + ': ' + device_info.extensions[ext].name),
-                                 QStandardItem(''),
-                                 QStandardItem(get_version_string(device_info.extensions[ext].firmware_version_installed)),
-                                 QStandardItem(get_version_string(device_info.extensions[ext].firmware_version_latest))]
+                if device_info.can_have_extension:
+                    for ext in device_info.extensions:
+                        if device_info.extensions[ext]:
+                            child = [QStandardItem(ext.capitalize() + ': ' + device_info.extensions[ext].name),
+                                     QStandardItem(''),
+                                     QStandardItem(get_version_string(device_info.extensions[ext].firmware_version_installed)),
+                                     QStandardItem(get_version_string(device_info.extensions[ext].firmware_version_latest))]
 
-                        color, update = get_color_for_device(device_info.extensions[ext])
-                        if update:
-                            is_update = True
-                        for item in child:
-                            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                            item.setData(color, Qt.BackgroundRole)
-                        parent[0].appendRow(child)
+                            color, update = get_color_for_device(device_info.extensions[ext])
+                            if update:
+                                is_update = True
+                            for item in child:
+                                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                                item.setData(color, Qt.BackgroundRole)
+                            parent[0].appendRow(child)
 
             elif device_info.type == 'tool' and 'Brick Viewer' in device_info.name:
                 parent = [QStandardItem(device_info.name),
