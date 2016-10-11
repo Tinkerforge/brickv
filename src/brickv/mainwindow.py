@@ -27,7 +27,7 @@ from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, \
                         QPushButton, QHBoxLayout, QVBoxLayout, \
                         QLabel, QFrame, QSpacerItem, QSizePolicy, \
                         QStandardItemModel, QStandardItem, QToolButton, \
-                        QLineEdit, QCursor, QMenu, QAction
+                        QLineEdit, QCursor, QMenu, QAction, QSortFilterProxyModel
 from brickv.ui_mainwindow import Ui_MainWindow
 from brickv.plugin_system.plugin_manager import PluginManager
 from brickv.bindings.ip_connection import IPConnection
@@ -45,6 +45,20 @@ import signal
 import sys
 import time
 import gc
+
+USER_ROLE_POSITION = Qt.UserRole + 1
+
+class DevicesProxyModel(QSortFilterProxyModel):
+    # overrides QSortFilterProxyModel.lessThan
+    def lessThan(self, left, right):
+        if left.column() == 2: # position
+            left_position = left.data(USER_ROLE_POSITION)
+            right_position = right.data(USER_ROLE_POSITION)
+
+            if left_position != None and right_position != None:
+                return cmp(left_position, right_position) < 0
+
+        return QSortFilterProxyModel.lessThan(self, left, right)
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     qtcb_enumerate = pyqtSignal(str, str, 'char', type((0,)), type((0,)), int, int)
@@ -65,7 +79,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.tree_view_model_labels = ['Name', 'UID', 'Position', 'FW Version']
         self.tree_view_model = QStandardItemModel(self)
-        self.tree_view.setModel(self.tree_view_model)
+        self.tree_view_proxy_model = DevicesProxyModel(self)
+        self.tree_view_proxy_model.setSourceModel(self.tree_view_model)
+        self.tree_view.setModel(self.tree_view_proxy_model)
         self.tree_view.doubleClicked.connect(self.item_double_clicked)
         self.set_tree_view_defaults()
 
@@ -390,6 +406,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.do_disconnect()
 
     def item_double_clicked(self, index):
+        index = self.tree_view_proxy_model.mapToSource(index)
         position_index = index.sibling(index.row(), 2)
 
         if position_index.isValid() and position_index.data().startswith('Ext'):
@@ -784,9 +801,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tree_view_model.clear()
 
         for info in infos.get_brick_infos():
+            if info.connected_uid != '0':
+                position_prefix = info.connected_uid
+            else:
+                position_prefix = info.uid
+
+            position_item = QStandardItem(info.position.upper())
+            position_item.setData(position_prefix + ':' + info.position.upper(), USER_ROLE_POSITION)
+
             parent = [QStandardItem(info.name),
                       QStandardItem(info.uid),
-                      QStandardItem(info.position.upper()),
+                      position_item,
                       QStandardItem('.'.join(map(str, info.firmware_version_installed)))]
 
             for item in parent:
