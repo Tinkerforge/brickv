@@ -23,9 +23,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-107</y>
-        <width>673</width>
-        <height>1158</height>
+        <y>0</y>
+        <width>671</width>
+        <height>1122</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -617,7 +617,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                 </item>
                 <item>
                  <property name="text">
-                  <string>WPA/WPA2</string>
+                  <string>WPA/WPA2 PSK</string>
                  </property>
                 </item>
                </widget>
