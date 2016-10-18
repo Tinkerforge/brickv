@@ -80,14 +80,7 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         self.steps_button.clicked.connect(self.steps_button_clicked)
         self.motor_current_button.clicked.connect(self.motor_current_button_clicked)
         self.minimum_motor_voltage_button.clicked.connect(self.minimum_motor_voltage_button_clicked)
-        
-        self.mode_dropbox.currentIndexChanged.connect(self.mode_changed)
-        
-        self.combo_standstill_power_down.currentIndexChanged.connect(self.apply_configuration)
-        self.combo_chopper_off_time.currentIndexChanged.connect(self.apply_configuration)
-        self.combo_chopper_hysteresis.currentIndexChanged.connect(self.apply_configuration)
-        self.combo_chopper_blank_time.currentIndexChanged.connect(self.apply_configuration)
-        
+
         self.qtcb_position_reached.connect(self.cb_position_reached)
         self.silent_stepper.register_callback(self.silent_stepper.CALLBACK_POSITION_REACHED, 
                                               self.qtcb_position_reached.emit)
@@ -95,7 +88,53 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         self.qtcb_under_voltage.connect(self.cb_under_voltage)
         self.silent_stepper.register_callback(self.silent_stepper.CALLBACK_UNDER_VOLTAGE, 
                                               self.qtcb_under_voltage.emit)
-
+        
+        # Step Configuration
+        self.step_resolution_dropbox.currentIndexChanged.connect(self.step_configuration_changed)
+        self.interpolate_checkbox.stateChanged.connect(self.step_configuration_changed)
+        
+        # Basic Configuration
+        self.standstill_current_spin.valueChanged.connect(self.basic_configuration_changed)
+        self.motor_run_current_spin.valueChanged.connect(self.basic_configuration_changed)
+        self.standstill_delay_time_spin.valueChanged.connect(self.basic_configuration_changed)
+        self.power_down_time_spin.valueChanged.connect(self.basic_configuration_changed)
+        self.stealth_threshold_spin.valueChanged.connect(self.basic_configuration_changed)
+        self.coolstep_threashold_spin.valueChanged.connect(self.basic_configuration_changed)
+        self.classic_threshold_spin.valueChanged.connect(self.basic_configuration_changed)
+        self.high_velocity_chopper_mode_checkbox.stateChanged.connect(self.basic_configuration_changed)
+        
+        # Spreadcycle Configuration
+        self.slow_decay_duration_spin.valueChanged.connect(self.spreadcycle_configuration_changed)
+        self.enable_random_slow_decay_checkbox.stateChanged.connect(self.spreadcycle_configuration_changed)
+        self.fast_decay_duration_spin.valueChanged.connect(self.spreadcycle_configuration_changed)
+        self.hysteresis_start_value_spin.valueChanged.connect(self.spreadcycle_configuration_changed)
+        self.hysteresis_end_value_spin.valueChanged.connect(self.spreadcycle_configuration_changed)
+        self.sinewave_offset_spin.valueChanged.connect(self.spreadcycle_configuration_changed)
+        self.chopper_mode_combo.currentIndexChanged.connect(self.spreadcycle_configuration_changed)
+        self.comperator_blank_time_combo.currentIndexChanged.connect(self.spreadcycle_configuration_changed)
+        self.fast_decay_without_comperator_checkbox.stateChanged.connect(self.spreadcycle_configuration_changed)
+        
+        # Stealth Configuration
+        self.enable_stealth_checkbox.stateChanged.connect(self.stealth_configuration_changed)
+        self.amplitude_spin.valueChanged.connect(self.stealth_configuration_changed)
+        self.gradient_spin.valueChanged.connect(self.stealth_configuration_changed)
+        self.enable_autoscale_checkbox.stateChanged.connect(self.stealth_configuration_changed)
+        self.force_symmetric_checkbox.stateChanged.connect(self.stealth_configuration_changed)
+        self.freewheel_mode_combo.currentIndexChanged.connect(self.stealth_configuration_changed)
+        
+        # Coolstep Configuration
+        self.minimum_stallguard_value_spin.valueChanged.connect(self.coolstep_configuration_changed)
+        self.maximum_stallguard_value_spin.valueChanged.connect(self.coolstep_configuration_changed)
+        self.current_up_step_width_combo.currentIndexChanged.connect(self.coolstep_configuration_changed)
+        self.current_down_step_width_combo.currentIndexChanged.connect(self.coolstep_configuration_changed)
+        self.minimum_current_combo.currentIndexChanged.connect(self.coolstep_configuration_changed)
+        self.stallguard_threshold_value_spin.valueChanged.connect(self.coolstep_configuration_changed)
+        self.stallguard_mode_combo.currentIndexChanged.connect(self.coolstep_configuration_changed)
+        
+        # Misc Configuration
+        self.disable_short_to_ground_protection_checkbox.stateChanged.connect(self.misc_configuration_changed)
+        self.synchronize_phase_frequency_spin.valueChanged.connect(self.misc_configuration_changed)
+        
         self.ste = 0
         self.pos = 0
         self.current_velocity = 0
@@ -142,20 +181,78 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         self.steps_button.setEnabled(value)
         self.full_brake_button.setEnabled(value)
         
-    def apply_configuration(self, _):
-        standstill_power_down = self.combo_standstill_power_down.currentIndex()
-        chopper_off_time = self.combo_chopper_off_time.currentIndex()
-        chopper_hysteresis = self.combo_chopper_hysteresis.currentIndex()
-        chopper_blank_time = self.combo_chopper_blank_time.currentIndex()
-        
+    def step_configuration_changed(self, _):
+        step_resolution = self.step_resolution_dropbox.currentIndex()
+        interpolation = self.interpolate_checkbox.isChecked()
         try:
-            self.silent_stepper.set_configuration(standstill_power_down, chopper_off_time, chopper_hysteresis, chopper_blank_time)
+            self.silent_stepper.set_step_configuration(step_resolution, interpolation)
         except ip_connection.Error:
             return
         
-    def mode_changed(self, mode):
+    def basic_configuration_changed(self, _):
+        standstill_current = self.standstill_current_spin.value()
+        motor_run_current = self.motor_run_current_spin.value()
+        standstill_delay_time = self.standstill_delay_time_spin.value()
+        power_down_time = self.power_down_time_spin.value()
+        stealth_threshold = self.stealth_threshold_spin.value()
+        coolstep_threshold = self.coolstep_threashold_spin.value()
+        classic_threshold = self.classic_threshold_spin.value()
+        high_velocity_chopper_mode = self.high_velocity_chopper_mode_checkbox.isChecked()
+        
         try:
-            self.silent_stepper.set_step_mode(mode)
+            self.silent_stepper.set_basic_configuration(standstill_current, motor_run_current, standstill_delay_time, power_down_time, stealth_threshold, coolstep_threshold, classic_threshold, high_velocity_chopper_mode)
+        except ip_connection.Error:
+            return
+
+    def spreadcycle_configuration_changed(self, _):
+        slow_decay_duration = self.slow_decay_duration_spin.value()
+        enable_random_slow_decay = self.enable_random_slow_decay_checkbox.isChecked()
+        fast_decay_duration = self.fast_decay_duration_spin.value()
+        hysteresis_start_value = self.hysteresis_start_value_spin.value()
+        hysteresis_end_value = self.hysteresis_end_value_spin.value()
+        sinewave_offset = self.sinewave_offset_spin.value()
+        chopper_mode = self.chopper_mode_combo.currentIndex()
+        comperator_blank_time = self.comperator_blank_time_combo.currentIndex()
+        fast_decay_without_comperator = self.fast_decay_without_comperator_checkbox.isChecked()
+        
+        try:
+            self.silent_stepper.set_spreadcycle_configuration(slow_decay_duration, enable_random_slow_decay, fast_decay_duration, hysteresis_start_value, hysteresis_end_value, sinewave_offset, chopper_mode, comperator_blank_time, fast_decay_without_comperator)
+        except ip_connection.Error:
+            return
+        
+    def stealth_configuration_changed(self, _):
+        enable_stealth = self.enable_stealth_checkbox.isChecked()
+        amplitude = self.amplitude_spin.value()
+        gradient = self.gradient_spin.value()
+        enable_autoscale = self.enable_autoscale_checkbox.isChecked()
+        force_symmetric = self.force_symmetric_checkbox.isChecked()
+        freewheel_mode = self.freewheel_mode_combo.currentIndex()
+        
+        try:
+            self.silent_stepper.set_stealth_configuration(enable_stealth, amplitude, gradient, enable_autoscale, force_symmetric, freewheel_mode)
+        except ip_connection.Error:
+            return
+        
+    def coolstep_configuration_changed(self, _):
+        minimum_stallguard_value = self.minimum_stallguard_value_spin.value()
+        maximum_stallguard_value = self.maximum_stallguard_value_spin.value()
+        current_up_step_width = self.current_up_step_width_combo.currentIndex()
+        current_down_step_width = self.current_down_step_width_combo.currentIndex()
+        minimum_current = self.minimum_current_combo.currentIndex()
+        stallguard_threshold_value = self.stallguard_threshold_value_spin.value()
+        stallguard_mode = self.stallguard_mode_combo.currentIndex()
+        
+        try:
+            self.silent_stepper.set_coolstep_configuration(minimum_stallguard_value, maximum_stallguard_value, current_up_step_width, current_down_step_width, minimum_current, stallguard_threshold_value, stallguard_mode)
+        except ip_connection.Error:
+            return
+        
+    def misc_configuration_changed(self, _):
+        disable_short_to_ground_protection = self.disable_short_to_ground_protection_checkbox.isChecked()
+        synchronize_phase_frequency = self.synchronize_phase_frequency_spin.value()
+        
+        try:
+            self.silent_stepper.set_misc_configuration(disable_short_to_ground_protection, synchronize_phase_frequency)
         except ip_connection.Error:
             return
         
@@ -218,7 +315,6 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         async_call(self.silent_stepper.get_motor_current, None, qid.setIntValue, self.increase_error_count)
         qid.intValueSelected.connect(self.motor_current_selected)
         qid.setLabelText("Choose motor current in mA.")
-#                         "<font color=red>Setting this too high can destroy your Motor.</font>")
         qid.open()
         
     def minimum_motor_voltage_button_clicked(self):
@@ -287,11 +383,51 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         ste_str = "%d" % ste
         self.remaining_steps_label.setText(ste_str)
         
-    def mode_update(self, mode):
-        self.mode_dropbox.blockSignals(True)
-        self.mode_dropbox.setCurrentIndex(mode)
-        self.mode_dropbox.blockSignals(False)
+    def driver_status_update(self, update):
+        if update.open_load == 0:
+            self.status_open_load.setText('No')
+        elif update.open_load == 1:
+            self.status_open_load.setText('Phase A')
+        elif update.open_load == 2:
+            self.status_open_load.setText('Phase B')
+        elif update.open_load == 3:
+            self.status_open_load.setText('Phase A and B')
+        else:
+            self.status_open_load.setText('Unkown')
+            
+        if update.short_to_ground == 0:
+            self.status_short_to_ground.setText('No')
+        elif update.short_to_ground == 1:
+            self.status_short_to_ground.setText('Phase A')
+        elif update.short_to_ground == 2:
+            self.status_short_to_ground.setText('Phase B')
+        elif update.short_to_ground == 3:
+            self.status_short_to_ground.setText('Phase A and B')
+        else:
+            self.status_short_to_ground.setText('Unkown')
+            
+        if update.over_temperature == 0:
+            self.status_over_temperature.setText('No')
+        elif update.over_temperature == 1:
+            self.status_over_temperature.setText('<font color=yellow>Warning</font>')
+        elif update.over_temperature == 2:
+            self.status_over_temperature.setText('<font color=red>Limit</font>')
         
+        if update.motor_stalled:
+            self.status_motor_stalled.setText('Yes')
+        else:
+            self.status_motor_stalled.setText('No')
+            
+        self.status_actual_motor_current.setText(str(update.actual_motor_current))
+        
+        if update.full_step_active:
+            self.status_full_step_active.setText('Yes')
+        else:
+            self.status_full_step_active.setText('No')
+            
+        self.status_stallguard_result.setText(str(update.stallguard_result))
+        self.status_stealth_voltage_amplitude.setText(str(update.stealth_voltage_amplitude))
+            
     def get_max_velocity_async(self, velocity):
         if not self.velocity_slider.isSliderDown():
             if velocity != self.velocity_slider.sliderPosition():
@@ -322,29 +458,160 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
                 self.enable_checkbox.blockSignals(True)
                 self.enable_checkbox.setChecked(False)
                 self.enable_checkbox.blockSignals(False)
-                
-    def get_configuration_async(self, conf):
-        self.combo_standstill_power_down.blockSignals(True)
-        self.combo_standstill_power_down.setCurrentIndex(conf.standstill_power_down)
-        self.combo_standstill_power_down.blockSignals(False)
+                        
+    def get_step_configuration_async(self, conf):
+        self.step_resolution_dropbox.blockSignals(True)
+        self.step_resolution_dropbox.setCurrentIndex(conf.step_resolution)
+        self.step_resolution_dropbox.blockSignals(False)
         
-        self.combo_chopper_off_time.blockSignals(True)
-        self.combo_chopper_off_time.setCurrentIndex(conf.chopper_off_time)
-        self.combo_chopper_off_time.blockSignals(False)
+        self.interpolate_checkbox.blockSignals(True)
+        self.interpolate_checkbox.setChecked(conf.interpolation)
+        self.interpolate_checkbox.blockSignals(False)
+        
+    def get_basic_configuration_async(self, conf):
+        self.standstill_current_spin.blockSignals(True)
+        self.standstill_current_spin.setValue(conf.standstill_current)
+        self.standstill_current_spin.blockSignals(False)
 
-        self.combo_chopper_hysteresis.blockSignals(True)
-        self.combo_chopper_hysteresis.setCurrentIndex(conf.chopper_hysteresis)
-        self.combo_chopper_hysteresis.blockSignals(False)
+        self.motor_run_current_spin.blockSignals(True)
+        self.motor_run_current_spin.setValue(conf.motor_run_current)
+        self.motor_run_current_spin.blockSignals(False)
         
-        self.combo_chopper_blank_time.blockSignals(True)
-        self.combo_chopper_blank_time.setCurrentIndex(conf.chopper_blank_time)
-        self.combo_chopper_blank_time.blockSignals(False)
+        self.standstill_delay_time_spin.blockSignals(True)
+        self.standstill_delay_time_spin.setValue(conf.standstill_delay_time)
+        self.standstill_delay_time_spin.blockSignals(False)
+        
+        self.power_down_time_spin.blockSignals(True)
+        self.power_down_time_spin.setValue(conf.power_down_time)
+        self.power_down_time_spin.blockSignals(False)
+        
+        self.stealth_threshold_spin.blockSignals(True)
+        self.stealth_threshold_spin.setValue(conf.stealth_threshold)
+        self.stealth_threshold_spin.blockSignals(False)
+        
+        self.coolstep_threashold_spin.blockSignals(True)
+        self.coolstep_threashold_spin.setValue(conf.coolstep_threshold)
+        self.coolstep_threashold_spin.blockSignals(False)
+        
+        self.classic_threshold_spin.blockSignals(True)
+        self.classic_threshold_spin.setValue(conf.classic_threshold)
+        self.classic_threshold_spin.blockSignals(False)
+        
+        self.high_velocity_chopper_mode_checkbox.blockSignals(True)
+        self.high_velocity_chopper_mode_checkbox.setChecked(conf.high_velocity_chopper_mode)
+        self.high_velocity_chopper_mode_checkbox.blockSignals(False)
+    
+    def get_spreadcycle_configuration_async(self, conf):
+        self.slow_decay_duration_spin.blockSignals(True)
+        self.slow_decay_duration_spin.setValue(conf.slow_decay_duration)
+        self.slow_decay_duration_spin.blockSignals(False)
+        
+        self.enable_random_slow_decay_checkbox.blockSignals(True)
+        self.enable_random_slow_decay_checkbox.setChecked(conf.enable_random_slow_decay)
+        self.enable_random_slow_decay_checkbox.blockSignals(False)
+        
+        self.fast_decay_duration_spin.blockSignals(True)
+        self.fast_decay_duration_spin.setValue(conf.fast_decay_duration)
+        self.fast_decay_duration_spin.blockSignals(False)
+        
+        self.hysteresis_start_value_spin.blockSignals(True)
+        self.hysteresis_start_value_spin.setValue(conf.hysteresis_start_value)
+        self.hysteresis_start_value_spin.blockSignals(False)
+        
+        self.hysteresis_end_value_spin.blockSignals(True)
+        self.hysteresis_end_value_spin.setValue(conf.hysteresis_end_value)
+        self.hysteresis_end_value_spin.blockSignals(False)
+        
+        self.sinewave_offset_spin.blockSignals(True)
+        self.sinewave_offset_spin.setValue(conf.sinewave_offset)
+        self.sinewave_offset_spin.blockSignals(False)
+        
+        self.chopper_mode_combo.blockSignals(True)
+        self.chopper_mode_combo.setCurrentIndex(conf.chopper_mode)
+        self.chopper_mode_combo.blockSignals(False)
+        
+        self.standstill_current_spin.blockSignals(True)
+        self.comperator_blank_time_combo.setCurrentIndex(conf.comperator_blank_time)
+        self.standstill_current_spin.blockSignals(False)
+        
+        self.fast_decay_without_comperator_checkbox.blockSignals(True)
+        self.fast_decay_without_comperator_checkbox.setChecked(conf.fast_decay_without_comperator)
+        self.fast_decay_without_comperator_checkbox.blockSignals(False)
+        
+    
+    def get_stealth_configuration_async(self, conf):
+        self.enable_stealth_checkbox.blockSignals(True)
+        self.enable_stealth_checkbox.setChecked(conf.enable_stealth)
+        self.enable_stealth_checkbox.blockSignals(False)
+        
+        self.amplitude_spin.blockSignals(True)
+        self.amplitude_spin.setValue(conf.amplitude)
+        self.amplitude_spin.blockSignals(False)
+        
+        self.gradient_spin.blockSignals(True)
+        self.gradient_spin.setValue(conf.gradient)
+        self.gradient_spin.blockSignals(False)
+        
+        self.enable_autoscale_checkbox.blockSignals(True)
+        self.enable_autoscale_checkbox.setChecked(conf.enable_autoscale)
+        self.enable_autoscale_checkbox.blockSignals(False)
+        
+        self.force_symmetric_checkbox.blockSignals(True)
+        self.force_symmetric_checkbox.setChecked(conf.force_symmetric)
+        self.force_symmetric_checkbox.blockSignals(False)
+        
+        self.freewheel_mode_combo.blockSignals(True)
+        self.freewheel_mode_combo.setCurrentIndex(conf.freewheel_mode)
+        self.freewheel_mode_combo.blockSignals(False)
+    
+    def get_coolstep_configuration_async(self, conf):
+        self.minimum_stallguard_value_spin.blockSignals(True)
+        self.minimum_stallguard_value_spin.setValue(conf.minimum_stallguard_value)
+        self.minimum_stallguard_value_spin.blockSignals(False)
+    
+        self.maximum_stallguard_value_spin.blockSignals(True)
+        self.maximum_stallguard_value_spin.setValue(conf.maximum_stallguard_value)
+        self.maximum_stallguard_value_spin.blockSignals(False)
+    
+        self.current_up_step_width_combo.blockSignals(True)
+        self.current_up_step_width_combo.setCurrentIndex(conf.current_up_step_width)
+        self.current_up_step_width_combo.blockSignals(False)
+    
+        self.current_down_step_width_combo.blockSignals(True)
+        self.current_down_step_width_combo.setCurrentIndex(conf.current_down_step_width)
+        self.current_down_step_width_combo.blockSignals(False)
+    
+        self.minimum_current_combo.blockSignals(True)
+        self.minimum_current_combo.setCurrentIndex(conf.minimum_current)
+        self.minimum_current_combo.blockSignals(False)
+    
+        self.stallguard_threshold_value_spin.blockSignals(True)
+        self.stallguard_threshold_value_spin.setValue(conf.stallguard_threshold_value)
+        self.stallguard_threshold_value_spin.blockSignals(False)
+    
+        self.stallguard_mode_combo.blockSignals(True)
+        self.stallguard_mode_combo.setCurrentIndex(conf.stallguard_mode)
+        self.stallguard_mode_combo.blockSignals(False)
+        
+    def get_misc_configuration_async(self, conf):
+        self.disable_short_to_ground_protection_checkbox.blockSignals(True)
+        self.disable_short_to_ground_protection_checkbox.setChecked(conf.disable_short_to_ground_protection)
+        self.disable_short_to_ground_protection_checkbox.blockSignals(False)
+        
+        self.synchronize_phase_frequency_spin.blockSignals(True)
+        self.synchronize_phase_frequency_spin.setValue(conf.synchronize_phase_frequency)
+        self.synchronize_phase_frequency_spin.blockSignals(False)
         
     def update_start(self):
         async_call(self.silent_stepper.get_max_velocity, None, self.get_max_velocity_async, self.increase_error_count)
         async_call(self.silent_stepper.get_speed_ramping, None, self.get_speed_ramping_async, self.increase_error_count)
         async_call(self.silent_stepper.is_enabled, None, self.is_enabled_async, self.increase_error_count)
-        async_call(self.silent_stepper.get_configuration, None, self.get_configuration_async, self.increase_error_count)
+        async_call(self.silent_stepper.get_step_configuration, None, self.get_step_configuration_async, self.increase_error_count)
+        async_call(self.silent_stepper.get_basic_configuration, None, self.get_basic_configuration_async, self.increase_error_count)
+        async_call(self.silent_stepper.get_spreadcycle_configuration, None, self.get_spreadcycle_configuration_async, self.increase_error_count)
+        async_call(self.silent_stepper.get_stealth_configuration, None, self.get_stealth_configuration_async, self.increase_error_count)
+        async_call(self.silent_stepper.get_coolstep_configuration, None, self.get_coolstep_configuration_async, self.increase_error_count)
+        async_call(self.silent_stepper.get_misc_configuration, None, self.get_misc_configuration_async, self.increase_error_count)
 
     def update_data(self):
         async_call(self.silent_stepper.get_remaining_steps, None, self.remaining_steps_update, self.increase_error_count)
@@ -357,7 +624,7 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
             async_call(self.silent_stepper.get_stack_input_voltage, None, self.stack_input_voltage_update, self.increase_error_count)
             async_call(self.silent_stepper.get_external_input_voltage, None, self.external_input_voltage_update, self.increase_error_count)
             async_call(self.silent_stepper.get_minimum_voltage, None, self.minimum_voltage_update, self.increase_error_count)
-            async_call(self.silent_stepper.get_step_mode, None, self.mode_update, self.increase_error_count)
+            async_call(self.silent_stepper.get_driver_status, None, self.driver_status_update, self.increase_error_count)
 
     def velocity_changed(self, value):
         try:
