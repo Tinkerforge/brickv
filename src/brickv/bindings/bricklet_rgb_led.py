@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-09-08.      #
+# This file was automatically generated on 2016-10-25.      #
 #                                                           #
 # Python Bindings Version 2.1.10                            #
 #                                                           #
@@ -61,7 +61,7 @@ class BrickletRGBLED(Device):
 
     def get_rgb_value(self):
         """
-        Returns the *rgb* value of the LED as set by :func:`SetRGBValues`.
+        Returns the *rgb* value of the LED as set by :func:`SetRGBValue`.
         """
         return GetRGBValue(*self.ipcon.send_request(self, BrickletRGBLED.FUNCTION_GET_RGB_VALUE, (), '', 'B B B'))
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-10-18.      #
+# This file was automatically generated on 2016-10-25.      #
 #                                                           #
-# Python Bindings Version 2.1.9                             #
+# Python Bindings Version 2.1.10                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -25,13 +25,7 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 GetSpeedRamping = namedtuple('SpeedRamping', ['acceleration', 'deacceleration'])
-GetStepConfiguration = namedtuple('StepConfiguration', ['step_resolution', 'interpolation'])
-GetBasicConfiguration = namedtuple('BasicConfiguration', ['standstill_current', 'motor_run_current', 'standstill_delay_time', 'power_down_time', 'stealth_threshold', 'coolstep_threshold', 'classic_threshold', 'high_velocity_chopper_mode'])
-GetSpreadcycleConfiguration = namedtuple('SpreadcycleConfiguration', ['slow_decay_duration', 'enable_random_slow_decay', 'fast_decay_duration', 'hysteresis_start_value', 'hysteresis_end_value', 'sinewave_offset', 'chopper_mode', 'comperator_blank_time', 'fast_decay_without_comperator'])
-GetStealthConfiguration = namedtuple('StealthConfiguration', ['enable_stealth', 'amplitude', 'gradient', 'enable_autoscale', 'force_symmetric', 'freewheel_mode'])
-GetCoolstepConfiguration = namedtuple('CoolstepConfiguration', ['minimum_stallguard_value', 'maximum_stallguard_value', 'current_up_step_width', 'current_down_step_width', 'minimum_current', 'stallguard_threshold_value', 'stallguard_mode'])
-GetMiscConfiguration = namedtuple('MiscConfiguration', ['disable_short_to_ground_protection', 'synchronize_phase_frequency'])
-GetDriverStatus = namedtuple('DriverStatus', ['open_load', 'short_to_ground', 'over_temperature', 'motor_stalled', 'actual_motor_current', 'full_step_active', 'stallguard_result', 'stealth_voltage_amplitude'])
+GetConfiguration = namedtuple('Configuration', ['standstill_power_down', 'chopper_off_time', 'chopper_hysteresis', 'chopper_blank_time'])
 GetAllData = namedtuple('AllData', ['current_velocity', 'current_position', 'remaining_steps', 'stack_voltage', 'external_voltage', 'current_consumption'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -44,10 +38,10 @@ class BrickSilentStepper(Device):
     DEVICE_IDENTIFIER = 19
     DEVICE_DISPLAY_NAME = 'Silent Stepper Brick'
 
-    CALLBACK_UNDER_VOLTAGE = 40
-    CALLBACK_POSITION_REACHED = 41
-    CALLBACK_ALL_DATA = 47
-    CALLBACK_NEW_STATE = 48
+    CALLBACK_UNDER_VOLTAGE = 31
+    CALLBACK_POSITION_REACHED = 32
+    CALLBACK_ALL_DATA = 38
+    CALLBACK_NEW_STATE = 39
 
     FUNCTION_SET_MAX_VELOCITY = 1
     FUNCTION_GET_MAX_VELOCITY = 2
@@ -62,8 +56,8 @@ class BrickSilentStepper(Device):
     FUNCTION_SET_STEPS = 11
     FUNCTION_GET_STEPS = 12
     FUNCTION_GET_REMAINING_STEPS = 13
-    FUNCTION_SET_STEP_CONFIGURATION = 14
-    FUNCTION_GET_STEP_CONFIGURATION = 15
+    FUNCTION_SET_STEP_MODE = 14
+    FUNCTION_GET_STEP_MODE = 15
     FUNCTION_DRIVE_FORWARD = 16
     FUNCTION_DRIVE_BACKWARD = 17
     FUNCTION_STOP = 18
@@ -75,24 +69,15 @@ class BrickSilentStepper(Device):
     FUNCTION_ENABLE = 24
     FUNCTION_DISABLE = 25
     FUNCTION_IS_ENABLED = 26
-    FUNCTION_SET_BASIC_CONFIGURATION = 27
-    FUNCTION_GET_BASIC_CONFIGURATION = 28
-    FUNCTION_SET_SPREADCYCLE_CONFIGURATION = 29
-    FUNCTION_GET_SPREADCYCLE_CONFIGURATION = 30
-    FUNCTION_SET_STEALTH_CONFIGURATION = 31
-    FUNCTION_GET_STEALTH_CONFIGURATION = 32
-    FUNCTION_SET_COOLSTEP_CONFIGURATION = 33
-    FUNCTION_GET_COOLSTEP_CONFIGURATION = 34
-    FUNCTION_SET_MISC_CONFIGURATION = 35
-    FUNCTION_GET_MISC_CONFIGURATION = 36
-    FUNCTION_GET_DRIVER_STATUS = 37
-    FUNCTION_SET_MINIMUM_VOLTAGE = 38
-    FUNCTION_GET_MINIMUM_VOLTAGE = 39
-    FUNCTION_SET_TIME_BASE = 42
-    FUNCTION_GET_TIME_BASE = 43
-    FUNCTION_GET_ALL_DATA = 44
-    FUNCTION_SET_ALL_DATA_PERIOD = 45
-    FUNCTION_GET_ALL_DATA_PERIOD = 46
+    FUNCTION_SET_CONFIGURATION = 27
+    FUNCTION_GET_CONFIGURATION = 28
+    FUNCTION_SET_MINIMUM_VOLTAGE = 29
+    FUNCTION_GET_MINIMUM_VOLTAGE = 30
+    FUNCTION_SET_TIME_BASE = 33
+    FUNCTION_GET_TIME_BASE = 34
+    FUNCTION_GET_ALL_DATA = 35
+    FUNCTION_SET_ALL_DATA_PERIOD = 36
+    FUNCTION_GET_ALL_DATA_PERIOD = 37
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -101,36 +86,26 @@ class BrickSilentStepper(Device):
     FUNCTION_RESET = 243
     FUNCTION_GET_IDENTITY = 255
 
-    STEP_RESOLUTION_1 = 8
-    STEP_RESOLUTION_2 = 7
-    STEP_RESOLUTION_4 = 6
-    STEP_RESOLUTION_8 = 5
-    STEP_RESOLUTION_16 = 4
-    STEP_RESOLUTION_32 = 3
-    STEP_RESOLUTION_64 = 2
-    STEP_RESOLUTION_128 = 1
-    STEP_RESOLUTION_256 = 0
-    CHOPPER_MODE_SPREAD_CYCLE = 0
-    CHOPPER_MODE_FAST_DECAY = 1
-    FREEWHEEL_MODE_NORMAL = 0
-    FREEWHEEL_MODE_FREEWHEELING = 1
-    FREEWHEEL_MODE_COIL_SHORT_LS = 2
-    FREEWHEEL_MODE_COIL_SHORT_HS = 3
-    MINIMUM_CURRENT_HALF = 0
-    MINIMUM_CURRENT_QUARTER = 1
-    STALLGUARD_MODE_STANDARD = 0
-    STALLGUARD_MODE_FILTERED = 1
-    OPEN_LOAD_NONE = 0
-    OPEN_LOAD_PHASE_A = 1
-    OPEN_LOAD_PHASE_B = 2
-    OPEN_LOAD_PHASE_AB = 3
-    SHORT_TO_GROUND_NONE = 0
-    SHORT_TO_GROUND_PHASE_A = 1
-    SHORT_TO_GROUND_PHASE_B = 2
-    SHORT_TO_GROUND_PHASE_AB = 3
-    OVER_TEMPERATURE_NONE = 0
-    OVER_TEMPERATURE_WARNING = 1
-    OVER_TEMPERATURE_LIMIT = 2
+    STEP_MODE_NORMAL_FULL = 0
+    STEP_MODE_NORMAL_HALF = 1
+    STEP_MODE_NORMAL_HALF_INTERPOLATE = 2
+    STEP_MODE_NORMAL_QUARTER = 3
+    STEP_MODE_NORMAL_SIXTEENTH = 4
+    STEP_MODE_NORMAL_QUARTER_INTERPOLATE = 5
+    STEP_MODE_NORMAL_SIXTEENTH_INTERPOLATE = 6
+    STEP_MODE_SILENT_QUARTER_INTERPOLATE = 7
+    STEP_MODE_SILENT_SIXTEENTH_INTERPOLATE = 8
+    STANDSTILL_POWER_DOWN_ON = 0
+    STANDSTILL_POWER_DOWN_OFF = 1
+    CHOPPER_OFF_TIME_LOW = 0
+    CHOPPER_OFF_TIME_MEDIUM = 1
+    CHOPPER_OFF_TIME_HIGH = 2
+    CHOPPER_HYSTERESIS_LOW = 0
+    CHOPPER_HYSTERESIS_MEDIUM = 1
+    CHOPPER_HYSTERESIS_HIGH = 2
+    CHOPPER_BLANK_TIME_LOW = 0
+    CHOPPER_BLANK_TIME_MEDIUM = 1
+    CHOPPER_BLANK_TIME_HIGH = 2
     STATE_STOP = 1
     STATE_ACCELERATION = 2
     STATE_RUN = 3
@@ -160,8 +135,8 @@ class BrickSilentStepper(Device):
         self.response_expected[BrickSilentStepper.FUNCTION_SET_STEPS] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickSilentStepper.FUNCTION_GET_STEPS] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickSilentStepper.FUNCTION_GET_REMAINING_STEPS] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickSilentStepper.FUNCTION_SET_STEP_CONFIGURATION] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickSilentStepper.FUNCTION_GET_STEP_CONFIGURATION] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickSilentStepper.FUNCTION_SET_STEP_MODE] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickSilentStepper.FUNCTION_GET_STEP_MODE] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickSilentStepper.FUNCTION_DRIVE_FORWARD] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickSilentStepper.FUNCTION_DRIVE_BACKWARD] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickSilentStepper.FUNCTION_STOP] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
@@ -173,17 +148,8 @@ class BrickSilentStepper(Device):
         self.response_expected[BrickSilentStepper.FUNCTION_ENABLE] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickSilentStepper.FUNCTION_DISABLE] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickSilentStepper.FUNCTION_IS_ENABLED] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickSilentStepper.FUNCTION_SET_BASIC_CONFIGURATION] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickSilentStepper.FUNCTION_GET_BASIC_CONFIGURATION] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickSilentStepper.FUNCTION_SET_SPREADCYCLE_CONFIGURATION] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickSilentStepper.FUNCTION_GET_SPREADCYCLE_CONFIGURATION] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickSilentStepper.FUNCTION_SET_STEALTH_CONFIGURATION] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickSilentStepper.FUNCTION_GET_STEALTH_CONFIGURATION] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickSilentStepper.FUNCTION_SET_COOLSTEP_CONFIGURATION] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickSilentStepper.FUNCTION_GET_COOLSTEP_CONFIGURATION] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickSilentStepper.FUNCTION_SET_MISC_CONFIGURATION] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickSilentStepper.FUNCTION_GET_MISC_CONFIGURATION] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickSilentStepper.FUNCTION_GET_DRIVER_STATUS] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickSilentStepper.FUNCTION_SET_CONFIGURATION] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickSilentStepper.FUNCTION_GET_CONFIGURATION] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickSilentStepper.FUNCTION_SET_MINIMUM_VOLTAGE] = BrickSilentStepper.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickSilentStepper.FUNCTION_GET_MINIMUM_VOLTAGE] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickSilentStepper.CALLBACK_UNDER_VOLTAGE] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -329,17 +295,17 @@ class BrickSilentStepper(Device):
         """
         return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_REMAINING_STEPS, (), '', 'i')
 
-    def set_step_configuration(self, step_resolution, interpolation):
+    def set_step_mode(self, step_mode):
         """
         TODO
         """
-        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_STEP_CONFIGURATION, (step_resolution, interpolation), 'B ?', '')
+        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_STEP_MODE, (step_mode,), 'B', '')
 
-    def get_step_configuration(self):
+    def get_step_mode(self):
         """
-        Returns the step mode as set by :func:`SetStepConfiguration`.
+        Returns the step mode as set by :func:`SetStepMode`.
         """
-        return GetStepConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_STEP_CONFIGURATION, (), '', 'B ?'))
+        return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_STEP_MODE, (), '', 'B')
 
     def drive_forward(self):
         """
@@ -433,71 +399,17 @@ class BrickSilentStepper(Device):
         """
         return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_IS_ENABLED, (), '', '?')
 
-    def set_basic_configuration(self, standstill_current, motor_run_current, standstill_delay_time, power_down_time, stealth_threshold, coolstep_threshold, classic_threshold, high_velocity_chopper_mode):
+    def set_configuration(self, standstill_power_down, chopper_off_time, chopper_hysteresis, chopper_blank_time):
         """
         TODO
         """
-        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_BASIC_CONFIGURATION, (standstill_current, motor_run_current, standstill_delay_time, power_down_time, stealth_threshold, coolstep_threshold, classic_threshold, high_velocity_chopper_mode), 'B B B B H H H ?', '')
+        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_CONFIGURATION, (standstill_power_down, chopper_off_time, chopper_hysteresis, chopper_blank_time), 'B B B B', '')
 
-    def get_basic_configuration(self):
+    def get_configuration(self):
         """
-        Returns the configuration as set by :func:`SetBasicConfiguration`.
+        Returns the configuration as set by :func:`SetConfiguration`.
         """
-        return GetBasicConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_BASIC_CONFIGURATION, (), '', 'B B B B H H H ?'))
-
-    def set_spreadcycle_configuration(self, slow_decay_duration, enable_random_slow_decay, fast_decay_duration, hysteresis_start_value, hysteresis_end_value, sinewave_offset, chopper_mode, comperator_blank_time, fast_decay_without_comperator):
-        """
-        TODO
-        """
-        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_SPREADCYCLE_CONFIGURATION, (slow_decay_duration, enable_random_slow_decay, fast_decay_duration, hysteresis_start_value, hysteresis_end_value, sinewave_offset, chopper_mode, comperator_blank_time, fast_decay_without_comperator), 'B ? B B b b B B ?', '')
-
-    def get_spreadcycle_configuration(self):
-        """
-        Returns the configuration as set by :func:`SetBasicConfiguration`.
-        """
-        return GetSpreadcycleConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_SPREADCYCLE_CONFIGURATION, (), '', 'B ? B B b b B B ?'))
-
-    def set_stealth_configuration(self, enable_stealth, amplitude, gradient, enable_autoscale, force_symmetric, freewheel_mode):
-        """
-        TODO
-        """
-        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_STEALTH_CONFIGURATION, (enable_stealth, amplitude, gradient, enable_autoscale, force_symmetric, freewheel_mode), '? B B ? ? B', '')
-
-    def get_stealth_configuration(self):
-        """
-        Returns the configuration as set by :func:`SetStealthConfiguration`.
-        """
-        return GetStealthConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_STEALTH_CONFIGURATION, (), '', '? B B ? ? B'))
-
-    def set_coolstep_configuration(self, minimum_stallguard_value, maximum_stallguard_value, current_up_step_width, current_down_step_width, minimum_current, stallguard_threshold_value, stallguard_mode):
-        """
-        TODO
-        """
-        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_COOLSTEP_CONFIGURATION, (minimum_stallguard_value, maximum_stallguard_value, current_up_step_width, current_down_step_width, minimum_current, stallguard_threshold_value, stallguard_mode), 'B B B B B b B', '')
-
-    def get_coolstep_configuration(self):
-        """
-        Returns the configuration as set by :func:`SetStallguardCoolstepConfiguration`.
-        """
-        return GetCoolstepConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_COOLSTEP_CONFIGURATION, (), '', 'B B B B B b B'))
-
-    def set_misc_configuration(self, disable_short_to_ground_protection, synchronize_phase_frequency):
-        """
-        TODO
-        """
-        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_MISC_CONFIGURATION, (disable_short_to_ground_protection, synchronize_phase_frequency), '? B', '')
-
-    def get_misc_configuration(self):
-        """
-        Returns the configuration as set by :func:`SetMiscConfiguration`.
-        """
-        return GetMiscConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_MISC_CONFIGURATION, (), '', '? B'))
-
-    def get_driver_status(self):
-        """
-        
-        """
-        return GetDriverStatus(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_DRIVER_STATUS, (), '', 'B B B ? B ? B B'))
+        return GetConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_CONFIGURATION, (), '', 'B B B B'))
 
     def set_minimum_voltage(self, voltage):
         """

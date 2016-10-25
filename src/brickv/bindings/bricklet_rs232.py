@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-09-08.      #
+# This file was automatically generated on 2016-10-25.      #
 #                                                           #
 # Python Bindings Version 2.1.10                            #
 #                                                           #
@@ -112,7 +112,7 @@ class BrickletRS232(Device):
         
         The return value is the number of bytes that could be written.
         
-        See :func:`SetConfigurations` for configuration possibilities
+        See :func:`SetConfiguration` for configuration possibilities
         regarding baudrate, parity and so on.
         """
         return self.ipcon.send_request(self, BrickletRS232.FUNCTION_WRITE, (message, length), '60c B', 'B')

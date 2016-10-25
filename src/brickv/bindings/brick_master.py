@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-09-08.      #
+# This file was automatically generated on 2016-10-25.      #
 #                                                           #
 # Python Bindings Version 2.1.10                            #
 #                                                           #
@@ -905,7 +905,7 @@ class BrickMaster(Device):
 
     def get_stack_current_callback_period(self):
         """
-        Returns the period as set by :func:`SetCurrentCallbackPeriod`.
+        Returns the period as set by :func:`SetStackCurrentCallbackPeriod`.
         
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
@@ -987,7 +987,7 @@ class BrickMaster(Device):
 
     def set_stack_voltage_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`StackStackVoltageReached` callback.
+        Sets the thresholds for the :func:`StackVoltageReached` callback.
         
         The following options are possible:
         
