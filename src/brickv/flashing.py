@@ -1476,6 +1476,12 @@ There was an error during the auto-detection of Bricklets with Protocol 1.0 plug
             self.popup_fail('Extension Firmware', 'Error during Extension flashing: Could not find choosen Master Brick')
             return
 
+        # This is a temporary fix to have debugging, EEPROM access and proper
+        # firmware flashing working simultaneously. This fix is only required for
+        # development.
+
+        #master.is_wifi2_status_led_enabled()
+
         try:
             ESPFlash(master, progress).flash(firmware)
         except:
