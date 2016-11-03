@@ -1476,9 +1476,15 @@ There was an error during the auto-detection of Bricklets with Protocol 1.0 plug
             self.popup_fail('Extension Firmware', 'Error during Extension flashing: Could not find choosen Master Brick')
             return
 
-        # This is a temporary fix to have debugging, EEPROM access and proper
-        # firmware flashing working simultaneously. This fix is only required for
-        # development.
+
+        # Uncomment only when WiFi Extension V2 debug is enabled.
+        # Allows to flash the WiFi Extension V2 when debugging is enabled.
+        #
+        # NOTE: When debug output is enabled in WiFi Extension V2 firmware, calling
+        # the getter "is_wifi2_status_led_enabled()" will disable debug output until
+        # the extension is reset. This getter is used by brickv to set GPIO2 of the
+        # ESP8266 module on the extension to high state during firmware flashing, to
+        # bring the module in UART flash mode.
 
         #master.is_wifi2_status_led_enabled()
 
