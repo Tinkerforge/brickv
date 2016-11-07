@@ -100,7 +100,11 @@ class Wifi2(QWidget, Ui_Wifi2):
 
         # Use passwords
         self.wifi_client_encryption_changed(1)
+
+        # TODO: Remove WEP encryption option for AP mode encryption selection
+        #       since it is not supported by the extension firmware.
         self.wifi_ap_encryption_changed(3)
+
         self.wifi_use_auth_state_changed(Qt.Unchecked)
         self.wifi_client_encryption.currentIndexChanged.connect(self.wifi_client_encryption_changed)
         self.wifi_ap_encryption.currentIndexChanged.connect(self.wifi_ap_encryption_changed)
