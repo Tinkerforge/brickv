@@ -204,7 +204,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.get_channel_mapping_async(channel_mapping)
 
     def update_voltage(self):
-        async_call(self.led_strip.get_supply_voltage, None, self.get_supply_voltage_async, self.increase_error_count, log_exception=True)
+        async_call(self.led_strip.get_supply_voltage, None, self.get_supply_voltage_async, self.increase_error_count)
 
     def get_chip_type_async(self, new_chip_type):
         for index in range(self.chip_type_combobox.count()):
