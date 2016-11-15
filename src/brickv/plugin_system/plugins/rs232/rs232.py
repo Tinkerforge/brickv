@@ -98,7 +98,7 @@ class RS232(PluginBase, Ui_RS232):
             self.label_error_overrun.setText(str(self.error_overrun))
         if error & BrickletRS232.ERROR_PARITY:
             self.error_parity += 1
-            self.label_parity_overrun.setText(str(self.error_parity))
+            self.label_error_parity.setText(str(self.error_parity))
         if error & BrickletRS232.ERROR_FRAMING:
             self.error_framing += 1
             self.label_error_framing.setText(str(self.error_framing))
