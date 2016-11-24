@@ -96,6 +96,7 @@ class Master(PluginBase, Ui_Master):
                     self.device_info.extensions[ext].firmware_version_installed = version
                     infos.update_info(self.uid)
                     get_main_window().update_tree_view() # FIXME: this is kind of a hack
+                    self.is_wifi2_present_async(True)
 
                 if extension_type == self.master.EXTENSION_TYPE_WIFI2:
                     self.device_info.extensions[ext].url_part = 'wifi_v2'
@@ -132,6 +133,27 @@ class Master(PluginBase, Ui_Master):
             self.num_extensions += 1
             self.extension_label.setText(str(self.num_extensions) + " Present")
             self.label_no_extension.hide()
+
+            '''
+            Check if the master brick and WIFI extension 2 firmware versions support
+            mesh networking feature. Also set firmware version information for the WIFI2
+            extension 2 object.
+            '''
+            for ext in self.device_info.extensions:
+                if not self.device_info.extensions[ext]:
+                    continue
+
+                if self.device_info.extensions[ext].name != 'WIFI Extension 2.0':
+                    continue
+
+                wifi2.wifi2_firmware_version = \
+                    self.device_info.extensions[ext].firmware_version_installed
+
+                if self.device_info.extensions[ext].firmware_version_installed >= (2, 0, 4) \
+                and self.firmware_version >= (2, 4, 2):
+                    wifi2.wifi_mode.addItem('Mesh')
+                    wifi2.get_current_status()
+                    break
 
     def is_ethernet_present_async(self, present):
         if present:
@@ -181,7 +203,14 @@ class Master(PluginBase, Ui_Master):
             self.is_rs485_present_async(self.extension_type_preset[self.master.EXTENSION_TYPE_RS485])
             self.is_wifi_present_async(self.extension_type_preset[self.master.EXTENSION_TYPE_WIFI])
             self.is_ethernet_present_async(self.extension_type_preset[self.master.EXTENSION_TYPE_ETHERNET])
-            self.is_wifi2_present_async(self.extension_type_preset[self.master.EXTENSION_TYPE_WIFI2])
+
+            '''
+            For WIFI extension 2, self.is_ethernet_present_async() isn't called here but called from the
+            async callback, get_wifi2_firmware_version_async(). This is to ensure that both the master brick
+            and WIFI extension 2 firmware versions are avilable before creating the tab widget of the extension.
+            This is required because WIFI extension 2 supports mesh networking for which the GUI is updated
+            dynamically only when the version information is available.
+            '''
 
         self.update_timer.start(1000)
 

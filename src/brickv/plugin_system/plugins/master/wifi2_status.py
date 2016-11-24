@@ -30,7 +30,7 @@ from brickv.utils import get_modeless_dialog_flags
 def disable_group(group):
     for t in group:
         t[0].setEnabled(False)
-        
+
 def enable_group(group):
     for t in group:
         t[0].setEnabled(True)
@@ -53,7 +53,7 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
             (self.wifi_client_status_rx, self.wifi_client_status_rx_label),
             (self.wifi_client_status_tx, self.wifi_client_status_tx_label),
         ]
-        
+
         self.ap_group = [
             (self.wifi_ap_status_connected_count, self.wifi_ap_status_connected_count_label),
             (self.wifi_ap_status_ip, self.wifi_ap_status_ip_label),
@@ -67,14 +67,61 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
         self.wifi_status_button_close.clicked.connect(self.close)
         self.update_status()
 
+    def get_wifi2_mesh_common_status_async(self, s):
+        if s.status == 0:
+            self.wifi_mesh_status.setText('Disabled')
+        elif s.status == 1:
+            self.wifi_mesh_status.setText('Connecting to WiFi')
+        elif s.status == 2:
+            self.wifi_mesh_status.setText('Got IP')
+        elif s.status == 3:
+            self.wifi_mesh_status.setText('Online')
+        elif s.status == 4:
+            self.wifi_mesh_status.setText('Local')
+        else:
+            self.wifi_mesh_status.setText('Unknown')
+
+        if s.root_node:
+            self.wifi_mesh_root_node.setText('Yes')
+        else:
+            self.wifi_mesh_root_node.setText('No')
+
+        if s.root_candidate:
+            self.wifi_mesh_root_candidate.setText('Yes')
+        else:
+            self.wifi_mesh_root_candidate.setText('No')
+
+        self.wifi_mesh_connected_nodes.setText("%d" % s.connected_nodes)
+
+        self.wifi_mesh_rx.setText("%d" % s.rx_count)
+        self.wifi_mesh_tx.setText("%d" % s.tx_count)
+
+    def get_wifi2_mesh_station_status_async(self, s):
+        self.wifi_mesh_station_hostname.setText(s.host_name)
+        self.wifi_mesh_station_ip.setText("%d.%d.%d.%d" % s.ip)
+        self.wifi_mesh_station_sub.setText("%d.%d.%d.%d" % s.subnet_mask)
+        self.wifi_mesh_station_gw.setText("%d.%d.%d.%d" % s.gateway)
+        self.wifi_mesh_station_mac.setText("%X:%X:%X:%X:%X:%X" % s.mac_address)
+
+    def get_wifi2_mesh_ap_status_async(self, s):
+        self.wifi_mesh_ap_ssid.setText(s.ssid)
+        self.wifi_mesh_ap_ip.setText("%d.%d.%d.%d" % s.ip)
+        self.wifi_mesh_ap_sub.setText("%d.%d.%d.%d" % s.subnet_mask)
+        self.wifi_mesh_ap_gw.setText("%d.%d.%d.%d" % s.gateway)
+        self.wifi_mesh_ap_mac.setText("%X:%X:%X:%X:%X:%X" % s.mac_address)
+
     def update_status_async(self, s):
+        self.wifi_client_status_group.setVisible(True)
+        self.wifi_ap_status_group.setVisible(True)
+        self.wifi_mesh_status_group.setVisible(False)
+
         if s.client_enabled:
             enable_group(self.client_group)
             client_enabled = 'Yes'
         else:
             disable_group(self.client_group)
             client_enabled = 'No'
-        
+
         if s.client_status == 0:
             client_status = 'Idle'
         elif s.client_status == 1:
@@ -89,7 +136,7 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
             client_status = 'Got IP'
         else:
             client_status = 'Unknown'
-        
+
         self.wifi_client_status_enabled.setText(client_enabled)
         self.wifi_client_status_status.setText(client_status)
         self.wifi_client_status_ip.setText("%d.%d.%d.%d" % s.client_ip)
@@ -106,7 +153,7 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
         else:
             disable_group(self.ap_group)
             ap_enabled = 'No'
-        
+
         self.wifi_ap_status_enabled.setText(ap_enabled)
         self.wifi_ap_status_ip.setText("%d.%d.%d.%d" % s.ap_ip)
         self.wifi_ap_status_subnet_mask.setText("%d.%d.%d.%d" % s.ap_subnet_mask)
@@ -117,4 +164,27 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
         self.wifi_ap_status_connected_count.setText(str(s.ap_connected_count) + ' Clients')
 
     def update_status(self):
-        async_call(self.master.get_wifi2_status, None, self.update_status_async, self.parent.parent.increase_error_count)
+        if self.parent.parent.firmware_version >= (2, 4, 2) \
+        and self.parent.wifi2_firmware_version >= (2, 0, 4) \
+        and not self.parent.client_enable \
+        and not self.parent.ap_enable \
+        and self.parent.mesh_enable:
+            self.wifi_client_status_group.setVisible(False)
+            self.wifi_ap_status_group.setVisible(False)
+            self.wifi_mesh_status_group.setVisible(True)
+
+            async_call(self.master.get_wifi2_mesh_common_status, None,
+                self.get_wifi2_mesh_common_status_async,
+                self.parent.parent.increase_error_count)
+
+            async_call(self.master.get_wifi2_mesh_station_status, None,
+                self.get_wifi2_mesh_station_status_async,
+                self.parent.parent.increase_error_count)
+
+            async_call(self.master.get_wifi2_mesh_ap_status, None,
+                self.get_wifi2_mesh_ap_status_async,
+                self.parent.parent.increase_error_count)
+        else:
+            async_call(self.master.get_wifi2_status, None,
+                self.update_status_async,
+                self.parent.parent.increase_error_count)

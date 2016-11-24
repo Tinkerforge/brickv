@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>707</width>
+    <width>875</width>
     <height>828</height>
    </rect>
   </property>
@@ -23,15 +23,15 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>671</width>
-        <height>1122</height>
+        <y>-868</y>
+        <width>842</width>
+        <height>1676</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QGridLayout" name="wifi_grid_layout">
-         <item row="7" column="0" colspan="2">
+         <item row="1" column="0" colspan="2">
           <widget class="QGroupBox" name="wifi_groupbox_client">
            <property name="title">
             <string>Client Mode</string>
@@ -648,91 +648,7 @@ WEP: 10 or 26 hexadecimal digits</string>
            </layout>
           </widget>
          </item>
-         <item row="6" column="1">
-          <widget class="QComboBox" name="wifi_mode">
-           <item>
-            <property name="text">
-             <string>Client</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Access Point</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Client and Access Point</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="wifi_phy_mode_label">
-           <property name="text">
-            <string>PHY Mode:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="wifi_port_label">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Port:</string>
-           </property>
-           <property name="buddy">
-            <cstring>wifi_port</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="wifi_website_port_label">
-           <property name="text">
-            <string>Website Port:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QCheckBox" name="wifi_use_auth">
-           <property name="text">
-            <string>Use Authentication</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_17">
-           <item>
-            <widget class="QLineEdit" name="wifi_secret">
-             <property name="maxLength">
-              <number>64</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="wifi_show_characters">
-             <property name="text">
-              <string>Show Characters</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="wifi_secret_label">
-           <property name="text">
-            <string>Secret:</string>
-           </property>
-           <property name="buddy">
-            <cstring>wifi_secret</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="0" colspan="2">
+         <item row="4" column="0" colspan="2">
           <layout class="QHBoxLayout" name="horizontalLayout_26">
            <item>
             <widget class="QPushButton" name="wifi_save">
@@ -750,84 +666,7 @@ WEP: 10 or 26 hexadecimal digits</string>
            </item>
           </layout>
          </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="wifi_mode_label">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Mode:</string>
-           </property>
-           <property name="buddy">
-            <cstring>wifi_mode</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="wifi_websocket_port_label">
-           <property name="text">
-            <string>WebSocket Port:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QSpinBox" name="wifi_port">
-           <property name="minimum">
-            <number>1</number>
-           </property>
-           <property name="maximum">
-            <number>65535</number>
-           </property>
-           <property name="value">
-            <number>4223</number>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QSpinBox" name="wifi_websocket_port">
-           <property name="minimum">
-            <number>1</number>
-           </property>
-           <property name="maximum">
-            <number>65535</number>
-           </property>
-           <property name="value">
-            <number>4280</number>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QComboBox" name="wifi_phy_mode">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="currentIndex">
-            <number>1</number>
-           </property>
-           <item>
-            <property name="text">
-             <string>B</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>G</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>N</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item row="8" column="0" colspan="2">
+         <item row="2" column="0" colspan="2">
           <widget class="QGroupBox" name="wifi_groupbox_ap">
            <property name="title">
             <string>Access Point Mode</string>
@@ -835,6 +674,77 @@ WEP: 10 or 26 hexadecimal digits</string>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
              <layout class="QGridLayout" name="wifi_ap_grid_layout">
+              <item row="1" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <item>
+                 <widget class="QSpinBox" name="wifi_ap_ip4">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_ap_dot1">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_ap_ip3">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_ap_dot2">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_ap_ip2">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_ap_dot3">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_ap_ip1">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
               <item row="4" column="1">
                <widget class="QLineEdit" name="wifi_ap_ssid">
                 <property name="maxLength">
@@ -1081,77 +991,6 @@ WEP: 10 or 26 hexadecimal digits</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
-               <layout class="QHBoxLayout" name="horizontalLayout_4">
-                <item>
-                 <widget class="QSpinBox" name="wifi_ap_ip4">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="wifi_ap_dot1">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="wifi_ap_ip3">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="wifi_ap_dot2">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="wifi_ap_ip2">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="wifi_ap_dot3">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="wifi_ap_ip1">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
               <item row="6" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_3">
                 <item>
@@ -1317,35 +1156,947 @@ WEP: 10 or 26 hexadecimal digits</string>
            </layout>
           </widget>
          </item>
-         <item row="2" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_8">
-           <item>
-            <widget class="QSpinBox" name="wifi_website_port">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimum">
-              <number>2</number>
-             </property>
-             <property name="maximum">
-              <number>65534</number>
-             </property>
-             <property name="value">
-              <number>80</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="wifi_disable_web_interface">
-             <property name="text">
-              <string>Disable Web Interface</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+         <item row="3" column="0" colspan="2">
+          <widget class="QGroupBox" name="wifi_groupbox_mesh">
+           <property name="title">
+            <string>Mesh Mode</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <layout class="QGridLayout" name="gridLayout">
+              <item row="0" column="0">
+               <widget class="QLabel" name="wifi_mesh_router_ssid_label">
+                <property name="text">
+                 <string>Router SSID:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="wifi_mesh_router_ip_configuration_label">
+                <property name="text">
+                 <string>Router IP Configuration:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="0">
+               <widget class="QLabel" name="wifi_mesh_router_sub_label">
+                <property name="text">
+                 <string>Subnet Mask:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="0">
+               <widget class="QLabel" name="wifi_mesh_ssid_prefix_label">
+                <property name="text">
+                 <string>SSID Prefix:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="11" column="0">
+               <widget class="QLabel" name="wifi_mesh_server_ip_label">
+                <property name="text">
+                 <string>Server IP:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="0">
+               <widget class="QLabel" name="wifi_mesh_server_port_label">
+                <property name="text">
+                 <string>Server Port:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="wifi_mesh_router_ip_label">
+                <property name="text">
+                 <string>IP:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="0">
+               <widget class="QLabel" name="wifi_mesh_group_id_label">
+                <property name="text">
+                 <string>Group ID:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="wifi_mesh_router_gw_label">
+                <property name="text">
+                 <string>Gateway:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="11" column="1" colspan="2">
+               <layout class="QHBoxLayout" name="horizontalLayout_14">
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_server_ip1">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_dot10">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_server_ip2">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_dot11">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_server_ip3">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_dot12">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_server_ip4">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="10" column="1" colspan="2">
+               <layout class="QHBoxLayout" name="horizontalLayout_13">
+                <item>
+                 <widget class="SpinBoxHex" name="wifi_mesh_group_id1">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_colon6">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="SpinBoxHex" name="wifi_mesh_group_id2">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_colon7">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="SpinBoxHex" name="wifi_mesh_group_id3">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_colon8">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="SpinBoxHex" name="wifi_mesh_group_id4">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_colon9">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="SpinBoxHex" name="wifi_mesh_group_id5">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_colon10">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="SpinBoxHex" name="wifi_mesh_group_id6">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="5" column="1" colspan="2">
+               <widget class="QComboBox" name="wifi_mesh_router_ip_configuration">
+                <item>
+                 <property name="text">
+                  <string>DHCP</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Static IP</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="6" column="1" colspan="2">
+               <layout class="QHBoxLayout" name="horizontalLayout_10">
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_router_ip1">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_dot1">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_router_ip2">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_dot2">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_router_ip3">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_dot3">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_router_ip4">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="wifi_mesh_router_bssid_label">
+                <property name="text">
+                 <string>Router BSSID:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1" colspan="2">
+               <layout class="QHBoxLayout" name="horizontalLayout_12">
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_router_gw1">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_dot7">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_router_gw2">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_dot8">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_router_gw3">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_dot9">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_router_gw4">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="0" column="1" colspan="2">
+               <widget class="QLineEdit" name="wifi_mesh_router_ssid">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="maxLength">
+                 <number>32</number>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1" colspan="2">
+               <widget class="QLineEdit" name="wifi_mesh_ssid_prefix">
+                <property name="maxLength">
+                 <number>16</number>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="1" colspan="2">
+               <widget class="QSpinBox" name="wifi_mesh_server_port">
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+                <property name="value">
+                 <number>4240</number>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="1" colspan="2">
+               <layout class="QHBoxLayout" name="horizontalLayout_11">
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_router_sub1">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_dot4">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_router_sub2">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_dot5">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_router_sub3">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_dot6">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="wifi_mesh_router_sub4">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="2" column="1" colspan="2">
+               <layout class="QHBoxLayout" name="horizontalLayout_9">
+                <item>
+                 <widget class="SpinBoxHex" name="wifi_mesh_router_bssid1">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_colon1">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="SpinBoxHex" name="wifi_mesh_router_bssid2">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_colon2">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="SpinBoxHex" name="wifi_mesh_router_bssid3">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_colon3">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="SpinBoxHex" name="wifi_mesh_router_bssid4">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_colon4">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="SpinBoxHex" name="wifi_mesh_router_bssid5">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wifi_mesh_colon5">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="SpinBoxHex" name="wifi_mesh_router_bssid6">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="1" column="1" colspan="2">
+               <widget class="QCheckBox" name="wifi_mesh_router_use_bssid">
+                <property name="text">
+                 <string>Use BSSID (Applies if the router SSID is hidden)</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="wifi_mesh_router_encryption_label">
+                <property name="text">
+                 <string>Router Encryption:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="wifi_mesh_router_password_label">
+                <property name="text">
+                 <string>Router Password:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1" colspan="2">
+               <widget class="QComboBox" name="wifi_mesh_router_encryption">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>1</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Open (No Encryption)</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>WPA/WPA2 PSK</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="4" column="1" colspan="2">
+               <layout class="QHBoxLayout" name="horizontalLayout_23">
+                <item>
+                 <widget class="QLineEdit" name="wifi_mesh_router_password">
+                  <property name="maxLength">
+                   <number>64</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="wifi_mesh_router_password_show">
+                  <property name="text">
+                   <string>Show Characters</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QGroupBox" name="groupBox">
+           <property name="title">
+            <string>General</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <item>
+             <layout class="QGridLayout" name="gridLayout_3">
+              <item row="6" column="0">
+               <widget class="QLabel" name="wifi_mode_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Mode:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>wifi_mode</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1" colspan="2">
+               <widget class="QCheckBox" name="wifi_use_auth">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Use Authentication</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" colspan="2">
+               <widget class="QSpinBox" name="wifi_port">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+                <property name="value">
+                 <number>4223</number>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QLineEdit" name="wifi_secret">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>3</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maxLength">
+                 <number>64</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1" colspan="2">
+               <widget class="QSpinBox" name="wifi_websocket_port">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+                <property name="value">
+                 <number>4280</number>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="wifi_website_port_label">
+                <property name="text">
+                 <string>Website Port:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="wifi_websocket_port_label">
+                <property name="text">
+                 <string>WebSocket Port:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1" colspan="2">
+               <widget class="QComboBox" name="wifi_phy_mode">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="currentIndex">
+                 <number>1</number>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>B</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>G</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>N</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QSpinBox" name="wifi_website_port">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>4</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimum">
+                 <number>2</number>
+                </property>
+                <property name="maximum">
+                 <number>65534</number>
+                </property>
+                <property name="value">
+                 <number>80</number>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="wifi_phy_mode_label">
+                <property name="text">
+                 <string>PHY Mode:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="2">
+               <widget class="QCheckBox" name="wifi_disable_web_interface">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Disable Web Interface</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="wifi_port_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Port:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>wifi_port</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="wifi_secret_label">
+                <property name="text">
+                 <string>Secret:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>wifi_secret</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="2">
+               <widget class="QCheckBox" name="wifi_show_characters">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Show Characters</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1" colspan="2">
+               <widget class="QComboBox" name="wifi_mode">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>1</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="currentIndex">
+                 <number>0</number>
+                </property>
+                <property name="sizeAdjustPolicy">
+                 <enum>QComboBox::AdjustToContents</enum>
+                </property>
+                <property name="minimumContentsLength">
+                 <number>0</number>
+                </property>
+                <property name="modelColumn">
+                 <number>0</number>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Client</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Access Point</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Client and Access Point</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
          </item>
         </layout>
        </item>
@@ -1377,9 +2128,6 @@ WEP: 10 or 26 hexadecimal digits</string>
  </customwidgets>
  <tabstops>
   <tabstop>wifi_scroll_area</tabstop>
-  <tabstop>wifi_use_auth</tabstop>
-  <tabstop>wifi_secret</tabstop>
-  <tabstop>wifi_show_characters</tabstop>
   <tabstop>wifi_client_ip4</tabstop>
   <tabstop>wifi_client_ip3</tabstop>
   <tabstop>wifi_client_ip2</tabstop>
