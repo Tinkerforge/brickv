@@ -471,6 +471,12 @@ class Wifi2(QWidget, Ui_Wifi2):
             return
 
         try:
+            v = self.wifi_mesh_router_password.text().encode('ascii')
+        except:
+            self.popup_fail('Mesh router password cannot contain non-ASCII characters')
+            return
+
+        try:
             v = self.wifi_mesh_ssid_prefix.text().encode('ascii')
         except:
             self.popup_fail('Mesh SSID prefix cannot contain non-ASCII characters')
