@@ -71,13 +71,19 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
         if s.status == 0:
             self.wifi_mesh_status.setText('Disabled')
         elif s.status == 1:
-            self.wifi_mesh_status.setText('Connecting to WiFi')
+            self.wifi_mesh_status.setText('WiFi Connecting')
         elif s.status == 2:
             self.wifi_mesh_status.setText('Got IP')
         elif s.status == 3:
-            self.wifi_mesh_status.setText('Online')
+            self.wifi_mesh_status.setText('Mesh Local')
         elif s.status == 4:
-            self.wifi_mesh_status.setText('Local')
+            self.wifi_mesh_status.setText('Mesh Online')
+        elif s.status == 5:
+            self.wifi_mesh_status.setText('AP Available')
+        elif s.status == 6:
+            self.wifi_mesh_status.setText('AP Setup')
+        elif s.status == 7:
+            self.wifi_mesh_status.setText('Leaf Available')
         else:
             self.wifi_mesh_status.setText('Unknown')
 
