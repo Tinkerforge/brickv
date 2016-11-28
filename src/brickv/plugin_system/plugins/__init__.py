@@ -61,6 +61,7 @@ from brickv.plugin_system.plugins.rgb_led import device_class as rgb_led
 from brickv.plugin_system.plugins.rotary_encoder import device_class as rotary_encoder
 from brickv.plugin_system.plugins.rotary_poti import device_class as rotary_poti
 from brickv.plugin_system.plugins.rs232 import device_class as rs232
+from brickv.plugin_system.plugins.rs485 import device_class as rs485
 from brickv.plugin_system.plugins.segment_display_4x7 import device_class as segment_display_4x7
 from brickv.plugin_system.plugins.servo import device_class as servo
 from brickv.plugin_system.plugins.silent_stepper import device_class as silent_stepper
@@ -139,6 +140,7 @@ device_classes = [
     rotary_encoder,
     rotary_poti,
     rs232,
+    rs485,
     segment_display_4x7,
     servo,
     silent_stepper,
