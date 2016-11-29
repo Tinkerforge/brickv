@@ -209,7 +209,7 @@ class RS485(PluginBase, Ui_RS485):
         self.cbe_error_count.set_period(0)
         if not self.read_callback_was_enabled:
             try:
-                self.rs485.disable_read_callback()
+                async_call(self.rs485.disable_read_callback, None, None, None)
             except:
                 pass
 
