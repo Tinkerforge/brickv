@@ -336,7 +336,7 @@
         <item>
          <widget class="QLabel" name="label_9">
           <property name="text">
-           <string>Overrun Error:</string>
+           <string>Overrun Error Count:</string>
           </property>
          </widget>
         </item>
@@ -363,7 +363,7 @@
         <item>
          <widget class="QLabel" name="label_11">
           <property name="text">
-           <string>Parity Error:</string>
+           <string>Parity Error Count:</string>
           </property>
          </widget>
         </item>
