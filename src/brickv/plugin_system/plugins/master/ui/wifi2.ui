@@ -1188,21 +1188,21 @@ WEP: 10 or 26 hexadecimal digits</string>
               <item row="9" column="0">
                <widget class="QLabel" name="wifi_mesh_ssid_prefix_label">
                 <property name="text">
-                 <string>SSID Prefix:</string>
+                 <string>Group SSID Prefix:</string>
                 </property>
                </widget>
               </item>
               <item row="11" column="0">
-               <widget class="QLabel" name="wifi_mesh_server_ip_label">
+               <widget class="QLabel" name="wifi_mesh_gateway_ip_label">
                 <property name="text">
-                 <string>Server IP:</string>
+                 <string>Mesh Gateway IP:</string>
                 </property>
                </widget>
               </item>
               <item row="12" column="0">
-               <widget class="QLabel" name="wifi_mesh_server_port_label">
+               <widget class="QLabel" name="wifi_mesh_gateway_port_label">
                 <property name="text">
-                 <string>Server Port:</string>
+                 <string>Mesh Gateway Port:</string>
                 </property>
                </widget>
               </item>
@@ -1230,7 +1230,7 @@ WEP: 10 or 26 hexadecimal digits</string>
               <item row="11" column="1" colspan="2">
                <layout class="QHBoxLayout" name="horizontalLayout_14">
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_server_ip1">
+                 <widget class="QSpinBox" name="wifi_mesh_gateway_ip1">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1250,7 +1250,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_server_ip2">
+                 <widget class="QSpinBox" name="wifi_mesh_gateway_ip2">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1270,7 +1270,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_server_ip3">
+                 <widget class="QSpinBox" name="wifi_mesh_gateway_ip3">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1290,7 +1290,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_server_ip4">
+                 <widget class="QSpinBox" name="wifi_mesh_gateway_ip4">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1590,7 +1590,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                </widget>
               </item>
               <item row="12" column="1" colspan="2">
-               <widget class="QSpinBox" name="wifi_mesh_server_port">
+               <widget class="QSpinBox" name="wifi_mesh_gateway_port">
                 <property name="minimum">
                  <number>1</number>
                 </property>

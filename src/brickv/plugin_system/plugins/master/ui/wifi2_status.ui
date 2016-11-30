@@ -416,7 +416,7 @@
             <item row="4" column="0">
              <widget class="QLabel" name="wifi_mesh_station_hostname_label">
               <property name="text">
-               <string>Station Hostname:</string>
+               <string>Client Hostname:</string>
               </property>
              </widget>
             </item>
@@ -444,7 +444,7 @@
             <item row="7" column="0">
              <widget class="QLabel" name="wifi_mesh_staation_gw_label">
               <property name="text">
-               <string>Station Gateway:</string>
+               <string>Client Gateway:</string>
               </property>
              </widget>
             </item>
@@ -477,7 +477,7 @@
             <item row="8" column="0">
              <widget class="QLabel" name="wifi_mesh_station_mac_label">
               <property name="text">
-               <string>Station MAC Address:</string>
+               <string>Client MAC Address:</string>
               </property>
              </widget>
             </item>
@@ -498,7 +498,7 @@
             <item row="5" column="0">
              <widget class="QLabel" name="wifi_mesh_station_ip_label">
               <property name="text">
-               <string>Station IP:</string>
+               <string>Client IP:</string>
               </property>
              </widget>
             </item>
@@ -546,7 +546,7 @@
             <item row="6" column="0">
              <widget class="QLabel" name="wifi_mesh_station_sub_label">
               <property name="text">
-               <string>Station Subnet Mask:</string>
+               <string>Client Subnet Mask:</string>
               </property>
              </widget>
             </item>
