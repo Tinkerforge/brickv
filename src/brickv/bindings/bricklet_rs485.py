@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-11-28.      #
+# This file was automatically generated on 2016-12-06.      #
 #                                                           #
 # Python Bindings Version 2.1.10                            #
 #                                                           #
@@ -86,9 +86,11 @@ class BrickletRS485(Device):
     COMMUNICATION_LED_CONFIG_OFF = 0
     COMMUNICATION_LED_CONFIG_ON = 1
     COMMUNICATION_LED_CONFIG_SHOW_COMMUNICATION = 2
+    COMMUNICATION_LED_CONFIG_SHOW_HEARTBEAT = 3
     ERROR_LED_CONFIG_OFF = 0
     ERROR_LED_CONFIG_ON = 1
     ERROR_LED_CONFIG_SHOW_ERROR = 2
+    ERROR_LED_CONFIG_SHOW_HEARTBEAT = 3
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -103,6 +105,7 @@ class BrickletRS485(Device):
     STATUS_LED_CONFIG_OFF = 0
     STATUS_LED_CONFIG_ON = 1
     STATUS_LED_CONFIG_SHOW_STATUS = 2
+    STATUS_LED_CONFIG_SHOW_HEARTBEAT = 3
 
     def __init__(self, uid, ipcon):
         """
@@ -149,7 +152,7 @@ class BrickletRS485(Device):
 
     def write(self, message, length):
         """
-        Writes a string of up to 60 characters to the RS232 interface. The string
+        Writes a string of up to 60 characters to the RS485 interface. The string
         can be binary data, ASCII or similar is not necessary.
         
         The length of the string has to be given as an additional parameter.
@@ -197,15 +200,13 @@ class BrickletRS485(Device):
 
     def set_configuration(self, baudrate, parity, stopbits, wordlength, duplex):
         """
-        Sets the configuration for the RS232 communication. Available options:
+        Sets the configuration for the RS485 communication. Available options:
         
-        TODO: Baudrate 100 to 2000000
-        
-        * Baudrate between XXX and YYY baud.
+        * Baudrate between 100 and 2000000 baud.
         * Parity of none, odd or even.
         * Stopbits can be 1 or 2.
         * Word length of 5 to 8.
-        * Duplex TODO
+        * Half- or Full-Duplex
         
         The default is: 115200 baud, parity none, 1 stop bit, word length 8, half duplex.
         """
@@ -219,47 +220,69 @@ class BrickletRS485(Device):
 
     def set_communication_led_config(self, config):
         """
+        Sets the communication LED configuration. By default the LED shows
+        communication traffic, it flickers once for every 10 received data packets.
         
+        You can also turn the LED permanently on/off or show a heartbeat.
+        
+        If the Bricklet is in bootloader mode, the LED is off.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_COMMUNICATION_LED_CONFIG, (config,), 'B', '')
 
     def get_communication_led_config(self):
         """
-        
+        Returns the configuration as set by :func:`SetCommunicationLEDConfig`
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_COMMUNICATION_LED_CONFIG, (), '', 'B')
 
     def set_error_led_config(self, config):
         """
+        Sets the error led configuration. 
         
+        By default the error LED turns on if there is any error (see :func:`ErrorCountCallback`). 
+        If you call this function with the SHOW ERROR option again, the LED will turn off until the
+        next error occurs.
+        
+        You can also turn the LED permanently on/off or show a heartbeat.
+        
+        If the Bricklet is in bootloader mode, the LED is off.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', '')
 
     def get_error_led_config(self):
         """
-        
+        Returns the configuration as set by :func:`SetErrorLEDConfig`.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 'B')
 
     def set_buffer_config(self, send_buffer_size, receive_buffer_size):
         """
-        Current buffer content is lost if called
+        Sets the send and receive buffer size in byte. In sum there is
+        10240 byte (10kb) buffer available and the minimum buffer size
+        is 1024 byte (1kb) for both. 
         
-        Sum = X, min for both = 1024
-        default = 50/50
+        The current buffer content is lost if this function is called.
+        
+        The send buffer holds data that is given by :func:`Write` and
+        can not be written yet. The receive buffer holds data that is 
+        received through RS485 but could not yet be send to the
+        user, either by :func:`Read` or through :func:`ReadCallback`.
+        
+        The default configuration is 5120 byte (5kb) per buffer.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_BUFFER_CONFIG, (send_buffer_size, receive_buffer_size), 'H H', '')
 
     def get_buffer_config(self):
         """
-        Sum = X, min for both = 1024
-        default = 50/50
+        Returns the buffer configuration as set by :func:`SetBufferConfig`.
         """
         return GetBufferConfig(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_BUFFER_CONFIG, (), '', 'H H'))
 
     def get_buffer_status(self):
         """
-        Used bytes of send/receive buffer
+        Returns the currently used bytes for the send and received buffer.
+        
+        See :func:`SetBufferConfig` for buffer size configuration.
         """
         return GetBufferStatus(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_BUFFER_STATUS, (), '', 'H H'))
 
@@ -288,67 +311,73 @@ class BrickletRS485(Device):
 
     def get_error_count(self):
         """
-        
+        Returns the current number of overrun and parity errors.
         """
         return GetErrorCount(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_ERROR_COUNT, (), '', 'I I'))
 
     def get_spitfp_error_count(self):
         """
-        
+        TODO
         """
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
-        
+        TODO
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
 
     def get_bootloader_mode(self):
         """
-        
+        TODO
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
-        
+        TODO
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
 
     def write_firmware(self, data):
         """
-        
+        TODO
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
 
     def set_status_led_config(self, config):
         """
+        Sets the status LED configuration. By default the LED shows
+        communication traffic between Brick and Bricklet, it flickers once 
+        for every 10 received data packets.
         
+        You can also turn the LED permanently on/off or show a heartbeat.
+        
+        If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
 
     def get_status_led_config(self):
         """
-        
+        Returns the configuration as set by :func:`SetStatusLEDConfig`
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
         """
-        Returns the temperature in °C/10 as measured inside the microcontroller. The
+        Returns the temperature in °C as measured inside the microcontroller. The
         value returned is not the ambient temperature!
         
-        The temperature is only proportional to the real temperature and it has an
-        accuracy of +-15%. Practically it is only useful as an indicator for
+        The temperature is only proportional to the real temperature and it has bad
+        accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
         """
-        Calling this function will reset the Brick. Calling this function
-        on a Brick inside of a stack will reset the whole stack.
+        Calling this function will reset the Bricklet. All configurations
+        will be lost.
         
         After a reset you have to create new device objects,
         calling functions on the existing ones will result in

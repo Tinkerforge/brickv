@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-10-25.      #
+# This file was automatically generated on 2016-12-06.      #
 #                                                           #
 # Python Bindings Version 2.1.10                            #
 #                                                           #
@@ -40,6 +40,12 @@ GetWifi2Configuration = namedtuple('Wifi2Configuration', ['port', 'websocket_por
 GetWifi2Status = namedtuple('Wifi2Status', ['client_enabled', 'client_status', 'client_ip', 'client_subnet_mask', 'client_gateway', 'client_mac_address', 'client_rx_count', 'client_tx_count', 'client_rssi', 'ap_enabled', 'ap_ip', 'ap_subnet_mask', 'ap_gateway', 'ap_mac_address', 'ap_rx_count', 'ap_tx_count', 'ap_connected_count'])
 GetWifi2ClientConfiguration = namedtuple('Wifi2ClientConfiguration', ['enable', 'ssid', 'ip', 'subnet_mask', 'gateway', 'mac_address', 'bssid'])
 GetWifi2APConfiguration = namedtuple('Wifi2APConfiguration', ['enable', 'ssid', 'ip', 'subnet_mask', 'gateway', 'encryption', 'hidden', 'channel', 'mac_address'])
+GetWifi2MeshConfiguration = namedtuple('Wifi2MeshConfiguration', ['enable', 'router_ip', 'router_subnet_mask', 'router_gateway', 'router_bssid', 'group_id', 'ssid_prefix', 'gateway_ip', 'gateway_port'])
+GetWifi2MeshCommonStatus = namedtuple('Wifi2MeshCommonStatus', ['status', 'root_node', 'root_candidate', 'connected_nodes', 'rx_count', 'tx_count'])
+GetWifi2MeshStationStatus = namedtuple('Wifi2MeshStationStatus', ['host_name', 'ip', 'subnet_mask', 'gateway', 'mac_address'])
+GetWifi2MeshAPStatus = namedtuple('Wifi2MeshAPStatus', ['ssid', 'ip', 'subnet_mask', 'gateway', 'mac_address'])
+GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
+GetCoMCUSPITFPErrorCount = namedtuple('CoMCUSPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -153,6 +159,19 @@ class BrickMaster(Device):
     FUNCTION_ENABLE_WIFI2_STATUS_LED = 99
     FUNCTION_DISABLE_WIFI2_STATUS_LED = 100
     FUNCTION_IS_WIFI2_STATUS_LED_ENABLED = 101
+    FUNCTION_SET_WIFI2_MESH_CONFIGURATION = 102
+    FUNCTION_GET_WIFI2_MESH_CONFIGURATION = 103
+    FUNCTION_SET_WIFI2_MESH_ROUTER_SSID = 104
+    FUNCTION_GET_WIFI2_MESH_ROUTER_SSID = 105
+    FUNCTION_SET_WIFI2_MESH_ROUTER_PASSWORD = 106
+    FUNCTION_GET_WIFI2_MESH_ROUTER_PASSWORD = 107
+    FUNCTION_GET_WIFI2_MESH_COMMON_STATUS = 108
+    FUNCTION_GET_WIFI2_MESH_STATION_STATUS = 109
+    FUNCTION_GET_WIFI2_MESH_AP_STATUS = 110
+    FUNCTION_SET_SPITFP_BAUDRATE = 234
+    FUNCTION_GET_SPITFP_BAUDRATE = 235
+    FUNCTION_GET_SPITFP_ERROR_COUNT = 237
+    FUNCTION_GET_CO_MCU_SPITFP_ERROR_COUNT = 237
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -232,6 +251,14 @@ class BrickMaster(Device):
     WIFI2_AP_ENCRYPTION_WPA_PSK = 2
     WIFI2_AP_ENCRYPTION_WPA2_PSK = 3
     WIFI2_AP_ENCRYPTION_WPA_WPA2_PSK = 4
+    WIFI2_MESH_STATUS_DISABLED = 0
+    WIFI2_MESH_STATUS_WIFI_CONNECTING = 1
+    WIFI2_MESH_STATUS_GOT_IP = 2
+    WIFI2_MESH_STATUS_MESH_LOCAL = 3
+    WIFI2_MESH_STATUS_MESH_ONLINE = 4
+    WIFI2_MESH_STATUS_AP_AVAILABLE = 5
+    WIFI2_MESH_STATUS_AP_SETUP = 6
+    WIFI2_MESH_STATUS_LEAF_AVAILABLE = 7
 
     def __init__(self, uid, ipcon):
         """
@@ -343,6 +370,19 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_ENABLE_WIFI2_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_DISABLE_WIFI2_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_IS_WIFI2_STATUS_LED_ENABLED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI2_MESH_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_MESH_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI2_MESH_ROUTER_SSID] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_MESH_ROUTER_SSID] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI2_MESH_ROUTER_PASSWORD] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_MESH_ROUTER_PASSWORD] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_MESH_COMMON_STATUS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_MESH_STATION_STATUS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_MESH_AP_STATUS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_SPITFP_BAUDRATE] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_SPITFP_BAUDRATE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_CO_MCU_SPITFP_ERROR_COUNT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_ENABLE_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_DISABLE_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_IS_STATUS_LED_ENABLED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -1356,7 +1396,15 @@ class BrickMaster(Device):
         The ``phy_mode`` parameter sets the specific wireless network mode to be used.
         Possible values are B, G and N. The default value is G.
         
-        The ``sleep_mode`` and ``website`` parameters are currently unused.
+        The ``sleep_mode`` parameter is currently unused.
+        
+        The ``website`` parameter is used to enable or disable the web interface of
+        the WIFI Extension 2.0, which is available from firmware version 2.0.1. Note
+        that, for firmware version 2.0.3 and older, to disable the the web interface
+        the ``website_port`` parameter must be set to 1 and greater than 1 to enable
+        the web interface. For firmware version 2.0.4 and later, setting this parameter
+        to 1 will enable the web interface and setting it to 0 will disable the web
+        interface.
         
         To apply configuration changes to the WIFI Extension 2.0 the
         :func:`SaveWifi2Configuration` function has to be called and the Master Brick
@@ -1388,16 +1436,16 @@ class BrickMaster(Device):
         """
         Sets the client specific configuration of the WIFI Extension 2.0.
         
-        The ``enable`` parameter enables or disables the client part fo the
+        The ``enable`` parameter enables or disables the client part of the
         WIFI Extension 2.0. The default value is *true*.
         
         The ``ssid`` parameter sets the SSID (up to 32 characters) of the access point
         to connect to.
         
-        If the ``ip``, ``subnet_mask`` and ``gateway`` parameters are set to all zero
-        then DHCP is used for IP address configuration. Otherwise those three
-        parameters can be used to configure a static IP address. The default
-        configuration is DHCP.
+        If the ``ip`` parameter is set to all zero then ``subnet_mask`` and ``gateway``
+        parameters are also set to all zero and DHCP is used for IP address configuration.
+        Otherwise those three parameters can be used to configure a static IP address.
+        The default configuration is DHCP.
         
         If the ``mac_address`` parameter is set to all zero then the factory MAC
         address is used. Otherwise this parameter can be used to set a custom MAC
@@ -1476,15 +1524,15 @@ class BrickMaster(Device):
         """
         Sets the access point specific configuration of the WIFI Extension 2.0.
         
-        The ``enable`` parameter enables or disables the access point part fo the
+        The ``enable`` parameter enables or disables the access point part of the
         WIFI Extension 2.0. The default value is true.
         
         The ``ssid`` parameter sets the SSID (up to 32 characters) of the access point.
         
-        If the ``ip``, ``subnet_mask`` and ``gateway`` parameters are set to all zero
-        then a DHCP server is enabled. Otherwise those three parameters can be used to
-        configure a static IP address for the access point. The default configuration
-        is DHCP.
+        If the ``ip`` parameter is set to all zero then ``subnet_mask`` and ``gateway``
+        parameters are also set to all zero and DHCP is used for IP address configuration.
+        Otherwise those three parameters can be used to configure a static IP address.
+        The default configuration is DHCP.
         
         The ``encryption`` parameter sets the encryption mode to be used. Possible
         values are Open (no encryption), WEP or WPA/WPA2 PSK. The default value is
@@ -1586,6 +1634,151 @@ class BrickMaster(Device):
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_WIFI2_STATUS_LED_ENABLED, (), '', '?')
+
+    def set_wifi2_mesh_configuration(self, enable, router_ip, router_subnet_mask, router_gateway, router_bssid, group_id, ssid_prefix, gateway_ip, gateway_port):
+        """
+        Sets the mesh specific configuration of the WIFI Extension 2.0.
+        
+        The ``enable`` parameter enables or disables the mesh part of the
+        WIFI Extension 2.0. The default value is *false*.
+        
+        If the ``router_ip`` parameter is set to all zero then ``router_subnet_mask``
+        and ``router_gateway`` parameters are also set to all zero and DHCP is used for
+        IP address configuration. Otherwise those three parameters can be used to configure
+        a static IP address. The default configuration is DHCP.
+        
+        If the ``router_bssid`` parameter is set to all zero then the information is taken
+        from WiFi scan when connecting the SSID as set by :func:`SetWifi2MeshRouterSSID`.
+        This only works if the the SSID is not hidden. In case the AP has hidden SSID this
+        parameter must be specified, otherwise the node will not be able to reach the mesh
+        router.
+        
+        The ``group_id`` and the ``ssid_prefix`` parameters identifies a particular mesh
+        network and nodes configured with same ``group_id`` and the ``ssid_prefix`` are
+        considered to be in the same mesh network.
+        
+        The ``gateway_ip`` and the ``gateway_port`` parameters specifies the location of the
+        brickd that supports mesh feature.
+        
+        To apply configuration changes to the WIFI Extension 2.0 the
+        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        has to be restarted afterwards.
+        
+        It is recommended to use the Brick Viewer to set the client configuration.
+        
+        .. versionadded:: 2.4.2$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_MESH_CONFIGURATION, (enable, router_ip, router_subnet_mask, router_gateway, router_bssid, group_id, ssid_prefix, gateway_ip, gateway_port), '? 4B 4B 4B 6B 6B 16s 4B H', '')
+
+    def get_wifi2_mesh_configuration(self):
+        """
+        Returns the mesh configuration as set by :func:`SetWifi2MeshConfiguration`.
+        
+        .. versionadded:: 2.4.2$nbsp;(Firmware)
+        """
+        return GetWifi2MeshConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_CONFIGURATION, (), '', '? 4B 4B 4B 6B 6B 16s 4B H'))
+
+    def set_wifi2_mesh_router_ssid(self, router_ssid):
+        """
+        Sets the mesh router SSID (up to 32 characters) of the WIFI Extension 2.0.
+        It is used to specify the mesh router to connect to.
+        
+        To apply configuration changes to the WIFI Extension 2.0 the
+        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        has to be restarted afterwards.
+        
+        It is recommended to use the Brick Viewer to set the client hostname.
+        
+        .. versionadded:: 2.4.2$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_MESH_ROUTER_SSID, (router_ssid,), '32s', '')
+
+    def get_wifi2_mesh_router_ssid(self):
+        """
+        Returns the mesh router password as set by :func:`SetWifi2MeshRouterSSID`.
+        
+        .. versionadded:: 2.4.2$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_ROUTER_SSID, (), '', '32s')
+
+    def set_wifi2_mesh_router_password(self, router_password):
+        """
+        Sets the mesh router password (up to 64 characters) of the WIFI Extension 2.0.
+        The password will be used to connect to the mesh router.
+        
+        To apply configuration changes to the WIFI Extension 2.0 the
+        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        has to be restarted afterwards.
+        
+        It is recommended to use the Brick Viewer to set the client hostname.
+        
+        .. versionadded:: 2.4.2$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_MESH_ROUTER_PASSWORD, (router_password,), '64s', '')
+
+    def get_wifi2_mesh_router_password(self):
+        """
+        Returns the mesh router password as set by :func:`SetWifi2MeshRouterPassword`.
+        
+        .. versionadded:: 2.4.2$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_ROUTER_PASSWORD, (), '', '64s')
+
+    def get_wifi2_mesh_common_status(self):
+        """
+        Returns the common mesh status of the WIFI Extension 2.0.
+        
+        .. versionadded:: 2.4.2$nbsp;(Firmware)
+        """
+        return GetWifi2MeshCommonStatus(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_COMMON_STATUS, (), '', 'B ? ? H I I'))
+
+    def get_wifi2_mesh_station_status(self):
+        """
+        Returns the mesh station status of the WIFI Extension 2.0.
+        
+        .. versionadded:: 2.4.2$nbsp;(Firmware)
+        """
+        return GetWifi2MeshStationStatus(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_STATION_STATUS, (), '', '32s 4B 4B 4B 6B'))
+
+    def get_wifi2_mesh_ap_status(self):
+        """
+        Returns the mesh AP status of the WIFI Extension 2.0.
+        
+        .. versionadded:: 2.4.2$nbsp;(Firmware)
+        """
+        return GetWifi2MeshAPStatus(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_AP_STATUS, (), '', '32s 4B 4B 4B 6B'))
+
+    def set_spitfp_baudrate(self, bricklet_port, baudrate):
+        """
+        TODO (baud rate between 400000 and 2000000. Default 1400000)
+        
+        .. versionadded:: 2.4.2$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', '')
+
+    def get_spitfp_baudrate(self, bricklet_port):
+        """
+        TODO
+        
+        .. versionadded:: 2.4.2$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
+
+    def get_spitfp_error_count(self, bricklet_port):
+        """
+        TODO
+        
+        .. versionadded:: 2.4.2$nbsp;(Firmware)
+        """
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
+
+    def get_co_mcu_spitfp_error_count(self, bricklet_port):
+        """
+        TODO
+        
+        .. versionadded:: 2.4.2$nbsp;(Firmware)
+        """
+        return GetCoMCUSPITFPErrorCount(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CO_MCU_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
 
     def enable_status_led(self):
         """
