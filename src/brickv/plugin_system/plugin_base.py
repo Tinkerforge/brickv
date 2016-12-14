@@ -35,6 +35,7 @@ class PluginBase(QWidget, object):
     def __init__(self, device_class, ipcon, device_info, override_base_name=None):
         QWidget.__init__(self)
 
+        self.has_comcu = False # Will be overwritten if plugin has comcu
         self.plugin_state = PluginBase.PLUGIN_STATE_STOPPED
         self.label_timeouts = None
         self.ipcon = ipcon
@@ -76,7 +77,10 @@ class PluginBase(QWidget, object):
             else:
                 # otherwise start now
                 try:
-                    self.start()
+                    if hasattr(self, 'start_comcu'):
+                        self.start_comcu()
+                    else:
+                        self.start()
                 except:
                     if not hasattr(sys, 'frozen'):
                         traceback.print_exc()
@@ -87,7 +91,10 @@ class PluginBase(QWidget, object):
         # only stop the plugin, if it's running
         if self.plugin_state == PluginBase.PLUGIN_STATE_RUNNING:
             try:
-                self.stop()
+                if hasattr(self, 'stop_comcu'):
+                    self.stop_comcu()
+                else:
+                    from brickv.async_call import async_call
             except:
                 if not hasattr(sys, 'frozen'):
                     traceback.print_exc()
