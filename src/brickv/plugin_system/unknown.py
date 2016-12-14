@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2013-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2016 Olaf Lüke <olaf@tinkerforge.com>
 
 unknown.py: Unknwon Plugin Implementation
 
