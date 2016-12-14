@@ -26,15 +26,15 @@ import datetime
 from PyQt4.QtCore import QUrl, pyqtSignal, QTimer
 from PyQt4.QtGui import QDesktopServices, QStandardItemModel, QStandardItem, QHeaderView
 
-from brickv.plugin_system.plugin_base import PluginBase
+from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.gps_v2.ui_gps import Ui_GPS
 from brickv.bindings.bricklet_gps_v2 import BrickletGPSV2
 from brickv.callback_emulator import CallbackEmulator
 
-class GPS(PluginBase, Ui_GPS):
+class GPS(COMCUPluginBase, Ui_GPS):
     qtcb_pps = pyqtSignal()
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletGPSV2, *args)
+        COMCUPluginBase.__init__(self, BrickletGPSV2, *args)
 
         self.setupUi(self)
 

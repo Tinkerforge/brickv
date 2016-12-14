@@ -24,21 +24,21 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtGui import QTextCursor
 from PyQt4.QtCore import pyqtSignal
 
-from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_rs485 import BrickletRS485
 from brickv.plugin_system.plugins.rs485.ui_rs485 import Ui_RS485
 from brickv.async_call import async_call
 from brickv.hex_validator import HexValidator
 from brickv.callback_emulator import CallbackEmulator
+from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 
 from brickv.plugin_system.plugins.rs485.qhexedit import QHexeditWidget
 
-class RS485(PluginBase, Ui_RS485):
+class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_read = pyqtSignal(object, int)
     qtcb_error = pyqtSignal(int)
 
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletRS485, *args)
+        COMCUPluginBase.__init__(self, BrickletRS485, *args)
 
         self.setupUi(self)
         
