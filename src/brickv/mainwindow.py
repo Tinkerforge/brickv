@@ -40,6 +40,7 @@ from brickv.bindings.brick_red import BrickRED
 from brickv import config
 from brickv import infos
 from brickv.tab_window import TabWindow
+from brickv.plugin_system.comcu_bootloader import COMCUBootloader
 
 import signal
 import sys
@@ -417,7 +418,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if uid_index.isValid():
             self.show_plugin(uid_index.data())
 
-    def create_tab_window(self, device_info):
+    def create_tab_window(self, device_info, ipcon):
         tab_window = TabWindow(self.tab_widget, device_info.name, self.untab)
         tab_window._info = device_info
         tab_window.set_callback_on_tab(lambda index:
@@ -506,6 +507,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         device_info.plugin.layout().setContentsMargins(0, 0, 0, 0)
 
         layout.addWidget(line)
+        if device_info.plugin.has_comcu:
+            device_info.plugin.widget_bootloader = COMCUBootloader(ipcon, device_info)
+            device_info.plugin.widget_bootloader.hide()
+            layout.addWidget(device_info.plugin.widget_bootloader)
         layout.addWidget(device_info.plugin)
 
         return tab_window
@@ -610,7 +615,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if device_info.plugin == None:
                 self.plugin_manager.create_plugin_instance(device_identifier, self.ipcon, device_info)
 
-                device_info.tab_window = self.create_tab_window(device_info)
+                device_info.tab_window = self.create_tab_window(device_info, self.ipcon)
                 device_info.tab_window.setWindowFlags(Qt.Widget)
                 device_info.tab_window.tab()
 
