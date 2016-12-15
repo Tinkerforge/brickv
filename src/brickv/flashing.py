@@ -38,6 +38,12 @@ from brickv.utils import get_main_window, get_home_path, get_open_file_name, \
 from brickv.esp_flash import ESPFlash
 from brickv import infos
 
+from zipfile import ZipFile
+try:
+    from StringIO import StringIO as FileLike
+except ImportError:
+    from io import BytesIO as FileLike
+
 import zipfile
 import os
 import urllib2
@@ -476,6 +482,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.button_uid_load.setEnabled(has_bricklet_ports)
         self.button_uid_save.setEnabled(has_bricklet_ports)
 
+        has_comcu = self.current_bricklet_has_comcu()
         is_plugin_select = self.combo_plugin.currentText() == SELECT
         is_plugin_custom = self.combo_plugin.currentText() == CUSTOM
         is_no_brick = self.combo_brick.currentText() == NO_BRICK
@@ -483,6 +490,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.button_plugin_save.setEnabled(not is_plugin_select and not is_no_brick)
         self.edit_custom_plugin.setEnabled(is_plugin_custom)
         self.button_plugin_browse.setEnabled(is_plugin_custom)
+        self.label_bricklet_uid.setVisible(not has_comcu)
+        self.edit_uid.setVisible(not has_comcu)
+        self.button_uid_load.setVisible(not has_comcu)
+        self.button_uid_save.setVisible(not has_comcu)
 
         is_extension_firmware_select = self.combo_extension_firmware.currentText() == SELECT
         is_extension_firmware_custom = self.combo_extension_firmware.currentText() == CUSTOM
@@ -812,6 +823,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_ui_state()
 
     def port_changed(self, index):
+        self.update_ui_state()
         self.edit_uid.setText('')
 
         if index < 0:
@@ -891,6 +903,112 @@ class FlashingWindow(QDialog, Ui_Flashing):
         return plugin
 
     def write_bricklet_plugin(self, plugin, device, port, name, progress, popup=True):
+        if self.current_bricklet_has_comcu():
+            self.write_bricklet_plugin_comcu(plugin, device, port, name, progress, popup)
+        else:
+            self.write_bricklet_plugin_standard(plugin, device, port, name, progress, popup)
+
+    def write_bricklet_plugin_comcu(self, plugin, device, port, name, progress, popup=True):
+        try:
+            progress.setLabelText('Starting bootloader mode')
+            progress.setMaximum(0)
+            progress.setValue(0)
+            progress.show()
+
+            # Convert plugin back from list of bytes to something we can put in ZipFile
+            zip_file = str(bytearray(plugin))
+            try:
+                zf = ZipFile(FileLike(zip_file), 'r')
+            except:
+                progress.cancel()
+                if popup:
+                    self.popup_fail('Bricklet', 'Could not open Bricklet plugin:\n\n' + traceback.format_exc())
+                return False
+
+            plugin_data = None
+            for name in zf.namelist():
+                if name.endswith('firmware.bin'):
+                    plugin_data = zf.read(name)
+                    break
+
+            if plugin_data == None:
+                progress.cancel()
+                if popup:
+                    self.popup_fail('Bricklet', 'Could not find firmware in zbin')
+                return False
+
+            # Now convert plugin to list of bytes
+            plugin = map(ord, plugin_data)
+
+            device = self.current_bricklet_device()
+            if device == None:
+                progress.cancel()
+                if popup:
+                    self.popup_fail('Bricklet', 'Could not find device object for flashing')
+                return False
+
+            device.set_bootloader_mode(device.BOOTLOADER_MODE_BOOTLOADER)
+            counter = 0
+            while True:
+                try:
+                    if device.get_bootloader_mode() == device.BOOTLOADER_MODE_BOOTLOADER:
+                        break
+                except:
+                    pass
+
+                if counter == 10:
+                    progress.cancel()
+                    if popup:
+                        self.popup_fail('Bricklet', 'Device did not enter bootloader mode in 2.5s')
+                    return False
+
+                time.sleep(0.25)
+                counter += 1
+
+            num_packets = len(plugin)/64
+            progress.setLabelText('Writing plugin: ' + name)
+            progress.setMaximum(num_packets)
+            progress.setValue(0)
+            progress.show()
+            for position in range(num_packets):
+                start = position*64
+                end   = (position+1)*64
+                device.set_write_firmware_pointer(start)
+                device.write_firmware(plugin[start:end])
+                progress.setValue(position)
+
+            progress.setLabelText('Changing from bootloader mode to firmware mode')
+            progress.setMaximum(0)
+            progress.setValue(0)
+            progress.show()
+
+            device.set_bootloader_mode(device.BOOTLOADER_MODE_FIRMWARE)
+            counter = 0
+            while True:
+                try:
+                    if device.get_bootloader_mode() == device.BOOTLOADER_MODE_FIRMWARE:
+                        break
+                except:
+                    pass
+
+                if counter == 10:
+                    progress.cancel()
+                    if popup:
+                        self.popup_fail('Bricklet', 'Device did not enter firmware mode in 2.5s')
+                    return False
+
+                time.sleep(0.25)
+                counter += 1
+
+            progress.cancel()
+            return True
+        except:
+            if popup:
+                self.popup_fail('Bricklet', 'Unexpected error:\n\n' + traceback.format_exc())
+            progress.cancel()
+            return False
+
+    def write_bricklet_plugin_standard(self, plugin, device, port, name, progress, popup=True):
         # Write
         progress.setLabelText('Writing plugin: ' + name)
         progress.setMaximum(0)
@@ -1017,13 +1135,39 @@ class FlashingWindow(QDialog, Ui_Flashing):
         except:
             return None
 
+    def current_bricklet_plugin(self):
+        port_names = ['a', 'b', 'c', 'd']
+        try:
+            return self.brick_infos[self.combo_brick.currentIndex()].bricklets[port_names[self.combo_port.currentIndex()]].plugin
+        except:
+            return None
+
+    def current_bricklet_device(self):
+        try:
+            return self.current_bricklet_plugin().device
+        except:
+            return None
+
+    def current_bricklet_has_comcu(self):
+        try:
+            return self.current_bricklet_plugin().has_comcu
+        except:
+            return False
+
     def plugin_browse_clicked(self):
+        file_ending = '*.bin'
+        try:
+            if self.current_bricklet_has_comcu():
+                file_ending = '*.zbin'
+        except:
+            pass
+
         last_dir = get_home_path()
 
         if len(self.edit_custom_plugin.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(self.edit_custom_plugin.text()))
 
-        filename = get_open_file_name(get_main_window(), 'Open Plugin', last_dir, '*.bin')
+        filename = get_open_file_name(get_main_window(), 'Open Plugin', last_dir, file_ending)
 
         if len(filename) > 0:
             self.edit_custom_plugin.setText(filename)

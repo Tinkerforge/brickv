@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tab_widget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_updates">
       <attribute name="title">
@@ -292,7 +292,7 @@
           <widget class="QLineEdit" name="edit_uid"/>
          </item>
          <item row="7" column="0">
-          <widget class="QLabel" name="label_9">
+          <widget class="QLabel" name="label_bricklet_uid">
            <property name="text">
             <string>UID:</string>
            </property>
