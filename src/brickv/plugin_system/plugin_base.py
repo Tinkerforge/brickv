@@ -94,7 +94,7 @@ class PluginBase(QWidget, object):
                 if hasattr(self, 'stop_comcu'):
                     self.stop_comcu()
                 else:
-                    from brickv.async_call import async_call
+                    self.stop()
             except:
                 if not hasattr(sys, 'frozen'):
                     traceback.print_exc()

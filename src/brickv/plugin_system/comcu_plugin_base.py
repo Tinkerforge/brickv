@@ -56,5 +56,4 @@ class COMCUPluginBase(PluginBase):
 
     def stop_comcu(self):
         self.cbe_bootloader_mode.set_period(0)
-        if self.isVisible():
-            self.stop()
+        self.stop()
