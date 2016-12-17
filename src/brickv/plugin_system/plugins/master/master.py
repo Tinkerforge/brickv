@@ -22,6 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import time
 from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QAction
 
@@ -100,6 +101,15 @@ class Master(PluginBase, Ui_Master):
 
                 if extension_type == self.master.EXTENSION_TYPE_WIFI2:
                     self.device_info.extensions[ext].url_part = 'wifi_v2'
+                    '''
+                    When WIFI2 extension firmware version is being requested the
+                    extension might still not be done with booting and thus the
+                    message won't be received by the extension. So we delay sending
+                    the request which gives enough time to the extension to finish
+                    booting. Note that this delay is only induced when there is a
+                    WIFI2 extension present.
+                    '''
+                    time.sleep(1)
                     async_call(self.master.get_wifi2_firmware_version, None, lambda v: get_wifi2_firmware_version_async(v, ext), self.increase_error_count)
 
         def get_connection_type_async(connection_type):
