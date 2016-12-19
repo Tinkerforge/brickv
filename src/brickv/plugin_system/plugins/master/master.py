@@ -109,7 +109,7 @@ class Master(PluginBase, Ui_Master):
                     booting. Note that this delay is only induced when there is a
                     WIFI2 extension present.
                     '''
-                    time.sleep(1.5)
+                    time.sleep(2)
                     async_call(self.master.get_wifi2_firmware_version, None, lambda v: get_wifi2_firmware_version_async(v, ext), self.increase_error_count)
 
         def get_connection_type_async(connection_type):
