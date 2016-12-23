@@ -904,9 +904,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
     def write_bricklet_plugin(self, plugin, device, port, name, progress, popup=True):
         if self.current_bricklet_has_comcu():
-            self.write_bricklet_plugin_comcu(plugin, device, port, name, progress, popup)
+            return self.write_bricklet_plugin_comcu(plugin, device, port, name, progress, popup)
         else:
-            self.write_bricklet_plugin_standard(plugin, device, port, name, progress, popup)
+            return self.write_bricklet_plugin_standard(plugin, device, port, name, progress, popup)
 
     def write_bricklet_plugin_comcu(self, plugin, device, port, name, progress, popup=True):
         try:
