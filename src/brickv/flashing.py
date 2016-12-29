@@ -939,11 +939,16 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             # Now convert plugin to list of bytes
             plugin = map(ord, plugin_data)
-            regular_plugin_upto = 0
+            regular_plugin_upto = -1
             for i in reversed(range(4, len(plugin)-12)):
                 if plugin[i] == 0x12 and plugin[i-1] == 0x34 and plugin[i-2] == 0x56 and plugin[i-3] == 0x78:
                     regular_plugin_upto = i
                     break
+
+            if regular_plugin_upto == -1:
+                progress.cancel()
+                if popup:
+                    self.popup_fail('Bricklet', 'Could not find magic number in firmware')
 
             device = self.current_bricklet_device()
             if device == None:
@@ -971,9 +976,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 counter += 1
 
             num_packets = len(plugin)/64
-            # If we couldn't find the magic number or it is at in the last page of the
+            # If the magic number is in in the last page of the
             # flash, we write the whole thing
-            if (regular_plugin_upto == 0) or (regular_plugin_upto >= (len(plugin) - 64*4)):
+            if regular_plugin_upto >= (len(plugin) - 64*4):
                 index_list = range(num_packets)
             else:
                 # We write the 64 byte packets up to the end of the last page that has meaningful data
