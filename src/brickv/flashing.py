@@ -939,6 +939,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             # Now convert plugin to list of bytes
             plugin = map(ord, plugin_data)
+            regular_plugin_upto = 0
+            for i in reversed(range(4, len(plugin)-12)):
+                if plugin[i] == 0x12 and plugin[i-1] == 0x34 and plugin[i-2] == 0x56 and plugin[i-3] == 0x78:
+                    regular_plugin_upto = i
+                    break
 
             device = self.current_bricklet_device()
             if device == None:
@@ -966,11 +971,20 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 counter += 1
 
             num_packets = len(plugin)/64
+            # If we couldn't find the magic number or it is at in the last page of the
+            # flash, we write the whole thing
+            if (regular_plugin_upto == 0) or (regular_plugin_upto >= (len(plugin) - 64*4)):
+                index_list = range(num_packets)
+            else:
+                # We write the 64 byte packets up to the end of the last page that has meaningful data
+                packet_up_to = ((regular_plugin_upto // 256)+1)*4
+                index_list = range(0, packet_up_to) + [num_packets-4, num_packets-3, num_packets-2, num_packets-1]
+
             progress.setLabelText('Writing plugin: ' + name)
-            progress.setMaximum(num_packets)
+            progress.setMaximum(len(index_list))
             progress.setValue(0)
             progress.show()
-            for position in range(num_packets):
+            for position in index_list:
                 start = position*64
                 end   = (position+1)*64
                 device.set_write_firmware_pointer(start)
