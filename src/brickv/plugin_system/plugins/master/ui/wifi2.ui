@@ -1578,7 +1578,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                  <string/>
                 </property>
                 <property name="maxLength">
-                 <number>32</number>
+                 <number>31</number>
                 </property>
                </widget>
               </item>
