@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-12-06.      #
+# This file was automatically generated on 2017-01-06.      #
 #                                                           #
 # Python Bindings Version 2.1.10                            #
 #                                                           #
@@ -1691,7 +1691,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 2.4.2$nbsp;(Firmware)
         """
-        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_MESH_ROUTER_SSID, (router_ssid,), '32s', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_MESH_ROUTER_SSID, (router_ssid,), '31s', '')
 
     def get_wifi2_mesh_router_ssid(self):
         """
@@ -1699,7 +1699,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 2.4.2$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_ROUTER_SSID, (), '', '32s')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_ROUTER_SSID, (), '', '31s')
 
     def set_wifi2_mesh_router_password(self, router_password):
         """
