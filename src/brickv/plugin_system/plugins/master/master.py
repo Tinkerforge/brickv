@@ -22,7 +22,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import time
 from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QAction
 
@@ -50,6 +49,9 @@ class Master(PluginBase, Ui_Master):
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
 
+        self.wifi2_get_firmware_version_timer = QTimer()
+        self.wifi2_get_firmware_version_timer.timeout.connect(self.wifi2_get_firmware_version_timeout)
+
         self.extension_type = None
 
         self.extensions = []
@@ -74,6 +76,12 @@ class Master(PluginBase, Ui_Master):
         self.extension_type_preset = [None, False, False, False, False, False]
         self.update_extensions_in_device_info()
 
+    def get_wifi2_firmware_version_async(self, version, ext):
+        self.device_info.extensions[ext].firmware_version_installed = version
+        infos.update_info(self.uid)
+        get_main_window().update_tree_view() # FIXME: this is kind of a hack
+        self.is_wifi2_present_async(True)
+
     def update_extensions_in_device_info(self):
         def is_present_async(present, extension_type, name):
             self.extension_type_preset[extension_type] = present
@@ -93,12 +101,6 @@ class Master(PluginBase, Ui_Master):
                 self.device_info.extensions[ext].master_info = self.device_info
                 infos.update_info(self.uid)
 
-                def get_wifi2_firmware_version_async(version, ext):
-                    self.device_info.extensions[ext].firmware_version_installed = version
-                    infos.update_info(self.uid)
-                    get_main_window().update_tree_view() # FIXME: this is kind of a hack
-                    self.is_wifi2_present_async(True)
-
                 if extension_type == self.master.EXTENSION_TYPE_WIFI2:
                     self.device_info.extensions[ext].url_part = 'wifi_v2'
                     '''
@@ -109,8 +111,15 @@ class Master(PluginBase, Ui_Master):
                     booting. Note that this delay is only induced when there is a
                     WIFI2 extension present.
                     '''
-                    time.sleep(2)
-                    async_call(self.master.get_wifi2_firmware_version, None, lambda v: get_wifi2_firmware_version_async(v, ext), self.increase_error_count)
+
+                    '''
+                    This object wide variable saves the value of local ext to be
+                    used in the timer's timeout callback to do the async call to
+                    get WIFI2 extension's firmware version.
+                    '''
+                    self.ext = ext
+                    self.label_no_extension.setText('Waiting for WIFI Extension 2 firmware version...')
+                    self.wifi2_get_firmware_version_timer.start(2000)
 
         def get_connection_type_async(connection_type):
             self.device_info.connection_type = connection_type
@@ -254,6 +263,14 @@ class Master(PluginBase, Ui_Master):
 
         for extension in self.extensions:
             extension.update_data()
+
+    def wifi2_get_firmware_version_timeout(self):
+        self.wifi2_get_firmware_version_timer.stop()
+
+        async_call(self.master.get_wifi2_firmware_version,
+                   None,
+                   lambda v: self.get_wifi2_firmware_version_async(v, self.ext),
+                   self.increase_error_count)
 
     def get_stack_voltage_async(self, voltage):
         self.stack_voltage_label.setText('{:g} V'.format(round(voltage / 1000.0, 1)))
