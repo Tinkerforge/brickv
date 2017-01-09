@@ -30,9 +30,10 @@ from brickv.async_call import async_call
 import struct
 import time
 
-from PyQt4.QtGui import QWidget, QMessageBox
+from PyQt4.QtGui import QWidget, QMessageBox, QLabel
 from brickv.plugin_system.plugins.master.ui_rs485 import Ui_RS485
 from brickv.plugin_system.plugins.red.ui_red_tab_extension_ethernet import Ui_Ethernet
+from brickv.plugin_system.plugins.red.ui_red_tab_extension_unsupported import Ui_Unsupported
 from brickv.plugin_system.plugins.red import config_parser
 from brickv.utils import get_main_window
 
@@ -280,6 +281,12 @@ class Ethernet(QWidget, Ui_Ethernet):
 
         new_config['eeprom_file'].write_async(map(chr, data), lambda x: cb_error(new_config, x), None)
 
+class Unsupported(QWidget, Ui_Unsupported):
+    def __init__(self, parent, extension, config):
+        QWidget.__init__(self)
+
+        self.setupUi(self)
+
 class REDTabExtension(REDTab, Ui_REDTabExtension):
     def __init__(self):
         REDTab.__init__(self)
@@ -314,6 +321,16 @@ class REDTabExtension(REDTab, Ui_REDTabExtension):
                 self.tab_widget.addTab(RS485(self, extension, config), 'RS485')
             elif t == 4:
                 self.tab_widget.addTab(Ethernet(self, extension, config), 'Ethernet')
+            else:
+                extension_name = 'Unkown Extension'
+                if t == 1:
+                    extension_name = 'Chibi Extension'
+                elif t == 3:
+                    extension_name = 'WIFI Extension'
+                elif t == 5:
+                    extension_name = 'WIFI Extension 2.0'
+
+                self.tab_widget.addTab(Unsupported(self, extension, config), extension_name)
 
         self.config_read_counter += 1
 
