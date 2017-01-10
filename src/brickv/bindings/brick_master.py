@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-06.      #
+# This file was automatically generated on 2017-01-10.      #
 #                                                           #
 # Python Bindings Version 2.1.10                            #
 #                                                           #
@@ -1680,8 +1680,12 @@ class BrickMaster(Device):
 
     def set_wifi2_mesh_router_ssid(self, router_ssid):
         """
-        Sets the mesh router SSID (up to 32 characters) of the WIFI Extension 2.0.
+        Sets the mesh router SSID of the WIFI Extension 2.0.
         It is used to specify the mesh router to connect to.
+        
+        Note that even though in the argument of this function a 32 characters long SSID
+        is allowed, in practice valid SSID should have a maximum of 31 characters. This
+        is due to a bug in the mesh library that we use in the firmware of the extension.
         
         To apply configuration changes to the WIFI Extension 2.0 the
         :func:`SaveWifi2Configuration` function has to be called and the Master Brick
@@ -1691,7 +1695,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 2.4.2$nbsp;(Firmware)
         """
-        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_MESH_ROUTER_SSID, (router_ssid,), '31s', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_MESH_ROUTER_SSID, (router_ssid,), '32s', '')
 
     def get_wifi2_mesh_router_ssid(self):
         """
@@ -1699,7 +1703,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 2.4.2$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_ROUTER_SSID, (), '', '31s')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_ROUTER_SSID, (), '', '32s')
 
     def set_wifi2_mesh_router_password(self, router_password):
         """
