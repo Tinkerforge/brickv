@@ -224,9 +224,9 @@ class Master(PluginBase, Ui_Master):
             self.is_ethernet_present_async(self.extension_type_preset[self.master.EXTENSION_TYPE_ETHERNET])
 
             '''
-            For WIFI extension 2, self.is_ethernet_present_async() isn't called here but called from the
+            For WIFI extension 2, self.is_wifi2_present_async() isn't called here but called from the
             async callback, get_wifi2_firmware_version_async(). This is to ensure that both the master brick
-            and WIFI extension 2 firmware versions are avilable before creating the tab widget of the extension.
+            and WIFI extension 2 firmware versions are available before creating the tab widget of the extension.
             This is required because WIFI extension 2 supports mesh networking for which the GUI is updated
             dynamically only when the version information is available.
             '''
