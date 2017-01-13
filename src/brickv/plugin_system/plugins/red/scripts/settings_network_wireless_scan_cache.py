@@ -23,6 +23,10 @@ for network_id in range(0, wireless.GetNumberOfNetworks()):
         channel = wireless.GetWirelessProperty(network_id, 'channel')
         quality = wireless.GetWirelessProperty(network_id, 'quality')
 
+        # Ignore hidden wireless networks in scan result.
+        if str(essid) == '<hidden>':
+            continue
+
         if wireless.GetWirelessProperty(network_id, "encryption"):
             encryption = 'On'
             encryption_method = wireless.GetWirelessProperty(network_id, "encryption_method")
@@ -30,12 +34,23 @@ for network_id in range(0, wireless.GetNumberOfNetworks()):
             encryption = 'Off'
             encryption_method = None
 
+        ap_exists = False
+
+        for key, ap in return_dict.items():
+            if str(ap['bssid']) == str(bssid):
+                ap_exists = True
+                break
+
+        if ap_exists:
+            continue
+
         _apdict = {'essid':essid,
                    'bssid':bssid,
                    'channel':channel,
                    'encryption':encryption,
                    'encryption_method':encryption_method,
                    'quality':quality}
+
         return_dict[network_id] = _apdict
     except:
         pass
