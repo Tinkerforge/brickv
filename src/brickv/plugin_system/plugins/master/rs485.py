@@ -173,5 +173,12 @@ class RS485(QWidget, Ui_RS485):
             self.lineedit_slave_addresses.show()
             self.label_slave_addresses_help.show()
 
+    def get_rs485_error_log_async(self, crc_errors):
+        self.label_crc_errors.setText(str(crc_errors))
+
+    def get_rs485_error_log_error(self):
+        self.label_crc_errors.setText('?')
+        self.parent.increase_error_count()
+
     def update_data(self):
-        pass
+        async_call(self.master.get_rs485_error_log, None, self.get_rs485_error_log_async, self.get_rs485_error_log_error)

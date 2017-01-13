@@ -38,7 +38,7 @@ class Ethernet(QWidget, Ui_Ethernet):
         self.parent = parent
         self.master = parent.master
 
-        self.update_data_counter = 0
+        self.update_data_counter = -1
         self.connection = 0
         self.update_data_counter = 0
         self.last_status = None
@@ -293,7 +293,7 @@ class Ethernet(QWidget, Ui_Ethernet):
 
     def update_data(self):
         self.update_data_counter += 1
-        if self.update_data_counter == 10:
+        if self.update_data_counter == 0 or self.update_data_counter == 10:
             self.update_data_counter = 0
             async_call(self.master.get_ethernet_status, None, self.get_ethernet_status_async, self.parent.increase_error_count)
 
