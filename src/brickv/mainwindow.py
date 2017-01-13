@@ -806,7 +806,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tree_view_model.clear()
 
         for info in infos.get_brick_infos():
-            if info.connected_uid != '0':
+            if info.position != '0' and info.connected_uid != '0':
                 position_prefix = info.connected_uid
             else:
                 position_prefix = info.uid
