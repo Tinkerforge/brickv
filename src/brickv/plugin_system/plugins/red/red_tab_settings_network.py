@@ -93,7 +93,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
     def __init__(self):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
-        
+
         self.session        = None # Set from REDTabSettings
         self.script_manager = None # Set from REDTabSettings
         self.image_version  = None # Set from REDTabSettings
@@ -119,7 +119,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                  'manager_settings': None,
                                  'wireless_settings': None,
                                  'wired_settings': None}
-        
+
 
         self.ap_tree_model = QtGui.QStandardItemModel(0, 4)
 
@@ -202,7 +202,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         self.manager_settings_conf_rfile = REDFile(self.session)
         self.wired_settings_conf_rfile = REDFile(self.session)
         self.wireless_settings_conf_rfile = REDFile(self.session)
-        
+
         if not self.network_stat_work_in_progress:
             self.cb_network_stat_refresh()
         if not self.work_in_progress:
@@ -881,18 +881,12 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         if itype == INTERFACE_TYPE_WIRELESS:
             self.update_gui(WORKING_STATE_CONNECT)
 
-            index_list = self.tree_net_wireless_ap.selectedIndexes()
-
             ap_item = None
-            for i in range(len(index_list)):
-                item = self.ap_tree_model.itemFromIndex(index_list[i])
-                try:
-                    ap_col = item.data(AP_COL_USER_ROLE)
-                    if ap_col == AP_COL:
-                        ap_item = item
-                        break
-                except:
-                    continue
+            item = self.ap_tree_model.itemFromIndex(self.tree_net_wireless_ap.selectedIndexes()[0])
+            ap_col = item.data(AP_COL_USER_ROLE)
+
+            if ap_col == AP_COL:
+                ap_item = item
 
             if ap_item:
                 apname = ap_item.data(AP_NAME_USER_ROLE)
@@ -926,6 +920,12 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
                 iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', 'None')
                 self.network_all_data['manager_settings'].set('Settings', 'wireless_interface', iname)
+
+                sections = self.network_all_data['wireless_settings'].sections()
+
+                # Set all existing config file AP "automatic" parameter to be false
+                for s in sections:
+                    self.network_all_data['wireless_settings'].set(s, 'automatic', 'False')
 
                 # Check BSSID section
                 if not self.network_all_data['wireless_settings'].has_section(bssid):
@@ -993,7 +993,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
                 def cb_settings_network_apply(result):
                     self.update_gui(WORKING_STATE_DONE)
-                    if result and not result.stderr and result.exit_code == 0:
+                    if result and result.stderr == '' and result.exit_code == 0:
                         QtGui.QMessageBox.information(get_main_window(),
                                                       'Settings | Network',
                                                       'Configuration saved.')
@@ -1124,7 +1124,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
             def cb_settings_network_apply(result):
                 self.update_gui(WORKING_STATE_DONE)
-                if result and not result.stderr and result.exit_code == 0:
+                if result and result.stderr == '' and result.exit_code == 0:
                     self.slot_network_conf_refresh_clicked()
                     QtGui.QMessageBox.information(get_main_window(),
                                                   'Settings | Network',
