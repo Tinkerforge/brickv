@@ -84,7 +84,7 @@ try:
     dict_country_all = {}
     dict_country = {}
 
-    for entry_country in root_country.iter('iso_3166_entry'):
+    for entry_country in root_country.getiterator('iso_3166_entry'):
         dict_country_all[entry_country.get('alpha_2_code')] = entry_country.get('name')
 
     for dict_c in dict_provider['country']:
