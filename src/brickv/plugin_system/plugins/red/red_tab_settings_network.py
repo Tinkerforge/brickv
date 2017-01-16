@@ -77,6 +77,7 @@ AP_MASK_USER_ROLE = QtCore.Qt.UserRole + 11
 AP_GATEWAY_USER_ROLE = QtCore.Qt.UserRole + 12
 AP_DNS_USER_ROLE = QtCore.Qt.UserRole + 13
 AP_COL_USER_ROLE = QtCore.Qt.UserRole + 14
+AP_QUALITY_USER_ROLE = QtCore.Qt.UserRole + 15
 
 WORKING_STATE_REFRESH = 1
 WORKING_STATE_SCAN = 2
@@ -368,11 +369,13 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
         elif state == WORKING_STATE_SCAN:
             self.work_in_progress = True
-            show_work_in_progress()
             item = QtGui.QStandardItem('Scanning...')
             item.setData(AP_STATUS_NONE, AP_STATUS_USER_ROLE)
             self.ap_tree_model_clear_add_item(item)
+            self.ledit_net_wireless_key.setText('')
+            self.cbox_net_conftype.setCurrentIndex(0)
             self.pbutton_net_wireless_scan.setText('Scanning...')
+            show_work_in_progress()
 
         elif state == WORKING_STATE_CONNECT:
             self.work_in_progress = True
@@ -395,11 +398,20 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
     def update_access_points(self, scan_data):
         def ap_found():
             self.tree_net_wireless_ap.setEnabled(True)
+            self.ledit_net_wireless_key.setEnabled(True)
+            self.ledit_net_wireless_key.setText('')
+            self.chkbox_net_wireless_key_show.setEnabled(True)
+            self.cbox_net_conftype.setEnabled(True)
+            self.cbox_net_conftype.setCurrentIndex(0)
             self.chkbox_net_wireless_key_show.setChecked(False)
         def no_ap_found():
             self.tree_net_wireless_ap.setEnabled(True)
             self.ledit_net_wireless_key.setText('')
+            self.ledit_net_wireless_key.setEnabled(False)
             self.chkbox_net_wireless_key_show.setChecked(False)
+            self.chkbox_net_wireless_key_show.setEnabled(False)
+            self.cbox_net_conftype.setCurrentIndex(0)
+            self.cbox_net_conftype.setEnabled(False)
             self.ap_tree_model_clear_add_item(None)
             item = QtGui.QStandardItem('No access points found. Scan again?')
             item.setData(AP_COL, AP_COL_USER_ROLE)
@@ -437,6 +449,12 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 ap_item.setData(bssid, AP_BSSID_USER_ROLE)
                 ap_item.setData(nidx, AP_NETWORK_INDEX_USER_ROLE)
                 ap_item.setData(channel, AP_CHANNEL_USER_ROLE)
+
+                if str(quality) == '':
+                    quality = '0'
+                    ap_item.setData(0, AP_QUALITY_USER_ROLE)
+                else:
+                    ap_item.setData(int(quality), AP_QUALITY_USER_ROLE)
 
                 channel_item = QtGui.QStandardItem(channel)
 
@@ -514,21 +532,16 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
                 self.ap_tree_model.appendRow([ap_item, channel_item, encryption_method_item, quality_item])
 
+                self.ap_tree_model.setSortRole(AP_QUALITY_USER_ROLE)
+                self.ap_tree_model.sort(0, QtCore.Qt.DescendingOrder)
+
             if self.ap_tree_model.rowCount() <= 0:
                 no_ap_found()
                 return
 
             ap_found()
 
-            # Select first associated accesspoint if not then the first item
-            for i in range(self.ap_tree_model.rowCount()):
-                item = self.ap_tree_model.item(i)
-                ap_status = item.data(AP_STATUS_USER_ROLE)
-                if ap_status == AP_STATUS_ASSOCIATED:
-                    self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(i, 0))
-                    break
-                if i == self.ap_tree_model.rowCount()- 1:
-                    self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(0, 0))
+            self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(0, 0))
         else:
             no_ap_found()
 
@@ -782,6 +795,8 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
             if result and result.stdout and not result.stderr and result.exit_code == 0:
                 self.network_all_data['interfaces'] = json.loads(result.stdout)
+
+                self.update_gui(WORKING_STATE_SCAN)
 
                 self.script_manager.execute_script('settings_network_wireless_scan_cache',
                                                    cb_settings_network_wireless_scan_cache)
