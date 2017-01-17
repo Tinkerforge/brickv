@@ -857,6 +857,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
             ap_found()
 
+            self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(-1, -1))
             self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(0, 0))
         else:
             no_ap_found()
@@ -1479,6 +1480,8 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
             if self.ap_tree_model.rowCount() > 0:
                 self.address_configuration_gui(True)
+                self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(-1, -1))
+                self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(0, 0))
             else:
                 self.address_configuration_gui(False)
 
