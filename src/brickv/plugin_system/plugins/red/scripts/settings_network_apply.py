@@ -4,7 +4,7 @@
 import os
 from sys import argv
 
-if len(argv) < 4:
+if len(argv) < 3:
     exit (1)
 
 iname = unicode(argv[1])
@@ -16,12 +16,11 @@ if iname_previous and iname_previous != 'None':
     os.system(cmd_ifdown)
 
 if itype == 'wireless':
-    netidx = unicode(argv[4])
-
     cmd_wireless = '/usr/bin/wicd-cli --wireless -x && /bin/sleep 5 &&\
-                    /usr/sbin/service wicd restart && /bin/sleep 8 &&\
-                    /usr/bin/wicd-cli --wireless -c -n'+netidx+' && :'
+                    /usr/sbin/service wicd restart && /bin/sleep 8 && :'
+
     cmd_wireless_code = os.system(cmd_wireless)
+
     if cmd_wireless_code:
         exit (1)
 
