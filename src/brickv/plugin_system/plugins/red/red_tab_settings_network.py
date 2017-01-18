@@ -642,7 +642,6 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         if show:
             self.label_addrs_conf.show()
             self.cbox_net_conftype.show()
-            self.cbox_net_conftype.setEnabled(True)
         else:
             self.label_addrs_conf.hide()
             self.cbox_net_conftype.hide()
@@ -711,38 +710,39 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             self.pbutton_net_connect.setText('Connect')
             self.pbutton_net_wireless_scan.setText('Scan')
 
-    def update_access_points(self, scan_data):
-        def ap_found():
-            self.tree_net_wireless_ap.setEnabled(True)
-            self.ledit_net_wireless_key.setEnabled(True)
-            self.ledit_net_wireless_key.setText('')
-            self.chkbox_net_wireless_key_show.setEnabled(True)
-            self.cbox_net_conftype.setEnabled(True)
-            self.cbox_net_conftype.setCurrentIndex(0)
-            self.chkbox_net_wireless_key_show.setChecked(False)
-        def no_ap_found():
-            self.tree_net_wireless_ap.setEnabled(True)
-            self.ledit_net_wireless_key.setText('')
-            self.ledit_net_wireless_key.setEnabled(False)
-            self.chkbox_net_wireless_key_show.setChecked(False)
-            self.chkbox_net_wireless_key_show.setEnabled(False)
-            self.cbox_net_conftype.setCurrentIndex(0)
-            self.cbox_net_conftype.setEnabled(False)
-            self.ap_tree_model_clear_add_item(None)
-            item = QtGui.QStandardItem('No access points found. Scan again?')
-            item.setData(AP_COL, AP_COL_USER_ROLE)
-            item.setData(AP_STATUS_NONE, AP_STATUS_USER_ROLE)
-            item.setEnabled(False)
-            item.setSelectable(False)
-            self.ap_tree_model_clear_add_item(item)
+    def ap_found(self):
+        self.label_key.show()
+        self.ledit_net_wireless_key.show()
+        self.chkbox_net_wireless_key_show.setChecked(False)
+        self.chkbox_net_wireless_key_show.show()
+        self.address_configuration_gui(True)
+        self.chkbox_net_wireless_key_show.setChecked(False)
 
+    def no_ap_found(self):
+        self.label_key.hide()
+        self.ledit_net_wireless_key.setText('')
+        self.ledit_net_wireless_key.hide()
+        self.chkbox_net_wireless_key_show.setChecked(False)
+        self.chkbox_net_wireless_key_show.hide()
+        self.cbox_net_conftype.setCurrentIndex(0)
+        self.address_configuration_gui(False)
+
+        self.ap_tree_model_clear_add_item(None)
+        item = QtGui.QStandardItem('No access points found. Scan again?')
+        item.setData(AP_COL, AP_COL_USER_ROLE)
+        item.setData(AP_STATUS_NONE, AP_STATUS_USER_ROLE)
+        item.setEnabled(False)
+        item.setSelectable(False)
+        self.ap_tree_model_clear_add_item(item)
+
+    def update_access_points(self, scan_data):
         if scan_data and \
            self.network_all_data['interfaces']['wireless'] and \
            self.network_all_data['interfaces']['wireless_links']:
 
             if len(scan_data) <= 0 or \
                len(self.network_all_data['interfaces']['wireless']) <= 0:
-                no_ap_found()
+                self.no_ap_found()
                 return
 
             self.ap_tree_model_clear_add_item(None)
@@ -852,15 +852,15 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 self.ap_tree_model.sort(0, QtCore.Qt.DescendingOrder)
 
             if self.ap_tree_model.rowCount() <= 0:
-                no_ap_found()
+                self.no_ap_found()
                 return
 
-            ap_found()
+            self.ap_found()
 
             self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(-1, -1))
             self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(0, 0))
         else:
-            no_ap_found()
+            self.no_ap_found()
 
     def update_network_gui(self):
         def update_no_interface_available():
@@ -1477,13 +1477,15 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
         if interface_type == INTERFACE_TYPE_WIRELESS:
             self.wireless_configuration_gui(True)
+            item = self.ap_tree_model.item(0)
 
-            if self.ap_tree_model.rowCount() > 0:
-                self.address_configuration_gui(True)
-                self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(-1, -1))
-                self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(0, 0))
+            if self.ap_tree_model.rowCount() > 0 \
+               and item.data(AP_STATUS_USER_ROLE) != AP_STATUS_NONE:
+                    self.ap_found()
+                    self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(-1, -1))
+                    self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(0, 0))
             else:
-                self.address_configuration_gui(False)
+                self.no_ap_found()
 
         elif interface_type == INTERFACE_TYPE_WIRED:
             self.address_configuration_gui(True)
