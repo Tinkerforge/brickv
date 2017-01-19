@@ -482,7 +482,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.button_uid_load.setEnabled(has_bricklet_ports)
         self.button_uid_save.setEnabled(has_bricklet_ports)
 
-        has_comcu = self.current_bricklet_has_comcu()
         is_plugin_select = self.combo_plugin.currentText() == SELECT
         is_plugin_custom = self.combo_plugin.currentText() == CUSTOM
         is_no_brick = self.combo_brick.currentText() == NO_BRICK
@@ -490,10 +489,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.button_plugin_save.setEnabled(not is_plugin_select and not is_no_brick)
         self.edit_custom_plugin.setEnabled(is_plugin_custom)
         self.button_plugin_browse.setEnabled(is_plugin_custom)
-        self.label_bricklet_uid.setVisible(not has_comcu)
-        self.edit_uid.setVisible(not has_comcu)
-        self.button_uid_load.setVisible(not has_comcu)
-        self.button_uid_save.setVisible(not has_comcu)
+
 
         is_extension_firmware_select = self.combo_extension_firmware.currentText() == SELECT
         is_extension_firmware_custom = self.combo_extension_firmware.currentText() == CUSTOM
@@ -745,6 +741,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.cancel()
             self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not flash Brick')
+            
+    def read_current_uid(self):
+        if self.current_bricklet_has_comcu():
+            return base58encode(self.current_bricklet_device().read_uid())
+            
+        device, port = self.current_device_and_port()
+        return self.parent.ipcon.read_bricklet_uid(device, port)
 
     def uid_save_clicked(self):
         device, port = self.current_device_and_port()
@@ -768,13 +771,16 @@ class FlashingWindow(QDialog, Ui_Flashing):
             return
 
         try:
-            self.parent.ipcon.write_bricklet_uid(device, port, uid)
+            if self.current_bricklet_has_comcu():
+                self.current_bricklet_device().write_uid(base58decode(uid))
+            else:
+                self.parent.ipcon.write_bricklet_uid(device, port, uid)
         except Error as e:
             self.popup_fail('Bricklet', 'Could not write UID: ' + error_to_name(e))
             return
 
         try:
-            uid_read = self.parent.ipcon.read_bricklet_uid(device, port)
+            uid_read = self.read_current_uid()
         except Error as e:
             self.popup_fail('Bricklet', 'Could not read written UID: ' + error_to_name(e))
             return
@@ -785,9 +791,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.popup_fail('Bricklet', 'Could not write UID: Verification failed')
 
     def uid_load_clicked(self):
-        device, port = self.current_device_and_port()
         try:
-            uid = self.parent.ipcon.read_bricklet_uid(device, port)
+            uid = self.read_current_uid()
         except Error as e:
             self.edit_uid.setText('')
             self.popup_fail('Bricklet', 'Could not read UID: ' + error_to_name(e))
@@ -1001,7 +1006,25 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.setValue(0)
             progress.show()
 
-            device.set_bootloader_mode(device.BOOTLOADER_MODE_FIRMWARE)
+            mode_ret = device.set_bootloader_mode(device.BOOTLOADER_MODE_FIRMWARE)
+            if mode_ret != 0 and mode_ret != 2: # 0 = ok, 2 = no change
+                error_str = ''
+                if mode_ret == 1:
+                    error_str = 'Invalid mode (Error 1)'
+                elif mode_ret == 3:
+                    error_str = 'Entry function not present (Error 3)'
+                elif mode_ret == 4:
+                    error_str = 'Device identifier incorrect (Error 4)'
+                elif mode_ret == 5:
+                    error_str = 'CRC Mismatch (Error 5)'
+                else: # unkown error case
+                    error_str = 'Error ' + str(mode_ret)
+                
+                progress.cancel()
+                if popup:
+                    self.popup_fail('Bricklet', 'Coud not change from bootloader mode to firmware mode: ' + error_str)
+                return False
+                
             counter = 0
             while True:
                 try:
