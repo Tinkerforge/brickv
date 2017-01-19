@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-10.      #
+# This file was automatically generated on 2017-01-19.      #
 #                                                           #
 # Python Bindings Version 2.1.10                            #
 #                                                           #
@@ -45,7 +45,6 @@ GetWifi2MeshCommonStatus = namedtuple('Wifi2MeshCommonStatus', ['status', 'root_
 GetWifi2MeshStationStatus = namedtuple('Wifi2MeshStationStatus', ['host_name', 'ip', 'subnet_mask', 'gateway', 'mac_address'])
 GetWifi2MeshAPStatus = namedtuple('Wifi2MeshAPStatus', ['ssid', 'ip', 'subnet_mask', 'gateway', 'mac_address'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
-GetCoMCUSPITFPErrorCount = namedtuple('CoMCUSPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -171,7 +170,6 @@ class BrickMaster(Device):
     FUNCTION_SET_SPITFP_BAUDRATE = 234
     FUNCTION_GET_SPITFP_BAUDRATE = 235
     FUNCTION_GET_SPITFP_ERROR_COUNT = 237
-    FUNCTION_GET_CO_MCU_SPITFP_ERROR_COUNT = 237
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -382,7 +380,6 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_SET_SPITFP_BAUDRATE] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_SPITFP_BAUDRATE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickMaster.FUNCTION_GET_CO_MCU_SPITFP_ERROR_COUNT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_ENABLE_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_DISABLE_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_IS_STATUS_LED_ENABLED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -1775,14 +1772,6 @@ class BrickMaster(Device):
         .. versionadded:: 2.4.2$nbsp;(Firmware)
         """
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
-
-    def get_co_mcu_spitfp_error_count(self, bricklet_port):
-        """
-        TODO
-        
-        .. versionadded:: 2.4.2$nbsp;(Firmware)
-        """
-        return GetCoMCUSPITFPErrorCount(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CO_MCU_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
 
     def enable_status_led(self):
         """

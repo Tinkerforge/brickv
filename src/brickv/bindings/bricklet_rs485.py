@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-12-06.      #
+# This file was automatically generated on 2017-01-19.      #
 #                                                           #
 # Python Bindings Version 2.1.10                            #
 #                                                           #
@@ -70,6 +70,8 @@ class BrickletRS485(Device):
     FUNCTION_GET_STATUS_LED_CONFIG = 240
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
+    FUNCTION_WRITE_UID = 248
+    FUNCTION_READ_UID = 249
     FUNCTION_GET_IDENTITY = 255
 
     PARITY_NONE = 0
@@ -145,6 +147,8 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_GET_STATUS_LED_CONFIG] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_CHIP_TEMPERATURE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_RESET] = BrickletRS485.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRS485.FUNCTION_WRITE_UID] = BrickletRS485.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRS485.FUNCTION_READ_UID] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_IDENTITY] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletRS485.CALLBACK_READ_CALLBACK] = '60c B'
@@ -384,6 +388,18 @@ class BrickletRS485(Device):
         undefined behavior!
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_RESET, (), '', '')
+
+    def write_uid(self, uid):
+        """
+        TODO
+        """
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_WRITE_UID, (uid,), 'I', '')
+
+    def read_uid(self):
+        """
+        TODO
+        """
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):
         """

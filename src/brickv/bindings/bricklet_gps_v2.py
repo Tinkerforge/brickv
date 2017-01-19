@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-12-07.      #
+# This file was automatically generated on 2017-01-19.      #
 #                                                           #
 # Python Bindings Version 2.1.10                            #
 #                                                           #
@@ -42,12 +42,12 @@ class BrickletGPSV2(Device):
     DEVICE_IDENTIFIER = 276
     DEVICE_DISPLAY_NAME = 'GPS Bricklet 2.0'
 
-    CALLBACK_PULSE_PER_SECOND = 19
-    CALLBACK_COORDINATES = 20
-    CALLBACK_STATUS = 21
-    CALLBACK_ALTITUDE = 22
-    CALLBACK_MOTION = 23
-    CALLBACK_DATE_TIME = 24
+    CALLBACK_PULSE_PER_SECOND = 21
+    CALLBACK_COORDINATES = 22
+    CALLBACK_STATUS = 23
+    CALLBACK_ALTITUDE = 24
+    CALLBACK_MOTION = 25
+    CALLBACK_DATE_TIME = 26
 
     FUNCTION_GET_COORDINATES = 1
     FUNCTION_GET_STATUS = 2
@@ -57,16 +57,18 @@ class BrickletGPSV2(Device):
     FUNCTION_RESTART = 6
     FUNCTION_GET_SATELLITE_SYSTEM_STATUS = 7
     FUNCTION_GET_SATELLITE_STATUS = 8
-    FUNCTION_SET_COORDINATES_CALLBACK_PERIOD = 9
-    FUNCTION_GET_COORDINATES_CALLBACK_PERIOD = 10
-    FUNCTION_SET_STATUS_CALLBACK_PERIOD = 11
-    FUNCTION_GET_STATUS_CALLBACK_PERIOD = 12
-    FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD = 13
-    FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD = 14
-    FUNCTION_SET_MOTION_CALLBACK_PERIOD = 15
-    FUNCTION_GET_MOTION_CALLBACK_PERIOD = 16
-    FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD = 17
-    FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD = 18
+    FUNCTION_SET_FIX_LED_CONFIG = 9
+    FUNCTION_GET_FIX_LED_CONFIG = 10
+    FUNCTION_SET_COORDINATES_CALLBACK_PERIOD = 11
+    FUNCTION_GET_COORDINATES_CALLBACK_PERIOD = 12
+    FUNCTION_SET_STATUS_CALLBACK_PERIOD = 13
+    FUNCTION_GET_STATUS_CALLBACK_PERIOD = 14
+    FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD = 15
+    FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD = 16
+    FUNCTION_SET_MOTION_CALLBACK_PERIOD = 17
+    FUNCTION_GET_MOTION_CALLBACK_PERIOD = 18
+    FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD = 19
+    FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD = 20
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -76,6 +78,8 @@ class BrickletGPSV2(Device):
     FUNCTION_GET_STATUS_LED_CONFIG = 240
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
+    FUNCTION_WRITE_UID = 248
+    FUNCTION_READ_UID = 249
     FUNCTION_GET_IDENTITY = 255
 
     RESTART_TYPE_HOT_START = 0
@@ -88,6 +92,10 @@ class BrickletGPSV2(Device):
     FIX_NO_FIX = 1
     FIX_2D_FIX = 2
     FIX_3D_FIX = 3
+    FIX_LED_CONFIG_OFF = 0
+    FIX_LED_CONFIG_ON = 1
+    FIX_LED_CONFIG_SHOW_FIX = 2
+    FIX_LED_CONFIG_SHOW_HEARTBEAT = 3
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -121,6 +129,8 @@ class BrickletGPSV2(Device):
         self.response_expected[BrickletGPSV2.FUNCTION_RESTART] = BrickletGPSV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletGPSV2.FUNCTION_GET_SATELLITE_SYSTEM_STATUS] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_GET_SATELLITE_STATUS] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPSV2.FUNCTION_SET_FIX_LED_CONFIG] = BrickletGPSV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPSV2.FUNCTION_GET_FIX_LED_CONFIG] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_SET_COORDINATES_CALLBACK_PERIOD] = BrickletGPSV2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_GET_COORDINATES_CALLBACK_PERIOD] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_SET_STATUS_CALLBACK_PERIOD] = BrickletGPSV2.RESPONSE_EXPECTED_TRUE
@@ -146,6 +156,8 @@ class BrickletGPSV2(Device):
         self.response_expected[BrickletGPSV2.FUNCTION_GET_STATUS_LED_CONFIG] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_GET_CHIP_TEMPERATURE] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_RESET] = BrickletGPSV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPSV2.FUNCTION_WRITE_UID] = BrickletGPSV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPSV2.FUNCTION_READ_UID] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_GET_IDENTITY] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletGPSV2.CALLBACK_PULSE_PER_SECOND] = ''
@@ -239,6 +251,24 @@ class BrickletGPSV2(Device):
         TODO (galileo not supported yet)
         """
         return GetSatelliteStatus(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_SATELLITE_STATUS, (satellite_system, satellite_number), 'B B', 'h h h'))
+
+    def set_fix_led_config(self, config):
+        """
+        Sets the fix LED configuration. By default the LED shows if
+        the Bricklet got a GPS fix yet. The LED blinks as long as there is no fix.
+        If a fix is established, the led stops blinking and turns on.
+        
+        You can also turn the LED permanently on/off or show a heartbeat.
+        
+        If the Bricklet is in bootloader mode, the LED is off.
+        """
+        self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_FIX_LED_CONFIG, (config,), 'B', '')
+
+    def get_fix_led_config(self):
+        """
+        Returns the configuration as set by :func:`SetFixLEDConfig`
+        """
+        return self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_FIX_LED_CONFIG, (), '', 'B')
 
     def set_coordinates_callback_period(self, period):
         """
@@ -399,6 +429,18 @@ class BrickletGPSV2(Device):
         undefined behavior!
         """
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_RESET, (), '', '')
+
+    def write_uid(self, uid):
+        """
+        TODO
+        """
+        self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+
+    def read_uid(self):
+        """
+        TODO
+        """
+        return self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):
         """

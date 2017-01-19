@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-12-06.      #
+# This file was automatically generated on 2017-01-19.      #
 #                                                           #
 # Python Bindings Version 2.1.10                            #
 #                                                           #
@@ -25,7 +25,6 @@ except ValueError:
 GetSpeedRamping = namedtuple('SpeedRamping', ['acceleration', 'deacceleration'])
 GetAllData = namedtuple('AllData', ['current_velocity', 'current_position', 'remaining_steps', 'stack_voltage', 'external_voltage', 'current_consumption'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
-GetCoMCUSPITFPErrorCount = namedtuple('CoMCUSPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -82,7 +81,6 @@ class BrickStepper(Device):
     FUNCTION_SET_SPITFP_BAUDRATE = 234
     FUNCTION_GET_SPITFP_BAUDRATE = 235
     FUNCTION_GET_SPITFP_ERROR_COUNT = 237
-    FUNCTION_GET_CO_MCU_SPITFP_ERROR_COUNT = 237
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -155,7 +153,6 @@ class BrickStepper(Device):
         self.response_expected[BrickStepper.FUNCTION_SET_SPITFP_BAUDRATE] = BrickStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickStepper.FUNCTION_GET_SPITFP_BAUDRATE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickStepper.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickStepper.FUNCTION_GET_CO_MCU_SPITFP_ERROR_COUNT] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickStepper.FUNCTION_ENABLE_STATUS_LED] = BrickStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickStepper.FUNCTION_DISABLE_STATUS_LED] = BrickStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickStepper.FUNCTION_IS_STATUS_LED_ENABLED] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -552,14 +549,6 @@ class BrickStepper(Device):
         .. versionadded:: 2.3.3$nbsp;(Firmware)
         """
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
-
-    def get_co_mcu_spitfp_error_count(self, bricklet_port):
-        """
-        TODO
-        
-        .. versionadded:: 2.3.3$nbsp;(Firmware)
-        """
-        return GetCoMCUSPITFPErrorCount(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_CO_MCU_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
 
     def enable_status_led(self):
         """

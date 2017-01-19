@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-09-08.      #
+# This file was automatically generated on 2017-01-19.      #
 #                                                           #
 # Python Bindings Version 2.1.10                            #
 #                                                           #
@@ -36,10 +36,15 @@ class BrickletMotionDetector(Device):
     CALLBACK_DETECTION_CYCLE_ENDED = 3
 
     FUNCTION_GET_MOTION_DETECTED = 1
+    FUNCTION_SET_STATUS_LED_CONFIG = 4
+    FUNCTION_GET_STATUS_LED_CONFIG = 5
     FUNCTION_GET_IDENTITY = 255
 
     MOTION_NOT_DETECTED = 0
     MOTION_DETECTED = 1
+    STATUS_LED_CONFIG_OFF = 0
+    STATUS_LED_CONFIG_ON = 1
+    STATUS_LED_CONFIG_SHOW_STATUS = 2
 
     def __init__(self, uid, ipcon):
         """
@@ -53,6 +58,8 @@ class BrickletMotionDetector(Device):
         self.response_expected[BrickletMotionDetector.FUNCTION_GET_MOTION_DETECTED] = BrickletMotionDetector.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMotionDetector.CALLBACK_MOTION_DETECTED] = BrickletMotionDetector.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletMotionDetector.CALLBACK_DETECTION_CYCLE_ENDED] = BrickletMotionDetector.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletMotionDetector.FUNCTION_SET_STATUS_LED_CONFIG] = BrickletMotionDetector.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletMotionDetector.FUNCTION_GET_STATUS_LED_CONFIG] = BrickletMotionDetector.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMotionDetector.FUNCTION_GET_IDENTITY] = BrickletMotionDetector.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletMotionDetector.CALLBACK_MOTION_DETECTED] = ''
@@ -69,6 +76,27 @@ class BrickletMotionDetector(Device):
         in the "motion detected" state.
         """
         return self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_MOTION_DETECTED, (), '', 'B')
+
+    def set_status_led_config(self, config):
+        """
+        Sets the status led configuration. 
+        
+        By default the status LED turns on if a motion is detected and off is no motion
+        is detected. 
+        
+        You can also turn the LED permanently on/off.
+        
+        .. versionadded:: 2.0.1$nbsp;(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+
+    def get_status_led_config(self):
+        """
+        Returns the configuration as set by :func:`SetStatusLEDConfig`.
+        
+        .. versionadded:: 2.0.1$nbsp;(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_identity(self):
         """
