@@ -661,6 +661,9 @@ class BrickSilentStepper(Device):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
-        self.registered_callbacks[id] = callback
+        if callback is None:
+            self.registered_callbacks.pop(id, None)
+        else:
+            self.registered_callbacks[id] = callback
 
 SilentStepper = BrickSilentStepper # for backward compatibility

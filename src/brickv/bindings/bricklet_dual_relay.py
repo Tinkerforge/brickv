@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-09-08.      #
+# This file was automatically generated on 2017-01-19.      #
 #                                                           #
 # Python Bindings Version 2.1.10                            #
 #                                                           #
@@ -137,6 +137,9 @@ class BrickletDualRelay(Device):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
-        self.registered_callbacks[id] = callback
+        if callback is None:
+            self.registered_callbacks.pop(id, None)
+        else:
+            self.registered_callbacks[id] = callback
 
 DualRelay = BrickletDualRelay # for backward compatibility

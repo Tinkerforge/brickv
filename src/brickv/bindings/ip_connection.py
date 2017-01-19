@@ -516,8 +516,10 @@ class IPConnection:
         """
         Registers a callback with ID *id* to the function *callback*.
         """
-
-        self.registered_callbacks[id] = callback
+        if callback is None:
+            self.registered_callbacks.pop(id, None)
+        else:
+            self.registered_callbacks[id] = callback
 
     def connect_unlocked(self, is_auto_reconnect):
         # NOTE: assumes that socket is None and socket_lock is locked
@@ -709,8 +711,7 @@ class IPConnection:
 
     def dispatch_meta(self, function_id, parameter, socket_id):
         if function_id == IPConnection.CALLBACK_CONNECTED:
-            if IPConnection.CALLBACK_CONNECTED in self.registered_callbacks and \
-               self.registered_callbacks[IPConnection.CALLBACK_CONNECTED] is not None:
+            if IPConnection.CALLBACK_CONNECTED in self.registered_callbacks:
                 self.registered_callbacks[IPConnection.CALLBACK_CONNECTED](parameter)
         elif function_id == IPConnection.CALLBACK_DISCONNECTED:
             if parameter != IPConnection.DISCONNECT_REASON_REQUEST:
@@ -735,8 +736,7 @@ class IPConnection:
             # socket. the first receive will then fail directly
             time.sleep(0.1)
 
-            if IPConnection.CALLBACK_DISCONNECTED in self.registered_callbacks and \
-               self.registered_callbacks[IPConnection.CALLBACK_DISCONNECTED] is not None:
+            if IPConnection.CALLBACK_DISCONNECTED in self.registered_callbacks:
                 self.registered_callbacks[IPConnection.CALLBACK_DISCONNECTED](parameter)
 
             if parameter != IPConnection.DISCONNECT_REASON_REQUEST and \
@@ -783,8 +783,7 @@ class IPConnection:
 
         device = self.devices[uid]
 
-        if function_id in device.registered_callbacks and \
-           device.registered_callbacks[function_id] is not None:
+        if function_id in device.registered_callbacks:
             cb = device.registered_callbacks[function_id]
             form = device.callback_formats[function_id]
 
