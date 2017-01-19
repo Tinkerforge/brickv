@@ -171,8 +171,10 @@ class Master(PluginBase, Ui_Master):
                 if self.device_info.extensions[ext].firmware_version_installed >= (2, 1, 0) \
                    and self.firmware_version >= (2, 4, 2):
                     wifi2.wifi_mode.addItem('Mesh')
+                    wifi2.label_mesh_hint.hide()
                     wifi2.get_current_status()
-                    break
+
+                break
 
     def is_ethernet_present_async(self, present):
         if present:
