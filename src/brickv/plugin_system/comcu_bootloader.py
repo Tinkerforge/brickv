@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout, QWidget, QPushButton
+from brickv.utils import get_main_window
 
 class COMCUBootloader(QWidget):
     def __init__(self, ipcon, info):
@@ -46,5 +47,23 @@ class COMCUBootloader(QWidget):
         hbox.addStretch()
 
     def button_pressed(self):
-        # TODO: Implement me
-        print("button pressed:", str(self.info))
+        main_window = get_main_window()
+        main_window.flashing_clicked()
+        main_window.flashing_window.tab_widget.setCurrentPage(2)
+        combo_brick = main_window.flashing_window.combo_brick
+        combo_port  = main_window.flashing_window.combo_port
+
+        for i in range(combo_brick.count()):
+            if '[' + self.info.connected_uid + ']' in combo_brick.itemText(i):
+                combo_brick.setCurrentIndex(i)
+                break
+
+        port_index = 0
+        if self.info.position == 'b':
+            port_index = 1
+        elif self.info.position == 'c':
+            port_index = 2
+        elif self.info.position == 'd':
+            port_index = 3
+
+        combo_port.setCurrentIndex(port_index)
