@@ -171,10 +171,10 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
 
     def update_status(self):
         if self.parent.parent.firmware_version >= (2, 4, 2) \
-        and self.parent.wifi2_firmware_version >= (2, 0, 4) \
-        and not self.parent.client_enable \
-        and not self.parent.ap_enable \
-        and self.parent.mesh_enable:
+           and self.parent.wifi2_firmware_version >= (2, 1, 0) \
+           and not self.parent.client_enable \
+           and not self.parent.ap_enable \
+           and self.parent.mesh_enable:
             self.wifi_client_status_group.setVisible(False)
             self.wifi_ap_status_group.setVisible(False)
             self.wifi_mesh_status_group.setVisible(True)

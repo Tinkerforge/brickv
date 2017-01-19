@@ -168,8 +168,8 @@ class Master(PluginBase, Ui_Master):
                 wifi2.wifi2_firmware_version = \
                     self.device_info.extensions[ext].firmware_version_installed
 
-                if self.device_info.extensions[ext].firmware_version_installed >= (2, 0, 4) \
-                and self.firmware_version >= (2, 4, 2):
+                if self.device_info.extensions[ext].firmware_version_installed >= (2, 1, 0) \
+                   and self.firmware_version >= (2, 4, 2):
                     wifi2.wifi_mode.addItem('Mesh')
                     wifi2.get_current_status()
                     break

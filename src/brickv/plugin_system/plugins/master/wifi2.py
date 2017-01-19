@@ -214,7 +214,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         async_call(self.master.get_wifi2_ap_password, None,
             self.get_wifi2_ap_password_async, self.parent.increase_error_count)
 
-        if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 0, 4):
+        if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 1, 0):
             async_call(self.master.get_wifi2_mesh_configuration, None,
                 self.get_wifi2_mesh_configuration_async, self.parent.increase_error_count)
 
@@ -252,7 +252,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         self.wifi_phy_mode.setCurrentIndex(data.phy_mode)
         self.wifi_websocket_port.setValue(data.websocket_port)
 
-        if self.wifi2_firmware_version >= (2, 0, 4):
+        if self.wifi2_firmware_version >= (2, 1, 0):
             if(data.website == 1):
                 self.wifi_website_port.setValue(data.website_port)
                 self.wifi_disable_web_interface.setChecked(False)
@@ -492,7 +492,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         general_websocket_port = self.wifi_websocket_port.value()
         general_website        = 0
 
-        if self.wifi2_firmware_version >= (2, 0, 4):
+        if self.wifi2_firmware_version >= (2, 1, 0):
             if self.wifi_disable_web_interface.isChecked():
                 general_website = 0
                 general_website_port = 1
@@ -581,7 +581,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         else:
             ap_mac    = [0, 0, 0, 0, 0, 0]
 
-        if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 0, 4):
+        if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 1, 0):
             # Get current mesh configuration.
             if general_mode == 3:
                 mesh_enable = True
@@ -652,7 +652,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         self.master.set_response_expected(self.master.FUNCTION_SET_WIFI2_AP_CONFIGURATION,      True)
         self.master.set_response_expected(self.master.FUNCTION_SET_WIFI2_AP_PASSWORD,           True)
 
-        if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 0, 4):
+        if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 1, 0):
             self.master.set_response_expected(self.master.FUNCTION_SET_WIFI2_MESH_CONFIGURATION,    True)
             self.master.set_response_expected(self.master.FUNCTION_SET_WIFI2_MESH_ROUTER_PASSWORD,  True)
             self.master.set_response_expected(self.master.FUNCTION_SET_WIFI2_MESH_ROUTER_SSID,      True)
@@ -671,7 +671,7 @@ class Wifi2(QWidget, Ui_Wifi2):
             self.master.set_wifi2_ap_configuration(ap_enable, ap_ssid, ap_ip, ap_sub, ap_gw, ap_encryption, ap_hide_ssid, ap_channel, ap_mac)
             self.master.set_wifi2_ap_password(ap_password)
 
-            if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 0, 4):
+            if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 1, 0):
                 # Set mesh configuration.
                 self.master.set_wifi2_mesh_configuration(mesh_enable, mesh_router_ip,
                     mesh_router_sub, mesh_router_gw, mesh_router_bssid, mesh_ssid_group_id,
