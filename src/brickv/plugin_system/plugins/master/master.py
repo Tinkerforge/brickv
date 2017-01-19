@@ -118,7 +118,7 @@ class Master(PluginBase, Ui_Master):
                     get WIFI2 extension's firmware version.
                     '''
                     self.ext = ext
-                    self.label_no_extension.setText('Waiting for WIFI Extension 2 firmware version...')
+                    self.label_no_extension.setText('Waiting for WIFI Extension 2.0 firmware version...')
                     self.wifi2_get_firmware_version_timer.start(2000)
 
         def get_connection_type_async(connection_type):

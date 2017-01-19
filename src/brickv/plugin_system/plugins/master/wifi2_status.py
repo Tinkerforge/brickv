@@ -102,12 +102,12 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
         self.wifi_mesh_rx.setText("%d" % s.rx_count)
         self.wifi_mesh_tx.setText("%d" % s.tx_count)
 
-    def get_wifi2_mesh_station_status_async(self, s):
-        self.wifi_mesh_station_hostname.setText(s.host_name)
-        self.wifi_mesh_station_ip.setText("%d.%d.%d.%d" % s.ip)
-        self.wifi_mesh_station_sub.setText("%d.%d.%d.%d" % s.subnet_mask)
-        self.wifi_mesh_station_gw.setText("%d.%d.%d.%d" % s.gateway)
-        self.wifi_mesh_station_mac.setText("%X:%X:%X:%X:%X:%X" % s.mac_address)
+    def get_wifi2_mesh_client_status_async(self, s):
+        self.wifi_mesh_client_hostname.setText(s.hostname)
+        self.wifi_mesh_client_ip.setText("%d.%d.%d.%d" % s.ip)
+        self.wifi_mesh_client_sub.setText("%d.%d.%d.%d" % s.subnet_mask)
+        self.wifi_mesh_client_gw.setText("%d.%d.%d.%d" % s.gateway)
+        self.wifi_mesh_client_mac.setText("%X:%X:%X:%X:%X:%X" % s.mac_address)
 
     def get_wifi2_mesh_ap_status_async(self, s):
         self.wifi_mesh_ap_ssid.setText(s.ssid)
@@ -183,8 +183,8 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
                 self.get_wifi2_mesh_common_status_async,
                 self.parent.parent.increase_error_count)
 
-            async_call(self.master.get_wifi2_mesh_station_status, None,
-                self.get_wifi2_mesh_station_status_async,
+            async_call(self.master.get_wifi2_mesh_client_status, None,
+                self.get_wifi2_mesh_client_status_async,
                 self.parent.parent.increase_error_count)
 
             async_call(self.master.get_wifi2_mesh_ap_status, None,

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>875</width>
-    <height>828</height>
+    <width>897</width>
+    <height>667</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>839</width>
+        <width>861</width>
         <height>1655</height>
        </rect>
       </property>
@@ -498,6 +498,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="6" column="0">
                <widget class="QLabel" name="wifi_client_encryption_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>Encryption:</string>
                 </property>
@@ -529,6 +535,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="1" column="0">
                <widget class="QLabel" name="wifi_client_ip_configuration_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>IP Configuration:</string>
                 </property>
@@ -536,6 +548,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="0" column="0">
                <widget class="QLabel" name="wifi_client_hostname_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>Hostname:</string>
                 </property>
@@ -543,6 +561,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="5" column="0">
                <widget class="QLabel" name="wifi_client_ssid_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>SSID:</string>
                 </property>
@@ -550,6 +574,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="4" column="0">
                <widget class="QLabel" name="wifi_client_gw_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>Gateway:</string>
                 </property>
@@ -560,6 +590,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="7" column="0">
                <widget class="QLabel" name="wifi_client_password_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>Password:</string>
                 </property>
@@ -581,6 +617,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="3" column="0">
                <widget class="QLabel" name="wifi_client_sub_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>Subnet Mask:</string>
                 </property>
@@ -591,6 +633,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="2" column="0">
                <widget class="QLabel" name="wifi_client_ip_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>IP:</string>
                 </property>
@@ -631,6 +679,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="9" column="0">
                <widget class="QLabel" name="wifi_client_bssid_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>BSSID:</string>
                 </property>
@@ -1172,21 +1226,21 @@ WEP: 10 or 26 hexadecimal digits</string>
                </widget>
               </item>
               <item row="5" column="0">
-               <widget class="QLabel" name="wifi_mesh_router_ip_configuration_label">
+               <widget class="QLabel" name="wifi_mesh_root_ip_configuration_label">
                 <property name="text">
-                 <string>Router IP Configuration:</string>
+                 <string>Root IP Configuration:</string>
                 </property>
                </widget>
               </item>
               <item row="7" column="0">
-               <widget class="QLabel" name="wifi_mesh_router_sub_label">
+               <widget class="QLabel" name="wifi_mesh_root_sub_label">
                 <property name="text">
-                 <string>Subnet Mask:</string>
+                 <string>Root Subnet Mask:</string>
                 </property>
                </widget>
               </item>
               <item row="9" column="0">
-               <widget class="QLabel" name="wifi_mesh_ssid_prefix_label">
+               <widget class="QLabel" name="wifi_mesh_group_ssid_prefix_label">
                 <property name="text">
                  <string>Group SSID Prefix:</string>
                 </property>
@@ -1207,9 +1261,9 @@ WEP: 10 or 26 hexadecimal digits</string>
                </widget>
               </item>
               <item row="6" column="0">
-               <widget class="QLabel" name="wifi_mesh_router_ip_label">
+               <widget class="QLabel" name="wifi_mesh_root_ip_label">
                 <property name="text">
-                 <string>IP:</string>
+                 <string>Root IP:</string>
                 </property>
                </widget>
               </item>
@@ -1221,9 +1275,9 @@ WEP: 10 or 26 hexadecimal digits</string>
                </widget>
               </item>
               <item row="8" column="0">
-               <widget class="QLabel" name="wifi_mesh_router_gw_label">
+               <widget class="QLabel" name="wifi_mesh_root_gw_label">
                 <property name="text">
-                 <string>Gateway:</string>
+                 <string>Root Gateway:</string>
                 </property>
                </widget>
               </item>
@@ -1410,7 +1464,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                </layout>
               </item>
               <item row="5" column="1" colspan="2">
-               <widget class="QComboBox" name="wifi_mesh_router_ip_configuration">
+               <widget class="QComboBox" name="wifi_mesh_root_ip_configuration">
                 <item>
                  <property name="text">
                   <string>DHCP</string>
@@ -1426,7 +1480,7 @@ WEP: 10 or 26 hexadecimal digits</string>
               <item row="6" column="1" colspan="2">
                <layout class="QHBoxLayout" name="horizontalLayout_10">
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_router_ip1">
+                 <widget class="QSpinBox" name="wifi_mesh_root_ip1">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1446,7 +1500,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_router_ip2">
+                 <widget class="QSpinBox" name="wifi_mesh_root_ip2">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1466,7 +1520,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_router_ip3">
+                 <widget class="QSpinBox" name="wifi_mesh_root_ip3">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1486,7 +1540,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_router_ip4">
+                 <widget class="QSpinBox" name="wifi_mesh_root_ip4">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1504,7 +1558,7 @@ WEP: 10 or 26 hexadecimal digits</string>
               <item row="8" column="1" colspan="2">
                <layout class="QHBoxLayout" name="horizontalLayout_12">
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_router_gw1">
+                 <widget class="QSpinBox" name="wifi_mesh_root_gw1">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1524,7 +1578,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_router_gw2">
+                 <widget class="QSpinBox" name="wifi_mesh_root_gw2">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1544,7 +1598,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_router_gw3">
+                 <widget class="QSpinBox" name="wifi_mesh_root_gw3">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1564,7 +1618,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_router_gw4">
+                 <widget class="QSpinBox" name="wifi_mesh_root_gw4">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1583,7 +1637,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                </widget>
               </item>
               <item row="9" column="1" colspan="2">
-               <widget class="QLineEdit" name="wifi_mesh_ssid_prefix">
+               <widget class="QLineEdit" name="wifi_mesh_group_ssid_prefix">
                 <property name="maxLength">
                  <number>16</number>
                 </property>
@@ -1605,7 +1659,7 @@ WEP: 10 or 26 hexadecimal digits</string>
               <item row="7" column="1" colspan="2">
                <layout class="QHBoxLayout" name="horizontalLayout_11">
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_router_sub1">
+                 <widget class="QSpinBox" name="wifi_mesh_root_sub1">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1625,7 +1679,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_router_sub2">
+                 <widget class="QSpinBox" name="wifi_mesh_root_sub2">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1645,7 +1699,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_router_sub3">
+                 <widget class="QSpinBox" name="wifi_mesh_root_sub3">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1665,7 +1719,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="wifi_mesh_router_sub4">
+                 <widget class="QSpinBox" name="wifi_mesh_root_sub4">
                   <property name="maximum">
                    <number>255</number>
                   </property>
@@ -1906,12 +1960,6 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="5" column="1">
                <widget class="QLineEdit" name="wifi_secret">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                  <horstretch>3</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
                 <property name="maxLength">
                  <number>64</number>
                 </property>
@@ -1938,6 +1986,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="2" column="0">
                <widget class="QLabel" name="wifi_website_port_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>Website Port:</string>
                 </property>
@@ -1945,6 +1999,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="1" column="0">
                <widget class="QLabel" name="wifi_websocket_port_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>WebSocket Port:</string>
                 </property>
@@ -1999,6 +2059,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="3" column="0">
                <widget class="QLabel" name="wifi_phy_mode_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>PHY Mode:</string>
                 </property>
@@ -2035,6 +2101,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="5" column="0">
                <widget class="QLabel" name="wifi_secret_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>Secret:</string>
                 </property>
@@ -2058,6 +2130,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="6" column="1" colspan="2">
                <widget class="QComboBox" name="wifi_mode">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>1</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="currentIndex">
                  <number>0</number>
                 </property>
@@ -2089,6 +2167,12 @@ WEP: 10 or 26 hexadecimal digits</string>
               </item>
               <item row="7" column="1" colspan="2">
                <widget class="QLabel" name="label_mesh_hint">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>Mesh Mode requires Master Brick FW &gt;= 2.4.2 and WIFI Extension 2.0 firmware &gt;= 2.1.0</string>
                 </property>

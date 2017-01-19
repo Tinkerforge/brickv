@@ -94,33 +94,33 @@ class Wifi2(QWidget, Ui_Wifi2):
                              self.wifi_ap_mac_dot4, self.wifi_ap_mac_dot5]
         self.ap_enc_group = [self.wifi_ap_password_label, self.wifi_ap_password, self.wifi_ap_password_show]
         self.mesh_router_enc_group = [self.wifi_mesh_router_password_label,
-                                    self.wifi_mesh_router_password,
-                                    self.wifi_mesh_router_password_show]
+                                      self.wifi_mesh_router_password,
+                                      self.wifi_mesh_router_password_show]
 
-        self.mesh_router_static_ip_group = [self.wifi_mesh_router_ip_label,
-                                            self.wifi_mesh_router_sub_label,
-                                            self.wifi_mesh_router_gw_label,
-                                            self.wifi_mesh_router_ip1,
-                                            self.wifi_mesh_router_ip2,
-                                            self.wifi_mesh_router_ip3,
-                                            self.wifi_mesh_router_ip4,
-                                            self.wifi_mesh_router_sub1,
-                                            self.wifi_mesh_router_sub2,
-                                            self.wifi_mesh_router_sub3,
-                                            self.wifi_mesh_router_sub4,
-                                            self.wifi_mesh_router_gw1,
-                                            self.wifi_mesh_router_gw2,
-                                            self.wifi_mesh_router_gw3,
-                                            self.wifi_mesh_router_gw4,
-                                            self.wifi_mesh_dot1,
-                                            self.wifi_mesh_dot2,
-                                            self.wifi_mesh_dot3,
-                                            self.wifi_mesh_dot4,
-                                            self.wifi_mesh_dot5,
-                                            self.wifi_mesh_dot6,
-                                            self.wifi_mesh_dot7,
-                                            self.wifi_mesh_dot8,
-                                            self.wifi_mesh_dot9]
+        self.mesh_root_static_ip_group = [self.wifi_mesh_root_ip_label,
+                                          self.wifi_mesh_root_sub_label,
+                                          self.wifi_mesh_root_gw_label,
+                                          self.wifi_mesh_root_ip1,
+                                          self.wifi_mesh_root_ip2,
+                                          self.wifi_mesh_root_ip3,
+                                          self.wifi_mesh_root_ip4,
+                                          self.wifi_mesh_root_sub1,
+                                          self.wifi_mesh_root_sub2,
+                                          self.wifi_mesh_root_sub3,
+                                          self.wifi_mesh_root_sub4,
+                                          self.wifi_mesh_root_gw1,
+                                          self.wifi_mesh_root_gw2,
+                                          self.wifi_mesh_root_gw3,
+                                          self.wifi_mesh_root_gw4,
+                                          self.wifi_mesh_dot1,
+                                          self.wifi_mesh_dot2,
+                                          self.wifi_mesh_dot3,
+                                          self.wifi_mesh_dot4,
+                                          self.wifi_mesh_dot5,
+                                          self.wifi_mesh_dot6,
+                                          self.wifi_mesh_dot7,
+                                          self.wifi_mesh_dot8,
+                                          self.wifi_mesh_dot9]
 
         self.mesh_router_bssid_group = [self.wifi_mesh_router_bssid_label,
                                         self.wifi_mesh_router_bssid1,
@@ -172,10 +172,10 @@ class Wifi2(QWidget, Ui_Wifi2):
         # IP Configuration
         self.wifi_client_ip_configuration_changed(0)
         self.wifi_ap_ip_configuration_changed(0)
-        self.wifi_mesh_router_ip_configuration_changed(0)
+        self.wifi_mesh_root_ip_configuration_changed(0)
         self.wifi_client_ip_configuration.currentIndexChanged.connect(self.wifi_client_ip_configuration_changed)
         self.wifi_ap_ip_configuration.currentIndexChanged.connect(self.wifi_ap_ip_configuration_changed)
-        self.wifi_mesh_router_ip_configuration.currentIndexChanged.connect(self.wifi_mesh_router_ip_configuration_changed)
+        self.wifi_mesh_root_ip_configuration.currentIndexChanged.connect(self.wifi_mesh_root_ip_configuration_changed)
 
         # Mode
         self.wifi_mode_changed(0)
@@ -366,20 +366,20 @@ class Wifi2(QWidget, Ui_Wifi2):
     def get_wifi2_mesh_configuration_async(self, data):
         self.mesh_enable = data.enable
 
-        self.wifi_mesh_router_ip1.setValue(data.router_ip[0])
-        self.wifi_mesh_router_ip2.setValue(data.router_ip[1])
-        self.wifi_mesh_router_ip3.setValue(data.router_ip[2])
-        self.wifi_mesh_router_ip4.setValue(data.router_ip[3])
+        self.wifi_mesh_root_ip1.setValue(data.root_ip[0])
+        self.wifi_mesh_root_ip2.setValue(data.root_ip[1])
+        self.wifi_mesh_root_ip3.setValue(data.root_ip[2])
+        self.wifi_mesh_root_ip4.setValue(data.root_ip[3])
 
-        self.wifi_mesh_router_sub1.setValue(data.router_subnet_mask[0])
-        self.wifi_mesh_router_sub2.setValue(data.router_subnet_mask[1])
-        self.wifi_mesh_router_sub3.setValue(data.router_subnet_mask[2])
-        self.wifi_mesh_router_sub4.setValue(data.router_subnet_mask[3])
+        self.wifi_mesh_root_sub1.setValue(data.root_subnet_mask[0])
+        self.wifi_mesh_root_sub2.setValue(data.root_subnet_mask[1])
+        self.wifi_mesh_root_sub3.setValue(data.root_subnet_mask[2])
+        self.wifi_mesh_root_sub4.setValue(data.root_subnet_mask[3])
 
-        self.wifi_mesh_router_gw1.setValue(data.router_gateway[0])
-        self.wifi_mesh_router_gw2.setValue(data.router_gateway[1])
-        self.wifi_mesh_router_gw3.setValue(data.router_gateway[2])
-        self.wifi_mesh_router_gw4.setValue(data.router_gateway[3])
+        self.wifi_mesh_root_gw1.setValue(data.root_gateway[0])
+        self.wifi_mesh_root_gw2.setValue(data.root_gateway[1])
+        self.wifi_mesh_root_gw3.setValue(data.root_gateway[2])
+        self.wifi_mesh_root_gw4.setValue(data.root_gateway[3])
 
         self.wifi_mesh_router_bssid1.setValue(data.router_bssid[0])
         self.wifi_mesh_router_bssid2.setValue(data.router_bssid[1])
@@ -395,7 +395,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         self.wifi_mesh_group_id5.setValue(data.group_id[4])
         self.wifi_mesh_group_id6.setValue(data.group_id[5])
 
-        self.wifi_mesh_ssid_prefix.setText(data.ssid_prefix)
+        self.wifi_mesh_group_ssid_prefix.setText(data.group_ssid_prefix)
 
         self.wifi_mesh_gateway_ip1.setValue(data.gateway_ip[0])
         self.wifi_mesh_gateway_ip2.setValue(data.gateway_ip[1])
@@ -404,10 +404,10 @@ class Wifi2(QWidget, Ui_Wifi2):
 
         self.wifi_mesh_gateway_port.setValue(data.gateway_port)
 
-        if data.router_ip == (0, 0, 0, 0):
-            self.wifi_mesh_router_ip_configuration.setCurrentIndex(0)
+        if data.root_ip == (0, 0, 0, 0):
+            self.wifi_mesh_root_ip_configuration.setCurrentIndex(0)
         else:
-            self.wifi_mesh_router_ip_configuration.setCurrentIndex(1)
+            self.wifi_mesh_root_ip_configuration.setCurrentIndex(1)
 
         if data.router_bssid == (0, 0, 0, 0, 0, 0):
             self.wifi_mesh_router_use_bssid.setChecked(False)
@@ -482,7 +482,7 @@ class Wifi2(QWidget, Ui_Wifi2):
             return
 
         try:
-            v = self.wifi_mesh_ssid_prefix.text().encode('ascii')
+            v = self.wifi_mesh_group_ssid_prefix.text().encode('ascii')
         except:
             self.popup_fail('Mesh SSID prefix cannot contain non-ASCII characters')
             return
@@ -608,34 +608,34 @@ class Wifi2(QWidget, Ui_Wifi2):
             else:
                 mesh_router_password = '\0'
 
-            if self.wifi_mesh_router_ip_configuration.currentIndex() == 1 :
-                mesh_router_ip = [self.wifi_mesh_router_ip1.value(),
-                                  self.wifi_mesh_router_ip2.value(),
-                                  self.wifi_mesh_router_ip3.value(),
-                                  self.wifi_mesh_router_ip4.value()]
+            if self.wifi_mesh_root_ip_configuration.currentIndex() == 1 :
+                mesh_root_ip = [self.wifi_mesh_root_ip1.value(),
+                                self.wifi_mesh_root_ip2.value(),
+                                self.wifi_mesh_root_ip3.value(),
+                                self.wifi_mesh_root_ip4.value()]
 
-                mesh_router_sub = [self.wifi_mesh_router_sub1.value(),
-                                   self.wifi_mesh_router_sub2.value(),
-                                   self.wifi_mesh_router_sub3.value(),
-                                   self.wifi_mesh_router_sub4.value()]
+                mesh_root_sub = [self.wifi_mesh_root_sub1.value(),
+                                 self.wifi_mesh_root_sub2.value(),
+                                 self.wifi_mesh_root_sub3.value(),
+                                 self.wifi_mesh_root_sub4.value()]
 
-                mesh_router_gw = [self.wifi_mesh_router_gw1.value(),
-                                  self.wifi_mesh_router_gw2.value(),
-                                  self.wifi_mesh_router_gw3.value(),
-                                  self.wifi_mesh_router_gw4.value()]
+                mesh_root_gw = [self.wifi_mesh_root_gw1.value(),
+                                self.wifi_mesh_root_gw2.value(),
+                                self.wifi_mesh_root_gw3.value(),
+                                self.wifi_mesh_root_gw4.value()]
             else:
-                mesh_router_ip = [0, 0, 0, 0]
-                mesh_router_sub = [0, 0, 0, 0]
-                mesh_router_gw = [0, 0, 0, 0]
+                mesh_root_ip = [0, 0, 0, 0]
+                mesh_root_sub = [0, 0, 0, 0]
+                mesh_root_gw = [0, 0, 0, 0]
 
-            mesh_ssid_prefix = self.wifi_mesh_ssid_prefix.text()
+            mesh_group_ssid_prefix = self.wifi_mesh_group_ssid_prefix.text()
 
-            mesh_ssid_group_id = [self.wifi_mesh_group_id1.value(),
-                                  self.wifi_mesh_group_id2.value(),
-                                  self.wifi_mesh_group_id3.value(),
-                                  self.wifi_mesh_group_id4.value(),
-                                  self.wifi_mesh_group_id5.value(),
-                                  self.wifi_mesh_group_id6.value()]
+            mesh_group_id = [self.wifi_mesh_group_id1.value(),
+                             self.wifi_mesh_group_id2.value(),
+                             self.wifi_mesh_group_id3.value(),
+                             self.wifi_mesh_group_id4.value(),
+                             self.wifi_mesh_group_id5.value(),
+                             self.wifi_mesh_group_id6.value()]
 
             mesh_gateway_ip = [self.wifi_mesh_gateway_ip1.value(),
                                self.wifi_mesh_gateway_ip2.value(),
@@ -673,9 +673,9 @@ class Wifi2(QWidget, Ui_Wifi2):
 
             if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 1, 0):
                 # Set mesh configuration.
-                self.master.set_wifi2_mesh_configuration(mesh_enable, mesh_router_ip,
-                    mesh_router_sub, mesh_router_gw, mesh_router_bssid, mesh_ssid_group_id,
-                    mesh_ssid_prefix, mesh_gateway_ip, mesh_gateway_port)
+                self.master.set_wifi2_mesh_configuration(mesh_enable, mesh_root_ip,
+                    mesh_root_sub, mesh_root_gw, mesh_router_bssid, mesh_group_id,
+                    mesh_group_ssid_prefix, mesh_gateway_ip, mesh_gateway_port)
 
                 # Set mesh router password.
                 self.master.set_wifi2_mesh_router_password(mesh_router_password)
@@ -833,11 +833,11 @@ class Wifi2(QWidget, Ui_Wifi2):
         else:
             self.wifi_ap_password.setEchoMode(QLineEdit.Password)
 
-    def wifi_mesh_router_ip_configuration_changed(self, index):
+    def wifi_mesh_root_ip_configuration_changed(self, index):
         if index == 0:
-            hide_group(self.mesh_router_static_ip_group)
+            hide_group(self.mesh_root_static_ip_group)
         else:
-            show_group(self.mesh_router_static_ip_group)
+            show_group(self.mesh_root_static_ip_group)
 
     def show_status_clicked(self):
         if self.wifi2_status is None:
