@@ -45,7 +45,7 @@
             <string notr="true">color:red;</string>
            </property>
            <property name="text">
-            <string>Could not connect to tinkerforge.com to get the list of available update. Is your Internet connection working?</string>
+            <string>Could not connect to tinkerforge.com to get the list of available updates. Is your Internet connection working?</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
