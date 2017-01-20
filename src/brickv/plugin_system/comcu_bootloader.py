@@ -58,12 +58,9 @@ class COMCUBootloader(QWidget):
                 combo_brick.setCurrentIndex(i)
                 break
 
-        port_index = 0
-        if self.info.position == 'b':
-            port_index = 1
-        elif self.info.position == 'c':
-            port_index = 2
-        elif self.info.position == 'd':
-            port_index = 3
+        try:
+            port_index = ord(self.info.position) - ord('a')
+        except:
+            port_index = 0
 
         combo_port.setCurrentIndex(port_index)
