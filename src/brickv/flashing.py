@@ -1332,7 +1332,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         progress = self.create_progress_bar('Discovering')
 
         try:
-            urllib2.urlopen("http://tinkerforge.com", timeout=10).read()
+            urllib2.urlopen("http://download.tinkerforge.com", timeout=10).read()
             self.label_no_update_connection.hide()
             self.label_no_firmware_connection.hide()
             self.label_no_plugin_connection.hide()
