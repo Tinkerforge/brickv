@@ -198,6 +198,7 @@ def build_macosx_pkg():
         f.write(boot_prefix + boot)
 
     print('signing brickv binary')
+    system('security unlock-keychain /Users/$USER/Library/Keychains/login.keychain')
     # NOTE: codesign_identity contains "Developer ID Application: ..."
     codesign_command = 'codesign --force --verify --verbose --sign "`cat codesign_identity`" {0}'
     frameworks_path = os.path.join(dist_path, 'Brickv.app', 'Contents', 'Frameworks')
