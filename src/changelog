@@ -345,7 +345,7 @@
 - Add support for RGBW LEDs, channel mapping and SK6812RGBW (NeoPixel RGBW),
   LPD8806 und ADA102 (DotStar) chip types to LED Strip Bricklet plugin
 
-2017-01-25: 2.3.7 (<unknown>)
+2017-01-25: 2.3.7 (39f5d0f)
 - Warn about unsupported RS485 baud rates and modes on RED Brick
 - Add web interface enable/disable checkbox for WIFI Extension 2.0
 - Show WIFI Extension 2.0 firmware version in setup tab and updates dialog
