@@ -338,9 +338,21 @@
 - Unify GUI layout of plugins with a plot widget
 - Improve plot widget rendering performance by avoiding full updates
 
-2016-09-07: 2.3.6 (<unknown>)
+2016-09-07: 2.3.6 (fbf9e78)
 - Improve WIFI Extension 2.0 flashing speed
 - Handle unknown client status for WIFI Extension 2.0 correctly
 - Add moving average length spinbox to Distance US Bricklet plugin
 - Add support for RGBW LEDs, channel mapping and SK6812RGBW (NeoPixel RGBW),
   LPD8806 und ADA102 (DotStar) chip types to LED Strip Bricklet plugin
+
+2017-01-25: 2.3.7 (<unknown>)
+- Warn about unsupported RS485 baud rates and modes on RED Brick
+- Add web interface enable/disable checkbox for WIFI Extension 2.0
+- Show WIFI Extension 2.0 firmware version in setup tab and updates dialog
+- Keep stacks grouped in device table, if sorted by position
+- Add support for WIFI Extension 2.0 Mesh mode to Master Brick plugin
+- Fix race condition in WIFI Extension 2.0 firmware version lookup
+- Also show unsupported Extension in the RED Brick plugin
+- Add dialog to RED Brick network tab to connect to hidden Wi-Fi networks
+- Fix check for downloading firmwares from tinkerforge.com
+- Remove error prone Protocol 1 Bricklet detection logic
