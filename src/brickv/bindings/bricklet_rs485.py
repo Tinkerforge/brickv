@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-19.      #
+# This file was automatically generated on 2017-01-25.      #
 #                                                           #
-# Python Bindings Version 2.1.10                            #
+# Python Bindings Version 2.1.11                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -321,31 +321,61 @@ class BrickletRS485(Device):
 
     def get_spitfp_error_count(self):
         """
-        TODO
+        Returns the error count for the communication between Brick and Bricklet.
+        
+        The errors are divided into
+        
+        * ack checksum errors,
+        * message checksum errors,
+        * frameing errors and
+        * overflow errors.
+        
+        The errors counts are for errors that occur on the Bricklet side. All
+        Bricks have a similar function that returns the errors on the Brick side.
         """
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
-        TODO
+        Sets the bootloader mode and returns the status after the requested
+        mode change was instigated.
+        
+        You can change from bootloader mode to firmware mode and vice versa. A change
+        from bootloader mode to firmware mode will only take place if the entry function,
+        device identifier und crc are present and correct.
+        
+        This function is used by Brick Viewer during flashing. It should not be
+        necessary to call it in a normal user program.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
 
     def get_bootloader_mode(self):
         """
-        TODO
+        Returns the current bootloader mode, see :func:`SetBootloaderMode`.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
-        TODO
+        Sets the firmware pointer for func:`WriteFirmware`. The pointer has
+        to be increased by chunks of size 64. The data is written to flash
+        every 4 chunks (which equals to one page of size 256).
+        
+        This function is used by Brick Viewer during flashing. It should not be
+        necessary to call it in a normal user program.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
 
     def write_firmware(self, data):
         """
-        TODO
+        Writes 64 Bytes of firmware at the position as written by 
+        :func:`SetWriteFirmwarePointer` before. The firmware is written
+        to flash every 4 chunks.
+        
+        You can only write firmware in bootloader mode.
+        
+        This function is used by Brick Viewer during flashing. It should not be
+        necessary to call it in a normal user program.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
 
@@ -391,13 +421,18 @@ class BrickletRS485(Device):
 
     def write_uid(self, uid):
         """
-        TODO
+        Writes a new UID into flash. If you want to set a new UID
+        you have to decode the Base58 encoded UID string into an
+        integer first.
+        
+        We recommend that you use Brick Viewer to change the UID.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_WRITE_UID, (uid,), 'I', '')
 
     def read_uid(self):
         """
-        TODO
+        Returns the current UID as an integer. Encode as
+        Base58 to get the usual string version.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_READ_UID, (), '', 'I')
 

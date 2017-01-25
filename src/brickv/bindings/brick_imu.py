@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-19.      #
+# This file was automatically generated on 2017-01-25.      #
 #                                                           #
-# Python Bindings Version 2.1.10                            #
+# Python Bindings Version 2.1.11                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -28,7 +28,6 @@ GetAngularVelocity = namedtuple('AngularVelocity', ['x', 'y', 'z'])
 GetAllData = namedtuple('AllData', ['acc_x', 'acc_y', 'acc_z', 'mag_x', 'mag_y', 'mag_z', 'ang_x', 'ang_y', 'ang_z', 'temperature'])
 GetOrientation = namedtuple('Orientation', ['roll', 'pitch', 'yaw'])
 GetQuaternion = namedtuple('Quaternion', ['x', 'y', 'z', 'w'])
-GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -80,9 +79,6 @@ class BrickIMU(Device):
     FUNCTION_ORIENTATION_CALCULATION_ON = 37
     FUNCTION_ORIENTATION_CALCULATION_OFF = 38
     FUNCTION_IS_ORIENTATION_CALCULATION_ON = 39
-    FUNCTION_SET_SPITFP_BAUDRATE = 234
-    FUNCTION_GET_SPITFP_BAUDRATE = 235
-    FUNCTION_GET_SPITFP_ERROR_COUNT = 237
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -146,9 +142,6 @@ class BrickIMU(Device):
         self.response_expected[BrickIMU.FUNCTION_ORIENTATION_CALCULATION_ON] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_ORIENTATION_CALCULATION_OFF] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_IS_ORIENTATION_CALCULATION_ON] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickIMU.FUNCTION_SET_SPITFP_BAUDRATE] = BrickIMU.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickIMU.FUNCTION_GET_SPITFP_BAUDRATE] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickIMU.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_ENABLE_STATUS_LED] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_DISABLE_STATUS_LED] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_IS_STATUS_LED_ENABLED] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -513,30 +506,6 @@ class BrickIMU(Device):
         .. versionadded:: 2.0.2$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_IS_ORIENTATION_CALCULATION_ON, (), '', '?')
-
-    def set_spitfp_baudrate(self, bricklet_port, baudrate):
-        """
-        TODO (baud rate between 400000 and 2000000. Default 1400000)
-        
-        .. versionadded:: 2.3.3$nbsp;(Firmware)
-        """
-        self.ipcon.send_request(self, BrickIMU.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', '')
-
-    def get_spitfp_baudrate(self, bricklet_port):
-        """
-        TODO
-        
-        .. versionadded:: 2.3.3$nbsp;(Firmware)
-        """
-        return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
-
-    def get_spitfp_error_count(self, bricklet_port):
-        """
-        TODO
-        
-        .. versionadded:: 2.3.3$nbsp;(Firmware)
-        """
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
 
     def enable_status_led(self):
         """

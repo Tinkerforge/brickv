@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-19.      #
+# This file was automatically generated on 2017-01-25.      #
 #                                                           #
-# Python Bindings Version 2.1.10                            #
+# Python Bindings Version 2.1.11                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -22,7 +22,6 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
-GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -59,9 +58,6 @@ class BrickDC(Device):
     FUNCTION_GET_DRIVE_MODE = 18
     FUNCTION_SET_CURRENT_VELOCITY_PERIOD = 19
     FUNCTION_GET_CURRENT_VELOCITY_PERIOD = 20
-    FUNCTION_SET_SPITFP_BAUDRATE = 234
-    FUNCTION_GET_SPITFP_BAUDRATE = 235
-    FUNCTION_GET_SPITFP_ERROR_COUNT = 237
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -106,9 +102,6 @@ class BrickDC(Device):
         self.response_expected[BrickDC.CALLBACK_EMERGENCY_SHUTDOWN] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickDC.CALLBACK_VELOCITY_REACHED] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickDC.CALLBACK_CURRENT_VELOCITY] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickDC.FUNCTION_SET_SPITFP_BAUDRATE] = BrickDC.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickDC.FUNCTION_GET_SPITFP_BAUDRATE] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickDC.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickDC.FUNCTION_ENABLE_STATUS_LED] = BrickDC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickDC.FUNCTION_DISABLE_STATUS_LED] = BrickDC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickDC.FUNCTION_IS_STATUS_LED_ENABLED] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -320,30 +313,6 @@ class BrickDC(Device):
         Returns the period as set by :func:`SetCurrentVelocityPeriod`.
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD, (), '', 'H')
-
-    def set_spitfp_baudrate(self, bricklet_port, baudrate):
-        """
-        TODO (baud rate between 400000 and 2000000. Default 1400000)
-        
-        .. versionadded:: 2.3.3$nbsp;(Firmware)
-        """
-        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', '')
-
-    def get_spitfp_baudrate(self, bricklet_port):
-        """
-        TODO
-        
-        .. versionadded:: 2.3.3$nbsp;(Firmware)
-        """
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
-
-    def get_spitfp_error_count(self, bricklet_port):
-        """
-        TODO
-        
-        .. versionadded:: 2.3.3$nbsp;(Firmware)
-        """
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
 
     def enable_status_led(self):
         """

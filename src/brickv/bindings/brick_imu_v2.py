@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-19.      #
+# This file was automatically generated on 2017-01-25.      #
 #                                                           #
-# Python Bindings Version 2.1.10                            #
+# Python Bindings Version 2.1.11                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -30,7 +30,7 @@ GetLinearAcceleration = namedtuple('LinearAcceleration', ['x', 'y', 'z'])
 GetGravityVector = namedtuple('GravityVector', ['x', 'y', 'z'])
 GetQuaternion = namedtuple('Quaternion', ['w', 'x', 'y', 'z'])
 GetAllData = namedtuple('AllData', ['acceleration', 'magnetic_field', 'angular_velocity', 'euler_angle', 'quaternion', 'linear_acceleration', 'gravity_vector', 'temperature', 'calibration_status'])
-GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
+GetSensorConfiguration = namedtuple('SensorConfiguration', ['magnetometer_rate', 'gyroscope_range', 'gyroscope_bandwidth', 'accelerometer_range', 'accelerometer_bandwidth'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -83,9 +83,10 @@ class BrickIMUV2(Device):
     FUNCTION_GET_QUATERNION_PERIOD = 29
     FUNCTION_SET_ALL_DATA_PERIOD = 30
     FUNCTION_GET_ALL_DATA_PERIOD = 31
-    FUNCTION_SET_SPITFP_BAUDRATE = 234
-    FUNCTION_GET_SPITFP_BAUDRATE = 235
-    FUNCTION_GET_SPITFP_ERROR_COUNT = 237
+    FUNCTION_SET_SENSOR_CONFIGURATION = 41
+    FUNCTION_GET_SENSOR_CONFIGURATION = 42
+    FUNCTION_SET_SENSOR_FUSION_MODE = 43
+    FUNCTION_GET_SENSOR_FUSION_MODE = 44
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -94,6 +95,41 @@ class BrickIMUV2(Device):
     FUNCTION_RESET = 243
     FUNCTION_GET_IDENTITY = 255
 
+    MAGNETOMETER_RATE_2HZ = 0
+    MAGNETOMETER_RATE_6HZ = 1
+    MAGNETOMETER_RATE_8HZ = 2
+    MAGNETOMETER_RATE_10HZ = 3
+    MAGNETOMETER_RATE_15HZ = 4
+    MAGNETOMETER_RATE_20HZ = 5
+    MAGNETOMETER_RATE_25HZ = 6
+    MAGNETOMETER_RATE_30HZ = 7
+    GYROSCOPE_RANGE_2000DPS = 0
+    GYROSCOPE_RANGE_1000DPS = 1
+    GYROSCOPE_RANGE_500DPS = 2
+    GYROSCOPE_RANGE_250DPS = 3
+    GYROSCOPE_RANGE_125DPS = 4
+    GYROSCOPE_BANDWIDTH_523HZ = 0
+    GYROSCOPE_BANDWIDTH_230HZ = 1
+    GYROSCOPE_BANDWIDTH_116HZ = 2
+    GYROSCOPE_BANDWIDTH_47HZ = 3
+    GYROSCOPE_BANDWIDTH_23HZ = 4
+    GYROSCOPE_BANDWIDTH_12HZ = 5
+    GYROSCOPE_BANDWIDTH_64HZ = 6
+    GYROSCOPE_BANDWIDTH_32HZ = 7
+    ACCELEROMETER_RANGE_2G = 0
+    ACCELEROMETER_RANGE_4G = 1
+    ACCELEROMETER_RANGE_8G = 2
+    ACCELEROMETER_RANGE_16G = 3
+    ACCELEROMETER_BANDWIDTH_7_81HZ = 0
+    ACCELEROMETER_BANDWIDTH_15_63HZ = 1
+    ACCELEROMETER_BANDWIDTH_31_25HZ = 2
+    ACCELEROMETER_BANDWIDTH_62_5HZ = 3
+    ACCELEROMETER_BANDWIDTH_125HZ = 4
+    ACCELEROMETER_BANDWIDTH_250HZ = 5
+    ACCELEROMETER_BANDWIDTH_500HZ = 6
+    ACCELEROMETER_BANDWIDTH_1000HZ = 7
+    SENSOR_FUSION_OFF = 0
+    SENSOR_FUSION_ON = 1
 
     def __init__(self, uid, ipcon):
         """
@@ -102,7 +138,7 @@ class BrickIMUV2(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickIMUV2.FUNCTION_GET_ACCELERATION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_GET_MAGNETIC_FIELD] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -144,9 +180,10 @@ class BrickIMUV2(Device):
         self.response_expected[BrickIMUV2.CALLBACK_ORIENTATION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickIMUV2.CALLBACK_QUATERNION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickIMUV2.CALLBACK_ALL_DATA] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickIMUV2.FUNCTION_SET_SPITFP_BAUDRATE] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickIMUV2.FUNCTION_GET_SPITFP_BAUDRATE] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickIMUV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMUV2.FUNCTION_SET_SENSOR_CONFIGURATION] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMUV2.FUNCTION_GET_SENSOR_CONFIGURATION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMUV2.FUNCTION_SET_SENSOR_FUSION_MODE] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMUV2.FUNCTION_GET_SENSOR_FUSION_MODE] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_ENABLE_STATUS_LED] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMUV2.FUNCTION_DISABLE_STATUS_LED] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMUV2.FUNCTION_IS_STATUS_LED_ENABLED] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -461,29 +498,53 @@ class BrickIMUV2(Device):
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
 
-    def set_spitfp_baudrate(self, bricklet_port, baudrate):
+    def set_sensor_configuration(self, magnetometer_rate, gyroscope_range, gyroscope_bandwidth, accelerometer_range, accelerometer_bandwidth):
         """
-        TODO (baud rate between 400000 and 2000000. Default 1400000)
+        Sets the available sensor configuration for the Magnetometer, Gyroscope and
+        Accelerometer. The Accelerometer Range is user selectable in all fusion modes,
+        all other configurations are auto-controlled in fusion mode.
+        
+        The default values are:
+        
+        * Magnetometer Rate 20Hz
+        * Gyroscope Range 2000°/s
+        * Gyroscope Bandwidth 32Hz
+        * Accelerometer Range +/-4G
+        * Accelerometer Bandwidth 62.5Hz
+        
         
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_SENSOR_CONFIGURATION, (magnetometer_rate, gyroscope_range, gyroscope_bandwidth, accelerometer_range, accelerometer_bandwidth), 'B B B B B', '')
 
-    def get_spitfp_baudrate(self, bricklet_port):
+    def get_sensor_configuration(self):
         """
-        TODO
+        Returns the sensor configuration as set by :func:`SetSensorConfiguration`.
         
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
+        return GetSensorConfiguration(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SENSOR_CONFIGURATION, (), '', 'B B B B B'))
 
-    def get_spitfp_error_count(self, bricklet_port):
+    def set_sensor_fusion_mode(self, mode):
         """
-        TODO
+        If the fusion mode is turned off, the functions
+        :func:`GetAcceleration`, :func:`GetMagneticField` and :func:`GetAngularVelocity`
+        return uncalibrated and uncompensated sensor data. All other sensor data getters
+        return no data.
+        
+        By default sensor fusion is on.
         
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_SENSOR_FUSION_MODE, (mode,), 'B', '')
+
+    def get_sensor_fusion_mode(self):
+        """
+        Returns the sensor fusion mode as set by :func:`SetSensorFusionMode`.
+        
+        .. versionadded:: 2.0.5$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SENSOR_FUSION_MODE, (), '', 'B')
 
     def enable_status_led(self):
         """
