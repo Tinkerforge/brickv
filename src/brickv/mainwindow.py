@@ -596,7 +596,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             set_device_info_value('hardware_version', hardware_version)
             set_device_info_value('firmware_version_installed', firmware_version)
             set_device_info_value('device_identifier', device_identifier)
-            set_device_info_value('protocol_version', 2)
             set_device_info_value('enumeration_type', enumeration_type)
 
             if device_info.type == 'bricklet':
@@ -825,7 +824,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tree_view_model.appendRow(parent)
 
             for port in sorted(info.bricklets):
-                if info.bricklets[port] and info.bricklets[port].protocol_version == 2:
+                if info.bricklets[port]:
                     child = [QStandardItem(info.bricklets[port].name),
                              QStandardItem(info.bricklets[port].uid),
                              QStandardItem(info.bricklets[port].position.upper()),

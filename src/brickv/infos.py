@@ -84,7 +84,6 @@ class DeviceInfo(AbstractInfo):
     device_identifier = 0
     plugin = None
     tab_window = None
-    protocol_version = 0
     tab_index = -1
     enumeration_type = -1
 
@@ -96,26 +95,18 @@ class DeviceInfo(AbstractInfo):
   fw version latest: {5},
   hw version: {6},
   device identifier: {7},
-  protocol version: {8},
-  url_part: {9},
-  plugin: {10},
-  tab_window: {11}
+  url_part: {8},
+  plugin: {9},
+  tab_window: {10}
 """.format(self.name, self.uid, self.connected_uid, self.position,
            self.firmware_version_installed, self.firmware_version_latest,
            self.hardware_version, self.device_identifier,
-           self.protocol_version, self.url_part,
-           self.plugin, self.tab_window)
+           self.url_part, self.plugin, self.tab_window)
 
     def get_combo_item(self):
         version_str = get_version_string(self.firmware_version_installed)
 
-        if type == 'brick':
-            return '{0} [{1}] ({2})'.format(self.name, self.uid, version_str)
-        else:
-            if self.protocol_version < 2:
-                return '{0} ({1})'.format(self.name, version_str)
-            else:
-                return '{0} [{1}] ({2})'.format(self.name, self.uid, version_str)
+        return '{0} [{1}] ({2})'.format(self.name, self.uid, version_str)
 
 class BrickletInfo(DeviceInfo):
     type = 'bricklet'
