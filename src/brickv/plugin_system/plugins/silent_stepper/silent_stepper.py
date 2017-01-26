@@ -309,8 +309,8 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
     def motor_current_button_clicked(self):
         qid = QInputDialog(self)
         qid.setInputMode(QInputDialog.IntInput)
-        qid.setIntMinimum(0)
-        qid.setIntMaximum(2500)
+        qid.setIntMinimum(360)
+        qid.setIntMaximum(1640)
         qid.setIntStep(100)
         async_call(self.silent_stepper.get_motor_current, None, qid.setIntValue, self.increase_error_count)
         qid.intValueSelected.connect(self.motor_current_selected)
