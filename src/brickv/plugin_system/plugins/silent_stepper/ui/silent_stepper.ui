@@ -687,7 +687,7 @@ steps/s²</string>
          <item>
           <widget class="QLabel" name="label_9">
            <property name="text">
-            <string>Motor Current:</string>
+            <string>Maximum Motor Current:</string>
            </property>
           </widget>
          </item>
@@ -717,7 +717,7 @@ steps/s²</string>
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>5</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -744,7 +744,7 @@ steps/s²</string>
              <item row="0" column="1">
               <widget class="QSpinBox" name="standstill_current_spin">
                <property name="maximum">
-                <number>31</number>
+                <number>1640</number>
                </property>
               </widget>
              </item>
@@ -782,14 +782,14 @@ steps/s²</string>
              <item row="1" column="1">
               <widget class="QSpinBox" name="motor_run_current_spin">
                <property name="maximum">
-                <number>31</number>
+                <number>1640</number>
                </property>
               </widget>
              </item>
              <item row="2" column="1">
               <widget class="QSpinBox" name="standstill_delay_time_spin">
                <property name="maximum">
-                <number>15</number>
+                <number>307</number>
                </property>
               </widget>
              </item>
@@ -810,7 +810,7 @@ steps/s²</string>
              <item row="3" column="1">
               <widget class="QSpinBox" name="power_down_time_spin">
                <property name="maximum">
-                <number>255</number>
+                <number>5222</number>
                </property>
               </widget>
              </item>
@@ -859,28 +859,28 @@ steps/s²</string>
              <item row="0" column="2">
               <widget class="QLabel" name="label_20">
                <property name="text">
-                <string>*1/32 motor current</string>
+                <string>mA (up to max motor current)</string>
                </property>
               </widget>
              </item>
              <item row="1" column="2">
               <widget class="QLabel" name="label_21">
                <property name="text">
-                <string>*1/32 motor current</string>
+                <string>mA (up to max motor current)</string>
                </property>
               </widget>
              </item>
              <item row="2" column="2">
               <widget class="QLabel" name="label_22">
                <property name="text">
-                <string>clock cycles @12MHz</string>
+                <string>ms</string>
                </property>
               </widget>
              </item>
              <item row="3" column="2">
               <widget class="QLabel" name="label_23">
                <property name="text">
-                <string>clock cycles @12MHz</string>
+                <string>ms</string>
                </property>
               </widget>
              </item>
@@ -1046,20 +1046,6 @@ steps/s²</string>
               <widget class="QSpinBox" name="gradient_spin">
                <property name="maximum">
                 <number>255</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="label_46">
-               <property name="text">
-                <string>*255/steptime + Gradient (PWM)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2">
-              <widget class="QLabel" name="label_47">
-               <property name="text">
-                <string>*255/steptime (PWM)</string>
                </property>
               </widget>
              </item>
@@ -1416,7 +1402,7 @@ steps/s²</string>
              <item row="0" column="2">
               <widget class="QLabel" name="label_35">
                <property name="text">
-                <string>*32 clock cycles @12MHz</string>
+                <string>*32 clock cycles @12.8MHz</string>
                </property>
               </widget>
              </item>
@@ -1447,7 +1433,7 @@ steps/s²</string>
              <item row="2" column="2">
               <widget class="QLabel" name="label_36">
                <property name="text">
-                <string>*32 clock cycles @12MHz</string>
+                <string>*32 clock cycles @12.8MHz</string>
                </property>
               </widget>
              </item>
@@ -1605,7 +1591,7 @@ steps/s²</string>
              <item row="1" column="2">
               <widget class="QLabel" name="label_63">
                <property name="text">
-                <string>f_sync = 12MHz/(value*64) (0=off)</string>
+                <string>f_sync = 12.8MHz/(value*64) (0=off)</string>
                </property>
               </widget>
              </item>
