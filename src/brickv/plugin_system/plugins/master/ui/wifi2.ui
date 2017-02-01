@@ -2215,7 +2215,17 @@ WEP: 10 or 26 hexadecimal digits</string>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>wifi_scroll_area</tabstop>
+  <tabstop>wifi_port</tabstop>
+  <tabstop>wifi_websocket_port</tabstop>
+  <tabstop>wifi_website_port</tabstop>
+  <tabstop>wifi_disable_web_interface</tabstop>
+  <tabstop>wifi_phy_mode</tabstop>
+  <tabstop>wifi_use_auth</tabstop>
+  <tabstop>wifi_secret</tabstop>
+  <tabstop>wifi_show_characters</tabstop>
+  <tabstop>wifi_mode</tabstop>
+  <tabstop>wifi_client_hostname</tabstop>
+  <tabstop>wifi_client_ip_configuration</tabstop>
   <tabstop>wifi_client_ip4</tabstop>
   <tabstop>wifi_client_ip3</tabstop>
   <tabstop>wifi_client_ip2</tabstop>
@@ -2228,9 +2238,89 @@ WEP: 10 or 26 hexadecimal digits</string>
   <tabstop>wifi_client_gw3</tabstop>
   <tabstop>wifi_client_gw2</tabstop>
   <tabstop>wifi_client_gw1</tabstop>
+  <tabstop>wifi_client_ssid</tabstop>
+  <tabstop>wifi_client_encryption</tabstop>
   <tabstop>wifi_client_password</tabstop>
+  <tabstop>wifi_client_password_show</tabstop>
+  <tabstop>wifi_client_use_bssid</tabstop>
+  <tabstop>wifi_client_bssid6</tabstop>
+  <tabstop>wifi_client_bssid5</tabstop>
+  <tabstop>wifi_client_bssid4</tabstop>
+  <tabstop>wifi_client_bssid3</tabstop>
+  <tabstop>wifi_client_bssid2</tabstop>
+  <tabstop>wifi_client_bssid1</tabstop>
+  <tabstop>wifi_client_use_mac</tabstop>
+  <tabstop>wifi_client_mac6</tabstop>
+  <tabstop>wifi_client_mac5</tabstop>
+  <tabstop>wifi_client_mac4</tabstop>
+  <tabstop>wifi_client_mac3</tabstop>
+  <tabstop>wifi_client_mac2</tabstop>
+  <tabstop>wifi_client_mac1</tabstop>
+  <tabstop>wifi_ap_ip_configuration</tabstop>
+  <tabstop>wifi_ap_ip4</tabstop>
+  <tabstop>wifi_ap_ip3</tabstop>
+  <tabstop>wifi_ap_ip2</tabstop>
+  <tabstop>wifi_ap_ip1</tabstop>
+  <tabstop>wifi_ap_sub4</tabstop>
+  <tabstop>wifi_ap_sub3</tabstop>
+  <tabstop>wifi_ap_sub2</tabstop>
+  <tabstop>wifi_ap_sub1</tabstop>
+  <tabstop>wifi_ap_gw4</tabstop>
+  <tabstop>wifi_ap_gw3</tabstop>
+  <tabstop>wifi_ap_gw2</tabstop>
+  <tabstop>wifi_ap_gw1</tabstop>
+  <tabstop>wifi_ap_ssid</tabstop>
+  <tabstop>wifi_ap_encryption</tabstop>
+  <tabstop>wifi_ap_password</tabstop>
+  <tabstop>wifi_ap_password_show</tabstop>
+  <tabstop>wifi_ap_channel</tabstop>
+  <tabstop>wifi_ap_hide_ssid</tabstop>
+  <tabstop>wifi_ap_use_mac</tabstop>
+  <tabstop>wifi_ap_mac6</tabstop>
+  <tabstop>wifi_ap_mac5</tabstop>
+  <tabstop>wifi_ap_mac4</tabstop>
+  <tabstop>wifi_ap_mac3</tabstop>
+  <tabstop>wifi_ap_mac2</tabstop>
+  <tabstop>wifi_ap_mac1</tabstop>
+  <tabstop>wifi_mesh_router_ssid</tabstop>
+  <tabstop>wifi_mesh_router_use_bssid</tabstop>
+  <tabstop>wifi_mesh_router_bssid1</tabstop>
+  <tabstop>wifi_mesh_router_bssid2</tabstop>
+  <tabstop>wifi_mesh_router_bssid3</tabstop>
+  <tabstop>wifi_mesh_router_bssid4</tabstop>
+  <tabstop>wifi_mesh_router_bssid5</tabstop>
+  <tabstop>wifi_mesh_router_bssid6</tabstop>
+  <tabstop>wifi_mesh_router_encryption</tabstop>
+  <tabstop>wifi_mesh_router_password</tabstop>
+  <tabstop>wifi_mesh_router_password_show</tabstop>
+  <tabstop>wifi_mesh_root_ip_configuration</tabstop>
+  <tabstop>wifi_mesh_root_ip1</tabstop>
+  <tabstop>wifi_mesh_root_ip2</tabstop>
+  <tabstop>wifi_mesh_root_ip3</tabstop>
+  <tabstop>wifi_mesh_root_ip4</tabstop>
+  <tabstop>wifi_mesh_root_sub1</tabstop>
+  <tabstop>wifi_mesh_root_sub2</tabstop>
+  <tabstop>wifi_mesh_root_sub3</tabstop>
+  <tabstop>wifi_mesh_root_sub4</tabstop>
+  <tabstop>wifi_mesh_root_gw1</tabstop>
+  <tabstop>wifi_mesh_root_gw2</tabstop>
+  <tabstop>wifi_mesh_root_gw3</tabstop>
+  <tabstop>wifi_mesh_root_gw4</tabstop>
+  <tabstop>wifi_mesh_group_ssid_prefix</tabstop>
+  <tabstop>wifi_mesh_group_id1</tabstop>
+  <tabstop>wifi_mesh_group_id2</tabstop>
+  <tabstop>wifi_mesh_group_id3</tabstop>
+  <tabstop>wifi_mesh_group_id4</tabstop>
+  <tabstop>wifi_mesh_group_id5</tabstop>
+  <tabstop>wifi_mesh_group_id6</tabstop>
+  <tabstop>wifi_mesh_gateway_ip1</tabstop>
+  <tabstop>wifi_mesh_gateway_ip2</tabstop>
+  <tabstop>wifi_mesh_gateway_ip3</tabstop>
+  <tabstop>wifi_mesh_gateway_ip4</tabstop>
+  <tabstop>wifi_mesh_gateway_port</tabstop>
   <tabstop>wifi_save</tabstop>
   <tabstop>wifi_show_status</tabstop>
+  <tabstop>wifi_scroll_area</tabstop>
  </tabstops>
  <resources/>
  <connections/>
