@@ -47,7 +47,7 @@ class PiezoBuzzer(PluginBase):
 
         self.beep_edit = QLineEdit()
         self.beep_edit.setText(str(1000))
-        self.beep_label = QLabel('Duration [ms]: ')
+        self.beep_label = QLabel('Duration [ms]:')
         self.beep_button = QPushButton('Send Beep')
         self.beep_layout = QHBoxLayout()
         self.beep_layout.addWidget(self.beep_label)
@@ -57,7 +57,7 @@ class PiezoBuzzer(PluginBase):
         self.morse_edit = QLineEdit()
         self.morse_edit.setText('- .. -. -.- . .-. ..-. --- .-. --. .')
         self.morse_edit.setMaxLength(60)
-        self.morse_label = QLabel('Morse Code: ')
+        self.morse_label = QLabel('Morse Code:')
         self.morse_button = QPushButton('Send Morse Code')
         self.morse_layout = QHBoxLayout()
         self.morse_layout.addWidget(self.morse_label)

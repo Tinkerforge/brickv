@@ -59,7 +59,7 @@ class LaserRangeFinder(PluginBase):
         self.plot_widget_distance = PlotWidget('Distance [cm]', plots_distance)
         self.plot_widget_velocity = PlotWidget('Velocity [m/s]', plots_velocity)
 
-        self.mode_label = QLabel('Mode: ')
+        self.mode_label = QLabel('Mode:')
         self.mode_combo = QComboBox()
         self.mode_combo.addItem("Distance: 1cm resolution, 40m max")
         self.mode_combo.addItem("Velocity: 0.10 m/s resolution, 12.70m/s max")

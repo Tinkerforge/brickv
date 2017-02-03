@@ -63,7 +63,7 @@ class MotorizedPoti(PluginBase):
         self.motor_enable = QCheckBox("Enable Motor")
         self.motor_enable.stateChanged.connect(self.motor_enable_changed)
 
-        self.motor_position_label = MotorPositionLabel('Motor Position: ')
+        self.motor_position_label = MotorPositionLabel('Motor Position:')
 
         hlayout = QHBoxLayout()
         hlayout.addWidget(self.motor_position_label)

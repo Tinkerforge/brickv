@@ -109,7 +109,7 @@ class LoadCell(PluginBase):
         self.spin_average.editingFinished.connect(self.spin_average_finished)
         self.label_average = QLabel('Moving Average Length:')
 
-        self.rate_label = QLabel('Rate: ')
+        self.rate_label = QLabel('Rate:')
         self.rate_combo = QComboBox()
         self.rate_combo.addItem("10 Hz")
         self.rate_combo.addItem("80 Hz")

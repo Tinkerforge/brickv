@@ -55,7 +55,7 @@ class ACCurrent(PluginBase):
         self.spin_average.setValue(50)
         self.spin_average.editingFinished.connect(self.spin_average_finished)
 
-        self.label_range = QLabel('Current Range: ')
+        self.label_range = QLabel('Current Range:')
         self.combo_range = QComboBox()
         self.combo_range.addItem("0") # TODO: Adjust ranges
         self.combo_range.addItem("1")

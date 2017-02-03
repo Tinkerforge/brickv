@@ -93,7 +93,7 @@ class Color(PluginBase):
         self.plot_widget_color_temperature = PlotWidget('Color Temperature [K]', plots_color_temperature, self.clear_graphs_button, extra_key_widgets=[self.color_temperature_frame])
         self.plot_widget_color_temperature.setMinimumSize(250, 200)
 
-        self.gain_label = QLabel('Gain: ')
+        self.gain_label = QLabel('Gain:')
         self.gain_combo = QComboBox()
         self.gain_combo.addItem("1x")
         self.gain_combo.addItem("4x")
@@ -104,7 +104,7 @@ class Color(PluginBase):
 
         self.current_gain_factor = 60
 
-        self.conversion_label = QLabel('Integration Time: ')
+        self.conversion_label = QLabel('Integration Time:')
         self.conversion_combo = QComboBox()
         self.conversion_combo.addItem("2.4 ms")
         self.conversion_combo.addItem("24 ms")

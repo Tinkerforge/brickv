@@ -75,7 +75,7 @@ class IndustrialDual020mA(PluginBase):
         self.sample_rate_label = QLabel('Sample Rate:')
         self.sample_rate_combo = QComboBox()
         self.sample_rate_combo.addItem('240 Hz')
-        self.sample_rate_combo.addItem('60 Hz ')
+        self.sample_rate_combo.addItem('60 Hz')
         self.sample_rate_combo.addItem('15 Hz')
         self.sample_rate_combo.addItem('4 Hz')
         self.sample_rate_combo.currentIndexChanged.connect(self.sample_rate_combo_index_changed)

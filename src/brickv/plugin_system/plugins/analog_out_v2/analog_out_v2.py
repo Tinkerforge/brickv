@@ -43,7 +43,7 @@ class AnalogOutV2(PluginBase):
         
         self.input_voltage_label = VoltageLabel()
         
-        self.output_voltage_label = QLabel('Output Voltage [mV]: ')
+        self.output_voltage_label = QLabel('Output Voltage [mV]:')
         self.output_voltage_box = QSpinBox()
         self.output_voltage_box.setMinimum(0)
         self.output_voltage_box.setMaximum(12000)
