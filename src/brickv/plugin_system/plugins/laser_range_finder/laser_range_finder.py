@@ -296,6 +296,8 @@ class LaserRangeFinder(PluginBase):
         self.frequency.blockSignals(True)
         self.frequency.setChecked(conf.measurement_frequency == 0)
         self.frequency.blockSignals(False)
+
+        self.configuration_changed()
         
     def get_sensor_hardware_version_async(self, value):
         if value == 1:
