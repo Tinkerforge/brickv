@@ -258,8 +258,12 @@ class LaserRangeFinder(PluginBase):
 
         if self.frequency.isChecked():
             frequency = 0
+            for w in self.widgets_velocity:
+                w.hide() 
         else:
             frequency = self.spin_frequency.value()
+            for w in self.widgets_velocity:
+                w.show() 
             
         self.spin_threshold.setDisabled(threshold == 0)
         self.spin_frequency.setDisabled(frequency == 0)
