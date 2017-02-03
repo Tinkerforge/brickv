@@ -31,7 +31,6 @@ from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
-from django.conf.locale import en
 
 def format_distance(distance): # cm
     if distance < 100:
