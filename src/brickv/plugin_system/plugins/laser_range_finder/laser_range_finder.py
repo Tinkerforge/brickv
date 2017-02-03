@@ -69,7 +69,7 @@ class LaserRangeFinder(PluginBase):
         self.mode_combo.currentIndexChanged.connect(self.mode_changed)
         self.mode_combo.hide()
 
-        self.label_average_distance = QLabel('Moving Average Distance:')
+        self.label_average_distance = QLabel('Moving Average for Distance:')
 
         self.spin_average_distance = QSpinBox()
         self.spin_average_distance.setMinimum(0)
@@ -78,7 +78,7 @@ class LaserRangeFinder(PluginBase):
         self.spin_average_distance.setValue(10)
         self.spin_average_distance.editingFinished.connect(self.spin_average_finished)
 
-        self.label_average_velocity = QLabel('Moving Average Velcity:')
+        self.label_average_velocity = QLabel('Moving Average for Velocity:')
 
         self.spin_average_velocity = QSpinBox()
         self.spin_average_velocity.setMinimum(0)
@@ -90,17 +90,17 @@ class LaserRangeFinder(PluginBase):
         self.enable_laser = QCheckBox("Enable Laser")
         self.enable_laser.stateChanged.connect(self.enable_laser_changed)
         
-        self.label_acquisition_count = QLabel('Acquisition_count')
+        self.label_acquisition_count = QLabel('Acquisition Count:')
         self.spin_acquisition_count = QSpinBox()
         self.spin_acquisition_count.setMinimum(1)
         self.spin_acquisition_count.setMaximum(255)
         self.spin_acquisition_count.setSingleStep(1)
         self.spin_acquisition_count.setValue(128)
         
-        self.enable_qick_termination = QCheckBox("Enable Quick Termination")
+        self.enable_qick_termination = QCheckBox("Quick Termination")
         
-        self.label_threshold = QLabel('Threshold')
-        self.threshold = QCheckBox("Enable Automatic Threshold")
+        self.label_threshold = QLabel('Threshold:')
+        self.threshold = QCheckBox("Automatic Threshold")
         
         self.spin_threshold = QSpinBox()
         self.spin_threshold.setMinimum(1)
@@ -108,8 +108,8 @@ class LaserRangeFinder(PluginBase):
         self.spin_threshold.setSingleStep(1)
         self.spin_threshold.setValue(1)
         
-        self.label_frequency = QLabel('Frequency (Hz)')
-        self.frequency = QCheckBox("Enable Automatic Frequency")
+        self.label_frequency = QLabel('Frequency [Hz]:')
+        self.frequency = QCheckBox("Automatic Frequency (Disable for Velocity)")
         
         self.spin_frequency = QSpinBox()
         self.spin_frequency.setMinimum(10)
