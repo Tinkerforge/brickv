@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-03.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -25,6 +25,7 @@ except ValueError:
 GetDistanceCallbackThreshold = namedtuple('DistanceCallbackThreshold', ['option', 'min', 'max'])
 GetVelocityCallbackThreshold = namedtuple('VelocityCallbackThreshold', ['option', 'min', 'max'])
 GetMovingAverage = namedtuple('MovingAverage', ['distance_average_length', 'velocity_average_length'])
+GetConfiguration = namedtuple('Configuration', ['acquisition_count', 'enable_quick_termination', 'threshold_value', 'measurement_frequency'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletLaserRangeFinder(Device):
@@ -59,6 +60,9 @@ class BrickletLaserRangeFinder(Device):
     FUNCTION_ENABLE_LASER = 17
     FUNCTION_DISABLE_LASER = 18
     FUNCTION_IS_LASER_ENABLED = 19
+    FUNCTION_GET_SENSOR_HARDWARE_VERSION = 24
+    FUNCTION_SET_CONFIGURATION = 25
+    FUNCTION_GET_CONFIGURATION = 26
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -71,6 +75,8 @@ class BrickletLaserRangeFinder(Device):
     MODE_VELOCITY_MAX_32MS = 2
     MODE_VELOCITY_MAX_64MS = 3
     MODE_VELOCITY_MAX_127MS = 4
+    VERSION_1 = 1
+    VERSION_3 = 3
 
     def __init__(self, uid, ipcon):
         """
@@ -104,6 +110,9 @@ class BrickletLaserRangeFinder(Device):
         self.response_expected[BrickletLaserRangeFinder.CALLBACK_VELOCITY] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLaserRangeFinder.CALLBACK_DISTANCE_REACHED] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLaserRangeFinder.CALLBACK_VELOCITY_REACHED] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_SENSOR_HARDWARE_VERSION] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_SET_CONFIGURATION] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_CONFIGURATION] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_IDENTITY] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletLaserRangeFinder.CALLBACK_DISTANCE] = 'H'
@@ -277,6 +286,10 @@ class BrickletLaserRangeFinder(Device):
 
     def set_mode(self, mode):
         """
+        .. note::
+         This function is only available if you use the LIDAR-Lite sensor hardware version 1.
+         Use :func:`SetConfiguration` for version 3.
+        
         The LIDAR has five different modes. One mode is for distance
         measurements and four modes are for velocity measurements with
         different ranges.
@@ -319,6 +332,60 @@ class BrickletLaserRangeFinder(Device):
         Returns *true* if the laser is enabled, *false* otherwise.
         """
         return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_IS_LASER_ENABLED, (), '', '?')
+
+    def get_sensor_hardware_version(self):
+        """
+        Returns the LIDAR-Lite hardware version. 
+        
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_SENSOR_HARDWARE_VERSION, (), '', 'B')
+
+    def set_configuration(self, acquisition_count, enable_quick_termination, threshold_value, measurement_frequency):
+        """
+        .. note::
+         This function is only available if you use the LIDAR-Lite sensor hardware version 3.
+         Use :func:`SetMode` for version 1.
+        
+        The **Aquisition Count** defines the number of times the Laser Range Finder Bricklet
+        will integrate acqusitions to find a correlation record peak. With a higher count,
+        the Bricklet can measure longer distances. With a lower count, the rate increases. The
+        allowed values are 1-255.
+        
+        If you set **Enable Quick Termination** to true, the distance measurement will be terminated
+        early if a high peak was already detected. This means that a higher rate can be achieved
+        and long distances can be measured at the same time. However, the chance of false-positive
+        distance measurements increases.
+        
+        Normally the distance is calculated with a detection algorithm that uses peak value,
+        signal strength and noise. You can however also define a fixed **Threshold Value**.
+        Set this to a low value if you want to measure the distance to something that has
+        very little reflection (e.g. glas) and set it to a high value if you want to measure
+        the distance to something with a very high reflection (e.g. mirror). Set this to 0 to
+        use the default algorithm. The other allowed values are 1-255.
+        
+        Set The **Measurement Frequency** in Hz to force a steady measurement rate. If set to 0,
+        the Laser Range Finder Bricklet will use the optimal frequency according to the other
+        configurations and the actual measured distance. Since the rate is not fixed in this case,
+        the velocity measurement is not stable. For a stable velocity measurement you should
+        set a fixed measurement frequency. The lower the frequency, the higher is the resolution
+        of the calculated velocity. The allowed values are 10Hz-500Hz (and 0 to turn the fixed
+        frequency off).
+        
+        The default values for Acquisition Count, Enable Quick Termination, Threshold Value and
+        Measurement Frequency are 128, False, 0 and 0.
+        
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_CONFIGURATION, (acquisition_count, enable_quick_termination, threshold_value, measurement_frequency), 'B ? B H', '')
+
+    def get_configuration(self):
+        """
+        Returns the configuration as set by :func:`SetConfiguration`.
+        
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_CONFIGURATION, (), '', 'B ? B H'))
 
     def get_identity(self):
         """
