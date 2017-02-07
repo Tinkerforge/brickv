@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-03.      #
+# This file was automatically generated on 2017-02-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -85,7 +85,7 @@ class BrickletLaserRangeFinder(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -125,10 +125,11 @@ class BrickletLaserRangeFinder(Device):
         Returns the measured distance. The value has a range of 0 to 4000
         and is given in cm.
         
-        The Laser Range Finder Bricklet knows different modes. Distances
-        are only measured in the distance measurement mode,
-        see :func:`SetMode`. Also the laser has to be enabled, see
-        :func:`EnableLaser`.
+        Sensor hardware version 1 (see :func:`GetSensorHardwareVersion`) cannot
+        measure distance and velocity at the same time. Therefore, the distance mode
+        has to be enabled using :func:`SetMode`.
+        Sensor hardware version 3 can measure distance and velocity at the same
+        time. Also the laser has to be enabled, see :func:`EnableLaser`.
         
         If you want to get the distance periodically, it is recommended to
         use the callback :func:`Distance` and set the period with 
@@ -141,10 +142,13 @@ class BrickletLaserRangeFinder(Device):
         Returns the measured velocity. The value has a range of -12800 to 12700
         and is given in 1/100 m/s.
         
-        The Laser Range Finder Bricklet knows different modes. Velocity 
-        is only measured in the velocity measurement modes, 
-        see :func:`SetMode`. Also the laser has to be enabled, see
-        :func:`EnableLaser`.
+        Sensor hardware version 1 (see :func:`GetSensorHardwareVersion`) cannot
+        measure distance and velocity at the same time. Therefore, the velocity mode
+        has to be enabled using :func:`SetMode`.
+        Sensor hardware version 3 can measure distance and velocity at the same
+        time, but the velocity measurement only produces stables results if a fixed
+        measurement rate (see :func:`SetConfiguration`) is configured. Also the laser
+        has to be enabled, see :func:`EnableLaser`.
         
         If you want to get the velocity periodically, it is recommended to
         use the callback :func:`Velocity` and set the period with 
@@ -287,11 +291,12 @@ class BrickletLaserRangeFinder(Device):
     def set_mode(self, mode):
         """
         .. note::
-         This function is only available if you use the LIDAR-Lite sensor hardware version 1.
-         Use :func:`SetConfiguration` for version 3.
+         This function is only available if you have a LIDAR-Lite sensor with hardware
+         version 1. Use :func:`SetConfiguration` for hardware version 3. You can check
+         the sensor hardware version using :func:`GetSensorHardwareVersion`.
         
-        The LIDAR has five different modes. One mode is for distance
-        measurements and four modes are for velocity measurements with
+        The LIDAR-Lite sensor (hardware version 1) has five different modes. One mode is
+        for distance measurements and four modes are for velocity measurements with
         different ranges.
         
         The following modes are available:
@@ -344,27 +349,28 @@ class BrickletLaserRangeFinder(Device):
     def set_configuration(self, acquisition_count, enable_quick_termination, threshold_value, measurement_frequency):
         """
         .. note::
-         This function is only available if you use the LIDAR-Lite sensor hardware version 3.
-         Use :func:`SetMode` for version 1.
+         This function is only available if you have a LIDAR-Lite sensor with hardware
+         version 3. Use :func:`SetMode` for hardware version 1. You can check
+         the sensor hardware version using :func:`GetSensorHardwareVersion`.
         
         The **Aquisition Count** defines the number of times the Laser Range Finder Bricklet
-        will integrate acqusitions to find a correlation record peak. With a higher count,
+        will integrate acquisitions to find a correlation record peak. With a higher count,
         the Bricklet can measure longer distances. With a lower count, the rate increases. The
         allowed values are 1-255.
         
         If you set **Enable Quick Termination** to true, the distance measurement will be terminated
-        early if a high peak was already detected. This means that a higher rate can be achieved
+        early if a high peak was already detected. This means that a higher measurement rate can be achieved
         and long distances can be measured at the same time. However, the chance of false-positive
         distance measurements increases.
         
         Normally the distance is calculated with a detection algorithm that uses peak value,
         signal strength and noise. You can however also define a fixed **Threshold Value**.
         Set this to a low value if you want to measure the distance to something that has
-        very little reflection (e.g. glas) and set it to a high value if you want to measure
+        very little reflection (e.g. glass) and set it to a high value if you want to measure
         the distance to something with a very high reflection (e.g. mirror). Set this to 0 to
         use the default algorithm. The other allowed values are 1-255.
         
-        Set The **Measurement Frequency** in Hz to force a steady measurement rate. If set to 0,
+        Set the **Measurement Frequency** in Hz to force a fixed measurement rate. If set to 0,
         the Laser Range Finder Bricklet will use the optimal frequency according to the other
         configurations and the actual measured distance. Since the rate is not fixed in this case,
         the velocity measurement is not stable. For a stable velocity measurement you should
@@ -373,7 +379,7 @@ class BrickletLaserRangeFinder(Device):
         frequency off).
         
         The default values for Acquisition Count, Enable Quick Termination, Threshold Value and
-        Measurement Frequency are 128, False, 0 and 0.
+        Measurement Frequency are 128, false, 0 and 0.
         
         .. versionadded:: 2.0.3$nbsp;(Plugin)
         """

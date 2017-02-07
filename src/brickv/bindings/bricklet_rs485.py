@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -25,7 +25,7 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 Read = namedtuple('Read', ['message', 'length'])
-GetConfiguration = namedtuple('Configuration', ['baudrate', 'parity', 'stopbits', 'wordlength', 'duplex'])
+GetConfiguration = namedtuple('Configuration', ['mode', 'modbus_slave_address', 'baudrate', 'parity', 'stopbits', 'wordlength', 'duplex'])
 GetBufferConfig = namedtuple('BufferConfig', ['send_buffer_size', 'receive_buffer_size'])
 GetBufferStatus = namedtuple('BufferStatus', ['send_buffer_used', 'receive_buffer_used'])
 GetErrorCount = namedtuple('ErrorCount', ['overrun_error_count', 'parity_error_count'])
@@ -40,8 +40,9 @@ class BrickletRS485(Device):
     DEVICE_IDENTIFIER = 277
     DEVICE_DISPLAY_NAME = 'RS485 Bricklet'
 
-    CALLBACK_READ_CALLBACK = 19
-    CALLBACK_ERROR_COUNT_CALLBACK = 20
+    CALLBACK_READ_CALLBACK = 20
+    CALLBACK_ERROR_COUNT = 21
+    CALLBACK_MODBUS_READ_COILS_REQUEST = 22
 
     FUNCTION_WRITE = 1
     FUNCTION_READ = 2
@@ -61,6 +62,7 @@ class BrickletRS485(Device):
     FUNCTION_DISABLE_ERROR_COUNT_CALLBACK = 16
     FUNCTION_IS_ERROR_COUNT_CALLBACK_ENABLED = 17
     FUNCTION_GET_ERROR_COUNT = 18
+    FUNCTION_ANSWER_MODBUS_READ_COILS_REQUEST_LOW_LEVEL = 19
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -136,8 +138,10 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_DISABLE_ERROR_COUNT_CALLBACK] = BrickletRS485.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS485.FUNCTION_IS_ERROR_COUNT_CALLBACK_ENABLED] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_ANSWER_MODBUS_READ_COILS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS485.CALLBACK_READ_CALLBACK] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_ERROR_COUNT_CALLBACK] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_COILS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_SET_BOOTLOADER_MODE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_BOOTLOADER_MODE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -152,7 +156,8 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_GET_IDENTITY] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletRS485.CALLBACK_READ_CALLBACK] = '60c B'
-        self.callback_formats[BrickletRS485.CALLBACK_ERROR_COUNT_CALLBACK] = 'I I'
+        self.callback_formats[BrickletRS485.CALLBACK_ERROR_COUNT] = 'I I'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_COILS_REQUEST] = 'B H H'
 
     def write(self, message, length):
         """
@@ -202,25 +207,27 @@ class BrickletRS485(Device):
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_IS_READ_CALLBACK_ENABLED, (), '', '?')
 
-    def set_configuration(self, baudrate, parity, stopbits, wordlength, duplex):
+    def set_configuration(self, mode, modbus_slave_address, baudrate, parity, stopbits, wordlength, duplex):
         """
         Sets the configuration for the RS485 communication. Available options:
         
+        * Mode specifies the operating mode, can be RS485, Modbus RTU Master or Modbus RTU Slave
+        * Modbus slave address specifies the address to be used when in Modbus slave mode.
         * Baudrate between 100 and 2000000 baud.
         * Parity of none, odd or even.
         * Stopbits can be 1 or 2.
         * Word length of 5 to 8.
-        * Half- or Full-Duplex
+        * Half- or Full-Duplex.
         
         The default is: 115200 baud, parity none, 1 stop bit, word length 8, half duplex.
         """
-        self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_CONFIGURATION, (baudrate, parity, stopbits, wordlength, duplex), 'I B B B B', '')
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_CONFIGURATION, (mode, modbus_slave_address, baudrate, parity, stopbits, wordlength, duplex), 'B B I B B B B', '')
 
     def get_configuration(self):
         """
         Returns the configuration as set by :func:`SetConfiguration`.
         """
-        return GetConfiguration(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_CONFIGURATION, (), '', 'I B B B B'))
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_CONFIGURATION, (), '', 'B B I B B B B'))
 
     def set_communication_led_config(self, config):
         """
@@ -241,9 +248,9 @@ class BrickletRS485(Device):
 
     def set_error_led_config(self, config):
         """
-        Sets the error led configuration. 
+        Sets the error LED configuration.
         
-        By default the error LED turns on if there is any error (see :func:`ErrorCountCallback`). 
+        By default the error LED turns on if there is any error (see :func:`ErrorCount`).
         If you call this function with the SHOW ERROR option again, the LED will turn off until the
         next error occurs.
         
@@ -263,12 +270,12 @@ class BrickletRS485(Device):
         """
         Sets the send and receive buffer size in byte. In sum there is
         10240 byte (10kb) buffer available and the minimum buffer size
-        is 1024 byte (1kb) for both. 
+        is 1024 byte (1kb) for both.
         
         The current buffer content is lost if this function is called.
         
         The send buffer holds data that is given by :func:`Write` and
-        can not be written yet. The receive buffer holds data that is 
+        can not be written yet. The receive buffer holds data that is
         received through RS485 but could not yet be send to the
         user, either by :func:`Read` or through :func:`ReadCallback`.
         
@@ -292,7 +299,7 @@ class BrickletRS485(Device):
 
     def enable_error_count_callback(self):
         """
-        Enables the :func:`ErrorCountCallback`.
+        Enables the :func:`ErrorCount`.
         
         By default the callback is disabled.
         """
@@ -300,7 +307,7 @@ class BrickletRS485(Device):
 
     def disable_error_count_callback(self):
         """
-        Disables the :func:`ErrorCountCallback`.
+        Disables the :func:`ErrorCount`.
         
         By default the callback is disabled.
         """
@@ -308,7 +315,7 @@ class BrickletRS485(Device):
 
     def is_error_count_callback_enabled(self):
         """
-        Returns *true* if the :func:`ErrorCountCallback` is enabled,
+        Returns *true* if the :func:`ErrorCount` is enabled,
         *false* otherwise.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_IS_ERROR_COUNT_CALLBACK_ENABLED, (), '', '?')
@@ -318,6 +325,12 @@ class BrickletRS485(Device):
         Returns the current number of overrun and parity errors.
         """
         return GetErrorCount(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_ERROR_COUNT, (), '', 'I I'))
+
+    def answer_modbus_read_coils_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
+        """
+        TODO: English documentation.
+        """
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_ANSWER_MODBUS_READ_COILS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 59B', '')
 
     def get_spitfp_error_count(self):
         """
@@ -448,6 +461,20 @@ class BrickletRS485(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def answer_modbus_read_coils_request(self, request_id, data):
+        stream_total_length = len(data)
+        stream_chunk_offset = 0
+
+        while stream_chunk_offset < stream_total_length:
+            stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 59]
+
+            if len(stream_chunk_data) < 59:
+                stream_chunk_data.extend([0]*(59 - len(stream_chunk_data)))
+
+            self.answer_modbus_read_coils_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
+
+            stream_chunk_offset += 59
 
     def register_callback(self, id, callback):
         """

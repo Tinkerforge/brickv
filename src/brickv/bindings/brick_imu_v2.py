@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -130,6 +130,7 @@ class BrickIMUV2(Device):
     ACCELEROMETER_BANDWIDTH_1000HZ = 7
     SENSOR_FUSION_OFF = 0
     SENSOR_FUSION_ON = 1
+    SENSOR_FUSION_ON_WITHOUT_MAGNETOMETER = 2
 
     def __init__(self, uid, ipcon):
         """
@@ -531,6 +532,11 @@ class BrickIMUV2(Device):
         :func:`GetAcceleration`, :func:`GetMagneticField` and :func:`GetAngularVelocity`
         return uncalibrated and uncompensated sensor data. All other sensor data getters
         return no data.
+        
+        Since firmware version 2.0.6 you can also use a fusion mode without magnetometer.
+        In this mode the calculated orientation is relative (with magnetometer it is
+        absolute with respect to the earth). However, the calculation can't be influenced
+        by spurious magnetic fields.
         
         By default sensor fusion is on.
         
