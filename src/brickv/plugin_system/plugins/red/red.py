@@ -144,7 +144,7 @@ class RED(PluginBase, Ui_RED):
         self.session.expire()
 
     def has_custom_version(self, label_version_name, label_version):
-        label_version_name.setText('Image Version: ')
+        label_version_name.setText('Image Version:')
 
         self.label_version = label_version
 

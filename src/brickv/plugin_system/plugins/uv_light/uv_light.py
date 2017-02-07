@@ -45,7 +45,7 @@ class UVLight(PluginBase):
                                              self.cb_uv_light,
                                              self.increase_error_count)
 
-        self.index_label = IndexLabel('UV Index: ')
+        self.index_label = IndexLabel('UV Index:')
 
         self.current_uv_light = None
 

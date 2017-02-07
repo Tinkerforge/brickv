@@ -31,7 +31,6 @@ from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
-from django.conf.locale import en
 
 def format_distance(distance): # cm
     if distance < 100:
@@ -60,7 +59,7 @@ class LaserRangeFinder(PluginBase):
         self.plot_widget_distance = PlotWidget('Distance [cm]', plots_distance)
         self.plot_widget_velocity = PlotWidget('Velocity [m/s]', plots_velocity)
 
-        self.mode_label = QLabel('Mode: ')
+        self.mode_label = QLabel('Mode:')
         self.mode_combo = QComboBox()
         self.mode_combo.addItem("Distance: 1cm resolution, 40m max")
         self.mode_combo.addItem("Velocity: 0.10 m/s resolution, 12.70m/s max")
@@ -70,7 +69,7 @@ class LaserRangeFinder(PluginBase):
         self.mode_combo.currentIndexChanged.connect(self.mode_changed)
         self.mode_combo.hide()
 
-        self.label_average_distance = QLabel('Moving Average Distance:')
+        self.label_average_distance = QLabel('Moving Average for Distance:')
 
         self.spin_average_distance = QSpinBox()
         self.spin_average_distance.setMinimum(0)
@@ -79,7 +78,7 @@ class LaserRangeFinder(PluginBase):
         self.spin_average_distance.setValue(10)
         self.spin_average_distance.editingFinished.connect(self.spin_average_finished)
 
-        self.label_average_velocity = QLabel('Moving Average Velcity:')
+        self.label_average_velocity = QLabel('Moving Average for Velocity:')
 
         self.spin_average_velocity = QSpinBox()
         self.spin_average_velocity.setMinimum(0)
@@ -91,17 +90,17 @@ class LaserRangeFinder(PluginBase):
         self.enable_laser = QCheckBox("Enable Laser")
         self.enable_laser.stateChanged.connect(self.enable_laser_changed)
         
-        self.label_acquisition_count = QLabel('Acquisition_count')
+        self.label_acquisition_count = QLabel('Acquisition Count:')
         self.spin_acquisition_count = QSpinBox()
         self.spin_acquisition_count.setMinimum(1)
         self.spin_acquisition_count.setMaximum(255)
         self.spin_acquisition_count.setSingleStep(1)
         self.spin_acquisition_count.setValue(128)
         
-        self.enable_qick_termination = QCheckBox("Enable Quick Termination")
+        self.enable_qick_termination = QCheckBox("Quick Termination")
         
-        self.label_threshold = QLabel('Threshold')
-        self.threshold = QCheckBox("Enable Automatic Threshold")
+        self.label_threshold = QLabel('Threshold:')
+        self.threshold = QCheckBox("Automatic Threshold")
         
         self.spin_threshold = QSpinBox()
         self.spin_threshold.setMinimum(1)
@@ -109,8 +108,8 @@ class LaserRangeFinder(PluginBase):
         self.spin_threshold.setSingleStep(1)
         self.spin_threshold.setValue(1)
         
-        self.label_frequency = QLabel('Frequency (Hz)')
-        self.frequency = QCheckBox("Enable Automatic Frequency")
+        self.label_frequency = QLabel('Frequency [Hz]:')
+        self.frequency = QCheckBox("Automatic Frequency (Disable for Velocity)")
         
         self.spin_frequency = QSpinBox()
         self.spin_frequency.setMinimum(10)
@@ -258,8 +257,12 @@ class LaserRangeFinder(PluginBase):
 
         if self.frequency.isChecked():
             frequency = 0
+            for w in self.widgets_velocity:
+                w.hide() 
         else:
             frequency = self.spin_frequency.value()
+            for w in self.widgets_velocity:
+                w.show() 
             
         self.spin_threshold.setDisabled(threshold == 0)
         self.spin_frequency.setDisabled(frequency == 0)
@@ -292,6 +295,8 @@ class LaserRangeFinder(PluginBase):
         self.frequency.blockSignals(True)
         self.frequency.setChecked(conf.measurement_frequency == 0)
         self.frequency.blockSignals(False)
+
+        self.configuration_changed()
         
     def get_sensor_hardware_version_async(self, value):
         if value == 1:

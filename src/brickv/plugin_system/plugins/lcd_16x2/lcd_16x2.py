@@ -49,12 +49,12 @@ class LCD16x2(PluginBase):
         self.lcd.register_callback(self.lcd.CALLBACK_BUTTON_RELEASED,
                                    self.qtcb_released.emit)
 
-        self.line_label = QLabel('Line: ')
+        self.line_label = QLabel('Line:')
         self.line_combo = QComboBox()
         for i  in range(LCD16x2.MAX_LINE):
             self.line_combo.addItem(str(i))
 
-        self.pos_label = QLabel('Position: ')
+        self.pos_label = QLabel('Position:')
         self.pos_combo = QComboBox()
         for i  in range(LCD16x2.MAX_POSITION):
             self.pos_combo.addItem(str(i))
@@ -66,7 +66,7 @@ class LCD16x2(PluginBase):
         self.line_pos_layout.addWidget(self.pos_combo)
         self.line_pos_layout.addStretch()
 
-        self.text_label = QLabel('Text: ')
+        self.text_label = QLabel('Text:')
         self.text_edit = QLineEdit()
         self.text_edit.setMaxLength(LCD16x2.MAX_POSITION)
         self.text_button = QPushButton('Send Text')
@@ -159,7 +159,7 @@ class LCD16x2(PluginBase):
             self.char_save_layout.addStretch()
 
             grid_stretch_layout = QHBoxLayout()
-            grid_stretch_layout.addWidget(QLabel('Custom Character: '))
+            grid_stretch_layout.addWidget(QLabel('Custom Character:'))
             grid_stretch_layout.addLayout(gridlayout)
             grid_stretch_layout.addLayout(self.char_save_layout)
             grid_stretch_layout.addStretch()

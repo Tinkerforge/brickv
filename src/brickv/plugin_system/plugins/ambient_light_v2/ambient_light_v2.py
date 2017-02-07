@@ -78,7 +78,7 @@ class AmbientLightV2(PluginBase):
         plots = [('Illuminance', Qt.red, lambda: self.current_illuminance, '{:.2f} lx (Lux)'.format)]
         self.plot_widget = PlotWidget('Illuminance [lx]', plots, extra_key_widgets=[self.out_of_range_label, self.saturated_label, self.alf])
 
-        self.range_label = QLabel('Illuminance Range: ')
+        self.range_label = QLabel('Illuminance Range:')
         self.range_combo = QComboBox()
         if self.has_clamped_output: # Also means that the unlimited range is available
             self.range_combo.addItem("Unlimited", BrickletAmbientLightV2.ILLUMINANCE_RANGE_UNLIMITED)
@@ -90,7 +90,7 @@ class AmbientLightV2(PluginBase):
         self.range_combo.addItem("0 - 600 lx", BrickletAmbientLightV2.ILLUMINANCE_RANGE_600LUX)
         self.range_combo.currentIndexChanged.connect(self.new_config)
 
-        self.time_label = QLabel('Integration Time: ')
+        self.time_label = QLabel('Integration Time:')
         self.time_combo = QComboBox()
         self.time_combo.addItem("50 ms", BrickletAmbientLightV2.INTEGRATION_TIME_50MS)
         self.time_combo.addItem("100 ms", BrickletAmbientLightV2.INTEGRATION_TIME_100MS)

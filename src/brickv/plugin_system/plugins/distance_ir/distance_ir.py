@@ -154,7 +154,7 @@ class DistanceIR(PluginBase):
                                                  self.cb_analog_value,
                                                  self.increase_error_count)
 
-        self.analog_label = AnalogLabel('Analog Value: ')
+        self.analog_label = AnalogLabel('Analog Value:')
         hlayout = QHBoxLayout()
         self.sample_label = QLabel('Sample Points:')
         self.sample_edit = QLineEdit()

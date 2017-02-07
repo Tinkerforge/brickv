@@ -48,7 +48,7 @@ class PiezoSpeaker(PluginBase):
 
         self.has_stoppable_beep = self.firmware_version >= (2, 0, 2)
 
-        self.frequency_label = QLabel('Frequency (585 - 7100 Hz): ')
+        self.frequency_label = QLabel('Frequency (585 - 7100 Hz):')
         self.frequency_box = QSpinBox()
         self.frequency_box.setMinimum(585)
         self.frequency_box.setMaximum(7100)
@@ -63,7 +63,7 @@ class PiezoSpeaker(PluginBase):
         self.beep_box.setMaximum(2147483647)
         self.beep_box.setValue(1000)
         self.beep_box.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        self.beep_label = QLabel('Duration [ms]: ')
+        self.beep_label = QLabel('Duration [ms]:')
         self.beep_button = QPushButton('Send Beep')
         self.beep_layout = QHBoxLayout()
         self.beep_layout.addWidget(self.beep_label)
@@ -73,7 +73,7 @@ class PiezoSpeaker(PluginBase):
         self.morse_edit = QLineEdit()
         self.morse_edit.setText('- .. -. -.- . .-. ..-. --- .-. --. .')
         self.morse_edit.setMaxLength(60)
-        self.morse_label = QLabel('Morse Code: ')
+        self.morse_label = QLabel('Morse Code:')
         self.morse_button = QPushButton('Send Morse Code')
         self.morse_layout = QHBoxLayout()
         self.morse_layout.addWidget(self.morse_label)

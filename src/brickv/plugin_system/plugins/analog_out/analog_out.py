@@ -35,12 +35,12 @@ class AnalogOut(PluginBase):
 
         self.ao = self.device
 
-        self.voltage_label = QLabel('Output Voltage [mV]: ')
+        self.voltage_label = QLabel('Output Voltage [mV]:')
         self.voltage_box = QSpinBox()
         self.voltage_box.setMinimum(0)
         self.voltage_box.setMaximum(5000)
         self.voltage_box.setSingleStep(1)
-        self.mode_label = QLabel('Mode: ')
+        self.mode_label = QLabel('Mode:')
         self.mode_combo = QComboBox()
         self.mode_combo.addItem("Normal")
         self.mode_combo.addItem("1 kOhm Resistor to GND")
