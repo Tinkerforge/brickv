@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -37,6 +37,7 @@ class BrickletIO16(Device):
 
     CALLBACK_INTERRUPT = 9
     CALLBACK_MONOFLOP_DONE = 12
+
 
     FUNCTION_SET_PORT = 1
     FUNCTION_GET_PORT = 2
@@ -90,6 +91,7 @@ class BrickletIO16(Device):
         self.callback_formats[BrickletIO16.CALLBACK_INTERRUPT] = 'c B B'
         self.callback_formats[BrickletIO16.CALLBACK_MONOFLOP_DONE] = 'c B B'
 
+
     def set_port(self, port, value_mask):
         """
         Sets the output value (high or low) for a port ("a" or "b") with a bitmask
@@ -100,7 +102,7 @@ class BrickletIO16(Device):
         
         .. note::
          This function does nothing for pins that are configured as input.
-         Pull-up resistors can be switched on with :func:`SetPortConfiguration`.
+         Pull-up resistors can be switched on with :func:`Set Port Configuration`.
         """
         self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_PORT, (port, value_mask), 'c B', '')
 
@@ -151,7 +153,7 @@ class BrickletIO16(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the debounce period of the :func:`Interrupt` callback in ms.
+        Sets the debounce period of the :cb:`Interrupt` callback in ms.
         
         For example: If you set this value to 100, you will get the interrupt
         maximal every 100ms. This is necessary if something that bounces is
@@ -163,7 +165,7 @@ class BrickletIO16(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletIO16.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -176,14 +178,14 @@ class BrickletIO16(Device):
         For example: ('a', 129) or ('a', 0b10000001) will enable the interrupt for
         pins 0 and 7 of port a.
         
-        The interrupt is delivered with the callback :func:`Interrupt`.
+        The interrupt is delivered with the :cb:`Interrupt` callback.
         """
         self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_PORT_INTERRUPT, (port, interrupt_mask), 'c B', '')
 
     def get_port_interrupt(self, port):
         """
         Returns the interrupt bitmask for the specified port as set by
-        :func:`SetPortInterrupt`.
+        :func:`Set Port Interrupt`.
         """
         return self.ipcon.send_request(self, BrickletIO16.FUNCTION_GET_PORT_INTERRUPT, (port,), 'c', 'B')
 
@@ -214,7 +216,7 @@ class BrickletIO16(Device):
     def get_port_monoflop(self, port, pin):
         """
         Returns (for the given pin) the current value and the time as set by
-        :func:`SetPortMonoflop` as well as the remaining time until the value flips.
+        :func:`Set Port Monoflop` as well as the remaining time until the value flips.
         
         If the timer is not running currently, the remaining time will be returned
         as 0.
@@ -223,7 +225,7 @@ class BrickletIO16(Device):
 
     def set_selected_values(self, port, selection_mask, value_mask):
         """
-        Sets the output value (high or low) for a port ("a" or "b" with a bitmask, 
+        Sets the output value (high or low) for a port ("a" or "b" with a bitmask,
         according to the selection mask. The bitmask is 8 bit long and a 1 in the
         bitmask means high and a 0 in the bitmask means low.
         
@@ -232,14 +234,14 @@ class BrickletIO16(Device):
         
         .. note::
          This function does nothing for pins that are configured as input.
-         Pull-up resistors can be switched on with :func:`SetPortConfiguration`.
+         Pull-up resistors can be switched on with :func:`Set Port Configuration`.
         """
         self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_SELECTED_VALUES, (port, selection_mask, value_mask), 'c B B', '')
 
     def get_edge_count(self, pin, reset_counter):
         """
         Returns the current value of the edge counter for the selected pin on port A.
-        You can configure the edges that are counted with :func:`SetEdgeCountConfig`.
+        You can configure the edges that are counted with :func:`Set Edge Count Config`.
         
         If you set the reset counter to *true*, the count is set back to 0
         directly after it is read.
@@ -276,7 +278,7 @@ class BrickletIO16(Device):
     def get_edge_count_config(self, pin):
         """
         Returns the edge type and debounce time for the selected pin of port A as set by
-        :func:`SetEdgeCountConfig`.
+        :func:`Set Edge Count Config`.
         
         .. versionadded:: 2.0.3$nbsp;(Plugin)
         """
@@ -284,7 +286,7 @@ class BrickletIO16(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -295,13 +297,13 @@ class BrickletIO16(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletIO16.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 IO16 = BrickletIO16 # for backward compatibility

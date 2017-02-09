@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletMotionDetector(Device):
     CALLBACK_MOTION_DETECTED = 2
     CALLBACK_DETECTION_CYCLE_ENDED = 3
 
+
     FUNCTION_GET_MOTION_DETECTED = 1
     FUNCTION_SET_STATUS_LED_CONFIG = 4
     FUNCTION_GET_STATUS_LED_CONFIG = 5
@@ -65,6 +66,7 @@ class BrickletMotionDetector(Device):
         self.callback_formats[BrickletMotionDetector.CALLBACK_MOTION_DETECTED] = ''
         self.callback_formats[BrickletMotionDetector.CALLBACK_DETECTION_CYCLE_ENDED] = ''
 
+
     def get_motion_detected(self):
         """
         Returns 1 if a motion was detected. How long this returns 1 after a motion
@@ -79,10 +81,10 @@ class BrickletMotionDetector(Device):
 
     def set_status_led_config(self, config):
         """
-        Sets the status led configuration. 
+        Sets the status led configuration.
         
         By default the status LED turns on if a motion is detected and off is no motion
-        is detected. 
+        is detected.
         
         You can also turn the LED permanently on/off.
         
@@ -92,7 +94,7 @@ class BrickletMotionDetector(Device):
 
     def get_status_led_config(self):
         """
-        Returns the configuration as set by :func:`SetStatusLEDConfig`.
+        Returns the configuration as set by :func:`Set Status LED Config`.
         
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
@@ -100,7 +102,7 @@ class BrickletMotionDetector(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -111,13 +113,13 @@ class BrickletMotionDetector(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 MotionDetector = BrickletMotionDetector # for backward compatibility

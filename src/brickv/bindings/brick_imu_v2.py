@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-07.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -51,6 +51,7 @@ class BrickIMUV2(Device):
     CALLBACK_ORIENTATION = 38
     CALLBACK_QUATERNION = 39
     CALLBACK_ALL_DATA = 40
+
 
     FUNCTION_GET_ACCELERATION = 1
     FUNCTION_GET_MAGNETIC_FIELD = 2
@@ -203,42 +204,43 @@ class BrickIMUV2(Device):
         self.callback_formats[BrickIMUV2.CALLBACK_QUATERNION] = 'h h h h'
         self.callback_formats[BrickIMUV2.CALLBACK_ALL_DATA] = '3h 3h 3h 3h 4h 3h 3h b B'
 
+
     def get_acceleration(self):
         """
-        Returns the calibrated acceleration from the accelerometer for the 
+        Returns the calibrated acceleration from the accelerometer for the
         x, y and z axis in 1/100 m/s².
         
-        If you want to get the acceleration periodically, it is recommended 
-        to use the callback :func:`Acceleration` and set the period with 
-        :func:`SetAccelerationPeriod`.
+        If you want to get the acceleration periodically, it is recommended
+        to use the :cb:`Acceleration` callback and set the period with
+        :func:`Set Acceleration Period`.
         """
         return GetAcceleration(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ACCELERATION, (), '', 'h h h'))
 
     def get_magnetic_field(self):
         """
-        Returns the calibrated magnetic field from the magnetometer for the 
+        Returns the calibrated magnetic field from the magnetometer for the
         x, y and z axis in 1/16 µT (Microtesla).
         
-        If you want to get the magnetic field periodically, it is recommended 
-        to use the callback :func:`MagneticField` and set the period with 
-        :func:`SetMagneticFieldPeriod`.
+        If you want to get the magnetic field periodically, it is recommended
+        to use the :cb:`Magnetic Field` callback and set the period with
+        :func:`Set Magnetic Field Period`.
         """
         return GetMagneticField(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_MAGNETIC_FIELD, (), '', 'h h h'))
 
     def get_angular_velocity(self):
         """
-        Returns the calibrated angular velocity from the gyroscope for the 
+        Returns the calibrated angular velocity from the gyroscope for the
         x, y and z axis in 1/16 °/s.
         
-        If you want to get the angular velocity periodically, it is recommended 
-        to use the callback :func:`AngularVelocity` and set the period with 
-        :func:`SetAngularVelocityPeriod`.
+        If you want to get the angular velocity periodically, it is recommended
+        to use the :cb:`Angular Velocity` acallback nd set the period with
+        :func:`Set Angular Velocity Period`.
         """
         return GetAngularVelocity(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ANGULAR_VELOCITY, (), '', 'h h h'))
 
     def get_temperature(self):
         """
-        Returns the temperature of the IMU Brick. The temperature is given in 
+        Returns the temperature of the IMU Brick. The temperature is given in
         °C. The temperature is measured in the core of the BNO055 IC, it is not the
         ambient temperature
         """
@@ -248,8 +250,9 @@ class BrickIMUV2(Device):
         """
         Returns the current orientation (heading, roll, pitch) of the IMU Brick as
         independent Euler angles in 1/16 degree. Note that Euler angles always
-        experience a `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__. We
-        recommend that you use quaternions instead, if you need the absolute orientation.
+        experience a `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
+        We recommend that you use quaternions instead, if you need the absolute
+        orientation.
         
         The rotation angle has the following ranges:
         
@@ -257,9 +260,9 @@ class BrickIMUV2(Device):
         * roll: -90° to +90°
         * pitch: -180° to +180°
         
-        If you want to get the orientation periodically, it is recommended 
-        to use the callback :func:`Orientation` and set the period with 
-        :func:`SetOrientationPeriod`.
+        If you want to get the orientation periodically, it is recommended
+        to use the :cb:`Orientation` callback and set the period with
+        :func:`Set Orientation Period`.
         """
         return GetOrientation(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ORIENTATION, (), '', 'h h h'))
 
@@ -272,11 +275,11 @@ class BrickIMUV2(Device):
         axis of the IMU Brick with the influences of gravity removed.
         
         It is also possible to get the gravity vector with the influence of linear
-        acceleration removed, see :func:`GetGravityVector`.
+        acceleration removed, see :func:`Get Gravity Vector`.
         
-        If you want to get the linear acceleration periodically, it is recommended 
-        to use the callback :func:`LinearAcceleration` and set the period with 
-        :func:`SetLinearAccelerationPeriod`.
+        If you want to get the linear acceleration periodically, it is recommended
+        to use the :cb:`Linear Acceleration` callback and set the period with
+        :func:`Set Linear Acceleration Period`.
         """
         return GetLinearAcceleration(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_LINEAR_ACCELERATION, (), '', 'h h h'))
 
@@ -288,12 +291,12 @@ class BrickIMUV2(Device):
         The gravity vector is the acceleration that occurs due to gravity.
         Influences of additional linear acceleration are removed.
         
-        It is also possible to get the linear acceleration with the influence 
-        of gravity removed, see :func:`GetLinearAcceleration`.
+        It is also possible to get the linear acceleration with the influence
+        of gravity removed, see :func:`Get Linear Acceleration`.
         
-        If you want to get the gravity vector periodically, it is recommended 
-        to use the callback :func:`GravityVector` and set the period with 
-        :func:`SetGravityVectorPeriod`.
+        If you want to get the gravity vector periodically, it is recommended
+        to use the :cb:`Gravity Vector` callback and set the period with
+        :func:`Set Gravity Vector Period`.
         """
         return GetGravityVector(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_GRAVITY_VECTOR, (), '', 'h h h'))
 
@@ -305,9 +308,9 @@ class BrickIMUV2(Device):
         You have to divide the returns values by 16383 (14 bit) to get
         the usual range of -1.0 to +1.0 for quaternions.
         
-        If you want to get the quaternions periodically, it is recommended 
-        to use the callback :func:`Quaternion` and set the period with 
-        :func:`SetQuaternionPeriod`.
+        If you want to get the quaternions periodically, it is recommended
+        to use the :cb:`Quaternion` callback and set the period with
+        :func:`Set Quaternion Period`.
         """
         return GetQuaternion(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_QUATERNION, (), '', 'h h h h'))
 
@@ -315,14 +318,14 @@ class BrickIMUV2(Device):
         """
         Return all of the available data of the IMU Brick.
         
-        * acceleration in 1/100 m/s² (see :func:`GetAcceleration`)
-        * magnetic field in 1/16 µT (see :func:`GetMagneticField`)
-        * angular velocity in 1/16 °/s (see :func:`GetAngularVelocity`)
-        * Euler angles in 1/16 ° (see :func:`GetOrientation`)
-        * quaternion 1/16383 (see :func:`GetQuaternion`)
-        * linear acceleration 1/100 m/s² (see :func:`GetLinearAcceleration`)
-        * gravity vector 1/100 m/s² (see :func:`GetGravityVector`)
-        * temperature in 1 °C (see :func:`GetTemperature`)
+        * acceleration in 1/100 m/s² (see :func:`Get Acceleration`)
+        * magnetic field in 1/16 µT (see :func:`Get Magnetic Field`)
+        * angular velocity in 1/16 °/s (see :func:`Get Angular Velocity`)
+        * Euler angles in 1/16 ° (see :func:`Get Orientation`)
+        * quaternion 1/16383 (see :func:`Get Quaternion`)
+        * linear acceleration 1/100 m/s² (see :func:`Get Linear Acceleration`)
+        * gravity vector 1/100 m/s² (see :func:`Get Gravity Vector`)
+        * temperature in 1 °C (see :func:`Get Temperature`)
         * calibration status (see below)
         
         The calibration status consists of four pairs of two bits. Each pair
@@ -340,9 +343,9 @@ class BrickIMUV2(Device):
         calibration. See the documentation in the calibration window for
         more information regarding the calibration of the IMU Brick.
         
-        If you want to get the data periodically, it is recommended 
-        to use the callback :func:`AllData` and set the period with 
-        :func:`SetAllDataPeriod`.
+        If you want to get the data periodically, it is recommended
+        to use the :cb:`All Data` callback and set the period with
+        :func:`Set All Data Period`.
         """
         return GetAllData(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ALL_DATA, (), '', '3h 3h 3h 3h 4h 3h 3h b B'))
 
@@ -372,7 +375,7 @@ class BrickIMUV2(Device):
         of the IMU Brick.
         
         A return value of *true* means that the calibration could be used and
-        *false* means that it could not be used (this happens if the calibration 
+        *false* means that it could not be used (this happens if the calibration
         status is not "fully calibrated").
         
         This function is used by the calibration window of the Brick Viewer, you
@@ -382,7 +385,7 @@ class BrickIMUV2(Device):
 
     def set_acceleration_period(self, period):
         """
-        Sets the period in ms with which the :func:`Acceleration` callback is triggered
+        Sets the period in ms with which the :cb:`Acceleration` callback is triggered
         periodically. A value of 0 turns the callback off.
         
         The default value is 0.
@@ -391,111 +394,111 @@ class BrickIMUV2(Device):
 
     def get_acceleration_period(self):
         """
-        Returns the period as set by :func:`SetAccelerationPeriod`.
+        Returns the period as set by :func:`Set Acceleration Period`.
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ACCELERATION_PERIOD, (), '', 'I')
 
     def set_magnetic_field_period(self, period):
         """
-        Sets the period in ms with which the :func:`MagneticField` callback is triggered
+        Sets the period in ms with which the :cb:`Magnetic Field` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_MAGNETIC_FIELD_PERIOD, (period,), 'I', '')
 
     def get_magnetic_field_period(self):
         """
-        Returns the period as set by :func:`SetMagneticFieldPeriod`.
+        Returns the period as set by :func:`Set Magnetic Field Period`.
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_MAGNETIC_FIELD_PERIOD, (), '', 'I')
 
     def set_angular_velocity_period(self, period):
         """
-        Sets the period in ms with which the :func:`AngularVelocity` callback is triggered
-        periodically. A value of 0 turns the callback off.
+        Sets the period in ms with which the :cb:`Angular Velocity` callback is
+        triggered periodically. A value of 0 turns the callback off.
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_ANGULAR_VELOCITY_PERIOD, (period,), 'I', '')
 
     def get_angular_velocity_period(self):
         """
-        Returns the period as set by :func:`SetAngularVelocityPeriod`.
+        Returns the period as set by :func:`Set Angular Velocity Period`.
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ANGULAR_VELOCITY_PERIOD, (), '', 'I')
 
     def set_temperature_period(self, period):
         """
-        Sets the period in ms with which the :func:`Temperature` callback is triggered
+        Sets the period in ms with which the :cb:`Temperature` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_TEMPERATURE_PERIOD, (period,), 'I', '')
 
     def get_temperature_period(self):
         """
-        Returns the period as set by :func:`SetTemperaturePeriod`.
+        Returns the period as set by :func:`Set Temperature Period`.
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_TEMPERATURE_PERIOD, (), '', 'I')
 
     def set_orientation_period(self, period):
         """
-        Sets the period in ms with which the :func:`Orientation` callback is triggered
+        Sets the period in ms with which the :cb:`Orientation` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_ORIENTATION_PERIOD, (period,), 'I', '')
 
     def get_orientation_period(self):
         """
-        Returns the period as set by :func:`SetOrientationPeriod`.
+        Returns the period as set by :func:`Set Orientation Period`.
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ORIENTATION_PERIOD, (), '', 'I')
 
     def set_linear_acceleration_period(self, period):
         """
-        Sets the period in ms with which the :func:`LinearAcceleration` callback is triggered
-        periodically. A value of 0 turns the callback off.
+        Sets the period in ms with which the :cb:`Linear Acceleration` callback is
+        triggered periodically. A value of 0 turns the callback off.
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_LINEAR_ACCELERATION_PERIOD, (period,), 'I', '')
 
     def get_linear_acceleration_period(self):
         """
-        Returns the period as set by :func:`SetLinearAccelerationPeriod`.
+        Returns the period as set by :func:`Set Linear Acceleration Period`.
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_LINEAR_ACCELERATION_PERIOD, (), '', 'I')
 
     def set_gravity_vector_period(self, period):
         """
-        Sets the period in ms with which the :func:`GravityVector` callback is triggered
+        Sets the period in ms with which the :cb:`Gravity Vector` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_GRAVITY_VECTOR_PERIOD, (period,), 'I', '')
 
     def get_gravity_vector_period(self):
         """
-        Returns the period as set by :func:`SetGravityVectorPeriod`.
+        Returns the period as set by :func:`Set Gravity Vector Period`.
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_GRAVITY_VECTOR_PERIOD, (), '', 'I')
 
     def set_quaternion_period(self, period):
         """
-        Sets the period in ms with which the :func:`Quaternion` callback is triggered
+        Sets the period in ms with which the :cb:`Quaternion` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_QUATERNION_PERIOD, (period,), 'I', '')
 
     def get_quaternion_period(self):
         """
-        Returns the period as set by :func:`SetQuaternionPeriod`.
+        Returns the period as set by :func:`Set Quaternion Period`.
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_QUATERNION_PERIOD, (), '', 'I')
 
     def set_all_data_period(self, period):
         """
-        Sets the period in ms with which the :func:`AllData` callback is triggered
+        Sets the period in ms with which the :cb:`All Data` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_ALL_DATA_PERIOD, (period,), 'I', '')
 
     def get_all_data_period(self):
         """
-        Returns the period as set by :func:`SetAllDataPeriod`.
+        Returns the period as set by :func:`Set All Data Period`.
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
 
@@ -513,14 +516,13 @@ class BrickIMUV2(Device):
         * Accelerometer Range +/-4G
         * Accelerometer Bandwidth 62.5Hz
         
-        
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_SENSOR_CONFIGURATION, (magnetometer_rate, gyroscope_range, gyroscope_bandwidth, accelerometer_range, accelerometer_bandwidth), 'B B B B B', '')
 
     def get_sensor_configuration(self):
         """
-        Returns the sensor configuration as set by :func:`SetSensorConfiguration`.
+        Returns the sensor configuration as set by :func:`Set Sensor Configuration`.
         
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
@@ -528,10 +530,9 @@ class BrickIMUV2(Device):
 
     def set_sensor_fusion_mode(self, mode):
         """
-        If the fusion mode is turned off, the functions
-        :func:`GetAcceleration`, :func:`GetMagneticField` and :func:`GetAngularVelocity`
-        return uncalibrated and uncompensated sensor data. All other sensor data getters
-        return no data.
+        If the fusion mode is turned off, the functions :func:`Get Acceleration`,
+        :func:`Get Magnetic Field` and :func:`Get Angular Velocity` return uncalibrated
+        and uncompensated sensor data. All other sensor data getters return no data.
         
         Since firmware version 2.0.6 you can also use a fusion mode without magnetometer.
         In this mode the calculated orientation is relative (with magnetometer it is
@@ -546,7 +547,7 @@ class BrickIMUV2(Device):
 
     def get_sensor_fusion_mode(self):
         """
-        Returns the sensor fusion mode as set by :func:`SetSensorFusionMode`.
+        Returns the sensor fusion mode as set by :func:`Set Sensor Fusion Mode`.
         
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
@@ -614,7 +615,7 @@ class BrickIMUV2(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Brick is connected to, 
+        Returns the UID, the UID where the Brick is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -625,13 +626,13 @@ class BrickIMUV2(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 IMUV2 = BrickIMUV2 # for backward compatibility

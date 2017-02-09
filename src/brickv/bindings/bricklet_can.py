@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -37,6 +37,7 @@ class BrickletCAN(Device):
     DEVICE_DISPLAY_NAME = 'CAN Bricklet'
 
     CALLBACK_FRAME_READ = 11
+
 
     FUNCTION_WRITE_FRAME = 1
     FUNCTION_READ_FRAME = 2
@@ -95,6 +96,7 @@ class BrickletCAN(Device):
 
         self.callback_formats[BrickletCAN.CALLBACK_FRAME_READ] = 'B I 8B B'
 
+
     def write_frame(self, frame_type, identifier, data, length):
         """
         Writes a data or remote frame to the write buffer to be transmitted over the
@@ -109,10 +111,10 @@ class BrickletCAN(Device):
         The write buffer can overflow if frames are written to it at a higher rate
         than the Bricklet can transmitted them over the CAN transceiver. This may
         happen if the CAN transceiver is configured as read-only or is using a low baud
-        rate (see :func:`SetConfiguration`). It can also happen if the CAN bus is
+        rate (see :func:`Set Configuration`). It can also happen if the CAN bus is
         congested and the frame cannot be transmitted because it constantly loses
         arbitration or because the CAN transceiver is currently disabled due to a high
-        write error level (see :func:`GetErrorLog`).
+        write error level (see :func:`Get Error Log`).
         """
         return self.ipcon.send_request(self, BrickletCAN.FUNCTION_WRITE_FRAME, (frame_type, identifier, data, length), 'B I 8B B', '?')
 
@@ -128,16 +130,16 @@ class BrickletCAN(Device):
         
         A configurable read filter can be used to define which frames should be
         received by the CAN transceiver and put into the read buffer (see
-        :func:`SetReadFilter`).
+        :func:`Set Read Filter`).
         
         Instead of polling with this function, you can also use callbacks. See the
-        :func:`EnableFrameReadCallback` function and the :func:`FrameRead` callback.
+        :func:`Enable Frame Read Callback` function and the :cb:`Frame Read` callback.
         """
         return ReadFrame(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_READ_FRAME, (), '', '? B I 8B B'))
 
     def enable_frame_read_callback(self):
         """
-        Enables the :func:`FrameRead` callback.
+        Enables the :cb:`Frame Read` callback.
         
         By default the callback is disabled.
         """
@@ -145,7 +147,7 @@ class BrickletCAN(Device):
 
     def disable_frame_read_callback(self):
         """
-        Disables the :func:`FrameRead` callback.
+        Disables the :cb:`Frame Read` callback.
         
         By default the callback is disabled.
         """
@@ -153,7 +155,7 @@ class BrickletCAN(Device):
 
     def is_frame_read_callback_enabled(self):
         """
-        Returns *true* if the :func:`FrameRead` callback is enabled, *false* otherwise.
+        Returns *true* if the :cb:`Frame Read` callback is enabled, *false* otherwise.
         """
         return self.ipcon.send_request(self, BrickletCAN.FUNCTION_IS_FRAME_READ_CALLBACK_ENABLED, (), '', '?')
 
@@ -190,7 +192,7 @@ class BrickletCAN(Device):
 
     def get_configuration(self):
         """
-        Returns the configuration as set by :func:`SetConfiguration`.
+        Returns the configuration as set by :func:`Set Configuration`.
         """
         return GetConfiguration(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_CONFIGURATION, (), '', 'B B i'))
 
@@ -253,7 +255,7 @@ class BrickletCAN(Device):
 
     def get_read_filter(self):
         """
-        Returns the read filter as set by :func:`SetReadFilter`.
+        Returns the read filter as set by :func:`Set Read Filter`.
         """
         return GetReadFilter(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_READ_FILTER, (), '', 'B I I I'))
 
@@ -270,34 +272,34 @@ class BrickletCAN(Device):
         automatically be activated again after the CAN bus is idle for a while.
         
         The write and read error levels are not available in read-only transceiver mode
-        (see :func:`SetConfiguration`) and are reset to 0 as a side effect of changing
+        (see :func:`Set Configuration`) and are reset to 0 as a side effect of changing
         the configuration or the read filter.
         
         The write timeout, read register and buffer overflow counts represents the
         number of these errors:
         
         * A write timeout occurs if a frame could not be transmitted before the
-          configured write timeout expired (see :func:`SetConfiguration`).
+          configured write timeout expired (see :func:`Set Configuration`).
         * A read register overflow occurs if the read register of the CAN transceiver
           still contains the last received frame when the next frame arrives. In this
           case the newly arrived frame is lost. This happens if the CAN transceiver
           receives more frames than the Bricklet can handle. Using the read filter
-          (see :func:`SetReadFilter`) can help to reduce the amount of received frames.
+          (see :func:`Set Read Filter`) can help to reduce the amount of received frames.
           This count is not exact, but a lower bound, because the Bricklet might not
           able detect all overflows if they occur in rapid succession.
         * A read buffer overflow occurs if the read buffer of the Bricklet is already
           full when the next frame should be read from the read register of the CAN
           transceiver. In this case the frame in the read register is lost. This
           happens if the CAN transceiver receives more frames to be added to the read
-          buffer than are removed from the read buffer using the :func:`ReadFrame`
-          function. Using the :func:`FrameRead` callback ensures that the read buffer
+          buffer than are removed from the read buffer using the :func:`Read Frame`
+          function. Using the :cb:`Frame Read` callback ensures that the read buffer
           can not overflow.
         """
         return GetErrorLog(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_ERROR_LOG, (), '', 'B B ? I I I'))
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -308,13 +310,13 @@ class BrickletCAN(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 CAN = BrickletCAN # for backward compatibility

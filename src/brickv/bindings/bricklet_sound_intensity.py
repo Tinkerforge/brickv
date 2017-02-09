@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletSoundIntensity(Device):
 
     CALLBACK_INTENSITY = 8
     CALLBACK_INTENSITY_REACHED = 9
+
 
     FUNCTION_GET_INTENSITY = 1
     FUNCTION_SET_INTENSITY_CALLBACK_PERIOD = 2
@@ -74,27 +75,29 @@ class BrickletSoundIntensity(Device):
         self.callback_formats[BrickletSoundIntensity.CALLBACK_INTENSITY] = 'H'
         self.callback_formats[BrickletSoundIntensity.CALLBACK_INTENSITY_REACHED] = 'H'
 
+
     def get_intensity(self):
         """
         Returns the current sound intensity. The value has a range of
         0 to 4095.
         
-        The value corresponds to the `upper envelop <https://en.wikipedia.org/wiki/Envelope_(waves)>`__
+        The value corresponds to the
+        `upper envelop <https://en.wikipedia.org/wiki/Envelope_(waves)>`__
         of the signal of the microphone capsule.
         
         If you want to get the intensity periodically, it is recommended to use the
-        callback :func:`Intensity` and set the period with 
-        :func:`SetIntensityCallbackPeriod`.
+        :cb:`Intensity` callback and set the period with
+        :func:`Set Intensity Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_INTENSITY, (), '', 'H')
 
     def set_intensity_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Intensity` callback is triggered
+        Sets the period in ms with which the :cb:`Intensity` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Intensity` is only triggered if the intensity has changed since the
-        last triggering.
+        The :cb:`Intensity` callback is only triggered if the intensity has changed
+        since the last triggering.
         
         The default value is 0.
         """
@@ -102,13 +105,13 @@ class BrickletSoundIntensity(Device):
 
     def get_intensity_callback_period(self):
         """
-        Returns the period as set by :func:`SetIntensityCallbackPeriod`.
+        Returns the period as set by :func:`Set Intensity Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_INTENSITY_CALLBACK_PERIOD, (), '', 'I')
 
     def set_intensity_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`IntensityReached` callback. 
+        Sets the thresholds for the :cb:`Intensity Reached` callback.
         
         The following options are possible:
         
@@ -128,7 +131,7 @@ class BrickletSoundIntensity(Device):
 
     def get_intensity_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetIntensityCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Intensity Callback Threshold`.
         """
         return GetIntensityCallbackThreshold(*self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_INTENSITY_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
@@ -136,11 +139,11 @@ class BrickletSoundIntensity(Device):
         """
         Sets the period in ms with which the threshold callback
         
-        * :func:`IntensityReached`
+        * :cb:`Intensity Reached`
         
         is triggered, if the thresholds
         
-        * :func:`SetIntensityCallbackThreshold`
+        * :func:`Set Intensity Callback Threshold`
         
         keeps being reached.
         
@@ -150,13 +153,13 @@ class BrickletSoundIntensity(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -167,13 +170,13 @@ class BrickletSoundIntensity(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 SoundIntensity = BrickletSoundIntensity # for backward compatibility

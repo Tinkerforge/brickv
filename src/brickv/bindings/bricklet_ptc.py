@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -38,6 +38,7 @@ class BrickletPTC(Device):
     CALLBACK_TEMPERATURE_REACHED = 14
     CALLBACK_RESISTANCE = 15
     CALLBACK_RESISTANCE_REACHED = 16
+
 
     FUNCTION_GET_TEMPERATURE = 1
     FUNCTION_GET_RESISTANCE = 2
@@ -106,15 +107,16 @@ class BrickletPTC(Device):
         self.callback_formats[BrickletPTC.CALLBACK_RESISTANCE] = 'H'
         self.callback_formats[BrickletPTC.CALLBACK_RESISTANCE_REACHED] = 'H'
 
+
     def get_temperature(self):
         """
         Returns the temperature of connected sensor. The value
         has a range of -246 to 849 °C and is given in °C/100,
         e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
         
-        If you want to get the temperature periodically, it is recommended 
-        to use the callback :func:`Temperature` and set the period with 
-        :func:`SetTemperatureCallbackPeriod`.
+        If you want to get the temperature periodically, it is recommended
+        to use the :cb:`Temperature` callback and set the period with
+        :func:`Set Temperature Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_TEMPERATURE, (), '', 'i')
 
@@ -127,19 +129,19 @@ class BrickletPTC(Device):
         * Pt100:  resistance = (value * 390) / 32768
         * Pt1000: resistance = (value * 3900) / 32768
         
-        If you want to get the resistance periodically, it is recommended 
-        to use the callback :func:`Resistance` and set the period with 
-        :func:`SetResistanceCallbackPeriod`.
+        If you want to get the resistance periodically, it is recommended
+        to use the :cb:`Resistance` callback and set the period with
+        :func:`Set Resistance Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_RESISTANCE, (), '', 'H')
 
     def set_temperature_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Temperature` callback is triggered
+        Sets the period in ms with which the :cb:`Temperature` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Temperature` is only triggered if the temperature has changed since the
-        last triggering.
+        The :cb:`Temperature` callback is only triggered if the temperature has
+        changed since the last triggering.
         
         The default value is 0.
         """
@@ -147,17 +149,17 @@ class BrickletPTC(Device):
 
     def get_temperature_callback_period(self):
         """
-        Returns the period as set by :func:`SetTemperatureCallbackPeriod`.
+        Returns the period as set by :func:`Set Temperature Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_resistance_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Resistance` callback is triggered
+        Sets the period in ms with which the :cb:`Resistance` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Resistance` is only triggered if the resistance has changed since the
-        last triggering.
+        The :cb:`Resistance` callback is only triggered if the resistance has changed
+        since the last triggering.
         
         The default value is 0.
         """
@@ -165,13 +167,13 @@ class BrickletPTC(Device):
 
     def get_resistance_callback_period(self):
         """
-        Returns the period as set by :func:`SetResistanceCallbackPeriod`.
+        Returns the period as set by :func:`Set Resistance Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_RESISTANCE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_temperature_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`TemperatureReached` callback. 
+        Sets the thresholds for the :cb:`Temperature Reached` callback.
         
         The following options are possible:
         
@@ -191,13 +193,13 @@ class BrickletPTC(Device):
 
     def get_temperature_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetTemperatureCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Temperature Callback Threshold`.
         """
         return GetTemperatureCallbackThreshold(*self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c i i'))
 
     def set_resistance_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`ResistanceReached` callback. 
+        Sets the thresholds for the :cb:`Resistance Reached` callback.
         
         The following options are possible:
         
@@ -217,7 +219,7 @@ class BrickletPTC(Device):
 
     def get_resistance_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetResistanceCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Resistance Callback Threshold`.
         """
         return GetResistanceCallbackThreshold(*self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_RESISTANCE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
@@ -225,13 +227,13 @@ class BrickletPTC(Device):
         """
         Sets the period in ms with which the threshold callback
         
-        * :func:`TemperatureReached`,
-        * :func:`ResistanceReached`
+        * :cb:`Temperature Reached`,
+        * :cb:`Resistance Reached`
         
         is triggered, if the threshold
         
-        * :func:`SetTemperatureCallbackThreshold`,
-        * :func:`SetResistanceCallbackThreshold`
+        * :func:`Set Temperature Callback Threshold`,
+        * :func:`Set Resistance Callback Threshold`
         
         keeps being reached.
         
@@ -241,7 +243,7 @@ class BrickletPTC(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -258,14 +260,14 @@ class BrickletPTC(Device):
 
     def get_noise_rejection_filter(self):
         """
-        Returns the noise rejection filter option as set by 
-        :func:`SetNoiseRejectionFilter`
+        Returns the noise rejection filter option as set by
+        :func:`Set Noise Rejection Filter`
         """
         return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_NOISE_REJECTION_FILTER, (), '', 'B')
 
     def is_sensor_connected(self):
         """
-        Returns *true* if the sensor is connected correctly. 
+        Returns *true* if the sensor is connected correctly.
         
         If this function
         returns *false*, there is either no Pt100 or Pt1000 sensor connected,
@@ -285,13 +287,13 @@ class BrickletPTC(Device):
 
     def get_wire_mode(self):
         """
-        Returns the wire mode as set by :func:`SetWireMode`
+        Returns the wire mode as set by :func:`Set Wire Mode`
         """
         return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_WIRE_MODE, (), '', 'B')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -302,13 +304,13 @@ class BrickletPTC(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 PTC = BrickletPTC # for backward compatibility

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -38,6 +38,7 @@ class BrickServo(Device):
     CALLBACK_UNDER_VOLTAGE = 26
     CALLBACK_POSITION_REACHED = 27
     CALLBACK_VELOCITY_REACHED = 28
+
 
     FUNCTION_ENABLE = 1
     FUNCTION_DISABLE = 2
@@ -134,6 +135,7 @@ class BrickServo(Device):
         self.callback_formats[BrickServo.CALLBACK_POSITION_REACHED] = 'B h'
         self.callback_formats[BrickServo.CALLBACK_VELOCITY_REACHED] = 'B h'
 
+
     def enable(self, servo_num):
         """
         Enables a servo (0 to 6). If a servo is enabled, the configured position,
@@ -156,27 +158,27 @@ class BrickServo(Device):
 
     def set_position(self, servo_num, position):
         """
-        Sets the position in °/100 for the specified servo. 
+        Sets the position in °/100 for the specified servo.
         
         The default range of the position is -9000 to 9000, but it can be specified
-        according to your servo with :func:`SetDegree`.
+        according to your servo with :func:`Set Degree`.
         
         If you want to control a linear servo or RC brushless motor controller or
         similar with the Servo Brick, you can also define lengths or speeds with
-        :func:`SetDegree`.
+        :func:`Set Degree`.
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_POSITION, (servo_num, position), 'B h', '')
 
     def get_position(self, servo_num):
         """
-        Returns the position of the specified servo as set by :func:`SetPosition`.
+        Returns the position of the specified servo as set by :func:`Set Position`.
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_POSITION, (servo_num,), 'B', 'h')
 
     def get_current_position(self, servo_num):
         """
         Returns the *current* position of the specified servo. This may not be the
-        value of :func:`SetPosition` if the servo is currently approaching a
+        value of :func:`Set Position` if the servo is currently approaching a
         position goal.
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_CURRENT_POSITION, (servo_num,), 'B', 'h')
@@ -184,7 +186,7 @@ class BrickServo(Device):
     def set_velocity(self, servo_num, velocity):
         """
         Sets the maximum velocity of the specified servo in °/100s. The velocity
-        is accelerated according to the value set by :func:`SetAcceleration`.
+        is accelerated according to the value set by :func:`Set Acceleration`.
         
         The minimum velocity is 0 (no movement) and the maximum velocity is 65535.
         With a value of 65535 the position will be set immediately (no velocity).
@@ -195,14 +197,14 @@ class BrickServo(Device):
 
     def get_velocity(self, servo_num):
         """
-        Returns the velocity of the specified servo as set by :func:`SetVelocity`.
+        Returns the velocity of the specified servo as set by :func:`Set Velocity`.
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_VELOCITY, (servo_num,), 'B', 'H')
 
     def get_current_velocity(self, servo_num):
         """
         Returns the *current* velocity of the specified servo. This may not be the
-        value of :func:`SetVelocity` if the servo is currently approaching a
+        value of :func:`Set Velocity` if the servo is currently approaching a
         velocity goal.
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_CURRENT_VELOCITY, (servo_num,), 'B', 'H')
@@ -220,15 +222,15 @@ class BrickServo(Device):
 
     def get_acceleration(self, servo_num):
         """
-        Returns the acceleration for the specified servo as set by 
-        :func:`SetAcceleration`.
+        Returns the acceleration for the specified servo as set by
+        :func:`Set Acceleration`.
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_ACCELERATION, (servo_num,), 'B', 'H')
 
     def set_output_voltage(self, voltage):
         """
         Sets the output voltages with which the servos are driven in mV.
-        The minimum output voltage is 2000mV and the maximum output voltage is 
+        The minimum output voltage is 2000mV and the maximum output voltage is
         9000mV.
         
         .. note::
@@ -242,7 +244,7 @@ class BrickServo(Device):
 
     def get_output_voltage(self):
         """
-        Returns the output voltage as specified by :func:`SetOutputVoltage`.
+        Returns the output voltage as specified by :func:`Set Output Voltage`.
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_OUTPUT_VOLTAGE, (), '', 'H')
 
@@ -250,7 +252,7 @@ class BrickServo(Device):
         """
         Sets the minimum and maximum pulse width of the specified servo in µs.
         
-        Usually, servos are controlled with a 
+        Usually, servos are controlled with a
         `PWM <https://en.wikipedia.org/wiki/Pulse-width_modulation>`__, whereby the
         length of the pulse controls the position of the servo. Every servo has
         different minimum and maximum pulse widths, these can be specified with
@@ -263,7 +265,7 @@ class BrickServo(Device):
         Both values have a range from 1 to 65535 (unsigned 16-bit integer). The
         minimum must be smaller than the maximum.
         
-        The default values are 1000µs (1ms) and 2000µs (2ms) for minimum and 
+        The default values are 1000µs (1ms) and 2000µs (2ms) for minimum and
         maximum pulse width.
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_PULSE_WIDTH, (servo_num, min, max), 'B H H', '')
@@ -271,7 +273,7 @@ class BrickServo(Device):
     def get_pulse_width(self, servo_num):
         """
         Returns the minimum and maximum pulse width for the specified servo as set by
-        :func:`SetPulseWidth`.
+        :func:`Set Pulse Width`.
         """
         return GetPulseWidth(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_PULSE_WIDTH, (servo_num,), 'B', 'H H'))
 
@@ -282,8 +284,8 @@ class BrickServo(Device):
         
         This only specifies the abstract values between which the minimum and maximum
         pulse width is scaled. For example: If you specify a pulse width of 1000µs
-        to 2000µs and a degree range of -90° to 90°, a call of :func:`SetPosition`
-        with 0 will result in a pulse width of 1500µs 
+        to 2000µs and a degree range of -90° to 90°, a call of :func:`Set Position`
+        with 0 will result in a pulse width of 1500µs
         (-90° = 1000µs, 90° = 2000µs, etc.).
         
         Possible usage:
@@ -294,16 +296,16 @@ class BrickServo(Device):
           position. In this case you can set the minimum to 0 and the maximum to 22000.
         * You have a linear servo with a drive length of 20cm, In this case you could
           set the minimum to 0 and the maximum to 20000. Now you can set the Position
-          with :func:`SetPosition` with a resolution of cm/100. Also the velocity will
+          with :func:`Set Position` with a resolution of cm/100. Also the velocity will
           have a resolution of cm/100s and the acceleration will have a resolution of
           cm/100s².
         * You don't care about units and just want the highest possible resolution. In
           this case you should set the minimum to -32767 and the maximum to 32767.
         * You have a brushless motor with a maximum speed of 10000 rpm and want to
           control it with a RC brushless motor controller. In this case you can set the
-          minimum to 0 and the maximum to 10000. :func:`SetPosition` now controls the rpm.
+          minimum to 0 and the maximum to 10000. :func:`Set Position` now controls the rpm.
         
-        Both values have a possible range from -32767 to 32767 
+        Both values have a possible range from -32767 to 32767
         (signed 16-bit integer). The minimum must be smaller than the maximum.
         
         The default values are -9000 and 9000 for the minimum and maximum degree.
@@ -313,7 +315,7 @@ class BrickServo(Device):
     def get_degree(self, servo_num):
         """
         Returns the minimum and maximum degree for the specified servo as set by
-        :func:`SetDegree`.
+        :func:`Set Degree`.
         """
         return GetDegree(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_DEGREE, (servo_num,), 'B', 'h h'))
 
@@ -321,15 +323,15 @@ class BrickServo(Device):
         """
         Sets the period of the specified servo in µs.
         
-        Usually, servos are controlled with a 
+        Usually, servos are controlled with a
         `PWM <https://en.wikipedia.org/wiki/Pulse-width_modulation>`__. Different
-        servos expect PWMs with different periods. Most servos run well with a 
+        servos expect PWMs with different periods. Most servos run well with a
         period of about 20ms.
         
         If your servo comes with a datasheet that specifies a period, you should
         set it accordingly. If you don't have a datasheet and you have no idea
         what the correct period is, the default value (19.5ms) will most likely
-        work fine. 
+        work fine.
         
         The minimum possible period is 1µs and the maximum is 65535µs.
         
@@ -339,7 +341,7 @@ class BrickServo(Device):
 
     def get_period(self, servo_num):
         """
-        Returns the period for the specified servo as set by :func:`SetPeriod`.
+        Returns the period for the specified servo as set by :func:`Set Period`.
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_PERIOD, (servo_num,), 'B', 'H')
 
@@ -358,7 +360,7 @@ class BrickServo(Device):
     def get_stack_input_voltage(self):
         """
         Returns the stack input voltage in mV. The stack input voltage is the
-        voltage that is supplied via the stack, i.e. it is given by a 
+        voltage that is supplied via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_STACK_INPUT_VOLTAGE, (), '', 'H')
@@ -366,10 +368,10 @@ class BrickServo(Device):
     def get_external_input_voltage(self):
         """
         Returns the external input voltage in mV. The external input voltage is
-        given via the black power input connector on the Servo Brick. 
-         
+        given via the black power input connector on the Servo Brick.
+        
         If there is an external input voltage and a stack input voltage, the motors
-        will be driven by the external input voltage. If there is only a stack 
+        will be driven by the external input voltage. If there is only a stack
         voltage present, the motors will be driven by this voltage.
         
         .. warning::
@@ -382,10 +384,10 @@ class BrickServo(Device):
 
     def set_minimum_voltage(self, voltage):
         """
-        Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
+        Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
         is triggered. The minimum possible value that works with the Servo Brick is 5V.
         You can use this function to detect the discharge of a battery that is used
-        to drive the stepper motor. If you have a fixed power supply, you likely do 
+        to drive the stepper motor. If you have a fixed power supply, you likely do
         not need this functionality.
         
         The default value is 5V (5000mV).
@@ -394,13 +396,13 @@ class BrickServo(Device):
 
     def get_minimum_voltage(self):
         """
-        Returns the minimum voltage as set by :func:`SetMinimumVoltage`
+        Returns the minimum voltage as set by :func:`Set Minimum Voltage`
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 'H')
 
     def enable_position_reached_callback(self):
         """
-        Enables the :func:`PositionReached` callback.
+        Enables the :cb:`Position Reached` callback.
         
         Default is disabled.
         
@@ -410,7 +412,7 @@ class BrickServo(Device):
 
     def disable_position_reached_callback(self):
         """
-        Disables the :func:`PositionReached` callback.
+        Disables the :cb:`Position Reached` callback.
         
         Default is disabled.
         
@@ -420,7 +422,7 @@ class BrickServo(Device):
 
     def is_position_reached_callback_enabled(self):
         """
-        Returns *true* if :func:`PositionReached` callback is enabled, *false* otherwise.
+        Returns *true* if :cb:`Position Reached` callback is enabled, *false* otherwise.
         
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
@@ -428,7 +430,7 @@ class BrickServo(Device):
 
     def enable_velocity_reached_callback(self):
         """
-        Enables the :func:`VelocityReached` callback.
+        Enables the :cb:`Velocity Reached` callback.
         
         Default is disabled.
         
@@ -438,7 +440,7 @@ class BrickServo(Device):
 
     def disable_velocity_reached_callback(self):
         """
-        Disables the :func:`VelocityReached` callback.
+        Disables the :cb:`Velocity Reached` callback.
         
         Default is disabled.
         
@@ -448,7 +450,7 @@ class BrickServo(Device):
 
     def is_velocity_reached_callback_enabled(self):
         """
-        Returns *true* if :func:`VelocityReached` callback is enabled, *false* otherwise.
+        Returns *true* if :cb:`Velocity Reached` callback is enabled, *false* otherwise.
         
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
@@ -522,7 +524,7 @@ class BrickServo(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Brick is connected to, 
+        Returns the UID, the UID where the Brick is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -533,13 +535,13 @@ class BrickServo(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 Servo = BrickServo # for backward compatibility

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -38,6 +38,7 @@ class BrickletDistanceIR(Device):
     CALLBACK_ANALOG_VALUE = 16
     CALLBACK_DISTANCE_REACHED = 17
     CALLBACK_ANALOG_VALUE_REACHED = 18
+
 
     FUNCTION_GET_DISTANCE = 1
     FUNCTION_GET_ANALOG_VALUE = 2
@@ -95,6 +96,7 @@ class BrickletDistanceIR(Device):
         self.callback_formats[BrickletDistanceIR.CALLBACK_DISTANCE_REACHED] = 'H'
         self.callback_formats[BrickletDistanceIR.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
 
+
     def get_distance(self):
         """
         Returns the distance measured by the sensor. The value is in mm and possible
@@ -102,8 +104,8 @@ class BrickletDistanceIR(Device):
         selected IR sensor.
         
         If you want to get the distance periodically, it is recommended to use the
-        callback :func:`Distance` and set the period with 
-        :func:`SetDistanceCallbackPeriod`.
+        :cb:`Distance` callback and set the period with
+        :func:`Set Distance Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_DISTANCE, (), '', 'H')
 
@@ -113,14 +115,14 @@ class BrickletDistanceIR(Device):
         The value is between 0 and 4095.
         
         .. note::
-         The value returned by :func:`GetDistance` is averaged over several samples
-         to yield less noise, while :func:`GetAnalogValue` gives back raw
-         unfiltered analog values. The only reason to use :func:`GetAnalogValue` is,
+         The value returned by :func:`Get Distance` is averaged over several samples
+         to yield less noise, while :func:`Get Analog Value` gives back raw
+         unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
          if you need the full resolution of the analog-to-digital converter.
         
-        If you want the analog value periodically, it is recommended to use the 
-        callback :func:`AnalogValue` and set the period with 
-        :func:`SetAnalogValueCallbackPeriod`.
+        If you want the analog value periodically, it is recommended to use the
+        :cb:`Analog Value` callback and set the period with
+        :func:`Set Analog Value Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
 
@@ -150,16 +152,16 @@ class BrickletDistanceIR(Device):
     def get_sampling_point(self, position):
         """
         Returns the distance to a sampling point position as set by
-        :func:`SetSamplingPoint`.
+        :func:`Set Sampling Point`.
         """
         return self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_SAMPLING_POINT, (position,), 'B', 'H')
 
     def set_distance_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Distance` callback is triggered
+        Sets the period in ms with which the :cb:`Distance` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Distance` is only triggered if the distance has changed since the
+        The :cb:`Distance` callback is only triggered if the distance has changed since the
         last triggering.
         
         The default value is 0.
@@ -168,17 +170,17 @@ class BrickletDistanceIR(Device):
 
     def get_distance_callback_period(self):
         """
-        Returns the period as set by :func:`SetDistanceCallbackPeriod`.
+        Returns the period as set by :func:`Set Distance Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_analog_value_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`AnalogValue` callback is triggered
+        Sets the period in ms with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`AnalogValue` is only triggered if the analog value has changed since the
-        last triggering.
+        The :cb:`Analog Value` callback is only triggered if the analog value has
+        changed since the last triggering.
         
         The default value is 0.
         """
@@ -186,13 +188,13 @@ class BrickletDistanceIR(Device):
 
     def get_analog_value_callback_period(self):
         """
-        Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
+        Returns the period as set by :func:`Set Analog Value Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_distance_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`DistanceReached` callback. 
+        Sets the thresholds for the :cb:`Distance Reached` callback.
         
         The following options are possible:
         
@@ -212,13 +214,13 @@ class BrickletDistanceIR(Device):
 
     def get_distance_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetDistanceCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Distance Callback Threshold`.
         """
         return GetDistanceCallbackThreshold(*self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`AnalogValueReached` callback. 
+        Sets the thresholds for the :cb:`Analog Value Reached` callback.
         
         The following options are possible:
         
@@ -238,7 +240,7 @@ class BrickletDistanceIR(Device):
 
     def get_analog_value_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Analog Value Callback Threshold`.
         """
         return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
@@ -246,13 +248,13 @@ class BrickletDistanceIR(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-        * :func:`DistanceReached`,
-        * :func:`AnalogValueReached`
+        * :cb:`Distance Reached`,
+        * :cb:`Analog Value Reached`
         
         are triggered, if the thresholds
         
-        * :func:`SetDistanceCallbackThreshold`,
-        * :func:`SetAnalogValueCallbackThreshold`
+        * :func:`Set Distance Callback Threshold`,
+        * :func:`Set Analog Value Callback Threshold`
         
         keep being reached.
         
@@ -262,13 +264,13 @@ class BrickletDistanceIR(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -279,13 +281,13 @@ class BrickletDistanceIR(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 DistanceIR = BrickletDistanceIR # for backward compatibility

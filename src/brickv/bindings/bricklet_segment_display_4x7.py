@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletSegmentDisplay4x7(Device):
 
     CALLBACK_COUNTER_FINISHED = 5
 
+
     FUNCTION_SET_SEGMENTS = 1
     FUNCTION_GET_SEGMENTS = 2
     FUNCTION_START_COUNTER = 3
@@ -60,6 +61,7 @@ class BrickletSegmentDisplay4x7(Device):
 
         self.callback_formats[BrickletSegmentDisplay4x7.CALLBACK_COUNTER_FINISHED] = ''
 
+
     def set_segments(self, segments, brightness, colon):
         """
         The 7-segment display can be set with bitmaps. Every bit controls one
@@ -80,8 +82,8 @@ class BrickletSegmentDisplay4x7(Device):
 
     def get_segments(self):
         """
-        Returns the segment, brightness and color data as set by 
-        :func:`SetSegments`.
+        Returns the segment, brightness and color data as set by
+        :func:`Set Segments`.
         """
         return GetSegments(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_SEGMENTS, (), '', '4B B ?'))
 
@@ -95,12 +97,12 @@ class BrickletSegmentDisplay4x7(Device):
         *length* to 1000, a counter that goes from 0 to 100 with one second
         pause between each increment will be started.
         
-        The maximum values for *from*, *to* and *increment* is 9999, 
+        The maximum values for *from*, *to* and *increment* is 9999,
         the minimum value is -999.
         
         Using a negative increment allows to count backwards.
         
-        You can stop the counter at every time by calling :func:`SetSegments`.
+        You can stop the counter at every time by calling :func:`Set Segments`.
         """
         self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_START_COUNTER, (value_from, value_to, increment, length), 'h h h I', '')
 
@@ -114,7 +116,7 @@ class BrickletSegmentDisplay4x7(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -125,13 +127,13 @@ class BrickletSegmentDisplay4x7(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 SegmentDisplay4x7 = BrickletSegmentDisplay4x7 # for backward compatibility

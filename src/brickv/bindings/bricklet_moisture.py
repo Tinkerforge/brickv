@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletMoisture(Device):
 
     CALLBACK_MOISTURE = 8
     CALLBACK_MOISTURE_REACHED = 9
+
 
     FUNCTION_GET_MOISTURE_VALUE = 1
     FUNCTION_SET_MOISTURE_CALLBACK_PERIOD = 2
@@ -78,25 +79,26 @@ class BrickletMoisture(Device):
         self.callback_formats[BrickletMoisture.CALLBACK_MOISTURE] = 'H'
         self.callback_formats[BrickletMoisture.CALLBACK_MOISTURE_REACHED] = 'H'
 
+
     def get_moisture_value(self):
         """
         Returns the current moisture value. The value has a range of
         0 to 4095. A small value corresponds to little moisture, a big
         value corresponds to much moisture.
         
-        If you want to get the moisture value periodically, it is recommended 
-        to use the callback :func:`Moisture` and set the period with 
-        :func:`SetMoistureCallbackPeriod`.
+        If you want to get the moisture value periodically, it is recommended
+        to use the :cb:`Moisture` callback and set the period with
+        :func:`Set Moisture Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_MOISTURE_VALUE, (), '', 'H')
 
     def set_moisture_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Moisture` callback is triggered
+        Sets the period in ms with which the :cb:`Moisture` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Moisture` is only triggered if the moisture value has changed since the
-        last triggering.
+        The :cb:`Moisture` callback is only triggered if the moisture value has changed
+        since the last triggering.
         
         The default value is 0.
         """
@@ -104,13 +106,13 @@ class BrickletMoisture(Device):
 
     def get_moisture_callback_period(self):
         """
-        Returns the period as set by :func:`SetMoistureCallbackPeriod`.
+        Returns the period as set by :func:`Set Moisture Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_MOISTURE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_moisture_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`MoistureReached` callback. 
+        Sets the thresholds for the :cb:`Moisture Reached` callback.
         
         The following options are possible:
         
@@ -130,7 +132,7 @@ class BrickletMoisture(Device):
 
     def get_moisture_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetMoistureCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Moisture Callback Threshold`.
         """
         return GetMoistureCallbackThreshold(*self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_MOISTURE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
@@ -138,11 +140,11 @@ class BrickletMoisture(Device):
         """
         Sets the period in ms with which the threshold callback
         
-        * :func:`MoistureReached`
+        * :cb:`Moisture Reached`
         
         is triggered, if the threshold
         
-        * :func:`SetMoistureCallbackThreshold`
+        * :func:`Set Moisture Callback Threshold`
         
         keeps being reached.
         
@@ -152,7 +154,7 @@ class BrickletMoisture(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -172,13 +174,13 @@ class BrickletMoisture(Device):
 
     def get_moving_average(self):
         """
-        Returns the length moving average as set by :func:`SetMovingAverage`.
+        Returns the length moving average as set by :func:`Set Moving Average`.
         """
         return self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -189,13 +191,13 @@ class BrickletMoisture(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 Moisture = BrickletMoisture # for backward compatibility

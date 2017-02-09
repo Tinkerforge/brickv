@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletHallEffect(Device):
     DEVICE_DISPLAY_NAME = 'Hall Effect Bricklet'
 
     CALLBACK_EDGE_COUNT = 10
+
 
     FUNCTION_GET_VALUE = 1
     FUNCTION_GET_EDGE_COUNT = 2
@@ -74,6 +75,7 @@ class BrickletHallEffect(Device):
 
         self.callback_formats[BrickletHallEffect.CALLBACK_EDGE_COUNT] = 'I ?'
 
+
     def get_value(self):
         """
         Returns *true* if a magnetic field of 35 Gauss (3.5mT) or greater is detected.
@@ -84,7 +86,7 @@ class BrickletHallEffect(Device):
         """
         Returns the current value of the edge counter. You can configure
         edge type (rising, falling, both) that is counted with
-        :func:`SetEdgeCountConfig`.
+        :func:`Set Edge Count Config`.
         
         If you set the reset counter to *true*, the count is set back to 0
         directly after it is read.
@@ -93,7 +95,7 @@ class BrickletHallEffect(Device):
 
     def set_edge_count_config(self, edge_type, debounce):
         """
-        The edge type parameter configures if rising edges, falling edges or 
+        The edge type parameter configures if rising edges, falling edges or
         both are counted. Possible edge types are:
         
         * 0 = rising (default)
@@ -119,7 +121,7 @@ class BrickletHallEffect(Device):
 
     def get_edge_count_config(self):
         """
-        Returns the edge type and debounce time as set by :func:`SetEdgeCountConfig`.
+        Returns the edge type and debounce time as set by :func:`Set Edge Count Config`.
         """
         return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT_CONFIG, (), '', 'B B'))
 
@@ -137,17 +139,17 @@ class BrickletHallEffect(Device):
 
     def get_edge_interrupt(self):
         """
-        Returns the edges as set by :func:`SetEdgeInterrupt`.
+        Returns the edges as set by :func:`Set Edge Interrupt`.
         """
         return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_INTERRUPT, (), '', 'I')
 
     def set_edge_count_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`EdgeCount` callback is triggered
+        Sets the period in ms with which the :cb:`Edge Count` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`EdgeCount` is only triggered if the edge count has changed since the
-        last triggering.
+        The :cb:`Edge Count` callback is only triggered if the edge count has changed
+        since the last triggering.
         
         The default value is 0.
         """
@@ -155,21 +157,22 @@ class BrickletHallEffect(Device):
 
     def get_edge_count_callback_period(self):
         """
-        Returns the period as set by :func:`SetEdgeCountCallbackPeriod`.
+        Returns the period as set by :func:`Set Edge Count Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT_CALLBACK_PERIOD, (), '', 'I')
 
     def edge_interrupt(self):
         """
         This callback is triggered every n-th count, as configured with
-        :func:`SetEdgeInterrupt`. The parameters are the
-        current count and the current value (see :func:`GetValue` and :func:`GetEdgeCount`).
+        :func:`Set Edge Interrupt`. The parameters are the
+        current count and the current value (see :func:`Get Value` and
+        :func:`Get Edge Count`).
         """
         return EdgeInterrupt(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_EDGE_INTERRUPT, (), '', 'I ?'))
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -180,13 +183,13 @@ class BrickletHallEffect(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 HallEffect = BrickletHallEffect # for backward compatibility

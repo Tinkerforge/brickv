@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletPiezoSpeaker(Device):
     CALLBACK_BEEP_FINISHED = 4
     CALLBACK_MORSE_CODE_FINISHED = 5
 
+
     FUNCTION_BEEP = 1
     FUNCTION_MORSE_CODE = 2
     FUNCTION_CALIBRATE = 3
@@ -62,9 +63,10 @@ class BrickletPiezoSpeaker(Device):
         self.callback_formats[BrickletPiezoSpeaker.CALLBACK_BEEP_FINISHED] = ''
         self.callback_formats[BrickletPiezoSpeaker.CALLBACK_MORSE_CODE_FINISHED] = ''
 
+
     def beep(self, duration, frequency):
         """
-        Beeps with the given frequency for the duration in ms. For example: 
+        Beeps with the given frequency for the duration in ms. For example:
         If you set a duration of 1000, with a frequency value of 2000
         the piezo buzzer will beep for one second with a frequency of
         approximately 2 kHz.
@@ -88,7 +90,7 @@ class BrickletPiezoSpeaker(Device):
         The second parameter is the frequency (see :func:`Beep`).
         
         For example: If you set the string "...---...", the piezo buzzer will beep
-        nine times with the durations "short short short long long long short 
+        nine times with the durations "short short short long long long short
         short short".
         
         The maximum string size is 60.
@@ -111,7 +113,7 @@ class BrickletPiezoSpeaker(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -122,13 +124,13 @@ class BrickletPiezoSpeaker(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 PiezoSpeaker = BrickletPiezoSpeaker # for backward compatibility

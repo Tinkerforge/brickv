@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletIndustrialDual020mA(Device):
 
     CALLBACK_CURRENT = 10
     CALLBACK_CURRENT_REACHED = 11
+
 
     FUNCTION_GET_CURRENT = 1
     FUNCTION_SET_CURRENT_CALLBACK_PERIOD = 2
@@ -82,6 +83,7 @@ class BrickletIndustrialDual020mA(Device):
         self.callback_formats[BrickletIndustrialDual020mA.CALLBACK_CURRENT] = 'B i'
         self.callback_formats[BrickletIndustrialDual020mA.CALLBACK_CURRENT_REACHED] = 'B i'
 
+
     def get_current(self, sensor):
         """
         Returns the current of the specified sensor (0 or 1). The value is in nA
@@ -95,17 +97,17 @@ class BrickletIndustrialDual020mA(Device):
         be a short circuit or the sensor may be defect.
         
         If you want to get the current periodically, it is recommended to use the
-        callback :func:`Current` and set the period with 
-        :func:`SetCurrentCallbackPeriod`.
+        :cb:`Current` callback and set the period with
+        :func:`Set Current Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_CURRENT, (sensor,), 'B', 'i')
 
     def set_current_callback_period(self, sensor, period):
         """
-        Sets the period in ms with which the :func:`Current` callback is triggered
+        Sets the period in ms with which the :cb:`Current` callback is triggered
         periodically for the given sensor. A value of 0 turns the callback off.
         
-        :func:`Current` is only triggered if the current has changed since the
+        The :cb:`Current` callback is only triggered if the current has changed since the
         last triggering.
         
         The default value is 0.
@@ -114,13 +116,13 @@ class BrickletIndustrialDual020mA(Device):
 
     def get_current_callback_period(self, sensor):
         """
-        Returns the period as set by :func:`SetCurrentCallbackPeriod`.
+        Returns the period as set by :func:`Set Current Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_CURRENT_CALLBACK_PERIOD, (sensor,), 'B', 'I')
 
     def set_current_callback_threshold(self, sensor, option, min, max):
         """
-        Sets the thresholds for the :func:`CurrentReached` callback for the given
+        Sets the thresholds for the :cb:`Current Reached` callback for the given
         sensor.
         
         The following options are possible:
@@ -141,7 +143,7 @@ class BrickletIndustrialDual020mA(Device):
 
     def get_current_callback_threshold(self, sensor):
         """
-        Returns the threshold as set by :func:`SetCurrentCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Current Callback Threshold`.
         """
         return GetCurrentCallbackThreshold(*self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_CURRENT_CALLBACK_THRESHOLD, (sensor,), 'B', 'c i i'))
 
@@ -149,11 +151,11 @@ class BrickletIndustrialDual020mA(Device):
         """
         Sets the period in ms with which the threshold callback
         
-        * :func:`CurrentReached`
+        * :cb:`Current Reached`
         
         is triggered, if the threshold
         
-        * :func:`SetCurrentCallbackThreshold`
+        * :func:`Set Current Callback Threshold`
         
         keeps being reached.
         
@@ -163,7 +165,7 @@ class BrickletIndustrialDual020mA(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -187,13 +189,13 @@ class BrickletIndustrialDual020mA(Device):
 
     def get_sample_rate(self):
         """
-        Returns the sample rate as set by :func:`SetSampleRate`.
+        Returns the sample rate as set by :func:`Set Sample Rate`.
         """
         return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_SAMPLE_RATE, (), '', 'B')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -204,13 +206,13 @@ class BrickletIndustrialDual020mA(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 IndustrialDual020mA = BrickletIndustrialDual020mA # for backward compatibility

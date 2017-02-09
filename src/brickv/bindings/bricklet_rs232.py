@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -36,6 +36,7 @@ class BrickletRS232(Device):
 
     CALLBACK_READ_CALLBACK = 8
     CALLBACK_ERROR_CALLBACK = 9
+
 
     FUNCTION_WRITE = 1
     FUNCTION_READ = 2
@@ -103,6 +104,7 @@ class BrickletRS232(Device):
         self.callback_formats[BrickletRS232.CALLBACK_READ_CALLBACK] = '60c B'
         self.callback_formats[BrickletRS232.CALLBACK_ERROR_CALLBACK] = 'B'
 
+
     def write(self, message, length):
         """
         Writes a string of up to 60 characters to the RS232 interface. The string
@@ -112,7 +114,7 @@ class BrickletRS232(Device):
         
         The return value is the number of bytes that could be written.
         
-        See :func:`SetConfiguration` for configuration possibilities
+        See :func:`Set Configuration` for configuration possibilities
         regarding baudrate, parity and so on.
         """
         return self.ipcon.send_request(self, BrickletRS232.FUNCTION_WRITE, (message, length), '60c B', 'B')
@@ -124,13 +126,13 @@ class BrickletRS232(Device):
         new data available.
         
         Instead of polling with this function, you can also use
-        callbacks. See :func:`EnableReadCallback` and :func:`ReadCallback`.
+        callbacks. See :func:`Enable Read Callback` and :cb:`Read Callback` callback.
         """
         return Read(*self.ipcon.send_request(self, BrickletRS232.FUNCTION_READ, (), '', '60c B'))
 
     def enable_read_callback(self):
         """
-        Enables the :func:`ReadCallback`.
+        Enables the :cb:`Read Callback` callback.
         
         By default the callback is disabled.
         """
@@ -138,7 +140,7 @@ class BrickletRS232(Device):
 
     def disable_read_callback(self):
         """
-        Disables the :func:`ReadCallback`.
+        Disables the :cb:`Read Callback` callback.
         
         By default the callback is disabled.
         """
@@ -146,7 +148,7 @@ class BrickletRS232(Device):
 
     def is_read_callback_enabled(self):
         """
-        Returns *true* if the :func:`ReadCallback` is enabled,
+        Returns *true* if the :cb:`Read Callback` callback is enabled,
         *false* otherwise.
         """
         return self.ipcon.send_request(self, BrickletRS232.FUNCTION_IS_READ_CALLBACK_ENABLED, (), '', '?')
@@ -167,14 +169,14 @@ class BrickletRS232(Device):
 
     def get_configuration(self):
         """
-        Returns the configuration as set by :func:`SetConfiguration`.
+        Returns the configuration as set by :func:`Set Configuration`.
         """
         return GetConfiguration(*self.ipcon.send_request(self, BrickletRS232.FUNCTION_GET_CONFIGURATION, (), '', 'B B B B B B'))
 
     def set_break_condition(self, break_time):
         """
-        Sets a break condition (the TX output is forced to a logic 0 state). 
-        The parameter sets the hold-time of the break condition (in ms). 
+        Sets a break condition (the TX output is forced to a logic 0 state).
+        The parameter sets the hold-time of the break condition (in ms).
         
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
@@ -182,7 +184,7 @@ class BrickletRS232(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -193,13 +195,13 @@ class BrickletRS232(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletRS232.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 RS232 = BrickletRS232 # for backward compatibility

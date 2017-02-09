@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletPiezoBuzzer(Device):
     CALLBACK_BEEP_FINISHED = 3
     CALLBACK_MORSE_CODE_FINISHED = 4
 
+
     FUNCTION_BEEP = 1
     FUNCTION_MORSE_CODE = 2
     FUNCTION_GET_IDENTITY = 255
@@ -58,6 +59,7 @@ class BrickletPiezoBuzzer(Device):
         self.callback_formats[BrickletPiezoBuzzer.CALLBACK_BEEP_FINISHED] = ''
         self.callback_formats[BrickletPiezoBuzzer.CALLBACK_MORSE_CODE_FINISHED] = ''
 
+
     def beep(self, duration):
         """
         Beeps with the duration in ms. For example: If you set a value of 1000,
@@ -72,7 +74,7 @@ class BrickletPiezoBuzzer(Device):
         for *dits*, *dahs* and *pauses*. Every other character is ignored.
         
         For example: If you set the string "...---...", the piezo buzzer will beep
-        nine times with the durations "short short short long long long short 
+        nine times with the durations "short short short long long long short
         short short".
         
         The maximum string size is 60.
@@ -81,7 +83,7 @@ class BrickletPiezoBuzzer(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -92,13 +94,13 @@ class BrickletPiezoBuzzer(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletPiezoBuzzer.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 PiezoBuzzer = BrickletPiezoBuzzer # for backward compatibility

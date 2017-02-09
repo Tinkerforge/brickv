@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -38,6 +38,7 @@ class BrickletThermocouple(Device):
     CALLBACK_TEMPERATURE = 8
     CALLBACK_TEMPERATURE_REACHED = 9
     CALLBACK_ERROR_STATE = 13
+
 
     FUNCTION_GET_TEMPERATURE = 1
     FUNCTION_SET_TEMPERATURE_CALLBACK_PERIOD = 2
@@ -102,24 +103,25 @@ class BrickletThermocouple(Device):
         self.callback_formats[BrickletThermocouple.CALLBACK_TEMPERATURE_REACHED] = 'i'
         self.callback_formats[BrickletThermocouple.CALLBACK_ERROR_STATE] = '? ?'
 
+
     def get_temperature(self):
         """
         Returns the temperature of the thermocouple. The value is given in °C/100,
         e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
         
-        If you want to get the temperature periodically, it is recommended 
-        to use the callback :func:`Temperature` and set the period with 
-        :func:`SetTemperatureCallbackPeriod`.
+        If you want to get the temperature periodically, it is recommended
+        to use the :cb:`Temperature` callback and set the period with
+        :func:`Set Temperature Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletThermocouple.FUNCTION_GET_TEMPERATURE, (), '', 'i')
 
     def set_temperature_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Temperature` callback is triggered
+        Sets the period in ms with which the :cb:`Temperature` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Temperature` is only triggered if the temperature has changed since the
-        last triggering.
+        The :cb:`Temperature` callback is only triggered if the temperature has changed
+        since the last triggering.
         
         The default value is 0.
         """
@@ -127,13 +129,13 @@ class BrickletThermocouple(Device):
 
     def get_temperature_callback_period(self):
         """
-        Returns the period as set by :func:`SetTemperatureCallbackPeriod`.
+        Returns the period as set by :func:`Set Temperature Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletThermocouple.FUNCTION_GET_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_temperature_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`TemperatureReached` callback. 
+        Sets the thresholds for the :cb:`Temperature Reached` callback.
         
         The following options are possible:
         
@@ -153,7 +155,7 @@ class BrickletThermocouple(Device):
 
     def get_temperature_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetTemperatureCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Temperature Callback Threshold`.
         """
         return GetTemperatureCallbackThreshold(*self.ipcon.send_request(self, BrickletThermocouple.FUNCTION_GET_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c i i'))
 
@@ -161,11 +163,11 @@ class BrickletThermocouple(Device):
         """
         Sets the period in ms with which the threshold callback
         
-        * :func:`TemperatureReached`
+        * :cb:`Temperature Reached`
         
         is triggered, if the threshold
         
-        * :func:`SetTemperatureCallbackThreshold`
+        * :func:`Set Temperature Callback Threshold`
         
         keeps being reached.
         
@@ -175,7 +177,7 @@ class BrickletThermocouple(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletThermocouple.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -211,7 +213,7 @@ class BrickletThermocouple(Device):
 
     def get_configuration(self):
         """
-        Returns the configuration as set by :func:`SetConfiguration`.
+        Returns the configuration as set by :func:`Set Configuration`.
         """
         return GetConfiguration(*self.ipcon.send_request(self, BrickletThermocouple.FUNCTION_GET_CONFIGURATION, (), '', 'B B B'))
 
@@ -233,7 +235,7 @@ class BrickletThermocouple(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -244,13 +246,13 @@ class BrickletThermocouple(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletThermocouple.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 Thermocouple = BrickletThermocouple # for backward compatibility

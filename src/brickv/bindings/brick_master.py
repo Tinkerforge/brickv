@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -61,6 +61,7 @@ class BrickMaster(Device):
     CALLBACK_STACK_CURRENT_REACHED = 62
     CALLBACK_STACK_VOLTAGE_REACHED = 63
     CALLBACK_USB_VOLTAGE_REACHED = 64
+
 
     FUNCTION_GET_STACK_VOLTAGE = 1
     FUNCTION_GET_STACK_CURRENT = 2
@@ -388,6 +389,7 @@ class BrickMaster(Device):
         self.callback_formats[BrickMaster.CALLBACK_STACK_VOLTAGE_REACHED] = 'H'
         self.callback_formats[BrickMaster.CALLBACK_USB_VOLTAGE_REACHED] = 'H'
 
+
     def get_stack_voltage(self):
         """
         Returns the stack voltage in mV. The stack voltage is the
@@ -429,7 +431,7 @@ class BrickMaster(Device):
 
     def get_extension_type(self, extension):
         """
-        Returns the type for a given extension as set by :func:`SetExtensionType`.
+        Returns the type for a given extension as set by :func:`Set Extension Type`.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_EXTENSION_TYPE, (extension,), 'B', 'I')
 
@@ -451,7 +453,7 @@ class BrickMaster(Device):
 
     def get_chibi_address(self):
         """
-        Returns the address as set by :func:`SetChibiAddress`.
+        Returns the address as set by :func:`Set Chibi Address`.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_ADDRESS, (), '', 'B')
 
@@ -468,7 +470,7 @@ class BrickMaster(Device):
 
     def get_chibi_master_address(self):
         """
-        Returns the address as set by :func:`SetChibiMasterAddress`.
+        Returns the address as set by :func:`Set Chibi Master Address`.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_MASTER_ADDRESS, (), '', 'B')
 
@@ -495,7 +497,7 @@ class BrickMaster(Device):
     def get_chibi_slave_address(self, num):
         """
         Returns the slave address for a given ``num`` as set by
-        :func:`SetChibiSlaveAddress`.
+        :func:`Set Chibi Slave Address`.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_SLAVE_ADDRESS, (num,), 'B', 'B')
 
@@ -536,7 +538,7 @@ class BrickMaster(Device):
 
     def get_chibi_frequency(self):
         """
-        Returns the frequency value as set by :func:`SetChibiFrequency`.
+        Returns the frequency value as set by :func:`Set Chibi Frequency`.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_FREQUENCY, (), '', 'B')
 
@@ -562,7 +564,7 @@ class BrickMaster(Device):
 
     def get_chibi_channel(self):
         """
-        Returns the channel as set by :func:`SetChibiChannel`.
+        Returns the channel as set by :func:`Set Chibi Channel`.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_CHANNEL, (), '', 'B')
 
@@ -587,7 +589,7 @@ class BrickMaster(Device):
 
     def get_rs485_address(self):
         """
-        Returns the address as set by :func:`SetRS485Address`.
+        Returns the address as set by :func:`Set RS485 Address`.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_RS485_ADDRESS, (), '', 'B')
 
@@ -614,7 +616,7 @@ class BrickMaster(Device):
     def get_rs485_slave_address(self, num):
         """
         Returns the slave address for a given ``num`` as set by
-        :func:`SetRS485SlaveAddress`.
+        :func:`Set RS485 Slave Address`.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_RS485_SLAVE_ADDRESS, (num,), 'B', 'B')
 
@@ -646,7 +648,7 @@ class BrickMaster(Device):
 
     def get_rs485_configuration(self):
         """
-        Returns the configuration as set by :func:`SetRS485Configuration`.
+        Returns the configuration as set by :func:`Set RS485 Configuration`.
         """
         return GetRS485Configuration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_RS485_CONFIGURATION, (), '', 'I c B'))
 
@@ -690,7 +692,7 @@ class BrickMaster(Device):
 
     def get_wifi_configuration(self):
         """
-        Returns the configuration as set by :func:`SetWifiConfiguration`.
+        Returns the configuration as set by :func:`Set Wifi Configuration`.
         """
         return GetWifiConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_CONFIGURATION, (), '', '32s B 4B 4B 4B H'))
 
@@ -712,7 +714,7 @@ class BrickMaster(Device):
         is set to 0 or 2 (WPA/WPA2 or WEP). Otherwise the value is ignored.
         
         For WPA/WPA2 the key has to be at least 8 characters long. If you want to set
-        a key with more than 50 characters, see :func:`SetLongWifiKey`.
+        a key with more than 50 characters, see :func:`Set Long Wifi Key`.
         
         For WEP the key has to be either 10 or 26 hexadecimal digits long. It is
         possible to set the WEP ``key_index`` (1-4). If you don't know your
@@ -721,7 +723,7 @@ class BrickMaster(Device):
         If you choose WPA Enterprise as encryption, you have to set ``eap_options`` and
         the length of the certificates (for other encryption types these parameters
         are ignored). The certificate length are given in byte and the certificates
-        themselves can be set with :func:`SetWifiCertificate`. ``eap_options`` consist
+        themselves can be set with :func:`Set Wifi Certificate`. ``eap_options`` consist
         of the outer authentication (bits 1-2), inner authentication (bit 3) and
         certificate type (bits 4-5):
         
@@ -744,7 +746,7 @@ class BrickMaster(Device):
 
     def get_wifi_encryption(self):
         """
-        Returns the encryption as set by :func:`SetWifiEncryption`.
+        Returns the encryption as set by :func:`Set Wifi Encryption`.
         """
         return GetWifiEncryption(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_ENCRYPTION, (), '', 'B 50s B B H H H'))
 
@@ -752,7 +754,7 @@ class BrickMaster(Device):
         """
         Returns the status of the WIFI Extension. The ``state`` is updated automatically,
         all of the other parameters are updated on startup and every time
-        :func:`RefreshWifiStatus` is called.
+        :func:`Refresh Wifi Status` is called.
         
         Possible states are:
         
@@ -770,7 +772,7 @@ class BrickMaster(Device):
 
     def refresh_wifi_status(self):
         """
-        Refreshes the Wi-Fi status (see :func:`GetWifiStatus`). To read the status
+        Refreshes the Wi-Fi status (see :func:`Get Wifi Status`). To read the status
         of the Wi-Fi module, the Master Brick has to change from data mode to
         command mode and back. This transaction and the readout itself is
         unfortunately time consuming. This means, that it might take some ms
@@ -804,7 +806,7 @@ class BrickMaster(Device):
 
     def get_wifi_certificate(self, index):
         """
-        Returns the certificate for a given index as set by :func:`SetWifiCertificate`.
+        Returns the certificate for a given index as set by :func:`Set Wifi Certificate`.
         """
         return GetWifiCertificate(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_CERTIFICATE, (index,), 'H', '32B B'))
 
@@ -825,7 +827,7 @@ class BrickMaster(Device):
 
     def get_wifi_power_mode(self):
         """
-        Returns the power mode as set by :func:`SetWifiPowerMode`.
+        Returns the power mode as set by :func:`Set Wifi Power Mode`.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_POWER_MODE, (), '', 'B')
 
@@ -866,7 +868,7 @@ class BrickMaster(Device):
 
     def get_wifi_regulatory_domain(self):
         """
-        Returns the regulatory domain as set by :func:`SetWifiRegulatoryDomain`.
+        Returns the regulatory domain as set by :func:`Set Wifi Regulatory Domain`.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_REGULATORY_DOMAIN, (), '', 'B')
 
@@ -880,7 +882,7 @@ class BrickMaster(Device):
         """
         Sets a long Wi-Fi key (up to 63 chars, at least 8 chars) for WPA encryption.
         This key will be used
-        if the key in :func:`SetWifiEncryption` is set to "-". In the old protocol,
+        if the key in :func:`Set Wifi Encryption` is set to "-". In the old protocol,
         a payload of size 63 was not possible, so the maximum key length was 50 chars.
         
         With the new protocol this is possible, since we didn't want to break API,
@@ -892,7 +894,7 @@ class BrickMaster(Device):
 
     def get_long_wifi_key(self):
         """
-        Returns the encryption key as set by :func:`SetLongWifiKey`.
+        Returns the encryption key as set by :func:`Set Long Wifi Key`.
         
         .. versionadded:: 2.0.2$nbsp;(Firmware)
         """
@@ -911,7 +913,7 @@ class BrickMaster(Device):
 
     def get_wifi_hostname(self):
         """
-        Returns the hostname as set by :func:`SetWifiHostname`.
+        Returns the hostname as set by :func:`Set Wifi Hostname`.
         
         An empty String means, that the default hostname is used.
         
@@ -921,11 +923,11 @@ class BrickMaster(Device):
 
     def set_stack_current_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`StackCurrent` callback is triggered
+        Sets the period in ms with which the :cb:`Stack Current` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`StackCurrent` is only triggered if the current has changed since the
-        last triggering.
+        The :cb:`Stack Current` callback is only triggered if the current has changed
+        since the last triggering.
         
         The default value is 0.
         
@@ -935,7 +937,7 @@ class BrickMaster(Device):
 
     def get_stack_current_callback_period(self):
         """
-        Returns the period as set by :func:`SetStackCurrentCallbackPeriod`.
+        Returns the period as set by :func:`Set Stack Current Callback Period`.
         
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
@@ -943,11 +945,11 @@ class BrickMaster(Device):
 
     def set_stack_voltage_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`StackVoltage` callback is triggered
+        Sets the period in ms with which the :cb:`Stack Voltage` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`StackVoltage` is only triggered if the voltage has changed since the
-        last triggering.
+        The :cb:`Stack Voltage` callback is only triggered if the voltage has changed
+        since the last triggering.
         
         The default value is 0.
         
@@ -957,7 +959,7 @@ class BrickMaster(Device):
 
     def get_stack_voltage_callback_period(self):
         """
-        Returns the period as set by :func:`SetStackVoltageCallbackPeriod`.
+        Returns the period as set by :func:`Set Stack Voltage Callback Period`.
         
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
@@ -965,11 +967,11 @@ class BrickMaster(Device):
 
     def set_usb_voltage_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`USBVoltage` callback is triggered
+        Sets the period in ms with which the :cb:`USB Voltage` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`USBVoltage` is only triggered if the voltage has changed since the
-        last triggering.
+        The :cb:`USB Voltage` callback is only triggered if the voltage has changed
+        since the last triggering.
         
         The default value is 0.
         
@@ -979,7 +981,7 @@ class BrickMaster(Device):
 
     def get_usb_voltage_callback_period(self):
         """
-        Returns the period as set by :func:`SetUSBVoltageCallbackPeriod`.
+        Returns the period as set by :func:`Set USB Voltage Callback Period`.
         
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
@@ -987,7 +989,7 @@ class BrickMaster(Device):
 
     def set_stack_current_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`StackCurrentReached` callback.
+        Sets the thresholds for the :cb:`Stack Current Reached` callback.
         
         The following options are possible:
         
@@ -1009,7 +1011,7 @@ class BrickMaster(Device):
 
     def get_stack_current_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetStackCurrentCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Stack Current Callback Threshold`.
         
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
@@ -1017,7 +1019,7 @@ class BrickMaster(Device):
 
     def set_stack_voltage_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`StackVoltageReached` callback.
+        Sets the thresholds for the :cb:`Stack Voltage Reached` callback.
         
         The following options are possible:
         
@@ -1039,7 +1041,7 @@ class BrickMaster(Device):
 
     def get_stack_voltage_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetStackVoltageCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Stack Voltage Callback Threshold`.
         
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
@@ -1047,7 +1049,7 @@ class BrickMaster(Device):
 
     def set_usb_voltage_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`USBVoltageReached` callback.
+        Sets the thresholds for the :cb:`USB Voltage Reached` callback.
         
         The following options are possible:
         
@@ -1069,7 +1071,7 @@ class BrickMaster(Device):
 
     def get_usb_voltage_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetUSBVoltageCallbackThreshold`.
+        Returns the threshold as set by :func:`Set USB Voltage Callback Threshold`.
         
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
@@ -1079,15 +1081,15 @@ class BrickMaster(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-        * :func:`StackCurrentReached`,
-        * :func:`StackVoltageReached`,
-        * :func:`USBVoltageReached`
+        * :cb:`Stack Current Reached`,
+        * :cb:`Stack Voltage Reached`,
+        * :cb:`USB Voltage Reached`
         
         are triggered, if the thresholds
         
-        * :func:`SetStackCurrentCallbackThreshold`,
-        * :func:`SetStackVoltageCallbackThreshold`,
-        * :func:`SetUSBVoltageCallbackThreshold`
+        * :func:`Set Stack Current Callback Threshold`,
+        * :func:`Set Stack Voltage Callback Threshold`,
+        * :func:`Set USB Voltage Callback Threshold`
         
         keep being reached.
         
@@ -1099,7 +1101,7 @@ class BrickMaster(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
@@ -1146,7 +1148,7 @@ class BrickMaster(Device):
 
     def get_ethernet_configuration(self):
         """
-        Returns the configuration as set by :func:`SetEthernetConfiguration`.
+        Returns the configuration as set by :func:`Set Ethernet Configuration`.
         
         .. versionadded:: 2.1.0$nbsp;(Firmware)
         """
@@ -1175,7 +1177,7 @@ class BrickMaster(Device):
         
         Setting an empty String will restore the default hostname.
         
-        The current hostname can be discovered with :func:`GetEthernetStatus`.
+        The current hostname can be discovered with :func:`Get Ethernet Status`.
         
         .. versionadded:: 2.1.0$nbsp;(Firmware)
         """
@@ -1187,7 +1189,7 @@ class BrickMaster(Device):
         come configured with a valid MAC address, that is also written on a
         sticker of the extension itself.
         
-        The MAC address can be read out again with :func:`GetEthernetStatus`.
+        The MAC address can be read out again with :func:`Get Ethernet Status`.
         
         .. versionadded:: 2.1.0$nbsp;(Firmware)
         """
@@ -1216,7 +1218,7 @@ class BrickMaster(Device):
 
     def get_ethernet_websocket_configuration(self):
         """
-        Returns the configuration as set by :func:`SetEthernetConfiguration`.
+        Returns the configuration as set by :func:`Set Ethernet Configuration`.
         
         .. versionadded:: 2.2.0$nbsp;(Firmware)
         """
@@ -1243,7 +1245,8 @@ class BrickMaster(Device):
 
     def get_ethernet_authentication_secret(self):
         """
-        Returns the authentication secret as set by :func:`SetEthernetAuthenticationSecret`.
+        Returns the authentication secret as set by
+        :func:`Set Ethernet Authentication Secret`.
         
         .. versionadded:: 2.2.0$nbsp;(Firmware)
         """
@@ -1270,7 +1273,8 @@ class BrickMaster(Device):
 
     def get_wifi_authentication_secret(self):
         """
-        Returns the authentication secret as set by :func:`SetWifiAuthenticationSecret`.
+        Returns the authentication secret as set by
+        :func:`Set Wifi Authentication Secret`.
         
         .. versionadded:: 2.2.0$nbsp;(Firmware)
         """
@@ -1296,12 +1300,12 @@ class BrickMaster(Device):
     def start_wifi2_bootloader(self):
         """
         Starts the bootloader of the WIFI Extension 2.0. Returns 0 on success.
-        Afterwards the :func:`WriteWifi2SerialPort` and :func:`ReadWifi2SerialPort`
+        Afterwards the :func:`Write Wifi2 Serial Port` and :func:`Read Wifi2 Serial Port`
         functions can be used to communicate with the bootloader to flash a new
         firmware.
         
         The bootloader should only be started over a USB connection. It cannot be
-        started over a WIFI2 connection, see the :func:`GetConnectionType` function.
+        started over a WIFI2 connection, see the :func:`Get Connection Type` function.
         
         It is recommended to use the Brick Viewer to update the firmware of the WIFI
         Extension 2.0.
@@ -1317,7 +1321,7 @@ class BrickMaster(Device):
         success.
         
         Before this function can be used the bootloader has to be started using the
-        :func:`StartWifi2Bootloader` function.
+        :func:`Start Wifi2 Bootloader` function.
         
         It is recommended to use the Brick Viewer to update the firmware of the WIFI
         Extension 2.0.
@@ -1333,7 +1337,7 @@ class BrickMaster(Device):
         Returns the number of actually read bytes.
         
         Before this function can be used the bootloader has to be started using the
-        :func:`StartWifi2Bootloader` function.
+        :func:`Start Wifi2 Bootloader` function.
         
         It is recommended to use the Brick Viewer to update the firmware of the WIFI
         Extension 2.0.
@@ -1352,7 +1356,7 @@ class BrickMaster(Device):
         information.
         
         To apply configuration changes to the WIFI Extension 2.0 the
-        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        :func:`Save Wifi2 Configuration` function has to be called and the Master Brick
         has to be restarted afterwards.
         
         It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -1364,7 +1368,7 @@ class BrickMaster(Device):
     def get_wifi2_authentication_secret(self):
         """
         Returns the WIFI authentication secret as set by
-        :func:`SetWifi2AuthenticationSecret`.
+        :func:`Set Wifi2 Authentication Secret`.
         
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
@@ -1397,7 +1401,7 @@ class BrickMaster(Device):
         interface.
         
         To apply configuration changes to the WIFI Extension 2.0 the
-        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        :func:`Save Wifi2 Configuration` function has to be called and the Master Brick
         has to be restarted afterwards.
         
         It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -1408,7 +1412,7 @@ class BrickMaster(Device):
 
     def get_wifi2_configuration(self):
         """
-        Returns the general configuration as set by :func:`SetWifi2Configuration`.
+        Returns the general configuration as set by :func:`Set Wifi2 Configuration`.
         
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
@@ -1447,7 +1451,7 @@ class BrickMaster(Device):
         access point if SSID and BSSID match.
         
         To apply configuration changes to the WIFI Extension 2.0 the
-        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        :func:`Save Wifi2 Configuration` function has to be called and the Master Brick
         has to be restarted afterwards.
         
         It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -1458,7 +1462,7 @@ class BrickMaster(Device):
 
     def get_wifi2_client_configuration(self):
         """
-        Returns the client configuration as set by :func:`SetWifi2ClientConfiguration`.
+        Returns the client configuration as set by :func:`Set Wifi2 Client Configuration`.
         
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
@@ -1471,7 +1475,7 @@ class BrickMaster(Device):
         table.
         
         To apply configuration changes to the WIFI Extension 2.0 the
-        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        :func:`Save Wifi2 Configuration` function has to be called and the Master Brick
         has to be restarted afterwards.
         
         It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -1482,7 +1486,7 @@ class BrickMaster(Device):
 
     def get_wifi2_client_hostname(self):
         """
-        Returns the client hostname as set by :func:`SetWifi2ClientHostname`.
+        Returns the client hostname as set by :func:`Set Wifi2 Client Hostname`.
         
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
@@ -1493,7 +1497,7 @@ class BrickMaster(Device):
         Sets the client password (up to 63 chars) for WPA/WPA2 encryption.
         
         To apply configuration changes to the WIFI Extension 2.0 the
-        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        :func:`Save Wifi2 Configuration` function has to be called and the Master Brick
         has to be restarted afterwards.
         
         It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -1504,7 +1508,7 @@ class BrickMaster(Device):
 
     def get_wifi2_client_password(self):
         """
-        Returns the client password as set by :func:`SetWifi2ClientPassword`.
+        Returns the client password as set by :func:`Set Wifi2 Client Password`.
         
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
@@ -1526,7 +1530,7 @@ class BrickMaster(Device):
         
         The ``encryption`` parameter sets the encryption mode to be used. Possible
         values are Open (no encryption), WEP or WPA/WPA2 PSK. The default value is
-        WPA/WPA2 PSK. Use the :func:`SetWifi2APPassword` function to set the encryption
+        WPA/WPA2 PSK. Use the :func:`Set Wifi2 AP Password` function to set the encryption
         password.
         
         The ``hidden`` parameter makes the access point hide or show its SSID.
@@ -1540,7 +1544,7 @@ class BrickMaster(Device):
         address.
         
         To apply configuration changes to the WIFI Extension 2.0 the
-        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        :func:`Save Wifi2 Configuration` function has to be called and the Master Brick
         has to be restarted afterwards.
         
         It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -1551,7 +1555,7 @@ class BrickMaster(Device):
 
     def get_wifi2_ap_configuration(self):
         """
-        Returns the access point configuration as set by :func:`SetWifi2APConfiguration`.
+        Returns the access point configuration as set by :func:`Set Wifi2 AP Configuration`.
         
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
@@ -1560,10 +1564,10 @@ class BrickMaster(Device):
     def set_wifi2_ap_password(self, password):
         """
         Sets the access point password (up to 63 chars) for the configured encryption
-        mode, see :func:`SetWifi2APConfiguration`.
+        mode, see :func:`Set Wifi2 AP Configuration`.
         
         To apply configuration changes to the WIFI Extension 2.0 the
-        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        :func:`Save Wifi2 Configuration` function has to be called and the Master Brick
         has to be restarted afterwards.
         
         It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -1574,7 +1578,7 @@ class BrickMaster(Device):
 
     def get_wifi2_ap_password(self):
         """
-        Returns the access point password as set by :func:`SetWifi2APPassword`.
+        Returns the access point password as set by :func:`Set Wifi2 AP Password`.
         
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
@@ -1642,7 +1646,7 @@ class BrickMaster(Device):
         
         If the ``router_bssid`` parameter is set to all zero then the information is
         taken from Wi-Fi scan when connecting the SSID as set by
-        :func:`SetWifi2MeshRouterSSID`. This only works if the the SSID is not hidden.
+        :func:`Set Wifi2 Mesh Router SSID`. This only works if the the SSID is not hidden.
         In case the router has hidden SSID this parameter must be specified, otherwise
         the node will not be able to reach the mesh router.
         
@@ -1654,7 +1658,7 @@ class BrickMaster(Device):
         of the brickd that supports mesh feature.
         
         To apply configuration changes to the WIFI Extension 2.0 the
-        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        :func:`Save Wifi2 Configuration` function has to be called and the Master Brick
         has to be restarted afterwards.
         
         It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -1667,7 +1671,7 @@ class BrickMaster(Device):
         """
         Requires WIFI Extension 2.0 firmware 2.1.0.
         
-        Returns the mesh configuration as set by :func:`SetWifi2MeshConfiguration`.
+        Returns the mesh configuration as set by :func:`Set Wifi2 Mesh Configuration`.
         
         .. versionadded:: 2.4.2$nbsp;(Firmware)
         """
@@ -1685,7 +1689,7 @@ class BrickMaster(Device):
         is due to a bug in the mesh library that we use in the firmware of the extension.
         
         To apply configuration changes to the WIFI Extension 2.0 the
-        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        :func:`Save Wifi2 Configuration` function has to be called and the Master Brick
         has to be restarted afterwards.
         
         It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -1698,7 +1702,7 @@ class BrickMaster(Device):
         """
         Requires WIFI Extension 2.0 firmware 2.1.0.
         
-        Returns the mesh router SSID as set by :func:`SetWifi2MeshRouterSSID`.
+        Returns the mesh router SSID as set by :func:`Set Wifi2 Mesh Router SSID`.
         
         .. versionadded:: 2.4.2$nbsp;(Firmware)
         """
@@ -1712,7 +1716,7 @@ class BrickMaster(Device):
         The password will be used to connect to the mesh router.
         
         To apply configuration changes to the WIFI Extension 2.0 the
-        :func:`SaveWifi2Configuration` function has to be called and the Master Brick
+        :func:`Save Wifi2 Configuration` function has to be called and the Master Brick
         has to be restarted afterwards.
         
         It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -1725,7 +1729,7 @@ class BrickMaster(Device):
         """
         Requires WIFI Extension 2.0 firmware 2.1.0.
         
-        Returns the mesh router password as set by :func:`SetWifi2MeshRouterPassword`.
+        Returns the mesh router password as set by :func:`Set Wifi2 Mesh Router Password`.
         
         .. versionadded:: 2.4.2$nbsp;(Firmware)
         """
@@ -1829,7 +1833,7 @@ class BrickMaster(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Brick is connected to, 
+        Returns the UID, the UID where the Brick is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -1840,13 +1844,13 @@ class BrickMaster(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 Master = BrickMaster # for backward compatibility

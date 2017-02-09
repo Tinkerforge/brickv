@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletDustDetector(Device):
 
     CALLBACK_DUST_DENSITY = 8
     CALLBACK_DUST_DENSITY_REACHED = 9
+
 
     FUNCTION_GET_DUST_DENSITY = 1
     FUNCTION_SET_DUST_DENSITY_CALLBACK_PERIOD = 2
@@ -78,23 +79,24 @@ class BrickletDustDetector(Device):
         self.callback_formats[BrickletDustDetector.CALLBACK_DUST_DENSITY] = 'H'
         self.callback_formats[BrickletDustDetector.CALLBACK_DUST_DENSITY_REACHED] = 'H'
 
+
     def get_dust_density(self):
         """
         Returns the dust density in µg/m³.
         
-        If you want to get the dust density periodically, it is recommended 
-        to use the callback :func:`DustDensity` and set the period with 
-        :func:`SetDustDensityCallbackPeriod`.
+        If you want to get the dust density periodically, it is recommended
+        to use the :cb:`Dust Density` callback and set the period with
+        :func:`Set Dust Density Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_GET_DUST_DENSITY, (), '', 'H')
 
     def set_dust_density_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`DustDensity` callback is triggered
+        Sets the period in ms with which the :cb:`Dust Density` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`DustDensity` is only triggered if the dust density has changed since the
-        last triggering.
+        The :cb:`Dust Density` callback is only triggered if the dust density has
+        changed since the last triggering.
         
         The default value is 0.
         """
@@ -102,13 +104,13 @@ class BrickletDustDetector(Device):
 
     def get_dust_density_callback_period(self):
         """
-        Returns the period as set by :func:`SetDustDensityCallbackPeriod`.
+        Returns the period as set by :func:`Set Dust Density Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_GET_DUST_DENSITY_CALLBACK_PERIOD, (), '', 'I')
 
     def set_dust_density_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`DustDensityReached` callback. 
+        Sets the thresholds for the :cb:`Dust Density Reached` callback.
         
         The following options are possible:
         
@@ -128,7 +130,7 @@ class BrickletDustDetector(Device):
 
     def get_dust_density_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetDustDensityCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Dust Density Callback Threshold`.
         """
         return GetDustDensityCallbackThreshold(*self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_GET_DUST_DENSITY_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
@@ -136,11 +138,11 @@ class BrickletDustDetector(Device):
         """
         Sets the period in ms with which the threshold callback
         
-        * :func:`DustDensityReached`
+        * :cb:`Dust Density Reached`
         
         is triggered, if the threshold
         
-        * :func:`SetDustDensityCallbackThreshold`
+        * :func:`Set Dust Density Callback Threshold`
         
         keeps being reached.
         
@@ -150,7 +152,7 @@ class BrickletDustDetector(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -170,13 +172,13 @@ class BrickletDustDetector(Device):
 
     def get_moving_average(self):
         """
-        Returns the length moving average as set by :func:`SetMovingAverage`.
+        Returns the length moving average as set by :func:`Set Moving Average`.
         """
         return self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -187,13 +189,13 @@ class BrickletDustDetector(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 DustDetector = BrickletDustDetector # for backward compatibility

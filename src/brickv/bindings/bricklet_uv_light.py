@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletUVLight(Device):
 
     CALLBACK_UV_LIGHT = 8
     CALLBACK_UV_LIGHT_REACHED = 9
+
 
     FUNCTION_GET_UV_LIGHT = 1
     FUNCTION_SET_UV_LIGHT_CALLBACK_PERIOD = 2
@@ -74,6 +75,7 @@ class BrickletUVLight(Device):
         self.callback_formats[BrickletUVLight.CALLBACK_UV_LIGHT] = 'I'
         self.callback_formats[BrickletUVLight.CALLBACK_UV_LIGHT_REACHED] = 'I'
 
+
     def get_uv_light(self):
         """
         Returns the UV light intensity of the sensor, the intensity is given
@@ -83,18 +85,18 @@ class BrickletUVLight(Device):
         intensity of 500µW/cm² is equivalent to an UV Index of 2.
         
         If you want to get the intensity periodically, it is recommended to use the
-        callback :func:`UVLight` and set the period with 
-        :func:`SetUVLightCallbackPeriod`.
+        :cb:`UV Light` callback and set the period with
+        :func:`Set UV Light Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_UV_LIGHT, (), '', 'I')
 
     def set_uv_light_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`UVLight` callback is triggered
+        Sets the period in ms with which the :cb:`UV Light` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`UVLight` is only triggered if the intensity has changed since the
-        last triggering.
+        The :cb:`UV Light` callback is only triggered if the intensity has changed since
+        the last triggering.
         
         The default value is 0.
         """
@@ -102,13 +104,13 @@ class BrickletUVLight(Device):
 
     def get_uv_light_callback_period(self):
         """
-        Returns the period as set by :func:`SetUVLightCallbackPeriod`.
+        Returns the period as set by :func:`Set UV Light Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_UV_LIGHT_CALLBACK_PERIOD, (), '', 'I')
 
     def set_uv_light_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`UVLightReached` callback. 
+        Sets the thresholds for the :cb:`UV Light Reached` callback.
         
         The following options are possible:
         
@@ -128,7 +130,7 @@ class BrickletUVLight(Device):
 
     def get_uv_light_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetUVLightCallbackThreshold`.
+        Returns the threshold as set by :func:`Set UV Light Callback Threshold`.
         """
         return GetUVLightCallbackThreshold(*self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_UV_LIGHT_CALLBACK_THRESHOLD, (), '', 'c I I'))
 
@@ -136,11 +138,11 @@ class BrickletUVLight(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-        * :func:`UVLightReached`,
+        * :cb:`UV Light Reached`,
         
         are triggered, if the thresholds
         
-        * :func:`SetUVLightCallbackThreshold`,
+        * :func:`Set UV Light Callback Threshold`,
         
         keep being reached.
         
@@ -150,13 +152,13 @@ class BrickletUVLight(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -167,13 +169,13 @@ class BrickletUVLight(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 UVLight = BrickletUVLight # for backward compatibility

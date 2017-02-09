@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -37,6 +37,7 @@ class BrickletAccelerometer(Device):
 
     CALLBACK_ACCELERATION = 14
     CALLBACK_ACCELERATION_REACHED = 15
+
 
     FUNCTION_GET_ACCELERATION = 1
     FUNCTION_SET_ACCELERATION_CALLBACK_PERIOD = 2
@@ -107,24 +108,25 @@ class BrickletAccelerometer(Device):
         self.callback_formats[BrickletAccelerometer.CALLBACK_ACCELERATION] = 'h h h'
         self.callback_formats[BrickletAccelerometer.CALLBACK_ACCELERATION_REACHED] = 'h h h'
 
+
     def get_acceleration(self):
         """
         Returns the acceleration in x, y and z direction. The values
         are given in g/1000 (1g = 9.80665m/s²), not to be confused with grams.
         
-        If you want to get the acceleration periodically, it is recommended 
-        to use the callback :func:`Acceleration` and set the period with 
-        :func:`SetAccelerationCallbackPeriod`.
+        If you want to get the acceleration periodically, it is recommended
+        to use the :cb:`Acceleration` callback and set the period with
+        :func:`Set Acceleration Callback Period`.
         """
         return GetAcceleration(*self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_ACCELERATION, (), '', 'h h h'))
 
     def set_acceleration_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Acceleration` callback is triggered
+        Sets the period in ms with which the :cb:`Acceleration` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Acceleration` is only triggered if the acceleration has changed since the
-        last triggering.
+        The :cb:`Acceleration` callback is only triggered if the acceleration has
+        changed since the last triggering.
         
         The default value is 0.
         """
@@ -132,13 +134,13 @@ class BrickletAccelerometer(Device):
 
     def get_acceleration_callback_period(self):
         """
-        Returns the period as set by :func:`SetAccelerationCallbackPeriod`.
+        Returns the period as set by :func:`Set Acceleration Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_ACCELERATION_CALLBACK_PERIOD, (), '', 'I')
 
     def set_acceleration_callback_threshold(self, option, min_x, max_x, min_y, max_y, min_z, max_z):
         """
-        Sets the thresholds for the :func:`AccelerationReached` callback. 
+        Sets the thresholds for the :cb:`Acceleration Reached` callback.
         
         The following options are possible:
         
@@ -158,7 +160,7 @@ class BrickletAccelerometer(Device):
 
     def get_acceleration_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetAccelerationCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Acceleration Callback Threshold`.
         """
         return GetAccelerationCallbackThreshold(*self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_ACCELERATION_CALLBACK_THRESHOLD, (), '', 'c h h h h h h'))
 
@@ -166,11 +168,11 @@ class BrickletAccelerometer(Device):
         """
         Sets the period in ms with which the threshold callback
         
-        * :func:`AccelerationReached`
+        * :cb:`Acceleration Reached`
         
         is triggered, if the threshold
         
-        * :func:`SetAccelerationCallbackThreshold`
+        * :func:`Set Acceleration Callback Threshold`
         
         keeps being reached.
         
@@ -180,7 +182,7 @@ class BrickletAccelerometer(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -199,7 +201,7 @@ class BrickletAccelerometer(Device):
         * Full scale range of -2G to +2G up to -16G to +16G.
         * Filter bandwidth between 50Hz and 800Hz.
         
-        Decreasing data rate or full scale range will also decrease the noise on 
+        Decreasing data rate or full scale range will also decrease the noise on
         the data.
         
         The default values are 100Hz data rate, -4G to +4G range and 200Hz
@@ -209,7 +211,7 @@ class BrickletAccelerometer(Device):
 
     def get_configuration(self):
         """
-        Returns the configuration as set by :func:`SetConfiguration`.
+        Returns the configuration as set by :func:`Set Configuration`.
         """
         return GetConfiguration(*self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_CONFIGURATION, (), '', 'B B B'))
 
@@ -233,7 +235,7 @@ class BrickletAccelerometer(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -244,13 +246,13 @@ class BrickletAccelerometer(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 Accelerometer = BrickletAccelerometer # for backward compatibility

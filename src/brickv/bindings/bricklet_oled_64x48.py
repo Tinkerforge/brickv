@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -34,6 +34,7 @@ class BrickletOLED64x48(Device):
     DEVICE_DISPLAY_NAME = 'OLED 64x48 Bricklet'
 
 
+
     FUNCTION_WRITE = 1
     FUNCTION_NEW_WINDOW = 2
     FUNCTION_CLEAR_DISPLAY = 3
@@ -61,13 +62,14 @@ class BrickletOLED64x48(Device):
         self.response_expected[BrickletOLED64x48.FUNCTION_GET_IDENTITY] = BrickletOLED64x48.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+
     def write(self, data):
         """
-        Appends 64 byte of data to the window as set by :func:`NewWindow`.
+        Appends 64 byte of data to the window as set by :func:`New Window`.
         
         Each row has a height of 8 pixels which corresponds to one byte of data.
         
-        Example: if you call :func:`NewWindow` with column from 0 to 63 and row
+        Example: if you call :func:`New Window` with column from 0 to 63 and row
         from 0 to 5 (the whole display) each call of :func:`Write` (red arrow) will
         write one row.
         
@@ -77,7 +79,7 @@ class BrickletOLED64x48(Device):
            :align: center
            :target: ../../_images/Bricklets/bricklet_oled_64x48_display.png
         
-        The LSB (D0) of each data byte is at the top and the MSB (D7) is at the 
+        The LSB (D0) of each data byte is at the top and the MSB (D7) is at the
         bottom of the row.
         
         The next call of :func:`Write` will write the second row and so on. To
@@ -96,7 +98,7 @@ class BrickletOLED64x48(Device):
 
     def clear_display(self):
         """
-        Clears the current content of the window as set by :func:`NewWindow`.
+        Clears the current content of the window as set by :func:`New Window`.
         """
         self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_CLEAR_DISPLAY, (), '', '')
 
@@ -113,13 +115,13 @@ class BrickletOLED64x48(Device):
 
     def get_display_configuration(self):
         """
-        Returns the configuration as set by :func:`SetDisplayConfiguration`.
+        Returns the configuration as set by :func:`Set Display Configuration`.
         """
         return GetDisplayConfiguration(*self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_GET_DISPLAY_CONFIGURATION, (), '', 'B ?'))
 
     def write_line(self, line, position, text):
         """
-        Writes text to a specific line (0 to 5) with a specific position 
+        Writes text to a specific line (0 to 5) with a specific position
         (0 to 12). The text can have a maximum of 13 characters.
         
         For example: (1, 4, "Hello") will write *Hello* in the middle of the
@@ -128,14 +130,14 @@ class BrickletOLED64x48(Device):
         You can draw to the display with :func:`Write` and then add text to it
         afterwards.
         
-        The display uses a special 5x7 pixel charset. You can view the characters 
+        The display uses a special 5x7 pixel charset. You can view the characters
         of the charset in Brick Viewer.
         """
         self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_WRITE_LINE, (line, position, text), 'B B 13s', '')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -48,6 +48,7 @@ class BrickletGPSV2(Device):
     CALLBACK_ALTITUDE = 24
     CALLBACK_MOTION = 25
     CALLBACK_DATE_TIME = 26
+
 
     FUNCTION_GET_COORDINATES = 1
     FUNCTION_GET_STATUS = 2
@@ -167,6 +168,7 @@ class BrickletGPSV2(Device):
         self.callback_formats[BrickletGPSV2.CALLBACK_MOTION] = 'I I'
         self.callback_formats[BrickletGPSV2.CALLBACK_DATE_TIME] = 'I I'
 
+
     def get_coordinates(self):
         """
         Returns the GPS coordinates. Latitude and longitude are given in the
@@ -176,13 +178,13 @@ class BrickletGPSV2(Device):
         and 'W' (north, south, east and west).
         
         This data is only valid if there is currently a fix as indicated by
-        :func:`GetStatus`.
+        :func:`Get Status`.
         """
         return GetCoordinates(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_COORDINATES, (), '', 'I c I c'))
 
     def get_status(self):
         """
-        Returns if a fix is currently available as well as the, the number of 
+        Returns if a fix is currently available as well as the, the number of
         satellites that are in view.
         
         There is also a :ref:`green LED <gps_v2_bricklet_fix_led>` on the Bricklet that
@@ -197,7 +199,7 @@ class BrickletGPSV2(Device):
         Both values are given in cm.
         
         This data is only valid if there is currently a fix as indicated by
-        :func:`GetStatus`.
+        :func:`Get Status`.
         """
         return GetAltitude(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_ALTITUDE, (), '', 'i i'))
 
@@ -211,7 +213,7 @@ class BrickletGPSV2(Device):
         is present.
         
         This data is only valid if there is currently a fix as indicated by
-        :func:`GetStatus`.
+        :func:`Get Status`.
         """
         return GetMotion(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_MOTION, (), '', 'I I'))
 
@@ -289,17 +291,17 @@ class BrickletGPSV2(Device):
 
     def get_fix_led_config(self):
         """
-        Returns the configuration as set by :func:`SetFixLEDConfig`
+        Returns the configuration as set by :func:`Set Fix LED Config`
         """
         return self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_FIX_LED_CONFIG, (), '', 'B')
 
     def set_coordinates_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Coordinates` callback is triggered
+        Sets the period in ms with which the :cb:`Coordinates` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Coordinates` is only triggered if the coordinates changed since the
-        last triggering.
+        The :cb:`Coordinates` callback is only triggered if the coordinates changed
+        since the last triggering.
         
         The default value is 0.
         """
@@ -307,16 +309,16 @@ class BrickletGPSV2(Device):
 
     def get_coordinates_callback_period(self):
         """
-        Returns the period as set by :func:`SetCoordinatesCallbackPeriod`.
+        Returns the period as set by :func:`Set Coordinates Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_COORDINATES_CALLBACK_PERIOD, (), '', 'I')
 
     def set_status_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Status` callback is triggered
+        Sets the period in ms with which the :cb:`Status` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Status` is only triggered if the status changed since the
+        The :cb:`Status` callback is only triggered if the status changed since the
         last triggering.
         
         The default value is 0.
@@ -325,16 +327,16 @@ class BrickletGPSV2(Device):
 
     def get_status_callback_period(self):
         """
-        Returns the period as set by :func:`SetStatusCallbackPeriod`.
+        Returns the period as set by :func:`Set Status Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_STATUS_CALLBACK_PERIOD, (), '', 'I')
 
     def set_altitude_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Altitude` callback is triggered
+        Sets the period in ms with which the :cb:`Altitude` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Altitude` is only triggered if the altitude changed since the
+        The :cb:`Altitude` callback is only triggered if the altitude changed since the
         last triggering.
         
         The default value is 0.
@@ -343,16 +345,16 @@ class BrickletGPSV2(Device):
 
     def get_altitude_callback_period(self):
         """
-        Returns the period as set by :func:`SetAltitudeCallbackPeriod`.
+        Returns the period as set by :func:`Set Altitude Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_motion_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Motion` callback is triggered
+        Sets the period in ms with which the :cb:`Motion` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Motion` is only triggered if the motion changed since the
+        The :cb:`Motion` callback is only triggered if the motion changed since the
         last triggering.
         
         The default value is 0.
@@ -361,17 +363,17 @@ class BrickletGPSV2(Device):
 
     def get_motion_callback_period(self):
         """
-        Returns the period as set by :func:`SetMotionCallbackPeriod`.
+        Returns the period as set by :func:`Set Motion Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_MOTION_CALLBACK_PERIOD, (), '', 'I')
 
     def set_date_time_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`DateTime` callback is triggered
+        Sets the period in ms with which the :cb:`Date Time` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`DateTime` is only triggered if the date or time changed since the
-        last triggering.
+        The :cb:`Date Time` callback is only triggered if the date or time changed
+        since the last triggering.
         
         The default value is 0.
         """
@@ -379,7 +381,7 @@ class BrickletGPSV2(Device):
 
     def get_date_time_callback_period(self):
         """
-        Returns the period as set by :func:`SetDateTimeCallbackPeriod`.
+        Returns the period as set by :func:`Set Date Time Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD, (), '', 'I')
 
@@ -415,7 +417,7 @@ class BrickletGPSV2(Device):
 
     def get_bootloader_mode(self):
         """
-        Returns the current bootloader mode, see :func:`SetBootloaderMode`.
+        Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         return self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
@@ -432,8 +434,8 @@ class BrickletGPSV2(Device):
 
     def write_firmware(self, data):
         """
-        Writes 64 Bytes of firmware at the position as written by 
-        :func:`SetWriteFirmwarePointer` before. The firmware is written
+        Writes 64 Bytes of firmware at the position as written by
+        :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
         
         You can only write firmware in bootloader mode.
@@ -446,7 +448,7 @@ class BrickletGPSV2(Device):
     def set_status_led_config(self, config):
         """
         Sets the status LED configuration. By default the LED shows
-        communication traffic between Brick and Bricklet, it flickers once 
+        communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
         
         You can also turn the LED permanently on/off or show a heartbeat.
@@ -457,7 +459,7 @@ class BrickletGPSV2(Device):
 
     def get_status_led_config(self):
         """
-        Returns the configuration as set by :func:`SetStatusLEDConfig`
+        Returns the configuration as set by :func:`Set Status LED Config`
         """
         return self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
@@ -502,7 +504,7 @@ class BrickletGPSV2(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -513,13 +515,13 @@ class BrickletGPSV2(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 GPSV2 = BrickletGPSV2 # for backward compatibility

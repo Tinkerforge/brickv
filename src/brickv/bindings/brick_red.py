@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -73,6 +73,7 @@ class BrickRED(Device):
     CALLBACK_PROCESS_STATE_CHANGED = 45
     CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED = 65
     CALLBACK_PROGRAM_PROCESS_SPAWNED = 66
+
 
     FUNCTION_CREATE_SESSION = 1
     FUNCTION_EXPIRE_SESSION = 2
@@ -332,6 +333,7 @@ class BrickRED(Device):
         self.callback_formats[BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED] = 'H'
         self.callback_formats[BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED] = 'H'
 
+
     def create_session(self, lifetime):
         """
         
@@ -541,10 +543,10 @@ class BrickRED(Device):
         
         If the file type is *Pipe* then the returned name string object is invalid,
         because a pipe has no name. Otherwise the returned name string object was used
-        to open or create the file object, as passed to :func:`OpenFile`.
+        to open or create the file object, as passed to :func:`Open File`.
         
         The returned flags were used to open or create the file object, as passed to
-        :func:`OpenFile` or :func:`CreatePipe`. See the respective function for a list
+        :func:`Open File` or :func:`Create Pipe`. See the respective function for a list
         of possible file and pipe flags.
         
         FIXME: everything except flags and length is invalid if file type is *Pipe*
@@ -562,8 +564,8 @@ class BrickRED(Device):
         end-of-file or because there is not data in the pipe, then zero bytes are
         returned.
         
-        If the file object was created by :func:`OpenFile` without the *NonBlocking*
-        flag or by :func:`CreatePipe` without the *NonBlockingRead* flag then the
+        If the file object was created by :func:`Open File` without the *NonBlocking*
+        flag or by :func:`Create Pipe` without the *NonBlockingRead* flag then the
         error code *NotSupported* is returned.
         """
         return ReadFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_READ_FILE, (file_id, length_to_read), 'H B', 'B 62B B'))
@@ -573,25 +575,25 @@ class BrickRED(Device):
         Reads up to 2\ :sup:`63`\  - 1 bytes from a file object asynchronously.
         
         Reports the bytes read (in 60 byte chunks), the actual number of bytes read and
-        the resulting error code via the :func:`AsyncFileRead` callback.
+        the resulting error code via the :cb:`Async File Read` callback.
         
         If there is not data to be read, either because the file position reached
         end-of-file or because there is not data in the pipe, then zero bytes are
         reported.
         
-        If the file object was created by :func:`OpenFile` without the *NonBlocking*
-        flag or by :func:`CreatePipe` without the *NonBlockingRead* flag then the error
-        code *NotSupported* is reported via the :func:`AsyncFileRead` callback.
+        If the file object was created by :func:`Open File` without the *NonBlocking*
+        flag or by :func:`Create Pipe` without the *NonBlockingRead* flag then the error
+        code *NotSupported* is reported via the :cb:`Async File Read` callback.
         """
         self.ipcon.send_request(self, BrickRED.FUNCTION_READ_FILE_ASYNC, (file_id, length_to_read), 'H Q', '')
 
     def abort_async_file_read(self, file_id):
         """
-        Aborts a :func:`ReadFileAsync` operation in progress.
+        Aborts a :func:`Read File Async` operation in progress.
         
         Returns the resulting error code.
         
-        On success the :func:`AsyncFileRead` callback will report *OperationAborted*.
+        On success the :cb:`Async File Read` callback will report *OperationAborted*.
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_ABORT_ASYNC_FILE_READ, (file_id,), 'H', 'B')
 
@@ -601,8 +603,8 @@ class BrickRED(Device):
         
         Returns the actual number of bytes written and the resulting error code.
         
-        If the file object was created by :func:`OpenFile` without the *NonBlocking*
-        flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag then the
+        If the file object was created by :func:`Open File` without the *NonBlocking*
+        flag or by :func:`Create Pipe` without the *NonBlockingWrite* flag then the
         error code *NotSupported* is returned.
         """
         return WriteFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE, (file_id, buffer, length_to_write), 'H 61B B', 'B B'))
@@ -614,8 +616,8 @@ class BrickRED(Device):
         Does neither report the actual number of bytes written nor the resulting error
         code.
         
-        If the file object was created by :func:`OpenFile` without the *NonBlocking*
-        flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag then the
+        If the file object was created by :func:`Open File` without the *NonBlocking*
+        flag or by :func:`Create Pipe` without the *NonBlockingWrite* flag then the
         write operation will fail silently.
         """
         self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE_UNCHECKED, (file_id, buffer, length_to_write), 'H 61B B', '')
@@ -625,11 +627,11 @@ class BrickRED(Device):
         Writes up to 61 bytes to a file object.
         
         Reports the actual number of bytes written and the resulting error code via the
-        :func:`AsyncFileWrite` callback.
+        :cb:`Async File Write` callback.
         
-        If the file object was created by :func:`OpenFile` without the *NonBlocking*
-        flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag then the
-        error code *NotSupported* is reported via the :func:`AsyncFileWrite` callback.
+        If the file object was created by :func:`Open File` without the *NonBlocking*
+        flag or by :func:`Create Pipe` without the *NonBlockingWrite* flag then the
+        error code *NotSupported* is reported via the :cb:`Async File Write` callback.
         """
         self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE_ASYNC, (file_id, buffer, length_to_write), 'H 61B B', '')
 
@@ -645,7 +647,7 @@ class BrickRED(Device):
         
         Returns the resulting absolute seek position and error code.
         
-        If the file object was created by :func:`CreatePipe` then it has no seek
+        If the file object was created by :func:`Create Pipe` then it has no seek
         position and the error code *InvalidSeek* is returned.
         """
         return SetFilePosition(*self.ipcon.send_request(self, BrickRED.FUNCTION_SET_FILE_POSITION, (file_id, offset, origin), 'H q B', 'B Q'))
@@ -655,7 +657,7 @@ class BrickRED(Device):
         Returns the current seek position of a file object in bytes and returns the
         resulting error code.
         
-        If the file object was created by :func:`CreatePipe` then it has no seek
+        If the file object was created by :func:`Create Pipe` then it has no seek
         position and the error code *InvalidSeek* is returned.
         """
         return GetFilePosition(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_POSITION, (file_id,), 'H', 'B Q'))
@@ -689,7 +691,7 @@ class BrickRED(Device):
 
     def get_directory_name(self, directory_id, session_id):
         """
-        Returns the name of a directory object, as passed to :func:`OpenDirectory`, and
+        Returns the name of a directory object, as passed to :func:`Open Directory`, and
         the resulting error code.
         """
         return GetDirectoryName(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_DIRECTORY_NAME, (directory_id, session_id), 'H H', 'B H'))
@@ -699,7 +701,7 @@ class BrickRED(Device):
         Returns the next entry in a directory object and the resulting error code.
         
         If there is not next entry then error code *NoMoreData* is returned. To rewind
-        a directory object call :func:`RewindDirectory`.
+        a directory object call :func:`Rewind Directory`.
         
         Possible directory entry types are:
         
@@ -759,7 +761,7 @@ class BrickRED(Device):
     def get_process_command(self, process_id, session_id):
         """
         Returns the executable, arguments, environment and working directory used to
-        spawn a process object, as passed to :func:`SpawnProcess`, and the resulting
+        spawn a process object, as passed to :func:`Spawn Process`, and the resulting
         error code.
         """
         return GetProcessCommand(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_COMMAND, (process_id, session_id), 'H H', 'B H H H H'))
@@ -767,17 +769,17 @@ class BrickRED(Device):
     def get_process_identity(self, process_id):
         """
         Returns the process ID and the user and group ID used to spawn a process object,
-        as passed to :func:`SpawnProcess`, and the resulting error code.
+        as passed to :func:`Spawn Process`, and the resulting error code.
         
         The process ID is only valid if the state is *Running* or *Stopped*, see
-        :func:`GetProcessState`.
+        :func:`Get Process State`.
         """
         return GetProcessIdentity(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_IDENTITY, (process_id,), 'H', 'B I I I'))
 
     def get_process_stdio(self, process_id, session_id):
         """
         Returns the stdin, stdout and stderr files used to spawn a process object, as
-        passed to :func:`SpawnProcess`, and the resulting error code.
+        passed to :func:`Spawn Process`, and the resulting error code.
         """
         return GetProcessStdio(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STDIO, (process_id, session_id), 'H H', 'B H H H'))
 
@@ -933,7 +935,7 @@ class BrickRED(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Brick is connected to, 
+        Returns the UID, the UID where the Brick is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -944,13 +946,13 @@ class BrickRED(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 RED = BrickRED # for backward compatibility

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -37,6 +37,7 @@ class BrickDC(Device):
     CALLBACK_EMERGENCY_SHUTDOWN = 22
     CALLBACK_VELOCITY_REACHED = 23
     CALLBACK_CURRENT_VELOCITY = 24
+
 
     FUNCTION_SET_VELOCITY = 1
     FUNCTION_GET_VELOCITY = 2
@@ -115,17 +116,18 @@ class BrickDC(Device):
         self.callback_formats[BrickDC.CALLBACK_VELOCITY_REACHED] = 'h'
         self.callback_formats[BrickDC.CALLBACK_CURRENT_VELOCITY] = 'h'
 
+
     def set_velocity(self, velocity):
         """
         Sets the velocity of the motor. Whereas -32767 is full speed backward,
         0 is stop and 32767 is full speed forward. Depending on the
-        acceleration (see :func:`SetAcceleration`), the motor is not immediately
+        acceleration (see :func:`Set Acceleration`), the motor is not immediately
         brought to the velocity but smoothly accelerated.
         
         The velocity describes the duty cycle of the PWM with which the motor is
         controlled, e.g. a velocity of 3277 sets a PWM with a 10% duty cycle.
         You can not only control the duty cycle of the PWM but also the frequency,
-        see :func:`SetPWMFrequency`.
+        see :func:`Set PWM Frequency`.
         
         The default velocity is 0.
         """
@@ -133,15 +135,15 @@ class BrickDC(Device):
 
     def get_velocity(self):
         """
-        Returns the velocity as set by :func:`SetVelocity`.
+        Returns the velocity as set by :func:`Set Velocity`.
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_VELOCITY, (), '', 'h')
 
     def get_current_velocity(self):
         """
         Returns the *current* velocity of the motor. This value is different
-        from :func:`GetVelocity` whenever the motor is currently accelerating
-        to a goal set by :func:`SetVelocity`.
+        from :func:`Get Velocity` whenever the motor is currently accelerating
+        to a goal set by :func:`Set Velocity`.
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_VELOCITY, (), '', 'h')
 
@@ -164,7 +166,7 @@ class BrickDC(Device):
 
     def get_acceleration(self):
         """
-        Returns the acceleration as set by :func:`SetAcceleration`.
+        Returns the acceleration as set by :func:`Set Acceleration`.
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_ACCELERATION, (), '', 'H')
 
@@ -185,7 +187,7 @@ class BrickDC(Device):
 
     def get_pwm_frequency(self):
         """
-        Returns the PWM frequency (in Hz) as set by :func:`SetPWMFrequency`.
+        Returns the PWM frequency (in Hz) as set by :func:`Set PWM Frequency`.
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_PWM_FREQUENCY, (), '', 'H')
 
@@ -198,7 +200,7 @@ class BrickDC(Device):
          where an immediate brake is necessary. Depending on the current velocity and
          the strength of the motor, a full brake can be quite violent.
         
-        Call :func:`SetVelocity` with 0 if you just want to stop the motor.
+        Call :func:`Set Velocity` with 0 if you just want to stop the motor.
         """
         self.ipcon.send_request(self, BrickDC.FUNCTION_FULL_BRAKE, (), '', '')
 
@@ -255,7 +257,7 @@ class BrickDC(Device):
 
     def set_minimum_voltage(self, voltage):
         """
-        Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
+        Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
         is triggered. The minimum possible value that works with the DC Brick is 6V.
         You can use this function to detect the discharge of a battery that is used
         to drive the motor. If you have a fixed power supply, you likely do not need
@@ -267,7 +269,7 @@ class BrickDC(Device):
 
     def get_minimum_voltage(self):
         """
-        Returns the minimum voltage as set by :func:`SetMinimumVoltage`
+        Returns the minimum voltage as set by :func:`Set Minimum Voltage`
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 'H')
 
@@ -295,13 +297,13 @@ class BrickDC(Device):
 
     def get_drive_mode(self):
         """
-        Returns the drive mode, as set by :func:`SetDriveMode`.
+        Returns the drive mode, as set by :func:`Set Drive Mode`.
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_DRIVE_MODE, (), '', 'B')
 
     def set_current_velocity_period(self, period):
         """
-        Sets a period in ms with which the :func:`CurrentVelocity` callback is triggered.
+        Sets a period in ms with which the :cb:`Current Velocity` callback is triggered.
         A period of 0 turns the callback off.
         
         The default value is 0.
@@ -310,7 +312,7 @@ class BrickDC(Device):
 
     def get_current_velocity_period(self):
         """
-        Returns the period as set by :func:`SetCurrentVelocityPeriod`.
+        Returns the period as set by :func:`Set Current Velocity Period`.
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD, (), '', 'H')
 
@@ -382,7 +384,7 @@ class BrickDC(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Brick is connected to, 
+        Returns the UID, the UID where the Brick is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -393,13 +395,13 @@ class BrickDC(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 DC = BrickDC # for backward compatibility

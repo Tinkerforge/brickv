@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -38,6 +38,7 @@ class BrickletHumidity(Device):
     CALLBACK_ANALOG_VALUE = 14
     CALLBACK_HUMIDITY_REACHED = 15
     CALLBACK_ANALOG_VALUE_REACHED = 16
+
 
     FUNCTION_GET_HUMIDITY = 1
     FUNCTION_GET_ANALOG_VALUE = 2
@@ -91,15 +92,16 @@ class BrickletHumidity(Device):
         self.callback_formats[BrickletHumidity.CALLBACK_HUMIDITY_REACHED] = 'H'
         self.callback_formats[BrickletHumidity.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
 
+
     def get_humidity(self):
         """
         Returns the humidity of the sensor. The value
-        has a range of 0 to 1000 and is given in %RH/10 (Relative Humidity), 
+        has a range of 0 to 1000 and is given in %RH/10 (Relative Humidity),
         i.e. a value of 421 means that a humidity of 42.1 %RH is measured.
         
         If you want to get the humidity periodically, it is recommended to use the
-        callback :func:`Humidity` and set the period with 
-        :func:`SetHumidityCallbackPeriod`.
+        :cb:`Humidity` callback and set the period with
+        :func:`Set Humidity Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_HUMIDITY, (), '', 'H')
 
@@ -109,27 +111,27 @@ class BrickletHumidity(Device):
         The value is between 0 and 4095.
         
         .. note::
-         The value returned by :func:`GetHumidity` is averaged over several samples
-         to yield less noise, while :func:`GetAnalogValue` gives back raw
+         The value returned by :func:`Get Humidity` is averaged over several samples
+         to yield less noise, while :func:`Get Analog Value` gives back raw
          unfiltered analog values. The returned humidity value is calibrated for
          room temperatures, if you use the sensor in extreme cold or extreme
          warm environments, you might want to calculate the humidity from
          the analog value yourself. See the `HIH 5030 datasheet
          <https://github.com/Tinkerforge/humidity-bricklet/raw/master/datasheets/hih-5030.pdf>`__.
         
-        If you want the analog value periodically, it is recommended to use the 
-        callback :func:`AnalogValue` and set the period with 
-        :func:`SetAnalogValueCallbackPeriod`.
+        If you want the analog value periodically, it is recommended to use the
+        :cb:`Analog Value` callback and set the period with
+        :func:`Set Analog Value Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
 
     def set_humidity_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Humidity` callback is triggered
+        Sets the period in ms with which the :cb:`Humidity` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Humidity` is only triggered if the humidity has changed since the
-        last triggering.
+        The :cb:`Humidity` callback is only triggered if the humidity has changed
+        since the last triggering.
         
         The default value is 0.
         """
@@ -137,17 +139,17 @@ class BrickletHumidity(Device):
 
     def get_humidity_callback_period(self):
         """
-        Returns the period as set by :func:`SetHumidityCallbackPeriod`.
+        Returns the period as set by :func:`Set Humidity Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_HUMIDITY_CALLBACK_PERIOD, (), '', 'I')
 
     def set_analog_value_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`AnalogValue` callback is triggered
+        Sets the period in ms with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`AnalogValue` is only triggered if the analog value has changed since the
-        last triggering.
+        The :cb:`Analog Value` callback is only triggered if the analog value has
+        changed since the last triggering.
         
         The default value is 0.
         """
@@ -155,13 +157,13 @@ class BrickletHumidity(Device):
 
     def get_analog_value_callback_period(self):
         """
-        Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
+        Returns the period as set by :func:`Set Analog Value Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_humidity_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`HumidityReached` callback. 
+        Sets the thresholds for the :cb:`Humidity Reached` callback.
         
         The following options are possible:
         
@@ -181,13 +183,13 @@ class BrickletHumidity(Device):
 
     def get_humidity_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetHumidityCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Humidity Callback Threshold`.
         """
         return GetHumidityCallbackThreshold(*self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_HUMIDITY_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`AnalogValueReached` callback. 
+        Sets the thresholds for the :cb:`Analog Value Reached` callback.
         
         The following options are possible:
         
@@ -207,7 +209,7 @@ class BrickletHumidity(Device):
 
     def get_analog_value_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Analog Value Callback Threshold`.
         """
         return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
@@ -215,13 +217,13 @@ class BrickletHumidity(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-        * :func:`HumidityReached`,
-        * :func:`AnalogValueReached`
+        * :cb:`Humidity Reached`,
+        * :cb:`Analog Value Reached`
         
         are triggered, if the thresholds
         
-        * :func:`SetHumidityCallbackThreshold`,
-        * :func:`SetAnalogValueCallbackThreshold`
+        * :func:`Set Humidity Callback Threshold`,
+        * :func:`Set Analog Value Callback Threshold`
         
         keep being reached.
         
@@ -231,13 +233,13 @@ class BrickletHumidity(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -248,13 +250,13 @@ class BrickletHumidity(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 Humidity = BrickletHumidity # for backward compatibility

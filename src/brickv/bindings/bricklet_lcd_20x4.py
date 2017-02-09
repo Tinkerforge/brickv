@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletLCD20x4(Device):
 
     CALLBACK_BUTTON_PRESSED = 9
     CALLBACK_BUTTON_RELEASED = 10
+
 
     FUNCTION_WRITE_LINE = 1
     FUNCTION_CLEAR_DISPLAY = 2
@@ -83,9 +84,10 @@ class BrickletLCD20x4(Device):
         self.callback_formats[BrickletLCD20x4.CALLBACK_BUTTON_PRESSED] = 'B'
         self.callback_formats[BrickletLCD20x4.CALLBACK_BUTTON_RELEASED] = 'B'
 
+
     def write_line(self, line, position, text):
         """
-        Writes text to a specific line (0 to 3) with a specific position 
+        Writes text to a specific line (0 to 3) with a specific position
         (0 to 19). The text can have a maximum of 20 characters.
         
         For example: (0, 7, "Hello") will write *Hello* in the middle of the
@@ -127,8 +129,8 @@ class BrickletLCD20x4(Device):
         """
         Configures if the cursor (shown as "_") should be visible and if it
         should be blinking (shown as a blinking block). The cursor position
-        is one character behind the the last text written with 
-        :func:`WriteLine`.
+        is one character behind the the last text written with
+        :func:`Write Line`.
         
         The default is (*false*, *false*).
         """
@@ -136,7 +138,7 @@ class BrickletLCD20x4(Device):
 
     def get_config(self):
         """
-        Returns the configuration as set by :func:`SetConfig`.
+        Returns the configuration as set by :func:`Set Config`.
         """
         return GetConfig(*self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_CONFIG, (), '', '? ?'))
 
@@ -146,7 +148,7 @@ class BrickletLCD20x4(Device):
         is pressed.
         
         If you want to react on button presses and releases it is recommended to use
-        the :func:`ButtonPressed` and :func:`ButtonReleased` callbacks.
+        the :cb:`Button Pressed` and :cb:`Button Released` callbacks.
         """
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_IS_BUTTON_PRESSED, (button,), 'B', '?')
 
@@ -166,7 +168,7 @@ class BrickletLCD20x4(Device):
         * ``character[6] = 0b00010001`` (decimal value 17)
         * ``character[7] = 0b00000000`` (decimal value 0)
         
-        The characters can later be written with :func:`WriteLine` by using the
+        The characters can later be written with :func:`Write Line` by using the
         characters with the byte representation 8 ("\x08") to 15 ("\x0F").
         
         You can play around with the custom characters in Brick Viewer version
@@ -182,7 +184,7 @@ class BrickletLCD20x4(Device):
     def get_custom_character(self, index):
         """
         Returns the custom character for a given index, as set with
-        :func:`SetCustomCharacter`.
+        :func:`Set Custom Character`.
         
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
@@ -194,7 +196,7 @@ class BrickletLCD20x4(Device):
         per line is 20.
         
         The default text is shown on the LCD, if the default text counter
-        expires, see :func:`SetDefaultTextCounter`.
+        expires, see :func:`Set Default Text Counter`.
         
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
@@ -203,7 +205,7 @@ class BrickletLCD20x4(Device):
     def get_default_text(self, line):
         """
         Returns the default text for a given line (0-3) as set by
-        :func:`SetDefaultText`.
+        :func:`Set Default Text`.
         
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
@@ -213,12 +215,12 @@ class BrickletLCD20x4(Device):
         """
         Sets the default text counter in ms. This counter is decremented each
         ms by the LCD firmware. If the counter reaches 0, the default text
-        (see :func:`SetDefaultText`) is shown on the LCD.
+        (see :func:`Set Default Text`) is shown on the LCD.
         
         This functionality can be used to show a default text if the controlling
         program crashes or the connection is interrupted.
         
-        A possible approach is to call :func:`SetDefaultTextCounter` every
+        A possible approach is to call :func:`Set Default Text Counter` every
         minute with the parameter 1000*60*2 (2 minutes). In this case the
         default text will be shown no later than 2 minutes after the
         controlling program crashes.
@@ -241,7 +243,7 @@ class BrickletLCD20x4(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -252,13 +254,13 @@ class BrickletLCD20x4(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 LCD20x4 = BrickletLCD20x4 # for backward compatibility

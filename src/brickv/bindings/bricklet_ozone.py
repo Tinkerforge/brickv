@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -40,6 +40,7 @@ class BrickletOzone(Device):
     CALLBACK_ANALOG_VALUE = 16
     CALLBACK_OZONE_CONCENTRATION_REACHED = 17
     CALLBACK_ANALOG_VALUE_REACHED = 18
+
 
     FUNCTION_GET_OZONE_CONCENTRATION = 1
     FUNCTION_GET_ANALOG_VALUE = 2
@@ -97,15 +98,16 @@ class BrickletOzone(Device):
         self.callback_formats[BrickletOzone.CALLBACK_OZONE_CONCENTRATION_REACHED] = 'H'
         self.callback_formats[BrickletOzone.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
 
+
     def get_ozone_concentration(self):
         """
-        Returns the measured ozone concentration. The value is in 
+        Returns the measured ozone concentration. The value is in
         `ppb (parts per billion) <https://en.wikipedia.org/wiki/Parts-per_notation>`__
         and between 0 to 250.
         
-        If you want to get the ozone concentration periodically, it is recommended to use the
-        callback :func:`OzoneConcentration` and set the period with
-        :func:`SetOzoneConcentrationCallbackPeriod`.
+        If you want to get the ozone concentration periodically, it is recommended to
+        use the :cb:`Ozone Concentration` callback and set the period with
+        :func:`Set Ozone Concentration Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletOzone.FUNCTION_GET_OZONE_CONCENTRATION, (), '', 'H')
 
@@ -115,18 +117,18 @@ class BrickletOzone(Device):
         The value is between 0 and 4095.
         
         If you want the analog value periodically, it is recommended to use the
-        callback :func:`AnalogValue` and set the period with
-        :func:`SetAnalogValueCallbackPeriod`.
+        :cb:`Analog Value` callback and set the period with
+        :func:`Set Analog Value Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletOzone.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
 
     def set_ozone_concentration_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`OzoneConcentration` callback is triggered
-        periodically. A value of 0 turns the callback off.
+        Sets the period in ms with which the :cb:`Ozone Concentration` callback is
+        triggered periodically. A value of 0 turns the callback off.
         
-        :func:`OzoneConcentration` is only triggered if the ozone_concentration has changed since the
-        last triggering.
+        The :cb:`Ozone Concentration` callback is only triggered if the
+        ozone concentration has changed since the last triggering.
         
         The default value is 0.
         """
@@ -134,17 +136,17 @@ class BrickletOzone(Device):
 
     def get_ozone_concentration_callback_period(self):
         """
-        Returns the period as set by :func:`SetOzoneConcentrationCallbackPeriod`.
+        Returns the period as set by :func:`Set Ozone Concentration Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletOzone.FUNCTION_GET_OZONE_CONCENTRATION_CALLBACK_PERIOD, (), '', 'I')
 
     def set_analog_value_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`AnalogValue` callback is triggered
+        Sets the period in ms with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`AnalogValue` is only triggered if the analog value has changed since the
-        last triggering.
+        The :cb:`Analog Value` callback is only triggered if the analog value has
+        changed since the last triggering.
         
         The default value is 0.
         """
@@ -152,13 +154,13 @@ class BrickletOzone(Device):
 
     def get_analog_value_callback_period(self):
         """
-        Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
+        Returns the period as set by :func:`Set Analog Value Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletOzone.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_ozone_concentration_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`OzoneConcentrationReached` callback.
+        Sets the thresholds for the :cb:`Ozone Concentration Reached` callback.
         
         The following options are possible:
         
@@ -167,10 +169,10 @@ class BrickletOzone(Device):
          :widths: 10, 100
         
          "'x'",    "Callback is turned off"
-         "'o'",    "Callback is triggered when the ozone_concentration is *outside* the min and max values"
-         "'i'",    "Callback is triggered when the ozone_concentration is *inside* the min and max values"
-         "'<'",    "Callback is triggered when the ozone_concentration is smaller than the min value (max is ignored)"
-         "'>'",    "Callback is triggered when the ozone_concentration is greater than the min value (max is ignored)"
+         "'o'",    "Callback is triggered when the ozone concentration is *outside* the min and max values"
+         "'i'",    "Callback is triggered when the ozone concentration is *inside* the min and max values"
+         "'<'",    "Callback is triggered when the ozone concentration is smaller than the min value (max is ignored)"
+         "'>'",    "Callback is triggered when the ozone concentration is greater than the min value (max is ignored)"
         
         The default value is ('x', 0, 0).
         """
@@ -178,13 +180,13 @@ class BrickletOzone(Device):
 
     def get_ozone_concentration_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetOzoneConcentrationCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Ozone Concentration Callback Threshold`.
         """
         return GetOzoneConcentrationCallbackThreshold(*self.ipcon.send_request(self, BrickletOzone.FUNCTION_GET_OZONE_CONCENTRATION_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`AnalogValueReached` callback.
+        Sets the thresholds for the :cb:`Analog Value Reached` callback.
         
         The following options are possible:
         
@@ -204,7 +206,7 @@ class BrickletOzone(Device):
 
     def get_analog_value_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Analog Value Callback Threshold`.
         """
         return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletOzone.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
@@ -212,13 +214,13 @@ class BrickletOzone(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-        * :func:`OzoneConcentrationReached`,
-        * :func:`AnalogValueReached`
+        * :cb:`Ozone Concentration Reached`,
+        * :cb:`Analog Value Reached`
         
         are triggered, if the thresholds
         
-        * :func:`SetOzoneConcentrationCallbackThreshold`,
-        * :func:`SetAnalogValueCallbackThreshold`
+        * :func:`Set Ozone Concentration Callback Threshold`,
+        * :func:`Set Analog Value Callback Threshold`
         
         keep being reached.
         
@@ -228,7 +230,7 @@ class BrickletOzone(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletOzone.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -248,13 +250,13 @@ class BrickletOzone(Device):
 
     def get_moving_average(self):
         """
-        Returns the length of the moving average as set by :func:`SetMovingAverage`.
+        Returns the length of the moving average as set by :func:`Set Moving Average`.
         """
         return self.ipcon.send_request(self, BrickletOzone.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -265,13 +267,13 @@ class BrickletOzone(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletOzone.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 Ozone = BrickletOzone # for backward compatibility

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -39,6 +39,7 @@ class BrickletCurrent12(Device):
     CALLBACK_CURRENT_REACHED = 17
     CALLBACK_ANALOG_VALUE_REACHED = 18
     CALLBACK_OVER_CURRENT = 19
+
 
     FUNCTION_GET_CURRENT = 1
     FUNCTION_CALIBRATE = 2
@@ -98,21 +99,22 @@ class BrickletCurrent12(Device):
         self.callback_formats[BrickletCurrent12.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
         self.callback_formats[BrickletCurrent12.CALLBACK_OVER_CURRENT] = ''
 
+
     def get_current(self):
         """
         Returns the current of the sensor. The value is in mA
         and between -12500mA and 12500mA.
         
         If you want to get the current periodically, it is recommended to use the
-        callback :func:`Current` and set the period with 
-        :func:`SetCurrentCallbackPeriod`.
+        :cb:`Current` callback and set the period with
+        :func:`Set Current Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletCurrent12.FUNCTION_GET_CURRENT, (), '', 'h')
 
     def calibrate(self):
         """
         Calibrates the 0 value of the sensor. You have to call this function
-        when there is no current present. 
+        when there is no current present.
         
         The zero point of the current sensor
         is depending on the exact properties of the analog-to-digital converter,
@@ -140,24 +142,24 @@ class BrickletCurrent12(Device):
         The value is between 0 and 4095.
         
         .. note::
-         The value returned by :func:`GetCurrent` is averaged over several samples
-         to yield less noise, while :func:`GetAnalogValue` gives back raw
-         unfiltered analog values. The only reason to use :func:`GetAnalogValue` is,
+         The value returned by :func:`Get Current` is averaged over several samples
+         to yield less noise, while :func:`Get Analog Value` gives back raw
+         unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
          if you need the full resolution of the analog-to-digital converter.
         
-        If you want the analog value periodically, it is recommended to use the 
-        callback :func:`AnalogValue` and set the period with 
-        :func:`SetAnalogValueCallbackPeriod`.
+        If you want the analog value periodically, it is recommended to use the
+        :cb:`Analog Value` callback and set the period with
+        :func:`Set Analog Value Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletCurrent12.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
 
     def set_current_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Current` callback is triggered
+        Sets the period in ms with which the :cb:`Current` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Current` is only triggered if the current has changed since the
-        last triggering.
+        The :cb:`Current` callback is only triggered if the current has changed since
+        the last triggering.
         
         The default value is 0.
         """
@@ -165,17 +167,17 @@ class BrickletCurrent12(Device):
 
     def get_current_callback_period(self):
         """
-        Returns the period as set by :func:`SetCurrentCallbackPeriod`.
+        Returns the period as set by :func:`Set Current Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletCurrent12.FUNCTION_GET_CURRENT_CALLBACK_PERIOD, (), '', 'I')
 
     def set_analog_value_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`AnalogValue` callback is triggered
+        Sets the period in ms with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`AnalogValue` is only triggered if the analog value has changed since the
-        last triggering.
+        The :cb:`Analog Value` callback is only triggered if the analog value has
+        changed since the last triggering.
         
         The default value is 0.
         """
@@ -183,13 +185,13 @@ class BrickletCurrent12(Device):
 
     def get_analog_value_callback_period(self):
         """
-        Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
+        Returns the period as set by :func:`Set Analog Value Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletCurrent12.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_current_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`CurrentReached` callback. 
+        Sets the thresholds for the :cb:`Current Reached` callback.
         
         The following options are possible:
         
@@ -209,13 +211,13 @@ class BrickletCurrent12(Device):
 
     def get_current_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetCurrentCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Current Callback Threshold`.
         """
         return GetCurrentCallbackThreshold(*self.ipcon.send_request(self, BrickletCurrent12.FUNCTION_GET_CURRENT_CALLBACK_THRESHOLD, (), '', 'c h h'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`AnalogValueReached` callback. 
+        Sets the thresholds for the :cb:`Analog Value Reached` callback.
         
         The following options are possible:
         
@@ -235,7 +237,7 @@ class BrickletCurrent12(Device):
 
     def get_analog_value_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Analog Value Callback Threshold`.
         """
         return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletCurrent12.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
@@ -243,13 +245,13 @@ class BrickletCurrent12(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-        * :func:`CurrentReached`,
-        * :func:`AnalogValueReached`
+        * :cb:`Current Reached`,
+        * :cb:`Analog Value Reached`
         
         are triggered, if the thresholds
         
-        * :func:`SetCurrentCallbackThreshold`,
-        * :func:`SetAnalogValueCallbackThreshold`
+        * :func:`Set Current Callback Threshold`,
+        * :func:`Set Analog Value Callback Threshold`
         
         keep being reached.
         
@@ -259,13 +261,13 @@ class BrickletCurrent12(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletCurrent12.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -276,13 +278,13 @@ class BrickletCurrent12(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletCurrent12.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 Current12 = BrickletCurrent12 # for backward compatibility

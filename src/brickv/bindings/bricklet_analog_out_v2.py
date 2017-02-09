@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -33,6 +33,7 @@ class BrickletAnalogOutV2(Device):
     DEVICE_DISPLAY_NAME = 'Analog Out Bricklet 2.0'
 
 
+
     FUNCTION_SET_OUTPUT_VOLTAGE = 1
     FUNCTION_GET_OUTPUT_VOLTAGE = 2
     FUNCTION_GET_INPUT_VOLTAGE = 3
@@ -54,6 +55,7 @@ class BrickletAnalogOutV2(Device):
         self.response_expected[BrickletAnalogOutV2.FUNCTION_GET_IDENTITY] = BrickletAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+
     def set_output_voltage(self, voltage):
         """
         Sets the voltage in mV. The possible range is 0V to 12V (0-12000).
@@ -62,7 +64,7 @@ class BrickletAnalogOutV2(Device):
 
     def get_output_voltage(self):
         """
-        Returns the voltage as set by :func:`SetOutputVoltage`.
+        Returns the voltage as set by :func:`Set Output Voltage`.
         """
         return self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_GET_OUTPUT_VOLTAGE, (), '', 'H')
 
@@ -74,7 +76,7 @@ class BrickletAnalogOutV2(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -38,6 +38,7 @@ class BrickletHeartRate(Device):
     CALLBACK_HEART_RATE = 8
     CALLBACK_HEART_RATE_REACHED = 9
     CALLBACK_BEAT_STATE_CHANGED = 10
+
 
     FUNCTION_GET_HEART_RATE = 1
     FUNCTION_SET_HEART_RATE_CALLBACK_PERIOD = 2
@@ -87,23 +88,24 @@ class BrickletHeartRate(Device):
         self.callback_formats[BrickletHeartRate.CALLBACK_HEART_RATE_REACHED] = 'H'
         self.callback_formats[BrickletHeartRate.CALLBACK_BEAT_STATE_CHANGED] = 'B'
 
+
     def get_heart_rate(self):
         """
         Returns the current heart rate measured.
         
-        If you want to get the heart rate periodically, it is recommended 
-        to use the callback :func:`HeartRate` and set the period with 
-        :func:`SetHeartRateCallbackPeriod`.
+        If you want to get the heart rate periodically, it is recommended
+        to use the :cb:`Heart Rate` callback and set the period with
+        :func:`Set Heart Rate Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletHeartRate.FUNCTION_GET_HEART_RATE, (), '', 'H')
 
     def set_heart_rate_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`HeartRate` callback is triggered
+        Sets the period in ms with which the :cb:`Heart Rate` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`HeartRate` is only triggered if the heart rate has changed since the
-        last triggering.
+        The :cb:`Heart Rate` callback is only triggered if the heart rate has changed
+        since the last triggering.
         
         The default value is 0.
         """
@@ -111,13 +113,13 @@ class BrickletHeartRate(Device):
 
     def get_heart_rate_callback_period(self):
         """
-        Returns the period as set by :func:`SetHeartRateCallbackPeriod`.
+        Returns the period as set by :func:`Set Heart Rate Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletHeartRate.FUNCTION_GET_HEART_RATE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_heart_rate_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`HeartRateReached` callback. 
+        Sets the thresholds for the :cb:`Heart Rate Reached` callback.
         
         The following options are possible:
         
@@ -137,7 +139,7 @@ class BrickletHeartRate(Device):
 
     def get_heart_rate_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetHeartRateCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Heart Rate Callback Threshold`.
         """
         return GetHeartRateCallbackThreshold(*self.ipcon.send_request(self, BrickletHeartRate.FUNCTION_GET_HEART_RATE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
@@ -145,11 +147,11 @@ class BrickletHeartRate(Device):
         """
         Sets the period in ms with which the threshold callback
         
-        * :func:`HeartRateReached`
+        * :cb:`Heart Rate Reached`
         
         is triggered, if the threshold
         
-        * :func:`SetHeartRateCallbackThreshold`
+        * :func:`Set Heart Rate Callback Threshold`
         
         keeps being reached.
         
@@ -159,31 +161,31 @@ class BrickletHeartRate(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletHeartRate.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def enable_beat_state_changed_callback(self):
         """
-        Enables the :func:`BeatStateChanged` callback.
+        Enables the :cb:`Beat State Changed` callback.
         """
         self.ipcon.send_request(self, BrickletHeartRate.FUNCTION_ENABLE_BEAT_STATE_CHANGED_CALLBACK, (), '', '')
 
     def disable_beat_state_changed_callback(self):
         """
-        Disables the :func:`BeatStateChanged` callback.
+        Disables the :cb:`Beat State Changed` callback.
         """
         self.ipcon.send_request(self, BrickletHeartRate.FUNCTION_DISABLE_BEAT_STATE_CHANGED_CALLBACK, (), '', '')
 
     def is_beat_state_changed_callback_enabled(self):
         """
-        Returns *true* if the :func:`BeatStateChanged` callback is enabled.
+        Returns *true* if the :cb:`Beat State Changed` callback is enabled.
         """
         return self.ipcon.send_request(self, BrickletHeartRate.FUNCTION_IS_BEAT_STATE_CHANGED_CALLBACK_ENABLED, (), '', '?')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -194,13 +196,13 @@ class BrickletHeartRate(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletHeartRate.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 HeartRate = BrickletHeartRate # for backward compatibility

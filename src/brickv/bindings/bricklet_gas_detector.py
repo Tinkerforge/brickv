@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -37,6 +37,7 @@ class BrickletGasDetector(Device):
 
     CALLBACK_VALUE = 15
     CALLBACK_VALUE_REACHED = 16
+
 
     FUNCTION_GET_VALUE = 1
     FUNCTION_SET_VALUE_CALLBACK_PERIOD = 2
@@ -92,25 +93,26 @@ class BrickletGasDetector(Device):
         self.callback_formats[BrickletGasDetector.CALLBACK_VALUE] = 'H'
         self.callback_formats[BrickletGasDetector.CALLBACK_VALUE_REACHED] = 'H'
 
+
     def get_value(self):
         """
-        Returns a value between 0 and 4095. 
+        Returns a value between 0 and 4095.
         
         See `here <TODO>`__ for more information about the measurements.
         
-        If you want to get the value periodically, it is recommended 
-        to use the callback :func:`Value` and set the period with 
-        :func:`SetValueCallbackPeriod`.
+        If you want to get the value periodically, it is recommended
+        to use the :cb:`Value` callback and set the period with
+        :func:`Set Value Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletGasDetector.FUNCTION_GET_VALUE, (), '', 'H')
 
     def set_value_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Value` callback is triggered
+        Sets the period in ms with which the :cb:`Value` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Value` is only triggered if the value value has changed since the
-        last triggering.
+        The :cb:`Value` callback is only triggered if the value value has changed
+        since the last triggering.
         
         The default value is 0.
         """
@@ -118,13 +120,13 @@ class BrickletGasDetector(Device):
 
     def get_value_callback_period(self):
         """
-        Returns the period as set by :func:`SetValueCallbackPeriod`.
+        Returns the period as set by :func:`Set Value Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletGasDetector.FUNCTION_GET_VALUE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_value_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`ValueReached` callback. 
+        Sets the thresholds for the :cb:`Value Reached` callback.
         
         The following options are possible:
         
@@ -144,7 +146,7 @@ class BrickletGasDetector(Device):
 
     def get_value_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetValueCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Value Callback Threshold`.
         """
         return GetValueCallbackThreshold(*self.ipcon.send_request(self, BrickletGasDetector.FUNCTION_GET_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
@@ -152,11 +154,11 @@ class BrickletGasDetector(Device):
         """
         Sets the period in ms with which the threshold callback
         
-        * :func:`ValueReached`
+        * :cb:`Value Reached`
         
         is triggered, if the threshold
         
-        * :func:`SetValueCallbackThreshold`
+        * :func:`Set Value Callback Threshold`
         
         keeps being reached.
         
@@ -166,7 +168,7 @@ class BrickletGasDetector(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletGasDetector.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -186,7 +188,7 @@ class BrickletGasDetector(Device):
 
     def get_moving_average(self):
         """
-        Returns the length moving average as set by :func:`SetMovingAverage`.
+        Returns the length moving average as set by :func:`Set Moving Average`.
         """
         return self.ipcon.send_request(self, BrickletGasDetector.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
 
@@ -211,7 +213,7 @@ class BrickletGasDetector(Device):
 
     def get_detector_type(self):
         """
-        Returns the detector type as set by :func:`SetDetectorType`.
+        Returns the detector type as set by :func:`Set Detector Type`.
         """
         return self.ipcon.send_request(self, BrickletGasDetector.FUNCTION_GET_DETECTOR_TYPE, (), '', 'B')
 
@@ -235,7 +237,7 @@ class BrickletGasDetector(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -246,13 +248,13 @@ class BrickletGasDetector(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletGasDetector.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 GasDetector = BrickletGasDetector # for backward compatibility

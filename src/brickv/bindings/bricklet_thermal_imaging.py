@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-07.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,8 +35,11 @@ class BrickletThermalImaging(Device):
     DEVICE_IDENTIFIER = 278
     DEVICE_DISPLAY_NAME = 'Thermal Imaging Bricklet'
 
-    CALLBACK_GREY_SCALE_IMAGE = 3
-    CALLBACK_TEMPERATURE_IMAGE = 4
+    CALLBACK_GREY_SCALE_IMAGE_LOW_LEVEL = 3
+    CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL = 4
+
+    CALLBACK_GREY_SCALE_IMAGE = -3
+    CALLBACK_TEMPERATURE_IMAGE = -4
 
     FUNCTION_SET_CALLBACK_CONFIG = 1
     FUNCTION_GET_CALLBACK_CONFIG = 2
@@ -80,8 +83,8 @@ class BrickletThermalImaging(Device):
 
         self.response_expected[BrickletThermalImaging.FUNCTION_SET_CALLBACK_CONFIG] = BrickletThermalImaging.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_CALLBACK_CONFIG] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletThermalImaging.CALLBACK_GREY_SCALE_IMAGE] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletThermalImaging.CALLBACK_GREY_SCALE_IMAGE_LOW_LEVEL] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_SET_BOOTLOADER_MODE] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_BOOTLOADER_MODE] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -95,8 +98,11 @@ class BrickletThermalImaging(Device):
         self.response_expected[BrickletThermalImaging.FUNCTION_READ_UID] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_IDENTITY] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletThermalImaging.CALLBACK_GREY_SCALE_IMAGE] = 'H 62B'
-        self.callback_formats[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE] = 'H 31H'
+        self.callback_formats[BrickletThermalImaging.CALLBACK_GREY_SCALE_IMAGE_LOW_LEVEL] = 'H 62B'
+        self.callback_formats[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = 'H 31H'
+
+        self.low_level_callbacks[BrickletThermalImaging.CALLBACK_GREY_SCALE_IMAGE_LOW_LEVEL] = [BrickletThermalImaging.CALLBACK_GREY_SCALE_IMAGE, {'stream': {'fixed_total_length': 4800}}, None]
+        self.low_level_callbacks[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = [BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE, {'stream': {'fixed_total_length': 4800}}, None]
 
     def set_callback_config(self, callback_config):
         """
@@ -142,7 +148,7 @@ class BrickletThermalImaging(Device):
 
     def get_bootloader_mode(self):
         """
-        Returns the current bootloader mode, see :func:`SetBootloaderMode`.
+        Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
@@ -159,8 +165,8 @@ class BrickletThermalImaging(Device):
 
     def write_firmware(self, data):
         """
-        Writes 64 Bytes of firmware at the position as written by 
-        :func:`SetWriteFirmwarePointer` before. The firmware is written
+        Writes 64 Bytes of firmware at the position as written by
+        :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
         
         You can only write firmware in bootloader mode.
@@ -173,7 +179,7 @@ class BrickletThermalImaging(Device):
     def set_status_led_config(self, config):
         """
         Sets the status LED configuration. By default the LED shows
-        communication traffic between Brick and Bricklet, it flickers once 
+        communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
         
         You can also turn the LED permanently on/off or show a heartbeat.
@@ -184,7 +190,7 @@ class BrickletThermalImaging(Device):
 
     def get_status_led_config(self):
         """
-        Returns the configuration as set by :func:`SetStatusLEDConfig`
+        Returns the configuration as set by :func:`Set Status LED Config`
         """
         return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
@@ -229,7 +235,7 @@ class BrickletThermalImaging(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -240,13 +246,13 @@ class BrickletThermalImaging(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 ThermalImaging = BrickletThermalImaging # for backward compatibility

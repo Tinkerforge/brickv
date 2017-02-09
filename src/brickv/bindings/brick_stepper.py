@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -39,6 +39,7 @@ class BrickStepper(Device):
     CALLBACK_POSITION_REACHED = 32
     CALLBACK_ALL_DATA = 40
     CALLBACK_NEW_STATE = 41
+
 
     FUNCTION_SET_MAX_VELOCITY = 1
     FUNCTION_GET_MAX_VELOCITY = 2
@@ -159,19 +160,20 @@ class BrickStepper(Device):
         self.callback_formats[BrickStepper.CALLBACK_ALL_DATA] = 'H i i H H H'
         self.callback_formats[BrickStepper.CALLBACK_NEW_STATE] = 'B B'
 
+
     def set_max_velocity(self, velocity):
         """
         Sets the maximum velocity of the stepper motor in steps per second.
         This function does *not* start the motor, it merely sets the maximum
         velocity the stepper motor is accelerated to. To get the motor running use
-        either :func:`SetTargetPosition`, :func:`SetSteps`, :func:`DriveForward` or
-        :func:`DriveBackward`.
+        either :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` or
+        :func:`Drive Backward`.
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_MAX_VELOCITY, (velocity,), 'H', '')
 
     def get_max_velocity(self):
         """
-        Returns the velocity as set by :func:`SetMaxVelocity`.
+        Returns the velocity as set by :func:`Set Max Velocity`.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_MAX_VELOCITY, (), '', 'H')
 
@@ -200,15 +202,15 @@ class BrickStepper(Device):
 
     def get_speed_ramping(self):
         """
-        Returns the acceleration and deacceleration as set by 
-        :func:`SetSpeedRamping`.
+        Returns the acceleration and deacceleration as set by
+        :func:`Set Speed Ramping`.
         """
         return GetSpeedRamping(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SPEED_RAMPING, (), '', 'H H'))
 
     def full_brake(self):
         """
-        Executes an active full brake. 
-         
+        Executes an active full brake.
+        
         .. warning::
          This function is for emergency purposes,
          where an immediate brake is necessary. Depending on the current velocity and
@@ -230,52 +232,52 @@ class BrickStepper(Device):
         """
         Returns the current position of the stepper motor in steps. On startup
         the position is 0. The steps are counted with all possible driving
-        functions (:func:`SetTargetPosition`, :func:`SetSteps`, :func:`DriveForward` or
-        :func:`DriveBackward`). It also is possible to reset the steps to 0 or
-        set them to any other desired value with :func:`SetCurrentPosition`.
+        functions (:func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` or
+        :func:`Drive Backward`). It also is possible to reset the steps to 0 or
+        set them to any other desired value with :func:`Set Current Position`.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_CURRENT_POSITION, (), '', 'i')
 
     def set_target_position(self, position):
         """
         Sets the target position of the stepper motor in steps. For example,
-        if the current position of the motor is 500 and :func:`SetTargetPosition` is
+        if the current position of the motor is 500 and :func:`Set Target Position` is
         called with 1000, the stepper motor will drive 500 steps forward. It will
         use the velocity, acceleration and deacceleration as set by
-        :func:`SetMaxVelocity` and :func:`SetSpeedRamping`.
+        :func:`Set Max Velocity` and :func:`Set Speed Ramping`.
         
-        A call of :func:`SetTargetPosition` with the parameter *x* is equivalent to
-        a call of :func:`SetSteps` with the parameter 
-        (*x* - :func:`GetCurrentPosition`).
+        A call of :func:`Set Target Position` with the parameter *x* is equivalent to
+        a call of :func:`Set Steps` with the parameter
+        (*x* - :func:`Get Current Position`).
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_TARGET_POSITION, (position,), 'i', '')
 
     def get_target_position(self):
         """
-        Returns the last target position as set by :func:`SetTargetPosition`.
+        Returns the last target position as set by :func:`Set Target Position`.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_TARGET_POSITION, (), '', 'i')
 
     def set_steps(self, steps):
         """
         Sets the number of steps the stepper motor should run. Positive values
-        will drive the motor forward and negative values backward. 
+        will drive the motor forward and negative values backward.
         The velocity, acceleration and deacceleration as set by
-        :func:`SetMaxVelocity` and :func:`SetSpeedRamping` will be used.
+        :func:`Set Max Velocity` and :func:`Set Speed Ramping` will be used.
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_STEPS, (steps,), 'i', '')
 
     def get_steps(self):
         """
-        Returns the last steps as set by :func:`SetSteps`.
+        Returns the last steps as set by :func:`Set Steps`.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_STEPS, (), '', 'i')
 
     def get_remaining_steps(self):
         """
-        Returns the remaining steps of the last call of :func:`SetSteps`.
-        For example, if :func:`SetSteps` is called with 2000 and 
-        :func:`GetRemainingSteps` is called after the motor has run for 500 steps,
+        Returns the remaining steps of the last call of :func:`Set Steps`.
+        For example, if :func:`Set Steps` is called with 2000 and
+        :func:`Get Remaining Steps` is called after the motor has run for 500 steps,
         it will return 1500.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_REMAINING_STEPS, (), '', 'i')
@@ -298,37 +300,37 @@ class BrickStepper(Device):
 
     def get_step_mode(self):
         """
-        Returns the step mode as set by :func:`SetStepMode`.
+        Returns the step mode as set by :func:`Set Step Mode`.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_STEP_MODE, (), '', 'B')
 
     def drive_forward(self):
         """
-        Drives the stepper motor forward until :func:`DriveBackward` or
-        :func:`Stop` is called. The velocity, acceleration and deacceleration as 
-        set by :func:`SetMaxVelocity` and :func:`SetSpeedRamping` will be used.
+        Drives the stepper motor forward until :func:`Drive Backward` or
+        :func:`Stop` is called. The velocity, acceleration and deacceleration as
+        set by :func:`Set Max Velocity` and :func:`Set Speed Ramping` will be used.
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_DRIVE_FORWARD, (), '', '')
 
     def drive_backward(self):
         """
-        Drives the stepper motor backward until :func:`DriveForward` or
+        Drives the stepper motor backward until :func:`Drive Forward` or
         :func:`Stop` is triggered. The velocity, acceleration and deacceleration as
-        set by :func:`SetMaxVelocity` and :func:`SetSpeedRamping` will be used.
+        set by :func:`Set Max Velocity` and :func:`Set Speed Ramping` will be used.
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_DRIVE_BACKWARD, (), '', '')
 
     def stop(self):
         """
-        Stops the stepper motor with the deacceleration as set by 
-        :func:`SetSpeedRamping`.
+        Stops the stepper motor with the deacceleration as set by
+        :func:`Set Speed Ramping`.
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_STOP, (), '', '')
 
     def get_stack_input_voltage(self):
         """
         Returns the stack input voltage in mV. The stack input voltage is the
-        voltage that is supplied via the stack, i.e. it is given by a 
+        voltage that is supplied via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_STACK_INPUT_VOLTAGE, (), '', 'H')
@@ -336,10 +338,10 @@ class BrickStepper(Device):
     def get_external_input_voltage(self):
         """
         Returns the external input voltage in mV. The external input voltage is
-        given via the black power input connector on the Stepper Brick. 
-         
+        given via the black power input connector on the Stepper Brick.
+        
         If there is an external input voltage and a stack input voltage, the motor
-        will be driven by the external input voltage. If there is only a stack 
+        will be driven by the external input voltage. If there is only a stack
         voltage present, the motor will be driven by this voltage.
         
         .. warning::
@@ -359,7 +361,7 @@ class BrickStepper(Device):
     def set_motor_current(self, current):
         """
         Sets the current in mA with which the motor will be driven.
-        The minimum value is 100mA, the maximum value 2291mA and the 
+        The minimum value is 100mA, the maximum value 2291mA and the
         default value is 800mA.
         
         .. warning::
@@ -370,7 +372,7 @@ class BrickStepper(Device):
 
     def get_motor_current(self):
         """
-        Returns the current as set by :func:`SetMotorCurrent`.
+        Returns the current as set by :func:`Set Motor Current`.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_MOTOR_CURRENT, (), '', 'H')
 
@@ -402,15 +404,15 @@ class BrickStepper(Device):
         decay mode.
         
         Changing the decay mode is only possible if synchronous rectification
-        is enabled (see :func:`SetSyncRect`).
+        is enabled (see :func:`Set Sync Rect`).
         
-        For a good explanation of the different decay modes see 
+        For a good explanation of the different decay modes see
         `this <http://ebldc.com/?p=86/>`__ blog post by Avayan.
         
         A good decay mode is unfortunately different for every motor. The best
         way to work out a good decay mode for your stepper motor, if you can't
         measure the current with an oscilloscope, is to listen to the sound of
-        the motor. If the value is too low, you often hear a high pitched 
+        the motor. If the value is too low, you often hear a high pitched
         sound and if it is too high you can often hear a humming sound.
         
         Generally, fast decay mode (small value) will be noisier but also
@@ -428,16 +430,16 @@ class BrickStepper(Device):
 
     def get_decay(self):
         """
-        Returns the decay mode as set by :func:`SetDecay`.
+        Returns the decay mode as set by :func:`Set Decay`.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_DECAY, (), '', 'H')
 
     def set_minimum_voltage(self, voltage):
         """
-        Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
+        Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
         is triggered. The minimum possible value that works with the Stepper Brick is 8V.
         You can use this function to detect the discharge of a battery that is used
-        to drive the stepper motor. If you have a fixed power supply, you likely do 
+        to drive the stepper motor. If you have a fixed power supply, you likely do
         not need this functionality.
         
         The default value is 8V.
@@ -446,7 +448,7 @@ class BrickStepper(Device):
 
     def get_minimum_voltage(self):
         """
-        Returns the minimum voltage as set by :func:`SetMinimumVoltage`.
+        Returns the minimum voltage as set by :func:`Set Minimum Voltage`.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 'H')
 
@@ -455,14 +457,14 @@ class BrickStepper(Device):
         Turns synchronous rectification on or off (*true* or *false*).
         
         With synchronous rectification on, the decay can be changed
-        (see :func:`SetDecay`). Without synchronous rectification fast
+        (see :func:`Set Decay`). Without synchronous rectification fast
         decay is used.
         
-        For an explanation of synchronous rectification see 
+        For an explanation of synchronous rectification see
         `here <https://en.wikipedia.org/wiki/Active_rectification>`__.
         
         .. warning::
-         If you want to use high speeds (> 10000 steps/s) for a large 
+         If you want to use high speeds (> 10000 steps/s) for a large
          stepper motor with a large inductivity we strongly
          suggest that you disable synchronous rectification. Otherwise the
          Brick may not be able to cope with the load and overheat.
@@ -482,8 +484,8 @@ class BrickStepper(Device):
         Sets the time base of the velocity and the acceleration of the stepper brick
         (in seconds).
         
-        For example, if you want to make one step every 1.5 seconds, you can set 
-        the time base to 15 and the velocity to 10. Now the velocity is 
+        For example, if you want to make one step every 1.5 seconds, you can set
+        the time base to 15 and the velocity to 10. Now the velocity is
         10steps/15s = 1steps/1.5s.
         
         The default value is 1.
@@ -492,7 +494,7 @@ class BrickStepper(Device):
 
     def get_time_base(self):
         """
-        Returns the time base as set by :func:`SetTimeBase`.
+        Returns the time base as set by :func:`Set Time Base`.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_TIME_BASE, (), '', 'I')
 
@@ -502,20 +504,20 @@ class BrickStepper(Device):
         the current position, the remaining steps, the stack voltage, the external
         voltage and the current consumption of the stepper motor.
         
-        There is also a callback for this function, see :func:`AllData`.
+        There is also a callback for this function, see :cb:`All Data` callback.
         """
         return GetAllData(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_ALL_DATA, (), '', 'H i i H H H'))
 
     def set_all_data_period(self, period):
         """
-        Sets the period in ms with which the :func:`AllData` callback is triggered
+        Sets the period in ms with which the :cb:`All Data` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_ALL_DATA_PERIOD, (period,), 'I', '')
 
     def get_all_data_period(self):
         """
-        Returns the period as set by :func:`SetAllDataPeriod`.
+        Returns the period as set by :func:`Set All Data Period`.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
 
@@ -587,7 +589,7 @@ class BrickStepper(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Brick is connected to, 
+        Returns the UID, the UID where the Brick is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -598,13 +600,13 @@ class BrickStepper(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 Stepper = BrickStepper # for backward compatibility

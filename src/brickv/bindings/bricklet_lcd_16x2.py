@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletLCD16x2(Device):
 
     CALLBACK_BUTTON_PRESSED = 9
     CALLBACK_BUTTON_RELEASED = 10
+
 
     FUNCTION_WRITE_LINE = 1
     FUNCTION_CLEAR_DISPLAY = 2
@@ -75,9 +76,10 @@ class BrickletLCD16x2(Device):
         self.callback_formats[BrickletLCD16x2.CALLBACK_BUTTON_PRESSED] = 'B'
         self.callback_formats[BrickletLCD16x2.CALLBACK_BUTTON_RELEASED] = 'B'
 
+
     def write_line(self, line, position, text):
         """
-        Writes text to a specific line (0 to 1) with a specific position 
+        Writes text to a specific line (0 to 1) with a specific position
         (0 to 15). The text can have a maximum of 16 characters.
         
         For example: (0, 5, "Hello") will write *Hello* in the middle of the
@@ -119,8 +121,8 @@ class BrickletLCD16x2(Device):
         """
         Configures if the cursor (shown as "_") should be visible and if it
         should be blinking (shown as a blinking block). The cursor position
-        is one character behind the the last text written with 
-        :func:`WriteLine`.
+        is one character behind the the last text written with
+        :func:`Write Line`.
         
         The default is (false, false).
         """
@@ -128,7 +130,7 @@ class BrickletLCD16x2(Device):
 
     def get_config(self):
         """
-        Returns the configuration as set by :func:`SetConfig`.
+        Returns the configuration as set by :func:`Set Config`.
         """
         return GetConfig(*self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_GET_CONFIG, (), '', '? ?'))
 
@@ -137,7 +139,7 @@ class BrickletLCD16x2(Device):
         Returns *true* if the button (0 to 2) is pressed.
         
         If you want to react on button presses and releases it is recommended to use the
-        :func:`ButtonPressed` and :func:`ButtonReleased` callbacks.
+        :cb:`Button Pressed` and :cb:`Button Released` callbacks.
         """
         return self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_IS_BUTTON_PRESSED, (button,), 'B', '?')
 
@@ -157,7 +159,7 @@ class BrickletLCD16x2(Device):
         * ``character[6] = 0b00010001`` (decimal value 17)
         * ``character[7] = 0b00000000`` (decimal value 0)
         
-        The characters can later be written with :func:`WriteLine` by using the
+        The characters can later be written with :func:`Write Line` by using the
         characters with the byte representation 8 to 15.
         
         You can play around with the custom characters in Brick Viewer since
@@ -173,7 +175,7 @@ class BrickletLCD16x2(Device):
     def get_custom_character(self, index):
         """
         Returns the custom character for a given index, as set with
-        :func:`SetCustomCharacter`.
+        :func:`Set Custom Character`.
         
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
@@ -181,7 +183,7 @@ class BrickletLCD16x2(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -192,13 +194,13 @@ class BrickletLCD16x2(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 LCD16x2 = BrickletLCD16x2 # for backward compatibility

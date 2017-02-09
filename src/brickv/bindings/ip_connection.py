@@ -125,6 +125,7 @@ class Device:
         self.api_version = (0, 0, 0)
         self.registered_callbacks = {}
         self.callback_formats = {}
+        self.low_level_callbacks = {}
         self.expected_response_function_id = None # protected by request_lock
         self.expected_response_sequence_number = None # protected by request_lock
         self.response_queue = Queue()
@@ -512,14 +513,14 @@ class IPConnection:
         """
         self.waiter.release()
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
     def connect_unlocked(self, is_auto_reconnect):
         # NOTE: assumes that socket is None and socket_lock is locked
@@ -794,6 +795,49 @@ class IPConnection:
             else:
                 cb(*self.deserialize_data(payload, form))
 
+        if function_id in device.low_level_callbacks:
+            llcb = device.low_level_callbacks[function_id]
+            llform = device.callback_formats[function_id] # FIXME: currently assuming that llform is longer than 1
+            values = self.deserialize_data(payload, llform)
+            stream = llcb[1].get('stream', None)
+
+            if stream != None:
+                result = None
+                fixed_total_length = stream.get('fixed_total_length', None)
+
+                if fixed_total_length == None:
+                    extra = tuple(list(values)[:-3])
+                    total_length = values[-3]
+                else:
+                    extra = tuple(list(values)[:-2])
+                    total_length = fixed_total_length
+
+                # FIXME: validate that extra parameters are identical for all low-level callback of a stream
+
+                chunk_offset = values[-2]
+                chunk_data = values[-1]
+
+                if llcb[2] == None:
+                    if chunk_offset == 0:
+                        llcb[2] = chunk_data
+
+                        if len(llcb[2]) >= total_length:
+                            result = (0,) + extra + (llcb[2][:total_length],) # FIXME: add stream result constant
+                            llcb[2] = None
+                else:
+                    if chunk_offset != len(llcb[2]):
+                        result = (1,) + extra + (llcb[2] + [0]*(total_length - len(llcb[2])),) # FIXME: add stream result constant, need to handle padding for non-int types
+                        llcb[2] = None
+                    else:
+                        llcb[2] += chunk_data
+
+                        if len(llcb[2]) >= total_length:
+                            result = (0,) + extra + (llcb[2][:total_length],) # FIXME: add stream result constant
+                            llcb[2] = None
+
+                if result != None and llcb[0] in device.registered_callbacks:
+                    device.registered_callbacks[llcb[0]](*result)
+
     def callback_loop(self, callback):
         while True:
             kind, data = callback.queue.get()
@@ -1012,7 +1056,8 @@ class IPConnection:
         device = self.devices[uid]
 
         if sequence_number == 0:
-            if function_id in device.registered_callbacks:
+            if function_id in device.registered_callbacks or \
+               function_id in device.low_level_callbacks: # FIXME: better lookup
                 self.callback.queue.put((IPConnection.QUEUE_PACKET, packet))
             return
 

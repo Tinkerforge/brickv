@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -33,6 +33,7 @@ class BrickletAnalogOut(Device):
     DEVICE_DISPLAY_NAME = 'Analog Out Bricklet'
 
 
+
     FUNCTION_SET_VOLTAGE = 1
     FUNCTION_GET_VOLTAGE = 2
     FUNCTION_SET_MODE = 3
@@ -60,10 +61,11 @@ class BrickletAnalogOut(Device):
         self.response_expected[BrickletAnalogOut.FUNCTION_GET_IDENTITY] = BrickletAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+
     def set_voltage(self, voltage):
         """
         Sets the voltage in mV. The possible range is 0V to 5V (0-5000).
-        Calling this function will set the mode to 0 (see :func:`SetMode`).
+        Calling this function will set the mode to 0 (see :func:`Set Mode`).
         
         The default value is 0 (with mode 1).
         """
@@ -71,7 +73,7 @@ class BrickletAnalogOut(Device):
 
     def get_voltage(self):
         """
-        Returns the voltage as set by :func:`SetVoltage`.
+        Returns the voltage as set by :func:`Set Voltage`.
         """
         return self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_GET_VOLTAGE, (), '', 'H')
 
@@ -79,13 +81,13 @@ class BrickletAnalogOut(Device):
         """
         Sets the mode of the analog value. Possible modes:
         
-        * 0: Normal Mode (Analog value as set by :func:`SetVoltage` is applied)
+        * 0: Normal Mode (Analog value as set by :func:`Set Voltage` is applied)
         * 1: 1k Ohm resistor to ground
         * 2: 100k Ohm resistor to ground
         * 3: 500k Ohm resistor to ground
         
         Setting the mode to 0 will result in an output voltage of 0. You can jump
-        to a higher output voltage directly by calling :func:`SetVoltage`.
+        to a higher output voltage directly by calling :func:`Set Voltage`.
         
         The default mode is 1.
         """
@@ -93,13 +95,13 @@ class BrickletAnalogOut(Device):
 
     def get_mode(self):
         """
-        Returns the mode as set by :func:`SetMode`.
+        Returns the mode as set by :func:`Set Mode`.
         """
         return self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_GET_MODE, (), '', 'B')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         

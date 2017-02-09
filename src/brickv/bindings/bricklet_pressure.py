@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -40,6 +40,7 @@ class BrickletPressure(Device):
     CALLBACK_ANALOG_VALUE = 18
     CALLBACK_PRESSURE_REACHED = 19
     CALLBACK_ANALOG_VALUE_REACHED = 20
+
 
     FUNCTION_GET_PRESSURE = 1
     FUNCTION_GET_ANALOG_VALUE = 2
@@ -104,13 +105,14 @@ class BrickletPressure(Device):
         self.callback_formats[BrickletPressure.CALLBACK_PRESSURE_REACHED] = 'i'
         self.callback_formats[BrickletPressure.CALLBACK_ANALOG_VALUE_REACHED] = 'i'
 
+
     def get_pressure(self):
         """
         Returns the measured pressure in Pa.
         
         If you want to get the pressure periodically, it is recommended to use the
-        callback :func:`Pressure` and set the period with
-        :func:`SetPressureCallbackPeriod`.
+        :cb:`Pressure` callback and set the period with
+        :func:`Set Pressure Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletPressure.FUNCTION_GET_PRESSURE, (), '', 'i')
 
@@ -120,18 +122,18 @@ class BrickletPressure(Device):
         The value is between 0 and 4095.
         
         If you want the analog value periodically, it is recommended to use the
-        callback :func:`AnalogValue` and set the period with
-        :func:`SetAnalogValueCallbackPeriod`.
+        :cb:`Analog Value` callback and set the period with
+        :func:`Set Analog Value Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletPressure.FUNCTION_GET_ANALOG_VALUE, (), '', 'i')
 
     def set_pressure_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Pressure` callback is triggered
+        Sets the period in ms with which the :cb:`Pressure` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Pressure` is only triggered if the pressure has changed since the
-        last triggering.
+        The :cb:`Pressure` callback is only triggered if the pressure has changed
+        since the last triggering.
         
         The default value is 0.
         """
@@ -139,17 +141,17 @@ class BrickletPressure(Device):
 
     def get_pressure_callback_period(self):
         """
-        Returns the period as set by :func:`SetPressureCallbackPeriod`.
+        Returns the period as set by :func:`Set Pressure Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletPressure.FUNCTION_GET_PRESSURE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_analog_value_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`AnalogValue` callback is triggered
+        Sets the period in ms with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`AnalogValue` is only triggered if the analog value has changed since the
-        last triggering.
+        The :cb:`Analog Value` callback is only triggered if the analog value has
+        changed since the last triggering.
         
         The default value is 0.
         """
@@ -157,13 +159,13 @@ class BrickletPressure(Device):
 
     def get_analog_value_callback_period(self):
         """
-        Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
+        Returns the period as set by :func:`Set Analog Value Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletPressure.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_pressure_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`PressureReached` callback.
+        Sets the thresholds for the :cb:`Pressure Reached` callback.
         
         The following options are possible:
         
@@ -183,13 +185,13 @@ class BrickletPressure(Device):
 
     def get_pressure_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetPressureCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Pressure Callback Threshold`.
         """
         return GetPressureCallbackThreshold(*self.ipcon.send_request(self, BrickletPressure.FUNCTION_GET_PRESSURE_CALLBACK_THRESHOLD, (), '', 'c i i'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`AnalogValueReached` callback.
+        Sets the thresholds for the :cb:`Analog Value Reached` callback.
         
         The following options are possible:
         
@@ -209,7 +211,7 @@ class BrickletPressure(Device):
 
     def get_analog_value_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Analog Value Callback Threshold`.
         """
         return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletPressure.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c i i'))
 
@@ -217,13 +219,13 @@ class BrickletPressure(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-        * :func:`PressureReached`,
-        * :func:`AnalogValueReached`
+        * :cb:`Pressure Reached`,
+        * :cb:`Analog Value Reached`
         
         are triggered, if the thresholds
         
-        * :func:`SetPressureCallbackThreshold`,
-        * :func:`SetAnalogValueCallbackThreshold`
+        * :func:`Set Pressure Callback Threshold`,
+        * :func:`Set Analog Value Callback Threshold`
         
         keep being reached.
         
@@ -233,7 +235,7 @@ class BrickletPressure(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletPressure.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -251,7 +253,7 @@ class BrickletPressure(Device):
 
     def get_sensor_type(self):
         """
-        Returns the sensor type as set by :func:`SetSensorType`.
+        Returns the sensor type as set by :func:`Set Sensor Type`.
         """
         return self.ipcon.send_request(self, BrickletPressure.FUNCTION_GET_SENSOR_TYPE, (), '', 'B')
 
@@ -271,13 +273,13 @@ class BrickletPressure(Device):
 
     def get_moving_average(self):
         """
-        Returns the length of the moving average as set by :func:`SetMovingAverage`.
+        Returns the length of the moving average as set by :func:`Set Moving Average`.
         """
         return self.ipcon.send_request(self, BrickletPressure.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -288,13 +290,13 @@ class BrickletPressure(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletPressure.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 Pressure = BrickletPressure # for backward compatibility

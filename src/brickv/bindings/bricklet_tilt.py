@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -34,6 +34,7 @@ class BrickletTilt(Device):
 
     CALLBACK_TILT_STATE = 5
 
+
     FUNCTION_GET_TILT_STATE = 1
     FUNCTION_ENABLE_TILT_STATE_CALLBACK = 2
     FUNCTION_DISABLE_TILT_STATE_CALLBACK = 3
@@ -62,6 +63,7 @@ class BrickletTilt(Device):
 
         self.callback_formats[BrickletTilt.CALLBACK_TILT_STATE] = 'B'
 
+
     def get_tilt_state(self):
         """
         Returns the current tilt state. The state can either be
@@ -80,25 +82,25 @@ class BrickletTilt(Device):
 
     def enable_tilt_state_callback(self):
         """
-        Enables the :func:`TiltState` callback.
+        Enables the :cb:`Tilt State` callback.
         """
         self.ipcon.send_request(self, BrickletTilt.FUNCTION_ENABLE_TILT_STATE_CALLBACK, (), '', '')
 
     def disable_tilt_state_callback(self):
         """
-        Disables the :func:`TiltState` callback.
+        Disables the :cb:`Tilt State` callback.
         """
         self.ipcon.send_request(self, BrickletTilt.FUNCTION_DISABLE_TILT_STATE_CALLBACK, (), '', '')
 
     def is_tilt_state_callback_enabled(self):
         """
-        Returns *true* if the :func:`TiltState` callback is enabled.
+        Returns *true* if the :cb:`Tilt State` callback is enabled.
         """
         return self.ipcon.send_request(self, BrickletTilt.FUNCTION_IS_TILT_STATE_CALLBACK_ENABLED, (), '', '?')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -109,13 +111,13 @@ class BrickletTilt(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletTilt.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 Tilt = BrickletTilt # for backward compatibility

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletIndustrialDigitalOut4(Device):
 
     CALLBACK_MONOFLOP_DONE = 8
 
+
     FUNCTION_SET_VALUE = 1
     FUNCTION_GET_VALUE = 2
     FUNCTION_SET_MONOFLOP = 3
@@ -68,6 +69,7 @@ class BrickletIndustrialDigitalOut4(Device):
 
         self.callback_formats[BrickletIndustrialDigitalOut4.CALLBACK_MONOFLOP_DONE] = 'H H'
 
+
     def set_value(self, value_mask):
         """
         Sets the output value with a bitmask (16bit). A 1 in the bitmask means high
@@ -76,7 +78,7 @@ class BrickletIndustrialDigitalOut4(Device):
         For example: The value 3 or 0b0011 will turn pins 0-1 high and the other pins
         low.
         
-        If no groups are used (see :func:`SetGroup`), the pins correspond to the
+        If no groups are used (see :func:`Set Group`), the pins correspond to the
         markings on the Digital Out 4 Bricklet.
         
         If groups are used, the pins correspond to the element in the group.
@@ -87,7 +89,7 @@ class BrickletIndustrialDigitalOut4(Device):
 
     def get_value(self):
         """
-        Returns the bitmask as set by :func:`SetValue`.
+        Returns the bitmask as set by :func:`Set Value`.
         """
         return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_GET_VALUE, (), '', 'H')
 
@@ -117,7 +119,7 @@ class BrickletIndustrialDigitalOut4(Device):
     def get_monoflop(self, pin):
         """
         Returns (for the given pin) the current value and the time as set by
-        :func:`SetMonoflop` as well as the remaining time until the value flips.
+        :func:`Set Monoflop` as well as the remaining time until the value flips.
         
         If the timer is not running currently, the remaining time will be returned
         as 0.
@@ -127,7 +129,7 @@ class BrickletIndustrialDigitalOut4(Device):
     def set_group(self, group):
         """
         Sets a group of Digital Out 4 Bricklets that should work together. You can
-        find Bricklets that can be grouped together with :func:`GetAvailableForGroup`.
+        find Bricklets that can be grouped together with :func:`Get Available For Group`.
         
         The group consists of 4 elements. Element 1 in the group will get pins 0-3,
         element 2 pins 4-7, element 3 pins 8-11 and element 4 pins 12-15.
@@ -140,13 +142,13 @@ class BrickletIndustrialDigitalOut4(Device):
         
         Now the pins on the Digital Out 4 on port A are assigned to 0-3 and the
         pins on the Digital Out 4 on port B are assigned to 4-7. It is now possible
-        to call :func:`SetValue` and control two Bricklets at the same time.
+        to call :func:`Set Value` and control two Bricklets at the same time.
         """
         self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_SET_GROUP, (group,), '4c', '')
 
     def get_group(self):
         """
-        Returns the group as set by :func:`SetGroup`
+        Returns the group as set by :func:`Set Group`
         """
         return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_GET_GROUP, (), '', '4c')
 
@@ -161,13 +163,13 @@ class BrickletIndustrialDigitalOut4(Device):
     def set_selected_values(self, selection_mask, value_mask):
         """
         Sets the output value with a bitmask, according to the selection mask.
-        The bitmask is 16 bit long, *true* refers to high and *false* refers to 
+        The bitmask is 16 bit long, *true* refers to high and *false* refers to
         low.
         
         For example: The values (3, 1) or (0b0011, 0b0001) will turn pin 0 high, pin 1
         low the other pins remain untouched.
         
-        If no groups are used (see :func:`SetGroup`), the pins correspond to the
+        If no groups are used (see :func:`Set Group`), the pins correspond to the
         markings on the Digital Out 4 Bricklet.
         
         If groups are used, the pins correspond to the element in the group.
@@ -178,7 +180,7 @@ class BrickletIndustrialDigitalOut4(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -189,13 +191,13 @@ class BrickletIndustrialDigitalOut4(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 IndustrialDigitalOut4 = BrickletIndustrialDigitalOut4 # for backward compatibility

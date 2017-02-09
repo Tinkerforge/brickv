@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -36,6 +36,7 @@ class BrickletLoadCell(Device):
 
     CALLBACK_WEIGHT = 17
     CALLBACK_WEIGHT_REACHED = 18
+
 
     FUNCTION_GET_WEIGHT = 1
     FUNCTION_SET_WEIGHT_CALLBACK_PERIOD = 2
@@ -98,22 +99,23 @@ class BrickletLoadCell(Device):
         self.callback_formats[BrickletLoadCell.CALLBACK_WEIGHT] = 'i'
         self.callback_formats[BrickletLoadCell.CALLBACK_WEIGHT_REACHED] = 'i'
 
+
     def get_weight(self):
         """
         Returns the currently measured weight in grams.
         
-        If you want to get the weight periodically, it is recommended 
-        to use the callback :func:`Weight` and set the period with 
-        :func:`SetWeightCallbackPeriod`.
+        If you want to get the weight periodically, it is recommended
+        to use the :cb:`Weight` callback and set the period with
+        :func:`Set Weight Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_WEIGHT, (), '', 'i')
 
     def set_weight_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Weight` callback is triggered
+        Sets the period in ms with which the :cb:`Weight` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Weight` is only triggered if the weight has changed since the
+        The :cb:`Weight` callback is only triggered if the weight has changed since the
         last triggering.
         
         The default value is 0.
@@ -122,13 +124,13 @@ class BrickletLoadCell(Device):
 
     def get_weight_callback_period(self):
         """
-        Returns the period as set by :func:`SetWeightCallbackPeriod`.
+        Returns the period as set by :func:`Set Weight Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_WEIGHT_CALLBACK_PERIOD, (), '', 'I')
 
     def set_weight_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`WeightReached` callback. 
+        Sets the thresholds for the :cb:`Weight Reached` callback.
         
         The following options are possible:
         
@@ -148,7 +150,7 @@ class BrickletLoadCell(Device):
 
     def get_weight_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetWeightCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Weight Callback Threshold`.
         """
         return GetWeightCallbackThreshold(*self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_WEIGHT_CALLBACK_THRESHOLD, (), '', 'c i i'))
 
@@ -156,11 +158,11 @@ class BrickletLoadCell(Device):
         """
         Sets the period in ms with which the threshold callback
         
-        * :func:`WeightReached`
+        * :cb:`Weight Reached`
         
         is triggered, if the threshold
         
-        * :func:`SetWeightCallbackThreshold`
+        * :func:`Set Weight Callback Threshold`
         
         keeps being reached.
         
@@ -170,7 +172,7 @@ class BrickletLoadCell(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -190,7 +192,7 @@ class BrickletLoadCell(Device):
 
     def get_moving_average(self):
         """
-        Returns the length moving average as set by :func:`SetMovingAverage`.
+        Returns the length moving average as set by :func:`Set Moving Average`.
         """
         return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
 
@@ -217,7 +219,7 @@ class BrickletLoadCell(Device):
         To calibrate your Load Cell Bricklet you have to
         
         * empty the scale and call this function with 0 and
-        * add a known weight to the scale and call this function with the weight in 
+        * add a known weight to the scale and call this function with the weight in
           grams.
         
         The calibration is saved in the EEPROM of the Bricklet and only
@@ -240,13 +242,13 @@ class BrickletLoadCell(Device):
         
         The rate can be either 10Hz or 80Hz. A faster rate will produce more noise.
         It is additionally possible to add a moving average
-        (see :func:`SetMovingAverage`) to the measurements.
+        (see :func:`Set Moving Average`) to the measurements.
         
         The gain can be 128x, 64x or 32x. It represents a measurement range of
         ±20mV, ±40mV and ±80mV respectively. The Load Cell Bricklet uses an
         excitation voltage of 5V and most load cells use an output of 2mV/V. That
         means the voltage range is ±15mV for most load cells (i.e. gain of 128x
-        is best). If you don't know what all of this means you should keep it at 
+        is best). If you don't know what all of this means you should keep it at
         128x, it will most likely be correct.
         
         The configuration is saved in the EEPROM of the Bricklet and only
@@ -261,13 +263,13 @@ class BrickletLoadCell(Device):
 
     def get_configuration(self):
         """
-        Returns the configuration as set by :func:`SetConfiguration`.
+        Returns the configuration as set by :func:`Set Configuration`.
         """
         return GetConfiguration(*self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -278,13 +280,13 @@ class BrickletLoadCell(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 LoadCell = BrickletLoadCell # for backward compatibility

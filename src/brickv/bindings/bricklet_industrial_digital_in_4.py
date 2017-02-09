@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -34,6 +34,7 @@ class BrickletIndustrialDigitalIn4(Device):
     DEVICE_DISPLAY_NAME = 'Industrial Digital In 4 Bricklet'
 
     CALLBACK_INTERRUPT = 9
+
 
     FUNCTION_GET_VALUE = 1
     FUNCTION_SET_GROUP = 2
@@ -77,6 +78,7 @@ class BrickletIndustrialDigitalIn4(Device):
 
         self.callback_formats[BrickletIndustrialDigitalIn4.CALLBACK_INTERRUPT] = 'H H'
 
+
     def get_value(self):
         """
         Returns the input value with a bitmask. The bitmask is 16bit long, *true*
@@ -85,7 +87,7 @@ class BrickletIndustrialDigitalIn4(Device):
         For example: The value 3 or 0b0011 means that pins 0-1 are high and the other
         pins are low.
         
-        If no groups are used (see :func:`SetGroup`), the pins correspond to the
+        If no groups are used (see :func:`Set Group`), the pins correspond to the
         markings on the Digital In 4 Bricklet.
         
         If groups are used, the pins correspond to the element in the group.
@@ -97,7 +99,7 @@ class BrickletIndustrialDigitalIn4(Device):
     def set_group(self, group):
         """
         Sets a group of Digital In 4 Bricklets that should work together. You can
-        find Bricklets that can be grouped together with :func:`GetAvailableForGroup`.
+        find Bricklets that can be grouped together with :func:`Get Available For Group`.
         
         The group consists of 4 elements. Element 1 in the group will get pins 0-3,
         element 2 pins 4-7, element 3 pins 8-11 and element 4 pins 12-15.
@@ -110,7 +112,7 @@ class BrickletIndustrialDigitalIn4(Device):
         
         Now the pins on the Digital In 4 on port A are assigned to 0-3 and the
         pins on the Digital In 4 on port B are assigned to 4-7. It is now possible
-        to call :func:`GetValue` and read out two Bricklets at the same time.
+        to call :func:`Get Value` and read out two Bricklets at the same time.
         
         Changing the group configuration resets all edge counter configurations
         and values.
@@ -119,7 +121,7 @@ class BrickletIndustrialDigitalIn4(Device):
 
     def get_group(self):
         """
-        Returns the group as set by :func:`SetGroup`
+        Returns the group as set by :func:`Set Group`
         """
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_GROUP, (), '', '4c')
 
@@ -133,7 +135,7 @@ class BrickletIndustrialDigitalIn4(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the debounce period of the :func:`Interrupt` callback in ms.
+        Sets the debounce period of the :cb:`Interrupt` callback in ms.
         
         For example: If you set this value to 100, you will get the interrupt
         maximal every 100ms. This is necessary if something that bounces is
@@ -145,7 +147,7 @@ class BrickletIndustrialDigitalIn4(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -158,22 +160,22 @@ class BrickletIndustrialDigitalIn4(Device):
         For example: An interrupt bitmask of 9 or 0b1001 will enable the interrupt for
         pins 0 and 3.
         
-        The interrupts use the grouping as set by :func:`SetGroup`.
+        The interrupts use the grouping as set by :func:`Set Group`.
         
-        The interrupt is delivered with the callback :func:`Interrupt`.
+        The interrupt is delivered with the :cb:`Interrupt` callback.
         """
         self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_INTERRUPT, (interrupt_mask,), 'H', '')
 
     def get_interrupt(self):
         """
-        Returns the interrupt bitmask as set by :func:`SetInterrupt`.
+        Returns the interrupt bitmask as set by :func:`Set Interrupt`.
         """
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_INTERRUPT, (), '', 'H')
 
     def get_edge_count(self, pin, reset_counter):
         """
         Returns the current value of the edge counter for the selected pin. You can
-        configure the edges that are counted with :func:`SetEdgeCountConfig`.
+        configure the edges that are counted with :func:`Set Edge Count Config`.
         
         If you set the reset counter to *true*, the count is set back to 0
         directly after it is read.
@@ -210,7 +212,7 @@ class BrickletIndustrialDigitalIn4(Device):
     def get_edge_count_config(self, pin):
         """
         Returns the edge type and debounce time for the selected pin as set by
-        :func:`SetEdgeCountConfig`.
+        :func:`Set Edge Count Config`.
         
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
@@ -218,7 +220,7 @@ class BrickletIndustrialDigitalIn4(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -229,13 +231,13 @@ class BrickletIndustrialDigitalIn4(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 IndustrialDigitalIn4 = BrickletIndustrialDigitalIn4 # for backward compatibility

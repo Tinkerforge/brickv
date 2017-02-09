@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletDistanceUS(Device):
 
     CALLBACK_DISTANCE = 8
     CALLBACK_DISTANCE_REACHED = 9
+
 
     FUNCTION_GET_DISTANCE_VALUE = 1
     FUNCTION_SET_DISTANCE_CALLBACK_PERIOD = 2
@@ -78,6 +79,7 @@ class BrickletDistanceUS(Device):
         self.callback_formats[BrickletDistanceUS.CALLBACK_DISTANCE] = 'H'
         self.callback_formats[BrickletDistanceUS.CALLBACK_DISTANCE_REACHED] = 'H'
 
+
     def get_distance_value(self):
         """
         Returns the current distance value measured by the sensor. The value has a
@@ -88,18 +90,18 @@ class BrickletDistanceUS(Device):
         non-linear (resolution is bigger at close range).
         
         If you want to get the distance value periodically, it is recommended to
-        use the callback :func:`Distance` and set the period with 
-        :func:`SetDistanceCallbackPeriod`.
+        use the :cb:`Distance` callback and set the period with
+        :func:`Set Distance Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DISTANCE_VALUE, (), '', 'H')
 
     def set_distance_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Distance` callback is triggered
+        Sets the period in ms with which the :cb:`Distance` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Distance` is only triggered if the distance value has changed since the
-        last triggering.
+        Der :cb:`Distance` callback is only triggered if the distance value has changed
+        since the last triggering.
         
         The default value is 0.
         """
@@ -107,13 +109,13 @@ class BrickletDistanceUS(Device):
 
     def get_distance_callback_period(self):
         """
-        Returns the period as set by :func:`SetDistanceCallbackPeriod`.
+        Returns the period as set by :func:`Set Distance Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_distance_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`DistanceReached` callback. 
+        Sets the thresholds for the :cb:`Distance Reached` callback.
         
         The following options are possible:
         
@@ -133,7 +135,7 @@ class BrickletDistanceUS(Device):
 
     def get_distance_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetDistanceCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Distance Callback Threshold`.
         """
         return GetDistanceCallbackThreshold(*self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
@@ -141,11 +143,11 @@ class BrickletDistanceUS(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-        * :func:`DistanceReached`,
+        * :cb:`Distance Reached`,
         
         are triggered, if the thresholds
         
-        * :func:`SetDistanceCallbackThreshold`,
+        * :func:`Set Distance Callback Threshold`,
         
         keep being reached.
         
@@ -155,7 +157,7 @@ class BrickletDistanceUS(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -175,13 +177,13 @@ class BrickletDistanceUS(Device):
 
     def get_moving_average(self):
         """
-        Returns the length moving average as set by :func:`SetMovingAverage`.
+        Returns the length moving average as set by :func:`Set Moving Average`.
         """
         return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -192,13 +194,13 @@ class BrickletDistanceUS(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 DistanceUS = BrickletDistanceUS # for backward compatibility

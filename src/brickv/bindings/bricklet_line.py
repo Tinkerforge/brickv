@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletLine(Device):
 
     CALLBACK_REFLECTIVITY = 8
     CALLBACK_REFLECTIVITY_REACHED = 9
+
 
     FUNCTION_GET_REFLECTIVITY = 1
     FUNCTION_SET_REFLECTIVITY_CALLBACK_PERIOD = 2
@@ -74,6 +75,7 @@ class BrickletLine(Device):
         self.callback_formats[BrickletLine.CALLBACK_REFLECTIVITY] = 'H'
         self.callback_formats[BrickletLine.CALLBACK_REFLECTIVITY_REACHED] = 'H'
 
+
     def get_reflectivity(self):
         """
         Returns the currently measured reflectivity. The reflectivity is
@@ -82,19 +84,19 @@ class BrickletLine(Device):
         Usually black has a low reflectivity while white has a high
         reflectivity.
         
-        If you want to get the reflectivity periodically, it is recommended 
-        to use the callback :func:`Reflectivity` and set the period with 
-        :func:`SetReflectivityCallbackPeriod`.
+        If you want to get the reflectivity periodically, it is recommended
+        to use the :cb:`Reflectivity` callback and set the period with
+        :func:`Set Reflectivity Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletLine.FUNCTION_GET_REFLECTIVITY, (), '', 'H')
 
     def set_reflectivity_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Reflectivity` callback is triggered
+        Sets the period in ms with which the :cb:`Reflectivity` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Reflectivity` is only triggered if the reflectivity has changed since the
-        last triggering.
+        The :cb:`Reflectivity` callback is only triggered if the reflectivity has
+        changed since the last triggering.
         
         The default value is 0.
         """
@@ -102,13 +104,13 @@ class BrickletLine(Device):
 
     def get_reflectivity_callback_period(self):
         """
-        Returns the period as set by :func:`SetReflectivityCallbackPeriod`.
+        Returns the period as set by :func:`Set Reflectivity Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletLine.FUNCTION_GET_REFLECTIVITY_CALLBACK_PERIOD, (), '', 'I')
 
     def set_reflectivity_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`ReflectivityReached` callback. 
+        Sets the thresholds for the :cb:`Reflectivity Reached` callback.
         
         The following options are possible:
         
@@ -128,7 +130,7 @@ class BrickletLine(Device):
 
     def get_reflectivity_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetReflectivityCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Reflectivity Callback Threshold`.
         """
         return GetReflectivityCallbackThreshold(*self.ipcon.send_request(self, BrickletLine.FUNCTION_GET_REFLECTIVITY_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
@@ -136,11 +138,11 @@ class BrickletLine(Device):
         """
         Sets the period in ms with which the threshold callback
         
-        * :func:`ReflectivityReached`
+        * :cb:`Reflectivity Reached`
         
         is triggered, if the threshold
         
-        * :func:`SetReflectivityCallbackThreshold`
+        * :func:`Set Reflectivity Callback Threshold`
         
         keeps being reached.
         
@@ -150,13 +152,13 @@ class BrickletLine(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletLine.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -167,13 +169,13 @@ class BrickletLine(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletLine.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 Line = BrickletLine # for backward compatibility

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -36,6 +36,7 @@ class BrickletRealTimeClock(Device):
 
     CALLBACK_DATE_TIME = 10
     CALLBACK_ALARM = 11
+
 
     FUNCTION_SET_DATE_TIME = 1
     FUNCTION_GET_DATE_TIME = 2
@@ -82,6 +83,7 @@ class BrickletRealTimeClock(Device):
 
         self.callback_formats[BrickletRealTimeClock.CALLBACK_DATE_TIME] = 'H B B B B B B B q'
         self.callback_formats[BrickletRealTimeClock.CALLBACK_ALARM] = 'H B B B B B B B q'
+
 
     def set_date_time(self, year, month, day, hour, minute, second, centisecond, weekday):
         """
@@ -155,17 +157,17 @@ class BrickletRealTimeClock(Device):
 
     def get_offset(self):
         """
-        Returns the offset as set by :func:`SetOffset`.
+        Returns the offset as set by :func:`Set Offset`.
         """
         return self.ipcon.send_request(self, BrickletRealTimeClock.FUNCTION_GET_OFFSET, (), '', 'b')
 
     def set_date_time_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`DateTime` callback is triggered
+        Sets the period in ms with which the :cb:`Date Time` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`DateTime` is only triggered if the date or time changed since the
-        last triggering.
+        The :cb:`Date Time` Callback is only triggered if the date or time changed
+        since the last triggering.
         
         The default value is 0.
         
@@ -175,7 +177,7 @@ class BrickletRealTimeClock(Device):
 
     def get_date_time_callback_period(self):
         """
-        Returns the period as set by :func:`SetDateTimeCallbackPeriod`.
+        Returns the period as set by :func:`Set Date Time Callback Period`.
         
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
@@ -183,7 +185,7 @@ class BrickletRealTimeClock(Device):
 
     def set_alarm(self, month, day, hour, minute, second, weekday, interval):
         """
-        Configures a repeatable alarm. The :func:`Alarm` callback is triggered if the
+        Configures a repeatable alarm. The :cb:`Alarm` callback is triggered if the
         current date and time matches the configured alarm.
         
         Setting a parameter to -1 means that it should be disabled and doesn't take part
@@ -214,7 +216,7 @@ class BrickletRealTimeClock(Device):
 
     def get_alarm(self):
         """
-        Returns the alarm configuration as set by :func:`SetAlarm`.
+        Returns the alarm configuration as set by :func:`Set Alarm`.
         
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
@@ -222,7 +224,7 @@ class BrickletRealTimeClock(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -233,13 +235,13 @@ class BrickletRealTimeClock(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletRealTimeClock.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 RealTimeClock = BrickletRealTimeClock # for backward compatibility

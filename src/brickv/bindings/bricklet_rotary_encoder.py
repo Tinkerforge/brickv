@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -37,6 +37,7 @@ class BrickletRotaryEncoder(Device):
     CALLBACK_COUNT_REACHED = 9
     CALLBACK_PRESSED = 11
     CALLBACK_RELEASED = 12
+
 
     FUNCTION_GET_COUNT = 1
     FUNCTION_SET_COUNT_CALLBACK_PERIOD = 2
@@ -82,6 +83,7 @@ class BrickletRotaryEncoder(Device):
         self.callback_formats[BrickletRotaryEncoder.CALLBACK_PRESSED] = ''
         self.callback_formats[BrickletRotaryEncoder.CALLBACK_RELEASED] = ''
 
+
     def get_count(self, reset):
         """
         Returns the current count of the encoder. If you set reset
@@ -97,10 +99,10 @@ class BrickletRotaryEncoder(Device):
 
     def set_count_callback_period(self, period):
         """
-        Sets the period in ms with which the :func:`Count` callback is triggered
+        Sets the period in ms with which the :cb:`Count` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Count` is only triggered if the count has changed since the
+        The :cb:`Count` callback is only triggered if the count has changed since the
         last triggering.
         
         The default value is 0.
@@ -109,13 +111,13 @@ class BrickletRotaryEncoder(Device):
 
     def get_count_callback_period(self):
         """
-        Returns the period as set by :func:`SetCountCallbackPeriod`.
+        Returns the period as set by :func:`Set Count Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_COUNT_CALLBACK_PERIOD, (), '', 'I')
 
     def set_count_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`CountReached` callback. 
+        Sets the thresholds for the :cb:`Count Reached` callback.
         
         The following options are possible:
         
@@ -135,7 +137,7 @@ class BrickletRotaryEncoder(Device):
 
     def get_count_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetCountCallbackThreshold`.
+        Returns the threshold as set by :func:`Set Count Callback Threshold`.
         """
         return GetCountCallbackThreshold(*self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_COUNT_CALLBACK_THRESHOLD, (), '', 'c i i'))
 
@@ -143,11 +145,11 @@ class BrickletRotaryEncoder(Device):
         """
         Sets the period in ms with which the threshold callback
         
-        * :func:`CountReached`
+        * :cb:`Count Reached`
         
         is triggered, if the thresholds
         
-        * :func:`SetCountCallbackThreshold`
+        * :func:`Set Count Callback Threshold`
         
         keeps being reached.
         
@@ -157,7 +159,7 @@ class BrickletRotaryEncoder(Device):
 
     def get_debounce_period(self):
         """
-        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -165,14 +167,14 @@ class BrickletRotaryEncoder(Device):
         """
         Returns *true* if the button is pressed and *false* otherwise.
         
-        It is recommended to use the :func:`Pressed` and :func:`Released` callbacks
+        It is recommended to use the :cb:`Pressed` and :cb:`Released` callbacks
         to handle the button.
         """
         return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_IS_PRESSED, (), '', '?')
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -183,13 +185,13 @@ class BrickletRotaryEncoder(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 RotaryEncoder = BrickletRotaryEncoder # for backward compatibility

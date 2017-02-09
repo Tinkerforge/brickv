@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -32,6 +32,7 @@ class BrickletIndustrialAnalogOut(Device):
 
     DEVICE_IDENTIFIER = 258
     DEVICE_DISPLAY_NAME = 'Industrial Analog Out Bricklet'
+
 
 
     FUNCTION_ENABLE = 1
@@ -72,6 +73,7 @@ class BrickletIndustrialAnalogOut(Device):
         self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_GET_IDENTITY] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+
     def enable(self):
         """
         Enables the output of voltage and current.
@@ -105,7 +107,7 @@ class BrickletIndustrialAnalogOut(Device):
 
     def get_voltage(self):
         """
-        Returns the voltage as set by :func:`SetVoltage`.
+        Returns the voltage as set by :func:`Set Voltage`.
         """
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_GET_VOLTAGE, (), '', 'H')
 
@@ -120,7 +122,7 @@ class BrickletIndustrialAnalogOut(Device):
 
     def get_current(self):
         """
-        Returns the current as set by :func:`SetCurrent`.
+        Returns the current as set by :func:`Set Current`.
         """
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_GET_CURRENT, (), '', 'H')
 
@@ -146,13 +148,13 @@ class BrickletIndustrialAnalogOut(Device):
 
     def get_configuration(self):
         """
-        Returns the configuration as set by :func:`SetConfiguration`.
+        Returns the configuration as set by :func:`Set Configuration`.
         """
         return GetConfiguration(*self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         

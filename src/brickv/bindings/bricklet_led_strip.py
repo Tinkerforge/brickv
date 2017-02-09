@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-01-25.      #
+# This file was automatically generated on 2017-02-09.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletLEDStrip(Device):
     DEVICE_DISPLAY_NAME = 'LED Strip Bricklet'
 
     CALLBACK_FRAME_RENDERED = 6
+
 
     FUNCTION_SET_RGB_VALUES = 1
     FUNCTION_GET_RGB_VALUES = 2
@@ -120,13 +121,14 @@ class BrickletLEDStrip(Device):
 
         self.callback_formats[BrickletLEDStrip.CALLBACK_FRAME_RENDERED] = 'H'
 
+
     def set_rgb_values(self, index, length, r, g, b):
         """
         Sets the RGB values for the LEDs with the given *length* starting
         from *index*.
         
         To make the colors show correctly you need to configure the chip type
-        (:func:`SetChipType`) and a 3-channel channel mapping (:func:`SetChannelMapping`)
+        (:func:`Set Chip Type`) and a 3-channel channel mapping (:func:`Set Channel Mapping`)
         according to the connected LEDs.
         
         The maximum length is 16, the index goes from 0 to 319 and the rgb values
@@ -145,16 +147,16 @@ class BrickletLEDStrip(Device):
         .. note:: Depending on the LED circuitry colors can be permuted.
         
         The colors will be transfered to actual LEDs when the next
-        frame duration ends, see :func:`SetFrameDuration`.
+        frame duration ends, see :func:`Set Frame Duration`.
         
         Generic approach:
         
         * Set the frame duration to a value that represents
           the number of frames per second you want to achieve.
         * Set all of the LED colors for one frame.
-        * Wait for the :func:`FrameRendered` callback.
+        * Wait for the :cb:`Frame Rendered` callback.
         * Set all of the LED colors for next frame.
-        * Wait for the :func:`FrameRendered` callback.
+        * Wait for the :cb:`Frame Rendered` callback.
         * and so on.
         
         This approach ensures that you can change the LED colors with
@@ -162,7 +164,7 @@ class BrickletLEDStrip(Device):
         
         The actual number of controllable LEDs depends on the number of free
         Bricklet ports. See :ref:`here <led_strip_bricklet_ram_constraints>` for more
-        information. A call of :func:`SetRGBValues` with index + length above the
+        information. A call of :func:`Set RGB Values` with index + length above the
         bounds is ignored completely.
         """
         self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_RGB_VALUES, (index, length, r, g, b), 'H B 16B 16B 16B', '')
@@ -172,7 +174,7 @@ class BrickletLEDStrip(Device):
         Returns RGB value with the given *length* starting from the
         given *index*.
         
-        The values are the last values that were set by :func:`SetRGBValues`.
+        The values are the last values that were set by :func:`Set RGB Values`.
         """
         return GetRGBValues(*self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_RGB_VALUES, (index, length), 'H B', '16B 16B 16B'))
 
@@ -183,7 +185,7 @@ class BrickletLEDStrip(Device):
         Example: If you want to achieve 20 frames per second, you should
         set the frame duration to 50ms (50ms * 20 = 1 second).
         
-        For an explanation of the general approach see :func:`SetRGBValues`.
+        For an explanation of the general approach see :func:`Set RGB Values`.
         
         Default value: 100ms (10 frames per second).
         """
@@ -191,7 +193,7 @@ class BrickletLEDStrip(Device):
 
     def get_frame_duration(self):
         """
-        Returns the frame duration in ms as set by :func:`SetFrameDuration`.
+        Returns the frame duration in ms as set by :func:`Set Frame Duration`.
         """
         return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_FRAME_DURATION, (), '', 'H')
 
@@ -208,7 +210,7 @@ class BrickletLEDStrip(Device):
         
         The Bricklet will choose the nearest achievable frequency, which may
         be off by a few Hz. You can get the exact frequency that is used by
-        calling :func:`GetClockFrequency`.
+        calling :func:`Get Clock Frequency`.
         
         If you have problems with flickering LEDs, they may be bits flipping. You
         can fix this by either making the connection between the LEDs and the
@@ -228,7 +230,7 @@ class BrickletLEDStrip(Device):
 
     def get_clock_frequency(self):
         """
-        Returns the currently used clock frequency as set by :func:`SetClockFrequency`.
+        Returns the currently used clock frequency as set by :func:`Set Clock Frequency`.
         
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
@@ -253,7 +255,7 @@ class BrickletLEDStrip(Device):
 
     def get_chip_type(self):
         """
-        Returns the currently used chip type as set by :func:`SetChipType`.
+        Returns the currently used chip type as set by :func:`Set Chip Type`.
         
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
@@ -265,7 +267,7 @@ class BrickletLEDStrip(Device):
         from *index*.
         
         To make the colors show correctly you need to configure the chip type
-        (:func:`SetChipType`) and a 4-channel channel mapping (:func:`SetChannelMapping`)
+        (:func:`Set Chip Type`) and a 4-channel channel mapping (:func:`Set Channel Mapping`)
         according to the connected LEDs.
         
         The maximum length is 12, the index goes from 0 to 239 and the rgbw values
@@ -285,16 +287,16 @@ class BrickletLEDStrip(Device):
         .. note:: Depending on the LED circuitry colors can be permuted.
         
         The colors will be transfered to actual LEDs when the next
-        frame duration ends, see :func:`SetFrameDuration`.
+        frame duration ends, see :func:`Set Frame Duration`.
         
         Generic approach:
         
         * Set the frame duration to a value that represents
           the number of frames per second you want to achieve.
         * Set all of the LED colors for one frame.
-        * Wait for the :func:`FrameRendered` callback.
+        * Wait for the :cb:`Frame Rendered` callback.
         * Set all of the LED colors for next frame.
-        * Wait for the :func:`FrameRendered` callback.
+        * Wait for the :cb:`Frame Rendered` callback.
         * and so on.
         
         This approach ensures that you can change the LED colors with
@@ -302,7 +304,7 @@ class BrickletLEDStrip(Device):
         
         The actual number of controllable LEDs depends on the number of free
         Bricklet ports. See :ref:`here <led_strip_bricklet_ram_constraints>` for more
-        information. A call of :func:`SetRGBWValues` with index + length above the
+        information. A call of :func:`Set RGBW Values` with index + length above the
         bounds is ignored completely.
         
         The LPD8806 LED driver chips have 7-bit channels for RGB. Internally the LED
@@ -324,7 +326,7 @@ class BrickletLEDStrip(Device):
         Returns RGBW values with the given *length* starting from the
         given *index*.
         
-        The values are the last values that were set by :func:`SetRGBWValues`.
+        The values are the last values that were set by :func:`Set RGBW Values`.
         
         .. versionadded:: 2.0.6$nbsp;(Plugin)
         """
@@ -334,7 +336,7 @@ class BrickletLEDStrip(Device):
         """
         Sets the channel mapping for the connected LEDs.
         
-        :func:`SetRGBValues` and :func:`SetRGBWValues` take the data in RGB(W) order.
+        :func:`Set RGB Values` and :func:`Set RGBW Values` take the data in RGB(W) order.
         But the connected LED driver chips might have their 3 or 4 channels in a
         different order. For example, the WS2801 chips typically use BGR order, the
         WS2812 chips typically use GRB order and the APA102 chips typically use WBGR
@@ -346,10 +348,10 @@ class BrickletLEDStrip(Device):
         channel, therefore one of the Wxyz channel mappings should be used. Then
         the W channel controls the brightness.
         
-        If a 3-channel mapping is selected then :func:`SetRGBValues` has to be used.
-        Calling :func:`SetRGBWValues` with a 3-channel mapping will produce incorrect
+        If a 3-channel mapping is selected then :func:`Set RGB Values` has to be used.
+        Calling :func:`Set RGBW Values` with a 3-channel mapping will produce incorrect
         results. Vice-versa if a 4-channel mapping is selected then
-        :func:`SetRGBWValues` has to be used. Calling :func:`SetRGBValues` with a
+        :func:`Set RGBW Values` has to be used. Calling :func:`Set RGB Values` with a
         4-channel mapping will produce incorrect results.
         
         The default value is BGR (36).
@@ -360,7 +362,7 @@ class BrickletLEDStrip(Device):
 
     def get_channel_mapping(self):
         """
-        Returns the currently used channel mapping as set by :func:`SetChannelMapping`.
+        Returns the currently used channel mapping as set by :func:`Set Channel Mapping`.
         
         .. versionadded:: 2.0.6$nbsp;(Plugin)
         """
@@ -368,7 +370,7 @@ class BrickletLEDStrip(Device):
 
     def enable_frame_rendered_callback(self):
         """
-        Enables the :func:`FrameRendered` callback.
+        Enables the :cb:`Frame Rendered` callback.
         
         By default the callback is enabled.
         
@@ -378,7 +380,7 @@ class BrickletLEDStrip(Device):
 
     def disable_frame_rendered_callback(self):
         """
-        Disables the :func:`FrameRendered` callback.
+        Disables the :cb:`Frame Rendered` callback.
         
         By default the callback is enabled.
         
@@ -388,7 +390,7 @@ class BrickletLEDStrip(Device):
 
     def is_frame_rendered_callback_enabled(self):
         """
-        Returns *true* if the :func:`FrameRendered` callback is enabled, *false* otherwise.
+        Returns *true* if the :cb:`Frame Rendered` callback is enabled, *false* otherwise.
         
         .. versionadded:: 2.0.6$nbsp;(Plugin)
         """
@@ -396,7 +398,7 @@ class BrickletLEDStrip(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to, 
+        Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
         
@@ -407,13 +409,13 @@ class BrickletLEDStrip(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
 LEDStrip = BrickletLEDStrip # for backward compatibility
