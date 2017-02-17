@@ -2,6 +2,7 @@
 """
 RS485 Plugin
 Copyright (C) 2016 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2017 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 rs485.py: RS485 Plugin Implementation
 
@@ -33,19 +34,27 @@ from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 
 from brickv.plugin_system.plugins.rs485.qhexedit import QHexeditWidget
 
+MODE_RS485 = 0
+MODE_MODBUS_SLAVE_RTU = 1
+MODE_MODBUS_MASTER_RTU = 2
+
+MODBUS_READ_COILS = 0
+
 class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_read = pyqtSignal(object, int)
     qtcb_error = pyqtSignal(int)
+
+    # Modbus specific.
+    qtcb_modbus_read_coils_request = pyqtSignal(int, int, int)
+    qtcb_modbus_read_coils_response = pyqtSignal(int, int, int, object)
 
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletRS485, *args)
 
         self.setupUi(self)
-        
         self.text.setReadOnly(True)
 
         self.rs485 = self.device
-        
         self.cbe_error_count = CallbackEmulator(self.rs485.get_error_count,
                                                 self.cb_error_count,
                                                 self.increase_error_count)
@@ -53,23 +62,44 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.read_callback_was_enabled = False
 
         self.qtcb_read.connect(self.cb_read)
+
+        # Modbus specific.
+        self.qtcb_modbus_read_coils_request.connect(self.cb_modbus_read_coils_request)
+        self.qtcb_modbus_read_coils_response.connect(self.cb_modbus_read_coils_response)
+
         self.rs485.register_callback(self.rs485.CALLBACK_READ_CALLBACK,
                                      self.qtcb_read.emit)
 
-        self.input_combobox.addItem("")
-        self.input_combobox.lineEdit().setMaxLength(58)
-        self.input_combobox.lineEdit().returnPressed.connect(self.input_changed)
+        # Modbus specific.
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_COILS_REQUEST,
+                                     self.qtcb_modbus_read_coils_request.emit)
 
-        self.line_ending_lineedit.setValidator(HexValidator())
-        self.line_ending_combobox.currentIndexChanged.connect(self.line_ending_changed)
-        self.line_ending_lineedit.editingFinished.connect(self.line_ending_changed)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_COILS_RESPONSE,
+                                     self.qtcb_modbus_read_coils_response.emit)
 
+        self.rs485_input_combobox.addItem("")
+        self.rs485_input_combobox.lineEdit().setMaxLength(58)
+        self.rs485_input_combobox.lineEdit().returnPressed.connect(self.input_changed)
+
+        self.rs485_input_line_ending_lineedit.setValidator(HexValidator())
+        self.rs485_input_line_ending_combobox.currentIndexChanged.connect(self.line_ending_changed)
+        self.rs485_input_line_ending_lineedit.editingFinished.connect(self.line_ending_changed)
+
+        self.mode_combobox.currentIndexChanged.connect(self.mode_changed)
         self.baudrate_spinbox.valueChanged.connect(self.configuration_changed)
         self.parity_combobox.currentIndexChanged.connect(self.configuration_changed)
         self.stopbits_spinbox.valueChanged.connect(self.configuration_changed)
         self.wordlength_spinbox.valueChanged.connect(self.configuration_changed)
         self.duplex_combobox.currentIndexChanged.connect(self.configuration_changed)
         self.text_type_combobox.currentIndexChanged.connect(self.text_type_changed)
+
+        # Modbus specific.
+        self.modbus_slave_address_spinbox.valueChanged.connect(self.configuration_changed)
+        self.modbus_master_slave_address_spinbox.valueChanged.connect(self.configuration_changed)
+        self.modbus_master_param1_spinbox.valueChanged.connect(self.configuration_changed)
+        self.modbus_master_param2_spinbox.valueChanged.connect(self.configuration_changed)
+        self.modbus_master_function_combobox.currentIndexChanged.connect(self.modbus_master_function_changed)
+        self.modbus_master_request_timeout_spinbox.valueChanged.connect(self.configuration_changed)
 
         self.hextext = QHexeditWidget(self.text.font())
         self.hextext.hide()
@@ -78,19 +108,75 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.button_clear_text.clicked.connect(lambda: self.text.setPlainText(""))
         self.button_clear_text.clicked.connect(self.hextext.clear)
 
-        self.save_button.clicked.connect(self.save_clicked)
-        
+        self.apply_button.clicked.connect(self.apply_clicked)
+
         self.error_overrun = 0
         self.error_parity = 0
-
         self.last_char = ''
+
+        self.gui_group_rs485 = [self.rs485_input_label,
+                                self.rs485_input_combobox,
+                                self.rs485_input_line_ending_combobox,
+                                self.rs485_input_line_ending_lineedit]
+
+        self.gui_group_modbus_master = [self.modbus_master_function_label,
+                                            self.modbus_master_function_combobox,
+                                            self.modbus_master_slave_address_label,
+                                            self.modbus_master_slave_address_spinbox,
+                                            self.modbus_master_param1_label,
+                                            self.modbus_master_param1_spinbox,
+                                            self.modbus_master_param2_label,
+                                            self.modbus_master_param2_spinbox,
+                                            self.modbus_master_request_timeout_label,
+                                            self.modbus_master_request_timeout_spinbox,
+                                            self.modbus_master_send_button]
+
+        self.gui_group_modbus_slave = [self.modbus_slave_address_label,
+                                       self.modbus_slave_address_spinbox]
+
+        self.mode_changed(0)
+
+    def toggle_gui_group(self, group, toggle):
+        for e in group:
+            if toggle:
+                e.show()
+            else:
+                e.hide()
+
+    def modbus_master_function_changed(self, function):
+        if function == MODBUS_READ_COILS:
+            self.modbus_master_param1_label.setText('Starting Address:')
+            self.modbus_master_param1_spinbox.setMinimum(0x0000)
+            self.modbus_master_param1_spinbox.setMaximum(0xFFFF)
+            self.modbus_master_param2_label.setText('Number of Coils:')
+            self.modbus_master_param2_spinbox.setMinimum(0x0001)
+            self.modbus_master_param2_spinbox.setMaximum(0x07D0)
+
+    def mode_changed(self, mode):
+        if mode == MODE_RS485:
+            self.toggle_gui_group(self.gui_group_rs485, True)
+            self.toggle_gui_group(self.gui_group_modbus_slave, False)
+            self.toggle_gui_group(self.gui_group_modbus_master, False)
+
+        elif mode == MODE_MODBUS_SLAVE_RTU:
+            self.toggle_gui_group(self.gui_group_rs485, False)
+            self.toggle_gui_group(self.gui_group_modbus_slave, True)
+            self.toggle_gui_group(self.gui_group_modbus_master, False)
+
+        elif mode == MODE_MODBUS_MASTER_RTU:
+            self.toggle_gui_group(self.gui_group_rs485, False)
+            self.toggle_gui_group(self.gui_group_modbus_slave, False)
+            self.toggle_gui_group(self.gui_group_modbus_master, True)
+
+        self.configuration_changed()
 
     def cb_read(self, message, length):
         s = ''.join(message[:length])
+
         self.hextext.appendData(s)
 
         # check if a \r\n or \n\r was split into two messages. the first one
-        # ended with \r or \n and the net one starts with \n or \r
+        # ended with \r or \n and the next one starts with \n or \r
         if len(s) > 0:
             if s[0] != self.last_char and self.last_char in ['\r', '\n'] and s[0] in ['\r', '\n']:
                 s = s[1:]
@@ -104,6 +190,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         s = s.replace('\n\r', '\n').replace('\r\n', '\n')
 
         ascii = ''
+
         for c in s:
             if (ord(c) < 32 or ord(c) > 126) and not (ord(c) in (10, 13)):
                 ascii += '.'
@@ -114,12 +201,46 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.text.insertPlainText(ascii)
         self.text.moveCursor(QTextCursor.End)
 
+    def cb_modbus_read_coils_request(self, request_id, starting_address, count):
+        a = 'READ COILS REQUEST: ' + \
+            'REQUEST ID=' + \
+            str(request_id) + \
+            ', STARTING ADDRESS=' + \
+            str(starting_address) + \
+            ', COUNT=' + \
+            str(count) + \
+            '\n\n'
+
+        self.text.moveCursor(QTextCursor.End)
+        self.text.insertPlainText(a)
+        self.text.moveCursor(QTextCursor.End)
+
+    def cb_modbus_read_coils_response(self,
+                                      exception_code,
+                                      request_id,
+                                      reconstruction_status,
+                                      data):
+        a = 'READ COILS RESPONSE: ' + \
+            'EXCEPTION CODE=' + \
+            str(exception_code) + \
+            ', REQUEST ID=' + \
+            str(request_id) + \
+            ', RECONSTRUCTION STATUS=' + \
+            str(reconstruction_status) + \
+            ', DATA=' + \
+            str(data) + \
+            '\n\n'
+
+        self.text.moveCursor(QTextCursor.End)
+        self.text.insertPlainText(a)
+        self.text.moveCursor(QTextCursor.End)
+
     def line_ending_changed(self):
-        selected_line_ending = self.line_ending_combobox.currentText()
-        self.line_ending_lineedit.setEnabled( (selected_line_ending == 'Hex:' ))
+        selected_line_ending = self.rs485_input_line_ending_combobox.currentText()
+        self.rs485_input_line_ending_lineedit.setEnabled( (selected_line_ending == 'Hex:' ))
 
     def get_line_ending(self):
-        selected_line_ending = self.line_ending_combobox.currentText()
+        selected_line_ending = self.rs485_input_line_ending_combobox.currentText()
 
         if selected_line_ending == '\\n':
             hex_le = '0A'
@@ -132,7 +253,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         elif selected_line_ending == '\\0':
             hex_le = "00"
         elif selected_line_ending == 'Hex:':
-            hex_le = self.line_ending_lineedit.text()
+            hex_le = self.rs485_input_line_ending_lineedit.text()
         else:
             hex_le = ''
 
@@ -146,7 +267,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         return line_ending
 
     def input_changed(self):
-        text = self.input_combobox.currentText().encode('utf-8') + self.get_line_ending()
+        text = self.rs485_input_combobox.currentText().encode('utf-8') + self.get_line_ending()
         c = ['\0']*60
         for i, t in enumerate(text):
             c[i] = t
@@ -159,15 +280,24 @@ class RS485(COMCUPluginBase, Ui_RS485):
             c = c + ['\0']*written
             length = length - written
 
-        self.input_combobox.setCurrentIndex(0)
+        self.rs485_input_combobox.setCurrentIndex(0)
 
-    def get_configuration_async(self, conf):
+    def get_rs485_configuration_async(self, conf):
         self.baudrate_spinbox.setValue(conf.baudrate)
         self.parity_combobox.setCurrentIndex(conf.parity)
         self.stopbits_spinbox.setValue(conf.stopbits)
         self.wordlength_spinbox.setValue(conf.wordlength)
         self.duplex_combobox.setCurrentIndex(conf.duplex)
-        self.save_button.setEnabled(False)
+        self.apply_button.setEnabled(False)
+
+    def get_modbus_configuration_async(self, conf):
+        self.modbus_slave_address_spinbox.setValue(conf.slave_address)
+        self.modbus_master_request_timeout_spinbox.setValue(conf.master_request_timeout)
+        self.apply_button.setEnabled(False)
+
+    def get_mode_async(self, mode):
+        self.mode_combobox.setCurrentIndex(mode)
+        self.apply_button.setEnabled(False)
 
     def text_type_changed(self):
         if self.text_type_combobox.currentIndex() == 0:
@@ -178,22 +308,37 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.hextext.show()
 
     def configuration_changed(self):
-        self.save_button.setEnabled(True)
+        self.apply_button.setEnabled(True)
 
-    def save_clicked(self):
+    def apply_clicked(self):
+        mode = self.mode_combobox.currentIndex()
         baudrate = self.baudrate_spinbox.value()
         parity = self.parity_combobox.currentIndex()
         stopbits = self.stopbits_spinbox.value()
         wordlength = self.wordlength_spinbox.value()
         duplex = self.duplex_combobox.currentIndex()
+        modbus_slave_address = self.modbus_slave_address_spinbox.value()
+        modbus_master_request_timeout = self.modbus_master_request_timeout_spinbox.value()
 
-        self.rs485.set_configuration(baudrate, parity, stopbits, wordlength, duplex)
-        self.save_button.setEnabled(False)
+        self.rs485.set_rs485_configuration(baudrate,
+                                           parity,
+                                           stopbits,
+                                           wordlength,
+                                           duplex)
+
+        self.rs485.set_modbus_configuration(modbus_slave_address,
+                                            modbus_master_request_timeout)
+
+        self.rs485.set_mode(mode)
+
+        self.rs485.apply_configuration()
+
+        self.apply_button.setEnabled(False)
 
     def is_read_callback_enabled_async(self, enabled):
         self.read_callback_was_enabled = enabled
         self.rs485.enable_read_callback()
-        
+
     def cb_error_count(self, error):
         self.label_error_overrun.setText(str(error.overrun_error_count))
         self.label_error_parity.setText(str(error.parity_error_count))
@@ -202,7 +347,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.read_callback_was_enabled = False
 
         async_call(self.rs485.is_read_callback_enabled, None, self.is_read_callback_enabled_async, self.increase_error_count)
-        async_call(self.rs485.get_configuration, None, self.get_configuration_async, self.increase_error_count)
+        async_call(self.rs485.get_rs485_configuration, None, self.get_rs485_configuration_async, self.increase_error_count)
+        async_call(self.rs485.get_modbus_configuration, None, self.get_modbus_configuration_async, self.increase_error_count)
+        async_call(self.rs485.get_mode, None, self.get_mode_async, self.increase_error_count)
         self.cbe_error_count.set_period(250)
 
     def stop(self):
