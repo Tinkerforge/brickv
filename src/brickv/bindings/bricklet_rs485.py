@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-17.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -25,10 +25,12 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 Read = namedtuple('Read', ['message', 'length'])
-GetConfiguration = namedtuple('Configuration', ['mode', 'modbus_slave_address', 'baudrate', 'parity', 'stopbits', 'wordlength', 'duplex'])
+GetRS485Configuration = namedtuple('RS485Configuration', ['baudrate', 'parity', 'stopbits', 'wordlength', 'duplex'])
+GetModbusConfiguration = namedtuple('ModbusConfiguration', ['slave_address', 'master_request_timeout'])
 GetBufferConfig = namedtuple('BufferConfig', ['send_buffer_size', 'receive_buffer_size'])
 GetBufferStatus = namedtuple('BufferStatus', ['send_buffer_used', 'receive_buffer_used'])
 GetErrorCount = namedtuple('ErrorCount', ['overrun_error_count', 'parity_error_count'])
+GetModbusCommonErrorCount = namedtuple('ModbusCommonErrorCount', ['timeout_error_count', 'checksum_error_count', 'frame_too_big_error_count', 'illegal_function_error_count', 'illegal_data_address_error_count', 'illegal_data_value_error_count', 'slave_device_failure_error_count'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -40,32 +42,40 @@ class BrickletRS485(Device):
     DEVICE_IDENTIFIER = 277
     DEVICE_DISPLAY_NAME = 'RS485 Bricklet'
 
-    CALLBACK_READ_CALLBACK = 20
-    CALLBACK_ERROR_COUNT = 21
-    CALLBACK_MODBUS_READ_COILS_REQUEST = 22
-    CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL = 23
+    CALLBACK_READ_CALLBACK = 28
+    CALLBACK_ERROR_COUNT = 29
+    CALLBACK_MODBUS_READ_COILS_REQUEST = 30
+    CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL = 31
 
-    CALLBACK_MODBUS_READ_COILS_RESPONSE = -23
+    CALLBACK_MODBUS_READ_COILS_RESPONSE = -31
 
     FUNCTION_WRITE = 1
     FUNCTION_READ = 2
     FUNCTION_ENABLE_READ_CALLBACK = 3
     FUNCTION_DISABLE_READ_CALLBACK = 4
     FUNCTION_IS_READ_CALLBACK_ENABLED = 5
-    FUNCTION_SET_CONFIGURATION = 6
-    FUNCTION_GET_CONFIGURATION = 7
-    FUNCTION_SET_COMMUNICATION_LED_CONFIG = 8
-    FUNCTION_GET_COMMUNICATION_LED_CONFIG = 9
-    FUNCTION_SET_ERROR_LED_CONFIG = 10
-    FUNCTION_GET_ERROR_LED_CONFIG = 11
-    FUNCTION_SET_BUFFER_CONFIG = 12
-    FUNCTION_GET_BUFFER_CONFIG = 13
-    FUNCTION_GET_BUFFER_STATUS = 14
-    FUNCTION_ENABLE_ERROR_COUNT_CALLBACK = 15
-    FUNCTION_DISABLE_ERROR_COUNT_CALLBACK = 16
-    FUNCTION_IS_ERROR_COUNT_CALLBACK_ENABLED = 17
-    FUNCTION_GET_ERROR_COUNT = 18
-    FUNCTION_ANSWER_MODBUS_READ_COILS_REQUEST_LOW_LEVEL = 19
+    FUNCTION_SET_RS485_CONFIGURATION = 6
+    FUNCTION_GET_RS485_CONFIGURATION = 7
+    FUNCTION_SET_MODBUS_CONFIGURATION = 8
+    FUNCTION_GET_MODBUS_CONFIGURATION = 9
+    FUNCTION_SET_MODE = 10
+    FUNCTION_GET_MODE = 11
+    FUNCTION_APPLY_CONFIGURATION = 12
+    FUNCTION_SET_COMMUNICATION_LED_CONFIG = 13
+    FUNCTION_GET_COMMUNICATION_LED_CONFIG = 14
+    FUNCTION_SET_ERROR_LED_CONFIG = 15
+    FUNCTION_GET_ERROR_LED_CONFIG = 16
+    FUNCTION_SET_BUFFER_CONFIG = 17
+    FUNCTION_GET_BUFFER_CONFIG = 18
+    FUNCTION_GET_BUFFER_STATUS = 19
+    FUNCTION_ENABLE_ERROR_COUNT_CALLBACK = 20
+    FUNCTION_DISABLE_ERROR_COUNT_CALLBACK = 21
+    FUNCTION_IS_ERROR_COUNT_CALLBACK_ENABLED = 22
+    FUNCTION_GET_ERROR_COUNT = 23
+    FUNCTION_GET_MODBUS_COMMON_ERROR_COUNT = 24
+    FUNCTION_MODBUS_ANSWER_READ_COILS_REQUEST_LOW_LEVEL = 25
+    FUNCTION_MODBUS_REPORT_EXCEPTION = 26
+    FUNCTION_MODBUS_READ_COILS = 27
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -90,6 +100,9 @@ class BrickletRS485(Device):
     WORDLENGTH_8 = 8
     DUPLEX_HALF = 0
     DUPLEX_FULL = 1
+    MODE_RS485 = 0
+    MODE_MODBUS_SLAVE_RTU = 1
+    MODE_MODBUS_MASTER_RTU = 2
     COMMUNICATION_LED_CONFIG_OFF = 0
     COMMUNICATION_LED_CONFIG_ON = 1
     COMMUNICATION_LED_CONFIG_SHOW_COMMUNICATION = 2
@@ -128,8 +141,13 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_ENABLE_READ_CALLBACK] = BrickletRS485.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS485.FUNCTION_DISABLE_READ_CALLBACK] = BrickletRS485.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS485.FUNCTION_IS_READ_CALLBACK_ENABLED] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_SET_CONFIGURATION] = BrickletRS485.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletRS485.FUNCTION_GET_CONFIGURATION] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_SET_RS485_CONFIGURATION] = BrickletRS485.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRS485.FUNCTION_GET_RS485_CONFIGURATION] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_SET_MODBUS_CONFIGURATION] = BrickletRS485.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRS485.FUNCTION_GET_MODBUS_CONFIGURATION] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_SET_MODE] = BrickletRS485.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRS485.FUNCTION_GET_MODE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_APPLY_CONFIGURATION] = BrickletRS485.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletRS485.FUNCTION_SET_COMMUNICATION_LED_CONFIG] = BrickletRS485.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletRS485.FUNCTION_GET_COMMUNICATION_LED_CONFIG] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_SET_ERROR_LED_CONFIG] = BrickletRS485.RESPONSE_EXPECTED_FALSE
@@ -141,7 +159,10 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_DISABLE_ERROR_COUNT_CALLBACK] = BrickletRS485.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS485.FUNCTION_IS_ERROR_COUNT_CALLBACK_ENABLED] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_ANSWER_MODBUS_READ_COILS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_GET_MODBUS_COMMON_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_COILS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_REPORT_EXCEPTION] = BrickletRS485.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_READ_COILS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.CALLBACK_READ_CALLBACK] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_COILS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -162,7 +183,7 @@ class BrickletRS485(Device):
         self.callback_formats[BrickletRS485.CALLBACK_READ_CALLBACK] = '60c B'
         self.callback_formats[BrickletRS485.CALLBACK_ERROR_COUNT] = 'I I'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_COILS_REQUEST] = 'B H H'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL] = 'B B H H 58B'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL] = 'B b H H 58B'
 
         self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
 
@@ -175,7 +196,7 @@ class BrickletRS485(Device):
         
         The return value is the number of bytes that could be written.
         
-        See :func:`Set Configuration` for configuration possibilities
+        See :func:`Set RS485 Configuration` for configuration possibilities
         regarding baudrate, parity and so on.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_WRITE, (message, length), '60c B', 'B')
@@ -214,12 +235,10 @@ class BrickletRS485(Device):
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_IS_READ_CALLBACK_ENABLED, (), '', '?')
 
-    def set_configuration(self, mode, modbus_slave_address, baudrate, parity, stopbits, wordlength, duplex):
+    def set_rs485_configuration(self, baudrate, parity, stopbits, wordlength, duplex):
         """
         Sets the configuration for the RS485 communication. Available options:
         
-        * Mode specifies the operating mode, can be RS485, Modbus RTU Master or Modbus RTU Slave
-        * Modbus slave address specifies the address to be used when in Modbus slave mode.
         * Baudrate between 100 and 2000000 baud.
         * Parity of none, odd or even.
         * Stopbits can be 1 or 2.
@@ -228,13 +247,46 @@ class BrickletRS485(Device):
         
         The default is: 115200 baud, parity none, 1 stop bit, word length 8, half duplex.
         """
-        self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_CONFIGURATION, (mode, modbus_slave_address, baudrate, parity, stopbits, wordlength, duplex), 'B B I B B B B', '')
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_RS485_CONFIGURATION, (baudrate, parity, stopbits, wordlength, duplex), 'I B B B B', '')
 
-    def get_configuration(self):
+    def get_rs485_configuration(self):
         """
-        Returns the configuration as set by :func:`Set Configuration`.
+        Returns the configuration as set by :func:`Set RS485 Configuration`.
         """
-        return GetConfiguration(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_CONFIGURATION, (), '', 'B B I B B B B'))
+        return GetRS485Configuration(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_RS485_CONFIGURATION, (), '', 'I B B B B'))
+
+    def set_modbus_configuration(self, slave_address, master_request_timeout):
+        """
+        Sets the configuration for the RS485 Modbus communication. Available options:
+        
+        * Slave Address to be used in Modbus slave mode.
+        * Master Request Timeout specifies how long the master should wait for a response from a slave in milliseconds.
+        """
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_MODBUS_CONFIGURATION, (slave_address, master_request_timeout), 'B I', '')
+
+    def get_modbus_configuration(self):
+        """
+        Returns the configuration as set by :func:`Set Modbus Configuration`.
+        """
+        return GetModbusConfiguration(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_MODBUS_CONFIGURATION, (), '', 'B I'))
+
+    def set_mode(self, mode):
+        """
+        Sets the mode of the Bricklet on which it operates.
+        """
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_MODE, (mode,), 'B', '')
+
+    def get_mode(self):
+        """
+        Returns the configuration as set by :func:`Set Mode`.
+        """
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_MODE, (), '', 'B')
+
+    def apply_configuration(self):
+        """
+        This function must be called after any configuration changes.
+        """
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_APPLY_CONFIGURATION, (), '', '')
 
     def set_communication_led_config(self, config):
         """
@@ -333,11 +385,29 @@ class BrickletRS485(Device):
         """
         return GetErrorCount(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_ERROR_COUNT, (), '', 'I I'))
 
-    def answer_modbus_read_coils_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
+    def get_modbus_common_error_count(self):
         """
-        TODO: English documentation.
+        -
         """
-        self.ipcon.send_request(self, BrickletRS485.FUNCTION_ANSWER_MODBUS_READ_COILS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 59B', '')
+        return GetModbusCommonErrorCount(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_MODBUS_COMMON_ERROR_COUNT, (), '', 'I I I I I I I'))
+
+    def modbus_answer_read_coils_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
+        """
+        -
+        """
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_COILS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 59B', '')
+
+    def modbus_report_exception(self, request_id, exception_code):
+        """
+        -
+        """
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_REPORT_EXCEPTION, (request_id, exception_code), 'B B', '')
+
+    def modbus_read_coils(self, slave_address, starting_address, count):
+        """
+        -
+        """
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_READ_COILS, (slave_address, starting_address, count), 'B H H', 'B')
 
     def get_spitfp_error_count(self):
         """
@@ -469,7 +539,7 @@ class BrickletRS485(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def answer_modbus_read_coils_request(self, request_id, data):
+    def modbus_answer_read_coils_request(self, request_id, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
 
@@ -479,7 +549,7 @@ class BrickletRS485(Device):
             if len(stream_chunk_data) < 59:
                 stream_chunk_data.extend([0]*(59 - len(stream_chunk_data)))
 
-            self.answer_modbus_read_coils_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
+            self.modbus_answer_read_coils_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
             stream_chunk_offset += 59
 
