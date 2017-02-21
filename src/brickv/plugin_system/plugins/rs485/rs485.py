@@ -47,6 +47,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
     # Modbus specific.
     qtcb_modbus_read_coils_request = pyqtSignal(int, int, int)
     qtcb_modbus_read_coils_response = pyqtSignal(int, int, int, object)
+    qtcb_modbus_read_holding_registers_request = pyqtSignal(int, int, int)
+    qtcb_modbus_read_holding_registers_response = pyqtSignal(int, int, int, object)
 
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletRS485, *args)
@@ -66,6 +68,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
         # Modbus specific.
         self.qtcb_modbus_read_coils_request.connect(self.cb_modbus_read_coils_request)
         self.qtcb_modbus_read_coils_response.connect(self.cb_modbus_read_coils_response)
+        self.qtcb_modbus_read_holding_registers_request.connect(self.cb_modbus_read_holding_registers_request)
+        self.qtcb_modbus_read_holding_registers_response.connect(self.cb_modbus_read_holding_registers_response)
 
         self.rs485.register_callback(self.rs485.CALLBACK_READ_CALLBACK,
                                      self.qtcb_read.emit)
@@ -76,6 +80,12 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_COILS_RESPONSE,
                                      self.qtcb_modbus_read_coils_response.emit)
+
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_REQUEST,
+                                     self.qtcb_modbus_read_holding_registers_request.emit)
+
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE,
+                                     self.qtcb_modbus_read_holding_registers_response.emit)
 
         self.rs485_input_combobox.addItem("")
         self.rs485_input_combobox.lineEdit().setMaxLength(58)
@@ -216,11 +226,48 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.text.moveCursor(QTextCursor.End)
 
     def cb_modbus_read_coils_response(self,
-                                      exception_code,
-                                      request_id,
                                       reconstruction_status,
+                                      request_id,
+                                      exception_code,
                                       data):
         a = 'READ COILS RESPONSE: ' + \
+            'EXCEPTION CODE=' + \
+            str(exception_code) + \
+            ', REQUEST ID=' + \
+            str(request_id) + \
+            ', RECONSTRUCTION STATUS=' + \
+            str(reconstruction_status) + \
+            ', DATA=' + \
+            str(data) + \
+            '\n\n'
+
+        self.text.moveCursor(QTextCursor.End)
+        self.text.insertPlainText(a)
+        self.text.moveCursor(QTextCursor.End)
+
+    def cb_modbus_read_holding_registers_request(self,
+                                                 request_id,
+                                                 starting_address,
+                                                 count):
+        a = 'READ HOLDING REGISTERS REQUEST: ' + \
+            'REQUEST ID=' + \
+            str(request_id) + \
+            ', STARTING ADDRESS=' + \
+            str(starting_address) + \
+            ', COUNT=' + \
+            str(count) + \
+            '\n\n'
+
+        self.text.moveCursor(QTextCursor.End)
+        self.text.insertPlainText(a)
+        self.text.moveCursor(QTextCursor.End)
+
+    def cb_modbus_read_holding_registers_response(self,
+                                                  reconstruction_status,
+                                                  request_id,
+                                                  exception_code,
+                                                  data):
+        a = 'READ HOLDING REGISTERS RESPONSE: ' + \
             'EXCEPTION CODE=' + \
             str(exception_code) + \
             ', REQUEST ID=' + \
