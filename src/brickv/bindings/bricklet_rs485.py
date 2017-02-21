@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-17.      #
+# This file was automatically generated on 2017-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -8,8 +8,6 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 try:
     from collections import namedtuple
@@ -42,12 +40,15 @@ class BrickletRS485(Device):
     DEVICE_IDENTIFIER = 277
     DEVICE_DISPLAY_NAME = 'RS485 Bricklet'
 
-    CALLBACK_READ_CALLBACK = 28
-    CALLBACK_ERROR_COUNT = 29
-    CALLBACK_MODBUS_READ_COILS_REQUEST = 30
-    CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL = 31
+    CALLBACK_READ_CALLBACK = 30
+    CALLBACK_ERROR_COUNT = 31
+    CALLBACK_MODBUS_READ_COILS_REQUEST = 32
+    CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL = 33
+    CALLBACK_MODBUS_READ_HOLDING_REGISTERS_REQUEST = 34
+    CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL = 35
 
-    CALLBACK_MODBUS_READ_COILS_RESPONSE = -31
+    CALLBACK_MODBUS_READ_COILS_RESPONSE = -33
+    CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE = -35
 
     FUNCTION_WRITE = 1
     FUNCTION_READ = 2
@@ -73,9 +74,11 @@ class BrickletRS485(Device):
     FUNCTION_IS_ERROR_COUNT_CALLBACK_ENABLED = 22
     FUNCTION_GET_ERROR_COUNT = 23
     FUNCTION_GET_MODBUS_COMMON_ERROR_COUNT = 24
-    FUNCTION_MODBUS_ANSWER_READ_COILS_REQUEST_LOW_LEVEL = 25
-    FUNCTION_MODBUS_REPORT_EXCEPTION = 26
+    FUNCTION_MODBUS_REPORT_EXCEPTION = 25
+    FUNCTION_MODBUS_ANSWER_READ_COILS_REQUEST_LOW_LEVEL = 26
     FUNCTION_MODBUS_READ_COILS = 27
+    FUNCTION_MODBUS_ANSWER_READ_HOLDING_REGISTERS_REQUEST_LOW_LEVEL = 28
+    FUNCTION_MODBUS_READ_HOLDING_REGISTERS = 29
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -160,13 +163,17 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_IS_ERROR_COUNT_CALLBACK_ENABLED] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_MODBUS_COMMON_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_COILS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_REPORT_EXCEPTION] = BrickletRS485.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_COILS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_READ_COILS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_HOLDING_REGISTERS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_READ_HOLDING_REGISTERS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.CALLBACK_READ_CALLBACK] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_COILS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_SET_BOOTLOADER_MODE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_BOOTLOADER_MODE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -184,8 +191,11 @@ class BrickletRS485(Device):
         self.callback_formats[BrickletRS485.CALLBACK_ERROR_COUNT] = 'I I'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_COILS_REQUEST] = 'B H H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL] = 'B b H H 58B'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_REQUEST] = 'B H H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = 'B b H H 29H'
 
         self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
 
     def write(self, message, length):
         """
@@ -391,23 +401,35 @@ class BrickletRS485(Device):
         """
         return GetModbusCommonErrorCount(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_MODBUS_COMMON_ERROR_COUNT, (), '', 'I I I I I I I'))
 
-    def modbus_answer_read_coils_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
-        """
-        -
-        """
-        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_COILS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 59B', '')
-
     def modbus_report_exception(self, request_id, exception_code):
         """
         -
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_REPORT_EXCEPTION, (request_id, exception_code), 'B B', '')
 
+    def modbus_answer_read_coils_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
+        """
+        -
+        """
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_COILS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 59B', '')
+
     def modbus_read_coils(self, slave_address, starting_address, count):
         """
         -
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_READ_COILS, (slave_address, starting_address, count), 'B H H', 'B')
+
+    def modbus_answer_read_holding_registers_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
+        """
+        -
+        """
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_HOLDING_REGISTERS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 29H', '')
+
+    def modbus_read_holding_registers(self, slave_address, starting_address, count):
+        """
+        -
+        """
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_READ_HOLDING_REGISTERS, (slave_address, starting_address, count), 'B H H', 'B')
 
     def get_spitfp_error_count(self):
         """
@@ -552,6 +574,20 @@ class BrickletRS485(Device):
             self.modbus_answer_read_coils_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
             stream_chunk_offset += 59
+
+    def modbus_answer_read_holding_registers_request(self, request_id, data):
+        stream_total_length = len(data)
+        stream_chunk_offset = 0
+
+        while stream_chunk_offset < stream_total_length:
+            stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 29]
+
+            if len(stream_chunk_data) < 29:
+                stream_chunk_data.extend([0]*(29 - len(stream_chunk_data)))
+
+            self.modbus_answer_read_holding_registers_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
+
+            stream_chunk_offset += 29
 
     def register_callback(self, id_, callback):
         """
