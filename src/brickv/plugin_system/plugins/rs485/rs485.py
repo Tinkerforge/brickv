@@ -38,7 +38,8 @@ MODE_RS485 = 0
 MODE_MODBUS_SLAVE_RTU = 1
 MODE_MODBUS_MASTER_RTU = 2
 
-MODBUS_READ_COILS = 0
+MODBUS_F_IDX_READ_COILS = 0
+MODBUS_F_IDX_READ_HOLDING_REGISTERS = 1
 
 class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_read = pyqtSignal(object, int)
@@ -118,6 +119,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.button_clear_text.clicked.connect(lambda: self.text.setPlainText(""))
         self.button_clear_text.clicked.connect(self.hextext.clear)
 
+        self.modbus_master_send_button.clicked.connect(self.master_send_clicked)
         self.apply_button.clicked.connect(self.apply_clicked)
 
         self.error_overrun = 0
@@ -153,14 +155,48 @@ class RS485(COMCUPluginBase, Ui_RS485):
             else:
                 e.hide()
 
+    def master_send_clicked(self):
+        self.rs485.set_modbus_configuration(self.modbus_slave_address_spinbox.value(),
+                                            self.modbus_master_request_timeout_spinbox.value())
+
+        self.rs485.apply_configuration()
+
+        if self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_COILS:
+            rid = self.rs485.modbus_read_coils(self.modbus_master_slave_address_spinbox.value(),
+                                               self.modbus_master_param1_spinbox.value(),
+                                               self.modbus_master_param2_spinbox.value())
+            if rid == 0:
+                # Error.
+                return
+
+            self.modbus_master_send_button.setEnabled(False)
+
+        elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_HOLDING_REGISTERS:
+            rid = self.rs485.modbus_read_holding_registers(self.modbus_master_slave_address_spinbox.value(),
+                                                           self.modbus_master_param1_spinbox.value(),
+                                                           self.modbus_master_param2_spinbox.value())
+            if rid == 0:
+                # Error.
+                return
+
+            self.modbus_master_send_button.setEnabled(False)
+
     def modbus_master_function_changed(self, function):
-        if function == MODBUS_READ_COILS:
+        if function == MODBUS_F_IDX_READ_COILS:
             self.modbus_master_param1_label.setText('Starting Address:')
-            self.modbus_master_param1_spinbox.setMinimum(0x0000)
-            self.modbus_master_param1_spinbox.setMaximum(0xFFFF)
+            self.modbus_master_param1_spinbox.setMinimum(0)
+            self.modbus_master_param1_spinbox.setMaximum(65535)
             self.modbus_master_param2_label.setText('Number of Coils:')
-            self.modbus_master_param2_spinbox.setMinimum(0x0001)
-            self.modbus_master_param2_spinbox.setMaximum(0x07D0)
+            self.modbus_master_param2_spinbox.setMinimum(1)
+            self.modbus_master_param2_spinbox.setMaximum(2000)
+
+        elif function == MODBUS_F_IDX_READ_HOLDING_REGISTERS:
+            self.modbus_master_param1_label.setText('Starting Address:')
+            self.modbus_master_param1_spinbox.setMinimum(0)
+            self.modbus_master_param1_spinbox.setMaximum(65535)
+            self.modbus_master_param2_label.setText('Number of Registers:')
+            self.modbus_master_param2_spinbox.setMinimum(1)
+            self.modbus_master_param2_spinbox.setMaximum(125)
 
     def mode_changed(self, mode):
         if mode == MODE_RS485:
@@ -245,6 +281,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.text.insertPlainText(a)
         self.text.moveCursor(QTextCursor.End)
 
+        self.modbus_master_send_button.setEnabled(True)
+
     def cb_modbus_read_holding_registers_request(self,
                                                  request_id,
                                                  starting_address,
@@ -281,6 +319,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
         self.text.moveCursor(QTextCursor.End)
+
+        self.modbus_master_send_button.setEnabled(True)
 
     def line_ending_changed(self):
         selected_line_ending = self.rs485_input_line_ending_combobox.currentText()

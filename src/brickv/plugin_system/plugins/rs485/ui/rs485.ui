@@ -120,6 +120,11 @@
          <string>Read Coils</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Read Holding Registers</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="0" column="2">
@@ -238,14 +243,14 @@
       </widget>
      </item>
      <item row="3" column="1" colspan="3">
-      <widget class="SpinBoxHex" name="modbus_master_param1_spinbox">
+      <widget class="QSpinBox" name="modbus_master_param1_spinbox">
        <property name="maximum">
         <number>65535</number>
        </property>
       </widget>
      </item>
      <item row="4" column="1" colspan="3">
-      <widget class="SpinBoxHex" name="modbus_master_param2_spinbox">
+      <widget class="QSpinBox" name="modbus_master_param2_spinbox">
        <property name="minimum">
         <number>1</number>
        </property>
@@ -545,13 +550,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>SpinBoxHex</class>
-   <extends>QSpinBox</extends>
-   <header location="global">brickv.spin_box_hex</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>text_type_combobox</tabstop>
   <tabstop>rs485_input_combobox</tabstop>
