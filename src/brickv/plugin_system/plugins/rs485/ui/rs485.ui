@@ -125,6 +125,11 @@
          <string>Read Holding Registers</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Write Single Coil</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="0" column="2">
@@ -252,10 +257,10 @@
      <item row="4" column="1" colspan="3">
       <widget class="QSpinBox" name="modbus_master_param2_spinbox">
        <property name="minimum">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="maximum">
-        <number>2000</number>
+        <number>65535</number>
        </property>
       </widget>
      </item>

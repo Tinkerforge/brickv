@@ -34,12 +34,15 @@ from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 
 from brickv.plugin_system.plugins.rs485.qhexedit import QHexeditWidget
 
+import random
+
 MODE_RS485 = 0
 MODE_MODBUS_SLAVE_RTU = 1
 MODE_MODBUS_MASTER_RTU = 2
 
 MODBUS_F_IDX_READ_COILS = 0
 MODBUS_F_IDX_READ_HOLDING_REGISTERS = 1
+MODBUS_F_IDX_WRITE_SINGLE_COIL = 2
 
 class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_read = pyqtSignal(object, int)
@@ -50,6 +53,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_modbus_read_coils_response = pyqtSignal(int, int, int, object)
     qtcb_modbus_read_holding_registers_request = pyqtSignal(int, int, int)
     qtcb_modbus_read_holding_registers_response = pyqtSignal(int, int, int, object)
+    qtcb_modbus_write_single_coil_request = pyqtSignal(int, int, int)
+    qtcb_modbus_write_single_coil_response = pyqtSignal(int, int, int, int)
 
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletRS485, *args)
@@ -71,6 +76,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.qtcb_modbus_read_coils_response.connect(self.cb_modbus_read_coils_response)
         self.qtcb_modbus_read_holding_registers_request.connect(self.cb_modbus_read_holding_registers_request)
         self.qtcb_modbus_read_holding_registers_response.connect(self.cb_modbus_read_holding_registers_response)
+        self.qtcb_modbus_write_single_coil_request.connect(self.cb_modbus_write_single_coil_request)
+        self.qtcb_modbus_write_single_coil_response.connect(self.cb_modbus_write_single_coil_response)
 
         self.rs485.register_callback(self.rs485.CALLBACK_READ_CALLBACK,
                                      self.qtcb_read.emit)
@@ -87,6 +94,12 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE,
                                      self.qtcb_modbus_read_holding_registers_response.emit)
+
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_WRITE_SINGLE_COIL_REQUEST,
+                                     self.qtcb_modbus_write_single_coil_request.emit)
+
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_WRITE_SINGLE_COIL_RESPONSE,
+                                     self.qtcb_modbus_write_single_coil_response.emit)
 
         self.rs485_input_combobox.addItem("")
         self.rs485_input_combobox.lineEdit().setMaxLength(58)
@@ -111,6 +124,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.modbus_master_param2_spinbox.valueChanged.connect(self.configuration_changed)
         self.modbus_master_function_combobox.currentIndexChanged.connect(self.modbus_master_function_changed)
         self.modbus_master_request_timeout_spinbox.valueChanged.connect(self.configuration_changed)
+        self.modbus_master_param2_spinbox.valueChanged.connect(self.modbus_master_param2_changed)
 
         self.hextext = QHexeditWidget(self.text.font())
         self.hextext.hide()
@@ -125,6 +139,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.error_overrun = 0
         self.error_parity = 0
         self.last_char = ''
+
+        self.modbus_master_function_combobox.setCurrentIndex(-1)
+        self.modbus_master_function_combobox.setCurrentIndex(0)
 
         self.gui_group_rs485 = [self.rs485_input_label,
                                 self.rs485_input_combobox,
@@ -155,6 +172,12 @@ class RS485(COMCUPluginBase, Ui_RS485):
             else:
                 e.hide()
 
+    def modbus_master_param2_changed(self, value):
+        if self.mode_combobox.currentIndex() == MODE_MODBUS_MASTER_RTU and \
+           self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_SINGLE_COIL:
+                if value > 0:
+                    self.modbus_master_param2_spinbox.setValue(65280)
+
     def master_send_clicked(self):
         self.rs485.set_modbus_configuration(self.modbus_slave_address_spinbox.value(),
                                             self.modbus_master_request_timeout_spinbox.value())
@@ -181,6 +204,21 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
             self.modbus_master_send_button.setEnabled(False)
 
+        elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_SINGLE_COIL:
+            if self.modbus_master_param2_spinbox.value() > 0:
+                param2 = 65280
+            else:
+                param2 = 0
+
+            rid = self.rs485.modbus_write_single_coil(self.modbus_master_slave_address_spinbox.value(),
+                                                      self.modbus_master_param1_spinbox.value(),
+                                                      param2)
+            if rid == 0:
+                # Error.
+                return
+
+            self.modbus_master_send_button.setEnabled(False)
+
     def modbus_master_function_changed(self, function):
         if function == MODBUS_F_IDX_READ_COILS:
             self.modbus_master_param1_label.setText('Starting Address:')
@@ -197,6 +235,15 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.modbus_master_param2_label.setText('Number of Registers:')
             self.modbus_master_param2_spinbox.setMinimum(1)
             self.modbus_master_param2_spinbox.setMaximum(125)
+
+        elif function == MODBUS_F_IDX_WRITE_SINGLE_COIL:
+            self.modbus_master_param1_label.setText('Coil Address:')
+            self.modbus_master_param1_spinbox.setMinimum(0)
+            self.modbus_master_param1_spinbox.setMaximum(65535)
+            self.modbus_master_param2_label.setText('Coil Value:')
+            self.modbus_master_param2_spinbox.setMinimum(0)
+            self.modbus_master_param2_spinbox.setMaximum(1)
+            self.modbus_master_param2_spinbox.setValue(0)
 
     def mode_changed(self, mode):
         if mode == MODE_RS485:
@@ -257,6 +304,18 @@ class RS485(COMCUPluginBase, Ui_RS485):
             str(count) + \
             '\n\n'
 
+        data = []
+
+        q, r = divmod(count, 8)
+
+        if r != 0:
+            q = q + 1
+
+        for i in range(q):
+            data.append(random.randint(1, 255))
+
+        self.rs485.modbus_answer_read_coils_request(request_id, data)
+
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
         self.text.moveCursor(QTextCursor.End)
@@ -296,6 +355,13 @@ class RS485(COMCUPluginBase, Ui_RS485):
             str(count) + \
             '\n\n'
 
+        data = []
+
+        for i in range(count):
+            data.append(random.randint(1, 65535))
+
+        self.rs485.modbus_answer_read_holding_registers_request(request_id, data)
+
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
         self.text.moveCursor(QTextCursor.End)
@@ -314,6 +380,49 @@ class RS485(COMCUPluginBase, Ui_RS485):
             str(reconstruction_status) + \
             ', DATA=' + \
             str(data) + \
+            '\n\n'
+
+        self.text.moveCursor(QTextCursor.End)
+        self.text.insertPlainText(a)
+        self.text.moveCursor(QTextCursor.End)
+
+        self.modbus_master_send_button.setEnabled(True)
+
+    def cb_modbus_write_single_coil_request(self,
+                                            request_id,
+                                            coil_address,
+                                            coil_value):
+        a = 'WRITE SINGLE COIL REQUEST: ' + \
+            'REQUEST ID=' + \
+            str(request_id) + \
+            ', COIL ADDRESS=' + \
+            str(coil_address) + \
+            ', COIL VALUE=' + \
+            str(coil_value) + \
+            '\n\n'
+
+        self.rs485.modbus_answer_write_single_coil_request(request_id,
+                                                           coil_address,
+                                                           coil_value)
+
+        self.text.moveCursor(QTextCursor.End)
+        self.text.insertPlainText(a)
+        self.text.moveCursor(QTextCursor.End)
+
+    def cb_modbus_write_single_coil_response(self,
+                                             request_id,
+                                             exception_code,
+                                             coil_address,
+                                             coil_data):
+        a = 'WRITE SINGLE COIL RESPONSE: ' + \
+            'REQUEST ID=' + \
+            str(request_id) + \
+            ', EXCEPTION CODE=' + \
+            str(exception_code) + \
+            ', COIL ADDRESS=' + \
+            str(coil_address) + \
+            ', COIL DATA=' + \
+            str(coil_data) + \
             '\n\n'
 
         self.text.moveCursor(QTextCursor.End)
