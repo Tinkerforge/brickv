@@ -130,6 +130,11 @@
          <string>Write Single Coil</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Write Single Register</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="0" column="2">
