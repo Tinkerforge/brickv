@@ -34,7 +34,7 @@ from brickv.bindings.ip_connection import IPConnection
 from brickv.flashing import FlashingWindow
 from brickv.advanced import AdvancedWindow
 from brickv.data_logger.setup_dialog import SetupDialog as DataLoggerWindow
-from brickv.async_call import async_start_thread, async_next_session
+from brickv.async_call import async_start_thread, async_next_session, async_call
 from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
 from brickv import config
@@ -388,21 +388,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.data_logger_window.show()
 
+    def connect_error(self):
+        self.setDisabled(False)
+        self.button_connect.setText("Connect")
+        QMessageBox.critical(self, 'Connection',
+                             'Could not connect. Please check host, check ' +
+                             'port and ensure that Brick Daemon is running.')
+
     def connect_clicked(self):
         if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_DISCONNECTED:
-            try:
-                self.last_host = self.combo_host.currentText()
-                self.button_connect.setDisabled(True)
-                self.button_connect.setText("Connecting ...")
-                self.button_connect.repaint()
-                QApplication.processEvents()
-                self.ipcon.connect(self.last_host, self.spinbox_port.value())
-            except:
-                self.button_connect.setDisabled(False)
-                self.button_connect.setText("Connect")
-                QMessageBox.critical(self, 'Connection',
-                                     'Could not connect. Please check host, check ' +
-                                     'port and ensure that Brick Daemon is running.')
+            self.last_host = self.combo_host.currentText()
+            self.setDisabled(True)
+            self.button_connect.setText("Connecting ...")
+
+            async_call(self.ipcon.connect, (self.last_host, self.spinbox_port.value()), None, self.connect_error)
         else:
             self.do_disconnect()
 
@@ -657,6 +656,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_ui_state()
 
         if connect_reason == IPConnection.CONNECT_REASON_REQUEST:
+            self.setDisabled(False)
+
             self.auto_reconnects = 0
             self.label_auto_reconnects.hide()
 
@@ -754,7 +755,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if connection_state is None:
             connection_state = self.ipcon.get_connection_state()
 
-        self.button_connect.setDisabled(False)
         self.button_flashing.setDisabled(False)
 
         if connection_state == IPConnection.CONNECTION_STATE_DISCONNECTED:
