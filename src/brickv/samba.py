@@ -169,6 +169,7 @@ class SAMBA(object):
     def __init__(self, port_name, progress=None, application_name='Brick Viewer'):
         self.r_command_bug = False
         self.sam_series = None
+        self.ignore_flerr_on_sgpb = False
         self.current_mode = None
         self.progress = progress
 
@@ -224,6 +225,7 @@ class SAMBA(object):
         elif chipid_cidr in [CHIPID_CIDR_ATSAM4E8C_A, CHIPID_CIDR_ATSAM4E8C_B] and \
              chipid_exid in [CHIPID_EXID_ATSAM4E8C_A, CHIPID_EXID_ATSAM4E8C_B]:
             self.sam_series = 4
+            self.ignore_flerr_on_sgpb = True # some SAM4E report FLERR even after a successfull SGPB command
             self.flash_base = 0x400000
             self.flash_page_count = 1024
             self.flash_page_size = 512
@@ -382,7 +384,7 @@ class SAMBA(object):
 
         self.wait_for_flash_ready('before setting Boot-from-Flash flag')
         self.write_flash_command(EEFC_FCR_FCMD_SGPB, 1)
-        self.wait_for_flash_ready('after setting Boot-from-Flash flag')
+        self.wait_for_flash_ready('after setting Boot-from-Flash flag', sgpb=True)
 
         # Boot
         try:
@@ -574,7 +576,7 @@ class SAMBA(object):
         except:
             raise SAMBAException('Write error while executing code at address 0x%08X' % address)
 
-    def wait_for_flash_ready(self, message, timeout=2000, ready=True, update_progress=False):
+    def wait_for_flash_ready(self, message, timeout=2000, ready=True, update_progress=False, sgpb=False):
         for i in range(timeout):
             fsr = self.read_uint32(EEFC_FSR)
 
@@ -584,8 +586,9 @@ class SAMBA(object):
             if (fsr & EEFC_FSR_FCMDE) != 0:
                 raise SAMBAException('Flash command error ' + message)
 
-            if self.sam_series == 4 and (fsr & EEFC_FSR_FLERR) != 0:
-                raise SAMBAException('Flash memory error ' + message)
+            if not (sgpb and self.ignore_flerr_on_sgpb):
+                if self.sam_series == 4 and (fsr & EEFC_FSR_FLERR) != 0:
+                    raise SAMBAException('Flash memory error ' + message)
 
             if ready:
                 if (fsr & EEFC_FSR_FRDY) != 0:
