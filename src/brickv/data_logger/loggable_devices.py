@@ -2355,19 +2355,6 @@ class AbstractDevice(object):
         """
         EventLogger.debug(self.__str__())
 
-    def _try_catch(self, func):
-        """
-        Creates a simple try-catch for a specific funtion.
-        """
-        value = "[NYI-FAIL-TIMER]"
-        # err = 0
-        try:
-            value = func()
-        except Exception as e:
-            value = self._exception_msg(e.value, e.description)
-            # err = 1
-        return value
-
     def _exception_msg(self, value, msg):
         """
         For a uniform creation of Exception messages.
