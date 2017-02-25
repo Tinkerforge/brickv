@@ -49,6 +49,8 @@ class CalibrateGyroscopeBias(QWidget, Ui_calibrate_gyroscope_bias):
         self.state = 0
         self.temperature_raw = 0
         self.t_raw_start_low = 0
+        self.t_raw_start_high = 0
+        self.t_raw_end_low = 0
         self.t_raw_end_high = 0
         
         self.gyr_sum = [0, 0, 0]
