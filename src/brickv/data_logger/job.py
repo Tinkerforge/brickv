@@ -29,6 +29,7 @@ Boston, MA 02111-1307, USA.
                                 Jobs
  ---------------------------------------------------------------------------*/
 """
+
 from PyQt4 import QtCore
 import Queue
 import threading

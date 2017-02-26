@@ -2,7 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2011 Bastian Nordmeyer <bastian@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 utils.py: General Utilites
 
@@ -22,10 +22,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QDir
-from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog
 import os
 import sys
+
+from PyQt4.QtCore import Qt, QDir
+from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog
 
 def get_program_path():
     # from http://www.py2exe.org/index.cgi/WhereAmI

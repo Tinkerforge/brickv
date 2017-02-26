@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4 import QtCore, QtGui
+
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_server_monitoring_add_host_dialog \
      import Ui_REDTabSettingsServerMonitoringAddHostDialog
 from brickv.plugin_system.plugins.red.api import *

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 callback_emulator.py: Emulate callback using getters and threads
 
@@ -21,8 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import QObject, pyqtSignal
 import threading
+
+from PyQt4.QtCore import QObject, pyqtSignal
 
 class CallbackEmulator(QObject):
     qtcb_data = pyqtSignal(object)

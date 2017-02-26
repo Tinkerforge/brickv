@@ -2,7 +2,7 @@
 """
 IMU Plugin
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 calibrate_window.py: IMU calibration implementation
 
@@ -22,11 +22,10 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugins.imu.ui_calibrate import Ui_Calibrate
-
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QDialog, QTabWidget
 
+from brickv.plugin_system.plugins.imu.ui_calibrate import Ui_Calibrate
 from brickv.plugin_system.plugins.imu.calibrate_accelerometer import CalibrateAccelerometer
 from brickv.plugin_system.plugins.imu.calibrate_magnetometer import CalibrateMagnetometer
 from brickv.plugin_system.plugins.imu.calibrate_gyroscope_bias import CalibrateGyroscopeBias

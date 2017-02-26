@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 program_info_c_compile.py: Program C/C++ Compile Info Widget
 
@@ -21,10 +21,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import posixpath
+
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QDialog
+
 from brickv.plugin_system.plugins.red.ui_program_info_c_compile import Ui_ProgramInfoCCompile
-import posixpath
 
 class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
     def __init__(self, parent, script_manager, program):

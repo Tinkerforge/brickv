@@ -22,12 +22,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import json
+
 from PyQt4 import QtGui
+
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_services import Ui_REDTabSettingsServices
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import report_script_result
 from brickv.utils import get_main_window
-import json
 
 class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
     def __init__(self):

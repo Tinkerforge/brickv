@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4 import Qt, QtCore, QtGui
+
 from brickv.plugin_system.plugins.red.qxt_span_slider import QxtSpanSlider
 
 class widgetSpinBoxSpanSlider(QtGui.QWidget):

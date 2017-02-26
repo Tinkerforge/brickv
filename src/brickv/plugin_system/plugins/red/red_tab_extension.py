@@ -2,7 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 red_tab_extension.py: RED extension configuration
 
@@ -22,19 +22,19 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugins.red.red_tab import REDTab
-from brickv.plugin_system.plugins.red.ui_red_tab_extension import Ui_REDTabExtension
-from brickv.plugin_system.plugins.red.api import *
-
-from brickv.async_call import async_call
 import struct
 import time
 
 from PyQt4.QtGui import QWidget, QMessageBox, QLabel
+
+from brickv.plugin_system.plugins.red.red_tab import REDTab
+from brickv.plugin_system.plugins.red.ui_red_tab_extension import Ui_REDTabExtension
+from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.master.ui_rs485 import Ui_RS485
 from brickv.plugin_system.plugins.red.ui_red_tab_extension_ethernet import Ui_Ethernet
 from brickv.plugin_system.plugins.red.ui_red_tab_extension_unsupported import Ui_Unsupported
 from brickv.plugin_system.plugins.red import config_parser
+from brickv.async_call import async_call
 from brickv.utils import get_main_window
 
 def popup_ok(msg):

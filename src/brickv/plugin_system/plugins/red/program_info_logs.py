@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 program_info_logs.py: Program Logs Info Widget
@@ -22,9 +22,16 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import os
+import posixpath
+import json
+import zlib
+import sys
+
 from PyQt4.QtCore import Qt, QDateTime
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, \
                         QMessageBox, QSortFilterProxyModel, QApplication
+
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import Download, get_file_display_size
 from brickv.plugin_system.plugins.red.ui_program_info_logs import Ui_ProgramInfoLogs
@@ -32,11 +39,6 @@ from brickv.plugin_system.plugins.red.program_info_logs_view import ProgramInfoL
 from brickv.plugin_system.plugins.red.script_manager import check_script_result, report_script_result
 from brickv.utils import get_main_window, get_home_path, get_existing_directory
 from brickv.load_pixmap import load_pixmap
-import os
-import posixpath
-import json
-import zlib
-import sys
 
 USER_ROLE_FILE_NAME = Qt.UserRole + 2
 USER_ROLE_ITEM_TYPE = Qt.UserRole + 3

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 program_page_java.py: Program Wizard Java Page
 
@@ -21,8 +21,13 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import posixpath
+import json
+import zlib
+
 from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QDialog, QMessageBox
+
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_java import Ui_ProgramPageJava
@@ -30,9 +35,6 @@ from brickv.plugin_system.plugins.red.java_utils import get_jar_file_main_classe
 from brickv.plugin_system.plugins.red.script_manager import check_script_result
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
-import posixpath
-import json
-import zlib
 
 def get_java_versions(script_manager, callback):
     def cb_versions(result):

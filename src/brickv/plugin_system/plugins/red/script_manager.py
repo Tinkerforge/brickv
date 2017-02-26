@@ -2,7 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 script_manager.py: Manage RED Brick scripts
 
@@ -22,12 +22,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugins.red.api import REDFile, REDPipe, REDProcess
 import posixpath
 from collections import namedtuple
+from threading import Lock
+
 from PyQt4.QtCore import QObject, pyqtSignal
 from PyQt4.QtGui import QMessageBox
-from threading import Lock
+
+from brickv.plugin_system.plugins.red.api import REDFile, REDPipe, REDProcess
 from brickv.async_call import async_call
 from brickv.object_creator import create_object_in_qt_main_thread
 from brickv.plugin_system.plugins.red.script_data import script_data

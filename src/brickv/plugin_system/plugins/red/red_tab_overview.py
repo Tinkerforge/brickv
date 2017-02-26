@@ -22,16 +22,18 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4 import QtCore, QtGui
-from brickv.plugin_system.plugins.red.red_tab import REDTab
-from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOverview
-from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.script_manager import check_script_result
-from operator import itemgetter
 import json
 import time
 import sys
 import zlib
+from operator import itemgetter
+
+from PyQt4 import QtCore, QtGui
+
+from brickv.plugin_system.plugins.red.red_tab import REDTab
+from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOverview
+from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.script_manager import check_script_result
 
 # constants
 REFRESH_TIME = 3000 # in milliseconds

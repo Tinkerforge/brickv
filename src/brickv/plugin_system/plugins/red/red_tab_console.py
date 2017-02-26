@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4 import QtCore, QtGui
+
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_console import Ui_REDTabConsole
 from brickv.plugin_system.plugins.red.api import *

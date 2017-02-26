@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 config_linux.py: Config Handling for Linux
 
@@ -21,13 +21,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.config_common import *
 import os
 
 try:
     import configparser
 except:
     import ConfigParser as configparser # Python 2 fallback
+
+from brickv.config_common import *
 
 XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME')
 

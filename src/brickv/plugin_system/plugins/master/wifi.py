@@ -22,6 +22,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import os
+import time
+
 from PyQt4.QtGui import QWidget, QMessageBox, QProgressDialog, QLineEdit
 from PyQt4.QtCore import Qt
 
@@ -29,9 +32,6 @@ from brickv.plugin_system.plugins.master.ui_wifi import Ui_Wifi
 from brickv.plugin_system.plugins.master.wifi_status import WifiStatus
 from brickv.async_call import async_call
 from brickv.utils import get_main_window, get_home_path, get_open_file_name
-
-import os
-import time
 
 class Wifi(QWidget, Ui_Wifi):
     def __init__(self, parent):

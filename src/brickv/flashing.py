@@ -3,7 +3,7 @@
 brickv (Brick Viewer)
 Copyright (C) 2011-2015 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
-Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 flashing.py: GUI for flashing features
 
@@ -23,21 +23,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.ui_flashing import Ui_Flashing
-from brickv.bindings.brick_master import BrickMaster
-from brickv.bindings.ip_connection import IPConnection, Error, base58encode, \
-                                          base58decode, BASE58, uid64_to_uid32
-from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
-from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QApplication, QColor, QDialog, QMessageBox, \
-                        QProgressDialog, QStandardItemModel, QStandardItem, QBrush
-from brickv.samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_ports
-from brickv.infos import get_version_string
-from brickv.utils import get_main_window, get_home_path, get_open_file_name, \
-                         get_modeless_dialog_flags
-from brickv.esp_flash import ESPFlash
-from brickv import infos
-
 from zipfile import ZipFile
 try:
     from StringIO import StringIO as FileLike
@@ -49,9 +34,24 @@ import os
 import urllib2
 import time
 import struct
-import math
 import traceback
 from serial import SerialException
+
+from PyQt4.QtCore import Qt, QTimer
+from PyQt4.QtGui import QApplication, QColor, QDialog, QMessageBox, \
+                        QProgressDialog, QStandardItemModel, QStandardItem, QBrush
+
+from brickv.ui_flashing import Ui_Flashing
+from brickv.bindings.brick_master import BrickMaster
+from brickv.bindings.ip_connection import IPConnection, Error, base58encode, \
+                                          base58decode, BASE58, uid64_to_uid32
+from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
+from brickv.samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_ports
+from brickv.infos import get_version_string
+from brickv.utils import get_main_window, get_home_path, get_open_file_name, \
+                         get_modeless_dialog_flags
+from brickv.esp_flash import ESPFlash
+from brickv import infos
 
 LATEST_VERSIONS_URL = 'http://download.tinkerforge.com/latest_versions.txt'
 FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'

@@ -23,8 +23,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import os
-
 from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QDialog, QAbstractButton, QTabBar, QPainter, \
                         QSizePolicy, QIcon

@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import pyqtSignal, QTimer
 from PyQt4.QtGui import QWidget, QDialog, QMessageBox
+
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_info import ProgramInfoContext
 from brickv.plugin_system.plugins.red.program_info_files import ProgramInfoFiles

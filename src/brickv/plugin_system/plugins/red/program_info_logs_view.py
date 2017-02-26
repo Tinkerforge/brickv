@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 program_info_logs_view.py: Program Logs View Widget
 
@@ -21,15 +21,17 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import posixpath
+import os
+
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QDialog, QFont, QMessageBox
+
 from brickv.plugin_system.plugins.red.ui_program_info_logs_view import Ui_ProgramInfoLogsView
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import timestamp_to_date_at_time
 from brickv.async_call import async_call
 from brickv.utils import get_main_window, get_home_path, get_save_file_name
-import posixpath
-import os
 
 class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
     def __init__(self, parent, session, source_name):

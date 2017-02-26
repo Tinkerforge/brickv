@@ -22,7 +22,9 @@ Boston, MA 02111-1307, USA.
 """
 
 import json
+
 from PyQt4 import Qt, QtCore, QtGui
+
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_mobile_internet import Ui_REDTabSettingsMobileInternet
 from brickv.plugin_system.plugins.red.red_tab_settings_mobile_internet_provider_preset_dialog import REDTabSettingsMobileInternetProviderPresetDialog
 from brickv.plugin_system.plugins.red.api import *

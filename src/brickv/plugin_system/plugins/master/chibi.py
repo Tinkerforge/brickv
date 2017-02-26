@@ -22,10 +22,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.bindings.ip_connection import IPConnection
-
 from PyQt4.QtGui import QWidget, QMessageBox
 
+from brickv.bindings.ip_connection import IPConnection
 from brickv.plugin_system.plugins.master.ui_chibi import Ui_Chibi
 from brickv.async_call import async_call
 from brickv.utils import get_main_window

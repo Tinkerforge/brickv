@@ -30,8 +30,6 @@ import json
 import struct
 import sys
 import time
-import math
-
 
 class ESPROM(object):
     # These are the currently known commands supported by the ROM

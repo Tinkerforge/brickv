@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 config_windows.py: Config Handling for Windows
 
@@ -21,12 +21,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.config_common import *
-
 try:
     import winreg
 except:
     import _winreg as winreg # Python 2 fallback
+
+from brickv.config_common import *
 
 KEY_NAME = 'Software\\Tinkerforge\\Brickv'
 

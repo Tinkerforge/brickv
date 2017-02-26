@@ -24,7 +24,9 @@ Boston, MA 02111-1307, USA.
 """
 
 import time
+
 from PyQt4 import QtCore, QtGui
+
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_datetime import Ui_REDTabSettingsDateTime
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import report_script_result

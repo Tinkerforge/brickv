@@ -22,6 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import random
+
 from PyQt4.QtGui import QTextCursor
 from PyQt4.QtCore import pyqtSignal
 
@@ -31,10 +33,7 @@ from brickv.async_call import async_call
 from brickv.hex_validator import HexValidator
 from brickv.callback_emulator import CallbackEmulator
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
-
 from brickv.plugin_system.plugins.rs485.qhexedit import QHexeditWidget
-
-import random
 
 MODE_RS485 = 0
 MODE_MODBUS_SLAVE_RTU = 1

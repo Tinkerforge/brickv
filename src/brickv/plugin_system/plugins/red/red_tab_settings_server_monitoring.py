@@ -22,7 +22,10 @@ Boston, MA 02111-1307, USA.
 """
 
 import re
+import json
+
 from PyQt4 import QtCore, QtGui
+
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_server_monitoring import\
      Ui_REDTabSettingsServerMonitoring
 from brickv.plugin_system.plugins.red.red_tab_settings_server_monitoring_add_host_dialog import\
@@ -38,7 +41,6 @@ from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
 from brickv.plugin_system.plugins.red.script_manager import report_script_result
 from brickv.plugin_system.plugins.red.widget_spinbox_span_slider import\
      widgetSpinBoxSpanSlider
-import json
 
 # Constants
 DEFAULT_COL_WIDTH_RULES_NAME                = 160

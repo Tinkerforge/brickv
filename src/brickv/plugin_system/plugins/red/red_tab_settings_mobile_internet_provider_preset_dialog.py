@@ -21,7 +21,10 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from operator import itemgetter
+
 from PyQt4 import QtCore, QtGui
+
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_mobile_internet_provider_preset_dialog import \
     Ui_REDTabSettingsMobileInternetProviderPresetDialog
 from brickv.plugin_system.plugins.red.api import *
@@ -30,7 +33,6 @@ from brickv.async_call import async_call
 from brickv.utils import get_main_window
 from brickv.plugin_system.plugins.red.serviceprovider_data import dict_provider
 from brickv.plugin_system.plugins.red.serviceprovider_data import dict_country
-from operator import itemgetter
 
 USER_ROLE_APN      = QtCore.Qt.UserRole
 USER_ROLE_USERNAME = QtCore.Qt.UserRole + 1

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2016-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 program_info_files_permissions.py: Program Files Permissions Info Widget
 
@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QDialog
+
 from brickv.plugin_system.plugins.red.ui_program_info_files_permissions import Ui_ProgramInfoFilesPermissions
 
 class ProgramInfoFilesPermissions(QDialog, Ui_ProgramInfoFilesPermissions):

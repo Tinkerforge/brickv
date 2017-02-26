@@ -28,6 +28,7 @@ from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, \
                         QLabel, QFrame, QSpacerItem, QSizePolicy, \
                         QStandardItemModel, QStandardItem, QToolButton, \
                         QLineEdit, QCursor, QMenu, QAction, QSortFilterProxyModel
+
 from brickv.ui_mainwindow import Ui_MainWindow
 from brickv.plugin_system.plugin_manager import PluginManager
 from brickv.bindings.ip_connection import IPConnection

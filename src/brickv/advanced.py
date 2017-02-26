@@ -3,7 +3,7 @@
 brickv (Brick Viewer)
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
-Copyright (C) 2012, 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 advanced.py: GUI for advanced features
 
@@ -23,13 +23,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.ui_advanced import Ui_Advanced
-
 from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QDialog
 
-from brickv import infos
+from brickv.ui_advanced import Ui_Advanced
 from brickv.utils import get_modeless_dialog_flags
+from brickv import infos
 
 NO_BRICK = 'No Brick found'
 

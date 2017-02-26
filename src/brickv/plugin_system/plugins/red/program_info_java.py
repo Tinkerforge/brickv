@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 program_info_java.py: Program Java Info Widget
 
@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
+
 from brickv.plugin_system.plugins.red.program_info import ProgramInfo
 from brickv.plugin_system.plugins.red.program_utils import Constants
 from brickv.plugin_system.plugins.red.ui_program_info_java import Ui_ProgramInfoJava

@@ -25,7 +25,6 @@ from PyQt4.QtCore import Qt, QSize, QPoint
 from PyQt4.QtGui import QWidget, QImage, QPainter, QPen, QColor
 
 from brickv.plugin_system.plugin_base import PluginBase
-from brickv.bindings import ip_connection
 from brickv.async_call import async_call
 from brickv.slider_spin_syncer import SliderSpinSyncer
 from brickv.plugin_system.plugins.oled_128x64.ui_oled_128x64 import Ui_OLED128x64

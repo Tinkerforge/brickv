@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 program_page.py: Program Wizard Page
 
@@ -21,12 +21,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import time
+
 from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QWizardPage, QMessageBox
+
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.utils import get_main_window
-import time
 
 class ProgramPage(QWizardPage):
     # makes QWizardPage.field virtual

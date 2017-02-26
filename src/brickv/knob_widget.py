@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 knob_widget.py: Round slider
 
@@ -21,10 +21,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import math
+
 from PyQt4.QtCore import Qt, QPoint, QPointF
 from PyQt4.QtGui import QWidget, QSizePolicy, QPainter, QColor, QPen, \
                         QFontMetrics, QRadialGradient, QPolygonF
-import math
 
 EPSILON = 0.000001
 DEBUG = False

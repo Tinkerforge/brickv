@@ -2,7 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2012-2015 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 infos.py: Common information structures for Tools/Bricks/Bricklets
 
@@ -22,8 +22,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv import config
 from PyQt4.QtGui import QApplication
+
+from brickv import config
 
 UID_BRICKV = '$BRICKV'
 UID_BRICKD = '$BRICKD'

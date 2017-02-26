@@ -21,12 +21,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget
+import time
+
 from PyQt4.QtCore import pyqtSignal, QTimer
+from PyQt4.QtGui import QWidget
 
 from brickv.plugin_system.plugins.imu.ui_calibrate_gyroscope_bias import Ui_calibrate_gyroscope_bias
-
-import time
 
 class CalibrateGyroscopeBias(QWidget, Ui_calibrate_gyroscope_bias):
     TYPE_GYR_BIAS = 5

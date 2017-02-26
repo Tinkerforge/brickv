@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 program_wizard.py: Program Wizard
 
@@ -21,8 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWizard
 from collections import namedtuple
+
+from PyQt4.QtGui import QWizard
 
 ProgramWizardContext = namedtuple('ProgramWizardContext', 'session identifiers script_manager image_version executable_versions')
 

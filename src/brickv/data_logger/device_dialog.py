@@ -26,13 +26,12 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import pyqtSignal, Qt
 from PyQt4.QtGui import QDialog, QTreeWidgetItem
+
 from brickv.data_logger.loggable_devices import device_specs
 from brickv.data_logger.event_logger import EventLogger
 from brickv.data_logger.utils import Utilities
 from brickv.data_logger.ui_device_dialog import Ui_DeviceDialog
-# from PyQt4 import QtGui, QtCore
 from brickv.data_logger.gui_config_handler import GuiConfigHandler
-from PyQt4.QtCore import Qt
 from brickv.bindings.ip_connection import IPConnection
 from brickv.bindings import device_factory
 from brickv.utils import get_modeless_dialog_flags

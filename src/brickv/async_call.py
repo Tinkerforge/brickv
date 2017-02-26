@@ -2,7 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 async_call.py: Asynchronous call for Brick/Bricklet functions
 
@@ -22,12 +22,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QApplication
-from PyQt4.QtCore import QThread, QEvent
 from threading import Lock
 from collections import namedtuple
 import logging
 import functools
+
+from PyQt4.QtGui import QApplication
+from PyQt4.QtCore import QThread, QEvent
+
 from brickv.bindings import ip_connection
 
 try:

@@ -3,6 +3,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 object_creator.py: Creates objects in Qt main thread
 
@@ -22,8 +23,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4 import QtCore
 import threading
+
+from PyQt4 import QtCore
 
 # Usage:
 # object_instance = create_object_in_qt_main_thread(Class, (data_1, data_2, ..., data_n))

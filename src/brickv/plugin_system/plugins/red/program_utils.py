@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 program_utils.py: Program Utils
 
@@ -21,16 +21,18 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QDir, QDateTime
-from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem, \
-                        QProgressDialog, QProgressBar, QInputDialog
-from brickv.plugin_system.plugins.red.api import *
-from brickv.async_call import async_call
 import re
 import os
 import stat
 import posixpath
 from collections import namedtuple
+
+from PyQt4.QtCore import Qt, QDir, QDateTime
+from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem, \
+                         QProgressDialog, QProgressBar, QInputDialog
+
+from brickv.plugin_system.plugins.red.api import *
+from brickv.async_call import async_call
 
 ExecutableVersion = namedtuple('ExecutableVersion', 'executable version')
 

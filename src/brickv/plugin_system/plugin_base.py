@@ -24,7 +24,9 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import traceback
+
 from PyQt4.QtGui import QWidget
+
 from brickv.bindings.ip_connection import IPConnection
 
 class PluginBase(QWidget, object):

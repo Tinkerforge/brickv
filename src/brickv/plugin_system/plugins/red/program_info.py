@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 program_info.py: Program Info Widget
 
@@ -21,9 +21,10 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from collections import namedtuple
+
 from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QWidget
-from collections import namedtuple
 
 ProgramInfoContext = namedtuple('ProgramInfoContext', 'session script_manager executable_versions program')
 

@@ -29,6 +29,7 @@ Boston, MA 02111-1307, USA.
                                 Event Logger
  ---------------------------------------------------------------------------*/
 """
+
 from PyQt4 import QtCore
 from PyQt4.QtCore import SIGNAL
 

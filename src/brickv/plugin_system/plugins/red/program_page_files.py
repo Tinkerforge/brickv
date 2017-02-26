@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 program_page_files.py: Program Wizard Files Page
 
@@ -21,18 +21,19 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import os
+import posixpath
+import sys
+
 from PyQt4.QtCore import Qt, QDir
 from PyQt4.QtGui import QIcon, QListWidgetItem, QApplication
+
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_files import Ui_ProgramPageFiles
 from brickv.utils import get_main_window, get_home_path, get_open_file_names, \
                          get_existing_directory
 from brickv.load_pixmap import load_pixmap
-
-import os
-import posixpath
-import sys
 
 class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
     def __init__(self, title_prefix='', last_directory=None):

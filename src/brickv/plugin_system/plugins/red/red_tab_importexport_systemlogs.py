@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 red_tab_importexport_systemlogs.py: RED import/export system logs tab implementation
 
@@ -21,14 +21,16 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import posixpath
+import os
+
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QWidget, QPlainTextEdit, QTextOption, QFont, QMessageBox
+
 from brickv.plugin_system.plugins.red.ui_red_tab_importexport_systemlogs import Ui_REDTabImportExportSystemLogs
 from brickv.plugin_system.plugins.red.api import *
 from brickv.async_call import async_call
 from brickv.utils import get_main_window, get_home_path, get_save_file_name
-import posixpath
-import os
 
 class SystemLog(object):
     def __init__(self, display_name, source_name):

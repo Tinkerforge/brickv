@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
 
 program_page_download.py: Program Wizard Download Page
@@ -22,18 +22,20 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWizard, QTextCursor
-from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.program_page import ProgramPage
-from brickv.plugin_system.plugins.red.program_utils import *
-from brickv.plugin_system.plugins.red.ui_program_page_download import Ui_ProgramPageDownload
-from brickv.load_pixmap import load_pixmap
 import os
 import posixpath
 import re
 import sys
 import errno
+
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QWizard, QTextCursor
+
+from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.program_page import ProgramPage
+from brickv.plugin_system.plugins.red.program_utils import *
+from brickv.plugin_system.plugins.red.ui_program_page_download import Ui_ProgramPageDownload
+from brickv.load_pixmap import load_pixmap
 
 class ChunkedDownloader(ChunkedDownloaderBase):
     def __init__(self, page):

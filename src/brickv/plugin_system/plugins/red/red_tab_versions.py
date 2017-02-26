@@ -22,13 +22,13 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import json
+
 from PyQt4.QtGui import QStandardItemModel, QStandardItem
+
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_versions import Ui_REDTabVersions
 from brickv.plugin_system.plugins.red.api import *
-
-import json
-
 from brickv.async_call import async_call
 
 DEFAULT_NAME_HEADER_WIDTH = 200
