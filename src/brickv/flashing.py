@@ -983,20 +983,20 @@ class FlashingWindow(QDialog, Ui_Flashing):
             num_packets = len(plugin)/64
             # If the magic number is in in the last page of the
             # flash, we write the whole thing
-            if regular_plugin_upto >= (len(plugin) - 64*4):
+            if regular_plugin_upto >= (len(plugin) - 64 * 4):
                 index_list = range(num_packets)
             else:
                 # We write the 64 byte packets up to the end of the last page that has meaningful data
-                packet_up_to = ((regular_plugin_upto // 256)+1)*4
-                index_list = range(0, packet_up_to) + [num_packets-4, num_packets-3, num_packets-2, num_packets-1]
+                packet_up_to = ((regular_plugin_upto // 256) + 1) * 4
+                index_list = range(0, packet_up_to) + [num_packets - 4, num_packets - 3, num_packets - 2, num_packets - 1]
 
             progress.setLabelText('Writing plugin: ' + name)
             progress.setMaximum(len(index_list))
             progress.setValue(0)
             progress.show()
             for position in index_list:
-                start = position*64
-                end   = (position+1)*64
+                start = position * 64
+                end = (position + 1) * 64
                 device.set_write_firmware_pointer(start)
                 device.write_firmware(plugin[start:end])
                 progress.setValue(position)

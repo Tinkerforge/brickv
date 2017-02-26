@@ -72,17 +72,17 @@ class CalibrateGyroscopeBias(QWidget, Ui_calibrate_gyroscope_bias):
     def stop(self):
         self.update_timer.stop()
         self.imu.set_angular_velocity_period(0)
-        
+
     def update_temperature(self):
         self.temperature_raw = self.imu.get_imu_temperature()
         t_str = "%.2f" % (self.temperature_raw/100.0)
-        
+
         if self.state < 2:
             self.t_low.setText(t_str)
         else:
             self.t_high.setText(t_str)
-            
-        
+
+
     def set_default(self):
         self.gyr_sum = [0, 0, 0]
         self.gyr_bias = [0, 0, 0]
@@ -101,16 +101,16 @@ measurement should be with a low temperature and the second with a high one. \
 The temperature difference should be at least 5%cC. If you have \
 a temperature where the IMU Brick is mostly used, you should use this \
 temperature for one of the sampling points.
-""" % 0xB0 
-            
+""" % 0xB0
+
         self.text_label.setText(text)
         self.start_button.setText("Start Calibration Low Temperature")
-        
+
     def calc(self):
         if self.state == 2:
             for i in range(3):
                 self.gyr_bias_low[i] = self.gyr_sum[i]/self.NUM_AVG
-                                    
+
                 if i == 0:
                     self.bias_low_x.setText(str(self.gyr_bias_low[i]))
                 elif i == 1:
@@ -120,15 +120,15 @@ temperature for one of the sampling points.
         else:
             for i in range(3):
                 self.gyr_bias_high[i] = self.gyr_sum[i]/self.NUM_AVG
-                                    
+
                 if i == 0:
                     self.bias_high_x.setText(str(self.gyr_bias_high[i]))
                 elif i == 1:
                     self.bias_high_y.setText(str(self.gyr_bias_high[i]))
                 elif i == 2:
                     self.bias_high_z.setText(str(self.gyr_bias_high[i]))
-            
-        
+
+
     def next_state(self):
         self.state += 1
         if self.state == 5:
@@ -141,16 +141,16 @@ temperature for one of the sampling points.
             bias = [self.gyr_bias_low[0],
                     self.gyr_bias_low[1],
                     self.gyr_bias_low[2],
-                    (self.t_raw_start_low + self.t_raw_end_low)/2, 
+                    (self.t_raw_start_low + self.t_raw_end_low)/2,
                     self.gyr_bias_high[0],
                     self.gyr_bias_high[1],
                     self.gyr_bias_high[2],
-                    (self.t_raw_start_high + self.t_raw_end_high)/2, 
+                    (self.t_raw_start_high + self.t_raw_end_high)/2,
                     0, 0]
-            
+
             self.imu.set_calibration(self.TYPE_GYR_BIAS, bias)
             self.parent.refresh_values()
-            
+
             self.bias_low_x.setText("?")
             self.bias_low_y.setText("?")
             self.bias_low_z.setText("?")
@@ -159,7 +159,7 @@ temperature for one of the sampling points.
             self.bias_high_y.setText("?")
             self.bias_high_z.setText("?")
             self.t_high.setText("?")
-            
+
             self.set_default()
         elif self.state == 1:
             self.update_timer.stop()
@@ -167,7 +167,7 @@ temperature for one of the sampling points.
             bias = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             self.imu.set_calibration(self.TYPE_GYR_BIAS, bias)
             self.parent.refresh_values()
-            
+
             self.imu.set_angular_velocity_period(1)
             self.text_label.setText("Waiting...")
             self.start_button.setEnabled(False)

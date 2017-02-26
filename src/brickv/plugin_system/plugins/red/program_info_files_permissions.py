@@ -80,4 +80,3 @@ class ProgramInfoFilesPermissions(QDialog, Ui_ProgramInfoFilesPermissions):
             permissions |= 0o1
 
         return permissions
-
