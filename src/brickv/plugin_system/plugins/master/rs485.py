@@ -26,7 +26,6 @@ from brickv.bindings.ip_connection import IPConnection
 
 from PyQt4.QtGui import QWidget, QMessageBox
 from brickv.plugin_system.plugins.master.ui_rs485 import Ui_RS485
-
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
 from brickv import infos

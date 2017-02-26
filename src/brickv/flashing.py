@@ -741,11 +741,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.cancel()
             self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not flash Brick')
-            
+
     def read_current_uid(self):
         if self.current_bricklet_has_comcu():
             return base58encode(self.current_bricklet_device().read_uid())
-            
+
         device, port = self.current_device_and_port()
         return self.parent.ipcon.read_bricklet_uid(device, port)
 
@@ -1019,12 +1019,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     error_str = 'CRC Mismatch (Error 5)'
                 else: # unkown error case
                     error_str = 'Error ' + str(mode_ret)
-                
+
                 progress.cancel()
                 if popup:
                     self.popup_fail('Bricklet', 'Coud not change from bootloader mode to firmware mode: ' + error_str)
                 return False
-                
+
             counter = 0
             while True:
                 try:

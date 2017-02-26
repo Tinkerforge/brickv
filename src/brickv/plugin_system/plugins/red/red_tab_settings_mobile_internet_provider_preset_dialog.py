@@ -35,7 +35,7 @@ from operator import itemgetter
 USER_ROLE_APN      = QtCore.Qt.UserRole
 USER_ROLE_USERNAME = QtCore.Qt.UserRole + 1
 USER_ROLE_PASSWORD = QtCore.Qt.UserRole + 2
-USER_ROLE_DIAL   = QtCore.Qt.UserRole + 3
+USER_ROLE_DIAL     = QtCore.Qt.UserRole + 3
 
 class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabSettingsMobileInternetProviderPresetDialog):
     def __init__(self, parent, session, dict_provider, dict_country):

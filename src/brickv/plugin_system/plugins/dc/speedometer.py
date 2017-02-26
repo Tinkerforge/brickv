@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtGui import QWidget, QVBoxLayout, QSizePolicy
 from PyQt4.QtCore import Qt
+
 from brickv.knob_widget import KnobWidget
 
 class SpeedoMeter(QWidget):

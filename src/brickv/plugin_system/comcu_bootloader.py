@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout, QWidget, QPushButton
+
 from brickv.utils import get_main_window
 
 class COMCUBootloader(QWidget):
