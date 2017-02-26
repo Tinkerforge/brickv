@@ -91,11 +91,11 @@ class GPS(COMCUPluginBase, Ui_GPS):
         self.glo_table.horizontalHeader().setResizeMode(QHeaderView.Stretch)
 
     def cb_pps(self):
-        self.fix.setStyleSheet("QLabel { color : green; }");
+        self.fix.setStyleSheet("QLabel { color : green; }")
         QTimer.singleShot(200, self.cb_pps_off)
 
     def cb_pps_off(self):
-        self.fix.setStyleSheet("QLabel { color : black; }");
+        self.fix.setStyleSheet("QLabel { color : black; }")
 
     def get_universal(self):
         return self.gps.get_coordinates(), self.gps.get_status(), self.gps.get_altitude(), self.gps.get_motion(), self.gps.get_date_time()
@@ -158,7 +158,7 @@ class GPS(COMCUPluginBase, Ui_GPS):
             if sat != 0:
                 sats.append(sat)
 
-        if(len(sats) == 0):
+        if len(sats) == 0:
             used.setText('None')
         else:
             used.setText(', '.join(map(str, sats)))

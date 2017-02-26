@@ -141,7 +141,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             self.brightness_label.hide()
         elif chip_type == BrickletLEDStrip.CHIP_TYPE_APA102:
             self.brightness_slider.show()
-            self.brightness_label.show();
+            self.brightness_label.show()
 
         self.box_clock_frequency.setVisible(has_clock)
         self.label_clock_frequency.setVisible(has_clock)

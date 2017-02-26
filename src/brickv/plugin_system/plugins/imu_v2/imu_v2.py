@@ -355,7 +355,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
                                self.sensor_data[14],
                                self.sensor_data[15])
 
-            cal_mag = data.calibration_status & 3;
+            cal_mag = data.calibration_status & 3
             cal_acc = (data.calibration_status & (3 << 2)) >> 2
             cal_gyr = (data.calibration_status & (3 << 4)) >> 4
             cal_sys = (data.calibration_status & (3 << 6)) >> 6
