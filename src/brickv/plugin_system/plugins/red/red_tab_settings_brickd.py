@@ -305,6 +305,6 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
                    REDFile.FLAG_WRITE_ONLY |
                    REDFile.FLAG_CREATE |
                    REDFile.FLAG_NON_BLOCKING |
-                   REDFile.FLAG_TRUNCATE, 0500, 0, 0),
+                   REDFile.FLAG_TRUNCATE, 0o500, 0, 0),
                    lambda x: cb_open(config, x),
                    cb_open_error)
