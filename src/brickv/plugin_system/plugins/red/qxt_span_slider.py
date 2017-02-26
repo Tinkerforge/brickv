@@ -9,11 +9,11 @@ class QxtSpanSlider(QSlider):
     NoHandle = None
     LowerHandle = 1
     UpperHandle = 2
-    
+
     FreeMovement = None
     NoCrossing = 1
     NoOverlapping = 2
-    
+
     __pyqtSignals__ = ("spanChanged(int, int)",
                        "lowerValueChanged(int)", "upperValueChanged(int)",
                        "lowerPositionChanged(int)", "upperPositionChanged(int)",
@@ -30,7 +30,7 @@ class QxtSpanSlider(QSlider):
         QSlider.__init__(self, QtCore.Qt.Horizontal, parent)
         self.connect(self, SIGNAL("rangeChanged(int, int)"), self.updateRange)
         self.connect(self, SIGNAL("sliderReleased()"), self.movePressedHandle)
-        
+
         self.setStyle(QStyleFactory.create('Plastique'))
 
         self.lower = 0
@@ -52,19 +52,19 @@ class QxtSpanSlider(QSlider):
 
     def lowerValue(self):
         return min(self.lower, self.upper)
-        
+
     def setLowerValue(self, lower):
         self.setSpan(lower, self.upper)
-        
+
     def upperValue(self):
         return max(self.lower, self.upper)
-        
+
     def setUpperValue(self, upper):
         self.setSpan(self.lower, upper)
 
     def handleMovementMode(self):
         return self.movement
-    
+
     def setHandleMovementMode(self, mode):
         self.movement = mode
 
@@ -114,11 +114,11 @@ class QxtSpanSlider(QSlider):
 
     def gradientLeftColor(self):
         return self.gradientLeft
-    
+
     def setGradientLeftColor(self, color):
         self.gradientLeft = color
         self.update()
-    
+
     def gradientRightColor(self):
         return self.gradientRight
 
@@ -147,7 +147,7 @@ class QxtSpanSlider(QSlider):
             return p.x()
         else:
             return p.y()
-    
+
     def triggerAction(self, action, main):
         value = 0
         no = False
@@ -159,9 +159,9 @@ class QxtSpanSlider(QSlider):
             altControl = QxtSpanSlider.UpperHandle
 
         self.blockTracking = True
-        
+
         isUpperHandle = (main and self.mainControl == QxtSpanSlider.UpperHandle) or (not main and altControl == QxtSpanSlider.UpperHandle)
-        
+
         if action == QAbstractSlider.SliderSingleStepAdd:
             if isUpperHandle:
                 value = clamp(self.upper + self.singleStep(), my_min, my_max)
@@ -215,7 +215,7 @@ class QxtSpanSlider(QSlider):
         self.blockTracking = False
         self.setLowerValue(self.lowerPos)
         self.setUpperValue(self.upperPos)
-    
+
     def swapControls(self):
         self.lower, self.upper = self.upper, self.lower
         self.lowerPressed, self.upperPressed = self.upperPressed, self.lowerPressed
@@ -224,7 +224,7 @@ class QxtSpanSlider(QSlider):
             self.lastPressed = QxtSpanSlider.UpperHandle
         else:
             self.lastPressed = QxtSpanSlider.LowerHandle
-            
+
         if self.mainControl == QxtSpanSlider.LowerHandle:
             self.mainControl = QxtSpanSlider.UpperHandle
         else:
@@ -233,10 +233,10 @@ class QxtSpanSlider(QSlider):
     def updateRange(self, min, max):
         # setSpan() takes care of keeping span in range
         self.setSpan(self.lower, self.upper)
-    
+
     def paintEvent(self, event):
         painter = QStylePainter(self)
-        
+
         # ticks
         opt = QStyleOptionSlider()
         self.initStyleOption(opt)
@@ -320,7 +320,7 @@ class QxtSpanSlider(QSlider):
         painter.fillRect(rectOutsideRangeLeft, self.colorOutsideRange)
         painter.fillRect(rectOutsideRangeRight, self.colorOutsideRange)
         painter.fillRect(intersected, gradient)
-    
+
     def drawHandle(self, painter, handle):
         opt = QStyleOptionSlider()
         self._initStyleOption(opt, handle)
@@ -328,12 +328,12 @@ class QxtSpanSlider(QSlider):
         pressed = self.upperPressed
         if handle == QxtSpanSlider.LowerHandle:
             pressed = self.lowerPressed
-        
+
         if pressed == QStyle.SC_SliderHandle:
             opt.activeSubControls = pressed
             opt.state |= QStyle.State_Sunken
         painter.drawComplexControl(QStyle.CC_Slider, opt)
-    
+
     def _initStyleOption(self, option, handle):
         self.initStyleOption(option)
 
@@ -344,7 +344,7 @@ class QxtSpanSlider(QSlider):
         option.sliderValue = self.upper
         if handle == QxtSpanSlider.LowerHandle:
             option.sliderPosition = self.lower
-    
+
     def handleMousePress(self, pos, control, value, handle):
         opt = QStyleOptionSlider()
         self._initStyleOption(opt, handle)
@@ -360,7 +360,7 @@ class QxtSpanSlider(QSlider):
         if control != oldControl:
             self.update(sr)
         return control
-    
+
     def mousePressEvent(self, event):
         if self.minimum() == self.maximum() or event.buttons() ^ event.button():
             event.ignore()
@@ -372,7 +372,7 @@ class QxtSpanSlider(QSlider):
 
         self.firstMovement = True
         event.accept()
-    
+
     def mouseMoveEvent(self, event):
         if self.lowerPressed != QStyle.SC_SliderHandle and self.upperPressed != QStyle.SC_SliderHandle:
             event.ignore()
@@ -419,14 +419,14 @@ class QxtSpanSlider(QSlider):
             else:
                 self.setUpperPosition(newPosition)
         event.accept()
-    
+
     def mouseReleaseEvent(self, event):
         QSlider.mouseReleaseEvent(self, event)
         self.setSliderDown(False)
         self.lowerPressed = QStyle.SC_None
         self.upperPressed = QStyle.SC_None
         self.update()
-    
+
     def pixelPosToRangeValue(self, pos):
         opt = QStyleOptionSlider()
         self.initStyleOption(opt)
@@ -444,9 +444,9 @@ class QxtSpanSlider(QSlider):
             sliderLength = sr.height()
             sliderMin = gr.y()
             sliderMax = gr.bottom() - sliderLength + 1
-        
+
         return QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), pos - sliderMin, sliderMax - sliderMin, opt.upsideDown)
-    
+
     lowerValue = pyqtProperty("int", lowerValue, setLowerValue)
     upperValue = pyqtProperty("int", upperValue, setUpperValue)
     upperPosition = pyqtProperty("int", upperPosition, setUpperPosition)

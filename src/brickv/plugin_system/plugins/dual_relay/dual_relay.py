@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Dual Relay Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 dual_relay.py: Dual Relay Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -33,23 +33,23 @@ from brickv.load_pixmap import load_masked_pixmap
 
 class DualRelay(PluginBase, Ui_DualRelay):
     qtcb_monoflop = pyqtSignal(int, bool)
-    
+
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletDualRelay, *args)
 
         self.setupUi(self)
-        
+
         self.dr = self.device
 
         self.has_monoflop = self.firmware_version >= (1, 1, 1)
-        
+
         self.qtcb_monoflop.connect(self.cb_monoflop)
         self.dr.register_callback(self.dr.CALLBACK_MONOFLOP_DONE,
                                   self.qtcb_monoflop.emit)
-        
+
         self.dr1_button.clicked.connect(self.dr1_clicked)
         self.dr2_button.clicked.connect(self.dr2_clicked)
-        
+
         self.go1_button.clicked.connect(self.go1_clicked)
         self.go2_button.clicked.connect(self.go2_clicked)
 
@@ -58,7 +58,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
 
         self.r1_timebefore = 500
         self.r2_timebefore = 500
-        
+
         self.a1_pixmap = load_masked_pixmap('plugin_system/plugins/dual_relay/relay_a1.bmp')
         self.a2_pixmap = load_masked_pixmap('plugin_system/plugins/dual_relay/relay_a2.bmp')
         self.b1_pixmap = load_masked_pixmap('plugin_system/plugins/dual_relay/relay_b1.bmp')
@@ -73,7 +73,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.go2_button.setText("Go (FW Versiom >= 1.1.1 required)")
             self.go1_button.setEnabled(False)
             self.go2_button.setEnabled(False)
-        
+
     def get_state_async(self, state):
         width = self.dr1_button.width()
         if self.dr1_button.minimumWidth() < width:
@@ -82,7 +82,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
         width = self.dr2_button.width()
         if self.dr2_button.minimumWidth() < width:
             self.dr2_button.setMinimumWidth(width)
-        
+
         dr1, dr2 = state
         if dr1:
             self.dr1_button.setText('Switch Off')
@@ -96,7 +96,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
         else:
             self.dr2_button.setText('Switch On')
             self.dr2_image.setPixmap(self.b2_pixmap)
-            
+
     def get_monoflop_async(self, monoflop, index):
         state, time, time_remaining = monoflop
         if index == 1:
@@ -143,17 +143,17 @@ class DualRelay(PluginBase, Ui_DualRelay):
 
     def get_state_dr1_clicked(self, state):
         dr1, dr2 = state
-        
+
         try:
             self.dr.set_state(not dr1, dr2)
         except ip_connection.Error:
             return
-        
+
         self.r1_monoflop = False
         self.time1_spinbox.setValue(self.r1_timebefore)
         self.time1_spinbox.setEnabled(True)
         self.state1_combobox.setEnabled(True)
-        
+
     def dr1_clicked(self):
         width = self.dr1_button.width()
         if self.dr1_button.minimumWidth() < width:
@@ -170,17 +170,17 @@ class DualRelay(PluginBase, Ui_DualRelay):
 
     def get_state_dr2_clicked(self, state):
         dr1, dr2 = state
-        
+
         try:
             self.dr.set_state(dr1, not dr2)
         except ip_connection.Error:
             return
-        
+
         self.r2_monoflop = False
         self.time2_spinbox.setValue(self.r2_timebefore)
         self.time2_spinbox.setEnabled(True)
         self.state2_combobox.setEnabled(True)
-        
+
     def dr2_clicked(self):
         width = self.dr2_button.width()
         if self.dr2_button.minimumWidth() < width:
@@ -203,13 +203,13 @@ class DualRelay(PluginBase, Ui_DualRelay):
                 time = self.r1_timebefore
             else:
                 self.r1_timebefore = self.time1_spinbox.value()
-                
+
             self.dr.set_monoflop(1, state, time)
-            
+
             self.r1_monoflop = True
             self.time1_spinbox.setEnabled(False)
             self.state1_combobox.setEnabled(False)
-            
+
             if state:
                 self.dr1_button.setText('Switch Off')
                 self.dr1_image.setPixmap(self.a1_pixmap)
@@ -227,13 +227,13 @@ class DualRelay(PluginBase, Ui_DualRelay):
                 time = self.r2_timebefore
             else:
                 self.r2_timebefore = self.time2_spinbox.value()
-                
+
             self.dr.set_monoflop(2, state, time)
-            
+
             self.r2_monoflop = True
             self.time2_spinbox.setEnabled(False)
             self.state2_combobox.setEnabled(False)
-            
+
             if state:
                 self.dr2_button.setText('Switch Off')
                 self.dr2_image.setPixmap(self.a2_pixmap)
@@ -242,7 +242,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
                 self.dr2_image.setPixmap(self.b2_pixmap)
         except ip_connection.Error:
             return
-    
+
     def cb_monoflop(self, relay, state):
         if relay == 1:
             self.r1_monoflop = False
@@ -266,7 +266,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
             else:
                 self.dr2_button.setText('Switch On')
                 self.dr2_image.setPixmap(self.b2_pixmap)
-    
+
     def update_time_remaining(self, relay, time_remaining):
         if relay == 1:
             if self.r1_monoflop:

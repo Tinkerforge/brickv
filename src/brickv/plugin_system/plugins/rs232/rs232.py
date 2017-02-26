@@ -40,9 +40,9 @@ class RS232(PluginBase, Ui_RS232):
         PluginBase.__init__(self, BrickletRS232, *args)
 
         self.setupUi(self)
-        
+
         has_errors = self.firmware_version >= (2, 0, 1)
-        
+
         self.text.setReadOnly(True)
 
         self.rs232 = self.device
@@ -85,7 +85,7 @@ class RS232(PluginBase, Ui_RS232):
         self.button_clear_text.clicked.connect(self.hextext.clear)
 
         self.save_button.clicked.connect(self.save_clicked)
-        
+
         self.error_overrun = 0
         self.error_parity = 0
         self.error_framing = 0

@@ -89,34 +89,34 @@ class LaserRangeFinder(PluginBase):
 
         self.enable_laser = QCheckBox("Enable Laser")
         self.enable_laser.stateChanged.connect(self.enable_laser_changed)
-        
+
         self.label_acquisition_count = QLabel('Acquisition Count:')
         self.spin_acquisition_count = QSpinBox()
         self.spin_acquisition_count.setMinimum(1)
         self.spin_acquisition_count.setMaximum(255)
         self.spin_acquisition_count.setSingleStep(1)
         self.spin_acquisition_count.setValue(128)
-        
+
         self.enable_qick_termination = QCheckBox("Quick Termination")
-        
+
         self.label_threshold = QLabel('Threshold:')
         self.threshold = QCheckBox("Automatic Threshold")
-        
+
         self.spin_threshold = QSpinBox()
         self.spin_threshold.setMinimum(1)
         self.spin_threshold.setMaximum(255)
         self.spin_threshold.setSingleStep(1)
         self.spin_threshold.setValue(1)
-        
+
         self.label_frequency = QLabel('Frequency [Hz]:')
         self.frequency = QCheckBox("Automatic Frequency (Disable for Velocity)")
-        
+
         self.spin_frequency = QSpinBox()
         self.spin_frequency.setMinimum(10)
         self.spin_frequency.setMaximum(500)
         self.spin_frequency.setSingleStep(1)
         self.spin_frequency.setValue(10)
-        
+
         self.spin_acquisition_count.editingFinished.connect(self.configuration_changed)
         self.enable_qick_termination.stateChanged.connect(self.configuration_changed)
         self.spin_threshold.editingFinished.connect(self.configuration_changed)
@@ -137,14 +137,14 @@ class LaserRangeFinder(PluginBase):
         layout_h2.addWidget(self.spin_average_velocity)
         layout_h2.addStretch()
         layout_h2.addWidget(self.enable_laser)
-        
+
         layout_h3 = QHBoxLayout()
         layout_h3.addWidget(self.label_frequency)
         layout_h3.addWidget(self.spin_frequency)
         layout_h3.addWidget(self.frequency)
         layout_h3.addStretch()
         layout_h3.addWidget(self.enable_qick_termination)
-        
+
         layout_h4 = QHBoxLayout()
         layout_h4.addWidget(self.label_threshold)
         layout_h4.addWidget(self.spin_threshold)
@@ -152,7 +152,7 @@ class LaserRangeFinder(PluginBase):
         layout_h4.addStretch()
         layout_h4.addWidget(self.label_acquisition_count)
         layout_h4.addWidget(self.spin_acquisition_count)
-        
+
         self.widgets_distance = [self.plot_widget_distance, self.spin_average_distance, self.label_average_distance]
         self.widgets_velocity = [self.plot_widget_velocity, self.spin_average_velocity, self.label_average_velocity]
 
@@ -171,7 +171,7 @@ class LaserRangeFinder(PluginBase):
         layout.addLayout(layout_h2)
         layout.addLayout(layout_h3)
         layout.addLayout(layout_h4)
-        
+
         self.has_sensor_hardware_version_api = self.firmware_version >= (2, 0, 3)
         self.has_configuration_api           = self.firmware_version >= (2, 0, 3)
 
@@ -180,7 +180,7 @@ class LaserRangeFinder(PluginBase):
             async_call(self.lrf.get_sensor_hardware_version, None, self.get_sensor_hardware_version_async, self.increase_error_count)
         else:
             self.get_sensor_hardware_version_async(1)
-            
+
         if self.has_configuration_api:
             async_call(self.lrf.get_configuration, None, self.get_configuration_async, self.increase_error_count)
 
@@ -223,7 +223,7 @@ class LaserRangeFinder(PluginBase):
             self.lrf.enable_laser()
         else:
             self.lrf.disable_laser()
-            
+
     def mode_changed(self, value):
         if value < 0 or value > 4:
             return
@@ -245,7 +245,7 @@ class LaserRangeFinder(PluginBase):
 
     def cb_velocity(self, velocity):
         self.current_velocity = velocity / 100.0
-        
+
     def configuration_changed(self):
         acquisition_count = self.spin_acquisition_count.value()
         enable_quick_termination = self.enable_qick_termination.isChecked()
@@ -258,26 +258,26 @@ class LaserRangeFinder(PluginBase):
         if self.frequency.isChecked():
             frequency = 0
             for w in self.widgets_velocity:
-                w.hide() 
+                w.hide()
         else:
             frequency = self.spin_frequency.value()
             for w in self.widgets_velocity:
-                w.show() 
-            
+                w.show()
+
         self.spin_threshold.setDisabled(threshold == 0)
         self.spin_frequency.setDisabled(frequency == 0)
-        
+
         self.lrf.set_configuration(acquisition_count, enable_quick_termination, threshold, frequency)
-        
+
     def get_configuration_async(self, conf):
         self.spin_acquisition_count.blockSignals(True)
         self.spin_acquisition_count.setValue(conf.acquisition_count)
         self.spin_acquisition_count.blockSignals(False)
-        
+
         self.enable_qick_termination.blockSignals(True)
         self.enable_qick_termination.setChecked(conf.enable_quick_termination)
         self.enable_qick_termination.blockSignals(False)
-        
+
         self.spin_threshold.blockSignals(True)
         self.spin_threshold.setValue(conf.threshold_value)
         self.spin_threshold.setDisabled(conf.threshold_value == 0)
@@ -291,13 +291,13 @@ class LaserRangeFinder(PluginBase):
         self.threshold.blockSignals(True)
         self.threshold.setChecked(conf.threshold_value == 0)
         self.threshold.blockSignals(False)
-        
+
         self.frequency.blockSignals(True)
         self.frequency.setChecked(conf.measurement_frequency == 0)
         self.frequency.blockSignals(False)
 
         self.configuration_changed()
-        
+
     def get_sensor_hardware_version_async(self, value):
         if value == 1:
             self.mode_combo.show()
@@ -323,11 +323,11 @@ class LaserRangeFinder(PluginBase):
             self.label_frequency.show()
             self.spin_frequency.show()
             self.frequency.show()
-            
+
             for w in self.widgets_distance:
                 w.show()
             for w in self.widgets_velocity:
-                w.show() 
+                w.show()
 
     def get_mode_async(self, value):
         self.mode_combo.setCurrentIndex(value)

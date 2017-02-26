@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 IO-16 Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2012, 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 io16.py: IO-16 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -35,14 +35,14 @@ from brickv.callback_emulator import CallbackEmulator
 
 class IO16(PluginBase, Ui_IO16):
     qtcb_monoflop = pyqtSignal('char', int, int)
-    
+
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletIO16, *args)
 
         self.setupUi(self)
-        
+
         self.io = self.device
-        
+
         self.has_monoflop = self.firmware_version >= (1, 1, 2)
 
         self.cbe_port_a = CallbackEmulator(functools.partial(self.io.get_port, 'a'),
@@ -51,36 +51,36 @@ class IO16(PluginBase, Ui_IO16):
         self.cbe_port_b = CallbackEmulator(functools.partial(self.io.get_port, 'b'),
                                            functools.partial(self.cb_port, 'b'),
                                            self.increase_error_count)
-        
-        self.port_value = { 'a': [self.av0, self.av1, self.av2, self.av3,
-                                  self.av4, self.av5, self.av6, self.av7],
-                            'b': [self.bv0, self.bv1, self.bv2, self.bv3,
-                                  self.bv4, self.bv5, self.bv6, self.bv7]}
-        
-        self.port_direction = { 'a': [self.ad0, self.ad1, self.ad2, self.ad3,
-                                      self.ad4, self.ad5, self.ad6, self.ad7],
-                                'b': [self.bd0, self.bd1, self.bd2, self.bd3,
-                                      self.bd4, self.bd5, self.bd6, self.bd7]}
-        
-        self.port_config = { 'a': [self.ac0, self.ac1, self.ac2, self.ac3,
-                                   self.ac4, self.ac5, self.ac6, self.ac7],
-                             'b': [self.bc0, self.bc1, self.bc2, self.bc3,
-                                   self.bc4, self.bc5, self.bc6, self.bc7]}
 
-        self.port_time = { 'a': [self.at0, self.at1, self.at2, self.at3,
-                                 self.at4, self.at5, self.at6, self.at7],
-                           'b': [self.bt0, self.bt1, self.bt2, self.bt3,
-                                 self.bt4, self.bt5, self.bt6, self.bt7]}
+        self.port_value = {'a': [self.av0, self.av1, self.av2, self.av3,
+                                 self.av4, self.av5, self.av6, self.av7],
+                           'b': [self.bv0, self.bv1, self.bv2, self.bv3,
+                                 self.bv4, self.bv5, self.bv6, self.bv7]}
 
-        self.monoflop_active = { 'a': [False, False, False, False,
-                                       False, False, False, False],
-                                 'b': [False, False, False, False,
-                                       False, False, False, False] }
+        self.port_direction = {'a': [self.ad0, self.ad1, self.ad2, self.ad3,
+                                     self.ad4, self.ad5, self.ad6, self.ad7],
+                               'b': [self.bd0, self.bd1, self.bd2, self.bd3,
+                                     self.bd4, self.bd5, self.bd6, self.bd7]}
 
-        self.monoflop_timebefore = { 'a': [500, 500, 500, 500,
-                                           500, 500, 500, 500],
-                                     'b': [500, 500, 500, 500,
-                                           500, 500, 500, 500] }
+        self.port_config = {'a': [self.ac0, self.ac1, self.ac2, self.ac3,
+                                  self.ac4, self.ac5, self.ac6, self.ac7],
+                            'b': [self.bc0, self.bc1, self.bc2, self.bc3,
+                                  self.bc4, self.bc5, self.bc6, self.bc7]}
+
+        self.port_time = {'a': [self.at0, self.at1, self.at2, self.at3,
+                                self.at4, self.at5, self.at6, self.at7],
+                          'b': [self.bt0, self.bt1, self.bt2, self.bt3,
+                                self.bt4, self.bt5, self.bt6, self.bt7]}
+
+        self.monoflop_active = {'a': [False, False, False, False,
+                                      False, False, False, False],
+                                'b': [False, False, False, False,
+                                      False, False, False, False] }
+
+        self.monoflop_timebefore = {'a': [500, 500, 500, 500,
+                                          500, 500, 500, 500],
+                                    'b': [500, 500, 500, 500,
+                                          500, 500, 500, 500] }
 
         self.save_button.clicked.connect(self.save_clicked)
         self.port_box.currentIndexChanged.connect(self.port_changed)
@@ -105,29 +105,29 @@ class IO16(PluginBase, Ui_IO16):
             self.update_timer.start()
 
         self.port_changed(0)
-        
+
     def init_async(self):
         self.init_value = 0
         self.init_dir = 0
         self.init_config = 0
         self.init_monoflop = 0
-        
+
         def get_port_async(value):
             self.init_value = value
             self.init_async_generator.next()
-        
+
         def get_port_configuration_async(conf):
             self.init_dir, self.init_config = conf
             self.init_async_generator.next()
-            
+
         def get_monoflop_async(init_monoflop):
             self.init_monoflop = init_monoflop
             self.init_async_generator.next()
-        
+
         def get_debounce_period_async(debounce_period):
             self.debounce_edit.setText(str(debounce_period))
             self.port_changed(0)
-        
+
         for port in ['a', 'b']:
             async_call(self.io.get_port, port, get_port_async, self.increase_error_count)
             yield
@@ -148,14 +148,14 @@ class IO16(PluginBase, Ui_IO16):
             self.init_values(port, self.init_value, self.init_dir, self.init_config, time, time_remaining)
 
         async_call(self.io.get_debounce_period, None, get_debounce_period_async, self.increase_error_count)
-        
+
     def start(self):
         self.init_async_generator = self.init_async()
         self.init_async_generator.next()
 
         self.cbe_port_a.set_period(50)
         self.cbe_port_b.set_period(50)
-        
+
         if self.has_monoflop:
             self.update_timer.start()
 
@@ -174,19 +174,19 @@ class IO16(PluginBase, Ui_IO16):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIO16.DEVICE_IDENTIFIER
-    
+
     def init_values(self, port, value, dir, config, time, time_remaining):
         for i in range(8):
             if dir & (1 << i):
                 self.port_direction[port][i].setText('Input')
-                
+
                 if config & (1 << i):
                     self.port_config[port][i].setText('Pull-Up')
                 else:
                     self.port_config[port][i].setText('Default')
             else:
                 self.port_direction[port][i].setText('Output')
-                
+
                 if config & (1 << i):
                     self.port_config[port][i].setText('High')
                 else:
@@ -231,12 +231,12 @@ class IO16(PluginBase, Ui_IO16):
             self.port_value[port][pin].setText(self.value_box.currentText())
         else:
             value = self.value_box.currentText() == 'Pull-Up'
-            
+
         try:
             self.io.set_port_configuration(port, 1 << pin, direction, value)
         except ip_connection.Error:
             return
-            
+
         self.port_direction[port][pin].setText(self.direction_box.currentText())
         self.port_config[port][pin].setText(self.value_box.currentText())
 
@@ -254,23 +254,23 @@ class IO16(PluginBase, Ui_IO16):
 
     def port_changed(self, port):
         self.pin_changed(int(self.pin_box.currentText()))
-                    
+
     def pin_changed(self, pin):
         port = self.port_box.currentText().lower()
-        
+
         if self.port_direction[port][pin].text() == 'Input':
             index = 0
         else:
             index = 1
-            
+
         self.direction_box.setCurrentIndex(index)
         self.direction_changed(index)
         self.update_monoflop_ui_state()
-        
+
     def direction_changed(self, direction):
         port = self.port_box.currentText().lower()
         pin = int(self.pin_box.currentText())
-        
+
         self.value_box.clear()
 
         if direction == 1:
@@ -353,7 +353,7 @@ class IO16(PluginBase, Ui_IO16):
     def update_async(self, port, pin, monoflop):
         selected_port = self.port_box.currentText().lower()
         selected_pin = int(self.pin_box.currentText())
-        
+
         _, _, time_remaining = monoflop
         if port == selected_port and pin == selected_pin and self.monoflop_active[port][pin]:
             self.time_spinbox.setValue(time_remaining)
@@ -366,5 +366,5 @@ class IO16(PluginBase, Ui_IO16):
                 if self.monoflop_active[port][pin]:
                     def get_lambda(port, pin):
                         return lambda x: self.update_async(port, pin, x)
-                    
+
                     async_call(self.io.get_port_monoflop, (port, pin), get_lambda(port, pin), self.increase_error_count)

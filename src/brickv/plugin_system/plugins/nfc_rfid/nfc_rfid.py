@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 NFC/RFID Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 nfc_rfid.py: NFC/RFID Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -32,29 +32,29 @@ from brickv.spin_box_hex import SpinBoxHex
 
 class NFCRFID(PluginBase, Ui_NFCRFID):
     qtcb_state = pyqtSignal(int, bool)
-    
-    def __init__ (self, *args):
+
+    def __init__(self, *args):
         PluginBase.__init__(self, BrickletNFCRFID, *args)
-        
+
         self.setupUi(self)
-        
+
         self.nfc = self.device
-        
+
         self.qtcb_state.connect(self.cb_state)
         self.nfc.register_callback(self.nfc.CALLBACK_STATE_CHANGED,
                                    self.qtcb_state.emit)
-        
+
         self.label_id.setTextInteractionFlags(Qt.TextSelectableByMouse)
-        
+
         self.write_page_was_clicked = False
-        
+
         self.key_read_spinbox = []
         for i in range(6):
             sb = SpinBoxHex()
             sb.setRange(0, 255)
             self.key_read_spinbox.append(sb)
             self.widget_read_spinbox.layout().addWidget(sb)
-            
+
         self.key_write_spinbox = []
         for i in range(16):
             sb = SpinBoxHex()
@@ -68,33 +68,33 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
                 self.layout_write3.addWidget(sb)
             else:
                 self.layout_write4.addWidget(sb)
-        
+
         self.scan_clicked_type = -1
         self.read_page_clicked_first_page = 0
         self.read_page_clicked_page_range = ''
         self.write_page_clicked_first_page = 0
         self.write_page_clicked_page_range = ''
         self.write_page_clicked_data = []
-        
+
         doc = self.textedit_read_page.document()
         font = doc.defaultFont()
         font.setFamily('Courier New')
         doc.setDefaultFont(font)
-        
+
         self.button_scan.clicked.connect(self.scan_clicked)
         self.button_read_page.clicked.connect(self.read_page_clicked)
         self.button_write_page.clicked.connect(self.write_page_clicked)
         self.combo_box_tag_type.currentIndexChanged.connect(self.tag_type_changed)
         self.spinbox_read_page.valueChanged.connect(self.page_changed)
-        
+
         self.index0_show = [self.widget_read_spinbox, self.label_read_key, self.combobox_read_key]
         self.index1_hide = [self.widget_read_spinbox, self.label_read_key, self.combobox_read_key]
         self.index2_hide = [self.widget_read_spinbox, self.label_read_key, self.combobox_read_key]
-        
+
         self.disable = [self.widget_read_spinbox, self.label_read_key, self.combobox_read_key, self.label_read_page, self.spinbox_read_page, self.button_read_page, self.button_write_page]
-        
+
         self.tag_type_changed(0)
-        
+
     def get_current_page_range(self):
         tt = self.combo_box_tag_type.currentIndex()
         page = self.spinbox_read_page.value()
@@ -113,34 +113,34 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
         s  = ''
         self.label_id.setText(s)
         self.textedit_read_page.setPlainText(s)
-        
+
         if index == self.nfc.TAG_TYPE_MIFARE_CLASSIC:
             for show in self.index0_show:
                 show.show()
         elif index in (self.nfc.TAG_TYPE_TYPE1, self.nfc.TAG_TYPE_TYPE2):
             for hide in self.index1_hide:
                 hide.hide()
-                
+
         for sp in self.key_write_spinbox:
-            sp.setEnabled(False) 
-            
+            sp.setEnabled(False)
+
         for disable in self.disable:
             disable.setEnabled(False)
-            
+
         self.page_changed(self.spinbox_read_page.value())
-        
+
     def page_changed(self, page):
         text_read = 'Read Page ' + self.get_current_page_range()
         text_write = 'Write Page ' + self.get_current_page_range()
 
         self.button_read_page.setText(text_read)
         self.button_write_page.setText(text_write)
-        
+
     def scan_clicked(self):
         t = self.combo_box_tag_type.currentIndex()
         self.scan_clicked_type = t
         self.nfc.request_tag_id(t)
-        
+
     def read_page_clicked(self):
         page = self.spinbox_read_page.value()
         self.read_page_clicked_first_page = page
@@ -150,11 +150,11 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
             key = []
             for sb in self.key_read_spinbox:
                 key.append(sb.value())
-                
+
             self.nfc.authenticate_mifare_classic_page(page, key_number, key)
         else:
             self.nfc.request_page(page)
-        
+
     def write_page_clicked(self):
         self.write_page_was_clicked = True
         page = self.spinbox_read_page.value()
@@ -164,23 +164,23 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
 
         for sp in self.key_write_spinbox:
             self.write_page_clicked_data.append(sp.value())
-            
+
         if self.scan_clicked_type == self.nfc.TAG_TYPE_MIFARE_CLASSIC:
             key_number = self.combobox_read_key.currentIndex()
             key = []
             for sb in self.key_read_spinbox:
                 key.append(sb.value())
-                
+
             self.nfc.authenticate_mifare_classic_page(page, key_number, key)
         else:
             self.nfc.write_page(page, self.write_page_clicked_data)
-        
+
     def start(self):
         pass
-        
+
     def stop(self):
         pass
-    
+
     def cb_state(self, state, idle):
         if state & (self.nfc.STATE_ERROR & ~self.nfc.STATE_IDLE):
             self.tag_type_changed(self.combo_box_tag_type.currentIndex())
@@ -235,7 +235,7 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
             return
 
         self.textedit_read_page.setPlainText(s)
-        
+
         for i, sp in enumerate(self.key_write_spinbox):
             sp.setValue(page[i])
 
@@ -249,12 +249,12 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
             s = 'Found tag with ID <b>{0:02X} {1:02X} {2:02X} {3:02X} {4:02X} {5:02X} {6:02X}</b>'.format(*ret.tid)
         else:
             s = 'Found tag with unsupported ID length ({0})'.format(ret.tid_length)
-        
+
         self.label_id.setText(s)
-        
+
         for sp in self.key_write_spinbox:
-            sp.setEnabled(True) 
-        
+            sp.setEnabled(True)
+
         for disable in self.disable:
             disable.setEnabled(True)
 

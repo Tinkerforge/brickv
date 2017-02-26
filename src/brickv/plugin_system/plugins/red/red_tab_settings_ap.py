@@ -307,7 +307,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
         try:
             interface = self.cbox_ap_interface.currentText()
-            
+
             interface_ip_list = []
             interface_ip_list.append(unicode(self.sbox_ap_intf_ip1.value()))
             interface_ip_list.append(unicode(self.sbox_ap_intf_ip2.value()))

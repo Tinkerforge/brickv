@@ -40,11 +40,11 @@ class QHexeditWidget(QAbstractScrollArea):
     highlightingNone=0
     highlightingData=1
     highlightingAscii=2
-    
+
     def __init__(self, font, parent = None):
         QAbstractScrollArea.__init__(self, parent)
         self.data = ""
-        self.row_width = 16        
+        self.row_width = 16
         self.word_width = 1
         self.address_color = Qt.blue
         self.show_hex = True
@@ -64,13 +64,13 @@ class QHexeditWidget(QAbstractScrollArea):
         self.show_address_separator = True
         self.setFont(font)
         self.setShowAddressSeparator(True)
-        return 
-    
+        return
+
     def setShowAddressSeparator(self, value):
         self.show_address_separator = value
         self.updateScrollbars()
         return
-        
+
     def formatAddress(self, address):
         return self.format_address(address, self.show_address_separator)
 
@@ -80,7 +80,7 @@ class QHexeditWidget(QAbstractScrollArea):
         else:
             sep = ''
 
-        return str("%04x%s%04x" % (address, sep, address + 0x10))	
+        return str("%04x%s%04x" % (address, sep, address + 0x10))
 
     def is_printable(self, ch):
         return (ch in string.printable) and (not ch in ('\n', '\r', '\t', '\x0b', '\x0c'))
@@ -102,7 +102,7 @@ class QHexeditWidget(QAbstractScrollArea):
         self.viewport().repaint()
         return
 
-    ''' 
+    '''
     Name: dataSize() const
     Desc: returns how much data we are viewing
     '''
@@ -123,7 +123,7 @@ class QHexeditWidget(QAbstractScrollArea):
         QAbstractScrollArea.setFont(self,f)
         return
 
-    ''' 
+    '''
     Name: createStandardContextMenu()
     Desc: creates the 'standard' context menu for the widget
     '''
@@ -146,8 +146,8 @@ class QHexeditWidget(QAbstractScrollArea):
         menu = self.createStandardContextMenu()
         menu.exec_(event.globalPos())
         del menu
-        return 
-    
+        return
+
 
     '''
     Name: mnuCopy()
@@ -156,7 +156,7 @@ class QHexeditWidget(QAbstractScrollArea):
     def mnuCopy(self):
         if not (self.hasSelectedText()) :
             return
-            
+
         ss = ""
         # current actual offset (in bytes)
         chars_per_row = self.bytesPerRow()
@@ -180,7 +180,7 @@ class QHexeditWidget(QAbstractScrollArea):
                     if (self.show_address) :
                         address_rva = self.address_offset + offset
                         addressBuffer = self.formatAddress(address_rva)
-                    
+
                         ss += str(addressBuffer)
                         ss += '|'
                     if (self.show_hex) :
@@ -205,8 +205,8 @@ class QHexeditWidget(QAbstractScrollArea):
     def clear(self) :
         self.data = ""
         self.repaint()
-        return 
-    
+        return
+
     '''
     // Name: hasSelectedText() const
     // Desc: returns true if any text is selected
@@ -218,7 +218,7 @@ class QHexeditWidget(QAbstractScrollArea):
     // Name: isInViewableArea(int index) const
     // Desc: returns true if the word at the given index is in the viewable area
     '''
-    def isInViewableArea(self, index) : 
+    def isInViewableArea(self, index) :
         firstViewableWord = self.verticalScrollBar().value() * self.row_width
         viewableLines         = self.viewport().height() / self.font_height
         viewableWords         = viewableLines * self.row_width
@@ -274,7 +274,7 @@ class QHexeditWidget(QAbstractScrollArea):
             return self.asciiDumpLeft() + (elements * self.font_width) + (self.font_width / 2)
         else :
             return self.line2()
-        
+
     '''
     // Name: line2() const
     // Desc: returns the x coordinate of the 2nd line
@@ -297,41 +297,41 @@ class QHexeditWidget(QAbstractScrollArea):
         else :
             return 0
 
-    
+
     '''
     // Name: hexDumpLeft() const
     // Desc: returns the x coordinate of the hex-dump field left edge
     '''
     def hexDumpLeft(self) :
         return self.line1() + (self.font_width / 2)
-    
+
     '''
     // Name: asciiDumpLeft() const
     // Desc: returns the x coordinate of the ascii-dump field left edge
     '''
     def asciiDumpLeft(self) :
         return self.line2() + (self.font_width / 2)
-    
+
     '''
     // Name: commentLeft() const
     // Desc: returns the x coordinate of the comment field left edge
     '''
     #def commentLeft(self) :
     #    return self.line3() + (self.font_width / 2)
-    
+
     '''
     // Name: charsPerWord() const
     // Desc: returns how many characters each word takes up
     '''
     def charsPerWord(self ) :
         return self.word_width * 2
-    
+
     '''
     // Name: addressLen() const
     // Desc: returns the lenth in characters the address will take up
     '''
     def addressLen(self) :
-        addressLength = 8 
+        addressLength = 8
         if self.show_address_separator:
             return addressLength + 1
         return addressLength + 0
@@ -360,13 +360,13 @@ class QHexeditWidget(QAbstractScrollArea):
     // Desc: scrolls view to given byte offset
     '''
     def scrollTo( self, offset) :
-    
+
         bpr = self.bytesPerRow()
         self.origin = offset % bpr
         address = offset / bpr
-    
+
         self.updateScrollbars()
-    
+
         if(self.origin != 0) :
             address+=1
         self.verticalScrollBar().setValue(address)
@@ -388,7 +388,7 @@ class QHexeditWidget(QAbstractScrollArea):
         self.updateScrollbars()
         self.repaint()
         return
-    
+
     '''
     // Name: setShowHexDump(bool show)
     // Desc: sets if we are to display the hex-dump column
@@ -408,7 +408,7 @@ class QHexeditWidget(QAbstractScrollArea):
     #    self.updateScrollbars()
     #    self.repaint()
     #    return
-    
+
     '''
     // Name: setShowAsciiDump(bool show)
     // Desc: sets if we are to display the ascii-dump column
@@ -428,7 +428,7 @@ class QHexeditWidget(QAbstractScrollArea):
         self.updateScrollbars()
         self.repaint()
         return
-    
+
     '''
     // Name: setWordWidth(int wordWidth)
     // Desc: sets how many bytes represent a word
@@ -444,7 +444,7 @@ class QHexeditWidget(QAbstractScrollArea):
     '''
     def bytesPerRow(self) :
         return self.row_width * self.word_width
-    
+
 
     '''
     // Name: pixelToWord(int x, int y) const
@@ -454,55 +454,55 @@ class QHexeditWidget(QAbstractScrollArea):
             #// the right edge of a box is kinda quirky, so we pretend there is one
             #// extra character there
             x = qBound(self.line1(), x, self.line2() + self.font_width)
-    
+
             #// the selection is in the data view portion
             x -= self.line1()
-    
+
             #// scale x/y down to character from pixels
             if (x % self.font_width >= self.font_width / 2 ):
                 x = x / self.font_width + 1
             else:
                 x = x / self.font_width
             y /= self.font_height
-    
+
             #// make x relative to rendering mode of the bytes
             x /= (self.charsPerWord() + 1)
         elif self.highlighting == self.highlightingAscii:
             x = qBound(self.asciiDumpLeft(), x, self.line3())
-    
+
             #// the selection is in the ascii view portion
             x -= self.asciiDumpLeft()
-    
+
             #// scale x/y down to character from pixels
             x /= self.font_width
             y /= self.font_height
-    
+
             #// make x relative to rendering mode of the bytes
             x /= self.word_width
         else:
             #Q_ASSERT(0)
             pass
-    
+
         #// starting offset in bytes
         start_offset = self.verticalScrollBar().value() * self.bytesPerRow()
-    
+
         #// take into account the origin
         if(self.origin != 0) :
             if(start_offset > 0) :
                 start_offset += self.origin
                 start_offset -= self.bytesPerRow()
-            
-        
-    
+
+
+
         #// convert byte offset to word offset, rounding up
         start_offset /= self.word_width
-    
+
         if((self.origin % self.word_width) != 0) :
             start_offset += 1
-        
-    
+
+
         word = ((y * self.row_width) + x) + start_offset
-    
+
         return word
 
 
@@ -538,7 +538,7 @@ class QHexeditWidget(QAbstractScrollArea):
                 self.highlighting = self.highlightingData
             elif(x >= self.line2()) :
                 self.highlighting = self.highlightingAscii
-            
+
             offset = self.pixelToWord(x, y)
             byte_offset = offset * self.word_width
             if(self.origin):
@@ -550,7 +550,7 @@ class QHexeditWidget(QAbstractScrollArea):
                 self.selection_start = self.selection_end = -1
             self.repaint()
         return
-        
+
     '''
     // Name: mouseMoveEvent(QMouseEvent *event)
     '''
@@ -656,7 +656,7 @@ class QHexeditWidget(QAbstractScrollArea):
                         stream += str(self.unprintable_char)
                 else :
                     stream += ' '
-                
+
             else :
                 break
         return stream
@@ -684,7 +684,7 @@ class QHexeditWidget(QAbstractScrollArea):
         #    quint32 d
         #    quint16 w
         #    quint8    b
-        value = 0 
+        value = 0
         byte_buffer = [0]*32
         if self.word_width == 1 :
             value |= (ord(row_data[index + 0]) & 0xff)
@@ -735,9 +735,9 @@ class QHexeditWidget(QAbstractScrollArea):
                     stream += ' '
             else :
                 break
-            
+
         return stream
-        
+
     '''
     // Name: drawHexDump(QPainter &painter, offset, row, int size, int &word_count, const QByteArray &row_data) const
     '''
@@ -776,7 +776,7 @@ class QHexeditWidget(QAbstractScrollArea):
                 else :
                     painter.setPen(QPen(self.even_word ))
                     painter.setPen(QPen(self.palette().text().color()))
-                
+
                 painter.drawText(
                     drawLeft,
                     row,

@@ -289,8 +289,8 @@ class YScale(Scale):
             title_painter = QPainter(self.title_text_pixmap)
             title_painter.setFont(self.title_text_font)
             title_painter.drawText(0, 0, title_width, title_height,
-                                  Qt.TextWordWrap | Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignTop,
-                                  self.title_text)
+                                   Qt.TextWordWrap | Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignTop,
+                                   self.title_text)
             title_painter = None
 
         painter.save()

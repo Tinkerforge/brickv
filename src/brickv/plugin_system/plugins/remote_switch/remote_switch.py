@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Remote Switch Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 remote_switch.py: Remote Switch Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -30,7 +30,7 @@ from brickv.bindings.bricklet_remote_switch import BrickletRemoteSwitch
 
 class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
     qtcb_switching_done = pyqtSignal()
-    
+
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletRemoteSwitch, *args)
 
@@ -43,27 +43,27 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
         self.qtcb_switching_done.connect(self.cb_switching_done)
         self.rs.register_callback(self.rs.CALLBACK_SWITCHING_DONE,
                                   self.qtcb_switching_done.emit)
-        
+
         self.h_check = (self.h_check_a, self.h_check_b, self.h_check_c, self.h_check_d, self.h_check_e)
         self.r_check = (self.r_check_a, self.r_check_b, self.r_check_c, self.r_check_d, self.r_check_e)
         for h in self.h_check:
             h.stateChanged.connect(self.h_check_state_changed)
-            
+
         for r in self.r_check:
             r.stateChanged.connect(self.r_check_state_changed)
-            
+
         self.checkbox_switchall.stateChanged.connect(self.switchall_state_changed)
         self.spinbox_house.valueChanged.connect(self.house_value_changed)
         self.spinbox_receiver.valueChanged.connect(self.receiver_value_changed)
         self.combo_type.currentIndexChanged.connect(self.type_index_changed)
-        
+
         self.spinbox_dim_value.valueChanged.connect(self.spinbox_dim_value_changed)
         self.slider_dim_value.valueChanged.connect(self.slider_dim_value_changed)
-        
+
         self.button_switch_on.clicked.connect(lambda: self.button_clicked(1))
         self.button_switch_off.clicked.connect(lambda: self.button_clicked(0))
         self.button_dim.clicked.connect(self.dim_clicked)
-        
+
         self.type_a_widgets = [self.groupbox_house, self.groupbox_receiver, self.button_switch_on, self.button_switch_off]
         self.type_b_widgets = [self.widget_address, self.widget_unit, self.button_switch_on, self.button_switch_off]
         self.type_b_dim_widgets = [self.widget_dim_value, self.widget_address, self.widget_unit, self.button_dim]
@@ -77,10 +77,10 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
             self.combo_type.addItem('A Switch')
 
         self.type_index_changed(0)
-        
+
     def spinbox_dim_value_changed(self, value):
         self.slider_dim_value.setValue(value)
-        
+
     def slider_dim_value_changed(self, value):
         self.spinbox_dim_value.setValue(value)
 
@@ -89,7 +89,7 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
             if i != index:
                 for w in self.type_widgets[i]:
                     w.setVisible(False)
-                    
+
         for w in self.type_widgets[index]:
             w.setVisible(True)
 
@@ -106,64 +106,64 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
                 self.r_check[i].setChecked(True)
             else:
                 self.r_check[i].setChecked(False)
-    
+
     def switchall_state_changed(self, state):
         if self.checkbox_switchall.isChecked():
             self.spinbox_unit.setEnabled(False)
         else:
             self.spinbox_unit.setEnabled(True)
-        
+
     def h_check_state_changed(self, state):
         house_code = 0
         for i in range(5):
             if self.h_check[i].isChecked():
                 house_code |= (1 << i)
-                
+
         self.spinbox_house.setValue(house_code)
-        
+
     def r_check_state_changed(self, state):
         receiver_code = 0
         for i in range(5):
             if self.r_check[i].isChecked():
                 receiver_code |= (1 << i)
-            
+
         self.spinbox_receiver.setValue(receiver_code)
-                    
+
     def start(self):
         pass
-        
+
     def stop(self):
         pass
 
     def destroy(self):
         pass
-    
+
     def dim_clicked(self):
         self.button_dim.setEnabled(False)
         self.button_dim.setText("Dimming...")
-        
+
         repeats = self.spinbox_repeats.value()
         self.rs.set_repeats(repeats)
-        
+
         if self.combo_type.currentIndex() == 2:
             address = self.spinbox_address.value()
             unit = self.spinbox_unit.value()
             if self.checkbox_switchall.isChecked():
                 unit = 255
-                
+
             dim_value = self.spinbox_dim_value.value()
-                
+
             self.rs.dim_socket_b(address, unit, dim_value)
-    
+
     def button_clicked(self, switch_to):
         self.button_switch_on.setEnabled(False)
         self.button_switch_on.setText("Switching...")
         self.button_switch_off.setEnabled(False)
         self.button_switch_off.setText("Switching...")
-        
+
         repeats = self.spinbox_repeats.value()
         self.rs.set_repeats(repeats)
-        
+
         if self.combo_type.currentText() == 'A Switch':
             house_code = self.spinbox_house.value()
             receiver_code = self.spinbox_receiver.value()

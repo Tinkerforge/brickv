@@ -42,21 +42,47 @@ class HostInfo(object):
 
         return host_info
 
-def get_host_info_strings(): return [DEFAULT_HOST_INFO]
-def set_host_info_strings(host_info_strings): pass
+def get_host_info_strings():
+    return [DEFAULT_HOST_INFO]
 
-def legacy_get_host(): return DEFAULT_HOST
-def legacy_set_host(host): pass
-def legacy_get_host_history(size): return []
-def legacy_set_host_history(history): pass
-def legacy_get_port(): return DEFAULT_PORT
-def legacy_set_port(port): pass
-def legacy_get_use_authentication(): return DEFAULT_USE_AUTHENTICATION
-def legacy_set_use_authentication(use): pass
-def legacy_get_secret(): return DEFAULT_SECRET
-def legacy_set_secret(secret): pass
-def legacy_get_remember_secret(): return DEFAULT_REMEMBER_SECRET
-def legacy_set_remember_secret(remember): pass
+def set_host_info_strings(host_info_strings):
+    pass
+
+def legacy_get_host():
+    return DEFAULT_HOST
+
+def legacy_set_host(host):
+    pass
+
+def legacy_get_host_history(size):
+    return []
+
+def legacy_set_host_history(history):
+    pass
+
+def legacy_get_port():
+    return DEFAULT_PORT
+
+def legacy_set_port(port):
+    pass
+
+def legacy_get_use_authentication():
+    return DEFAULT_USE_AUTHENTICATION
+
+def legacy_set_use_authentication(use):
+    pass
+
+def legacy_get_secret():
+    return DEFAULT_SECRET
+
+def legacy_set_secret(secret):
+    pass
+
+def legacy_get_remember_secret():
+    return DEFAULT_REMEMBER_SECRET
+
+def legacy_set_remember_secret(remember):
+    pass
 
 if sys.platform.startswith('linux') or sys.platform.startswith('freebsd'):
     from brickv.config_linux import *

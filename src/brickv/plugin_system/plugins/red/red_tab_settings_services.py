@@ -133,7 +133,7 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
             return
 
         get_main_window().setEnabled(True)
-        
+
         QtGui.QMessageBox.information(get_main_window(),
                                       'Settings | Services',
                                       'Saved configuration successfully, will now reboot RED Brick.')

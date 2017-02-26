@@ -26,7 +26,7 @@ from PyQt4 import Qt, QtCore, QtGui
 from brickv.plugin_system.plugins.red.qxt_span_slider import QxtSpanSlider
 
 class widgetSpinBoxSpanSlider(QtGui.QWidget):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
 
         self.span_slider = QxtSpanSlider()
@@ -56,8 +56,8 @@ class widgetSpinBoxSpanSlider(QtGui.QWidget):
             self.span_slider.setUpperPosition(value_sbox_lower)
             self.span_slider.setLowerValue(value_sbox_upper)
             self.span_slider.setLowerPosition(value_sbox_upper)
-            self.sbox_upper.setValue(value_sbox_lower) 
-            self.sbox_lower.setValue(value_sbox_upper) 
+            self.sbox_upper.setValue(value_sbox_lower)
+            self.sbox_lower.setValue(value_sbox_upper)
             return
 
         self.span_slider.setLowerValue(value_sbox_lower)
@@ -73,8 +73,8 @@ class widgetSpinBoxSpanSlider(QtGui.QWidget):
             self.span_slider.setUpperPosition(value_sbox_lower)
             self.span_slider.setLowerValue(value_sbox_upper)
             self.span_slider.setLowerPosition(value_sbox_upper)
-            self.sbox_upper.setValue(value_sbox_lower) 
-            self.sbox_lower.setValue(value_sbox_upper) 
+            self.sbox_upper.setValue(value_sbox_lower)
+            self.sbox_lower.setValue(value_sbox_upper)
             return
 
         self.span_slider.setUpperValue(value_sbox_upper)

@@ -85,7 +85,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         regex_sim_card_pin = QtCore.QRegExp('\\d+')
         validator_sim_card_pin = QtGui.QRegExpValidator(regex_sim_card_pin)
         self.ledit_mi_sim_card_pin.setValidator(validator_sim_card_pin)
-        
+
         regex_dial = QtCore.QRegExp('[\\d*#]+')
         validator_dial = QtGui.QRegExpValidator(regex_dial)
         self.ledit_mi_dial.setValidator(validator_dial)
@@ -106,7 +106,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         if self.image_version.number < (1, 7):
             self.update_gui(EVENT_GUI_INIT_UNSUPPORTED)
             return
-        
+
         # Check if the service is enabled
         if not self.service_state.mobileinternet:
             self.update_gui(EVENT_GUI_INIT_SERVICE_DISABLED)
@@ -195,11 +195,11 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
                                        MESSAGEBOX_TITLE,
                                        message)
             return
-        
+
         self.update_gui(EVENT_GUI_CONNECT_CLICKED)
-        
+
         usb_modem = self.cbox_mi_modem.itemData(self.cbox_mi_modem.currentIndex())
-        
+
         if self.ledit_mi_dial.text():
             dial = self.ledit_mi_dial.text()
         else:
@@ -278,22 +278,22 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
             self.label_mi_status_interface.setText('-')
         else:
             self.label_mi_status_interface.setText(dict_status['interface'])
-            
+
         if not dict_status['ip']:
             self.label_mi_status_ip.setText('-')
         else:
             self.label_mi_status_ip.setText(dict_status['ip'])
-            
+
         if not dict_status['subnet_mask']:
             self.label_mi_status_subnet_mask.setText('-')
         else:
             self.label_mi_status_subnet_mask.setText(dict_status['subnet_mask'])
-            
+
         if not dict_status['gateway']:
             self.label_mi_status_gateway.setText('-')
         else:
             self.label_mi_status_gateway.setText(dict_status['gateway'])
-            
+
         if not dict_status['dns']:
             self.label_mi_status_dns.setText('-')
         else:
@@ -386,7 +386,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
             for i in range(self.cbox_mi_modem.count()):
                 if dict_configuration['modem_configured'] != self.cbox_mi_modem.itemData(i):
                     continue
-                
+
                 self.cbox_mi_modem.setCurrentIndex(i)
                 break
 
@@ -399,12 +399,12 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
             self.ledit_mi_apn.setText('')
         else:
             self.ledit_mi_apn.setText(dict_configuration['apn'])
-        
+
         if not dict_configuration['username']:
             self.ledit_mi_username.setText('')
         else:
             self.ledit_mi_username.setText(dict_configuration['username'])
-        
+
         if not dict_configuration['password']:
             self.ledit_mi_password.setText('')
         else:
@@ -437,7 +437,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
 
         if username and not self.check_ascii(username):
             return False, MESSAGE_ERROR_VALIDATION_USERNAME_NON_ASCII
-    
+
         if password and not self.check_ascii(password):
             return False, MESSAGE_ERROR_VALIDATION_PASSWORD_NON_ASCII
 

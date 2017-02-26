@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Solid State Relay Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 solid_state_relay.py: Solid State Relay Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -33,24 +33,24 @@ from brickv.load_pixmap import load_masked_pixmap
 
 class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
     qtcb_monoflop = pyqtSignal(bool)
-    
+
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletSolidStateRelay, *args)
 
         self.setupUi(self)
-        
+
         self.ssr = self.device
-        
+
         self.qtcb_monoflop.connect(self.cb_monoflop)
         self.ssr.register_callback(self.ssr.CALLBACK_MONOFLOP_DONE,
-                                  self.qtcb_monoflop.emit)
-        
+                                   self.qtcb_monoflop.emit)
+
         self.ssr_button.clicked.connect(self.ssr_clicked)
         self.go_button.clicked.connect(self.go_clicked)
 
         self.monoflop = False
         self.timebefore = 500
-        
+
         self.a_pixmap = load_masked_pixmap('plugin_system/plugins/solid_state_relay/relay_a.bmp')
         self.b_pixmap = load_masked_pixmap('plugin_system/plugins/solid_state_relay/relay_b.bmp')
 
@@ -62,7 +62,7 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
         width = self.ssr_button.width()
         if self.ssr_button.minimumWidth() < width:
             self.ssr_button.setMinimumWidth(width)
-            
+
         s = state
         if s:
             self.ssr_button.setText('Switch Off')
@@ -70,7 +70,7 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
         else:
             self.ssr_button.setText('Switch On')
             self.ssr_image.setPixmap(self.b_pixmap)
-            
+
     def get_monoflop_async(self, monoflop):
         state, time, time_remaining = monoflop
         if time > 0:
@@ -105,20 +105,20 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
         width = self.ssr_button.width()
         if self.ssr_button.minimumWidth() < width:
             self.ssr_button.setMinimumWidth(width)
-            
+
         if 'On' in self.ssr_button.text():
             self.ssr_button.setText('Switch Off')
             self.ssr_image.setPixmap(self.a_pixmap)
         else:
             self.ssr_button.setText('Switch On')
-            self.ssr_image.setPixmap(self.b_pixmap)       
-            
+            self.ssr_image.setPixmap(self.b_pixmap)
+
         state = not 'On' in self.ssr_button.text()
         try:
             self.ssr.set_state(state)
         except ip_connection.Error:
             return
-                
+
         self.monoflop = False
         self.time_spinbox.setValue(self.timebefore)
         self.time_spinbox.setEnabled(True)
@@ -132,13 +132,13 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
                 time = self.timebefore
             else:
                 self.timebefore = self.time_spinbox.value()
-                
+
             self.ssr.set_monoflop(state, time)
-            
+
             self.monoflop = True
             self.time_spinbox.setEnabled(False)
             self.state_combobox.setEnabled(False)
-            
+
             if state:
                 self.ssr_button.setText('Switch Off')
                 self.ssr_image.setPixmap(self.a_pixmap)
@@ -159,7 +159,7 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
         else:
             self.ssr_button.setText('Switch On')
             self.ssr_image.setPixmap(self.b_pixmap)
-    
+
     def update_time_remaining(self, time_remaining):
         if self.monoflop:
             self.time_spinbox.setValue(time_remaining)

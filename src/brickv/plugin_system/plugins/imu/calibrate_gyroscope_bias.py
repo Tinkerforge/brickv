@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 IMU Plugin
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -6,8 +6,8 @@ Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
 calibrate_gyroscope_bias.py: IMU Gyroscope Bias Calibration implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -32,7 +32,7 @@ class CalibrateGyroscopeBias(QWidget, Ui_calibrate_gyroscope_bias):
     TYPE_GYR_BIAS = 5
     NUM_AVG = 5000
     qtcb_callback = pyqtSignal(int, int, int)
-    
+
     def __init__(self, parent):
         QWidget.__init__(self)
 
@@ -40,35 +40,35 @@ class CalibrateGyroscopeBias(QWidget, Ui_calibrate_gyroscope_bias):
 
         self.parent = parent
         self.imu = parent.parent.imu
-        
+
         self.set_default()
         self.start_button.clicked.connect(self.next_state)
         self.i = 0
         self.t = 0
-        
+
         self.state = 0
         self.temperature_raw = 0
         self.t_raw_start_low = 0
         self.t_raw_start_high = 0
         self.t_raw_end_low = 0
         self.t_raw_end_high = 0
-        
+
         self.gyr_sum = [0, 0, 0]
         self.gyr_bias_low = [0, 0, 0]
         self.gyr_bias_high = [0, 0, 0]
-        
+
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_temperature)
         self.update_timer.setInterval(1000)
-        
+
         self.qtcb_callback.connect(self.callback)
-        
+
     def start(self):
         self.update_temperature()
         self.update_timer.start()
-        self.imu.register_callback(self.imu.CALLBACK_ANGULAR_VELOCITY, 
+        self.imu.register_callback(self.imu.CALLBACK_ANGULAR_VELOCITY,
                                    self.qtcb_callback.emit)
-        
+
     def stop(self):
         self.update_timer.stop()
         self.imu.set_angular_velocity_period(0)
@@ -194,26 +194,26 @@ absolutely still.""" % 0xB0)
             self.text_label.setText("""Ready. To save the calibration \
 press "Save Calibration" """)
             self.start_button.setText("Save Calibration")
-        
+
     def callback(self, gyr_x, gyr_y, gyr_z):
         if self.i == 0:
             self.t = time.time()
             self.gyr_sum = [0, 0, 0]
-            
+
         if not self.start_button.isEnabled():
-            self.text_label.setText("Calibrating: " + 
-                                    str(self.i) + 
-                                    '/' + 
+            self.text_label.setText("Calibrating: " +
+                                    str(self.i) +
+                                    '/' +
                                     str(self.NUM_AVG))
         else:
             return
-        
+
         self.gyr_sum[0] -= gyr_x
         self.gyr_sum[1] -= gyr_y
         self.gyr_sum[2] -= gyr_z
-        
+
         self.i += 1
-        
+
         if self.i == self.NUM_AVG:
             self.imu.set_angular_velocity_period(0)
             self.start_button.setEnabled(True)

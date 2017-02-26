@@ -3,7 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
 
-backend_serial.py: Rewrite of the pyqterm backend for serial 
+backend_serial.py: Rewrite of the pyqterm backend for serial
                    communication with RED Brick. We use the
                    same API, so we can use the rest of the
                    pyqterm code as is.
@@ -106,7 +106,7 @@ class SerialMultiplexer(object):
         self.session[sid]['state'] = 'alive'
         w, h = self.session[sid]['w'], self.session[sid]['h']
         # Fork new process
-        
+
         try:
             self.serial = serial.Serial(cmd, timeout=0)
             return True

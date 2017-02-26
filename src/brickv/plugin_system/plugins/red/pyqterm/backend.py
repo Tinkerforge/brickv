@@ -1089,7 +1089,7 @@ class Terminal(object):
 
 class SerialSession(QObject):
     signal_update_screen = pyqtSignal()
-    
+
     def __init__(self, cmd, parent):
         QObject.__init__(self)
         self.parent = parent
@@ -1104,7 +1104,7 @@ class SerialSession(QObject):
         self.serial = serial.Serial(self.cmd, timeout=0.2, baudrate=115200)
         self.thread = threading.Thread(target=self.read_loop)
         self.thread.start()
-        
+
     def read_loop(self):
         self.read_loop_stopped = False
         while not self.read_loop_stopped:
@@ -1112,7 +1112,7 @@ class SerialSession(QObject):
                 d = self.serial.read(1)
             except:
                 continue
-                
+
             self.term.write(d)
             self.signal_update_screen.emit()
             d = self.term.read()
@@ -1125,12 +1125,12 @@ class SerialSession(QObject):
     def close(self):
         # Stop supervisor thread
         self.read_loop_stopped = 1
-        
+
         try:
             self.serial.close()
         except:
             pass
-        
+
         try:
             self.thread.join()
         except:

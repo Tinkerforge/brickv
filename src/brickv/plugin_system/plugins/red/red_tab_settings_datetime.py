@@ -36,7 +36,7 @@ class REDTabSettingsDateTime(QtGui.QWidget, Ui_REDTabSettingsDateTime):
     def __init__(self):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
-        
+
         self.session        = None # Set from REDTabSettings
         self.script_manager = None # Set from REDTabSettings
         self.image_version  = None # Set from REDTabSettings

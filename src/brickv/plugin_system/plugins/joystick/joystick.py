@@ -34,7 +34,7 @@ from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class JoystickFrame(QFrame):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         QFrame.__init__(self, parent)
         self.x = 0
         self.y = 0

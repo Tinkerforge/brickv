@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 OLED128x64 Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
@@ -6,8 +6,8 @@ Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
 oled_128x64.py: OLED 128x64 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -36,19 +36,19 @@ class ScribbleArea(QWidget):
     """
     def __init__(self, w, h, parent=None):
         super(ScribbleArea, self).__init__(parent)
-        
+
         self.setAttribute(Qt.WA_StaticContents)
         self.scribbling = 0
-        
+
         self.width = w
         self.height = h
         self.image_pen_width = 5
         self.pen_width = 1
         self.image = QImage(QSize(w, h), QImage.Format_RGB32)
-        
+
         self.setMaximumSize(w*self.image_pen_width, w*self.image_pen_width)
         self.setMinimumSize(w*self.image_pen_width, h*self.image_pen_width)
-        
+
         self.last_point = QPoint()
         self.clear_image()
 
@@ -98,7 +98,7 @@ class OLED128x64(PluginBase, Ui_OLED128x64):
         self.setupUi(self)
 
         self.oled = self.device
-        
+
         self.scribble_area = ScribbleArea(128, 64)
         self.image_button_layout.insertWidget(0, self.scribble_area)
 
@@ -112,18 +112,18 @@ class OLED128x64(PluginBase, Ui_OLED128x64):
         self.invert_checkbox.stateChanged.connect(self.new_configuration)
 
         self.current_char_value = -1
-    
+
     def char_slider_changed(self, value):
         if value != self.current_char_value:
             self.current_char_value = value
             self.write_chars(value)
             self.char_slider.setValue(value)
-    
+
     def new_configuration(self):
         contrast = self.contrast_slider.value()
         invert = self.invert_checkbox.isChecked()
         self.oled.set_display_configuration(contrast, invert)
-        
+
     def write_chars(self, value):
         if value > 248:
             value = 248
@@ -132,21 +132,21 @@ class OLED128x64(PluginBase, Ui_OLED128x64):
             if value + j < 10:
                 start = "  "
             elif value + j < 100:
-                start =  " "
+                start = " "
             self.oled.write_line(j, 8, start + str(value+j) + ": " + chr(value+j) + '\0')
-        
+
     def clear_display_clicked(self):
         self.oled.new_window(0, 127, 0, 7)
         self.oled.clear_display()
-        
+
     def clear_clicked(self):
         self.scribble_area.clear_image()
-        
+
     def send_clicked(self):
         line = int(self.line_combobox.currentText())
         pos = int(self.pos_combobox.currentText())
         text = self.text_edit.text()
-        self.oled.write_line(line, pos, text) 
+        self.oled.write_line(line, pos, text)
 
     def draw_clicked(self):
         lcd_index = 0
@@ -159,7 +159,7 @@ class OLED128x64(PluginBase, Ui_OLED128x64):
                         page |= 1 << k
 
                 if len(lcd) <= lcd_index:
-                    lcd.append([]) 
+                    lcd.append([])
 
                 lcd[lcd_index].append(page)
                 if len(lcd[lcd_index]) == 64:

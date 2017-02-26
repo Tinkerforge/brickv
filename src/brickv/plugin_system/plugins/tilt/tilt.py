@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Tilt Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 tilt.py: Tilt Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -43,27 +43,27 @@ class Tilt(PluginBase):
         self.closed_pixmap = load_masked_pixmap('plugin_system/plugins/tilt/tilt_closed.bmp')
         self.open_pixmap = load_masked_pixmap('plugin_system/plugins/tilt/tilt_open.bmp')
         self.closed_vibrationg_pixmap = load_masked_pixmap('plugin_system/plugins/tilt/tilt_closed_vibrating.bmp')
-        
+
         self.image_label = QLabel("")
         self.image_label.setPixmap(self.closed_pixmap)
-        
+
         layout = QVBoxLayout(self)
         layout.addStretch()
-        
+
         h_layout1 = QHBoxLayout()
         h_layout1.addStretch()
         h_layout1.addWidget(self.label)
         h_layout1.addStretch()
-        
+
         h_layout2 = QHBoxLayout()
         h_layout2.addStretch()
         h_layout2.addWidget(self.image_label)
         h_layout2.addStretch()
-        
+
         layout.addLayout(h_layout1)
         layout.addLayout(h_layout2)
         layout.addStretch()
-        
+
     def cb_tilt_state(self, state):
         if state == 0:
             self.label.setText("Closed")
@@ -77,7 +77,7 @@ class Tilt(PluginBase):
 
     def start(self):
         self.cbe_tilt_state.set_period(25)
-        
+
     def stop(self):
         self.cbe_tilt_state.set_period(0)
 

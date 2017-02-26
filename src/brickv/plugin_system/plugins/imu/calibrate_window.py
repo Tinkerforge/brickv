@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 IMU Plugin
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 calibrate_window.py: IMU calibration implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -46,19 +46,19 @@ class CalibrateWindow(QDialog, Ui_Calibrate):
         QDialog.__init__(self, parent, get_modeless_dialog_flags())
 
         self.setupUi(self)
-        
+
         self.parent = parent
         self.ipcon = parent.ipcon
         self.imu = parent.imu
-        
+
         self.cal_acc = CalibrateAccelerometer(self)
         self.cal_mag = CalibrateMagnetometer(self)
         self.cal_gyr_bias = CalibrateGyroscopeBias(self)
         self.cal_gyr_bias = CalibrateGyroscopeBias(self)
         self.cal_gyr_gain = CalibrateGyroscopeGain(self)
         self.cal_imex = CalibrateImportExport(self)
-        
-        
+
+
         self.tab_widget = QTabWidget()
         self.tab_widget.currentChanged.connect(self.current_tab_changed)
         self.tab_widget.addTab(self.cal_acc, "Accelerometer")
@@ -66,15 +66,15 @@ class CalibrateWindow(QDialog, Ui_Calibrate):
         self.tab_widget.addTab(self.cal_gyr_bias, "Gyroscope Bias")
         self.tab_widget.addTab(self.cal_gyr_gain, "Gyroscope Gain")
         self.tab_widget.addTab(self.cal_imex, "Import/Export")
-        
+
         self.vlayout.addWidget(self.tab_widget)
-        
+
         self.refresh_values()
-        
+
     def closeEvent(self, event):
         self.parent.start()
         event.accept()
-        
+
     def refresh_values(self):
         acc_gain = self.imu.get_calibration(self.TYPE_ACC_GAIN)
         acc_bias = self.imu.get_calibration(self.TYPE_ACC_BIAS)
@@ -82,7 +82,7 @@ class CalibrateWindow(QDialog, Ui_Calibrate):
         mag_bias = self.imu.get_calibration(self.TYPE_MAG_BIAS)
         gyr_gain = self.imu.get_calibration(self.TYPE_GYR_GAIN)
         gyr_bias = self.imu.get_calibration(self.TYPE_GYR_BIAS)
-        
+
         self.label_acc_gain_x.setText(str(acc_gain[0]) + '/' + str(acc_gain[3]))
         self.label_acc_gain_y.setText(str(acc_gain[1]) + '/' + str(acc_gain[4]))
         self.label_acc_gain_z.setText(str(acc_gain[2]) + '/' + str(acc_gain[5]))
@@ -106,7 +106,7 @@ class CalibrateWindow(QDialog, Ui_Calibrate):
         self.label_gyr_bias_high_y.setText(str(gyr_bias[5]))
         self.label_gyr_bias_high_z.setText(str(gyr_bias[6]))
         self.label_gyr_bias_high_t.setText(str(gyr_bias[7]))
-    
+
     def current_tab_changed(self, index):
         if index == 0:
             self.cal_acc.start()

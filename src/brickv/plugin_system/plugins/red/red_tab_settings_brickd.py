@@ -48,7 +48,7 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
     def __init__(self):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
-        
+
         self.session        = None # Set from REDTabSettings
         self.script_manager = None # Set from REDTabSettings
         self.image_version  = None # Set from REDTabSettings
@@ -101,7 +101,7 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
 
     def brickd_button_refresh_enabled(self, state):
         self.pbutton_brickd_refresh.setEnabled(state)
-    
+
         if state:
             self.pbutton_brickd_refresh.setText('Refresh')
         else:
@@ -109,11 +109,11 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
 
     def brickd_button_save_enabled(self, state):
         self.pbutton_brickd_save.setEnabled(state)
-    
+
     def update_brickd_widget_data(self):
         if self.brickd_conf == None:
             return
-        
+
         # Fill keys with default values if not available
         if not 'listen.address' in self.brickd_conf:
             self.brickd_conf['listen.address'] = '0.0.0.0'
@@ -133,17 +133,17 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
             self.brickd_conf['poll_delay.spi'] = '50'
         if not 'poll_delay.rs485' in self.brickd_conf:
             self.brickd_conf['poll_delay.rs485'] = '4000'
-        
+
         l_addr = self.brickd_conf['listen.address'].split('.')
         self.sbox_brickd_la_ip1.setValue(int(l_addr[0]))
         self.sbox_brickd_la_ip2.setValue(int(l_addr[1]))
         self.sbox_brickd_la_ip3.setValue(int(l_addr[2]))
         self.sbox_brickd_la_ip4.setValue(int(l_addr[3]))
-        
+
         self.sbox_brickd_lp.setValue(int(self.brickd_conf['listen.plain_port']))
         self.sbox_brickd_lwsp.setValue(int(self.brickd_conf['listen.websocket_port']))
         self.ledit_brickd_secret.setText(self.brickd_conf['authentication.secret'])
-        
+
         log_level = self.brickd_conf['log.level']
         if log_level == 'debug':
             self.cbox_brickd_ll.setCurrentIndex(CBOX_BRICKD_LOG_LEVEL_DEBUG)
@@ -153,7 +153,7 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
             self.cbox_brickd_ll.setCurrentIndex(CBOX_BRICKD_LOG_LEVEL_WARN)
         elif log_level == 'error':
             self.cbox_brickd_ll.setCurrentIndex(CBOX_BRICKD_LOG_LEVEL_ERROR)
-        
+
         trigger_green = self.brickd_conf['led_trigger.green']
         if trigger_green == 'cpu':
             self.cbox_brickd_gt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_CPU)
@@ -167,7 +167,7 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
             self.cbox_brickd_gt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_OFF)
         elif trigger_green == 'on':
             self.cbox_brickd_gt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_ON)
-        
+
         trigger_red = self.brickd_conf['led_trigger.red']
         if trigger_red == 'cpu':
             self.cbox_brickd_rt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_CPU)
@@ -181,7 +181,7 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
             self.cbox_brickd_rt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_OFF)
         elif trigger_red == 'on':
             self.cbox_brickd_rt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_ON)
-        
+
         self.sbox_brickd_spi_dly.setValue(int(self.brickd_conf['poll_delay.spi']))
         self.sbox_brickd_rs485_dly.setValue(int(self.brickd_conf['poll_delay.rs485']))
 
@@ -219,7 +219,7 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
                    (BRICKD_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                    cb_open,
                    cb_open_error)
-        
+
     def slot_brickd_save_clicked(self):
         adr = '.'.join((str(self.sbox_brickd_la_ip1.value()),
                         str(self.sbox_brickd_la_ip2.value()),

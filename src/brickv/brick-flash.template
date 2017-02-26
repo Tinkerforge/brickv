@@ -84,7 +84,7 @@ if __name__ == '__main__':
             print('<<VERSION>>')
             exit(0)
 
-    parser.add_argument('-v', '--version',  action=VersionAction, nargs=0, help='show version and exit')
+    parser.add_argument('-v', '--version', action=VersionAction, nargs=0, help='show version and exit')
     parser.add_argument('-p', '--port', dest='port', required=True, type=str,
                         help='Brick serial port, typically /dev/ttyUSB0 or /dev/ttyACM0')
     parser.add_argument('-f', '--file', dest='file', required=True, type=str,

@@ -59,13 +59,13 @@ class HexValidator(QValidator):
         for i, c in enumerate(_input.replace(' ', '').upper()):
             if n == 0:
                 break
-            
+
             if i % 2 == 0:
                 s += ' '
 
             s += c
             n -= 1
-        
+
         s = s.strip()
 
         if len(s.replace(' ', '')) % 2 == 1:

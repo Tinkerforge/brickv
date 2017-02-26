@@ -498,17 +498,17 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             widget_spin_span.span_slider.setRange(RANGE_MIN_PTC, RANGE_MAX_PTC)
             widget_spin_span.sbox_lower.setRange(RANGE_MIN_PTC, RANGE_MAX_PTC)
             widget_spin_span.sbox_upper.setRange(RANGE_MIN_PTC, RANGE_MAX_PTC)
-    
+
         elif bricklet == 'temperature':
             widget_spin_span.span_slider.setRange(RANGE_MIN_TEMPERATURE, RANGE_MAX_TEMPERATURE)
             widget_spin_span.sbox_lower.setRange(RANGE_MIN_TEMPERATURE, RANGE_MAX_TEMPERATURE)
             widget_spin_span.sbox_upper.setRange(RANGE_MIN_TEMPERATURE, RANGE_MAX_TEMPERATURE)
-    
+
         elif bricklet == 'humidity':
             widget_spin_span.span_slider.setRange(RANGE_MIN_HUMIDITY, RANGE_MAX_HUMIDITY)
             widget_spin_span.sbox_lower.setRange(RANGE_MIN_HUMIDITY, RANGE_MAX_HUMIDITY)
             widget_spin_span.sbox_upper.setRange(RANGE_MIN_HUMIDITY, RANGE_MAX_HUMIDITY)
-    
+
         elif bricklet == 'ambient_light':
             widget_spin_span.span_slider.setRange(RANGE_MIN_AMBIENT_LIGHT, RANGE_MAX_AMBIENT_LIGHT)
             widget_spin_span.sbox_lower.setRange(RANGE_MIN_AMBIENT_LIGHT, RANGE_MAX_AMBIENT_LIGHT)
@@ -663,7 +663,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
             # Updating the used field of the hosts list
             self.update_hosts_used()
-        
+
         # Clearing temporary rules list
         self.list_rules = []
 
@@ -1602,7 +1602,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         for r in reversed(range(self.model_hosts.rowCount())):
             item_host = self.model_hosts.item(r, INDEX_COL_HOSTS_HOST)
             index_host = self.model_hosts.indexFromItem(item_host)
-            
+
             if self.defaulthost == self.tview_sm_hosts.indexWidget(index_host).text():
                 continue
 
@@ -1834,7 +1834,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                         item_used   = self.model_hosts.item(r, c)
                         index_used  = self.model_hosts.indexFromItem(item_used)
                         chkbox_used = self.tview_sm_hosts.indexWidget(index_used)
-    
+
                         if not chkbox_used.isChecked():
                             self.model_hosts.removeRows(r, 1)
 

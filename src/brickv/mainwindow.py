@@ -192,10 +192,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def exit_logger(self):
         exitBrickv = True
-        if (self.data_logger_window is not None) and (self.data_logger_window.data_logger_thread is not None) and (not self.data_logger_window.data_logger_thread.stopped):
+        if (self.data_logger_window is not None) and \
+           (self.data_logger_window.data_logger_thread is not None) and \
+           (not self.data_logger_window.data_logger_thread.stopped):
             quit_msg = "The Data Logger is running. Are you sure you want to exit the program?"
-            reply = QMessageBox.question(self, 'Message',
-                     quit_msg, QMessageBox.Yes, QMessageBox.No)
+            reply = QMessageBox.question(self, 'Message', quit_msg, QMessageBox.Yes, QMessageBox.No)
 
             if reply == QMessageBox.Yes:
                 self.data_logger_window.data_logger_thread.stop()
@@ -422,8 +423,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         tab_window = TabWindow(self.tab_widget, device_info.name, self.untab)
         tab_window._info = device_info
         tab_window.set_callback_on_tab(lambda index:
-            self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING and \
-                self.tab_widget.setTabEnabled(index, False))
+                                       self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING and \
+                                       self.tab_widget.setTabEnabled(index, False))
 
         layout = QVBoxLayout(tab_window)
         info_bar = QHBoxLayout()

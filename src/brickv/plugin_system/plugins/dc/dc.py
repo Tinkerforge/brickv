@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 DC Plugin
 Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 dc.py: DC Plugin implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -37,22 +37,22 @@ class DC(PluginBase, Ui_DC):
     qtcb_velocity_reached = pyqtSignal(int)
     qtcb_under_voltage = pyqtSignal(int)
     qtcb_emergency_shutdown = pyqtSignal()
-    
+
     def __init__(self, *args):
         PluginBase.__init__(self, BrickDC, *args)
 
         self.setupUi(self)
-        
+
         self.dc = self.device
 
         self.encoder_hide_all()
-        
+
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
 
         self.new_value = 0
         self.update_counter = 0
-        
+
         self.full_brake_time = 0
 
         self.velocity_syncer = SliderSpinSyncer(self.velocity_slider,
@@ -69,26 +69,26 @@ class DC(PluginBase, Ui_DC):
 
         self.radio_mode_brake.toggled.connect(self.brake_value_changed)
         self.radio_mode_coast.toggled.connect(self.coast_value_changed)
-        
+
         self.minimum_voltage_button.clicked.connect(self.minimum_voltage_button_clicked)
         self.full_brake_button.clicked.connect(self.full_brake_clicked)
         self.enable_checkbox.stateChanged.connect(self.enable_state_changed)
-        
+
         self.emergency_signal = None
         self.under_signal = None
         self.current_velocity_signal = None
         self.velocity_reached_signal = None
-        
+
         self.qem = QErrorMessage(self)
-        
+
         self.qtcb_under_voltage.connect(self.cb_under_voltage)
         self.dc.register_callback(self.dc.CALLBACK_UNDER_VOLTAGE,
-                                  self.qtcb_under_voltage.emit) 
-        
+                                  self.qtcb_under_voltage.emit)
+
         self.qtcb_emergency_shutdown.connect(self.cb_emergency_shutdown)
         self.dc.register_callback(self.dc.CALLBACK_EMERGENCY_SHUTDOWN,
-                                  self.qtcb_emergency_shutdown.emit) 
-        
+                                  self.qtcb_emergency_shutdown.emit)
+
         self.qtcb_velocity_reached.connect(self.update_velocity)
         self.dc.register_callback(self.dc.CALLBACK_VELOCITY_REACHED,
                                   self.qtcb_velocity_reached.emit)
@@ -108,13 +108,13 @@ class DC(PluginBase, Ui_DC):
 #        else:
 #            self.enable_encoder_checkbox.setText('Enable Encoder (FW Version >= 2.0.1 required)')
 #            self.enable_encoder_checkbox.setEnabled(False)
-    
+
     def start(self):
         self.update_timer.start(1000)
         self.cbe_current_velocity.set_period(100)
         self.update_start()
         self.update_data()
-        
+
     def stop(self):
         self.update_timer.stop()
         self.cbe_current_velocity.set_period(0)
@@ -128,12 +128,12 @@ class DC(PluginBase, Ui_DC):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickDC.DEVICE_IDENTIFIER
-        
+
     def cb_emergency_shutdown(self):
         if not self.qem.isVisible():
             self.qem.setWindowTitle("Emergency Shutdown")
             self.qem.showMessage("Emergency Shutdown: Short-Circuit or Over-Temperature")
-        
+
     def cb_under_voltage(self, ov):
         mv_str = self.minimum_voltage_label.text()
         ov_str = "%gV"  % round(ov/1000.0, 1)
@@ -142,11 +142,11 @@ class DC(PluginBase, Ui_DC):
             self.qem.showMessage("Under Voltage: Output Voltage of " + ov_str +
                                  " is below minimum voltage of " + mv_str,
                                  "DC_UnderVoltage")
-            
+
     def encoder_hide_all(self):
         self.enable_encoder_checkbox.hide()
         self.encoder_hide()
-            
+
     def encoder_hide(self):
         self.p_label.hide()
         self.p_spinbox.hide()
@@ -159,7 +159,7 @@ class DC(PluginBase, Ui_DC):
         self.cpr_label.hide()
         self.cpr_spinbox.hide()
         self.encoder_spacer.hide()
-        
+
     def encoder_show(self):
         self.p_label.show()
         self.p_spinbox.show()
@@ -171,8 +171,8 @@ class DC(PluginBase, Ui_DC):
         self.st_spinbox.show()
         self.cpr_label.show()
         self.cpr_spinbox.show()
-        self.encoder_spacer.show()          
-         
+        self.encoder_spacer.show()
+
     def enable_encoder_state_changed(self, state):
         try:
             if state == Qt.Checked:
@@ -183,7 +183,7 @@ class DC(PluginBase, Ui_DC):
 
         except ip_connection.Error:
             return
-        
+
     def enable_state_changed(self, state):
         try:
             if state == Qt.Checked:
@@ -192,33 +192,33 @@ class DC(PluginBase, Ui_DC):
                 self.dc.disable()
         except ip_connection.Error:
             return
-            
+
     def brake_value_changed(self, checked):
         if checked:
             try:
                 self.dc.set_drive_mode(0)
             except ip_connection.Error:
                 return
-        
+
     def coast_value_changed(self, checked):
         if checked:
             try:
                 self.dc.set_drive_mode(1)
             except ip_connection.Error:
                 return
-        
+
     def full_brake_clicked(self):
         try:
             self.dc.full_brake()
         except ip_connection.Error:
             return
-        
+
     def minimum_voltage_selected(self, value):
         try:
             self.dc.set_minimum_voltage(value)
         except ip_connection.Error:
             return
-        
+
     def minimum_voltage_button_clicked(self):
         qid = QInputDialog(self)
         qid.setInputMode(QInputDialog.IntInput)
@@ -229,19 +229,19 @@ class DC(PluginBase, Ui_DC):
         qid.intValueSelected.connect(self.minimum_voltage_selected)
         qid.setLabelText("Choose minimum motor voltage in mV.")
         qid.open()
-        
+
     def stack_input_voltage_update(self, sv):
         sv_str = "%gV"  % round(sv/1000.0, 1)
         self.stack_voltage_label.setText(sv_str)
-        
+
     def external_input_voltage_update(self, ev):
         ev_str = "%gV"  % round(ev/1000.0, 1)
         self.external_voltage_label.setText(ev_str)
-        
+
     def minimum_voltage_update(self, mv):
         mv_str = "%gV"  % round(mv/1000.0, 1)
         self.minimum_voltage_label.setText(mv_str)
-        
+
     def drive_mode_update(self, dm):
         if dm == 0:
             self.radio_mode_brake.setChecked(True)
@@ -249,19 +249,19 @@ class DC(PluginBase, Ui_DC):
         else:
             self.radio_mode_brake.setChecked(False)
             self.radio_mode_coast.setChecked(True)
-            
+
     def current_consumption_update(self, cc):
         if cc >= 1000:
             cc_str = "%gA"  % round(cc/1000.0, 1)
         else:
             cc_str = "%gmA" % cc
-            
+
         self.current_label.setText(cc_str)
 
     def update_velocity(self, value):
         self.speedometer.set_velocity(value)
         self.current_velocity_label.setText('{0} ({1}%)'.format(value, round(abs(value) * 100 / 32768.0, 1)))
-        
+
     def get_velocity_async(self, velocity):
         if not self.velocity_slider.isSliderDown():
             if velocity != self.velocity_slider.sliderPosition():
@@ -275,13 +275,13 @@ class DC(PluginBase, Ui_DC):
             if acceleration != self.acceleration_slider.sliderPosition():
                 self.acceleration_slider.setSliderPosition(acceleration)
                 self.acceleration_spin.setValue(acceleration)
-        
+
     def get_pwm_frequency_async(self, frequency):
         if not self.frequency_slider.isSliderDown():
             if frequency != self.frequency_slider.sliderPosition():
                 self.frequency_slider.setSliderPosition(frequency)
                 self.frequency_spin.setValue(frequency)
-        
+
     def is_enabled_async(self, enabled):
         self.enable_checkbox.setChecked(enabled)
 
@@ -290,13 +290,13 @@ class DC(PluginBase, Ui_DC):
 
     def get_encoder_config_async(self, cpr):
         self.cpr_spinbox.setValue(cpr)
-    
+
     def get_encoder_pid_config_async(self, pid_config):
         self.p_spinbox.setValue(pid_config.p)
         self.i_spinbox.setValue(pid_config.i)
         self.d_spinbox.setValue(pid_config.d)
         self.st_spinbox.setValue(pid_config.sample_time)
-        
+
     def update_encoder(self):
         async_call(self.dc.get_encoder_config, None, self.get_encoder_config_async, self.increase_error_count)
         async_call(self.dc.get_encoder_pid_config, None, self.get_encoder_pid_config_async, self.increase_error_count)

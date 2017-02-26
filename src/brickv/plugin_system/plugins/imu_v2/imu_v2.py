@@ -98,7 +98,7 @@ during stabilization.</p>""")
         self.parent.calibration = None
 
 class ColorFrame(QFrame):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         QFrame.__init__(self, parent)
         self.color = Qt.red
         self.setMinimumSize(15, 15)

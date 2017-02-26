@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 IMU Plugin
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -6,8 +6,8 @@ Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
 calibrate_temperature.py: IMU Temperature Calibration implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -32,9 +32,9 @@ class CalibrateTemperature(QWidget, Ui_calibrate_temperature):
         self.setupUi(self)
 
         self.parent = parent
-        
+
     def start(self):
         pass
-        
+
     def stop(self):
         pass

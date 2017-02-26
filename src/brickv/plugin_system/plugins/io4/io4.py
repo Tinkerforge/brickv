@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 IO4 Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2012, 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 humidity.py: IO4 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -30,23 +30,23 @@ from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_io4 import BrickletIO4
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
-        
+
 class IO4(PluginBase, Ui_IO4):
     qtcb_monoflop = pyqtSignal(int, int)
-    
+
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletIO4, *args)
-        
+
         self.setupUi(self)
-        
+
         self.io = self.device
-        
+
         self.has_monoflop = self.firmware_version >= (1, 1, 1)
 
         self.cbe_value = CallbackEmulator(self.io.get_value,
                                           self.cb_value,
                                           self.increase_error_count)
-        
+
         self.port_value = [self.av0, self.av1, self.av2, self.av3]
         self.port_direction = [self.ad0, self.ad1, self.ad2, self.ad3]
         self.port_config = [self.ac0, self.ac1, self.ac2, self.ac3]
@@ -73,7 +73,7 @@ class IO4(PluginBase, Ui_IO4):
         if not self.has_monoflop:
             self.go_button.setText("Go (FW Versiom >= 1.1.1 required)")
             self.go_button.setEnabled(False)
-        
+
         self.pin_changed(0)
 
     def init_async(self):
@@ -81,19 +81,19 @@ class IO4(PluginBase, Ui_IO4):
         self.init_dir = 0
         self.init_config = 0
         self.init_monoflop = 0
-        
+
         def get_port_async(value):
             self.init_value = value
             self.init_async_generator.next()
-        
+
         def get_port_configuration_async(conf):
             self.init_dir, self.init_config = conf
             self.init_async_generator.next()
-            
+
         def get_monoflop_async(init_monoflop):
             self.init_monoflop = init_monoflop
             self.init_async_generator.next()
-        
+
         def get_debounce_period_async(debounce_period):
             self.debounce_edit.setText(str(debounce_period))
             self.pin_changed(0)
@@ -110,14 +110,14 @@ class IO4(PluginBase, Ui_IO4):
             for pin in range(4):
                 async_call(self.io.get_monoflop, pin, get_monoflop_async, self.increase_error_count)
                 yield
-   
+
                 time[pin] = self.init_monoflop.time
                 time_remaining[pin] = self.init_monoflop.time_remaining
 
         self.init_values(self.init_value, self.init_dir, self.init_config, time, time_remaining)
 
         async_call(self.io.get_debounce_period, None, get_debounce_period_async, self.increase_error_count)
-        
+
     def start(self):
         self.init_async_generator = self.init_async()
         self.init_async_generator.next()
@@ -126,7 +126,7 @@ class IO4(PluginBase, Ui_IO4):
 
         if self.has_monoflop:
             self.update_timer.start()
-        
+
     def stop(self):
         self.cbe_value.set_period(0)
 
@@ -141,19 +141,19 @@ class IO4(PluginBase, Ui_IO4):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIO4.DEVICE_IDENTIFIER
-    
+
     def init_values(self, value, dir, config, time, time_remaining):
         for i in range(4):
             if dir & (1 << i):
                 self.port_direction[i].setText('Input')
-                
+
                 if config & (1 << i):
                     self.port_config[i].setText('Pull-Up')
                 else:
                     self.port_config[i].setText('Default')
             else:
                 self.port_direction[i].setText('Output')
-                
+
                 if config & (1 << i):
                     self.port_config[i].setText('High')
                 else:
@@ -196,12 +196,12 @@ class IO4(PluginBase, Ui_IO4):
             self.port_value[pin].setText(self.value_box.currentText())
         else:
             value = self.value_box.currentText() == 'Pull-Up'
-            
+
         try:
             self.io.set_configuration(1 << pin, direction, value)
         except ip_connection.Error:
             return
-            
+
         self.port_direction[pin].setText(self.direction_box.currentText())
         self.port_config[pin].setText(self.value_box.currentText())
 
@@ -222,11 +222,11 @@ class IO4(PluginBase, Ui_IO4):
             index = 0
         else:
             index = 1
-            
+
         self.direction_box.setCurrentIndex(index)
         self.direction_changed(index)
         self.update_monoflop_ui_state()
-        
+
     def direction_changed(self, direction):
         pin = int(self.pin_box.currentText())
 
@@ -308,7 +308,7 @@ class IO4(PluginBase, Ui_IO4):
 
     def update_async(self, pin, monoflop):
         selected_pin = int(self.pin_box.currentText())
-        
+
         _, _, time_remaining = monoflop
         if pin == selected_pin and self.monoflop_active[pin]:
             self.time_spinbox.setValue(time_remaining)

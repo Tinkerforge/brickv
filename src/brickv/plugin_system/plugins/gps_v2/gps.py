@@ -43,7 +43,7 @@ class GPS(COMCUPluginBase, Ui_GPS):
         self.cbe_universal = CallbackEmulator(self.get_universal,
                                               self.cb_universal,
                                               self.increase_error_count)
-        
+
         self.cbe_universal_gps = CallbackEmulator(self.get_universal_gps,
                                                   self.cb_universal_gps,
                                                   self.increase_error_count)
@@ -51,10 +51,10 @@ class GPS(COMCUPluginBase, Ui_GPS):
         self.cbe_universal_glo = CallbackEmulator(self.get_universal_glo,
                                                   self.cb_universal_glo,
                                                   self.increase_error_count)
-        
+
         self.qtcb_pps.connect(self.cb_pps)
         self.gps.register_callback(self.gps.CALLBACK_PULSE_PER_SECOND, self.qtcb_pps.emit)
-        
+
         self.format_combobox.currentIndexChanged.connect(self.format_changed)
         self.show_pos.clicked.connect(self.show_pos_clicked)
         self.hot_start.clicked.connect(lambda: self.restart_clicked(0))
@@ -68,10 +68,10 @@ class GPS(COMCUPluginBase, Ui_GPS):
         self.last_ns = 'U'
         self.last_long = 0
         self.last_ew = 'U'
-        
+
         self.gps_counter = 0
         self.glo_counter = 0
-        
+
         self.gps_model = QStandardItemModel(32, 3, self)
         self.gps_table.setModel(self.gps_model)
         self.gps_model.setHorizontalHeaderItem(0, QStandardItem(u'Elevation (°)'))
@@ -80,7 +80,7 @@ class GPS(COMCUPluginBase, Ui_GPS):
         for i in range(32):
             self.gps_model.setVerticalHeaderItem(i, QStandardItem(u'Sat ' + str(i+1)))
         self.gps_table.horizontalHeader().setResizeMode(QHeaderView.Stretch)
-        
+
         self.glo_model = QStandardItemModel(32, 3, self)
         self.glo_table.setModel(self.glo_model)
         self.glo_model.setHorizontalHeaderItem(0, QStandardItem(u'Elevation (°)'))
@@ -89,35 +89,35 @@ class GPS(COMCUPluginBase, Ui_GPS):
         for i in range(32):
             self.glo_model.setVerticalHeaderItem(i, QStandardItem(u'Sat ' + str(i+1+64)))
         self.glo_table.horizontalHeader().setResizeMode(QHeaderView.Stretch)
-        
+
     def cb_pps(self):
         self.fix.setStyleSheet("QLabel { color : green; }");
         QTimer.singleShot(200, self.cb_pps_off)
-        
+
     def cb_pps_off(self):
         self.fix.setStyleSheet("QLabel { color : black; }");
 
     def get_universal(self):
         return self.gps.get_coordinates(), self.gps.get_status(), self.gps.get_altitude(), self.gps.get_motion(), self.gps.get_date_time()
-    
+
     def get_universal_gps(self):
         counter = self.gps_counter
         self.gps_counter = (self.gps_counter + 1) % 33
-        
+
         if counter == 0:
             return counter, self.gps.get_satellite_system_status(self.gps.SATELLITE_SYSTEM_GPS)
         else:
             return counter, self.gps.get_satellite_status(self.gps.SATELLITE_SYSTEM_GPS, counter)
-        
+
     def get_universal_glo(self):
         counter = self.glo_counter
         self.glo_counter = (self.glo_counter + 1) % 33
-        
+
         if counter == 0:
             return counter, self.gps.get_satellite_system_status(self.gps.SATELLITE_SYSTEM_GLONASS)
         else:
             return counter, self.gps.get_satellite_status(self.gps.SATELLITE_SYSTEM_GLONASS, counter)
-        
+
     def cb_universal_gps(self, data):
         try:
             counter, x = data
@@ -127,7 +127,7 @@ class GPS(COMCUPluginBase, Ui_GPS):
                 self.update_table(self.gps_model, counter, x)
         except:
             pass
-    
+
     def cb_universal_glo(self, data):
         try:
             counter, x = data
@@ -137,7 +137,7 @@ class GPS(COMCUPluginBase, Ui_GPS):
                 self.update_table(self.glo_model, counter, x)
         except:
             pass
-        
+
     def update_dop(self, fix, dop, used, data):
         if data.fix == 1:
             fix.setText("No Fix")
@@ -147,22 +147,22 @@ class GPS(COMCUPluginBase, Ui_GPS):
             fix.setText("3D Fix")
         else:
             fix.setText("Error")
-            
+
         str_pdop = '%.2f' % (data.pdop/100.0,)
         str_hdop = '%.2f' % (data.hdop/100.0,)
         str_vdop = '%.2f' % (data.vdop/100.0,)
         dop.setText(str(str_pdop) + ' / ' + str(str_hdop) + ' / ' + str(str_vdop))
-        
+
         sats = []
         for sat in data.satellites:
             if sat != 0:
                 sats.append(sat)
-        
+
         if(len(sats) == 0):
             used.setText('None')
         else:
             used.setText(', '.join(map(str, sats)))
-    
+
     def update_table(self, table_model, num, data):
         table_model.setItem(num-1, 0, QStandardItem(str(data.elevation)))
         table_model.setItem(num-1, 1, QStandardItem(str(data.azimuth)))
@@ -198,7 +198,7 @@ class GPS(COMCUPluginBase, Ui_GPS):
             self.last_ns = 'U'
             self.last_long = 0
             self.last_ew = 'U'
-            
+
             self.satellites_view.setText('0')
 
             self.latitude.setText("Unknown")
@@ -209,14 +209,14 @@ class GPS(COMCUPluginBase, Ui_GPS):
 
             self.gps_dop.setText("Unknown")
             self.glo_dop.setText("Unknown")
-            
+
             self.gps_satallites_used.setText("None")
             self.glo_satallites_used.setText("None")
-            
+
             self.gps_fix.setText("No Fix")
             self.glo_fix.setText("No Fix")
             self.fix.setText("No")
-            
+
             for i in range(32):
                 self.gps_model.setItem(i, 0, QStandardItem('0'))
                 self.gps_model.setItem(i, 1, QStandardItem('0'))

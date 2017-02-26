@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Industrial Digital Out 4 Plugin
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 industrial_digital_out_4.py: Industrial Digital Out 4 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -32,17 +32,17 @@ from brickv.load_pixmap import load_masked_pixmap
 
 class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
     qtcb_monoflop = pyqtSignal(int, int)
-    
+
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletIndustrialDigitalOut4, *args)
 
         self.setupUi(self)
-        
+
         self.ido4 = self.device
-        
+
         self.gnd_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_digital_out_4/dio_gnd.bmp')
         self.vcc_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_digital_out_4/dio_vcc.bmp')
-        
+
         self.pin_buttons = [self.b0, self.b1, self.b2, self.b3, self.b4, self.b5, self.b6, self.b7, self.b8, self.b9, self.b10, self.b11, self.b12, self.b13, self.b14, self.b15]
         self.pin_button_icons = [self.b0_icon, self.b1_icon, self.b2_icon, self.b3_icon, self.b4_icon, self.b5_icon, self.b6_icon, self.b7_icon, self.b8_icon, self.b9_icon, self.b10_icon, self.b11_icon, self.b12_icon, self.b13_icon, self.b14_icon, self.b15_icon]
         self.pin_button_labels = [self.b0_label, self.b1_label, self.b2_label, self.b3_label, self.b4_label, self.b5_label, self.b6_label, self.b7_label, self.b8_label, self.b9_label, self.b10_label, self.b11_label, self.b12_label, self.b13_label, self.b14_label, self.b15_label]
@@ -61,24 +61,24 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
 
         self.available_ports = 0
         async_call(self.ido4.get_available_for_group, None, self.get_available_for_group_aysnc, self.increase_error_count)
-        
+
         def get_button_lambda(button):
             return lambda: self.pin_button_clicked(button)
-        
+
         for i in range(len(self.pin_buttons)):
             self.pin_buttons[i].clicked.connect(get_button_lambda(i))
-        
+
         self.qtcb_monoflop.connect(self.cb_monoflop)
         self.ido4.register_callback(self.ido4.CALLBACK_MONOFLOP_DONE,
                                     self.qtcb_monoflop.emit)
-        
+
         self.set_group.clicked.connect(self.set_group_clicked)
-        
+
         self.monoflop_pin.currentIndexChanged.connect(self.monoflop_pin_changed)
         self.monoflop_go.clicked.connect(self.monoflop_go_clicked)
         self.monoflop_time_before = [1000] * 16
         self.monoflop_pending = [False] * 16
-        
+
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update)
         self.update_timer.setInterval(50)
@@ -178,7 +178,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
                 if self.available_ports & (1 << j):
                     item = 'Port ' + chr(ord('A') + j)
                     self.groups[i].addItem(item)
-                    
+
         async_call(self.ido4.get_group, None, self.reconfigure_everything_async1, self.increase_error_count)
 
     def show_buttons(self, num):
@@ -189,7 +189,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
 
         for line in self.lines[num]:
             line.setVisible(True)
-    
+
     def hide_buttons(self, num):
         for i in range(num*4, (num+1)*4):
             self.pin_buttons[i].setVisible(False)
@@ -198,32 +198,32 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
 
         for line in self.lines[num]:
             line.setVisible(False)
-    
+
     def get_current_value(self):
         value = 0
         i = 0
         for b in self.pin_buttons:
             if 'Low' in b.text():
-                value |= (1 << i) 
+                value |= (1 << i)
             i += 1
         return value
-    
+
     def set_group_clicked(self):
         group = ['n', 'n', 'n', 'n']
         for i in range(len(self.groups)):
             text = self.groups[i].currentText()
             if 'Port A' in text:
-                group[i] = 'a' 
+                group[i] = 'a'
             elif 'Port B' in text:
-                group[i] = 'b' 
+                group[i] = 'b'
             elif 'Port C' in text:
-                group[i] = 'c' 
+                group[i] = 'c'
             elif 'Port D' in text:
                 group[i] = 'd'
-                 
+
         self.ido4.set_group(group)
         self.reconfigure_everything()
-    
+
     def pin_button_clicked(self, button):
         value = self.get_current_value()
         if 'High' in self.pin_buttons[button].text():
@@ -234,7 +234,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
             value &= ~(1 << button)
             self.pin_buttons[button].setText('Switch High')
             self.pin_button_icons[button].setPixmap(self.gnd_pixmap)
-            
+
         self.ido4.set_value(value)
         self.update_timer.stop()
 
