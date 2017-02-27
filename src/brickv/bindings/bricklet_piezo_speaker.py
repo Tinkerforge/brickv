@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -70,13 +70,13 @@ class BrickletPiezoSpeaker(Device):
         If you set a duration of 1000, with a frequency value of 2000
         the piezo buzzer will beep for one second with a frequency of
         approximately 2 kHz.
-        
+
         .. versionchanged:: 2.0.2$nbsp;(Plugin)
            A duration of 0 stops the current beep if any, the frequency parameter is
            ignored. A duration of 4294967295 results in an infinite beep.
-        
+
         The *frequency* parameter can be set between 585 and 7100.
-        
+
         The Piezo Speaker Bricklet can only approximate the frequency, it will play
         the best possible match by applying the calibration (see :func:`Calibrate`).
         """
@@ -88,11 +88,11 @@ class BrickletPiezoSpeaker(Device):
         is given as a string consisting of "." (dot), "-" (minus) and " " (space)
         for *dits*, *dahs* and *pauses*. Every other character is ignored.
         The second parameter is the frequency (see :func:`Beep`).
-        
+
         For example: If you set the string "...---...", the piezo buzzer will beep
         nine times with the durations "short short short long long long short
         short short".
-        
+
         The maximum string size is 60.
         """
         self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_MORSE_CODE, (morse, frequency), '60s H', '')
@@ -103,10 +103,10 @@ class BrickletPiezoSpeaker(Device):
         plays each tone and measures the exact frequency back. The result is a
         mapping between setting value and frequency. This mapping is stored
         in the EEPROM and loaded on startup.
-        
+
         The Bricklet should come calibrated, you only need to call this
         function (once) every time you reflash the Bricklet plugin.
-        
+
         Returns *true* after the calibration finishes.
         """
         return self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_CALIBRATE, (), '', '?')
@@ -116,9 +116,9 @@ class BrickletPiezoSpeaker(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

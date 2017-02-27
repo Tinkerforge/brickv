@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -73,7 +73,7 @@ class BrickletMotionDetector(Device):
         was detected can be adjusted with one of the small potentiometers on the
         Motion Detector Bricklet, see :ref:`here
         <motion_detector_bricklet_sensitivity_delay_block_time>`.
-        
+
         There is also a blue LED on the Bricklet that is on as long as the Bricklet is
         in the "motion detected" state.
         """
@@ -82,12 +82,12 @@ class BrickletMotionDetector(Device):
     def set_status_led_config(self, config):
         """
         Sets the status led configuration.
-        
+
         By default the status LED turns on if a motion is detected and off is no motion
         is detected.
-        
+
         You can also turn the LED permanently on/off.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -95,7 +95,7 @@ class BrickletMotionDetector(Device):
     def get_status_led_config(self):
         """
         Returns the configuration as set by :func:`Set Status LED Config`.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
@@ -105,9 +105,9 @@ class BrickletMotionDetector(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -80,11 +80,11 @@ class BrickletSoundIntensity(Device):
         """
         Returns the current sound intensity. The value has a range of
         0 to 4095.
-        
+
         The value corresponds to the
         `upper envelop <https://en.wikipedia.org/wiki/Envelope_(waves)>`__
         of the signal of the microphone capsule.
-        
+
         If you want to get the intensity periodically, it is recommended to use the
         :cb:`Intensity` callback and set the period with
         :func:`Set Intensity Callback Period`.
@@ -95,10 +95,10 @@ class BrickletSoundIntensity(Device):
         """
         Sets the period in ms with which the :cb:`Intensity` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Intensity` callback is only triggered if the intensity has changed
         since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_SET_INTENSITY_CALLBACK_PERIOD, (period,), 'I', '')
@@ -112,19 +112,19 @@ class BrickletSoundIntensity(Device):
     def set_intensity_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Intensity Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the intensity is *outside* the min and max values"
          "'i'",    "Callback is triggered when the intensity is *inside* the min and max values"
          "'<'",    "Callback is triggered when the intensity is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the intensity is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_SET_INTENSITY_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
@@ -138,15 +138,15 @@ class BrickletSoundIntensity(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callback
-        
+
         * :cb:`Intensity Reached`
-        
+
         is triggered, if the thresholds
-        
+
         * :func:`Set Intensity Callback Threshold`
-        
+
         keeps being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -162,9 +162,9 @@ class BrickletSoundIntensity(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

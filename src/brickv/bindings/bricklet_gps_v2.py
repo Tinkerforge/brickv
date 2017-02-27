@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -176,7 +176,7 @@ class BrickletGPSV2(Device):
         The parameter ``ns`` and ``ew`` are the cardinal directions for
         latitude and longitude. Possible values for ``ns`` and ``ew`` are 'N', 'S', 'E'
         and 'W' (north, south, east and west).
-        
+
         This data is only valid if there is currently a fix as indicated by
         :func:`Get Status`.
         """
@@ -186,7 +186,7 @@ class BrickletGPSV2(Device):
         """
         Returns if a fix is currently available as well as the, the number of
         satellites that are in view.
-        
+
         There is also a :ref:`green LED <gps_v2_bricklet_fix_led>` on the Bricklet that
         indicates the fix status.
         """
@@ -195,9 +195,9 @@ class BrickletGPSV2(Device):
     def get_altitude(self):
         """
         Returns the current altitude and corresponding geoidal separation.
-        
+
         Both values are given in cm.
-        
+
         This data is only valid if there is currently a fix as indicated by
         :func:`Get Status`.
         """
@@ -208,10 +208,10 @@ class BrickletGPSV2(Device):
         Returns the current course and speed. Course is given in hundredths degree
         and speed is given in hundredths km/h. A course of 0° means the Bricklet is
         traveling north bound and 90° means it is traveling east bound.
-        
+
         Please note that this only returns useful values if an actual movement
         is present.
-        
+
         This data is only valid if there is currently a fix as indicated by
         :func:`Get Status`.
         """
@@ -229,11 +229,11 @@ class BrickletGPSV2(Device):
     def restart(self, restart_type):
         """
         Restarts the GPS Bricklet, the following restart types are available:
-        
+
         .. csv-table::
          :header: "Value", "Description"
          :widths: 10, 100
-        
+
          "0", "Hot start (use all available data in the NV store)"
          "1", "Warm start (don't use ephemeris at restart)"
          "2", "Cold start (don't use time, position, almanacs and ephemeris at restart)"
@@ -244,16 +244,16 @@ class BrickletGPSV2(Device):
     def get_satellite_system_status(self, satellite_system):
         """
         Returns the
-        
+
         * satellite numbers list
         * fix value,
         * PDOP value,
         * HDOP value and
         * VDOP value
-        
+
         for a given satellite system. Currently GPS and GLONASS are supported, Galileo
         is not yet supported.
-        
+
         The GPS and GLONASS satellites have unique numbers and the satellite list gives
         the numbers of the satellites that are currently utilized. The number 0 is not
         a valid satellite number and can be ignored in the list.
@@ -263,16 +263,16 @@ class BrickletGPSV2(Device):
     def get_satellite_status(self, satellite_system, satellite_number):
         """
         Returns the current
-        
+
         * elevation (0°-90°),
         * azimuth (0°-359°) and
         * SNR (0dB-99dB)
-        
+
         for a given satellite and satellite system.
-        
+
         The satellite number here always goes from 1 to 32. For GLONASS it corresponds to
         the satellites 65-96.
-        
+
         Galileo is not yet supported.
         """
         return GetSatelliteStatus(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_SATELLITE_STATUS, (satellite_system, satellite_number), 'B B', 'h h h'))
@@ -282,9 +282,9 @@ class BrickletGPSV2(Device):
         Sets the fix LED configuration. By default the LED shows if
         the Bricklet got a GPS fix yet. The LED blinks as long as there is no fix.
         If a fix is established, the led stops blinking and turns on.
-        
+
         You can also turn the LED permanently on/off or show a heartbeat.
-        
+
         If the Bricklet is in bootloader mode, the LED is off.
         """
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_FIX_LED_CONFIG, (config,), 'B', '')
@@ -299,10 +299,10 @@ class BrickletGPSV2(Device):
         """
         Sets the period in ms with which the :cb:`Coordinates` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Coordinates` callback is only triggered if the coordinates changed
         since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_COORDINATES_CALLBACK_PERIOD, (period,), 'I', '')
@@ -317,10 +317,10 @@ class BrickletGPSV2(Device):
         """
         Sets the period in ms with which the :cb:`Status` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Status` callback is only triggered if the status changed since the
         last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_STATUS_CALLBACK_PERIOD, (period,), 'I', '')
@@ -335,10 +335,10 @@ class BrickletGPSV2(Device):
         """
         Sets the period in ms with which the :cb:`Altitude` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Altitude` callback is only triggered if the altitude changed since the
         last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -353,10 +353,10 @@ class BrickletGPSV2(Device):
         """
         Sets the period in ms with which the :cb:`Motion` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Motion` callback is only triggered if the motion changed since the
         last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_MOTION_CALLBACK_PERIOD, (period,), 'I', '')
@@ -371,10 +371,10 @@ class BrickletGPSV2(Device):
         """
         Sets the period in ms with which the :cb:`Date Time` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Date Time` callback is only triggered if the date or time changed
         since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD, (period,), 'I', '')
@@ -388,14 +388,14 @@ class BrickletGPSV2(Device):
     def get_spitfp_error_count(self):
         """
         Returns the error count for the communication between Brick and Bricklet.
-        
+
         The errors are divided into
-        
+
         * ack checksum errors,
         * message checksum errors,
         * frameing errors and
         * overflow errors.
-        
+
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
@@ -405,11 +405,11 @@ class BrickletGPSV2(Device):
         """
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
-        
+
         You can change from bootloader mode to firmware mode and vice versa. A change
         from bootloader mode to firmware mode will only take place if the entry function,
         device identifier und crc are present and correct.
-        
+
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
@@ -426,7 +426,7 @@ class BrickletGPSV2(Device):
         Sets the firmware pointer for func:`WriteFirmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
-        
+
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
@@ -437,9 +437,9 @@ class BrickletGPSV2(Device):
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
-        
+
         You can only write firmware in bootloader mode.
-        
+
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
@@ -450,9 +450,9 @@ class BrickletGPSV2(Device):
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
-        
+
         You can also turn the LED permanently on/off or show a heartbeat.
-        
+
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -467,7 +467,7 @@ class BrickletGPSV2(Device):
         """
         Returns the temperature in °C as measured inside the microcontroller. The
         value returned is not the ambient temperature!
-        
+
         The temperature is only proportional to the real temperature and it has bad
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
@@ -478,7 +478,7 @@ class BrickletGPSV2(Device):
         """
         Calling this function will reset the Bricklet. All configurations
         will be lost.
-        
+
         After a reset you have to create new device objects,
         calling functions on the existing ones will result in
         undefined behavior!
@@ -490,7 +490,7 @@ class BrickletGPSV2(Device):
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
-        
+
         We recommend that you use Brick Viewer to change the UID.
         """
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -507,9 +507,9 @@ class BrickletGPSV2(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

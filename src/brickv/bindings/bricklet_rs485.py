@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-24.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -42,7 +42,7 @@ class BrickletRS485(Device):
     DEVICE_IDENTIFIER = 277
     DEVICE_DISPLAY_NAME = 'RS485 Bricklet'
 
-    CALLBACK_READ_CALLBACK = 36
+    CALLBACK_READ = 36
     CALLBACK_ERROR_COUNT = 37
     CALLBACK_MODBUS_READ_COILS_REQUEST = 38
     CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL = 39
@@ -189,7 +189,7 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_WRITE_SINGLE_REGISTER] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_WRITE_MULTIPLE_COILS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_WRITE_MULTIPLE_COILS_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.CALLBACK_READ_CALLBACK] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_READ] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_COILS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -214,7 +214,7 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_READ_UID] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_IDENTITY] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletRS485.CALLBACK_READ_CALLBACK] = '60c B'
+        self.callback_formats[BrickletRS485.CALLBACK_READ] = '60c B'
         self.callback_formats[BrickletRS485.CALLBACK_ERROR_COUNT] = 'I I'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_COILS_REQUEST] = 'B H H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL] = 'B b H H 58B'
@@ -235,11 +235,11 @@ class BrickletRS485(Device):
         """
         Writes a string of up to 60 characters to the RS485 interface. The string
         can be binary data, ASCII or similar is not necessary.
-        
+
         The length of the string has to be given as an additional parameter.
-        
+
         The return value is the number of bytes that could be written.
-        
+
         See :func:`Set RS485 Configuration` for configuration possibilities
         regarding baudrate, parity and so on.
         """
@@ -250,31 +250,31 @@ class BrickletRS485(Device):
         Returns the currently buffered message. The maximum length
         of message is 60. If the length is given as 0, there was no
         new data available.
-        
+
         Instead of polling with this function, you can also use
-        callbacks. See :func:`Enable Read Callback` and :cb:`Read Callback` callback.
+        callbacks. See :func:`Enable Read Callback` and :cb:`Read` callback.
         """
         return Read(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_READ, (), '', '60c B'))
 
     def enable_read_callback(self):
         """
-        Enables the :cb:`Read Callback` callback.
-        
+        Enables the :cb:`Read` callback.
+
         By default the callback is disabled.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_ENABLE_READ_CALLBACK, (), '', '')
 
     def disable_read_callback(self):
         """
-        Disables the :cb:`Read Callback` callback.
-        
+        Disables the :cb:`Read` callback.
+
         By default the callback is disabled.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_DISABLE_READ_CALLBACK, (), '', '')
 
     def is_read_callback_enabled(self):
         """
-        Returns *true* if the :cb:`Read Callback` callback is enabled,
+        Returns *true* if the :cb:`Read` callback is enabled,
         *false* otherwise.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_IS_READ_CALLBACK_ENABLED, (), '', '?')
@@ -282,13 +282,13 @@ class BrickletRS485(Device):
     def set_rs485_configuration(self, baudrate, parity, stopbits, wordlength, duplex):
         """
         Sets the configuration for the RS485 communication. Available options:
-        
+
         * Baudrate between 100 and 2000000 baud.
         * Parity of none, odd or even.
         * Stopbits can be 1 or 2.
         * Word length of 5 to 8.
         * Half- or Full-Duplex.
-        
+
         The default is: 115200 baud, parity none, 1 stop bit, word length 8, half duplex.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_RS485_CONFIGURATION, (baudrate, parity, stopbits, wordlength, duplex), 'I B B B B', '')
@@ -302,7 +302,7 @@ class BrickletRS485(Device):
     def set_modbus_configuration(self, slave_address, master_request_timeout):
         """
         Sets the configuration for the RS485 Modbus communication. Available options:
-        
+
         * Slave Address to be used in Modbus slave mode.
         * Master Request Timeout specifies how long the master should wait for a response from a slave in milliseconds.
         """
@@ -336,9 +336,9 @@ class BrickletRS485(Device):
         """
         Sets the communication LED configuration. By default the LED shows
         communication traffic, it flickers once for every 10 received data packets.
-        
+
         You can also turn the LED permanently on/off or show a heartbeat.
-        
+
         If the Bricklet is in bootloader mode, the LED is off.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_COMMUNICATION_LED_CONFIG, (config,), 'B', '')
@@ -352,13 +352,13 @@ class BrickletRS485(Device):
     def set_error_led_config(self, config):
         """
         Sets the error LED configuration.
-        
+
         By default the error LED turns on if there is any error (see :cb:`Error Count`
         callback). If you call this function with the SHOW ERROR option again, the LED
         will turn off until the next error occurs.
-        
+
         You can also turn the LED permanently on/off or show a heartbeat.
-        
+
         If the Bricklet is in bootloader mode, the LED is off.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', '')
@@ -374,14 +374,14 @@ class BrickletRS485(Device):
         Sets the send and receive buffer size in byte. In sum there is
         10240 byte (10kb) buffer available and the minimum buffer size
         is 1024 byte (1kb) for both.
-        
+
         The current buffer content is lost if this function is called.
-        
+
         The send buffer holds data that is given by :func:`Write` and
         can not be written yet. The receive buffer holds data that is
         received through RS485 but could not yet be send to the
-        user, either by :func:`Read` or through :cb:`Read Callback` callback.
-        
+        user, either by :func:`Read` or through :cb:`Read` callback.
+
         The default configuration is 5120 byte (5kb) per buffer.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_BUFFER_CONFIG, (send_buffer_size, receive_buffer_size), 'H H', '')
@@ -395,7 +395,7 @@ class BrickletRS485(Device):
     def get_buffer_status(self):
         """
         Returns the currently used bytes for the send and received buffer.
-        
+
         See :func:`Set Buffer Config` for buffer size configuration.
         """
         return GetBufferStatus(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_BUFFER_STATUS, (), '', 'H H'))
@@ -403,7 +403,7 @@ class BrickletRS485(Device):
     def enable_error_count_callback(self):
         """
         Enables the :cb:`Error Count` callback.
-        
+
         By default the callback is disabled.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_ENABLE_ERROR_COUNT_CALLBACK, (), '', '')
@@ -411,7 +411,7 @@ class BrickletRS485(Device):
     def disable_error_count_callback(self):
         """
         Disables the :cb:`Error Count` callback.
-        
+
         By default the callback is disabled.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_DISABLE_ERROR_COUNT_CALLBACK, (), '', '')
@@ -504,14 +504,14 @@ class BrickletRS485(Device):
     def get_spitfp_error_count(self):
         """
         Returns the error count for the communication between Brick and Bricklet.
-        
+
         The errors are divided into
-        
+
         * ack checksum errors,
         * message checksum errors,
         * frameing errors and
         * overflow errors.
-        
+
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
@@ -521,11 +521,11 @@ class BrickletRS485(Device):
         """
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
-        
+
         You can change from bootloader mode to firmware mode and vice versa. A change
         from bootloader mode to firmware mode will only take place if the entry function,
         device identifier und crc are present and correct.
-        
+
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
@@ -542,7 +542,7 @@ class BrickletRS485(Device):
         Sets the firmware pointer for func:`WriteFirmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
-        
+
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
@@ -553,9 +553,9 @@ class BrickletRS485(Device):
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
-        
+
         You can only write firmware in bootloader mode.
-        
+
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
@@ -566,9 +566,9 @@ class BrickletRS485(Device):
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
-        
+
         You can also turn the LED permanently on/off or show a heartbeat.
-        
+
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -583,7 +583,7 @@ class BrickletRS485(Device):
         """
         Returns the temperature in °C as measured inside the microcontroller. The
         value returned is not the ambient temperature!
-        
+
         The temperature is only proportional to the real temperature and it has bad
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
@@ -594,7 +594,7 @@ class BrickletRS485(Device):
         """
         Calling this function will reset the Bricklet. All configurations
         will be lost.
-        
+
         After a reset you have to create new device objects,
         calling functions on the existing ones will result in
         undefined behavior!
@@ -606,7 +606,7 @@ class BrickletRS485(Device):
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
-        
+
         We recommend that you use Brick Viewer to change the UID.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -623,9 +623,9 @@ class BrickletRS485(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

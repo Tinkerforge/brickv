@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -80,10 +80,10 @@ class BrickletUVLight(Device):
         """
         Returns the UV light intensity of the sensor, the intensity is given
         in µW/cm².
-        
+
         To get UV Index you have to divide the value by 250. For example, a UV Light
         intensity of 500µW/cm² is equivalent to an UV Index of 2.
-        
+
         If you want to get the intensity periodically, it is recommended to use the
         :cb:`UV Light` callback and set the period with
         :func:`Set UV Light Callback Period`.
@@ -94,10 +94,10 @@ class BrickletUVLight(Device):
         """
         Sets the period in ms with which the :cb:`UV Light` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`UV Light` callback is only triggered if the intensity has changed since
         the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletUVLight.FUNCTION_SET_UV_LIGHT_CALLBACK_PERIOD, (period,), 'I', '')
@@ -111,19 +111,19 @@ class BrickletUVLight(Device):
     def set_uv_light_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`UV Light Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the intensity is *outside* the min and max values"
          "'i'",    "Callback is triggered when the intensity is *inside* the min and max values"
          "'<'",    "Callback is triggered when the intensity is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the intensity is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletUVLight.FUNCTION_SET_UV_LIGHT_CALLBACK_THRESHOLD, (option, min, max), 'c I I', '')
@@ -137,15 +137,15 @@ class BrickletUVLight(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callbacks
-        
+
         * :cb:`UV Light Reached`,
-        
+
         are triggered, if the thresholds
-        
+
         * :func:`Set UV Light Callback Threshold`,
-        
+
         keep being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletUVLight.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -161,9 +161,9 @@ class BrickletUVLight(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -103,7 +103,7 @@ class BrickletLoadCell(Device):
     def get_weight(self):
         """
         Returns the currently measured weight in grams.
-        
+
         If you want to get the weight periodically, it is recommended
         to use the :cb:`Weight` callback and set the period with
         :func:`Set Weight Callback Period`.
@@ -114,10 +114,10 @@ class BrickletLoadCell(Device):
         """
         Sets the period in ms with which the :cb:`Weight` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Weight` callback is only triggered if the weight has changed since the
         last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_WEIGHT_CALLBACK_PERIOD, (period,), 'I', '')
@@ -131,19 +131,19 @@ class BrickletLoadCell(Device):
     def set_weight_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Weight Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the weight is *outside* the min and max values"
          "'i'",    "Callback is triggered when the weight is *inside* the min and max values"
          "'<'",    "Callback is triggered when the weight is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the weight is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_WEIGHT_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
@@ -157,15 +157,15 @@ class BrickletLoadCell(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callback
-        
+
         * :cb:`Weight Reached`
-        
+
         is triggered, if the threshold
-        
+
         * :func:`Set Weight Callback Threshold`
-        
+
         keeps being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -180,12 +180,12 @@ class BrickletLoadCell(Device):
         """
         Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
         for the weight value.
-        
+
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
-        
+
         The range for the averaging is 1-40.
-        
+
         The default value is 4.
         """
         self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
@@ -217,14 +217,14 @@ class BrickletLoadCell(Device):
     def calibrate(self, weight):
         """
         To calibrate your Load Cell Bricklet you have to
-        
+
         * empty the scale and call this function with 0 and
         * add a known weight to the scale and call this function with the weight in
           grams.
-        
+
         The calibration is saved in the EEPROM of the Bricklet and only
         needs to be done once.
-        
+
         We recommend to use the Brick Viewer for calibration, you don't need
         to call this function in your source code.
         """
@@ -239,24 +239,24 @@ class BrickletLoadCell(Device):
     def set_configuration(self, rate, gain):
         """
         The measurement rate and gain are configurable.
-        
+
         The rate can be either 10Hz or 80Hz. A faster rate will produce more noise.
         It is additionally possible to add a moving average
         (see :func:`Set Moving Average`) to the measurements.
-        
+
         The gain can be 128x, 64x or 32x. It represents a measurement range of
         ±20mV, ±40mV and ±80mV respectively. The Load Cell Bricklet uses an
         excitation voltage of 5V and most load cells use an output of 2mV/V. That
         means the voltage range is ±15mV for most load cells (i.e. gain of 128x
         is best). If you don't know what all of this means you should keep it at
         128x, it will most likely be correct.
-        
+
         The configuration is saved in the EEPROM of the Bricklet and only
         needs to be done once.
-        
+
         We recommend to use the Brick Viewer for configuration, you don't need
         to call this function in your source code.
-        
+
         The default rate is 10Hz and the default gain is 128x.
         """
         self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_CONFIGURATION, (rate, gain), 'B B', '')
@@ -272,9 +272,9 @@ class BrickletLoadCell(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

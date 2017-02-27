@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -66,7 +66,7 @@ class BrickletAnalogOut(Device):
         """
         Sets the voltage in mV. The possible range is 0V to 5V (0-5000).
         Calling this function will set the mode to 0 (see :func:`Set Mode`).
-        
+
         The default value is 0 (with mode 1).
         """
         self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_SET_VOLTAGE, (voltage,), 'H', '')
@@ -80,15 +80,15 @@ class BrickletAnalogOut(Device):
     def set_mode(self, mode):
         """
         Sets the mode of the analog value. Possible modes:
-        
+
         * 0: Normal Mode (Analog value as set by :func:`Set Voltage` is applied)
         * 1: 1k Ohm resistor to ground
         * 2: 100k Ohm resistor to ground
         * 3: 500k Ohm resistor to ground
-        
+
         Setting the mode to 0 will result in an output voltage of 0. You can jump
         to a higher output voltage directly by calling :func:`Set Voltage`.
-        
+
         The default mode is 1.
         """
         self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_SET_MODE, (mode,), 'B', '')
@@ -104,9 +104,9 @@ class BrickletAnalogOut(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -78,6 +78,7 @@ class BrickStepper(Device):
     FUNCTION_GET_ALL_DATA = 37
     FUNCTION_SET_ALL_DATA_PERIOD = 38
     FUNCTION_GET_ALL_DATA_PERIOD = 39
+    FUNCTION_GET_SEND_TIMEOUT_COUNT = 233
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -96,6 +97,14 @@ class BrickStepper(Device):
     STATE_DEACCELERATION = 4
     STATE_DIRECTION_CHANGE_TO_FORWARD = 5
     STATE_DIRECTION_CHANGE_TO_BACKWARD = 6
+    COMMUNICATION_METHOD_NONE = 0
+    COMMUNICATION_METHOD_USB = 1
+    COMMUNICATION_METHOD_SPI_STACK = 2
+    COMMUNICATION_METHOD_CHIBI = 3
+    COMMUNICATION_METHOD_RS485 = 4
+    COMMUNICATION_METHOD_WIFI = 5
+    COMMUNICATION_METHOD_ETHERNET = 6
+    COMMUNICATION_METHOD_WIFI_V2 = 7
 
     def __init__(self, uid, ipcon):
         """
@@ -147,6 +156,7 @@ class BrickStepper(Device):
         self.response_expected[BrickStepper.FUNCTION_GET_ALL_DATA_PERIOD] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickStepper.CALLBACK_ALL_DATA] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickStepper.CALLBACK_NEW_STATE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_SEND_TIMEOUT_COUNT] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickStepper.FUNCTION_ENABLE_STATUS_LED] = BrickStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickStepper.FUNCTION_DISABLE_STATUS_LED] = BrickStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickStepper.FUNCTION_IS_STATUS_LED_ENABLED] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -188,14 +198,14 @@ class BrickStepper(Device):
         Sets the acceleration and deacceleration of the stepper motor. The values
         are given in *steps/s²*. An acceleration of 1000 means, that
         every second the velocity is increased by 1000 *steps/s*.
-        
+
         For example: If the current velocity is 0 and you want to accelerate to a
         velocity of 8000 *steps/s* in 10 seconds, you should set an acceleration
         of 800 *steps/s²*.
-        
+
         An acceleration/deacceleration of 0 means instantaneous
         acceleration/deacceleration (not recommended)
-        
+
         The default value is 1000 for both
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SPEED_RAMPING, (acceleration, deacceleration), 'H H', '')
@@ -210,12 +220,12 @@ class BrickStepper(Device):
     def full_brake(self):
         """
         Executes an active full brake.
-        
+
         .. warning::
          This function is for emergency purposes,
          where an immediate brake is necessary. Depending on the current velocity and
          the strength of the motor, a full brake can be quite violent.
-        
+
         Call :func:`Stop` if you just want to stop the motor.
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_FULL_BRAKE, (), '', '')
@@ -245,7 +255,7 @@ class BrickStepper(Device):
         called with 1000, the stepper motor will drive 500 steps forward. It will
         use the velocity, acceleration and deacceleration as set by
         :func:`Set Max Velocity` and :func:`Set Speed Ramping`.
-        
+
         A call of :func:`Set Target Position` with the parameter *x* is equivalent to
         a call of :func:`Set Steps` with the parameter
         (*x* - :func:`Get Current Position`).
@@ -285,15 +295,15 @@ class BrickStepper(Device):
     def set_step_mode(self, mode):
         """
         Sets the step mode of the stepper motor. Possible values are:
-        
+
         * Full Step = 1
         * Half Step = 2
         * Quarter Step = 4
         * Eighth Step = 8
-        
+
         A higher value will increase the resolution and
         decrease the torque of the stepper motor.
-        
+
         The default value is 8 (Eighth Step).
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_STEP_MODE, (mode,), 'B', '')
@@ -339,11 +349,11 @@ class BrickStepper(Device):
         """
         Returns the external input voltage in mV. The external input voltage is
         given via the black power input connector on the Stepper Brick.
-        
+
         If there is an external input voltage and a stack input voltage, the motor
         will be driven by the external input voltage. If there is only a stack
         voltage present, the motor will be driven by this voltage.
-        
+
         .. warning::
          This means, if you have a high stack voltage and a low external voltage,
          the motor will be driven with the low external voltage. If you then remove
@@ -363,7 +373,7 @@ class BrickStepper(Device):
         Sets the current in mA with which the motor will be driven.
         The minimum value is 100mA, the maximum value 2291mA and the
         default value is 800mA.
-        
+
         .. warning::
          Do not set this value above the specifications of your stepper motor.
          Otherwise it may damage your motor.
@@ -402,24 +412,24 @@ class BrickStepper(Device):
         between 0 and 65535. A value of 0 sets the fast decay mode, a value of
         65535 sets the slow decay mode and a value in between sets the mixed
         decay mode.
-        
+
         Changing the decay mode is only possible if synchronous rectification
         is enabled (see :func:`Set Sync Rect`).
-        
+
         For a good explanation of the different decay modes see
         `this <http://ebldc.com/?p=86/>`__ blog post by Avayan.
-        
+
         A good decay mode is unfortunately different for every motor. The best
         way to work out a good decay mode for your stepper motor, if you can't
         measure the current with an oscilloscope, is to listen to the sound of
         the motor. If the value is too low, you often hear a high pitched
         sound and if it is too high you can often hear a humming sound.
-        
+
         Generally, fast decay mode (small value) will be noisier but also
         allow higher motor speeds.
-        
+
         The default value is 10000.
-        
+
         .. note::
          There is unfortunately no formula to calculate a perfect decay
          mode for a given stepper motor. If you have problems with loud noises
@@ -441,7 +451,7 @@ class BrickStepper(Device):
         You can use this function to detect the discharge of a battery that is used
         to drive the stepper motor. If you have a fixed power supply, you likely do
         not need this functionality.
-        
+
         The default value is 8V.
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
@@ -455,20 +465,20 @@ class BrickStepper(Device):
     def set_sync_rect(self, sync_rect):
         """
         Turns synchronous rectification on or off (*true* or *false*).
-        
+
         With synchronous rectification on, the decay can be changed
         (see :func:`Set Decay`). Without synchronous rectification fast
         decay is used.
-        
+
         For an explanation of synchronous rectification see
         `here <https://en.wikipedia.org/wiki/Active_rectification>`__.
-        
+
         .. warning::
          If you want to use high speeds (> 10000 steps/s) for a large
          stepper motor with a large inductivity we strongly
          suggest that you disable synchronous rectification. Otherwise the
          Brick may not be able to cope with the load and overheat.
-        
+
         The default value is *false*.
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SYNC_RECT, (sync_rect,), '?', '')
@@ -483,11 +493,11 @@ class BrickStepper(Device):
         """
         Sets the time base of the velocity and the acceleration of the stepper brick
         (in seconds).
-        
+
         For example, if you want to make one step every 1.5 seconds, you can set
         the time base to 15 and the velocity to 10. Now the velocity is
         10steps/15s = 1steps/1.5s.
-        
+
         The default value is 1.
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_TIME_BASE, (time_base,), 'I', '')
@@ -503,7 +513,7 @@ class BrickStepper(Device):
         Returns the following parameters: The current velocity,
         the current position, the remaining steps, the stack voltage, the external
         voltage and the current consumption of the stepper motor.
-        
+
         There is also a callback for this function, see :cb:`All Data` callback.
         """
         return GetAllData(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_ALL_DATA, (), '', 'H i i H H H'))
@@ -521,15 +531,28 @@ class BrickStepper(Device):
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
 
+    def get_send_timeout_count(self, communication_method):
+        """
+        Returns the timeout count for the different communication methods.
+
+        The methods 0-2 are available for all Bricks, 3-7 only for Master Bricks.
+
+        This function is mostly used for debugging during development, in normal operation
+        the counters should nearly always stay at 0.
+
+        .. versionadded:: 2.3.4$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
+
     def enable_status_led(self):
         """
         Enables the status LED.
-        
+
         The status LED is the blue LED next to the USB connector. If enabled is is
         on and it flickers if data is transfered. If disabled it is always off.
-        
+
         The default state is enabled.
-        
+
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_ENABLE_STATUS_LED, (), '', '')
@@ -537,12 +560,12 @@ class BrickStepper(Device):
     def disable_status_led(self):
         """
         Disables the status LED.
-        
+
         The status LED is the blue LED next to the USB connector. If enabled is is
         on and it flickers if data is transfered. If disabled it is always off.
-        
+
         The default state is enabled.
-        
+
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_DISABLE_STATUS_LED, (), '', '')
@@ -550,7 +573,7 @@ class BrickStepper(Device):
     def is_status_led_enabled(self):
         """
         Returns *true* if the status LED is enabled, *false* otherwise.
-        
+
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
@@ -559,7 +582,7 @@ class BrickStepper(Device):
         """
         Returns the firmware and protocol version and the name of the Bricklet for a
         given port.
-        
+
         This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
         plugins.
         """
@@ -569,7 +592,7 @@ class BrickStepper(Device):
         """
         Returns the temperature in °C/10 as measured inside the microcontroller. The
         value returned is not the ambient temperature!
-        
+
         The temperature is only proportional to the real temperature and it has an
         accuracy of +-15%. Practically it is only useful as an indicator for
         temperature changes.
@@ -580,7 +603,7 @@ class BrickStepper(Device):
         """
         Calling this function will reset the Brick. Calling this function
         on a Brick inside of a stack will reset the whole stack.
-        
+
         After a reset you have to create new device objects,
         calling functions on the existing ones will result in
         undefined behavior!
@@ -592,9 +615,9 @@ class BrickStepper(Device):
         Returns the UID, the UID where the Brick is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be '0'-'8' (stack position).
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

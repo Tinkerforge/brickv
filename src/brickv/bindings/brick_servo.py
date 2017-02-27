@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -71,6 +71,7 @@ class BrickServo(Device):
     FUNCTION_ENABLE_VELOCITY_REACHED_CALLBACK = 32
     FUNCTION_DISABLE_VELOCITY_REACHED_CALLBACK = 33
     FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED = 34
+    FUNCTION_GET_SEND_TIMEOUT_COUNT = 233
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -79,6 +80,14 @@ class BrickServo(Device):
     FUNCTION_RESET = 243
     FUNCTION_GET_IDENTITY = 255
 
+    COMMUNICATION_METHOD_NONE = 0
+    COMMUNICATION_METHOD_USB = 1
+    COMMUNICATION_METHOD_SPI_STACK = 2
+    COMMUNICATION_METHOD_CHIBI = 3
+    COMMUNICATION_METHOD_RS485 = 4
+    COMMUNICATION_METHOD_WIFI = 5
+    COMMUNICATION_METHOD_ETHERNET = 6
+    COMMUNICATION_METHOD_WIFI_V2 = 7
 
     def __init__(self, uid, ipcon):
         """
@@ -123,6 +132,7 @@ class BrickServo(Device):
         self.response_expected[BrickServo.FUNCTION_ENABLE_VELOCITY_REACHED_CALLBACK] = BrickServo.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickServo.FUNCTION_DISABLE_VELOCITY_REACHED_CALLBACK] = BrickServo.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickServo.FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_GET_SEND_TIMEOUT_COUNT] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickServo.FUNCTION_ENABLE_STATUS_LED] = BrickServo.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickServo.FUNCTION_DISABLE_STATUS_LED] = BrickServo.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickServo.FUNCTION_IS_STATUS_LED_ENABLED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -159,10 +169,10 @@ class BrickServo(Device):
     def set_position(self, servo_num, position):
         """
         Sets the position in °/100 for the specified servo.
-        
+
         The default range of the position is -9000 to 9000, but it can be specified
         according to your servo with :func:`Set Degree`.
-        
+
         If you want to control a linear servo or RC brushless motor controller or
         similar with the Servo Brick, you can also define lengths or speeds with
         :func:`Set Degree`.
@@ -187,10 +197,10 @@ class BrickServo(Device):
         """
         Sets the maximum velocity of the specified servo in °/100s. The velocity
         is accelerated according to the value set by :func:`Set Acceleration`.
-        
+
         The minimum velocity is 0 (no movement) and the maximum velocity is 65535.
         With a value of 65535 the position will be set immediately (no velocity).
-        
+
         The default value is 65535.
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_VELOCITY, (servo_num, velocity), 'B H', '')
@@ -212,10 +222,10 @@ class BrickServo(Device):
     def set_acceleration(self, servo_num, acceleration):
         """
         Sets the acceleration of the specified servo in °/100s².
-        
+
         The minimum acceleration is 1 and the maximum acceleration is 65535.
         With a value of 65535 the velocity will be set immediately (no acceleration).
-        
+
         The default value is 65535.
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_ACCELERATION, (servo_num, acceleration), 'B H', '')
@@ -232,12 +242,12 @@ class BrickServo(Device):
         Sets the output voltages with which the servos are driven in mV.
         The minimum output voltage is 2000mV and the maximum output voltage is
         9000mV.
-        
+
         .. note::
          We recommend that you set this value to the maximum voltage that is
          specified for your servo, most servos achieve their maximum force only
          with high voltages.
-        
+
         The default value is 5000.
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_OUTPUT_VOLTAGE, (voltage,), 'H', '')
@@ -251,20 +261,20 @@ class BrickServo(Device):
     def set_pulse_width(self, servo_num, min, max):
         """
         Sets the minimum and maximum pulse width of the specified servo in µs.
-        
+
         Usually, servos are controlled with a
         `PWM <https://en.wikipedia.org/wiki/Pulse-width_modulation>`__, whereby the
         length of the pulse controls the position of the servo. Every servo has
         different minimum and maximum pulse widths, these can be specified with
         this function.
-        
+
         If you have a datasheet for your servo that specifies the minimum and
         maximum pulse width, you should set the values accordingly. If your servo
         comes without any datasheet you have to find the values via trial and error.
-        
+
         Both values have a range from 1 to 65535 (unsigned 16-bit integer). The
         minimum must be smaller than the maximum.
-        
+
         The default values are 1000µs (1ms) and 2000µs (2ms) for minimum and
         maximum pulse width.
         """
@@ -281,15 +291,15 @@ class BrickServo(Device):
         """
         Sets the minimum and maximum degree for the specified servo (by default
         given as °/100).
-        
+
         This only specifies the abstract values between which the minimum and maximum
         pulse width is scaled. For example: If you specify a pulse width of 1000µs
         to 2000µs and a degree range of -90° to 90°, a call of :func:`Set Position`
         with 0 will result in a pulse width of 1500µs
         (-90° = 1000µs, 90° = 2000µs, etc.).
-        
+
         Possible usage:
-        
+
         * The datasheet of your servo specifies a range of 200° with the middle position
           at 110°. In this case you can set the minimum to -9000 and the maximum to 11000.
         * You measure a range of 220° on your servo and you don't have or need a middle
@@ -304,10 +314,10 @@ class BrickServo(Device):
         * You have a brushless motor with a maximum speed of 10000 rpm and want to
           control it with a RC brushless motor controller. In this case you can set the
           minimum to 0 and the maximum to 10000. :func:`Set Position` now controls the rpm.
-        
+
         Both values have a possible range from -32767 to 32767
         (signed 16-bit integer). The minimum must be smaller than the maximum.
-        
+
         The default values are -9000 and 9000 for the minimum and maximum degree.
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_DEGREE, (servo_num, min, max), 'B h h', '')
@@ -322,19 +332,19 @@ class BrickServo(Device):
     def set_period(self, servo_num, period):
         """
         Sets the period of the specified servo in µs.
-        
+
         Usually, servos are controlled with a
         `PWM <https://en.wikipedia.org/wiki/Pulse-width_modulation>`__. Different
         servos expect PWMs with different periods. Most servos run well with a
         period of about 20ms.
-        
+
         If your servo comes with a datasheet that specifies a period, you should
         set it accordingly. If you don't have a datasheet and you have no idea
         what the correct period is, the default value (19.5ms) will most likely
         work fine.
-        
+
         The minimum possible period is 1µs and the maximum is 65535µs.
-        
+
         The default value is 19.5ms (19500µs).
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_PERIOD, (servo_num, period), 'B H', '')
@@ -369,11 +379,11 @@ class BrickServo(Device):
         """
         Returns the external input voltage in mV. The external input voltage is
         given via the black power input connector on the Servo Brick.
-        
+
         If there is an external input voltage and a stack input voltage, the motors
         will be driven by the external input voltage. If there is only a stack
         voltage present, the motors will be driven by this voltage.
-        
+
         .. warning::
          This means, if you have a high stack voltage and a low external voltage,
          the motors will be driven with the low external voltage. If you then remove
@@ -389,7 +399,7 @@ class BrickServo(Device):
         You can use this function to detect the discharge of a battery that is used
         to drive the stepper motor. If you have a fixed power supply, you likely do
         not need this functionality.
-        
+
         The default value is 5V (5000mV).
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
@@ -403,9 +413,9 @@ class BrickServo(Device):
     def enable_position_reached_callback(self):
         """
         Enables the :cb:`Position Reached` callback.
-        
+
         Default is disabled.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_POSITION_REACHED_CALLBACK, (), '', '')
@@ -413,9 +423,9 @@ class BrickServo(Device):
     def disable_position_reached_callback(self):
         """
         Disables the :cb:`Position Reached` callback.
-        
+
         Default is disabled.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_POSITION_REACHED_CALLBACK, (), '', '')
@@ -423,7 +433,7 @@ class BrickServo(Device):
     def is_position_reached_callback_enabled(self):
         """
         Returns *true* if :cb:`Position Reached` callback is enabled, *false* otherwise.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_POSITION_REACHED_CALLBACK_ENABLED, (), '', '?')
@@ -431,9 +441,9 @@ class BrickServo(Device):
     def enable_velocity_reached_callback(self):
         """
         Enables the :cb:`Velocity Reached` callback.
-        
+
         Default is disabled.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_VELOCITY_REACHED_CALLBACK, (), '', '')
@@ -441,9 +451,9 @@ class BrickServo(Device):
     def disable_velocity_reached_callback(self):
         """
         Disables the :cb:`Velocity Reached` callback.
-        
+
         Default is disabled.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_VELOCITY_REACHED_CALLBACK, (), '', '')
@@ -451,20 +461,33 @@ class BrickServo(Device):
     def is_velocity_reached_callback_enabled(self):
         """
         Returns *true* if :cb:`Velocity Reached` callback is enabled, *false* otherwise.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED, (), '', '?')
 
+    def get_send_timeout_count(self, communication_method):
+        """
+        Returns the timeout count for the different communication methods.
+
+        The methods 0-2 are available for all Bricks, 3-7 only for Master Bricks.
+
+        This function is mostly used for debugging during development, in normal operation
+        the counters should nearly always stay at 0.
+
+        .. versionadded:: 2.3.2$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
+
     def enable_status_led(self):
         """
         Enables the status LED.
-        
+
         The status LED is the blue LED next to the USB connector. If enabled is is
         on and it flickers if data is transfered. If disabled it is always off.
-        
+
         The default state is enabled.
-        
+
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_STATUS_LED, (), '', '')
@@ -472,12 +495,12 @@ class BrickServo(Device):
     def disable_status_led(self):
         """
         Disables the status LED.
-        
+
         The status LED is the blue LED next to the USB connector. If enabled is is
         on and it flickers if data is transfered. If disabled it is always off.
-        
+
         The default state is enabled.
-        
+
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_STATUS_LED, (), '', '')
@@ -485,7 +508,7 @@ class BrickServo(Device):
     def is_status_led_enabled(self):
         """
         Returns *true* if the status LED is enabled, *false* otherwise.
-        
+
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
@@ -494,7 +517,7 @@ class BrickServo(Device):
         """
         Returns the firmware and protocol version and the name of the Bricklet for a
         given port.
-        
+
         This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
         plugins.
         """
@@ -504,7 +527,7 @@ class BrickServo(Device):
         """
         Returns the temperature in °C/10 as measured inside the microcontroller. The
         value returned is not the ambient temperature!
-        
+
         The temperature is only proportional to the real temperature and it has an
         accuracy of +-15%. Practically it is only useful as an indicator for
         temperature changes.
@@ -515,7 +538,7 @@ class BrickServo(Device):
         """
         Calling this function will reset the Brick. Calling this function
         on a Brick inside of a stack will reset the whole stack.
-        
+
         After a reset you have to create new device objects,
         calling functions on the existing ones will result in
         undefined behavior!
@@ -527,9 +550,9 @@ class BrickServo(Device):
         Returns the UID, the UID where the Brick is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be '0'-'8' (stack position).
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

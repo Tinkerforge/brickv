@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -97,9 +97,9 @@ class BrickletGasDetector(Device):
     def get_value(self):
         """
         Returns a value between 0 and 4095.
-        
+
         See `here <TODO>`__ for more information about the measurements.
-        
+
         If you want to get the value periodically, it is recommended
         to use the :cb:`Value` callback and set the period with
         :func:`Set Value Callback Period`.
@@ -110,10 +110,10 @@ class BrickletGasDetector(Device):
         """
         Sets the period in ms with which the :cb:`Value` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Value` callback is only triggered if the value value has changed
         since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletGasDetector.FUNCTION_SET_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -127,19 +127,19 @@ class BrickletGasDetector(Device):
     def set_value_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Value Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the value value is *outside* the min and max values"
          "'i'",    "Callback is triggered when the value value is *inside* the min and max values"
          "'<'",    "Callback is triggered when the value value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the value value is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletGasDetector.FUNCTION_SET_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
@@ -153,15 +153,15 @@ class BrickletGasDetector(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callback
-        
+
         * :cb:`Value Reached`
-        
+
         is triggered, if the threshold
-        
+
         * :func:`Set Value Callback Threshold`
-        
+
         keeps being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletGasDetector.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -176,12 +176,12 @@ class BrickletGasDetector(Device):
         """
         Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
         for the measured value.
-        
+
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
-        
+
         The range for the averaging is 1-100.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletGasDetector.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
@@ -195,18 +195,18 @@ class BrickletGasDetector(Device):
     def set_detector_type(self, detector_type):
         """
         Sets the detector type.
-        
+
         The following types are currently supported.
-        
+
         * Type 0: MQ2 and MQ5
         * Type 1: MQ3
-        
+
         The detector type is written to the EEPROM of the Bricklet, so it only has
         to be set once.
-        
+
         You can use the Brick Viewer to set the detector type, so you likely
         don't need to use this function in your source code.
-        
+
         The default detector type is 0.
         """
         self.ipcon.send_request(self, BrickletGasDetector.FUNCTION_SET_DETECTOR_TYPE, (detector_type,), 'B', '')
@@ -240,9 +240,9 @@ class BrickletGasDetector(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

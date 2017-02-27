@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -89,10 +89,10 @@ class BrickletLCD20x4(Device):
         """
         Writes text to a specific line (0 to 3) with a specific position
         (0 to 19). The text can have a maximum of 20 characters.
-        
+
         For example: (0, 7, "Hello") will write *Hello* in the middle of the
         first line of the display.
-        
+
         The display uses a special charset that includes all ASCII characters except
         backslash and tilde. The LCD charset also includes several other non-ASCII characters, see
         the `charset specification <https://github.com/Tinkerforge/lcd-20x4-bricklet/raw/master/datasheets/standard_charset.pdf>`__
@@ -131,7 +131,7 @@ class BrickletLCD20x4(Device):
         should be blinking (shown as a blinking block). The cursor position
         is one character behind the the last text written with
         :func:`Write Line`.
-        
+
         The default is (*false*, *false*).
         """
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_CONFIG, (cursor, blinking), '? ?', '')
@@ -146,7 +146,7 @@ class BrickletLCD20x4(Device):
         """
         Returns *true* if the button (0 to 2 or 0 to 3 since hardware version 1.2)
         is pressed.
-        
+
         If you want to react on button presses and releases it is recommended to use
         the :cb:`Button Pressed` and :cb:`Button Released` callbacks.
         """
@@ -158,7 +158,7 @@ class BrickletLCD20x4(Device):
         consist of 5x8 pixels and can be addressed with the index 0-7. To describe
         the pixels, the first 5 bits of 8 bytes are used. For example, to make
         a custom character "H", you should transfer the following:
-        
+
         * ``character[0] = 0b00010001`` (decimal value 17)
         * ``character[1] = 0b00010001`` (decimal value 17)
         * ``character[2] = 0b00010001`` (decimal value 17)
@@ -167,16 +167,16 @@ class BrickletLCD20x4(Device):
         * ``character[5] = 0b00010001`` (decimal value 17)
         * ``character[6] = 0b00010001`` (decimal value 17)
         * ``character[7] = 0b00000000`` (decimal value 0)
-        
+
         The characters can later be written with :func:`Write Line` by using the
         characters with the byte representation 8 ("\x08") to 15 ("\x0F").
-        
+
         You can play around with the custom characters in Brick Viewer version
         since 2.0.1.
-        
+
         Custom characters are stored by the LCD in RAM, so they have to be set
         after each startup.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_CUSTOM_CHARACTER, (index, character), 'B 8B', '')
@@ -185,7 +185,7 @@ class BrickletLCD20x4(Device):
         """
         Returns the custom character for a given index, as set with
         :func:`Set Custom Character`.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_CUSTOM_CHARACTER, (index,), 'B', '8B')
@@ -194,10 +194,10 @@ class BrickletLCD20x4(Device):
         """
         Sets the default text for lines 0-3. The max number of characters
         per line is 20.
-        
+
         The default text is shown on the LCD, if the default text counter
         expires, see :func:`Set Default Text Counter`.
-        
+
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_DEFAULT_TEXT, (line, text), 'B 20s', '')
@@ -206,7 +206,7 @@ class BrickletLCD20x4(Device):
         """
         Returns the default text for a given line (0-3) as set by
         :func:`Set Default Text`.
-        
+
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_DEFAULT_TEXT, (line,), 'B', '20s')
@@ -216,19 +216,19 @@ class BrickletLCD20x4(Device):
         Sets the default text counter in ms. This counter is decremented each
         ms by the LCD firmware. If the counter reaches 0, the default text
         (see :func:`Set Default Text`) is shown on the LCD.
-        
+
         This functionality can be used to show a default text if the controlling
         program crashes or the connection is interrupted.
-        
+
         A possible approach is to call :func:`Set Default Text Counter` every
         minute with the parameter 1000*60*2 (2 minutes). In this case the
         default text will be shown no later than 2 minutes after the
         controlling program crashes.
-        
+
         A negative counter turns the default text functionality off.
-        
+
         The default is -1.
-        
+
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_DEFAULT_TEXT_COUNTER, (counter,), 'i', '')
@@ -236,7 +236,7 @@ class BrickletLCD20x4(Device):
     def get_default_text_counter(self):
         """
         Returns the current value of the default text counter.
-        
+
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_DEFAULT_TEXT_COUNTER, (), '', 'i')
@@ -246,9 +246,9 @@ class BrickletLCD20x4(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

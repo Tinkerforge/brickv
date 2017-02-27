@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -113,7 +113,7 @@ class BrickletAccelerometer(Device):
         """
         Returns the acceleration in x, y and z direction. The values
         are given in g/1000 (1g = 9.80665m/s²), not to be confused with grams.
-        
+
         If you want to get the acceleration periodically, it is recommended
         to use the :cb:`Acceleration` callback and set the period with
         :func:`Set Acceleration Callback Period`.
@@ -124,10 +124,10 @@ class BrickletAccelerometer(Device):
         """
         Sets the period in ms with which the :cb:`Acceleration` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Acceleration` callback is only triggered if the acceleration has
         changed since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_ACCELERATION_CALLBACK_PERIOD, (period,), 'I', '')
@@ -141,19 +141,19 @@ class BrickletAccelerometer(Device):
     def set_acceleration_callback_threshold(self, option, min_x, max_x, min_y, max_y, min_z, max_z):
         """
         Sets the thresholds for the :cb:`Acceleration Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the acceleration is *outside* the min and max values"
          "'i'",    "Callback is triggered when the acceleration is *inside* the min and max values"
          "'<'",    "Callback is triggered when the acceleration is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the acceleration is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0, 0, 0, 0, 0).
         """
         self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_ACCELERATION_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y, min_z, max_z), 'c h h h h h h', '')
@@ -167,15 +167,15 @@ class BrickletAccelerometer(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callback
-        
+
         * :cb:`Acceleration Reached`
-        
+
         is triggered, if the threshold
-        
+
         * :func:`Set Acceleration Callback Threshold`
-        
+
         keeps being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -196,14 +196,14 @@ class BrickletAccelerometer(Device):
         """
         Configures the data rate, full scale range and filter bandwidth.
         Possible values are:
-        
+
         * Data rate of 0Hz to 1600Hz.
         * Full scale range of -2G to +2G up to -16G to +16G.
         * Filter bandwidth between 50Hz and 800Hz.
-        
+
         Decreasing data rate or full scale range will also decrease the noise on
         the data.
-        
+
         The default values are 100Hz data rate, -4G to +4G range and 200Hz
         filter bandwidth.
         """
@@ -238,9 +238,9 @@ class BrickletAccelerometer(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

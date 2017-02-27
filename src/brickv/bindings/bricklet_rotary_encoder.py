@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -89,9 +89,9 @@ class BrickletRotaryEncoder(Device):
         Returns the current count of the encoder. If you set reset
         to true, the count is set back to 0 directly after the
         current count is read.
-        
+
         The encoder has 24 steps per rotation
-        
+
         Turning the encoder to the left decrements the counter,
         so a negative count is possible.
         """
@@ -101,10 +101,10 @@ class BrickletRotaryEncoder(Device):
         """
         Sets the period in ms with which the :cb:`Count` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Count` callback is only triggered if the count has changed since the
         last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_SET_COUNT_CALLBACK_PERIOD, (period,), 'I', '')
@@ -118,19 +118,19 @@ class BrickletRotaryEncoder(Device):
     def set_count_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Count Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the count is *outside* the min and max values"
          "'i'",    "Callback is triggered when the count is *inside* the min and max values"
          "'<'",    "Callback is triggered when the count is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the count is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_SET_COUNT_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
@@ -144,15 +144,15 @@ class BrickletRotaryEncoder(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callback
-        
+
         * :cb:`Count Reached`
-        
+
         is triggered, if the thresholds
-        
+
         * :func:`Set Count Callback Threshold`
-        
+
         keeps being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -166,7 +166,7 @@ class BrickletRotaryEncoder(Device):
     def is_pressed(self):
         """
         Returns *true* if the button is pressed and *false* otherwise.
-        
+
         It is recommended to use the :cb:`Pressed` and :cb:`Released` callbacks
         to handle the button.
         """
@@ -177,9 +177,9 @@ class BrickletRotaryEncoder(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

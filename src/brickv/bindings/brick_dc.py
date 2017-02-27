@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -59,6 +59,7 @@ class BrickDC(Device):
     FUNCTION_GET_DRIVE_MODE = 18
     FUNCTION_SET_CURRENT_VELOCITY_PERIOD = 19
     FUNCTION_GET_CURRENT_VELOCITY_PERIOD = 20
+    FUNCTION_GET_SEND_TIMEOUT_COUNT = 233
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -69,6 +70,14 @@ class BrickDC(Device):
 
     DRIVE_MODE_DRIVE_BRAKE = 0
     DRIVE_MODE_DRIVE_COAST = 1
+    COMMUNICATION_METHOD_NONE = 0
+    COMMUNICATION_METHOD_USB = 1
+    COMMUNICATION_METHOD_SPI_STACK = 2
+    COMMUNICATION_METHOD_CHIBI = 3
+    COMMUNICATION_METHOD_RS485 = 4
+    COMMUNICATION_METHOD_WIFI = 5
+    COMMUNICATION_METHOD_ETHERNET = 6
+    COMMUNICATION_METHOD_WIFI_V2 = 7
 
     def __init__(self, uid, ipcon):
         """
@@ -103,6 +112,7 @@ class BrickDC(Device):
         self.response_expected[BrickDC.CALLBACK_EMERGENCY_SHUTDOWN] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickDC.CALLBACK_VELOCITY_REACHED] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickDC.CALLBACK_CURRENT_VELOCITY] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickDC.FUNCTION_GET_SEND_TIMEOUT_COUNT] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickDC.FUNCTION_ENABLE_STATUS_LED] = BrickDC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickDC.FUNCTION_DISABLE_STATUS_LED] = BrickDC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickDC.FUNCTION_IS_STATUS_LED_ENABLED] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -123,12 +133,12 @@ class BrickDC(Device):
         0 is stop and 32767 is full speed forward. Depending on the
         acceleration (see :func:`Set Acceleration`), the motor is not immediately
         brought to the velocity but smoothly accelerated.
-        
+
         The velocity describes the duty cycle of the PWM with which the motor is
         controlled, e.g. a velocity of 3277 sets a PWM with a 10% duty cycle.
         You can not only control the duty cycle of the PWM but also the frequency,
         see :func:`Set PWM Frequency`.
-        
+
         The default velocity is 0.
         """
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_VELOCITY, (velocity,), 'h', '')
@@ -152,14 +162,14 @@ class BrickDC(Device):
         Sets the acceleration of the motor. It is given in *velocity/s*. An
         acceleration of 10000 means, that every second the velocity is increased
         by 10000 (or about 30% duty cycle).
-        
+
         For example: If the current velocity is 0 and you want to accelerate to a
         velocity of 16000 (about 50% duty cycle) in 10 seconds, you should set
         an acceleration of 1600.
-        
+
         If acceleration is set to 0, there is no speed ramping, i.e. a new velocity
         is immediately given to the motor.
-        
+
         The default acceleration is 10000.
         """
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_ACCELERATION, (acceleration,), 'H', '')
@@ -177,10 +187,10 @@ class BrickDC(Device):
         is less noisy and the motor runs smoother. However, with a low frequency
         there are less switches and therefore fewer switching losses. Also with
         most motors lower frequencies enable higher torque.
-        
+
         If you have no idea what all this means, just ignore this function and use
         the default frequency, it will very likely work fine.
-        
+
         The default frequency is 15 kHz.
         """
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_PWM_FREQUENCY, (frequency,), 'H', '')
@@ -194,12 +204,12 @@ class BrickDC(Device):
     def full_brake(self):
         """
         Executes an active full brake.
-        
+
         .. warning::
          This function is for emergency purposes,
          where an immediate brake is necessary. Depending on the current velocity and
          the strength of the motor, a full brake can be quite violent.
-        
+
         Call :func:`Set Velocity` with 0 if you just want to stop the motor.
         """
         self.ipcon.send_request(self, BrickDC.FUNCTION_FULL_BRAKE, (), '', '')
@@ -216,11 +226,11 @@ class BrickDC(Device):
         """
         Returns the external input voltage in mV. The external input voltage is
         given via the black power input connector on the DC Brick.
-        
+
         If there is an external input voltage and a stack input voltage, the motor
         will be driven by the external input voltage. If there is only a stack
         voltage present, the motor will be driven by this voltage.
-        
+
         .. warning::
          This means, if you have a high stack voltage and a low external voltage,
          the motor will be driven with the low external voltage. If you then remove
@@ -262,7 +272,7 @@ class BrickDC(Device):
         You can use this function to detect the discharge of a battery that is used
         to drive the motor. If you have a fixed power supply, you likely do not need
         this functionality.
-        
+
         The default value is 6V.
         """
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
@@ -276,21 +286,21 @@ class BrickDC(Device):
     def set_drive_mode(self, mode):
         """
         Sets the drive mode. Possible modes are:
-        
+
         * 0 = Drive/Brake
         * 1 = Drive/Coast
-        
+
         These modes are different kinds of motor controls.
-        
+
         In Drive/Brake mode, the motor is always either driving or braking. There
         is no freewheeling. Advantages are: A more linear correlation between
         PWM and velocity, more exact accelerations and the possibility to drive
         with slower velocities.
-        
+
         In Drive/Coast mode, the motor is always either driving or freewheeling.
         Advantages are: Less current consumption and less demands on the motor and
         driver chip.
-        
+
         The default value is 0 = Drive/Brake.
         """
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_DRIVE_MODE, (mode,), 'B', '')
@@ -305,7 +315,7 @@ class BrickDC(Device):
         """
         Sets a period in ms with which the :cb:`Current Velocity` callback is triggered.
         A period of 0 turns the callback off.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_CURRENT_VELOCITY_PERIOD, (period,), 'H', '')
@@ -316,15 +326,28 @@ class BrickDC(Device):
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD, (), '', 'H')
 
+    def get_send_timeout_count(self, communication_method):
+        """
+        Returns the timeout count for the different communication methods.
+
+        The methods 0-2 are available for all Bricks, 3-7 only for Master Bricks.
+
+        This function is mostly used for debugging during development, in normal operation
+        the counters should nearly always stay at 0.
+
+        .. versionadded:: 2.3.3$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
+
     def enable_status_led(self):
         """
         Enables the status LED.
-        
+
         The status LED is the blue LED next to the USB connector. If enabled is is
         on and it flickers if data is transfered. If disabled it is always off.
-        
+
         The default state is enabled.
-        
+
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickDC.FUNCTION_ENABLE_STATUS_LED, (), '', '')
@@ -332,12 +355,12 @@ class BrickDC(Device):
     def disable_status_led(self):
         """
         Disables the status LED.
-        
+
         The status LED is the blue LED next to the USB connector. If enabled is is
         on and it flickers if data is transfered. If disabled it is always off.
-        
+
         The default state is enabled.
-        
+
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickDC.FUNCTION_DISABLE_STATUS_LED, (), '', '')
@@ -345,7 +368,7 @@ class BrickDC(Device):
     def is_status_led_enabled(self):
         """
         Returns *true* if the status LED is enabled, *false* otherwise.
-        
+
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
@@ -354,7 +377,7 @@ class BrickDC(Device):
         """
         Returns the firmware and protocol version and the name of the Bricklet for a
         given port.
-        
+
         This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
         plugins.
         """
@@ -364,7 +387,7 @@ class BrickDC(Device):
         """
         Returns the temperature in °C/10 as measured inside the microcontroller. The
         value returned is not the ambient temperature!
-        
+
         The temperature is only proportional to the real temperature and it has an
         accuracy of +-15%. Practically it is only useful as an indicator for
         temperature changes.
@@ -375,7 +398,7 @@ class BrickDC(Device):
         """
         Calling this function will reset the Brick. Calling this function
         on a Brick inside of a stack will reset the whole stack.
-        
+
         After a reset you have to create new device objects,
         calling functions on the existing ones will result in
         undefined behavior!
@@ -387,9 +410,9 @@ class BrickDC(Device):
         Returns the UID, the UID where the Brick is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be '0'-'8' (stack position).
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

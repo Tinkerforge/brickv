@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -74,13 +74,13 @@ class BrickletIndustrialQuadRelay(Device):
         """
         Sets the output value with a bitmask (16bit). A 1 in the bitmask means relay
         closed and a 0 means relay open.
-        
+
         For example: The value 3 or 0b0011 will close the relay of pins 0-1 and open
         the other pins.
-        
+
         If no groups are used (see :func:`Set Group`), the pins correspond to the
         markings on the Quad Relay Bricklet.
-        
+
         If groups are used, the pins correspond to the element in the group.
         Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
         pins 8-11 and element 4 pins 12-15.
@@ -97,17 +97,17 @@ class BrickletIndustrialQuadRelay(Device):
         """
         Configures a monoflop of the pins specified by the first parameter
         bitmask.
-        
+
         The second parameter is a bitmask with the desired value of the specified
         pins. A 1 in the bitmask means relay closed and a 0 means relay open.
-        
+
         The third parameter indicates the time (in ms) that the pins should hold
         the value.
-        
+
         If this function is called with the parameters (9, 1, 1500) or
         (0b1001, 0b0001, 1500): Pin 0 will close and pin 3 will open. In 1.5s pin 0
         will open and pin 3 will close again.
-        
+
         A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
         have a RS485 bus and a Quad Relay Bricklet connected to one of the slave
         stacks. You can now call this function every second, with a time parameter
@@ -120,7 +120,7 @@ class BrickletIndustrialQuadRelay(Device):
         """
         Returns (for the given pin) the current value and the time as set by
         :func:`Set Monoflop` as well as the remaining time until the value flips.
-        
+
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
@@ -130,16 +130,16 @@ class BrickletIndustrialQuadRelay(Device):
         """
         Sets a group of Quad Relay Bricklets that should work together. You can
         find Bricklets that can be grouped together with :func:`Get Available For Group`.
-        
+
         The group consists of 4 elements. Element 1 in the group will get pins 0-3,
         element 2 pins 4-7, element 3 pins 8-11 and element 4 pins 12-15.
-        
+
         Each element can either be one of the ports ('a' to 'd') or 'n' if it should
         not be used.
-        
+
         For example: If you have two Quad Relay Bricklets connected to port A and
         port B respectively, you could call with ``['a', 'b', 'n', 'n']``.
-        
+
         Now the pins on the Quad Relay on port A are assigned to 0-3 and the
         pins on the Quad Relay on port B are assigned to 4-7. It is now possible
         to call :func:`Set Value` and control two Bricklets at the same time.
@@ -165,13 +165,13 @@ class BrickletIndustrialQuadRelay(Device):
         Sets the output value with a bitmask, according to the selection mask.
         The bitmask is 16 bit long, *true* refers to a closed relay and
         *false* refers to an open relay.
-        
+
         For example: The values (3, 1) or (0b0011, 0b0001) will close the relay of
         pin 0, open the relay of pin 1 and leave the others untouched.
-        
+
         If no groups are used (see :func:`Set Group`), the pins correspond to the
         markings on the Quad Relay Bricklet.
-        
+
         If groups are used, the pins correspond to the element in the group.
         Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
         pins 8-11 and element 4 pins 12-15.
@@ -183,9 +183,9 @@ class BrickletIndustrialQuadRelay(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

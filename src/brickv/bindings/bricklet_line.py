@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -80,10 +80,10 @@ class BrickletLine(Device):
         """
         Returns the currently measured reflectivity. The reflectivity is
         a value between 0 (not reflective) and 4095 (very reflective).
-        
+
         Usually black has a low reflectivity while white has a high
         reflectivity.
-        
+
         If you want to get the reflectivity periodically, it is recommended
         to use the :cb:`Reflectivity` callback and set the period with
         :func:`Set Reflectivity Callback Period`.
@@ -94,10 +94,10 @@ class BrickletLine(Device):
         """
         Sets the period in ms with which the :cb:`Reflectivity` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Reflectivity` callback is only triggered if the reflectivity has
         changed since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletLine.FUNCTION_SET_REFLECTIVITY_CALLBACK_PERIOD, (period,), 'I', '')
@@ -111,19 +111,19 @@ class BrickletLine(Device):
     def set_reflectivity_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Reflectivity Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the reflectivity is *outside* the min and max values"
          "'i'",    "Callback is triggered when the reflectivity is *inside* the min and max values"
          "'<'",    "Callback is triggered when the reflectivity is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the reflectivity is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletLine.FUNCTION_SET_REFLECTIVITY_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
@@ -137,15 +137,15 @@ class BrickletLine(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callback
-        
+
         * :cb:`Reflectivity Reached`
-        
+
         is triggered, if the threshold
-        
+
         * :func:`Set Reflectivity Callback Threshold`
-        
+
         keeps being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletLine.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -161,9 +161,9 @@ class BrickletLine(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

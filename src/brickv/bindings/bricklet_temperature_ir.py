@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -103,7 +103,7 @@ class BrickletTemperatureIR(Device):
         has a range of -400 to 1250 and is given in °C/10,
         e.g. a value of 423 means that an ambient temperature of 42.3 °C is
         measured.
-        
+
         If you want to get the ambient temperature periodically, it is recommended
         to use the :cb:`Ambient Temperature` callback and set the period with
         :func:`Set Ambient Temperature Callback Period`.
@@ -117,11 +117,11 @@ class BrickletTemperatureIR(Device):
         has a range of -700 to 3800 and is given in °C/10,
         e.g. a value of 3001 means that a temperature of 300.1 °C is measured
         on the surface of the object.
-        
+
         The temperature of different materials is dependent on their `emissivity
         <https://en.wikipedia.org/wiki/Emissivity>`__. The emissivity of the material
         can be set with :func:`Set Emissivity`.
-        
+
         If you want to get the object temperature periodically, it is recommended
         to use the :cb:`Object Temperature` callback and set the period with
         :func:`Set Object Temperature Callback Period`.
@@ -133,19 +133,19 @@ class BrickletTemperatureIR(Device):
         Sets the `emissivity <https://en.wikipedia.org/wiki/Emissivity>`__ that is
         used to calculate the surface temperature as returned by
         :func:`Get Object Temperature`.
-        
+
         The emissivity is usually given as a value between 0.0 and 1.0. A list of
         emissivities of different materials can be found
         `here <http://www.infrared-thermography.com/material.htm>`__.
-        
+
         The parameter of :func:`Set Emissivity` has to be given with a factor of
         65535 (16-bit). For example: An emissivity of 0.1 can be set with the
         value 6553, an emissivity of 0.5 with the value 32767 and so on.
-        
+
         .. note::
          If you need a precise measurement for the object temperature, it is
          absolutely crucial that you also provide a precise emissivity.
-        
+
         The default emissivity is 1.0 (value of 65535) and the minimum emissivity the
         sensor can handle is 0.1 (value of 6553).
         """
@@ -161,10 +161,10 @@ class BrickletTemperatureIR(Device):
         """
         Sets the period in ms with which the :cb:`Ambient Temperature` callback is
         triggered periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Ambient Temperature` callback is only triggered if the temperature has
         changed since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -179,10 +179,10 @@ class BrickletTemperatureIR(Device):
         """
         Sets the period in ms with which the :cb:`Object Temperature` callback is
         triggered periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Object Temperature` callback is only triggered if the temperature
         has changed since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -196,19 +196,19 @@ class BrickletTemperatureIR(Device):
     def set_ambient_temperature_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Ambient Temperature Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the ambient temperature is *outside* the min and max values"
          "'i'",    "Callback is triggered when the ambient temperature is *inside* the min and max values"
          "'<'",    "Callback is triggered when the ambient temperature is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the ambient temperature is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
@@ -222,19 +222,19 @@ class BrickletTemperatureIR(Device):
     def set_object_temperature_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Object Temperature Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the object temperature is *outside* the min and max values"
          "'i'",    "Callback is triggered when the object temperature is *inside* the min and max values"
          "'<'",    "Callback is triggered when the object temperature is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the object temperature is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
@@ -248,17 +248,17 @@ class BrickletTemperatureIR(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callbacks
-        
+
         * :cb:`Ambient Temperature Reached`,
         * :cb:`Object Temperature Reached`
-        
+
         are triggered, if the thresholds
-        
+
         * :func:`Set Ambient Temperature Callback Threshold`,
         * :func:`Set Object Temperature Callback Threshold`
-        
+
         keep being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -274,9 +274,9 @@ class BrickletTemperatureIR(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

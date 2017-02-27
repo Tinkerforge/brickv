@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -108,7 +108,7 @@ class BrickletThermocouple(Device):
         """
         Returns the temperature of the thermocouple. The value is given in °C/100,
         e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
-        
+
         If you want to get the temperature periodically, it is recommended
         to use the :cb:`Temperature` callback and set the period with
         :func:`Set Temperature Callback Period`.
@@ -119,10 +119,10 @@ class BrickletThermocouple(Device):
         """
         Sets the period in ms with which the :cb:`Temperature` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Temperature` callback is only triggered if the temperature has changed
         since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletThermocouple.FUNCTION_SET_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -136,19 +136,19 @@ class BrickletThermocouple(Device):
     def set_temperature_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Temperature Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the temperature is *outside* the min and max values"
          "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
          "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletThermocouple.FUNCTION_SET_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
@@ -162,15 +162,15 @@ class BrickletThermocouple(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callback
-        
+
         * :cb:`Temperature Reached`
-        
+
         is triggered, if the threshold
-        
+
         * :func:`Set Temperature Callback Threshold`
-        
+
         keeps being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletThermocouple.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -185,28 +185,28 @@ class BrickletThermocouple(Device):
         """
         You can configure averaging size, thermocouple type and frequency
         filtering.
-        
+
         Available averaging sizes are 1, 2, 4, 8 and 16 samples.
-        
+
         As thermocouple type you can use B, E, J, K, N, R, S and T. If you have a
         different thermocouple or a custom thermocouple you can also use
         G8 and G32. With these types the returned value will not be in °C/100,
         it will be calculated by the following formulas:
-        
+
         * G8: ``value = 8 * 1.6 * 2^17 * Vin``
         * G32: ``value = 32 * 1.6 * 2^17 * Vin``
-        
+
         where Vin is the thermocouple input voltage.
-        
+
         The frequency filter can be either configured to 50Hz or to 60Hz. You should
         configure it according to your utility frequency.
-        
+
         The conversion time depends on the averaging and filter configuration, it can
         be calculated as follows:
-        
+
         * 60Hz: ``time = 82 + (samples - 1) * 16.67``
         * 50Hz: ``time = 98 + (samples - 1) * 20``
-        
+
         The default configuration is 16 samples, K type and 50Hz.
         """
         self.ipcon.send_request(self, BrickletThermocouple.FUNCTION_SET_CONFIGURATION, (averaging, thermocouple_type, filter), 'B B B', '')
@@ -220,14 +220,14 @@ class BrickletThermocouple(Device):
     def get_error_state(self):
         """
         Returns the current error state. There are two possible errors:
-        
+
         * Over/Under Voltage and
         * Open Circuit.
-        
+
         Over/Under Voltage happens for voltages below 0V or above 3.3V. In this case
         it is very likely that your thermocouple is defective. An Open Circuit error
         indicates that there is no thermocouple connected.
-        
+
         You can use the func:`ErrorState` callback to automatically get triggered
         when the error state changes.
         """
@@ -238,9 +238,9 @@ class BrickletThermocouple(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

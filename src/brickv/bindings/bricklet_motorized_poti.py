@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -110,7 +110,7 @@ class BrickletMotorizedPoti(Device):
         """
         Returns the position of the linear potentiometer. The value is
         between 0 (slider down) and 100 (slider up).
-        
+
         If you want to get the position periodically, it is recommended to use the
         :cb:`Position` callback and set the period with
         :func:`Set Position Callback Period`.
@@ -121,13 +121,13 @@ class BrickletMotorizedPoti(Device):
         """
         Returns the value as read by a 12-bit analog-to-digital converter.
         The value is between 0 and 4095.
-        
+
         .. note::
          The value returned by :func:`Get Position` is averaged over several samples
          to yield less noise, while :func:`Get Analog Value` gives back raw
          unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
          if you need the full resolution of the analog-to-digital converter.
-        
+
         If you want the analog value periodically, it is recommended to use the
         :cb:`Analog Value` callback and set the period with
         :func:`Set Analog Value Callback Period`.
@@ -138,10 +138,10 @@ class BrickletMotorizedPoti(Device):
         """
         Sets the period in ms with which the :cb:`Position` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Position` callback is only triggered if the position has changed
         since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletMotorizedPoti.FUNCTION_SET_POSITION_CALLBACK_PERIOD, (period,), 'I', '')
@@ -156,10 +156,10 @@ class BrickletMotorizedPoti(Device):
         """
         Sets the period in ms with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Analog Value` callback is only triggered if the analog value has
         changed since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletMotorizedPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -173,19 +173,19 @@ class BrickletMotorizedPoti(Device):
     def set_position_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Position Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the position is *outside* the min and max values"
          "'i'",    "Callback is triggered when the position is *inside* the min and max values"
          "'<'",    "Callback is triggered when the position is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the position is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletMotorizedPoti.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
@@ -199,19 +199,19 @@ class BrickletMotorizedPoti(Device):
     def set_analog_value_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Analog Value Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the analog value is *outside* the min and max values"
          "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
          "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletMotorizedPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
@@ -225,17 +225,17 @@ class BrickletMotorizedPoti(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callbacks
-        
+
         * :cb:`Position Reached`,
         * :cb:`Analog Value Reached`
-        
+
         are triggered, if the thresholds
-        
+
         * :func:`Set Position Callback Threshold`,
         * :func:`Set Analog Value Callback Threshold`
-        
+
         keep being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletMotorizedPoti.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -281,9 +281,9 @@ class BrickletMotorizedPoti(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

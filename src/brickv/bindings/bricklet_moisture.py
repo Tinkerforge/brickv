@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -85,7 +85,7 @@ class BrickletMoisture(Device):
         Returns the current moisture value. The value has a range of
         0 to 4095. A small value corresponds to little moisture, a big
         value corresponds to much moisture.
-        
+
         If you want to get the moisture value periodically, it is recommended
         to use the :cb:`Moisture` callback and set the period with
         :func:`Set Moisture Callback Period`.
@@ -96,10 +96,10 @@ class BrickletMoisture(Device):
         """
         Sets the period in ms with which the :cb:`Moisture` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Moisture` callback is only triggered if the moisture value has changed
         since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletMoisture.FUNCTION_SET_MOISTURE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -113,19 +113,19 @@ class BrickletMoisture(Device):
     def set_moisture_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Moisture Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the moisture value is *outside* the min and max values"
          "'i'",    "Callback is triggered when the moisture value is *inside* the min and max values"
          "'<'",    "Callback is triggered when the moisture value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the moisture value is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletMoisture.FUNCTION_SET_MOISTURE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
@@ -139,15 +139,15 @@ class BrickletMoisture(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callback
-        
+
         * :cb:`Moisture Reached`
-        
+
         is triggered, if the threshold
-        
+
         * :func:`Set Moisture Callback Threshold`
-        
+
         keeps being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletMoisture.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -162,12 +162,12 @@ class BrickletMoisture(Device):
         """
         Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
         for the moisture value.
-        
+
         Setting the length to 0 will turn the averaging completely off. With less
         averaging, there is more noise on the data.
-        
+
         The range for the averaging is 0-100.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletMoisture.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
@@ -183,9 +183,9 @@ class BrickletMoisture(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

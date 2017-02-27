@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -98,7 +98,7 @@ class BrickletIndustrialDualAnalogIn(Device):
     def get_voltage(self, channel):
         """
         Returns the voltage for the given channel in mV.
-        
+
         If you want to get the voltage periodically, it is recommended to use the
         :cb:`Voltage` callback and set the period with
         :func:`Set Voltage Callback Period`.
@@ -109,10 +109,10 @@ class BrickletIndustrialDualAnalogIn(Device):
         """
         Sets the period in ms with which the :cb:`Voltage` callback is triggered
         periodically for the given channel. A value of 0 turns the callback off.
-        
+
         The :cb:`Voltage` callback is only triggered if the voltage has changed since the
         last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_VOLTAGE_CALLBACK_PERIOD, (channel, period), 'B I', '')
@@ -127,19 +127,19 @@ class BrickletIndustrialDualAnalogIn(Device):
         """
         Sets the thresholds for the :cb:`Voltage Reached` callback for the given
         channel.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the voltage is *outside* the min and max values"
          "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
          "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD, (channel, option, min, max), 'B c i i', '')
@@ -153,15 +153,15 @@ class BrickletIndustrialDualAnalogIn(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callback
-        
+
         * :cb:`Voltage Reached`
-        
+
         is triggered, if the threshold
-        
+
         * :func:`Set Voltage Callback Threshold`
-        
+
         keeps being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -177,7 +177,7 @@ class BrickletIndustrialDualAnalogIn(Device):
         Sets the sample rate. The sample rate can be between 1 sample per second
         and 976 samples per second. Decreasing the sample rate will also decrease the
         noise on the data.
-        
+
         The default value is 6 (2 samples per second).
         """
         self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_SAMPLE_RATE, (rate,), 'B', '')
@@ -191,7 +191,7 @@ class BrickletIndustrialDualAnalogIn(Device):
     def set_calibration(self, offset, gain):
         """
         Sets offset and gain of MCP3911 internal calibration registers.
-        
+
         See MCP3911 datasheet 7.7 and 7.8. The Industrial Dual Analog In Bricklet
         is already factory calibrated by Tinkerforge. It should not be necessary
         for you to use this function
@@ -216,9 +216,9 @@ class BrickletIndustrialDualAnalogIn(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

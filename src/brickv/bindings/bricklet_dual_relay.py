@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -69,13 +69,13 @@ class BrickletDualRelay(Device):
         """
         Sets the state of the relays, *true* means on and *false* means off.
         For example: (true, false) turns relay 1 on and relay 2 off.
-        
+
         If you just want to set one of the relays and don't know the current state
         of the other relay, you can get the state with :func:`Get State` or you
         can use :func:`Set Selected State`.
-        
+
         Running monoflop timers will be overwritten if this function is called.
-        
+
         The default value is (*false*, *false*).
         """
         self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_SET_STATE, (relay1, relay2), '? ?', '')
@@ -92,10 +92,10 @@ class BrickletDualRelay(Device):
         is the desired state of the relay (*true* means on and *false* means off).
         The third parameter indicates the time (in ms) that the relay should hold
         the state.
-        
+
         If this function is called with the parameters (1, true, 1500):
         Relay 1 will turn on and in 1.5s it will turn off again.
-        
+
         A monoflop can be used as a failsafe mechanism. For example: Lets assume you
         have a RS485 bus and a Dual Relay Bricklet connected to one of the slave
         stacks. You can now call this function every second, with a time parameter
@@ -108,7 +108,7 @@ class BrickletDualRelay(Device):
         """
         Returns (for the given relay) the current state and the time as set by
         :func:`Set Monoflop` as well as the remaining time until the state flips.
-        
+
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
@@ -117,7 +117,7 @@ class BrickletDualRelay(Device):
     def set_selected_state(self, relay, state):
         """
         Sets the state of the selected relay (1 or 2), *true* means on and *false* means off.
-        
+
         The other relay remains untouched.
         """
         self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_SET_SELECTED_STATE, (relay, state), 'B ?', '')
@@ -127,9 +127,9 @@ class BrickletDualRelay(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

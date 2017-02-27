@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -87,7 +87,7 @@ class BrickletTemperature(Device):
         Returns the temperature of the sensor. The value
         has a range of -2500 to 8500 and is given in °C/100,
         e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
-        
+
         If you want to get the temperature periodically, it is recommended
         to use the :cb:`Temperature` callback and set the period with
         :func:`Set Temperature Callback Period`.
@@ -98,10 +98,10 @@ class BrickletTemperature(Device):
         """
         Sets the period in ms with which the :cb:`Temperature` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Temperature` callback is only triggered if the temperature has changed
         since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletTemperature.FUNCTION_SET_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -115,19 +115,19 @@ class BrickletTemperature(Device):
     def set_temperature_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Temperature Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the temperature is *outside* the min and max values"
          "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
          "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletTemperature.FUNCTION_SET_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
@@ -141,15 +141,15 @@ class BrickletTemperature(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callback
-        
+
         * :cb:`Temperature Reached`
-        
+
         is triggered, if the threshold
-        
+
         * :func:`Set Temperature Callback Threshold`
-        
+
         keeps being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletTemperature.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -163,17 +163,17 @@ class BrickletTemperature(Device):
     def set_i2c_mode(self, mode):
         """
         Sets the I2C mode. Possible modes are:
-        
+
         * 0: Fast (400kHz, default)
         * 1: Slow (100kHz)
-        
+
         If you have problems with obvious outliers in the
         Temperature Bricklet measurements, they may be caused by EMI issues.
         In this case it may be helpful to lower the I2C speed.
-        
+
         It is however not recommended to lower the I2C speed in applications where
         a high throughput needs to be achieved.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         self.ipcon.send_request(self, BrickletTemperature.FUNCTION_SET_I2C_MODE, (mode,), 'B', '')
@@ -181,7 +181,7 @@ class BrickletTemperature(Device):
     def get_i2c_mode(self):
         """
         Returns the I2C mode as set by :func:`Set I2C Mode`.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletTemperature.FUNCTION_GET_I2C_MODE, (), '', 'B')
@@ -191,9 +191,9 @@ class BrickletTemperature(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

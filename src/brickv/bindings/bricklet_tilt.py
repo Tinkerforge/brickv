@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -67,11 +67,11 @@ class BrickletTilt(Device):
     def get_tilt_state(self):
         """
         Returns the current tilt state. The state can either be
-        
+
         * 0 = Closed: The ball in the tilt switch closes the circuit.
         * 1 = Open: The ball in the tilt switch does not close the circuit.
         * 2 = Closed Vibrating: The tilt switch is in motion (rapid change between open and close).
-        
+
         .. image:: /Images/Bricklets/bricklet_tilt_mechanics.jpg
            :scale: 100 %
            :alt: Tilt states
@@ -103,9 +103,9 @@ class BrickletTilt(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

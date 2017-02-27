@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -98,7 +98,7 @@ class BrickletAmbientLight(Device):
         Returns the illuminance of the ambient light sensor. The value
         has a range of 0 to 9000 and is given in lux/10, i.e. a value
         of 4500 means that an illuminance of 450lux is measured.
-        
+
         If you want to get the illuminance periodically, it is recommended to use the
         :cb:`Illuminance` callback and set the period with
         :func:`Set Illuminance Callback Period`.
@@ -109,17 +109,17 @@ class BrickletAmbientLight(Device):
         """
         Returns the value as read by a 12-bit analog-to-digital converter.
         The value is between 0 and 4095.
-        
+
         .. note::
          The value returned by :func:`Get Illuminance` is averaged over several samples
          to yield less noise, while :func:`Get Analog Value` gives back raw
          unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
          if you need the full resolution of the analog-to-digital converter.
-        
+
          Also, the analog-to-digital converter covers three different ranges that are
          set dynamically depending on the light intensity. It is impossible to
          distinguish between these ranges with the analog value.
-        
+
         If you want the analog value periodically, it is recommended to use the
         :cb:`Analog Value` callback and set the period with
         :func:`Set Analog Value Callback Period`.
@@ -130,10 +130,10 @@ class BrickletAmbientLight(Device):
         """
         Sets the period in ms with which the :cb:`Illuminance` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Illuminance` callback is only triggered if the illuminance has changed since the
         last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletAmbientLight.FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -148,10 +148,10 @@ class BrickletAmbientLight(Device):
         """
         Sets the period in ms with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Analog Value` callback is only triggered if the analog value has changed since the
         last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletAmbientLight.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -165,19 +165,19 @@ class BrickletAmbientLight(Device):
     def set_illuminance_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Illuminance Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the illuminance is *outside* the min and max values"
          "'i'",    "Callback is triggered when the illuminance is *inside* the min and max values"
          "'<'",    "Callback is triggered when the illuminance is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the illuminance is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletAmbientLight.FUNCTION_SET_ILLUMINANCE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
@@ -191,19 +191,19 @@ class BrickletAmbientLight(Device):
     def set_analog_value_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Analog Value Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the analog value is *outside* the min and max values"
          "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
          "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletAmbientLight.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
@@ -217,17 +217,17 @@ class BrickletAmbientLight(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callbacks
-        
+
         * :cb:`Illuminance Reached`,
         * :cb:`Analog Value Reached`
-        
+
         are triggered, if the thresholds
-        
+
         * :func:`Set Illuminance Callback Threshold`,
         * :func:`Set Analog Value Callback Threshold`
-        
+
         keep being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletAmbientLight.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -243,9 +243,9 @@ class BrickletAmbientLight(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

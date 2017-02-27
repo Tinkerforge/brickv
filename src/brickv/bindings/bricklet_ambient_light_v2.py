@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -102,11 +102,11 @@ class BrickletAmbientLightV2(Device):
         up to about 100000lux, but above 64000lux the precision starts to drop.
         The illuminance is given in lux/100, i.e. a value of 450000 means that an
         illuminance of 4500lux is measured.
-        
+
         .. versionchanged:: 2.0.2$nbsp;(Plugin)
           An illuminance of 0lux indicates that the sensor is saturated and the
           configuration should be modified, see :func:`Set Configuration`.
-        
+
         If you want to get the illuminance periodically, it is recommended to use the
         :cb:`Illuminance` callback and set the period with
         :func:`Set Illuminance Callback Period`.
@@ -117,10 +117,10 @@ class BrickletAmbientLightV2(Device):
         """
         Sets the period in ms with which the :cb:`Illuminance` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Illuminance` callback is only triggered if the illuminance has changed
         since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -134,19 +134,19 @@ class BrickletAmbientLightV2(Device):
     def set_illuminance_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Illuminance Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the illuminance is *outside* the min and max values"
          "'i'",    "Callback is triggered when the illuminance is *inside* the min and max values"
          "'<'",    "Callback is triggered when the illuminance is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the illuminance is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_ILLUMINANCE_CALLBACK_THRESHOLD, (option, min, max), 'c I I', '')
@@ -160,15 +160,15 @@ class BrickletAmbientLightV2(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callbacks
-        
+
         * :cb:`Illuminance Reached`,
-        
+
         are triggered, if the thresholds
-        
+
         * :func:`Set Illuminance Callback Threshold`,
-        
+
         keep being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -183,28 +183,28 @@ class BrickletAmbientLightV2(Device):
         """
         Sets the configuration. It is possible to configure an illuminance range
         between 0-600lux and 0-64000lux and an integration time between 50ms and 400ms.
-        
+
         .. versionadded:: 2.0.2$nbsp;(Plugin)
           The unlimited illuminance range allows to measure up to about 100000lux, but
           above 64000lux the precision starts to drop.
-        
+
         A smaller illuminance range increases the resolution of the data. A longer
         integration time will result in less noise on the data.
-        
+
         .. versionchanged:: 2.0.2$nbsp;(Plugin)
           If the actual measure illuminance is out-of-range then the current illuminance
           range maximum +0.01lux is reported by :func:`Get Illuminance` and the
           :cb:`Illuminance` callback. For example, 800001 for the 0-8000lux range.
-        
+
         .. versionchanged:: 2.0.2$nbsp;(Plugin)
           With a long integration time the sensor might be saturated before the measured
           value reaches the maximum of the selected illuminance range. In this case 0lux
           is reported by :func:`Get Illuminance` and the :cb:`Illuminance` callback.
-        
+
         If the measurement is out-of-range or the sensor is saturated then you should
         configure the next higher illuminance range. If the highest range is already
         in use, then start to reduce the integration time.
-        
+
         The default values are 0-8000lux illuminance range and 200ms integration time.
         """
         self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_CONFIGURATION, (illuminance_range, integration_time), 'B B', '')
@@ -220,9 +220,9 @@ class BrickletAmbientLightV2(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

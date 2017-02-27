@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -132,7 +132,7 @@ class BrickletVoltageCurrent(Device):
         """
         Returns the current. The value is in mA
         and between -20000mA and 20000mA.
-        
+
         If you want to get the current periodically, it is recommended to use the
         :cb:`Current` callback and set the period with
         :func:`Set Current Callback Period`.
@@ -143,7 +143,7 @@ class BrickletVoltageCurrent(Device):
         """
         Returns the voltage. The value is in mV
         and between 0mV and 36000mV.
-        
+
         If you want to get the voltage periodically, it is recommended to use the
         :cb:`Voltage` callback and set the period with
         :func:`Set Voltage Callback Period`.
@@ -154,7 +154,7 @@ class BrickletVoltageCurrent(Device):
         """
         Returns the power. The value is in mW
         and between 0mV and 720000mW.
-        
+
         If you want to get the power periodically, it is recommended to use the
         :cb:`Power` callback and set the period with
         :func:`Set Power Callback Period`.
@@ -166,13 +166,13 @@ class BrickletVoltageCurrent(Device):
         Sets the configuration of the Voltage/Current Bricklet. It is
         possible to configure number of averages as well as
         voltage and current conversion time.
-        
+
         Averaging:
-        
+
         .. csv-table::
          :header: "Value", "Number of Averages"
          :widths: 20, 20
-        
+
          "0",    "1"
          "1",    "4"
          "2",    "16"
@@ -181,13 +181,13 @@ class BrickletVoltageCurrent(Device):
          "5",    "256"
          "6",    "512"
          ">=7",  "1024"
-        
+
         Voltage/Current conversion:
-        
+
         .. csv-table::
          :header: "Value", "Conversion time"
          :widths: 20, 20
-        
+
          "0",    "140µs"
          "1",    "204µs"
          "2",    "332µs"
@@ -196,7 +196,7 @@ class BrickletVoltageCurrent(Device):
          "5",    "2.116ms"
          "6",    "4.156ms"
          ">=7",  "8.244ms"
-        
+
         The default values are 3, 4 and 4 (64, 1.1ms, 1.1ms) for averaging, voltage
         conversion and current conversion.
         """
@@ -213,7 +213,7 @@ class BrickletVoltageCurrent(Device):
         Since the shunt resistor that is used to measure the current is not
         perfectly precise, it needs to be calibrated by a multiplier and
         divisor if a very precise reading is needed.
-        
+
         For example, if you are expecting a measurement of 1000mA and you
         are measuring 1023mA, you can calibrate the Voltage/Current Bricklet
         by setting the multiplier to 1000 and the divisor to 1023.
@@ -230,10 +230,10 @@ class BrickletVoltageCurrent(Device):
         """
         Sets the period in ms with which the :cb:`Current` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Current` callback is only triggered if the current has changed since
         the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_CURRENT_CALLBACK_PERIOD, (period,), 'I', '')
@@ -248,10 +248,10 @@ class BrickletVoltageCurrent(Device):
         """
         Sets the period in ms with which the :cb:`Voltage` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Voltage` callback is only triggered if the voltage has changed since
         the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_VOLTAGE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -266,10 +266,10 @@ class BrickletVoltageCurrent(Device):
         """
         Sets the period in ms with which the :cb:`Power` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Power` callback is only triggered if the power has changed since the
         last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_POWER_CALLBACK_PERIOD, (period,), 'I', '')
@@ -283,19 +283,19 @@ class BrickletVoltageCurrent(Device):
     def set_current_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Current Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the current is *outside* the min and max values"
          "'i'",    "Callback is triggered when the current is *inside* the min and max values"
          "'<'",    "Callback is triggered when the current is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the current is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_CURRENT_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
@@ -309,19 +309,19 @@ class BrickletVoltageCurrent(Device):
     def set_voltage_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Voltage Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the voltage is *outside* the min and max values"
          "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
          "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
@@ -335,19 +335,19 @@ class BrickletVoltageCurrent(Device):
     def set_power_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Power Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the power is *outside* the min and max values"
          "'i'",    "Callback is triggered when the power is *inside* the min and max values"
          "'<'",    "Callback is triggered when the power is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the power is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_POWER_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
@@ -361,19 +361,19 @@ class BrickletVoltageCurrent(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callbacks
-        
+
         * :cb:`Current Reached`,
         * :cb:`Voltage Reached`,
         * :cb:`Power Reached`
-        
+
         are triggered, if the thresholds
-        
+
         * :func:`Set Current Callback Threshold`,
         * :func:`Set Voltage Callback Threshold`,
         * :func:`Set Power Callback Threshold`
-        
+
         keep being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -389,9 +389,9 @@ class BrickletVoltageCurrent(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

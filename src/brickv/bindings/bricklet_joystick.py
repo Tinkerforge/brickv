@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -110,7 +110,7 @@ class BrickletJoystick(Device):
         Returns the position of the Joystick. The value ranges between -100 and
         100 for both axis. The middle position of the joystick is x=0, y=0. The
         returned values are averaged and calibrated (see :func:`Calibrate`).
-        
+
         If you want to get the position periodically, it is recommended to use the
         :cb:`Position` callback and set the period with
         :func:`Set Position Callback Period`.
@@ -120,7 +120,7 @@ class BrickletJoystick(Device):
     def is_pressed(self):
         """
         Returns *true* if the button is pressed and *false* otherwise.
-        
+
         It is recommended to use the :cb:`Pressed` and :cb:`Released` callbacks
         to handle the button.
         """
@@ -130,13 +130,13 @@ class BrickletJoystick(Device):
         """
         Returns the values as read by a 12-bit analog-to-digital converter.
         The values are between 0 and 4095 for both axis.
-        
+
         .. note::
          The values returned by :func:`Get Position` are averaged over several samples
          to yield less noise, while :func:`Get Analog Value` gives back raw
          unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
          if you need the full resolution of the analog-to-digital converter.
-        
+
         If you want the analog values periodically, it is recommended to use the
         :cb:`Analog Value` callback and set the period with
         :func:`Set Analog Value Callback Period`.
@@ -148,7 +148,7 @@ class BrickletJoystick(Device):
         Calibrates the middle position of the Joystick. If your Joystick Bricklet
         does not return x=0 and y=0 in the middle position, call this function
         while the Joystick is standing still in the middle position.
-        
+
         The resulting calibration will be saved on the EEPROM of the Joystick
         Bricklet, thus you only have to calibrate it once.
         """
@@ -158,10 +158,10 @@ class BrickletJoystick(Device):
         """
         Sets the period in ms with which the :cb:`Position` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Position` callback is only triggered if the position has changed since the
         last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_POSITION_CALLBACK_PERIOD, (period,), 'I', '')
@@ -176,10 +176,10 @@ class BrickletJoystick(Device):
         """
         Sets the period in ms with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Analog Value` callback is only triggered if the analog values have
         changed since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -193,19 +193,19 @@ class BrickletJoystick(Device):
     def set_position_callback_threshold(self, option, min_x, max_x, min_y, max_y):
         """
         Sets the thresholds for the :cb:`Position Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the position is *outside* the min and max values"
          "'i'",    "Callback is triggered when the position is *inside* the min and max values"
          "'<'",    "Callback is triggered when the position is smaller than the min values (max is ignored)"
          "'>'",    "Callback is triggered when the position is greater than the min values (max is ignored)"
-        
+
         The default value is ('x', 0, 0, 0, 0).
         """
         self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y), 'c h h h h', '')
@@ -219,19 +219,19 @@ class BrickletJoystick(Device):
     def set_analog_value_callback_threshold(self, option, min_x, max_x, min_y, max_y):
         """
         Sets the thresholds for the :cb:`Analog Value Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the analog values are *outside* the min and max values"
          "'i'",    "Callback is triggered when the analog values are *inside* the min and max values"
          "'<'",    "Callback is triggered when the analog values are smaller than the min values (max is ignored)"
          "'>'",    "Callback is triggered when the analog values are greater than the min values (max is ignored)"
-        
+
         The default value is ('x', 0, 0, 0, 0).
         """
         self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y), 'c H H H H', '')
@@ -245,17 +245,17 @@ class BrickletJoystick(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callbacks
-        
+
         * :cb:`Position Reached`,
         * :cb:`Analog Value Reached`
-        
+
         are triggered, if the thresholds
-        
+
         * :func:`Set Position Callback Threshold`,
         * :func:`Set Analog Value Callback Threshold`
-        
+
         keep being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -271,9 +271,9 @@ class BrickletJoystick(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

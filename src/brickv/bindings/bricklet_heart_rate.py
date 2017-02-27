@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -92,7 +92,7 @@ class BrickletHeartRate(Device):
     def get_heart_rate(self):
         """
         Returns the current heart rate measured.
-        
+
         If you want to get the heart rate periodically, it is recommended
         to use the :cb:`Heart Rate` callback and set the period with
         :func:`Set Heart Rate Callback Period`.
@@ -103,10 +103,10 @@ class BrickletHeartRate(Device):
         """
         Sets the period in ms with which the :cb:`Heart Rate` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Heart Rate` callback is only triggered if the heart rate has changed
         since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletHeartRate.FUNCTION_SET_HEART_RATE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -120,19 +120,19 @@ class BrickletHeartRate(Device):
     def set_heart_rate_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Heart Rate Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the heart rate is *outside* the min and max values"
          "'i'",    "Callback is triggered when the heart rate is *inside* the min and max values"
          "'<'",    "Callback is triggered when the heart rate is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the heart rate is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletHeartRate.FUNCTION_SET_HEART_RATE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
@@ -146,15 +146,15 @@ class BrickletHeartRate(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callback
-        
+
         * :cb:`Heart Rate Reached`
-        
+
         is triggered, if the threshold
-        
+
         * :func:`Set Heart Rate Callback Threshold`
-        
+
         keeps being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletHeartRate.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -188,9 +188,9 @@ class BrickletHeartRate(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

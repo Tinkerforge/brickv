@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -106,7 +106,7 @@ class BrickletACCurrent(Device):
     def get_current(self):
         """
         TODO
-        
+
         If you want to get the current periodically, it is recommended to use the
         :cb:`Current` callback and set the period with
         :func:`Set Current Callback Period`.
@@ -117,7 +117,7 @@ class BrickletACCurrent(Device):
         """
         Returns the value as read by a 12-bit analog-to-digital converter.
         The value is between 0 and 4095.
-        
+
         If you want the analog value periodically, it is recommended to use the
         :cb:`Analog Value` callback and set the period with
         :func:`Set Analog Value Callback Period`.
@@ -128,10 +128,10 @@ class BrickletACCurrent(Device):
         """
         Sets the period in ms with which the :cb:`Current` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Current` callback is only triggered if the current has changed since the
         last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletACCurrent.FUNCTION_SET_CURRENT_CALLBACK_PERIOD, (period,), 'I', '')
@@ -146,10 +146,10 @@ class BrickletACCurrent(Device):
         """
         Sets the period in ms with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Analog Value` callback is only triggered if the analog value has
         changed since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletACCurrent.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -163,19 +163,19 @@ class BrickletACCurrent(Device):
     def set_current_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Current Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the current is *outside* the min and max values"
          "'i'",    "Callback is triggered when the current is *inside* the min and max values"
          "'<'",    "Callback is triggered when the current is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the current is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletACCurrent.FUNCTION_SET_CURRENT_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
@@ -189,19 +189,19 @@ class BrickletACCurrent(Device):
     def set_analog_value_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Analog Value Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the analog value is *outside* the min and max values"
          "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
          "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletACCurrent.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
@@ -215,17 +215,17 @@ class BrickletACCurrent(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callbacks
-        
+
         * :cb:`Current Reached`,
         * :cb:`Analog Value Reached`
-        
+
         are triggered, if the thresholds
-        
+
         * :func:`Set Current Callback Threshold`,
         * :func:`Set Analog Value Callback Threshold`
-        
+
         keep being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletACCurrent.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -240,12 +240,12 @@ class BrickletACCurrent(Device):
         """
         Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
         for the moisture value.
-        
+
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
-        
+
         The range for the averaging is 1-50.
-        
+
         The default value is 50.
         """
         self.ipcon.send_request(self, BrickletACCurrent.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
@@ -258,13 +258,13 @@ class BrickletACCurrent(Device):
 
     def set_configuration(self, current_range):
         """
-        
+
         """
         self.ipcon.send_request(self, BrickletACCurrent.FUNCTION_SET_CONFIGURATION, (current_range,), 'B', '')
 
     def get_configuration(self):
         """
-        
+
         """
         return self.ipcon.send_request(self, BrickletACCurrent.FUNCTION_GET_CONFIGURATION, (), '', 'B')
 
@@ -273,9 +273,9 @@ class BrickletACCurrent(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

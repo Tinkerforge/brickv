@@ -547,9 +547,19 @@ class IPConnection:
             tmp.settimeout(5)
             tmp.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             tmp.connect((self.host, self.port))
-            tmp.settimeout(None)
+
+            if sys.platform == 'win32':
+                # for some unknown reason the socket recv() call does not
+                # immediate return on Windows if the socket gets shut down on
+                # disconnect. the socket recv() call will still block for
+                # several seconds before it returns. this in turn blocks the
+                # disconnect. to workaround this use a 100ms timeout for
+                # blocking socket operations.
+                tmp.settimeout(0.1)
+            else:
+                tmp.settimeout(None)
         except:
-            def cleanup():
+            def cleanup1():
                 # end callback thread
                 if not is_auto_reconnect:
                     self.callback.queue.put((IPConnection.QUEUE_EXIT, None))
@@ -559,7 +569,7 @@ class IPConnection:
 
                     self.callback = None
 
-            cleanup()
+            cleanup1()
             raise
 
         self.socket = tmp
@@ -575,7 +585,7 @@ class IPConnection:
             self.disconnect_probe_thread.daemon = True
             self.disconnect_probe_thread.start()
         except:
-            def cleanup():
+            def cleanup2():
                 self.disconnect_probe_thread = None
 
                 # close socket
@@ -591,7 +601,7 @@ class IPConnection:
 
                     self.callback = None
 
-            cleanup()
+            cleanup2()
             raise
 
         # create receive thread
@@ -605,7 +615,7 @@ class IPConnection:
             self.receive_thread.daemon = True
             self.receive_thread.start()
         except:
-            def cleanup():
+            def cleanup3():
                 # close socket
                 self.disconnect_unlocked()
 
@@ -618,7 +628,7 @@ class IPConnection:
 
                     self.callback = None
 
-            cleanup()
+            cleanup3()
             raise
 
         self.auto_reconnect_allowed = False
@@ -678,6 +688,8 @@ class IPConnection:
         while self.receive_flag:
             try:
                 data = self.socket.recv(8192)
+            except socket.timeout:
+                continue
             except socket.error:
                 if self.receive_flag:
                     e = sys.exc_info()[1]
@@ -870,7 +882,12 @@ class IPConnection:
             if self.disconnect_probe_flag:
                 try:
                     with self.socket_send_lock:
-                        self.socket.send(request)
+                        while True:
+                            try:
+                                self.socket.send(request)
+                                break
+                            except socket.timeout:
+                                continue
                 except socket.error:
                     self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR,
                                                    self.socket_id, False)
@@ -941,7 +958,12 @@ class IPConnection:
 
             try:
                 with self.socket_send_lock:
-                    self.socket.send(packet)
+                    while True:
+                        try:
+                            self.socket.send(packet)
+                            break
+                        except socket.timeout:
+                            continue
             except socket.error:
                 self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR, None, True)
                 raise Error(Error.NOT_CONNECTED, 'Not connected')

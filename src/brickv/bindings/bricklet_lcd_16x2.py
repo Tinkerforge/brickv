@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -81,10 +81,10 @@ class BrickletLCD16x2(Device):
         """
         Writes text to a specific line (0 to 1) with a specific position
         (0 to 15). The text can have a maximum of 16 characters.
-        
+
         For example: (0, 5, "Hello") will write *Hello* in the middle of the
         first line of the display.
-        
+
         The display uses a special charset that includes all ASCII characters except
         backslash and tilde. The LCD charset also includes several other non-ASCII characters, see
         the `charset specification <https://github.com/Tinkerforge/lcd-16x2-bricklet/raw/master/datasheets/standard_charset.pdf>`__
@@ -123,7 +123,7 @@ class BrickletLCD16x2(Device):
         should be blinking (shown as a blinking block). The cursor position
         is one character behind the the last text written with
         :func:`Write Line`.
-        
+
         The default is (false, false).
         """
         self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_SET_CONFIG, (cursor, blinking), '? ?', '')
@@ -137,7 +137,7 @@ class BrickletLCD16x2(Device):
     def is_button_pressed(self, button):
         """
         Returns *true* if the button (0 to 2) is pressed.
-        
+
         If you want to react on button presses and releases it is recommended to use the
         :cb:`Button Pressed` and :cb:`Button Released` callbacks.
         """
@@ -149,7 +149,7 @@ class BrickletLCD16x2(Device):
         consist of 5x8 pixels and can be addressed with the index 0-7. To describe
         the pixels, the first 5 bits of 8 bytes are used. For example, to make
         a custom character "H", you should transfer the following:
-        
+
         * ``character[0] = 0b00010001`` (decimal value 17)
         * ``character[1] = 0b00010001`` (decimal value 17)
         * ``character[2] = 0b00010001`` (decimal value 17)
@@ -158,16 +158,16 @@ class BrickletLCD16x2(Device):
         * ``character[5] = 0b00010001`` (decimal value 17)
         * ``character[6] = 0b00010001`` (decimal value 17)
         * ``character[7] = 0b00000000`` (decimal value 0)
-        
+
         The characters can later be written with :func:`Write Line` by using the
         characters with the byte representation 8 to 15.
-        
+
         You can play around with the custom characters in Brick Viewer since
         version 2.0.1.
-        
+
         Custom characters are stored by the LCD in RAM, so they have to be set
         after each startup.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_SET_CUSTOM_CHARACTER, (index, character), 'B 8B', '')
@@ -176,7 +176,7 @@ class BrickletLCD16x2(Device):
         """
         Returns the custom character for a given index, as set with
         :func:`Set Custom Character`.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_GET_CUSTOM_CHARACTER, (index,), 'B', '8B')
@@ -186,9 +186,9 @@ class BrickletLCD16x2(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

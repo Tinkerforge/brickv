@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -80,6 +80,7 @@ class BrickIMU(Device):
     FUNCTION_ORIENTATION_CALCULATION_ON = 37
     FUNCTION_ORIENTATION_CALCULATION_OFF = 38
     FUNCTION_IS_ORIENTATION_CALCULATION_ON = 39
+    FUNCTION_GET_SEND_TIMEOUT_COUNT = 233
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -94,6 +95,14 @@ class BrickIMU(Device):
     CALIBRATION_TYPE_MAGNETOMETER_BIAS = 3
     CALIBRATION_TYPE_GYROSCOPE_GAIN = 4
     CALIBRATION_TYPE_GYROSCOPE_BIAS = 5
+    COMMUNICATION_METHOD_NONE = 0
+    COMMUNICATION_METHOD_USB = 1
+    COMMUNICATION_METHOD_SPI_STACK = 2
+    COMMUNICATION_METHOD_CHIBI = 3
+    COMMUNICATION_METHOD_RS485 = 4
+    COMMUNICATION_METHOD_WIFI = 5
+    COMMUNICATION_METHOD_ETHERNET = 6
+    COMMUNICATION_METHOD_WIFI_V2 = 7
 
     def __init__(self, uid, ipcon):
         """
@@ -143,6 +152,7 @@ class BrickIMU(Device):
         self.response_expected[BrickIMU.FUNCTION_ORIENTATION_CALCULATION_ON] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_ORIENTATION_CALCULATION_OFF] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_IS_ORIENTATION_CALCULATION_ON] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_GET_SEND_TIMEOUT_COUNT] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_ENABLE_STATUS_LED] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_DISABLE_STATUS_LED] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_IS_STATUS_LED_ENABLED] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -163,7 +173,7 @@ class BrickIMU(Device):
         """
         Returns the calibrated acceleration from the accelerometer for the
         x, y and z axis in g/1000 (1g = 9.80665m/s²).
-        
+
         If you want to get the acceleration periodically, it is recommended
         to use the :cb:`Acceleration` callback and set the period with
         :func:`Set Acceleration Period`.
@@ -174,7 +184,7 @@ class BrickIMU(Device):
         """
         Returns the calibrated magnetic field from the magnetometer for the
         x, y and z axis in mG (Milligauss or Nanotesla).
-        
+
         If you want to get the magnetic field periodically, it is recommended
         to use the :cb:`Magnetic Field` callback and set the period with
         :func:`Set Magnetic Field Period`.
@@ -186,7 +196,7 @@ class BrickIMU(Device):
         Returns the calibrated angular velocity from the gyroscope for the
         x, y and z axis in °/14.375s (you have to divide by 14.375 to
         get the value in °/s).
-        
+
         If you want to get the angular velocity periodically, it is recommended
         to use the :cb:`Angular Velocity` callback and set the period with
         :func:`Set Angular Velocity Period`.
@@ -197,9 +207,9 @@ class BrickIMU(Device):
         """
         Returns the data from :func:`Get Acceleration`, :func:`Get Magnetic Field`
         and :func:`Get Angular Velocity` as well as the temperature of the IMU Brick.
-        
+
         The temperature is given in °C/100.
-        
+
         If you want to get the data periodically, it is recommended
         to use the :cb:`All Data` callback and set the period with
         :func:`Set All Data Period`.
@@ -211,12 +221,12 @@ class BrickIMU(Device):
         Returns the current orientation (roll, pitch, yaw) of the IMU Brick as Euler
         angles in one-hundredth degree. Note that Euler angles always experience a
         `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
-        
+
         We recommend that you use quaternions instead.
-        
+
         The order to sequence in which the orientation values should be applied is
         roll, yaw, pitch.
-        
+
         If you want to get the orientation periodically, it is recommended
         to use the :cb:`Orientation` callback and set the period with
         :func:`Set Orientation Period`.
@@ -227,32 +237,32 @@ class BrickIMU(Device):
         """
         Returns the current orientation (x, y, z, w) of the IMU as
         `quaternions <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
-        
+
         You can go from quaternions to Euler angles with the following formula::
-        
+
          xAngle = atan2(2*y*w - 2*x*z, 1 - 2*y*y - 2*z*z)
          yAngle = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
          zAngle =  asin(2*x*y + 2*z*w)
-        
+
         This process is not reversible, because of the
         `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
-        
+
         It is also possible to calculate independent angles. You can calculate
         yaw, pitch and roll in a right-handed vehicle coordinate system according to
         DIN70000 with::
-        
+
          yaw   =  atan2(2*x*y + 2*w*z, w*w + x*x - y*y - z*z)
          pitch = -asin(2*w*y - 2*x*z)
          roll  = -atan2(2*y*z + 2*w*x, -w*w + x*x + y*y - z*z))
-        
+
         Converting the quaternions to an OpenGL transformation matrix is
         possible with the following formula::
-        
+
          matrix = [[1 - 2*(y*y + z*z),     2*(x*y - w*z),     2*(x*z + w*y), 0],
                    [    2*(x*y + w*z), 1 - 2*(x*x + z*z),     2*(y*z - w*x), 0],
                    [    2*(x*z - w*y),     2*(y*z + w*x), 1 - 2*(x*x + y*y), 0],
                    [                0,                 0,                 0, 1]]
-        
+
         If you want to get the quaternions periodically, it is recommended
         to use the :cb:`Quaternion` callback and set the period with
         :func:`Set Quaternion Period`.
@@ -313,30 +323,30 @@ class BrickIMU(Device):
         """
         Sets the convergence speed of the IMU Brick in °/s. The convergence speed
         determines how the different sensor measurements are fused.
-        
+
         If the orientation of the IMU Brick is off by 10° and the convergence speed is
         set to 20°/s, it will take 0.5s until the orientation is corrected. However,
         if the correct orientation is reached and the convergence speed is too high,
         the orientation will fluctuate with the fluctuations of the accelerometer and
         the magnetometer.
-        
+
         If you set the convergence speed to 0, practically only the gyroscope is used
         to calculate the orientation. This gives very smooth movements, but errors of the
         gyroscope will not be corrected. If you set the convergence speed to something
         above 500, practically only the magnetometer and the accelerometer are used to
         calculate the orientation. In this case the movements are abrupt and the values
         will fluctuate, but there won't be any errors that accumulate over time.
-        
+
         In an application with high angular velocities, we recommend a high convergence
         speed, so the errors of the gyroscope can be corrected fast. In applications with
         only slow movements we recommend a low convergence speed. You can change the
         convergence speed on the fly. So it is possible (and recommended) to increase
         the convergence speed before an abrupt movement and decrease it afterwards
         again.
-        
+
         You might want to play around with the convergence speed in the Brick Viewer to
         get a feeling for a good value for your application.
-        
+
         The default value is 30.
         """
         self.ipcon.send_request(self, BrickIMU.FUNCTION_SET_CONVERGENCE_SPEED, (speed,), 'H', '')
@@ -350,27 +360,27 @@ class BrickIMU(Device):
     def set_calibration(self, typ, data):
         """
         There are several different types that can be calibrated:
-        
+
         .. csv-table::
          :header: "Type", "Description", "Values"
          :widths: 10, 30, 110
-        
+
          "0",    "Accelerometer Gain", "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
          "1",    "Accelerometer Bias", "``[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]``"
          "2",    "Magnetometer Gain",  "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
          "3",    "Magnetometer Bias",  "``[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]``"
          "4",    "Gyroscope Gain",     "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
          "5",    "Gyroscope Bias",     "``[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]``"
-        
+
         The calibration via gain and bias is done with the following formula::
-        
+
          new_value = (bias + orig_value) * gain_mul / gain_div
-        
+
         If you really want to write your own calibration software, please keep
         in mind that you first have to undo the old calibration (set bias to 0 and
         gain to 1/1) and that you have to average over several thousand values
         to obtain a usable result in the end.
-        
+
         The gyroscope bias is highly dependent on the temperature, so you have to
         calibrate the bias two times with different temperatures. The values ``xl``,
         ``yl``, ``zl`` and ``temp l`` are the bias for ``x``, ``y``, ``z`` and the
@@ -379,7 +389,7 @@ class BrickIMU(Device):
         difference should be at least 5°C. If you have a temperature where the
         IMU Brick is mostly used, you should use this temperature for one of the
         sampling points.
-        
+
         .. note::
          We highly recommend that you use the Brick Viewer to calibrate your
          IMU Brick.
@@ -396,7 +406,7 @@ class BrickIMU(Device):
         """
         Sets the period in ms with which the :cb:`Acceleration` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickIMU.FUNCTION_SET_ACCELERATION_PERIOD, (period,), 'I', '')
@@ -475,9 +485,9 @@ class BrickIMU(Device):
     def orientation_calculation_on(self):
         """
         Turns the orientation calculation of the IMU Brick on.
-        
+
         As default the calculation is on.
-        
+
         .. versionadded:: 2.0.2$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickIMU.FUNCTION_ORIENTATION_CALCULATION_ON, (), '', '')
@@ -485,17 +495,17 @@ class BrickIMU(Device):
     def orientation_calculation_off(self):
         """
         Turns the orientation calculation of the IMU Brick off.
-        
+
         If the calculation is off, :func:`Get Orientation` will return
         the last calculated value until the calculation is turned on again.
-        
+
         The trigonometric functions that are needed to calculate the orientation
         are very expensive. We recommend to turn the orientation calculation
         off if the orientation is not needed, to free calculation time for the
         sensor fusion algorithm.
-        
+
         As default the calculation is on.
-        
+
         .. versionadded:: 2.0.2$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickIMU.FUNCTION_ORIENTATION_CALCULATION_OFF, (), '', '')
@@ -504,20 +514,33 @@ class BrickIMU(Device):
         """
         Returns *true* if the orientation calculation of the IMU Brick
         is on, *false* otherwise.
-        
+
         .. versionadded:: 2.0.2$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_IS_ORIENTATION_CALCULATION_ON, (), '', '?')
 
+    def get_send_timeout_count(self, communication_method):
+        """
+        Returns the timeout count for the different communication methods.
+
+        The methods 0-2 are available for all Bricks, 3-7 only for Master Bricks.
+
+        This function is mostly used for debugging during development, in normal operation
+        the counters should nearly always stay at 0.
+
+        .. versionadded:: 2.3.3$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
+
     def enable_status_led(self):
         """
         Enables the status LED.
-        
+
         The status LED is the blue LED next to the USB connector. If enabled is is
         on and it flickers if data is transfered. If disabled it is always off.
-        
+
         The default state is enabled.
-        
+
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickIMU.FUNCTION_ENABLE_STATUS_LED, (), '', '')
@@ -525,12 +548,12 @@ class BrickIMU(Device):
     def disable_status_led(self):
         """
         Disables the status LED.
-        
+
         The status LED is the blue LED next to the USB connector. If enabled is is
         on and it flickers if data is transfered. If disabled it is always off.
-        
+
         The default state is enabled.
-        
+
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickIMU.FUNCTION_DISABLE_STATUS_LED, (), '', '')
@@ -538,7 +561,7 @@ class BrickIMU(Device):
     def is_status_led_enabled(self):
         """
         Returns *true* if the status LED is enabled, *false* otherwise.
-        
+
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
@@ -547,7 +570,7 @@ class BrickIMU(Device):
         """
         Returns the firmware and protocol version and the name of the Bricklet for a
         given port.
-        
+
         This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
         plugins.
         """
@@ -557,7 +580,7 @@ class BrickIMU(Device):
         """
         Returns the temperature in °C/10 as measured inside the microcontroller. The
         value returned is not the ambient temperature!
-        
+
         The temperature is only proportional to the real temperature and it has an
         accuracy of +-15%. Practically it is only useful as an indicator for
         temperature changes.
@@ -568,7 +591,7 @@ class BrickIMU(Device):
         """
         Calling this function will reset the Brick. Calling this function
         on a Brick inside of a stack will reset the whole stack.
-        
+
         After a reset you have to create new device objects,
         calling functions on the existing ones will result in
         undefined behavior!
@@ -580,9 +603,9 @@ class BrickIMU(Device):
         Returns the UID, the UID where the Brick is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be '0'-'8' (stack position).
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -65,9 +65,9 @@ class BrickletSolidStateRelay(Device):
     def set_state(self, state):
         """
         Sets the state of the relays *true* means on and *false* means off.
-        
+
         Running monoflop timers will be overwritten if this function is called.
-        
+
         The default value is *false*.
         """
         self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_SET_STATE, (state,), '?', '')
@@ -83,10 +83,10 @@ class BrickletSolidStateRelay(Device):
         The first parameter  is the desired state of the relay (*true* means on
         and *false* means off). The second parameter indicates the time (in ms) that
         the relay should hold the state.
-        
+
         If this function is called with the parameters (true, 1500):
         The relay will turn on and in 1.5s it will turn off again.
-        
+
         A monoflop can be used as a failsafe mechanism. For example: Lets assume you
         have a RS485 bus and a Solid State Relay Bricklet connected to one of the slave
         stacks. You can now call this function every second, with a time parameter
@@ -99,7 +99,7 @@ class BrickletSolidStateRelay(Device):
         """
         Returns the current state and the time as set by
         :func:`Set Monoflop` as well as the remaining time until the state flips.
-        
+
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
@@ -110,9 +110,9 @@ class BrickletSolidStateRelay(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

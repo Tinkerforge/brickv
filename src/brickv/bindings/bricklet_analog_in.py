@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -112,7 +112,7 @@ class BrickletAnalogIn(Device):
         Returns the voltage of the sensor. The value is in mV and
         between 0V and 45V. The resolution between 0 and 6V is about 2mV.
         Between 6 and 45V the resolution is about 10mV.
-        
+
         If you want to get the voltage periodically, it is recommended to use the
         :cb:`Voltage` callback and set the period with
         :func:`Set Voltage Callback Period`.
@@ -123,13 +123,13 @@ class BrickletAnalogIn(Device):
         """
         Returns the value as read by a 12-bit analog-to-digital converter.
         The value is between 0 and 4095.
-        
+
         .. note::
          The value returned by :func:`Get Voltage` is averaged over several samples
          to yield less noise, while :func:`Get Analog Value` gives back raw
          unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
          if you need the full resolution of the analog-to-digital converter.
-        
+
         If you want the analog value periodically, it is recommended to use the
         :cb:`Analog Value` callback and set the period with
         :func:`Set Analog Value Callback Period`.
@@ -140,10 +140,10 @@ class BrickletAnalogIn(Device):
         """
         Sets the period in ms with which the :cb:`Voltage` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Voltage` callback is only triggered if the voltage has changed since
         the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_VOLTAGE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -158,10 +158,10 @@ class BrickletAnalogIn(Device):
         """
         Sets the period in ms with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Analog Value` callback is only triggered if the analog value has
         changed since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -175,19 +175,19 @@ class BrickletAnalogIn(Device):
     def set_voltage_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Voltage Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the voltage is *outside* the min and max values"
          "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
          "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
@@ -201,19 +201,19 @@ class BrickletAnalogIn(Device):
     def set_analog_value_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Analog Value Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the analog value is *outside* the min and max values"
          "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
          "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
@@ -227,17 +227,17 @@ class BrickletAnalogIn(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callbacks
-        
+
         * :cb:`Voltage Reached`,
         * :cb:`Analog Value Reached`
-        
+
         are triggered, if the thresholds
-        
+
         * :func:`Set Voltage Callback Threshold`,
         * :func:`Set Analog Value Callback Threshold`
-        
+
         keep being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -251,16 +251,16 @@ class BrickletAnalogIn(Device):
     def set_range(self, range):
         """
         Sets the measurement range. Possible ranges:
-        
+
         * 0: Automatically switched
         * 1: 0V - 6.05V, ~1.48mV resolution
         * 2: 0V - 10.32V, ~2.52mV resolution
         * 3: 0V - 36.30V, ~8.86mV resolution
         * 4: 0V - 45.00V, ~11.25mV resolution
         * 5: 0V - 3.3V, ~0.81mV resolution, new in version 2.0.3$nbsp;(Plugin)
-        
+
         The default measurement range is 0.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_RANGE, (range,), 'B', '')
@@ -268,7 +268,7 @@ class BrickletAnalogIn(Device):
     def get_range(self):
         """
         Returns the measurement range as set by :func:`Set Range`.
-        
+
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_RANGE, (), '', 'B')
@@ -276,13 +276,13 @@ class BrickletAnalogIn(Device):
     def set_averaging(self, average):
         """
         Set the length of a averaging for the voltage value.
-        
+
         Setting the length to 0 will turn the averaging completely off. If the
         averaging is off, there is more noise on the data, but the data is without
         delay.
-        
+
         The default value is 50.
-        
+
         .. versionadded:: 2.0.3$nbsp;(Plugin)
         """
         self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_AVERAGING, (average,), 'B', '')
@@ -290,7 +290,7 @@ class BrickletAnalogIn(Device):
     def get_averaging(self):
         """
         Returns the averaging configuration as set by :func:`Set Averaging`.
-        
+
         .. versionadded:: 2.0.3$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_AVERAGING, (), '', 'B')
@@ -300,9 +300,9 @@ class BrickletAnalogIn(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

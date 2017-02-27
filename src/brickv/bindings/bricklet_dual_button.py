@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -74,18 +74,18 @@ class BrickletDualButton(Device):
     def set_led_state(self, led_l, led_r):
         """
         Sets the state of the LEDs. Possible states are:
-        
+
         * 0 = AutoToggleOn: Enables auto toggle with initially enabled LED.
         * 1 = AutoToggleOff: Activates auto toggle with initially disabled LED.
         * 2 = On: Enables LED (auto toggle is disabled).
         * 3 = Off: Disables LED (auto toggle is disabled).
-        
+
         In auto toggle mode the LED is toggled automatically at each press of a button.
-        
+
         If you just want to set one of the LEDs and don't know the current state
         of the other LED, you can get the state with :func:`Get LED State` or you
         can use :func:`Set Selected LED State`.
-        
+
         The default value is (1, 1).
         """
         self.ipcon.send_request(self, BrickletDualButton.FUNCTION_SET_LED_STATE, (led_l, led_r), 'B B', '')
@@ -99,7 +99,7 @@ class BrickletDualButton(Device):
     def get_button_state(self):
         """
         Returns the current state for both buttons. Possible states are:
-        
+
         * 0 = pressed
         * 1 = released
         """
@@ -108,7 +108,7 @@ class BrickletDualButton(Device):
     def set_selected_led_state(self, led, state):
         """
         Sets the state of the selected LED (0 or 1).
-        
+
         The other LED remains untouched.
         """
         self.ipcon.send_request(self, BrickletDualButton.FUNCTION_SET_SELECTED_LED_STATE, (led, state), 'B B', '')
@@ -118,9 +118,9 @@ class BrickletDualButton(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

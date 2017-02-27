@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -77,7 +77,7 @@ class BrickletIndustrialAnalogOut(Device):
     def enable(self):
         """
         Enables the output of voltage and current.
-        
+
         The default is disabled.
         """
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_ENABLE, (), '', '')
@@ -85,7 +85,7 @@ class BrickletIndustrialAnalogOut(Device):
     def disable(self):
         """
         Disables the output of voltage and current.
-        
+
         The default is disabled.
         """
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_DISABLE, (), '', '')
@@ -99,7 +99,7 @@ class BrickletIndustrialAnalogOut(Device):
     def set_voltage(self, voltage):
         """
         Sets the output voltage in mV.
-        
+
         The output voltage and output current are linked. Changing the output voltage
         also changes the output current.
         """
@@ -114,7 +114,7 @@ class BrickletIndustrialAnalogOut(Device):
     def set_current(self, current):
         """
         Sets the output current in µA.
-        
+
         The output current and output voltage are linked. Changing the output current
         also changes the output voltage.
         """
@@ -129,18 +129,18 @@ class BrickletIndustrialAnalogOut(Device):
     def set_configuration(self, voltage_range, current_range):
         """
         Configures the voltage and current range.
-        
+
         Possible voltage ranges are:
-        
+
         * 0V to 5V
         * 0V to 10V (default)
-        
+
         Possible current ranges are:
-        
+
         * 4mA to 20mA (default)
         * 0mA to 20mA
         * 0mA to 24mA
-        
+
         The resolution will always be 12 bit. This means, that the
         precision is higher with a smaller range.
         """
@@ -157,9 +157,9 @@ class BrickletIndustrialAnalogOut(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

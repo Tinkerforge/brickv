@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -83,7 +83,7 @@ class BrickletDustDetector(Device):
     def get_dust_density(self):
         """
         Returns the dust density in µg/m³.
-        
+
         If you want to get the dust density periodically, it is recommended
         to use the :cb:`Dust Density` callback and set the period with
         :func:`Set Dust Density Callback Period`.
@@ -94,10 +94,10 @@ class BrickletDustDetector(Device):
         """
         Sets the period in ms with which the :cb:`Dust Density` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Dust Density` callback is only triggered if the dust density has
         changed since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_SET_DUST_DENSITY_CALLBACK_PERIOD, (period,), 'I', '')
@@ -111,19 +111,19 @@ class BrickletDustDetector(Device):
     def set_dust_density_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :cb:`Dust Density Reached` callback.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the dust density value is *outside* the min and max values"
          "'i'",    "Callback is triggered when the dust density value is *inside* the min and max values"
          "'<'",    "Callback is triggered when the dust density value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the dust density value is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_SET_DUST_DENSITY_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
@@ -137,15 +137,15 @@ class BrickletDustDetector(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callback
-        
+
         * :cb:`Dust Density Reached`
-        
+
         is triggered, if the threshold
-        
+
         * :func:`Set Dust Density Callback Threshold`
-        
+
         keeps being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -160,12 +160,12 @@ class BrickletDustDetector(Device):
         """
         Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
         for the dust_density.
-        
+
         Setting the length to 0 will turn the averaging completely off. With less
         averaging, there is more noise on the data.
-        
+
         The range for the averaging is 0-100.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
@@ -181,9 +181,9 @@ class BrickletDustDetector(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

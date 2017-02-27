@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -88,6 +88,7 @@ class BrickIMUV2(Device):
     FUNCTION_GET_SENSOR_CONFIGURATION = 42
     FUNCTION_SET_SENSOR_FUSION_MODE = 43
     FUNCTION_GET_SENSOR_FUSION_MODE = 44
+    FUNCTION_GET_SEND_TIMEOUT_COUNT = 233
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -132,6 +133,14 @@ class BrickIMUV2(Device):
     SENSOR_FUSION_OFF = 0
     SENSOR_FUSION_ON = 1
     SENSOR_FUSION_ON_WITHOUT_MAGNETOMETER = 2
+    COMMUNICATION_METHOD_NONE = 0
+    COMMUNICATION_METHOD_USB = 1
+    COMMUNICATION_METHOD_SPI_STACK = 2
+    COMMUNICATION_METHOD_CHIBI = 3
+    COMMUNICATION_METHOD_RS485 = 4
+    COMMUNICATION_METHOD_WIFI = 5
+    COMMUNICATION_METHOD_ETHERNET = 6
+    COMMUNICATION_METHOD_WIFI_V2 = 7
 
     def __init__(self, uid, ipcon):
         """
@@ -186,6 +195,7 @@ class BrickIMUV2(Device):
         self.response_expected[BrickIMUV2.FUNCTION_GET_SENSOR_CONFIGURATION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_SET_SENSOR_FUSION_MODE] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMUV2.FUNCTION_GET_SENSOR_FUSION_MODE] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMUV2.FUNCTION_GET_SEND_TIMEOUT_COUNT] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_ENABLE_STATUS_LED] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMUV2.FUNCTION_DISABLE_STATUS_LED] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMUV2.FUNCTION_IS_STATUS_LED_ENABLED] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -209,7 +219,7 @@ class BrickIMUV2(Device):
         """
         Returns the calibrated acceleration from the accelerometer for the
         x, y and z axis in 1/100 m/s².
-        
+
         If you want to get the acceleration periodically, it is recommended
         to use the :cb:`Acceleration` callback and set the period with
         :func:`Set Acceleration Period`.
@@ -220,7 +230,7 @@ class BrickIMUV2(Device):
         """
         Returns the calibrated magnetic field from the magnetometer for the
         x, y and z axis in 1/16 µT (Microtesla).
-        
+
         If you want to get the magnetic field periodically, it is recommended
         to use the :cb:`Magnetic Field` callback and set the period with
         :func:`Set Magnetic Field Period`.
@@ -231,7 +241,7 @@ class BrickIMUV2(Device):
         """
         Returns the calibrated angular velocity from the gyroscope for the
         x, y and z axis in 1/16 °/s.
-        
+
         If you want to get the angular velocity periodically, it is recommended
         to use the :cb:`Angular Velocity` acallback nd set the period with
         :func:`Set Angular Velocity Period`.
@@ -253,13 +263,13 @@ class BrickIMUV2(Device):
         experience a `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
         We recommend that you use quaternions instead, if you need the absolute
         orientation.
-        
+
         The rotation angle has the following ranges:
-        
+
         * heading: 0° to 360°
         * roll: -90° to +90°
         * pitch: -180° to +180°
-        
+
         If you want to get the orientation periodically, it is recommended
         to use the :cb:`Orientation` callback and set the period with
         :func:`Set Orientation Period`.
@@ -270,13 +280,13 @@ class BrickIMUV2(Device):
         """
         Returns the linear acceleration of the IMU Brick for the
         x, y and z axis in 1/100 m/s².
-        
+
         The linear acceleration is the acceleration in each of the three
         axis of the IMU Brick with the influences of gravity removed.
-        
+
         It is also possible to get the gravity vector with the influence of linear
         acceleration removed, see :func:`Get Gravity Vector`.
-        
+
         If you want to get the linear acceleration periodically, it is recommended
         to use the :cb:`Linear Acceleration` callback and set the period with
         :func:`Set Linear Acceleration Period`.
@@ -287,13 +297,13 @@ class BrickIMUV2(Device):
         """
         Returns the current gravity vector of the IMU Brick for the
         x, y and z axis in 1/100 m/s².
-        
+
         The gravity vector is the acceleration that occurs due to gravity.
         Influences of additional linear acceleration are removed.
-        
+
         It is also possible to get the linear acceleration with the influence
         of gravity removed, see :func:`Get Linear Acceleration`.
-        
+
         If you want to get the gravity vector periodically, it is recommended
         to use the :cb:`Gravity Vector` callback and set the period with
         :func:`Set Gravity Vector Period`.
@@ -304,10 +314,10 @@ class BrickIMUV2(Device):
         """
         Returns the current orientation (w, x, y, z) of the IMU Brick as
         `quaternions <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
-        
+
         You have to divide the returns values by 16383 (14 bit) to get
         the usual range of -1.0 to +1.0 for quaternions.
-        
+
         If you want to get the quaternions periodically, it is recommended
         to use the :cb:`Quaternion` callback and set the period with
         :func:`Set Quaternion Period`.
@@ -317,7 +327,7 @@ class BrickIMUV2(Device):
     def get_all_data(self):
         """
         Return all of the available data of the IMU Brick.
-        
+
         * acceleration in 1/100 m/s² (see :func:`Get Acceleration`)
         * magnetic field in 1/16 µT (see :func:`Get Magnetic Field`)
         * angular velocity in 1/16 °/s (see :func:`Get Angular Velocity`)
@@ -327,22 +337,22 @@ class BrickIMUV2(Device):
         * gravity vector 1/100 m/s² (see :func:`Get Gravity Vector`)
         * temperature in 1 °C (see :func:`Get Temperature`)
         * calibration status (see below)
-        
+
         The calibration status consists of four pairs of two bits. Each pair
         of bits represents the status of the current calibration.
-        
+
         * bit 0-1: Magnetometer
         * bit 2-3: Accelerometer
         * bit 4-5: Gyroscope
         * bit 6-7: System
-        
+
         A value of 0 means for "not calibrated" and a value of 3 means
         "fully calibrated". In your program you should always be able to
         ignore the calibration status, it is used by the calibration
         window of the Brick Viewer and it can be ignored after the first
         calibration. See the documentation in the calibration window for
         more information regarding the calibration of the IMU Brick.
-        
+
         If you want to get the data periodically, it is recommended
         to use the :cb:`All Data` callback and set the period with
         :func:`Set All Data Period`.
@@ -373,11 +383,11 @@ class BrickIMUV2(Device):
         A call of this function saves the current calibration to be used
         as a starting point for the next restart of continuous calibration
         of the IMU Brick.
-        
+
         A return value of *true* means that the calibration could be used and
         *false* means that it could not be used (this happens if the calibration
         status is not "fully calibrated").
-        
+
         This function is used by the calibration window of the Brick Viewer, you
         should not need to call it in your program.
         """
@@ -387,7 +397,7 @@ class BrickIMUV2(Device):
         """
         Sets the period in ms with which the :cb:`Acceleration` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_ACCELERATION_PERIOD, (period,), 'I', '')
@@ -507,15 +517,15 @@ class BrickIMUV2(Device):
         Sets the available sensor configuration for the Magnetometer, Gyroscope and
         Accelerometer. The Accelerometer Range is user selectable in all fusion modes,
         all other configurations are auto-controlled in fusion mode.
-        
+
         The default values are:
-        
+
         * Magnetometer Rate 20Hz
         * Gyroscope Range 2000°/s
         * Gyroscope Bandwidth 32Hz
         * Accelerometer Range +/-4G
         * Accelerometer Bandwidth 62.5Hz
-        
+
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_SENSOR_CONFIGURATION, (magnetometer_rate, gyroscope_range, gyroscope_bandwidth, accelerometer_range, accelerometer_bandwidth), 'B B B B B', '')
@@ -523,7 +533,7 @@ class BrickIMUV2(Device):
     def get_sensor_configuration(self):
         """
         Returns the sensor configuration as set by :func:`Set Sensor Configuration`.
-        
+
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
         return GetSensorConfiguration(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SENSOR_CONFIGURATION, (), '', 'B B B B B'))
@@ -533,14 +543,14 @@ class BrickIMUV2(Device):
         If the fusion mode is turned off, the functions :func:`Get Acceleration`,
         :func:`Get Magnetic Field` and :func:`Get Angular Velocity` return uncalibrated
         and uncompensated sensor data. All other sensor data getters return no data.
-        
+
         Since firmware version 2.0.6 you can also use a fusion mode without magnetometer.
         In this mode the calculated orientation is relative (with magnetometer it is
         absolute with respect to the earth). However, the calculation can't be influenced
         by spurious magnetic fields.
-        
+
         By default sensor fusion is on.
-        
+
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_SENSOR_FUSION_MODE, (mode,), 'B', '')
@@ -548,18 +558,31 @@ class BrickIMUV2(Device):
     def get_sensor_fusion_mode(self):
         """
         Returns the sensor fusion mode as set by :func:`Set Sensor Fusion Mode`.
-        
+
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SENSOR_FUSION_MODE, (), '', 'B')
 
+    def get_send_timeout_count(self, communication_method):
+        """
+        Returns the timeout count for the different communication methods.
+
+        The methods 0-2 are available for all Bricks, 3-7 only for Master Bricks.
+
+        This function is mostly used for debugging during development, in normal operation
+        the counters should nearly always stay at 0.
+
+        .. versionadded:: 2.0.7$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
+
     def enable_status_led(self):
         """
         Enables the status LED.
-        
+
         The status LED is the blue LED next to the USB connector. If enabled is is
         on and it flickers if data is transfered. If disabled it is always off.
-        
+
         The default state is enabled.
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_ENABLE_STATUS_LED, (), '', '')
@@ -567,10 +590,10 @@ class BrickIMUV2(Device):
     def disable_status_led(self):
         """
         Disables the status LED.
-        
+
         The status LED is the blue LED next to the USB connector. If enabled is is
         on and it flickers if data is transfered. If disabled it is always off.
-        
+
         The default state is enabled.
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_DISABLE_STATUS_LED, (), '', '')
@@ -585,7 +608,7 @@ class BrickIMUV2(Device):
         """
         Returns the firmware and protocol version and the name of the Bricklet for a
         given port.
-        
+
         This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
         plugins.
         """
@@ -595,7 +618,7 @@ class BrickIMUV2(Device):
         """
         Returns the temperature in °C/10 as measured inside the microcontroller. The
         value returned is not the ambient temperature!
-        
+
         The temperature is only proportional to the real temperature and it has an
         accuracy of +-15%. Practically it is only useful as an indicator for
         temperature changes.
@@ -606,7 +629,7 @@ class BrickIMUV2(Device):
         """
         Calling this function will reset the Brick. Calling this function
         on a Brick inside of a stack will reset the whole stack.
-        
+
         After a reset you have to create new device objects,
         calling functions on the existing ones will result in
         undefined behavior!
@@ -618,9 +641,9 @@ class BrickIMUV2(Device):
         Returns the UID, the UID where the Brick is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be '0'-'8' (stack position).
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

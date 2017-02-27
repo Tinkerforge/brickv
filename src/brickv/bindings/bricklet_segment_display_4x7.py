@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -66,15 +66,15 @@ class BrickletSegmentDisplay4x7(Device):
         """
         The 7-segment display can be set with bitmaps. Every bit controls one
         segment:
-        
+
         .. image:: /Images/Bricklets/bricklet_segment_display_4x7_bit_order.png
            :scale: 100 %
            :alt: Bit order of one segment
            :align: center
-        
+
         For example to set a "5" you would want to activate segments 0, 2, 3, 5 and 6.
         This is represented by the number 0b01101101 = 0x6d = 109.
-        
+
         The brightness can be set between 0 (dark) and 7 (bright). The colon
         parameter turns the colon of the display on or off.
         """
@@ -92,16 +92,16 @@ class BrickletSegmentDisplay4x7(Device):
         Starts a counter with the *from* value that counts to the *to*
         value with the each step incremented by *increment*.
         The *length* of the increment is given in ms.
-        
+
         Example: If you set *from* to 0, *to* to 100, *increment* to 1 and
         *length* to 1000, a counter that goes from 0 to 100 with one second
         pause between each increment will be started.
-        
+
         The maximum values for *from*, *to* and *increment* is 9999,
         the minimum value is -999.
-        
+
         Using a negative increment allows to count backwards.
-        
+
         You can stop the counter at every time by calling :func:`Set Segments`.
         """
         self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_START_COUNTER, (value_from, value_to, increment, length), 'h h h I', '')
@@ -109,7 +109,7 @@ class BrickletSegmentDisplay4x7(Device):
     def get_counter_value(self):
         """
         Returns the counter value that is currently shown on the display.
-        
+
         If there is no counter running a 0 will be returned.
         """
         return self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_COUNTER_VALUE, (), '', 'H')
@@ -119,9 +119,9 @@ class BrickletSegmentDisplay4x7(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

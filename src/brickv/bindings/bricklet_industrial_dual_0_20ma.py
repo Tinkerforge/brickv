@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -88,14 +88,14 @@ class BrickletIndustrialDual020mA(Device):
         """
         Returns the current of the specified sensor (0 or 1). The value is in nA
         and between 0nA and 22505322nA (22.5mA).
-        
+
         It is possible to detect if an IEC 60381-1 compatible sensor is connected
         and if it works probably.
-        
+
         If the returned current is below 4mA, there is likely no sensor connected
         or the sensor may be defect. If the returned current is over 20mA, there might
         be a short circuit or the sensor may be defect.
-        
+
         If you want to get the current periodically, it is recommended to use the
         :cb:`Current` callback and set the period with
         :func:`Set Current Callback Period`.
@@ -106,10 +106,10 @@ class BrickletIndustrialDual020mA(Device):
         """
         Sets the period in ms with which the :cb:`Current` callback is triggered
         periodically for the given sensor. A value of 0 turns the callback off.
-        
+
         The :cb:`Current` callback is only triggered if the current has changed since the
         last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_CURRENT_CALLBACK_PERIOD, (sensor, period), 'B I', '')
@@ -124,19 +124,19 @@ class BrickletIndustrialDual020mA(Device):
         """
         Sets the thresholds for the :cb:`Current Reached` callback for the given
         sensor.
-        
+
         The following options are possible:
-        
+
         .. csv-table::
          :header: "Option", "Description"
          :widths: 10, 100
-        
+
          "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the current is *outside* the min and max values"
          "'i'",    "Callback is triggered when the current is *inside* the min and max values"
          "'<'",    "Callback is triggered when the current is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the current is greater than the min value (max is ignored)"
-        
+
         The default value is ('x', 0, 0).
         """
         self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_CURRENT_CALLBACK_THRESHOLD, (sensor, option, min, max), 'B c i i', '')
@@ -150,15 +150,15 @@ class BrickletIndustrialDual020mA(Device):
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callback
-        
+
         * :cb:`Current Reached`
-        
+
         is triggered, if the threshold
-        
+
         * :func:`Set Current Callback Threshold`
-        
+
         keeps being reached.
-        
+
         The default value is 100.
         """
         self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -173,16 +173,16 @@ class BrickletIndustrialDual020mA(Device):
         """
         Sets the sample rate to either 240, 60, 15 or 4 samples per second.
         The resolution for the rates is 12, 14, 16 and 18 bit respectively.
-        
+
         .. csv-table::
          :header: "Value", "Description"
          :widths: 10, 100
-        
+
          "0",    "240 samples per second, 12 bit resolution"
          "1",    "60 samples per second, 14 bit resolution"
          "2",    "15 samples per second, 16 bit resolution"
          "3",    "4 samples per second, 18 bit resolution"
-        
+
         The default value is 3 (4 samples per second with 18 bit resolution).
         """
         self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_SAMPLE_RATE, (rate,), 'B', '')
@@ -198,9 +198,9 @@ class BrickletIndustrialDual020mA(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """

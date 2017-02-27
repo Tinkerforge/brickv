@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-09.      #
+# This file was automatically generated on 2017-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -87,7 +87,7 @@ class BrickletHallEffect(Device):
         Returns the current value of the edge counter. You can configure
         edge type (rising, falling, both) that is counted with
         :func:`Set Edge Count Config`.
-        
+
         If you set the reset counter to *true*, the count is set back to 0
         directly after it is read.
         """
@@ -97,24 +97,24 @@ class BrickletHallEffect(Device):
         """
         The edge type parameter configures if rising edges, falling edges or
         both are counted. Possible edge types are:
-        
+
         * 0 = rising (default)
         * 1 = falling
         * 2 = both
-        
+
         A magnetic field of 35 Gauss (3.5mT) or greater causes a falling edge and a
         magnetic field of 25 Gauss (2.5mT) or smaller causes a rising edge.
-        
+
         If a magnet comes near the Bricklet the signal goes low (falling edge), if
         a magnet is removed from the vicinity the signal goes high (rising edge).
-        
+
         The debounce time is given in ms.
-        
+
         Configuring an edge counter resets its value to 0.
-        
+
         If you don't know what any of this means, just leave it at default. The
         default configuration is very likely OK for you.
-        
+
         Default values: 0 (edge type) and 100ms (debounce time)
         """
         self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_COUNT_CONFIG, (edge_type, debounce), 'B B', '')
@@ -128,11 +128,11 @@ class BrickletHallEffect(Device):
     def set_edge_interrupt(self, edges):
         """
         Sets the number of edges until an interrupt is invoked.
-        
+
         If *edges* is set to n, an interrupt is invoked for every n-th detected edge.
-        
+
         If *edges* is set to 0, the interrupt is disabled.
-        
+
         Default value is 0.
         """
         self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_INTERRUPT, (edges,), 'I', '')
@@ -147,10 +147,10 @@ class BrickletHallEffect(Device):
         """
         Sets the period in ms with which the :cb:`Edge Count` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
+
         The :cb:`Edge Count` callback is only triggered if the edge count has changed
         since the last triggering.
-        
+
         The default value is 0.
         """
         self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_COUNT_CALLBACK_PERIOD, (period,), 'I', '')
@@ -175,9 +175,9 @@ class BrickletHallEffect(Device):
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
-        
+
         The position can be 'a', 'b', 'c' or 'd'.
-        
+
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
