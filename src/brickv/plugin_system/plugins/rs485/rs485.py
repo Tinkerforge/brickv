@@ -45,6 +45,7 @@ MODBUS_F_IDX_WRITE_SINGLE_COIL = 2
 MODBUS_F_IDX_WRITE_SINGLE_REGISTER = 3
 MODBUS_F_IDX_WRITE_MULTIPLE_COILS = 4
 MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS = 5
+MODBUS_F_IDX_READ_DISCRETE_INPUTS = 6
 
 class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_read = pyqtSignal(object, int)
@@ -63,6 +64,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_modbus_write_multiple_coils_response = pyqtSignal(int, int, int, int)
     qtcb_modbus_write_multiple_registers_request = pyqtSignal(int, int, int, int, object)
     qtcb_modbus_write_multiple_registers_response = pyqtSignal(int, int, int, int)
+    qtcb_modbus_read_discrete_inputs_request = pyqtSignal(int, int, int)
+    qtcb_modbus_read_discrete_inputs_response = pyqtSignal(int, int, int, object)
 
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletRS485, *args)
@@ -92,6 +95,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.qtcb_modbus_write_multiple_coils_response.connect(self.cb_modbus_write_multiple_coils_response)
         self.qtcb_modbus_write_multiple_registers_request.connect(self.cb_modbus_write_multiple_registers_request)
         self.qtcb_modbus_write_multiple_registers_response.connect(self.cb_modbus_write_multiple_registers_response)
+        self.qtcb_modbus_read_discrete_inputs_request.connect(self.cb_modbus_read_discrete_inputs_request)
+        self.qtcb_modbus_read_discrete_inputs_response.connect(self.cb_modbus_read_discrete_inputs_response)
 
         self.rs485.register_callback(self.rs485.CALLBACK_READ_CALLBACK,
                                      self.qtcb_read.emit)
@@ -132,6 +137,12 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_RESPONSE,
                                      self.qtcb_modbus_write_multiple_registers_response.emit)
+
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_REQUEST,
+                                     self.qtcb_modbus_read_discrete_inputs_request.emit)
+
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE,
+                                     self.qtcb_modbus_read_discrete_inputs_response.emit)
 
         self.rs485_input_combobox.addItem("")
         self.rs485_input_combobox.lineEdit().setMaxLength(58)
@@ -181,16 +192,16 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                 self.rs485_input_line_ending_lineedit]
 
         self.gui_group_modbus_master = [self.modbus_master_function_label,
-                                            self.modbus_master_function_combobox,
-                                            self.modbus_master_slave_address_label,
-                                            self.modbus_master_slave_address_spinbox,
-                                            self.modbus_master_param1_label,
-                                            self.modbus_master_param1_spinbox,
-                                            self.modbus_master_param2_label,
-                                            self.modbus_master_param2_spinbox,
-                                            self.modbus_master_request_timeout_label,
-                                            self.modbus_master_request_timeout_spinbox,
-                                            self.modbus_master_send_button]
+                                        self.modbus_master_function_combobox,
+                                        self.modbus_master_slave_address_label,
+                                        self.modbus_master_slave_address_spinbox,
+                                        self.modbus_master_param1_label,
+                                        self.modbus_master_param1_spinbox,
+                                        self.modbus_master_param2_label,
+                                        self.modbus_master_param2_spinbox,
+                                        self.modbus_master_request_timeout_label,
+                                        self.modbus_master_request_timeout_spinbox,
+                                        self.modbus_master_send_button]
 
         self.gui_group_modbus_slave = [self.modbus_slave_address_label,
                                        self.modbus_slave_address_spinbox]
@@ -297,6 +308,16 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
             self.modbus_master_send_button.setEnabled(False)
 
+        elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_DISCRETE_INPUTS:
+            rid = self.rs485.modbus_read_discrete_inputs(self.modbus_master_slave_address_spinbox.value(),
+                                                         self.modbus_master_param1_spinbox.value(),
+                                                         self.modbus_master_param2_spinbox.value())
+            if rid == 0:
+                # Error.
+                return
+
+            self.modbus_master_send_button.setEnabled(False)
+
     def modbus_master_function_changed(self, function):
         if function == MODBUS_F_IDX_READ_COILS:
             self.modbus_master_param1_label.setText('Starting Address:')
@@ -346,6 +367,14 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.modbus_master_param2_label.setText('Number of Registers:')
             self.modbus_master_param2_spinbox.setMinimum(1)
             self.modbus_master_param2_spinbox.setMaximum(123)
+
+        elif function == MODBUS_F_IDX_READ_DISCRETE_INPUTS:
+            self.modbus_master_param1_label.setText('Starting Address:')
+            self.modbus_master_param1_spinbox.setMinimum(0)
+            self.modbus_master_param1_spinbox.setMaximum(65535)
+            self.modbus_master_param2_label.setText('Number of Coils:')
+            self.modbus_master_param2_spinbox.setMinimum(1)
+            self.modbus_master_param2_spinbox.setMaximum(2000)
 
     def mode_changed(self, mode):
         if mode == MODE_RS485:
@@ -668,6 +697,54 @@ class RS485(COMCUPluginBase, Ui_RS485):
             str(starting_address) + \
             ', COUNT=' + \
             str(count) + \
+            '\n\n'
+
+        self.text.moveCursor(QTextCursor.End)
+        self.text.insertPlainText(a)
+        self.text.moveCursor(QTextCursor.End)
+
+        self.modbus_master_send_button.setEnabled(True)
+
+    def cb_modbus_read_discrete_inputs_request(self, request_id, starting_address, count):
+        a = 'READ DISCRETE INPUTS REQUEST: ' + \
+            'REQUEST ID=' + \
+            str(request_id) + \
+            ', STARTING ADDRESS=' + \
+            str(starting_address) + \
+            ', COUNT=' + \
+            str(count) + \
+            '\n\n'
+
+        data = []
+
+        q, r = divmod(count, 8)
+
+        if r != 0:
+            q = q + 1
+
+        for i in range(q):
+            data.append(random.randint(1, 255))
+
+        self.rs485.modbus_answer_read_discrete_inputs_request(request_id, data)
+
+        self.text.moveCursor(QTextCursor.End)
+        self.text.insertPlainText(a)
+        self.text.moveCursor(QTextCursor.End)
+
+    def cb_modbus_read_discrete_inputs_response(self,
+                                                reconstruction_status,
+                                                request_id,
+                                                exception_code,
+                                                data):
+        a = 'READ DISCRETE INPUTS RESPONSE: ' + \
+            'EXCEPTION CODE=' + \
+            str(exception_code) + \
+            ', REQUEST ID=' + \
+            str(request_id) + \
+            ', RECONSTRUCTION STATUS=' + \
+            str(reconstruction_status) + \
+            ', DATA=' + \
+            str(data) + \
             '\n\n'
 
         self.text.moveCursor(QTextCursor.End)
