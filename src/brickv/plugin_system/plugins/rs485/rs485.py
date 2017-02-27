@@ -44,6 +44,7 @@ MODBUS_F_IDX_READ_HOLDING_REGISTERS = 1
 MODBUS_F_IDX_WRITE_SINGLE_COIL = 2
 MODBUS_F_IDX_WRITE_SINGLE_REGISTER = 3
 MODBUS_F_IDX_WRITE_MULTIPLE_COILS = 4
+MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS = 5
 
 class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_read = pyqtSignal(object, int)
@@ -60,6 +61,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_modbus_write_single_register_response = pyqtSignal(int, int, int, int)
     qtcb_modbus_write_multiple_coils_request = pyqtSignal(int, int, int, int, object)
     qtcb_modbus_write_multiple_coils_response = pyqtSignal(int, int, int, int)
+    qtcb_modbus_write_multiple_registers_request = pyqtSignal(int, int, int, int, object)
+    qtcb_modbus_write_multiple_registers_response = pyqtSignal(int, int, int, int)
 
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletRS485, *args)
@@ -87,6 +90,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.qtcb_modbus_write_single_register_response.connect(self.cb_modbus_write_single_register_response)
         self.qtcb_modbus_write_multiple_coils_request.connect(self.cb_modbus_write_multiple_coils_request)
         self.qtcb_modbus_write_multiple_coils_response.connect(self.cb_modbus_write_multiple_coils_response)
+        self.qtcb_modbus_write_multiple_registers_request.connect(self.cb_modbus_write_multiple_registers_request)
+        self.qtcb_modbus_write_multiple_registers_response.connect(self.cb_modbus_write_multiple_registers_response)
 
         self.rs485.register_callback(self.rs485.CALLBACK_READ_CALLBACK,
                                      self.qtcb_read.emit)
@@ -121,6 +126,12 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_RESPONSE,
                                      self.qtcb_modbus_write_multiple_coils_response.emit)
+
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_REQUEST,
+                                     self.qtcb_modbus_write_multiple_registers_request.emit)
+
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_RESPONSE,
+                                     self.qtcb_modbus_write_multiple_registers_response.emit)
 
         self.rs485_input_combobox.addItem("")
         self.rs485_input_combobox.lineEdit().setMaxLength(58)
@@ -270,6 +281,22 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
             self.modbus_master_send_button.setEnabled(False)
 
+        elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS:
+            data = []
+
+            for i in range(self.modbus_master_param2_spinbox.value()):
+                data.append(random.randint(1, 65535))
+
+            rid = self.rs485.modbus_write_multiple_registers(self.modbus_master_slave_address_spinbox.value(),
+                                                             self.modbus_master_param1_spinbox.value(),
+                                                             self.modbus_master_param2_spinbox.value(),
+                                                             data)
+            if rid == 0:
+                # Error.
+                return
+
+            self.modbus_master_send_button.setEnabled(False)
+
     def modbus_master_function_changed(self, function):
         if function == MODBUS_F_IDX_READ_COILS:
             self.modbus_master_param1_label.setText('Starting Address:')
@@ -311,6 +338,14 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.modbus_master_param2_label.setText('Number of Coils:')
             self.modbus_master_param2_spinbox.setMinimum(1)
             self.modbus_master_param2_spinbox.setMaximum(1968)
+
+        elif function == MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS:
+            self.modbus_master_param1_label.setText('Starting Address:')
+            self.modbus_master_param1_spinbox.setMinimum(0)
+            self.modbus_master_param1_spinbox.setMaximum(65535)
+            self.modbus_master_param2_label.setText('Number of Registers:')
+            self.modbus_master_param2_spinbox.setMinimum(1)
+            self.modbus_master_param2_spinbox.setMaximum(123)
 
     def mode_changed(self, mode):
         if mode == MODE_RS485:
@@ -575,6 +610,56 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                 starting_address,
                                                 count):
         a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
+            'REQUEST ID=' + \
+            str(request_id) + \
+            ', EXCEPTION CODE=' + \
+            str(exception_code) + \
+            ', STARTING ADDRESS=' + \
+            str(starting_address) + \
+            ', COUNT=' + \
+            str(count) + \
+            '\n\n'
+
+        self.text.moveCursor(QTextCursor.End)
+        self.text.insertPlainText(a)
+        self.text.moveCursor(QTextCursor.End)
+
+        self.modbus_master_send_button.setEnabled(True)
+
+    def cb_modbus_write_multiple_registers_request(self,
+                                                   reconstruction_status,
+                                                   request_id,
+                                                   starting_address,
+                                                   count,
+                                                   data):
+
+        a = 'WRITE MULTIPLE REGISTERS REQUEST: ' + \
+            'RECONSTRUCTION STATUS=' + \
+            str(reconstruction_status) + \
+            ', REQUEST ID=' + \
+            str(request_id) + \
+            ', STARTING ADDRESS=' + \
+            str(starting_address) + \
+            ', COUNT=' + \
+            str(count) + \
+            ', DATA=' + \
+            str(data) + \
+            '\n\n'
+
+        self.rs485.modbus_answer_write_multiple_registers_request(request_id,
+                                                                  starting_address,
+                                                                  count)
+
+        self.text.moveCursor(QTextCursor.End)
+        self.text.insertPlainText(a)
+        self.text.moveCursor(QTextCursor.End)
+
+    def cb_modbus_write_multiple_registers_response(self,
+                                                    request_id,
+                                                    exception_code,
+                                                    starting_address,
+                                                    count):
+        a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
             ', EXCEPTION CODE=' + \
