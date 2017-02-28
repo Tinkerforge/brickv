@@ -150,6 +150,11 @@
          <string>Read Discrete Inputs</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Read Input Registers</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="0" column="2">

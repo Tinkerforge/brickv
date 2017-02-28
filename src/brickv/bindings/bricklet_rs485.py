@@ -42,28 +42,31 @@ class BrickletRS485(Device):
     DEVICE_IDENTIFIER = 277
     DEVICE_DISPLAY_NAME = 'RS485 Bricklet'
 
-    CALLBACK_READ_CALLBACK = 40
-    CALLBACK_ERROR_COUNT = 41
-    CALLBACK_MODBUS_READ_COILS_REQUEST = 42
-    CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL = 43
-    CALLBACK_MODBUS_READ_HOLDING_REGISTERS_REQUEST = 44
-    CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL = 45
-    CALLBACK_MODBUS_WRITE_SINGLE_COIL_REQUEST = 46
-    CALLBACK_MODBUS_WRITE_SINGLE_COIL_RESPONSE = 47
-    CALLBACK_MODBUS_WRITE_SINGLE_REGISTER_REQUEST = 48
-    CALLBACK_MODBUS_WRITE_SINGLE_REGISTER_RESPONSE = 49
-    CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL = 50
-    CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_RESPONSE = 51
-    CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL = 52
-    CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_RESPONSE = 53
-    CALLBACK_MODBUS_READ_DISCRETE_INPUTS_REQUEST = 54
-    CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL = 55
+    CALLBACK_READ_CALLBACK = 42
+    CALLBACK_ERROR_COUNT = 43
+    CALLBACK_MODBUS_READ_COILS_REQUEST = 44
+    CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL = 45
+    CALLBACK_MODBUS_READ_HOLDING_REGISTERS_REQUEST = 46
+    CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL = 47
+    CALLBACK_MODBUS_WRITE_SINGLE_COIL_REQUEST = 48
+    CALLBACK_MODBUS_WRITE_SINGLE_COIL_RESPONSE = 49
+    CALLBACK_MODBUS_WRITE_SINGLE_REGISTER_REQUEST = 50
+    CALLBACK_MODBUS_WRITE_SINGLE_REGISTER_RESPONSE = 51
+    CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL = 52
+    CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_RESPONSE = 53
+    CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL = 54
+    CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_RESPONSE = 55
+    CALLBACK_MODBUS_READ_DISCRETE_INPUTS_REQUEST = 56
+    CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL = 57
+    CALLBACK_MODBUS_READ_INPUT_REGISTERS_REQUEST = 58
+    CALLBACK_MODBUS_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL = 59
 
-    CALLBACK_MODBUS_READ_COILS_RESPONSE = -43
-    CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE = -45
-    CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_REQUEST = -50
-    CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_REQUEST = -52
-    CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE = -55
+    CALLBACK_MODBUS_READ_COILS_RESPONSE = -45
+    CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE = -47
+    CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_REQUEST = -52
+    CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_REQUEST = -54
+    CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE = -57
+    CALLBACK_MODBUS_READ_INPUT_REGISTERS_RESPONSE = -59
 
     FUNCTION_WRITE = 1
     FUNCTION_READ = 2
@@ -104,6 +107,8 @@ class BrickletRS485(Device):
     FUNCTION_MODBUS_WRITE_MULTIPLE_REGISTERS_LOW_LEVEL = 37
     FUNCTION_MODBUS_ANSWER_READ_DISCRETE_INPUTS_REQUEST_LOW_LEVEL = 38
     FUNCTION_MODBUS_READ_DISCRETE_INPUTS = 39
+    FUNCTION_MODBUS_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL = 40
+    FUNCTION_MODBUS_READ_INPUT_REGISTERS = 41
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -203,6 +208,8 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_WRITE_MULTIPLE_REGISTERS_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_DISCRETE_INPUTS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_READ_DISCRETE_INPUTS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_READ_INPUT_REGISTERS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.CALLBACK_READ_CALLBACK] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_COILS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -219,6 +226,8 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_RESPONSE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_INPUT_REGISTERS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_SET_BOOTLOADER_MODE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_BOOTLOADER_MODE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -248,12 +257,15 @@ class BrickletRS485(Device):
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_RESPONSE] = 'B b H H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_REQUEST] = 'B H H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = 'B b H H 58B'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_INPUT_REGISTERS_REQUEST] = 'B H H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = 'B b H H 29H'
 
         self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
         self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
         self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_REQUEST, {'stream': {'fixed_total_length': None}}, None]
         self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_REQUEST, {'stream': {'fixed_total_length': None}}, None]
         self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_READ_INPUT_REGISTERS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
 
     def write(self, message, length):
         """
@@ -549,6 +561,18 @@ class BrickletRS485(Device):
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_READ_DISCRETE_INPUTS, (slave_address, starting_address, count), 'B H H', 'B')
 
+    def modbus_answer_read_input_registers_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
+        """
+        -
+        """
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 29H', '')
+
+    def modbus_read_input_registers(self, slave_address, starting_address, count):
+        """
+        -
+        """
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_READ_INPUT_REGISTERS, (slave_address, starting_address, count), 'B H H', 'B')
+
     def get_spitfp_error_count(self):
         """
         Returns the error count for the communication between Brick and Bricklet.
@@ -766,6 +790,24 @@ class BrickletRS485(Device):
             result = self.modbus_answer_read_discrete_inputs_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
             stream_chunk_offset += 59
+
+        return result
+
+    def modbus_answer_read_input_registers_request(self, request_id, data):
+        stream_total_length = len(data)
+        stream_chunk_offset = 0
+        result = None
+
+        while stream_chunk_offset < stream_total_length:
+            stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 29]
+
+            if len(stream_chunk_data) < 29:
+                stream_chunk_data.extend([0]*(29 - len(stream_chunk_data)))
+
+            # FIXME: validate that the result of all the low-level calls is identical
+            result = self.modbus_answer_read_input_registers_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
+
+            stream_chunk_offset += 29
 
         return result
 
