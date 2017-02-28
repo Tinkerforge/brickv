@@ -48,6 +48,8 @@ MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS = 5
 MODBUS_F_IDX_READ_DISCRETE_INPUTS = 6
 MODBUS_F_IDX_READ_INPUT_REGISTERS = 7
 
+MODBUS_EXCEPTION_REQUEST_TIMEOUT = -1
+
 class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_read = pyqtSignal(object, int)
     qtcb_error = pyqtSignal(int)
@@ -485,16 +487,21 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                       request_id,
                                       exception_code,
                                       data):
-        a = 'READ COILS RESPONSE: ' + \
-            'EXCEPTION CODE=' + \
-            str(exception_code) + \
-            ', REQUEST ID=' + \
-            str(request_id) + \
-            ', RECONSTRUCTION STATUS=' + \
-            str(reconstruction_status) + \
-            ', DATA=' + \
-            str(data) + \
-            '\n\n'
+        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+            a = 'READ COILS RESPONSE: ' + \
+                'REQUEST TIMEOUT' + \
+                '\n\n'
+        else:
+            a = 'READ COILS RESPONSE: ' + \
+                'EXCEPTION CODE=' + \
+                str(exception_code) + \
+                ', REQUEST ID=' + \
+                str(request_id) + \
+                ', RECONSTRUCTION STATUS=' + \
+                str(reconstruction_status) + \
+                ', DATA=' + \
+                str(data) + \
+                '\n\n'
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
@@ -531,16 +538,21 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                   request_id,
                                                   exception_code,
                                                   data):
-        a = 'READ HOLDING REGISTERS RESPONSE: ' + \
-            'EXCEPTION CODE=' + \
-            str(exception_code) + \
-            ', REQUEST ID=' + \
-            str(request_id) + \
-            ', RECONSTRUCTION STATUS=' + \
-            str(reconstruction_status) + \
-            ', DATA=' + \
-            str(data) + \
-            '\n\n'
+        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+            a = 'READ HOLDING REGISTERS RESPONSE: ' + \
+                'REQUEST TIMEOUT' + \
+                '\n\n'
+        else:
+            a = 'READ HOLDING REGISTERS RESPONSE: ' + \
+                'EXCEPTION CODE=' + \
+                str(exception_code) + \
+                ', REQUEST ID=' + \
+                str(request_id) + \
+                ', RECONSTRUCTION STATUS=' + \
+                str(reconstruction_status) + \
+                ', DATA=' + \
+                str(data) + \
+                '\n\n'
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
@@ -574,16 +586,21 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                              exception_code,
                                              coil_address,
                                              coil_data):
-        a = 'WRITE SINGLE COIL RESPONSE: ' + \
-            'REQUEST ID=' + \
-            str(request_id) + \
-            ', EXCEPTION CODE=' + \
-            str(exception_code) + \
-            ', COIL ADDRESS=' + \
-            str(coil_address) + \
-            ', COIL DATA=' + \
-            str(coil_data) + \
-            '\n\n'
+        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+            a = 'WRITE SINGLE COIL RESPONSE: ' + \
+                'REQUEST TIMEOUT' + \
+                '\n\n'
+        else:
+            a = 'WRITE SINGLE COIL RESPONSE: ' + \
+                'REQUEST ID=' + \
+                str(request_id) + \
+                ', EXCEPTION CODE=' + \
+                str(exception_code) + \
+                ', COIL ADDRESS=' + \
+                str(coil_address) + \
+                ', COIL DATA=' + \
+                str(coil_data) + \
+                '\n\n'
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
@@ -617,16 +634,21 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                  exception_code,
                                                  register_address,
                                                  register_data):
-        a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
-            'REQUEST ID=' + \
-            str(request_id) + \
-            ', EXCEPTION CODE=' + \
-            str(exception_code) + \
-            ', REGISTER ADDRESS=' + \
-            str(register_address) + \
-            ', REGISTER DATA=' + \
-            str(register_data) + \
-            '\n\n'
+        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+            a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
+                'REQUEST TIMEOUT' + \
+                '\n\n'
+        else:
+            a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
+                'REQUEST ID=' + \
+                str(request_id) + \
+                ', EXCEPTION CODE=' + \
+                str(exception_code) + \
+                ', REGISTER ADDRESS=' + \
+                str(register_address) + \
+                ', REGISTER DATA=' + \
+                str(register_data) + \
+                '\n\n'
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
@@ -667,16 +689,21 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                 exception_code,
                                                 starting_address,
                                                 count):
-        a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
-            'REQUEST ID=' + \
-            str(request_id) + \
-            ', EXCEPTION CODE=' + \
-            str(exception_code) + \
-            ', STARTING ADDRESS=' + \
-            str(starting_address) + \
-            ', COUNT=' + \
-            str(count) + \
-            '\n\n'
+        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+            a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
+                'REQUEST TIMEOUT' + \
+                '\n\n'
+        else:
+            a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
+                'REQUEST ID=' + \
+                str(request_id) + \
+                ', EXCEPTION CODE=' + \
+                str(exception_code) + \
+                ', STARTING ADDRESS=' + \
+                str(starting_address) + \
+                ', COUNT=' + \
+                str(count) + \
+                '\n\n'
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
@@ -717,16 +744,21 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                     exception_code,
                                                     starting_address,
                                                     count):
-        a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
-            'REQUEST ID=' + \
-            str(request_id) + \
-            ', EXCEPTION CODE=' + \
-            str(exception_code) + \
-            ', STARTING ADDRESS=' + \
-            str(starting_address) + \
-            ', COUNT=' + \
-            str(count) + \
-            '\n\n'
+        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+            a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
+                'REQUEST TIMEOUT' + \
+                '\n\n'
+        else:
+            a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
+                'REQUEST ID=' + \
+                str(request_id) + \
+                ', EXCEPTION CODE=' + \
+                str(exception_code) + \
+                ', STARTING ADDRESS=' + \
+                str(starting_address) + \
+                ', COUNT=' + \
+                str(count) + \
+                '\n\n'
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
@@ -765,16 +797,21 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                 request_id,
                                                 exception_code,
                                                 data):
-        a = 'READ DISCRETE INPUTS RESPONSE: ' + \
-            'EXCEPTION CODE=' + \
-            str(exception_code) + \
-            ', REQUEST ID=' + \
-            str(request_id) + \
-            ', RECONSTRUCTION STATUS=' + \
-            str(reconstruction_status) + \
-            ', DATA=' + \
-            str(data) + \
-            '\n\n'
+        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+            a = 'READ DISCRETE INPUTS RESPONSE: ' + \
+                'REQUEST TIMEOUT' + \
+                '\n\n'
+        else:
+            a = 'READ DISCRETE INPUTS RESPONSE: ' + \
+                'EXCEPTION CODE=' + \
+                str(exception_code) + \
+                ', REQUEST ID=' + \
+                str(request_id) + \
+                ', RECONSTRUCTION STATUS=' + \
+                str(reconstruction_status) + \
+                ', DATA=' + \
+                str(data) + \
+                '\n\n'
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
@@ -811,16 +848,21 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                 request_id,
                                                 exception_code,
                                                 data):
-        a = 'READ INPUT REGISTERS RESPONSE: ' + \
-            'EXCEPTION CODE=' + \
-            str(exception_code) + \
-            ', REQUEST ID=' + \
-            str(request_id) + \
-            ', RECONSTRUCTION STATUS=' + \
-            str(reconstruction_status) + \
-            ', DATA=' + \
-            str(data) + \
-            '\n\n'
+        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+            a = 'READ DISCRETE REGISTERS RESPONSE: ' + \
+                'REQUEST TIMEOUT' + \
+                '\n\n'
+        else:
+            a = 'READ INPUT REGISTERS RESPONSE: ' + \
+                'EXCEPTION CODE=' + \
+                str(exception_code) + \
+                ', REQUEST ID=' + \
+                str(request_id) + \
+                ', RECONSTRUCTION STATUS=' + \
+                str(reconstruction_status) + \
+                ', DATA=' + \
+                str(data) + \
+                '\n\n'
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
