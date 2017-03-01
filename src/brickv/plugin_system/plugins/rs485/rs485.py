@@ -238,8 +238,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.rs485.set_modbus_configuration(self.modbus_slave_address_spinbox.value(),
                                             self.modbus_master_request_timeout_spinbox.value())
 
-        self.rs485.apply_configuration()
-
         if self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_COILS:
             rid = self.rs485.modbus_read_coils(self.modbus_master_slave_address_spinbox.value(),
                                                self.modbus_master_param1_spinbox.value(),
@@ -965,8 +963,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                             modbus_master_request_timeout)
 
         self.rs485.set_mode(mode)
-
-        self.rs485.apply_configuration()
 
         self.apply_button.setEnabled(False)
 
