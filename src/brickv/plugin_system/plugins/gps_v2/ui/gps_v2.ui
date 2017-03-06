@@ -333,6 +333,9 @@ Google Maps</string>
        </item>
        <item row="4" column="0" colspan="2">
         <widget class="QTableView" name="glo_table">
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
          <attribute name="horizontalHeaderCascadingSectionResizes">
           <bool>true</bool>
          </attribute>
@@ -447,6 +450,17 @@ Google Maps</string>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>format_combobox</tabstop>
+  <tabstop>show_pos</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>gps_table</tabstop>
+  <tabstop>hot_start</tabstop>
+  <tabstop>warm_start</tabstop>
+  <tabstop>cold_start</tabstop>
+  <tabstop>factory_reset</tabstop>
+  <tabstop>glo_table</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
