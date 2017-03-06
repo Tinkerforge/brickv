@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-03-01.      #
+# This file was automatically generated on 2017-03-06.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -337,10 +337,10 @@ class BrickletRS485(Device):
         """
         Sets the configuration for the RS485 Modbus communication. Available options:
 
-        * Slave address to be used in Modbus slave mode.
-        * Master request timeout specifies how long the master should wait for a response from a slave in milliseconds.
+        * Slave Address: Address to be used as the Modbus slave address in Modbus slave mode. Valid Modbus slave address range is 0 to 247.
+        * Master Request Timeout: Specifies how long the master should wait for a response from a slave in milliseconds when in Modbus master mode.
 
-        The default is: Slave address = 1 and Master request timeout = 1000 milliseconds or 1 second.
+        The default is: Slave Address = 1 and Master Request Timeout = 1000 milliseconds or 1 second.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_MODBUS_CONFIGURATION, (slave_address, master_request_timeout), 'B I', '')
 
@@ -352,11 +352,11 @@ class BrickletRS485(Device):
 
     def set_mode(self, mode):
         """
-        Sets the mode of the Bricklet on which it operates. Available options:
+        Sets the mode of the Bricklet in which it operates. Available options:
 
-        * RS485, switches the operating mode of the bricklet to RS485 mode.
-        * Modbus Slave RTU, switches the operating mode of the bricklet to Modbus Slave RTU mode.
-        * Modbus Master RTU, switches the operating mode of the bricklet to Modbus Master RTU mode.
+        * RS485: Switches the operating mode of the bricklet to RS485 mode.
+        * Modbus Slave RTU: Switches the operating mode of the bricklet to Modbus Slave RTU mode.
+        * Modbus Master RTU. Switches the operating mode of the bricklet to Modbus Master RTU mode.
 
         The default is: RS485 mode.
         """
@@ -467,109 +467,290 @@ class BrickletRS485(Device):
 
     def get_modbus_common_error_count(self):
         """
-        -
+        Returns the current number of errors occurred in Modbus mode.
+
+        * Timeout Error Count: Number of timeouts occurred.
+        * Checksum Error Count: Number of failures due to Modbus frame CRC16 checksum mismatch.
+        * Frame Too Big Error Count: Number of times frames were rejected because they exceeded maximum Modbus frame size which is 256 bytes.
+        * Illegal Function Error Count: Number of errors when an unimplemented or illegal function is requested. This corresponds to Modbus exception code 1.
+        * Illegal Data Address Error Count: Number of errors due to invalid data address. This corresponds to Modbus exception code 2.
+        * Illegal Data Value Error Count: Number of errors due to invalid data value. This corresponds to Modbus exception code 3.
+        * Slave Device Failure Error Count: Number of errors occurred on the slave device which were unrecoverable. This corresponds to Modbus exception code 4.
         """
         return GetModbusCommonErrorCount(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_MODBUS_COMMON_ERROR_COUNT, (), '', 'I I I I I I I'))
 
     def modbus_report_exception(self, request_id, exception_code):
         """
-        -
+        In Modbus slave mode this function can be used to report a modbus exception for
+        a Modbus master request.
+
+        * Request ID: Request ID of the request received by the slave.
+        * Exception Code: Modbus exception code to report to the Modbus master.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_REPORT_EXCEPTION, (request_id, exception_code), 'B B', '')
 
     def modbus_answer_read_coils_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
-        -
+        In Modbus slave mode this function can be used to answer a master request to
+        read coils.
+
+        * Request ID: Request ID of the corresponding request that is being answered.
+        * Data: Data that is to be sent to the Modbus master for the corresponding request.
+
+        This function must be called from the :cb:`Modbus Read Coils Request` callback
+        with the Request ID as provided by the argument of the callback.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_COILS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 59B', '')
 
     def modbus_read_coils(self, slave_address, starting_address, count):
         """
-        -
+        In Modbus master mode this function can be used to read coils from a slave.
+
+        * Slave Address: Address of the target Modbus slave.
+        * Starting Address: Starting address of the read.
+        * Count: Number of coils to read.
+
+        Upon success the function will return a non-zero request ID which will represent
+        the current request initiated by the Modbus master. In case of failure the returned
+        request ID will be 0.
+
+        When successful this function will also invoke the :cb:`Modbus Read Coils Response`
+        callback. In this callback the Request ID provided by the callback argument must be
+        matched with the Request ID returned from this function to verify that the callback
+        is indeed for a particular request.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_READ_COILS, (slave_address, starting_address, count), 'B H H', 'B')
 
     def modbus_answer_read_holding_registers_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
-        -
+        In Modbus slave mode this function can be used to answer a master request to
+        read holding registers.
+
+        * Request ID: Request ID of the corresponding request that is being answered.
+        * Data: Data that is to be sent to the Modbus master for the corresponding request.
+
+        This function must be called from the :cb:`Modbus Read Holding Registers Request`
+        callback with the Request ID as provided by the argument of the callback.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_HOLDING_REGISTERS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 29H', '')
 
     def modbus_read_holding_registers(self, slave_address, starting_address, count):
         """
-        -
+        In Modbus master mode this function can be used to read holding registers from a slave.
+
+        * Slave Address: Address of the target Modbus slave.
+        * Starting Address: Starting address of the read.
+        * Count: Number of holding registers to read.
+
+        Upon success the function will return a non-zero request ID which will represent
+        the current request initiated by the Modbus master. In case of failure the returned
+        request ID will be 0.
+
+        When successful this function will also invoke the :cb:`Modbus Read Holding Registers Response`
+        callback. In this callback the Request ID provided by the callback argument must be matched
+        with the Request ID returned from this function to verify that the callback is indeed for a
+        particular request.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_READ_HOLDING_REGISTERS, (slave_address, starting_address, count), 'B H H', 'B')
 
     def modbus_answer_write_single_coil_request(self, request_id, coil_address, coil_value):
         """
-        -
+        In Modbus slave mode this function can be used to answer a master request to
+        write a single coil.
+
+        * Request ID: Request ID of the corresponding request that is being answered.
+        * Coil Address: Address of the coil to write.
+        * Coil Value: Value to be written.
+
+        This function must be called from the :cb:`Modbus Write Single Coil Request`
+        callback with the Request ID, Coil Address and Coil Value as provided by the
+        arguments of the callback.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_WRITE_SINGLE_COIL_REQUEST, (request_id, coil_address, coil_value), 'B H H', '')
 
     def modbus_write_single_coil(self, slave_address, coil_address, coil_value):
         """
-        -
+        In Modbus master mode this function can be used to write a single coil of a slave.
+
+        * Slave Address: Address of the target Modbus slave.
+        * Coil Address: Address of the coil.
+        * Coil Value: Value to be written.
+
+        Upon success the function will return a non-zero request ID which will represent
+        the current request initiated by the Modbus master. In case of failure the returned
+        request ID will be 0.
+
+        When successful this function will also invoke the :cb:`Modbus Write Single Coil Response`
+        callback. In this callback the Request ID provided by the callback argument must be matched
+        with the Request ID returned from this function to verify that the callback is indeed for a
+        particular request.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_WRITE_SINGLE_COIL, (slave_address, coil_address, coil_value), 'B H H', 'B')
 
     def modbus_answer_write_single_register_request(self, request_id, register_address, register_value):
         """
-        -
+        In Modbus slave mode this function can be used to answer a master request to
+        write a single register.
+
+        * Request ID: Request ID of the corresponding request that is being answered.
+        * Register Address: Address of the register to write.
+        * Register Value: Value to be written.
+
+        This function must be called from the :cb:`Modbus Write Single Register Request`
+        callback with the Request ID, Register Address and Register Value as provided by
+        the arguments of the callback.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_WRITE_SINGLE_REGISTER_REQUEST, (request_id, register_address, register_value), 'B H H', '')
 
     def modbus_write_single_register(self, slave_address, register_address, register_value):
         """
-        -
+        In Modbus master mode this function can be used to write a single register of a
+        slave.
+
+        * Slave Address: Address of the target Modbus slave.
+        * Register Address: Address of the register.
+        * Register Value: Value to be written.
+
+        Upon success the function will return a non-zero request ID which will represent
+        the current request initiated by the Modbus master. In case of failure the returned
+        request ID will be 0.
+
+        When successful this function will also invoke the :cb:`Modbus Write Single Register Response`
+        callback. In this callback the Request ID provided by the callback argument must be matched
+        with the Request ID returned from this function to verify that the callback is indeed for a
+        particular request.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_WRITE_SINGLE_REGISTER, (slave_address, register_address, register_value), 'B H H', 'B')
 
     def modbus_answer_write_multiple_coils_request(self, request_id, starting_address, count):
         """
-        -
+        In Modbus slave mode this function can be used to answer a master request to
+        write multiple coils.
+
+        * Request ID: Request ID of the corresponding request that is being answered.
+        * Starting Address: Starting address of the write.
+        * Count: Number of coils to write.
+
+        This function must be called from the :cb:`Modbus Write Multiple Coils Request`
+        callback with the Request ID, Starting Address and Count as provided by the
+        arguments of the callback.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_WRITE_MULTIPLE_COILS_REQUEST, (request_id, starting_address, count), 'B H H', '')
 
     def modbus_write_multiple_coils_low_level(self, slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
-        -
+        In Modbus master mode this function can be used to write multiple coils of a slave.
+
+        * Slave Address: Address of the target Modbus slave.
+        * Starting Address: Starting address of the write.
+        * Count: Number of coils to write.
+
+        Upon success the function will return a non-zero request ID which will represent
+        the current request initiated by the Modbus master. In case of failure the returned
+        request ID will be 0.
+
+        When successful this function will also invoke the :cb:`Modbus Write Multiple Coils Response`
+        callback. In this callback the Request ID provided by the callback argument must be matched
+        with the Request ID returned from this function to verify that the callback is indeed for a
+        particular request.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_WRITE_MULTIPLE_COILS_LOW_LEVEL, (slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H H H 54B', 'B')
 
     def modbus_answer_write_multiple_registers_request(self, request_id, starting_address, count):
         """
-        -
+        In Modbus slave mode this function can be used to answer a master request to
+        write multiple registers.
+
+        * Request ID: Request ID of the corresponding request that is being answered.
+        * Starting Address: Starting address of the write.
+        * Count: Number of registers to write.
+
+        This function must be called from the :cb:`Modbus Write Multiple Registers Request`
+        callback with the Request ID, Starting Address and Count as provided by the
+        arguments of the callback.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_WRITE_MULTIPLE_REGISTERS_REQUEST, (request_id, starting_address, count), 'B H H', '')
 
     def modbus_write_multiple_registers_low_level(self, slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
-        -
+        In Modbus master mode this function can be used to write multiple registers of a slave.
+
+        * Slave Address: Address of the target Modbus slave.
+        * Starting Address: Starting Address of the write.
+        * Count: Number of registers to write.
+
+        Upon success the function will return a non-zero request ID which will represent
+        the current request initiated by the Modbus master. In case of failure the returned
+        request ID will be 0.
+
+        When successful this function will also invoke the :cb:`Modbus Write Multiple Registers Response`
+        callback. In this callback the Request ID provided by the callback argument must be matched
+        with the Request ID returned from this function to verify that the callback is indeed for a
+        particular request.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_WRITE_MULTIPLE_REGISTERS_LOW_LEVEL, (slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H H H 27H', 'B')
 
     def modbus_answer_read_discrete_inputs_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
-        -
+        In Modbus slave mode this function can be used to answer a master request to
+        read discrete inputs.
+
+        * Request ID: Request ID of the corresponding request that is being answered.
+        * Data: Data that is to be sent to the Modbus master for the corresponding request.
+
+        This function must be called from the :cb:`Modbus Read Discrete Inputs Request`
+        callback with the Request ID as provided by the argument of the callback.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_DISCRETE_INPUTS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 59B', '')
 
     def modbus_read_discrete_inputs(self, slave_address, starting_address, count):
         """
-        -
+        In Modbus master mode this function can be used to read discrete inputs from a slave.
+
+        * Slave Address: Address of the target Modbus slave.
+        * Starting Address: Starting address of the read.
+        * Count: Number of discrete inputs to read.
+
+        Upon success the function will return a non-zero request ID which will represent
+        the current request initiated by the Modbus master. In case of failure the returned
+        request ID will be 0.
+
+        When successful this function will also invoke the :cb:`Modbus Read Discrete Inputs Response`
+        callback. In this callback the Request ID provided by the callback argument must be matched
+        with the Request ID returned from this function to verify that the callback is indeed for a
+        particular request.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_READ_DISCRETE_INPUTS, (slave_address, starting_address, count), 'B H H', 'B')
 
     def modbus_answer_read_input_registers_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
-        -
+        In Modbus slave mode this function can be used to answer a master request to
+        read input registers.
+
+        * Request ID: Request ID of the corresponding request that is being answered.
+        * Data: Data that is to be sent to the Modbus master for the corresponding request.
+
+        This function must be called from the :cb:`Modbus Read Input Registers Request` callback
+        with the Request ID as provided by the argument of the callback.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 29H', '')
 
     def modbus_read_input_registers(self, slave_address, starting_address, count):
         """
-        -
+        In Modbus master mode this function can be used to read input registers from a slave.
+
+        * Slave Address: Address of the target Modbus slave.
+        * Starting Address: Starting address of the read.
+        * Count: Number of input registers to read.
+
+        Upon success the function will return a non-zero request ID which will represent
+        the current request initiated by the Modbus master. In case of failure the returned
+        request ID will be 0.
+
+        When successful this function will also invoke the :cb:`Modbus Read Input Registers Response`
+        callback. In this callback the Request ID provided by the callback argument must be matched
+        with the Request ID returned from this function to verify that the callback is indeed for a
+        particular request.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_READ_INPUT_REGISTERS, (slave_address, starting_address, count), 'B H H', 'B')
 

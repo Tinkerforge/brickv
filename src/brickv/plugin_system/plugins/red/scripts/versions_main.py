@@ -4,8 +4,8 @@
 import os
 import re
 
-BINDINGS_DIR = "/usr/tinkerforge/bindings/"
-BINDINGS = ["csharp", "c", "delphi", "java", "javascript", "matlab", "perl", "php", "python", "ruby", "shell", "vbnet"]
+BINDINGS_DIR = '/usr/tinkerforge/bindings/'
+BINDINGS = ['c', 'csharp', 'delphi', 'java', 'javascript', 'labview', 'mathematica', 'matlab', 'perl', 'php', 'python', 'ruby', 'shell', 'vbnet']
 
 def get_changelog_version(bindings_root_directory):
     r = re.compile('^(\d{4}-\d{2}-\d{2}:\s)(\d+)\.(\d+)\.(\d+)\s\(')
