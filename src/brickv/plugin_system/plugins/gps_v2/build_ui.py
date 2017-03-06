@@ -6,4 +6,4 @@ def system(command):
     if os.system(command) != 0:
         exit(1)
 
-system("pyuic4 -o ui_gps.py ui/gps.ui")
+system("pyuic4 -o ui_gps_v2.py ui/gps_v2.ui")
