@@ -324,7 +324,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if name.endswith('_v2'):
             name = name.replace('_v2', '_2.0')
 
-        if name in ['gps', 'ptc', 'rs232', 'co2', 'can', 'rgb_led']:
+        if name in ['gps', 'gps_2.0', 'ptc', 'rs232', 'co2', 'can', 'rgb_led']:
             name = name.upper()
         elif name.startswith('lcd_'):
             name = name.replace('lcd_', 'LCD_')
@@ -344,6 +344,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
             name = name.replace('uv_', 'UV_')
         elif name.startswith('rgb_led_'):
             name = name.replace('rgb_led_', 'RGB_LED_')
+        elif name.startswith('rgb_'):
+            name = name.replace('rgb_', 'RGB_')
+        elif name.startswith('dmx_'):
+            name = name.replace('dmx_', 'DMX_')
+        elif name.startswith('midi_'):
+            name = name.replace('midi_', 'MIDI_')
 
         words = name.split('_')
         parts = []
@@ -864,10 +870,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
         progress.setMaximum(0)
         progress.show()
 
+        if self.current_bricklet_has_comcu():
+            file_ext = 'zbin'
+        else:
+            file_ext = 'bin'
+
         response = None
 
         try:
-            response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version), timeout=10)
+            response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{2}_{3}_{4}.{1}'.format(url_part, file_ext, *version), timeout=10)
         except urllib2.URLError:
             pass
 
@@ -875,7 +886,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         while response is None and beta > 0:
             try:
-                response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{2}_{3}_{4}_beta{1}.bin'.format(url_part, beta, *version), timeout=10)
+                response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{3}_{4}_{5}_beta{1}.{2}'.format(url_part, beta, file_ext, *version), timeout=10)
             except urllib2.URLError:
                 beta -= 1
 
@@ -1143,7 +1154,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             url_part = self.combo_plugin.itemData(self.combo_plugin.currentIndex())
             name = self.plugin_infos[url_part].name
             version = self.plugin_infos[url_part].firmware_version_latest
-            plugin = self.download_bricklet_plugin(progress, url_part, name, version)
+            plugin = self.download_bricklet_plugin(progress, url_part, name, version, popup=True)
 
             if not plugin:
                 return
@@ -1197,12 +1208,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
             return False
 
     def plugin_browse_clicked(self):
-        file_ending = '*.bin'
-        try:
-            if self.current_bricklet_has_comcu():
-                file_ending = '*.zbin'
-        except:
-            pass
+        if self.current_bricklet_has_comcu():
+            file_ending = '*.zbin'
+        else:
+            file_ending = '*.bin'
 
         last_dir = get_home_path()
 
