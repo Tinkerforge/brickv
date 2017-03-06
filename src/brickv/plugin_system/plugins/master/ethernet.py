@@ -47,13 +47,10 @@ class Ethernet(QWidget, Ui_Ethernet):
         self.last_websocket_port = 4280
 
         if parent.firmware_version >= (2, 1, 0):
-            async_call(self.master.get_ethernet_configuration, None, self.get_ethernet_configuration_async, self.parent.increase_error_count)
-            async_call(self.master.get_ethernet_status, None, self.get_ethernet_status_init_async, self.parent.increase_error_count)
             self.ethernet_connection.currentIndexChanged.connect(self.connection_changed)
             self.ethernet_save.clicked.connect(self.save_clicked)
 
         if parent.firmware_version >= (2, 2, 0):
-            async_call(self.master.get_ethernet_websocket_configuration, None, self.get_ethernet_websocket_configuration_async, self.parent.increase_error_count)
             self.ethernet_socket_connections.valueChanged.connect(self.socket_connections_changed)
             self.ethernet_websocket_connections.valueChanged.connect(self.websocket_connections_changed)
 
@@ -66,8 +63,6 @@ class Ethernet(QWidget, Ui_Ethernet):
             self.ethernet_show_characters.hide()
             self.ethernet_secret_label.hide()
             self.ethernet_secret.hide()
-
-            async_call(self.master.get_ethernet_authentication_secret, None, self.get_ethernet_authentication_secret_async, self.parent.increase_error_count)
         else:
             self.ethernet_use_auth.setText("Use Authentication (FW Version >= 2.2.0 required)")
             self.ethernet_use_auth.setDisabled(True)
@@ -77,6 +72,15 @@ class Ethernet(QWidget, Ui_Ethernet):
             self.ethernet_websocket_port.setEnabled(False)
             self.ethernet_socket_connections.setEnabled(False)
             self.ethernet_websocket_connections.setEnabled(False)
+
+    def start(self):
+        if self.parent.firmware_version >= (2, 1, 0):
+            async_call(self.master.get_ethernet_configuration, None, self.get_ethernet_configuration_async, self.parent.increase_error_count)
+            async_call(self.master.get_ethernet_status, None, self.get_ethernet_status_init_async, self.parent.increase_error_count)
+
+        if self.parent.firmware_version >= (2, 2, 0):
+            async_call(self.master.get_ethernet_websocket_configuration, None, self.get_ethernet_websocket_configuration_async, self.parent.increase_error_count)
+            async_call(self.master.get_ethernet_authentication_secret, None, self.get_ethernet_authentication_secret_async, self.parent.increase_error_count)
 
     def destroy(self):
         pass

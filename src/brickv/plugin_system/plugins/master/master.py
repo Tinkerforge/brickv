@@ -50,12 +50,14 @@ class Master(PluginBase, Ui_Master):
         self.update_timer.timeout.connect(self.update_data)
 
         self.wifi2_get_firmware_version_timer = QTimer()
-        self.wifi2_get_firmware_version_timer.timeout.connect(self.wifi2_get_firmware_version_timeout)
+        self.wifi2_get_firmware_version_timer.timeout.connect(self.wifi2_get_firmware_version)
 
         self.extension_type = None
 
         self.extensions = []
         self.num_extensions = 0
+        self.wifi2_ext = None
+        self.wifi2_firmware_version = None
 
         self.extension_label.setText("None Present")
         self.tab_widget.removeTab(0)
@@ -73,14 +75,13 @@ class Master(PluginBase, Ui_Master):
             reset.triggered.connect(lambda: self.master.reset())
             self.set_actions(reset)
 
-        self.extension_type_preset = [None, False, False, False, False, False]
+        self.extension_type_preset = [None,  # None
+                                      False, # Chibi
+                                      False, # RS485
+                                      False, # WIFI
+                                      False, # Ethernet
+                                      False] # WIFI 2.0
         self.update_extensions_in_device_info()
-
-    def get_wifi2_firmware_version_async(self, version, ext):
-        self.device_info.extensions[ext].firmware_version_installed = version
-        infos.update_info(self.uid)
-        get_main_window().update_tree_view() # FIXME: this is kind of a hack
-        self.is_wifi2_present_async(True)
 
     def update_extensions_in_device_info(self):
         def is_present_async(present, extension_type, name):
@@ -103,21 +104,13 @@ class Master(PluginBase, Ui_Master):
 
                 if extension_type == self.master.EXTENSION_TYPE_WIFI2:
                     self.device_info.extensions[ext].url_part = 'wifi_v2'
-                    '''
-                    When WIFI2 extension firmware version is being requested the
-                    extension might still not be done with booting and thus the
-                    message won't be received by the extension. So we delay sending
-                    the request which gives enough time to the extension to finish
-                    booting. Note that this delay is only induced when there is a
-                    WIFI2 extension present.
-                    '''
-
-                    '''
-                    This object wide variable saves the value of local ext to be
-                    used in the timer's timeout callback to do the async call to
-                    get WIFI2 extension's firmware version.
-                    '''
-                    self.ext = ext
+                    # When WIFI2 extension firmware version is being requested the
+                    # extension might still not be done with booting and thus the
+                    # message won't be received by the extension. So we delay sending
+                    # the request which gives enough time to the extension to finish
+                    # booting. Note that this delay is only induced when there is a
+                    # WIFI2 extension present.
+                    self.wifi2_ext = ext
                     self.label_no_extension.setText('Waiting for WIFI Extension 2.0 firmware version...')
                     self.wifi2_get_firmware_version_timer.start(2000)
 
@@ -143,9 +136,24 @@ class Master(PluginBase, Ui_Master):
 
         async_call(lambda: None, None, lambda: get_main_window().update_tree_view(), None)
 
-    def is_wifi2_present_async(self, present):
-        if present:
-            wifi2 = Wifi2(self)
+    def get_wifi2_firmware_version_async(self, version):
+        self.wifi2_firmware_version = version
+        self.device_info.extensions[self.wifi2_ext].firmware_version_installed = version
+        infos.update_info(self.uid)
+        get_main_window().update_tree_view() # FIXME: this is kind of a hack
+        self.wifi2_present(True)
+
+    def wifi2_get_firmware_version(self):
+        if self.wifi2_firmware_version != None:
+            return
+
+        self.wifi2_get_firmware_version_timer.stop()
+        async_call(self.master.get_wifi2_firmware_version, None, self.get_wifi2_firmware_version_async, self.increase_error_count)
+
+    def wifi2_present(self, present):
+        if present and self.wifi2_firmware_version != None and not self.check_extensions:
+            wifi2 = Wifi2(self.wifi2_firmware_version, self)
+            wifi2.start()
             self.extensions.append(wifi2)
             self.tab_widget.addTab(wifi2, 'WIFI 2.0')
             self.tab_widget.show()
@@ -153,32 +161,10 @@ class Master(PluginBase, Ui_Master):
             self.extension_label.setText(str(self.num_extensions) + " Present")
             self.label_no_extension.hide()
 
-            '''
-            Check if the master brick and WIFI extension 2 firmware versions support
-            mesh networking feature. Also set firmware version information for the WIFI2
-            extension 2 object.
-            '''
-            for ext in self.device_info.extensions:
-                if not self.device_info.extensions[ext]:
-                    continue
-
-                if self.device_info.extensions[ext].name != 'WIFI Extension 2.0':
-                    continue
-
-                wifi2.wifi2_firmware_version = \
-                    self.device_info.extensions[ext].firmware_version_installed
-
-                if self.device_info.extensions[ext].firmware_version_installed >= (2, 1, 0) \
-                   and self.firmware_version >= (2, 4, 2):
-                    wifi2.wifi_mode.addItem('Mesh')
-                    wifi2.label_mesh_hint.hide()
-                    wifi2.get_current_status()
-
-                break
-
-    def is_ethernet_present_async(self, present):
+    def ethernet_present(self, present):
         if present:
             ethernet = Ethernet(self)
+            ethernet.start()
             self.extensions.append(ethernet)
             self.tab_widget.addTab(ethernet, 'Ethernet')
             self.tab_widget.show()
@@ -186,9 +172,10 @@ class Master(PluginBase, Ui_Master):
             self.extension_label.setText(str(self.num_extensions) + " Present")
             self.label_no_extension.hide()
 
-    def is_wifi_present_async(self, present):
+    def wifi_present(self, present):
         if present:
             wifi = Wifi(self)
+            wifi.start()
             self.extensions.append(wifi)
             self.tab_widget.addTab(wifi, 'WIFI')
             self.tab_widget.show()
@@ -196,9 +183,10 @@ class Master(PluginBase, Ui_Master):
             self.extension_label.setText(str(self.num_extensions) + " Present")
             self.label_no_extension.hide()
 
-    def is_rs485_present_async(self, present):
+    def rs485_present(self, present):
         if present:
             rs485 = RS485(self)
+            rs485.start()
             self.extensions.append(rs485)
             self.tab_widget.addTab(rs485, 'RS485')
             self.tab_widget.show()
@@ -206,9 +194,10 @@ class Master(PluginBase, Ui_Master):
             self.extension_label.setText(str(self.num_extensions) + " Present")
             self.label_no_extension.hide()
 
-    def is_chibi_present_async(self, present):
+    def chibi_present(self, present):
         if present:
             chibi = Chibi(self)
+            chibi.start()
             self.extensions.append(chibi)
             self.tab_widget.addTab(chibi, 'Chibi')
             self.tab_widget.show()
@@ -220,18 +209,11 @@ class Master(PluginBase, Ui_Master):
         if self.check_extensions:
             self.check_extensions = False
 
-            self.is_chibi_present_async(self.extension_type_preset[self.master.EXTENSION_TYPE_CHIBI])
-            self.is_rs485_present_async(self.extension_type_preset[self.master.EXTENSION_TYPE_RS485])
-            self.is_wifi_present_async(self.extension_type_preset[self.master.EXTENSION_TYPE_WIFI])
-            self.is_ethernet_present_async(self.extension_type_preset[self.master.EXTENSION_TYPE_ETHERNET])
-
-            '''
-            For WIFI extension 2, self.is_wifi2_present_async() isn't called here but called from the
-            async callback, get_wifi2_firmware_version_async(). This is to ensure that both the master brick
-            and WIFI extension 2 firmware versions are available before creating the tab widget of the extension.
-            This is required because WIFI extension 2 supports mesh networking for which the GUI is updated
-            dynamically only when the version information is available.
-            '''
+            self.chibi_present(self.extension_type_preset[self.master.EXTENSION_TYPE_CHIBI])
+            self.rs485_present(self.extension_type_preset[self.master.EXTENSION_TYPE_RS485])
+            self.wifi_present(self.extension_type_preset[self.master.EXTENSION_TYPE_WIFI])
+            self.ethernet_present(self.extension_type_preset[self.master.EXTENSION_TYPE_ETHERNET])
+            self.wifi2_present(self.extension_type_preset[self.master.EXTENSION_TYPE_WIFI2])
 
         self.update_timer.start(1000)
 
@@ -265,14 +247,6 @@ class Master(PluginBase, Ui_Master):
 
         for extension in self.extensions:
             extension.update_data()
-
-    def wifi2_get_firmware_version_timeout(self):
-        self.wifi2_get_firmware_version_timer.stop()
-
-        async_call(self.master.get_wifi2_firmware_version,
-                   None,
-                   lambda v: self.get_wifi2_firmware_version_async(v, self.ext),
-                   self.increase_error_count)
 
     def get_stack_voltage_async(self, voltage):
         self.stack_voltage_label.setText('{:g} V'.format(round(voltage / 1000.0, 1)))

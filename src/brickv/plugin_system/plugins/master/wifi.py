@@ -51,8 +51,11 @@ class Wifi(QWidget, Ui_Wifi):
         self.wifi_password.setEchoMode(QLineEdit.Password)
         self.wifi_password_show.stateChanged.connect(self.wifi_password_show_state_changed)
 
-        if parent.firmware_version >= (1, 3, 0):
-            if parent.firmware_version < (1, 3, 3):
+        self.wifi_status = None
+
+    def start(self):
+        if self.parent.firmware_version >= (1, 3, 0):
+            if self.parent.firmware_version < (1, 3, 3):
                 # AP and Ad Hoc was added in 1.3.3
                 while self.wifi_connection.count() > 2:
                     self.wifi_connection.removeItem(self.wifi_connection.count() - 1)
@@ -62,7 +65,7 @@ class Wifi(QWidget, Ui_Wifi):
             async_call(self.master.get_wifi_certificate, 0xFFFE, self.update_password_async, self.parent.increase_error_count)
             async_call(self.master.get_wifi_power_mode, None, self.wifi_power_mode.setCurrentIndex, self.parent.increase_error_count)
 
-            if parent.firmware_version >= (1, 3, 4):
+            if self.parent.firmware_version >= (1, 3, 4):
                 async_call(self.master.get_wifi_regulatory_domain, None, self.wifi_domain.setCurrentIndex, self.parent.increase_error_count)
             else:
                 self.wifi_domain.setEnabled(False)
@@ -71,7 +74,7 @@ class Wifi(QWidget, Ui_Wifi):
 
             async_call(self.master.get_wifi_encryption, None, self.get_wifi_encryption_async, self.parent.increase_error_count)
 
-            if parent.firmware_version < (2, 0, 5):
+            if self.parent.firmware_version < (2, 0, 5):
                 self.wifi_hostname.setDisabled(True)
                 self.wifi_hostname.setMaxLength(50)
                 self.wifi_hostname.setText("FW Version >= 2.0.5 required")
@@ -79,7 +82,7 @@ class Wifi(QWidget, Ui_Wifi):
             else:
                 async_call(self.master.get_wifi_hostname, None, self.get_wifi_hostname_async, self.parent.increase_error_count)
 
-        if parent.firmware_version >= (2, 2, 0):
+        if self.parent.firmware_version >= (2, 2, 0):
             self.wifi_use_auth.stateChanged.connect(self.wifi_auth_changed)
             self.wifi_show_characters.stateChanged.connect(self.wifi_show_characters_changed)
 
@@ -94,8 +97,6 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_show_characters.hide()
             self.wifi_secret_label.hide()
             self.wifi_secret.hide()
-
-        self.wifi_status = None
 
     def destroy(self):
         if self.wifi_status:

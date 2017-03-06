@@ -44,14 +44,12 @@ class Chibi(QWidget, Ui_Chibi):
         self.update_chibi_frequency = 0
         self.update_chibi_channel = 0
 
-        if parent.firmware_version >= (1, 1, 0):
-            self.update_generator = self.init_update()
+    def start(self):
+        if self.parent.firmware_version >= (1, 1, 0):
+            self.update_generator = self.start_async()
             self.update_generator.next()
 
-    def destroy(self):
-        pass
-
-    def init_update(self):
+    def start_async(self):
         self.update_address = 0
         self.update_chibi_slave_address = 0
         self.update_chibi_master_address = 0
@@ -122,6 +120,9 @@ class Chibi(QWidget, Ui_Chibi):
         self.chibi_type.setCurrentIndex(typ)
         self.chibi_type_changed(typ)
         self.new_max_count()
+
+    def destroy(self):
+        pass
 
     def popup_ok(self):
         QMessageBox.information(get_main_window(), "Configuration", 'Successfully saved configuration.\nNew configuration will be used after reset of the Master Brick.', QMessageBox.Ok)

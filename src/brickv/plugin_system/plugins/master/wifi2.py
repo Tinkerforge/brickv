@@ -38,7 +38,7 @@ def hide_group(group):
         widget.setVisible(False)
 
 class Wifi2(QWidget, Ui_Wifi2):
-    def __init__(self, parent):
+    def __init__(self, wifi2_firmware_version, parent):
         QWidget.__init__(self)
 
         self.setupUi(self)
@@ -52,7 +52,7 @@ class Wifi2(QWidget, Ui_Wifi2):
             # This should not be possible
             return
 
-        self.wifi2_firmware_version = None
+        self.wifi2_firmware_version = wifi2_firmware_version
 
         self.general_group = [self.wifi_port_label, self.wifi_port, self.wifi_websocket_port_label,
                             self.wifi_websocket_port, self.wifi_website_port_label, self.wifi_website_port,
@@ -189,9 +189,13 @@ class Wifi2(QWidget, Ui_Wifi2):
         self.ap_enable = False
         self.mesh_enable = False
 
-        self.get_current_status()
+        # Check if the master brick and WIFI extension 2 firmware versions
+        # support mesh networking feature
+        if self.wifi2_firmware_version >= (2, 1, 0) and  self.parent.firmware_version >= (2, 4, 2):
+            self.wifi_mode.addItem('Mesh')
+            self.label_mesh_hint.hide()
 
-    def get_current_status(self):
+    def start(self):
         # Get Current state of WIFI Extension 2.0
         async_call(self.master.get_wifi2_authentication_secret, None,
             self.get_wifi2_authentication_secret_async, self.parent.increase_error_count)
@@ -223,6 +227,9 @@ class Wifi2(QWidget, Ui_Wifi2):
 
             async_call(self.master.get_wifi2_mesh_router_ssid, None,
                 self.get_wifi2_mesh_router_ssid_async, self.parent.increase_error_count)
+
+    def destroy(self):
+        pass
 
     def check_ap_client_mesh(self):
         if not self.client_enable and not self.ap_enable and not self.mesh_enable:
