@@ -48,7 +48,7 @@ class REDTabVersions(REDTab, Ui_REDTabVersions):
         self.language_packages = None
         self.language_packages_file = None
 
-        languages = ['C/C++', 'C#', 'Delphi', 'Java', 'JavaScript', 'LabVIEW', 'Mathematica', 'MATLAB/Octave', 'Perl', 'PHP', 'Python', 'Ruby', 'Shell', 'Visual Basic .NET']
+        languages = 'C/C++', 'C#/Mono', 'Delphi/Lazarus', 'Java', 'JavaScript', 'Octave', 'Perl', 'PHP', 'Python', 'Ruby', 'Shell', 'VB.NET'
 
         self.package_list[0].append({'name': 'Brick Daemon', 'version': 'Collecting Data...', 'description': 'Daemon that manages Bricks/Bricklets'})
         self.package_list[0].append({'name': 'RED Brick API Daemon', 'version': 'Collecting Data...', 'description': 'Daemon that implements RED Brick API'})
