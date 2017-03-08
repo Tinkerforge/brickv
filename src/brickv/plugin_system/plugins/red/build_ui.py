@@ -8,6 +8,7 @@ def system(command):
         exit(1)
 
 system("pyuic4 -o ui_red.py ui/red.ui")
+system("pyuic4 -o ui_red_update_tinkerforge_software.py ui/red_update_tinkerforge_software.ui")
 system("pyuic4 -o ui_red_tab_overview.py ui/red_tab_overview.ui")
 system("pyuic4 -o ui_red_tab_settings.py ui/red_tab_settings.ui")
 system("pyuic4 -o ui_red_tab_settings_network.py ui/red_tab_settings_network.ui")
