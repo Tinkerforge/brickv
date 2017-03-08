@@ -81,6 +81,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
         self.current_state = self.STATE_INIT
 
         self.pbar.hide()
+        self.label_pbar.hide()
 
         # Connect signals.
         self.pbutton_n.clicked.connect(self.pbutton_n_clicked)
@@ -94,8 +95,9 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
 
     def start_installing_updates(self):
         def cb_update_tf_software_install(result):
-            self.pbar.setFormat('Updates installed %p%')
             self.pbar.setValue(100)
+            self.label_pbar.setText('')
+            self.label_pbar.hide()
 
             if result and result.stdout and not result.stderr and result.exit_code == 0:
                 self.set_current_state(self.STATE_UPDATE_DONE)
@@ -135,8 +137,8 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                                   display_name + 'update:<br/>' + \
                                                   str(exception) + '<br/><br/>'
 
-        self.pbar.setFormat('Stored ' + display_name + ' update %p%')
         self.pbar.setValue(50 + (((self.update_info['processed'] * 100.00) / self.update_info['updates_total']) / 4))
+        self.label_pbar.setText('Stored ' + display_name)
 
         if self.update_info['processed'] == self.update_info['updates_total']:
             self.start_installing_updates()
@@ -274,8 +276,8 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
 
                     break
 
-        self.pbar.setFormat('Downloaded ' + display_name + ' %p%')
         self.pbar.setValue(((self.update_info['processed'] * 100.00) / self.update_info['updates_total']) / 2)
+        self.label_pbar.setText('Downloaded ' + display_name)
 
         self.update_info['processed'] = self.update_info['processed'] + 1
 
@@ -305,8 +307,8 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
 
                 break
 
-        self.pbar.setFormat('Downloaded ' + display_name + ' %p%')
         self.pbar.setValue(((self.update_info['processed'] * 100.00) / self.update_info['updates_total']) / 2)
+        self.label_pbar.setText('Downloaded ' + display_name)
 
         self.update_info['error_messages'] += _exception + '<br/><br/>'
 
@@ -360,40 +362,40 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                 continue
 
             if d['name'] == 'c':
-                msg += self.FMT_LI.format('Bindings C', d['from'], d['to'])
+                msg += self.FMT_LI.format('C/C++ Bindings', d['from'], d['to'])
 
             elif d['name'] == 'csharp':
-                msg += self.FMT_LI.format('Bindings C#/Mono', d['from'], d['to'])
+                msg += self.FMT_LI.format('C#/Mono Bindings', d['from'], d['to'])
 
             elif d['name'] == 'delphi':
-                msg += self.FMT_LI.format('Bindings Delphi/Lazarus', d['from'], d['to'])
+                msg += self.FMT_LI.format('Delphi/Lazarus Bindings', d['from'], d['to'])
 
             elif d['name'] == 'java':
-                msg += self.FMT_LI.format('Bindings Java', d['from'], d['to'])
+                msg += self.FMT_LI.format('Java Bindings', d['from'], d['to'])
 
             elif d['name'] == 'javascript':
-                msg += self.FMT_LI.format('Bindings JavaScript', d['from'], d['to'])
+                msg += self.FMT_LI.format('JavaScript Bindings', d['from'], d['to'])
 
             elif d['name'] == 'matlab':
-                msg += self.FMT_LI.format('Bindings Octave', d['from'], d['to'])
+                msg += self.FMT_LI.format('Octave Bindings', d['from'], d['to'])
 
             elif d['name'] == 'perl':
-                msg += self.FMT_LI.format('Bindings Perl', d['from'], d['to'])
+                msg += self.FMT_LI.format('Perl Bindings', d['from'], d['to'])
 
             elif d['name'] == 'php':
-                msg += self.FMT_LI.format('Bindings PHP', d['from'], d['to'])
+                msg += self.FMT_LI.format('PHP Bindings', d['from'], d['to'])
 
             elif d['name'] == 'python':
-                msg += self.FMT_LI.format('Bindings Python', d['from'], d['to'])
+                msg += self.FMT_LI.format('Python Bindings', d['from'], d['to'])
 
             elif d['name'] == 'ruby':
-                msg += self.FMT_LI.format('Bindings Ruby', d['from'], d['to'])
+                msg += self.FMT_LI.format('Ruby Bindings', d['from'], d['to'])
 
             elif d['name'] == 'shell':
-                msg += self.FMT_LI.format('Bindings Shell', d['from'], d['to'])
+                msg += self.FMT_LI.format('Shell Bindings', d['from'], d['to'])
 
             elif d['name'] == 'vbnet':
-                msg += self.FMT_LI.format('Bindings VB.NET', d['from'], d['to'])
+                msg += self.FMT_LI.format('VB.NET Bindings', d['from'], d['to'])
 
         msg += '</ul><br/>'
 
@@ -432,6 +434,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
 
         elif state == self.STATE_CHECKING_FOR_UPDATES:
             self.pbar.show()
+            self.label_pbar.hide()
             self.pbar.setMinimum(0)
             self.pbar.setMaximum(0)
             self.pbutton_n.setEnabled(False)
@@ -457,6 +460,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
 
         elif state == self.STATE_UPDATE_IN_PROGRESS:
             self.pbar.show()
+            self.label_pbar.hide()
             self.pbar.setMinimum(0)
             self.pbar.setMaximum(0)
             self.pbutton_n.setEnabled(False)
@@ -500,6 +504,8 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
 
             self.pbar.setMinimum(0)
             self.pbar.setMaximum(100)
+
+            self.label_pbar.show()
 
             self.pbar.setValue(0)
 
@@ -639,7 +645,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
                                                                                                l_split[2],
-                                                                                              'Bindings C/C++')
+                                                                                              'C/C++ Bindings')
 
                                     if not found:
                                         self.set_current_state(self.STATE_INIT)
@@ -651,7 +657,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
                                                                                                l_split[2],
-                                                                                               'Bindings C#/Mono')
+                                                                                               'C#/Mono Bindings')
                                     if not found:
                                         self.set_current_state(self.STATE_INIT)
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -662,7 +668,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
                                                                                                l_split[2],
-                                                                                               'Bindings Delphi/Lazarus')
+                                                                                               'Delphi/Lazarus Bindings')
                                     if not found:
                                         self.set_current_state(self.STATE_INIT)
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -673,7 +679,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
                                                                                                l_split[2],
-                                                                                               'Bindings Java')
+                                                                                               'Java Bindings')
                                     if not found:
                                         self.set_current_state(self.STATE_INIT)
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -684,7 +690,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
                                                                                                l_split[2],
-                                                                                               'Bindings JavaScript')
+                                                                                               'JavaScript Bindings')
                                     if not found:
                                         self.set_current_state(self.STATE_INIT)
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -695,7 +701,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
                                                                                                l_split[2],
-                                                                                               'Bindings Octave')
+                                                                                               'Octave Bindings')
                                     if not found:
                                         self.set_current_state(self.STATE_INIT)
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -706,7 +712,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
                                                                                                l_split[2],
-                                                                                               'Bindings Perl')
+                                                                                               'Perl Bindings')
                                     if not found:
                                         self.set_current_state(self.STATE_INIT)
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -717,7 +723,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
                                                                                                l_split[2],
-                                                                                               'Bindings PHP')
+                                                                                               'PHP Bindings')
                                     if not found:
                                         self.set_current_state(self.STATE_INIT)
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -728,7 +734,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
                                                                                                l_split[2],
-                                                                                               'Bindings Python')
+                                                                                               'Python Bindings')
                                     if not found:
                                         self.set_current_state(self.STATE_INIT)
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -739,7 +745,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
                                                                                                l_split[2],
-                                                                                               'Bindings Ruby')
+                                                                                               'Ruby Bindings')
                                     if not found:
                                         self.set_current_state(self.STATE_INIT)
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -750,7 +756,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
                                                                                                l_split[2],
-                                                                                               'Bindings Shell')
+                                                                                               'Shell Bindings')
                                     if not found:
                                         self.set_current_state(self.STATE_INIT)
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -761,7 +767,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
                                                                                                l_split[2],
-                                                                                               'Bindings VB.NET')
+                                                                                               'VB.NET Bindings')
                                     if not found:
                                         self.set_current_state(self.STATE_INIT)
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
