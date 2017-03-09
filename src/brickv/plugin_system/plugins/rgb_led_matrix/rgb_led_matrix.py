@@ -159,7 +159,7 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
         self.scribble_layout.insertWidget(1, self.scribble_area)
         
         self.color_button = QColorButton()
-        self.below_scribble_layout.insertWidget(1, self.color_button)
+        self.below_scribble_layout.insertWidget(2, self.color_button)
 
         self.qtcb_frame_started.connect(self.cb_frame_started)
 
