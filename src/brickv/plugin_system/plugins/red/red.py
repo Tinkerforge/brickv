@@ -61,7 +61,6 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
     MESSAGE_INFO_STATE_UPDATE_IN_PROGRESS = 'Updating RED Brick Tinkerforge software.<br /><br />Please wait...'
     MESSAGE_INFO_STATE_CHECKING_FOR_UPDATES = 'Checking if Tinkerforge software needs to be updated.<br /><br />Please wait...'
     MESSAGE_ERR_UPDATE = 'Error while updating.'
-    MESSAGE_ERR_INSTALLING_UPDATES = 'Error while installing updates.'
     MESSAGE_ERR_CHECK_FOR_UPDATES = 'Error while checking for updates.'
     MESSAGE_ERR_CHECK_LATEST_VERSIONS = 'Error while getting latest versions from tinkerforge.com. Please make sure that your internet connection is working.'
     MESSAGE_ERR_GET_INSTALLED_VERSIONS = 'Error while getting installed versions from the RED Brick.'
@@ -92,32 +91,78 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
     def closeEvent(self, event):
         self.dialog_session = False
 
-    def start_installing_updates(self):
+    def cb_update_tf_software_install(self, name, result):
         if not self.dialog_session:
             return
 
-        def cb_update_tf_software_install(result):
-            if not self.dialog_session:
-                return
+        display_name = ''
+        self.update_info['processed'] = self.update_info['processed'] + 1
+
+        if name == 'brickv':
+            display_name = self.update_info['brickv']['display_name']
+        else:
+            for d in self.update_info['bindings']:
+                if d['name'] != name:
+                    continue
+
+                display_name = d['display_name']
+
+                break
+
+        if not result or result.stderr or result.exit_code != 0:
+            self.update_info['error'] = True
+            self.update_info['error_message'] += 'Error while installing ' + display_name + ':<br/>'
+
+            if result.stderr:
+                self.update_info['error_message'] += str(result.stderr)
+
+            self.update_info['error_message'] += '<br/><br/>'
+
+        self.pbar.setValue(75 + (((self.update_info['processed'] * 100.00) / self.update_info['updates_total']) / 4))
+        self.label_pbar.setText('Installed ' + display_name)
+
+        if self.update_info['processed'] == self.update_info['updates_total']:
+            if self.update_info['error']:
+                self.set_current_state(self.STATE_INIT)
+                self.tedit_main.setPlainText(self.update_info['error_messages'])
+            else:
+                self.set_current_state(self.STATE_UPDATE_DONE)
+                self.tedit_main.setPlainText(self.MESSAGE_INFO_STATE_UPDATE_DONE)
 
             self.pbar.setValue(100)
             self.label_pbar.setText('')
             self.label_pbar.hide()
 
-            if result and result.stdout and not result.stderr and result.exit_code == 0:
-                self.set_current_state(self.STATE_UPDATE_DONE)
-                self.tedit_main.setPlainText(self.MESSAGE_INFO_STATE_UPDATE_DONE)
-            else:
-                self.set_current_state(self.STATE_INIT)
-                self.tedit_main.setPlainText(self.MESSAGE_ERR_INSTALLING_UPDATES)
+    def do_install_update(self, name, update_path):
+        if not self.dialog_session:
+            return
+
+        self.script_manager.execute_script('update_tf_software_install',
+                                           lambda r: self.cb_update_tf_software_install(name, r),
+                                           [name, update_path])
+
+    def start_installing_updates(self):
+        if not self.dialog_session:
+            return
 
         if self.update_info['error']:
             self.set_current_state(self.STATE_INIT)
             self.tedit_main.setPlainText(self.update_info['error_messages'])
         else:
-            self.script_manager.execute_script('update_tf_software_install',
-                                               cb_update_tf_software_install,
-                                               [self.update_info['temp_dir']])
+            self.update_info['error'] = False
+            self.update_info['processed'] = 0
+            self.update_info['error_messages'] = ''
+
+            if self.update_info['brickv']['update']:
+                self.do_install_update(self.update_info['brickv']['name'],
+                                       posixpath.join(self.update_info['temp_dir'], 'brickv_linux_latest.deb'))
+
+            for d in self.update_info['bindings']:
+                if not d['update']:
+                    continue
+
+                self.do_install_update(d['name'],
+                                       posixpath.join(self.update_info['temp_dir'], 'tinkerforge_' + d['name'] + '_bindings_latest.zip'))
 
     def write_async_cb_r(self, name, red_file, exception):
         red_file.release()
@@ -149,6 +194,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
         self.label_pbar.setText('Stored ' + display_name)
 
         if self.update_info['processed'] == self.update_info['updates_total']:
+            self.pbar.setValue(75)
             self.start_installing_updates()
 
     def do_write_update_file(self, name, data, red_file):
