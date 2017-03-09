@@ -59,6 +59,7 @@ from brickv.plugin_system.plugins.real_time_clock import device_class as real_ti
 from brickv.plugin_system.plugins.red import device_class as red
 from brickv.plugin_system.plugins.remote_switch import device_class as remote_switch
 from brickv.plugin_system.plugins.rgb_led import device_class as rgb_led
+from brickv.plugin_system.plugins.rgb_led_matrix import device_class as rgb_led_matrix
 from brickv.plugin_system.plugins.rotary_encoder import device_class as rotary_encoder
 from brickv.plugin_system.plugins.rotary_poti import device_class as rotary_poti
 from brickv.plugin_system.plugins.rs232 import device_class as rs232
@@ -139,6 +140,7 @@ device_classes = [
     red,
     remote_switch,
     rgb_led,
+    rgb_led_matrix,
     rotary_encoder,
     rotary_poti,
     rs232,
