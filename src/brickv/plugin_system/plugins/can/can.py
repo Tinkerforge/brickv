@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 CAN Plugin
-Copyright (C) 2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2016-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 can.py: CAN Plugin Implementation
 
@@ -56,9 +56,10 @@ class CAN(PluginBase, Ui_CAN):
         self.frame_read_callback_was_enabled = False
 
         self.tree_frames.header().resizeSection(0, 150)
-        self.tree_frames.header().resizeSection(1, 120)
-        self.tree_frames.header().resizeSection(2, 350)
-        self.tree_frames.header().resizeSection(3, 100)
+        self.tree_frames.header().resizeSection(1, 135)
+        self.tree_frames.header().resizeSection(2, 135)
+        self.tree_frames.header().resizeSection(3, 300)
+        self.tree_frames.header().resizeSection(4, 100)
 
         self.edit_data.setValidator(HexValidator(max_bytes=8))
 
@@ -68,18 +69,18 @@ class CAN(PluginBase, Ui_CAN):
         self.spin_write_timeout.valueChanged.connect(self.configuration_changed)
 
         self.combo_filter_mode.currentIndexChanged.connect(self.filter_mode_changed)
+        self.spin_filter_mask_extended.valueChanged.connect(self.mask_or_filter_changed)
         self.spin_filter_mask_standard.valueChanged.connect(self.mask_or_filter_changed)
         self.spin_filter_mask_data1.valueChanged.connect(self.mask_or_filter_changed)
         self.spin_filter_mask_data2.valueChanged.connect(self.mask_or_filter_changed)
-        self.spin_filter_mask_extended.valueChanged.connect(self.mask_or_filter_changed)
+        self.spin_filter1_extended.valueChanged.connect(self.mask_or_filter_changed)
         self.spin_filter1_standard.valueChanged.connect(self.mask_or_filter_changed)
         self.spin_filter1_data1.valueChanged.connect(self.mask_or_filter_changed)
         self.spin_filter1_data2.valueChanged.connect(self.mask_or_filter_changed)
-        self.spin_filter1_extended.valueChanged.connect(self.mask_or_filter_changed)
+        self.spin_filter2_extended.valueChanged.connect(self.mask_or_filter_changed)
         self.spin_filter2_standard.valueChanged.connect(self.mask_or_filter_changed)
         self.spin_filter2_data1.valueChanged.connect(self.mask_or_filter_changed)
         self.spin_filter2_data2.valueChanged.connect(self.mask_or_filter_changed)
-        self.spin_filter2_extended.valueChanged.connect(self.mask_or_filter_changed)
 
         self.button_write_frame.clicked.connect(self.write_frame)
         self.button_clear_history.clicked.connect(self.tree_frames.clear)
@@ -126,6 +127,7 @@ class CAN(PluginBase, Ui_CAN):
     def cb_frame_read(self, frame_type, identifier, data, length):
         parts = []
         max_length = 0
+        extended = False
 
         if frame_type == self.can.FRAME_TYPE_STANDARD_DATA:
             parts.append('Standard Data')
@@ -135,12 +137,19 @@ class CAN(PluginBase, Ui_CAN):
         elif frame_type == self.can.FRAME_TYPE_EXTENDED_DATA:
             parts.append('Extended Data')
             max_length = 8
+            extended = True
         elif frame_type == self.can.FRAME_TYPE_EXTENDED_REMOTE:
             parts.append('Extended Remote')
+            extended = True
         else:
             parts.append('Unknown')
 
-        parts.append(self.spin_identifier_extended.textFromValue(identifier))
+        if extended:
+            parts.append(self.spin_identifier_extended.textFromValue((identifier >> 11) & 0x3FFFF))
+        else:
+            parts.append('')
+
+        parts.append(self.spin_identifier_standard.textFromValue(identifier & 0x7FF))
         parts.append(' '.join(['%02X' % c for c in data[:min(length, max_length)]]))
         parts.append(str(length))
 
@@ -165,20 +174,20 @@ class CAN(PluginBase, Ui_CAN):
     def get_read_filter_async(self, read_filter):
         self.combo_filter_mode.setCurrentIndex(read_filter.mode)
 
-        self.spin_filter_mask_standard.setValue(read_filter.mask & 0x07FF)
+        self.spin_filter_mask_extended.setValue((read_filter.mask >> 11) & 0x3FFFF)
+        self.spin_filter_mask_standard.setValue(read_filter.mask & 0x7FF)
         self.spin_filter_mask_data1.setValue((read_filter.mask >> 19) & 0xFF)
         self.spin_filter_mask_data2.setValue((read_filter.mask >> 11) & 0xFF)
-        self.spin_filter_mask_extended.setValue(read_filter.mask)
 
-        self.spin_filter1_standard.setValue(read_filter.filter1 & 0x07FF)
+        self.spin_filter1_extended.setValue((read_filter.filter1 >> 11) & 0x3FFFF)
+        self.spin_filter1_standard.setValue(read_filter.filter1 & 0x7FF)
         self.spin_filter1_data1.setValue((read_filter.filter1 >> 19) & 0xFF)
         self.spin_filter1_data2.setValue((read_filter.filter1 >> 11) & 0xFF)
-        self.spin_filter1_extended.setValue(read_filter.filter1)
 
-        self.spin_filter2_standard.setValue(read_filter.filter2 & 0x07FF)
+        self.spin_filter2_extended.setValue((read_filter.filter2 >> 11) & 0x3FFFF)
+        self.spin_filter2_standard.setValue(read_filter.filter2 & 0x7FF)
         self.spin_filter2_data1.setValue((read_filter.filter2 >> 19) & 0xFF)
         self.spin_filter2_data2.setValue((read_filter.filter2 >> 11) & 0xFF)
-        self.spin_filter2_extended.setValue(read_filter.filter2)
 
         self.button_save_read_filter.setEnabled(False)
 
@@ -197,11 +206,10 @@ class CAN(PluginBase, Ui_CAN):
 
     def frame_type_changed(self):
         frame_type = self.combo_frame_type.currentIndex()
-        standard = frame_type in [self.can.FRAME_TYPE_STANDARD_DATA, self.can.FRAME_TYPE_STANDARD_REMOTE]
+        extended = frame_type in [self.can.FRAME_TYPE_EXTENDED_DATA, self.can.FRAME_TYPE_EXTENDED_REMOTE]
         remote = frame_type in [self.can.FRAME_TYPE_STANDARD_REMOTE, self.can.FRAME_TYPE_EXTENDED_REMOTE]
 
-        self.spin_identifier_standard.setVisible(standard)
-        self.spin_identifier_extended.setVisible(not standard)
+        self.spin_identifier_extended.setEnabled(extended)
         self.edit_data.setDisabled(remote)
 
     def configuration_changed(self):
@@ -211,39 +219,35 @@ class CAN(PluginBase, Ui_CAN):
         index = self.combo_filter_mode.currentIndex()
         disabled = index == self.can.FILTER_MODE_DISABLED
         accept_all = index == self.can.FILTER_MODE_ACCEPT_ALL
-        match_standard = index == self.can.FILTER_MODE_MATCH_STANDARD
         match_standard_and_data = index == self.can.FILTER_MODE_MATCH_STANDARD_AND_DATA
         match_extended = index == self.can.FILTER_MODE_MATCH_EXTENDED
 
+        self.spin_filter_mask_extended.setDisabled(disabled or accept_all)
         self.spin_filter_mask_standard.setDisabled(disabled or accept_all)
         self.spin_filter_mask_data1.setDisabled(disabled or accept_all)
         self.spin_filter_mask_data2.setDisabled(disabled or accept_all)
-        self.spin_filter_mask_extended.setDisabled(disabled or accept_all)
 
+        self.spin_filter1_extended.setDisabled(disabled or accept_all)
         self.spin_filter1_standard.setDisabled(disabled or accept_all)
         self.spin_filter1_data1.setDisabled(disabled or accept_all)
         self.spin_filter1_data2.setDisabled(disabled or accept_all)
-        self.spin_filter1_extended.setDisabled(disabled or accept_all)
 
+        self.spin_filter2_extended.setDisabled(disabled or accept_all)
         self.spin_filter2_standard.setDisabled(disabled or accept_all)
         self.spin_filter2_data1.setDisabled(disabled or accept_all)
         self.spin_filter2_data2.setDisabled(disabled or accept_all)
-        self.spin_filter2_extended.setDisabled(disabled or accept_all)
 
-        self.spin_filter_mask_standard.setVisible(disabled or accept_all or match_standard or match_standard_and_data)
+        self.spin_filter_mask_extended.setVisible(match_extended)
         self.spin_filter_mask_data1.setVisible(match_standard_and_data)
         self.spin_filter_mask_data2.setVisible(match_standard_and_data)
-        self.spin_filter_mask_extended.setVisible(match_extended)
 
-        self.spin_filter1_standard.setVisible(disabled or accept_all or match_standard or match_standard_and_data)
+        self.spin_filter1_extended.setVisible(match_extended)
         self.spin_filter1_data1.setVisible(match_standard_and_data)
         self.spin_filter1_data2.setVisible(match_standard_and_data)
-        self.spin_filter1_extended.setVisible(match_extended)
 
-        self.spin_filter2_standard.setVisible(disabled or accept_all or match_standard or match_standard_and_data)
+        self.spin_filter2_extended.setVisible(match_extended)
         self.spin_filter2_data1.setVisible(match_standard_and_data)
         self.spin_filter2_data2.setVisible(match_standard_and_data)
-        self.spin_filter2_extended.setVisible(match_extended)
 
         self.button_save_read_filter.setEnabled(True)
 
@@ -255,12 +259,11 @@ class CAN(PluginBase, Ui_CAN):
 
     def write_frame(self):
         frame_type = self.combo_frame_type.currentIndex()
-        standard = frame_type in [self.can.FRAME_TYPE_STANDARD_DATA, self.can.FRAME_TYPE_STANDARD_REMOTE]
+        extended = frame_type in [self.can.FRAME_TYPE_EXTENDED_DATA, self.can.FRAME_TYPE_EXTENDED_REMOTE]
+        identifier = self.spin_identifier_standard.value()
 
-        if standard:
-            identifier = self.spin_identifier_standard.value()
-        else:
-            identifier = self.spin_identifier_extended.value()
+        if extended:
+            identifier |= self.spin_identifier_extended.value() << 11
 
         data_str = self.edit_data.text().replace(' ', '')
         data = []
@@ -339,13 +342,13 @@ class CAN(PluginBase, Ui_CAN):
             filter1 = self.spin_filter1_standard.value()
             filter2 = self.spin_filter2_standard.value()
         elif mode == self.can.FILTER_MODE_MATCH_STANDARD_AND_DATA:
-            mask = self.spin_filter_mask_standard.value() | (self.spin_filter_mask_data1.value() << 19) | (self.spin_filter_mask_data2.value() << 11)
-            filter1 = self.spin_filter1_standard.value() | (self.spin_filter1_data1.value() << 19) | (self.spin_filter1_data2.value() << 11)
-            filter2 = self.spin_filter2_standard.value() | (self.spin_filter2_data1.value() << 19) | (self.spin_filter2_data2.value() << 11)
+            mask = (self.spin_filter_mask_data1.value() << 19) | (self.spin_filter_mask_data2.value() << 11) | self.spin_filter_mask_standard.value()
+            filter1 = (self.spin_filter1_data1.value() << 19) | (self.spin_filter1_data2.value() << 11) | self.spin_filter1_standard.value()
+            filter2 = (self.spin_filter2_data1.value() << 19) | (self.spin_filter2_data2.value() << 11) | self.spin_filter2_standard.value()
         elif mode == self.can.FILTER_MODE_MATCH_EXTENDED:
-            mask = self.spin_filter_mask_extended.value()
-            filter1 = self.spin_filter1_extended.value()
-            filter2 = self.spin_filter2_extended.value()
+            mask = (self.spin_filter_mask_extended.value() << 11) | self.spin_filter_mask_standard.value()
+            filter1 = (self.spin_filter1_extended.value() << 11) | self.spin_filter1_standard.value()
+            filter2 = (self.spin_filter2_extended.value() << 11) | self.spin_filter2_standard.value()
 
         # FIXME: add validation
         self.can.set_read_filter(mode, mask, filter1, filter2)
