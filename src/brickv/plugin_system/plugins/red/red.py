@@ -70,13 +70,15 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
     URL_LATEST_VERSIONS = 'http://download.tinkerforge.com/latest_versions.txt'
 
     def __init__(self, parent, session, script_manager):
-        QtGui.QDialog.__init__(self)
+        QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
 
+        self.setAttribute(Qt.WA_DeleteOnClose)
+
         self.session = session
+        self.dialog_session = True
         self.script_manager = script_manager
 
-        self.allow_close = True
         self.update_info = None
         self.current_state = self.STATE_INIT
 
@@ -87,14 +89,17 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
         self.pbutton_n.clicked.connect(self.pbutton_n_clicked)
         self.pbutton_p.clicked.connect(self.pbutton_p_clicked)
 
-    def closeEvent(self, evt):
-        if self.allow_close:
-            super(REDUpdateTinkerforgeSoftware, self).closeEvent(evt)
-        else:
-            evt.ignore()
+    def closeEvent(self, event):
+        self.dialog_session = False
 
     def start_installing_updates(self):
+        if not self.dialog_session:
+            return
+
         def cb_update_tf_software_install(result):
+            if not self.dialog_session:
+                return
+
             self.pbar.setValue(100)
             self.label_pbar.setText('')
             self.label_pbar.hide()
@@ -116,6 +121,9 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
 
     def write_async_cb_r(self, name, red_file, exception):
         red_file.release()
+
+        if not self.dialog_session:
+            return
 
         display_name = ''
         self.update_info['processed'] = self.update_info['processed'] + 1
@@ -144,9 +152,15 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
             self.start_installing_updates()
 
     def do_write_update_file(self, name, data, red_file):
+        if not self.dialog_session:
+            return
+
         red_file.write_async(data, lambda r: self.write_async_cb_r(name, red_file, r), None)
 
     def start_writing_updates(self):
+        if not self.dialog_session:
+            return
+
         if self.update_info['error']:
             self.set_current_state(self.STATE_INIT)
             self.tedit_main.setText(self.update_info['error_messages'])
@@ -167,6 +181,9 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                 self.do_write_update_file(d['name'], d['data'], d['red_file'])
 
     def cb_rfile_open_s(self, name, red_file):
+        if not self.dialog_session:
+            return
+
         self.update_info['processed'] = self.update_info['processed'] + 1
 
         if not self.update_info['error']:
@@ -185,6 +202,9 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
             self.start_writing_updates()
 
     def cb_rfile_open_f(self, name, exception):
+        if not self.dialog_session:
+            return
+
         self.update_info['error'] = True
         self.update_info['processed'] = self.update_info['processed'] + 1
 
@@ -205,6 +225,9 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
             self.start_writing_updates()
 
     def do_open_update_file(self, red_file, name, path):
+        if not self.dialog_session:
+            return
+
         async_call(red_file.open,
                    (path,
                    REDFile.FLAG_WRITE_ONLY |
@@ -219,11 +242,17 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                    report_exception=True)
 
     def do_install_updates(self):
+        if not self.dialog_session:
+            return
+
         if self.update_info['error']:
             self.set_current_state(self.STATE_INIT)
             self.tedit_main.setText(self.update_info['error_messages'])
         else:
             def cb_update_tf_software_mkdtemp(result):
+                if not self.dialog_session:
+                    return
+
                 if result and result.stdout and not result.stderr and result.exit_code == 0:
                     self.update_info['processed'] = 0
                     self.update_info['error'] = False
@@ -244,7 +273,10 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                                  posixpath.join(self.update_info['temp_dir'], 'tinkerforge_' + d['name'] + '_bindings_latest.zip'))
 
                 else:
-                    msg = self.MESSAGE_ERR_UPDATE + '\n\n' + str(result.stderr)
+                    if result and result.stderr:
+                        msg = self.MESSAGE_ERR_UPDATE + '\n' + str(result.stderr) + '\n\n'
+                    else:
+                        msg = self.MESSAGE_ERR_UPDATE + '\n\n'
 
                     self.set_current_state(self.STATE_INIT)
                     self.tedit_main.setPlainText(msg)
@@ -253,13 +285,19 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                                cb_update_tf_software_mkdtemp)
 
     def download_update_async(self, name, url):
+        if not self.dialog_session:
+            return '', ''
+
         response = urllib2.urlopen(url, timeout=10)
 
         return name, response.read()
 
     def download_update_s_async_cb(self, result):
-        name, data = result
+        if not self.dialog_session:
+            return
+
         display_name = ''
+        name, data = result
 
         if not self.update_info['error']:
             if name == 'brickv':
@@ -286,6 +324,9 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
             self.do_install_updates()
 
     def download_update_f_async_cb(self, name, exception):
+        if not self.dialog_session:
+            return
+
         display_name = ''
         _exception = str(exception)
         self.update_info['error'] = True
@@ -316,6 +357,9 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
             self.do_install_updates()
 
     def do_download_update_async_call(self, name, url):
+        if not self.dialog_session:
+            return
+
         async_call(self.download_update_async,
                    (name, url),
                    self.download_update_s_async_cb,
@@ -323,6 +367,9 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                    report_exception=True)
 
     def check_update_available(self, update_info):
+        if not self.dialog_session:
+            return False
+
         if 'brickv' in update_info and \
            'name' in update_info['brickv'] and \
            'display_name' in update_info['brickv'] and \
@@ -350,6 +397,9 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
         return True
 
     def do_update_available_message(self, update_info):
+        if not self.dialog_session:
+            return
+
         self.update_info = update_info
 
         msg = self.MESSAGE_INFO_STATE_UPDATES_AVAILABLE + '<ul>'
@@ -402,6 +452,9 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
         self.tedit_main.setText(msg)
 
     def update_latest_version_info(self, update_info, key, version_to, display_name):
+        if not self.dialog_session:
+            return False, False
+
         found = False
 
         for d in update_info['bindings']:
@@ -425,9 +478,11 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
         return found, updates_available
 
     def update_state_gui(self, state):
+        if not self.dialog_session:
+            return
+
         if state == self.STATE_INIT:
             self.pbar.hide()
-            self.allow_close = True
             self.pbutton_n.setEnabled(True)
             self.pbutton_p.setEnabled(True)
             self.pbutton_p.setText('Check for Updates')
@@ -444,7 +499,6 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
 
         elif state == self.STATE_NO_UPDATES_AVAILABLE:
             self.pbar.hide()
-            self.allow_close = True
             self.pbutton_n.setEnabled(True)
             self.pbutton_p.setEnabled(True)
             self.pbutton_p.setText('Check for Updates')
@@ -452,7 +506,6 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
 
         elif state == self.STATE_UPDATES_AVAILABLE:
             self.pbar.hide()
-            self.allow_close = True
             self.tedit_main.setText('')
             self.pbutton_n.setEnabled(True)
             self.pbutton_p.setEnabled(True)
@@ -470,13 +523,15 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
 
         elif state == self.STATE_UPDATE_DONE:
             self.pbar.hide()
-            self.allow_close = True
             self.pbutton_n.setEnabled(True)
             self.pbutton_p.setEnabled(True)
             self.pbutton_p.setText('Check for Updates')
             self.tedit_main.setText(self.MESSAGE_INFO_STATE_UPDATE_DONE)
 
     def set_current_state(self, state):
+        if not self.dialog_session:
+            return
+
         self.current_state = state
         self.update_state_gui(self.current_state)
 
@@ -484,7 +539,8 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
         self.done(0)
 
     def pbutton_p_clicked(self):
-        self.allow_close = False
+        if not self.dialog_session:
+            return
 
         if self.current_state == self.STATE_UPDATES_AVAILABLE:
             self.set_current_state(self.STATE_UPDATE_IN_PROGRESS)
@@ -525,6 +581,9 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
 
         else:
             def cb_update_tf_software_get_installed_versions(result):
+                if not self.dialog_session:
+                    return
+
                 self.set_current_state(self.STATE_NO_UPDATES_AVAILABLE)
 
                 if result and result.stdout and not result.stderr and result.exit_code == 0:
@@ -775,7 +834,10 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
                                         return
 
                 else:
-                    msg = self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + '\n\n' + str(result.stderr)
+                    if result and result.stderr:
+                        msg = self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + '\n' + str(result.stderr) + '\n\n'
+                    else:
+                        msg = self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + '\n\n'
 
                     self.set_current_state(self.STATE_INIT)
                     self.tedit_main.setPlainText(msg)
@@ -844,6 +906,8 @@ class RED(PluginBase, Ui_RED):
 
         self.set_actions(['System', actions])
 
+        self.dialog_update_tinkerforge_software = None
+
         # FIXME: RED Brick doesn't do enumerate-connected callback correctly yet
         #        for Brick(let)s connected to it. Trigger a enumerate to pick up
         #        all devices connected to a RED Brick properly
@@ -894,6 +958,9 @@ class RED(PluginBase, Ui_RED):
         if self.session == None:
             return
 
+        if self.dialog_update_tinkerforge_software is not None:
+            self.dialog_update_tinkerforge_software.close()
+
         for tab in self.tabs:
             tab.tab_destroy()
 
@@ -936,5 +1003,6 @@ class RED(PluginBase, Ui_RED):
             self.script_manager.execute_script('restart_reboot_shutdown', cb, [str(param)])
 
         elif param == 3:
-            dialog_update_tinkerforge_software = REDUpdateTinkerforgeSoftware(self, self.session, self.script_manager)
-            dialog_update_tinkerforge_software.exec_()
+            self.dialog_update_tinkerforge_software = REDUpdateTinkerforgeSoftware(self, self.session, self.script_manager)
+            self.dialog_update_tinkerforge_software.exec_()
+            self.dialog_update_tinkerforge_software = None
