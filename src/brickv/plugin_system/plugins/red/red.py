@@ -81,6 +81,9 @@ Please make sure that your internet connection is working.'
 
         self.setAttribute(Qt.WA_DeleteOnClose)
 
+        font = QtGui.QFont()
+        self.tedit_main.setFont(font)
+
         self.session = session
         self.dialog_session = True
         self.script_manager = script_manager
