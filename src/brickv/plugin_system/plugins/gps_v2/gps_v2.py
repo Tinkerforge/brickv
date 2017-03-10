@@ -147,7 +147,7 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
         elif data.fix == 3:
             fix.setText("3D Fix")
         else:
-            fix.setText("Error")
+            fix.setText("Unknown")
 
         str_pdop = '%.2f' % (data.pdop/100.0,)
         str_hdop = '%.2f' % (data.hdop/100.0,)
