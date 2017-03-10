@@ -87,6 +87,9 @@ p, li { white-space: pre-wrap; }
        <property name="value">
         <number>-1</number>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
       </widget>
      </item>
     </layout>
