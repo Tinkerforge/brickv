@@ -220,7 +220,7 @@ class Servo(PluginBase, Ui_Servo):
         if self.firmware_version >= (1, 1, 3):
             reset = QAction('Reset', self)
             reset.triggered.connect(lambda: self.servo.reset())
-            self.set_actions(reset)
+            self.set_actions([(0, None, [reset])])
 
     def start(self):
         self.alive = True

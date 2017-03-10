@@ -22,12 +22,19 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import signal
+import sys
+import time
+import gc
+import functools
+
 from PyQt4.QtCore import pyqtSignal, Qt, QTimer, QEvent
 from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, \
                         QPushButton, QHBoxLayout, QVBoxLayout, \
                         QLabel, QFrame, QSpacerItem, QSizePolicy, \
                         QStandardItemModel, QStandardItem, QToolButton, \
-                        QLineEdit, QCursor, QMenu, QAction, QSortFilterProxyModel
+                        QLineEdit, QCursor, QMenu, QAction, \
+                        QSortFilterProxyModel, QCheckBox, QComboBox
 
 from brickv.ui_mainwindow import Ui_MainWindow
 from brickv.plugin_system.plugin_manager import PluginManager
@@ -42,11 +49,6 @@ from brickv import config
 from brickv import infos
 from brickv.tab_window import TabWindow
 from brickv.plugin_system.comcu_bootloader import COMCUBootloader
-
-import signal
-import sys
-import time
-import gc
 
 USER_ROLE_POSITION = Qt.UserRole + 1
 
@@ -427,18 +429,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                        self.tab_widget.setTabEnabled(index, False))
 
         layout = QVBoxLayout(tab_window)
-        info_bar_1 = QHBoxLayout()
-        info_bar_2 = QHBoxLayout()
+        info_bars = [QHBoxLayout(), QHBoxLayout()]
 
         # uid
-        info_bar_1.addWidget(QLabel('UID:'))
+        info_bars[0].addWidget(QLabel('UID:'))
 
         label = QLabel('{0}'.format(device_info.uid))
         label.setTextInteractionFlags(Qt.TextSelectableByMouse |
                                       Qt.TextSelectableByKeyboard)
 
-        info_bar_1.addWidget(label)
-        info_bar_1.addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Preferred))
+        info_bars[0].addWidget(label)
+        info_bars[0].addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Preferred))
 
         # firmware version
         label_version_name = QLabel('Version:')
@@ -448,30 +449,85 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             label_version_name.setText('FW Version:')
             label_version.setText(infos.get_version_string(device_info.plugin.firmware_version))
 
-        info_bar_1.addWidget(label_version_name)
-        info_bar_1.addWidget(label_version)
-        info_bar_1.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+        info_bars[0].addWidget(label_version_name)
+        info_bars[0].addWidget(label_version)
+        info_bars[0].addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+
+        # connected uid
+        if device_info.connected_uid != '0':
+            info_bars[1].addWidget(QLabel('Connected to:'))
+
+            button = QToolButton()
+            button.setText(device_info.connected_uid)
+            button.clicked.connect(lambda: self.show_plugin(device_info.connected_uid))
+
+            info_bars[1].addWidget(button)
+            info_bars[1].addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Preferred))
+
+        # position
+        info_bars[1].addWidget(QLabel('Position:'))
+        info_bars[1].addWidget(QLabel('{0}'.format(device_info.position.upper())))
+        info_bars[1].addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Preferred))
+
+        # timeouts
+        info_bars[1].addWidget(QLabel('Timeouts:'))
+
+        label_timeouts = QLabel('0')
+
+        info_bars[1].addWidget(label_timeouts)
+        info_bars[1].addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+
+        # configs
+        configs = device_info.plugin.get_configs()
+
+        def config_changed(combobox):
+            i = combobox.currentIndex()
+
+            if i < 0:
+                return
+
+            combobox.itemData(i).trigger()
+
+        if len(configs) > 0:
+            for config in configs:
+                if config[1] != None:
+                    combobox = QComboBox()
+
+                    for i, item in enumerate(config[2]):
+                        combobox.addItem(item.text(), item)
+                        item.triggered.connect(functools.partial(combobox.setCurrentIndex, i))
+
+                    combobox.currentIndexChanged.connect(functools.partial(config_changed, combobox))
+
+                    info_bars[config[0]].addWidget(QLabel(config[1]))
+                    info_bars[config[0]].addWidget(combobox)
+                elif len(config[2]) > 0:
+                    checkbox = QCheckBox(config[2][0].text())
+                    config[2][0].toggled.connect(checkbox.setChecked)
+                    checkbox.toggled.connect(config[2][0].setChecked)
+
+                    info_bars[config[0]].addWidget(checkbox)
 
         # actions
         actions = device_info.plugin.get_actions()
 
-        if actions != None:
-            if type(actions) == QAction:
-                button = QPushButton(actions.text())
-                button.clicked.connect(actions.trigger)
-            else:
-                button = QPushButton(actions[0])
-                menu = QMenu(actions[0])
+        if len(actions) > 0:
+            for action in actions:
+                if action[1] != None:
+                    button = QPushButton(action[1])
+                    menu = QMenu()
 
-                button.setMenu(menu)
+                    for item in action[2]:
+                        menu.addAction(item)
 
-                for action in actions[1]:
-                    menu.addAction(action)
+                    button.setMenu(menu)
+                elif len(action[2]) > 0:
+                    button = QPushButton(action[2][0].text())
+                    button.clicked.connect(action[2][0].trigger)
 
-            info_bar_1.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
-            info_bar_1.addWidget(button)
+                info_bars[action[0]].addWidget(button)
 
-        def more(button, info_bar):
+        def more_clicked(button, info_bar):
             visible = button.text() == 'More'
 
             if visible:
@@ -486,46 +542,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     widget.setVisible(visible)
 
         more_button = QPushButton('More')
-        more_button.clicked.connect(lambda: more(more_button, info_bar_2))
+        more_button.clicked.connect(lambda: more_clicked(more_button, info_bars[1]))
 
-        if actions == None:
-            info_bar_1.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+        info_bars[0].addWidget(more_button)
 
-        info_bar_1.addWidget(more_button)
-
-        layout.addLayout(info_bar_1)
-
-        # connected uid
-        if device_info.connected_uid != '0':
-            info_bar_2.addWidget(QLabel('Connected to:'))
-
-            button = QToolButton()
-            button.setText(device_info.connected_uid)
-            button.clicked.connect(lambda: self.show_plugin(device_info.connected_uid))
-
-            info_bar_2.addWidget(button)
-            info_bar_2.addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Preferred))
-
-        # position
-        info_bar_2.addWidget(QLabel('Position:'))
-        info_bar_2.addWidget(QLabel('{0}'.format(device_info.position.upper())))
-        info_bar_2.addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Preferred))
-
-        # timeouts
-        info_bar_2.addWidget(QLabel('Timeouts:'))
-
-        label_timeouts = QLabel('0')
-
-        info_bar_2.addWidget(label_timeouts)
-        info_bar_2.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
-
-        for i in range(info_bar_2.count()):
-            widget = info_bar_2.itemAt(i).widget()
+        for i in range(info_bars[1].count()):
+            widget = info_bars[1].itemAt(i).widget()
 
             if widget != None:
                 widget.hide()
 
-        layout.addLayout(info_bar_2)
+        layout.addLayout(info_bars[0])
+        layout.addLayout(info_bars[1])
 
         line = QFrame()
         line.setFrameShape(QFrame.HLine)

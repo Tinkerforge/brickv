@@ -24,12 +24,14 @@ Boston, MA 02111-1307, USA.
 import datetime
 
 from PyQt4.QtCore import QUrl, pyqtSignal, QTimer
-from PyQt4.QtGui import QDesktopServices, QStandardItemModel, QStandardItem, QHeaderView
+from PyQt4.QtGui import QDesktopServices, QStandardItemModel, QStandardItem, \
+                        QHeaderView, QAction
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.gps_v2.ui_gps_v2 import Ui_GPSV2
 from brickv.bindings.bricklet_gps_v2 import BrickletGPSV2
 from brickv.callback_emulator import CallbackEmulator
+from brickv.async_call import async_call
 
 class GPSV2(COMCUPluginBase, Ui_GPSV2):
     qtcb_pps = pyqtSignal()
@@ -91,12 +93,29 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
             self.glo_model.setVerticalHeaderItem(i, QStandardItem(u'Sat ' + str(i+1+64)))
         self.glo_table.horizontalHeader().setResizeMode(QHeaderView.Stretch)
 
+        self.fix_led_off_action = QAction('Off', self)
+        self.fix_led_off_action.triggered.connect(lambda: self.gps.set_fix_led_config(BrickletGPSV2.FIX_LED_CONFIG_OFF))
+        self.fix_led_on_action = QAction('On', self)
+        self.fix_led_on_action.triggered.connect(lambda: self.gps.set_fix_led_config(BrickletGPSV2.FIX_LED_CONFIG_ON))
+        self.fix_led_show_heartbeat_action = QAction('Show Heartbeat', self)
+        self.fix_led_show_heartbeat_action.triggered.connect(lambda: self.gps.set_fix_led_config(BrickletGPSV2.FIX_LED_CONFIG_SHOW_HEARTBEAT))
+        self.fix_led_show_fix_action = QAction('Show Fix', self)
+        self.fix_led_show_fix_action.triggered.connect(lambda: self.gps.set_fix_led_config(BrickletGPSV2.FIX_LED_CONFIG_SHOW_FIX))
+        self.fix_led_show_pps_action = QAction('Show PPS', self)
+        self.fix_led_show_pps_action.triggered.connect(lambda: self.gps.set_fix_led_config(BrickletGPSV2.FIX_LED_CONFIG_SHOW_PPS))
+
+        self.extra_configs += [(1, 'Fix LED:', [self.fix_led_off_action,
+                                                self.fix_led_on_action,
+                                                self.fix_led_show_heartbeat_action,
+                                                self.fix_led_show_fix_action,
+                                                self.fix_led_show_pps_action])]
+
     def cb_pps(self):
         self.fix.setStyleSheet("QLabel { color : green; }")
         QTimer.singleShot(200, self.cb_pps_off)
 
     def cb_pps_off(self):
-        self.fix.setStyleSheet("QLabel { color : black; }")
+        self.fix.setStyleSheet("")
 
     def get_universal(self):
         return self.gps.get_coordinates(), self.gps.get_status(), self.gps.get_altitude(), self.gps.get_motion(), self.gps.get_date_time()
@@ -236,7 +255,20 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
 
         self.gps.restart(restart_type)
 
+    def get_fix_led_config_async(self, config):
+        if config == BrickletGPSV2.FIX_LED_CONFIG_OFF:
+            self.fix_led_off_action.trigger()
+        elif config == BrickletGPSV2.FIX_LED_CONFIG_ON:
+            self.fix_led_on_action.trigger()
+        elif config == BrickletGPSV2.FIX_LED_CONFIG_SHOW_HEARTBEAT:
+            self.fix_led_show_heartbeat_action.trigger()
+        elif config == BrickletGPSV2.FIX_LED_CONFIG_SHOW_FIX:
+            self.fix_led_show_fix_action.trigger()
+        elif config == BrickletGPSV2.FIX_LED_CONFIG_SHOW_PPS:
+            self.fix_led_show_pps_action.trigger()
+
     def start(self):
+        async_call(self.gps.get_fix_led_config, None, self.get_fix_led_config_async, self.increase_error_count)
         self.cbe_universal.set_period(250)
         self.cbe_universal_gps.set_period(100)
         self.cbe_universal_glo.set_period(100)

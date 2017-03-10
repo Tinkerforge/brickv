@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-03-10.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -102,8 +102,13 @@ class BrickletCAN(Device):
         Writes a data or remote frame to the write buffer to be transmitted over the
         CAN transceiver.
 
-        The Bricklet supports the standard 11-bit (CAN 2.0A) and the extended 29-bit
-        (CAN 2.0B) identifiers. For remote frames the ``data`` parameter is ignored.
+        The Bricklet supports the standard 11-bit (CAN 2.0A) and the additional extended
+        18-bit (CAN 2.0B) identifiers. For standard frames the Bricklet uses bit 0 to 10
+        from the ``identifier`` parameter as standard 11-bit identifier. For extended
+        frames the Bricklet additionally uses bit 11 to 28 from the ``identifier``
+        parameter as extended 18-bit identifier.
+
+        For remote frames the ``data`` parameter is ignored.
 
         Returns *true* if the frame was successfully added to the write buffer. Returns
         *false* if the frame could not be added because write buffer is already full.
@@ -125,6 +130,9 @@ class BrickletCAN(Device):
         *true* and the other return values contain the frame. If the read buffer is
         empty and no frame could be read, then the ``success`` return value is set to
         *false* and the other return values contain invalid data.
+
+        The ``identifier`` return value follows the identifier format described for
+        :func:`Write Frame`.
 
         For remote frames the ``data`` return value always contains invalid data.
 
@@ -222,8 +230,10 @@ class BrickletCAN(Device):
           to match the 11-bit identifier of standard frames. Bit 11 to 18 (8 bits) and
           bit 19 to 26 (8 bits) of mask and filters are used to match the first and
           second data byte (if present) of standard frames.
-        * Match-Extended: Bit 0 to 28 (29 bits) of mask and filters are used to match
-          the 29-bit identifier of extended frames.
+        * Match-Extended: Bit 0 to 10 (11 bits) of mask and filters are used
+          to match the standard 11-bit identifier part of extended frames. Bit 11 to 28
+          (18 bits) of mask and filters are used to match the extended 18-bit identifier
+          part of extended frames.
 
         The mask and filters are applied in this way: The mask is used to select the
         identifier and data bits that should be compared to the corresponding filter

@@ -70,10 +70,18 @@ class Master(PluginBase, Ui_Master):
             self.check_extensions = False
             self.extension_type_button.setEnabled(False)
 
+        if self.firmware_version >= (2, 3, 2):
+            self.status_led_action = QAction('Status LED', self)
+            self.status_led_action.setCheckable(True)
+            self.status_led_action.toggled.connect(lambda checked: self.master.enable_status_led() if checked else self.master.disable_status_led())
+            self.set_configs([(0, None, [self.status_led_action])])
+        else:
+            self.status_led_action = None
+
         if self.firmware_version >= (1, 2, 1):
             reset = QAction('Reset', self)
             reset.triggered.connect(lambda: self.master.reset())
-            self.set_actions(reset)
+            self.set_actions([(0, None, [reset])])
 
         self.extension_type_preset = [None,  # None
                                       False, # Chibi
@@ -206,6 +214,9 @@ class Master(PluginBase, Ui_Master):
             self.label_no_extension.hide()
 
     def start(self):
+        if self.firmware_version >= (2, 3, 2):
+            async_call(self.master.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
+
         if self.check_extensions:
             self.check_extensions = False
 

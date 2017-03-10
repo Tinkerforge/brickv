@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 
 import random
 
-from PyQt4.QtGui import QTextCursor
+from PyQt4.QtGui import QTextCursor, QAction
 from PyQt4.QtCore import pyqtSignal
 
 from brickv.bindings.bricklet_rs485 import BrickletRS485
@@ -220,6 +220,34 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                        self.modbus_slave_address_spinbox]
 
         self.mode_changed(0)
+
+        self.com_led_off_action = QAction('Off', self)
+        self.com_led_off_action.triggered.connect(lambda: self.rs485.set_communication_led_config(BrickletRS485.COMMUNICATION_LED_CONFIG_OFF))
+        self.com_led_on_action = QAction('On', self)
+        self.com_led_on_action.triggered.connect(lambda: self.rs485.set_communication_led_config(BrickletRS485.COMMUNICATION_LED_CONFIG_ON))
+        self.com_led_show_heartbeat_action = QAction('Show Heartbeat', self)
+        self.com_led_show_heartbeat_action.triggered.connect(lambda: self.rs485.set_communication_led_config(BrickletRS485.COMMUNICATION_LED_CONFIG_SHOW_HEARTBEAT))
+        self.com_led_show_communication_action = QAction('Show Com', self)
+        self.com_led_show_communication_action.triggered.connect(lambda: self.rs485.set_communication_led_config(BrickletRS485.COMMUNICATION_LED_CONFIG_SHOW_COMMUNICATION))
+
+        self.extra_configs += [(1, 'Com LED:', [self.com_led_off_action,
+                                                self.com_led_on_action,
+                                                self.com_led_show_heartbeat_action,
+                                                self.com_led_show_communication_action])]
+
+        self.error_led_off_action = QAction('Off', self)
+        self.error_led_off_action.triggered.connect(lambda: self.rs485.set_error_led_config(BrickletRS485.ERROR_LED_CONFIG_OFF))
+        self.error_led_on_action = QAction('On', self)
+        self.error_led_on_action.triggered.connect(lambda: self.rs485.set_error_led_config(BrickletRS485.ERROR_LED_CONFIG_ON))
+        self.error_led_show_heartbeat_action = QAction('Show Heartbeat', self)
+        self.error_led_show_heartbeat_action.triggered.connect(lambda: self.rs485.set_error_led_config(BrickletRS485.ERROR_LED_CONFIG_SHOW_HEARTBEAT))
+        self.error_led_show_error_action = QAction('Show Error', self)
+        self.error_led_show_error_action.triggered.connect(lambda: self.rs485.set_error_led_config(BrickletRS485.ERROR_LED_CONFIG_SHOW_ERROR))
+
+        self.extra_configs += [(1, 'Error LED:', [self.error_led_off_action,
+                                                  self.error_led_on_action,
+                                                  self.error_led_show_heartbeat_action,
+                                                  self.error_led_show_error_action])]
 
     def toggle_gui_group(self, group, toggle):
         for e in group:
@@ -974,7 +1002,30 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.label_error_overrun.setText(str(error.overrun_error_count))
         self.label_error_parity.setText(str(error.parity_error_count))
 
+    def get_communication_led_config_async(self, config):
+        if config == BrickletRS485.COMMUNICATION_LED_CONFIG_OFF:
+            self.com_led_off_action.trigger()
+        elif config == BrickletRS485.COMMUNICATION_LED_CONFIG_ON:
+            self.com_led_on_action.trigger()
+        elif config == BrickletRS485.COMMUNICATION_LED_CONFIG_SHOW_HEARTBEAT:
+            self.com_led_show_heartbeat_action.trigger()
+        elif config == BrickletRS485.COMMUNICATION_LED_CONFIG_SHOW_COMMUNICATION:
+            self.com_led_show_communication_action.trigger()
+
+    def get_error_led_config_async(self, config):
+        if config == BrickletRS485.ERROR_LED_CONFIG_OFF:
+            self.error_led_off_action.trigger()
+        elif config == BrickletRS485.ERROR_LED_CONFIG_ON:
+            self.error_led_on_action.trigger()
+        elif config == BrickletRS485.ERROR_LED_CONFIG_SHOW_HEARTBEAT:
+            self.error_led_show_heartbeat_action.trigger()
+        elif config == BrickletRS485.ERROR_LED_CONFIG_SHOW_ERROR:
+            self.error_led_show_error_action.trigger()
+
     def start(self):
+        async_call(self.rs485.get_communication_led_config, None, self.get_communication_led_config_async, self.increase_error_count)
+        async_call(self.rs485.get_error_led_config, None, self.get_error_led_config_async, self.increase_error_count)
+
         self.read_callback_was_enabled = False
 
         async_call(self.rs485.is_read_callback_enabled, None, self.is_read_callback_enabled_async, self.increase_error_count)

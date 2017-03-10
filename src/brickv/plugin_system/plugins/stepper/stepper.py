@@ -110,7 +110,7 @@ class Stepper(PluginBase, Ui_Stepper):
         if self.firmware_version >= (1, 1, 4):
             reset = QAction('Reset', self)
             reset.triggered.connect(lambda: self.stepper.reset())
-            self.set_actions(reset)
+            self.set_actions([(0, None, [reset])])
 
     def start(self):
         self.update_timer.start(100)

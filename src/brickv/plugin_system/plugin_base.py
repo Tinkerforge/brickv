@@ -40,17 +40,19 @@ class PluginBase(QWidget, object):
         self.has_comcu = False # Will be overwritten if plugin has comcu
         self.plugin_state = PluginBase.PLUGIN_STATE_STOPPED
         self.label_timeouts = None
+        self.device_class = device_class
         self.ipcon = ipcon
         self.device_info = device_info
         self.uid = device_info.uid
         self.hardware_version = device_info.hardware_version
         self.firmware_version = device_info.firmware_version_installed
         self.error_count = 0
-        self.actions = None
+        self.configs = []
+        self.actions = []
 
         if device_class is not None:
-            self.base_name = device_class.DEVICE_DISPLAY_NAME
-            self.device = device_class(self.uid, self.ipcon)
+            self.base_name = self.device_class.DEVICE_DISPLAY_NAME
+            self.device = self.device_class(self.uid, self.ipcon)
         else:
             self.base_name = 'Unnamed'
             self.device = None
@@ -183,6 +185,12 @@ class PluginBase(QWidget, object):
                 self.label_timeouts.setText('{0}'.format(self.error_count))
             except:
                 pass
+
+    def set_configs(self, configs):
+        self.configs = configs
+
+    def get_configs(self):
+        return self.configs
 
     def set_actions(self, actions):
         self.actions = actions

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-03-10.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -69,8 +69,8 @@ class BrickletThermalImaging(Device):
     BOOTLOADER_STATUS_CRC_MISMATCH = 5
     STATUS_LED_CONFIG_OFF = 0
     STATUS_LED_CONFIG_ON = 1
-    STATUS_LED_CONFIG_SHOW_STATUS = 2
-    STATUS_LED_CONFIG_SHOW_HEARTBEAT = 3
+    STATUS_LED_CONFIG_SHOW_HEARTBEAT = 2
+    STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
         """

@@ -100,7 +100,7 @@ class DC(PluginBase, Ui_DC):
         if self.firmware_version >= (1, 1, 3):
             reset = QAction('Reset', self)
             reset.triggered.connect(lambda: self.dc.reset())
-            self.set_actions(reset)
+            self.set_actions([(0, None, [reset])])
 
 #        if self.firmware_version >= (2, 0, 1):
 #            self.enable_encoder_checkbox.stateChanged.connect(self.enable_encoder_state_changed)

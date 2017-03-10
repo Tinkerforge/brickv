@@ -38,16 +38,50 @@ class COMCUPluginBase(PluginBase):
                                                     self.cb_bootloader_mode,
                                                     self.increase_error_count)
 
-        reset = QAction('Reset', self)
-        reset.triggered.connect(self.remove_and_reset)
-        self.set_actions(reset)
+        self.status_led_off_action = QAction('Off', self)
+        self.status_led_off_action.triggered.connect(lambda: self.device.set_status_led_config(device_class.STATUS_LED_CONFIG_OFF))
+        self.status_led_on_action = QAction('On', self)
+        self.status_led_on_action.triggered.connect(lambda: self.device.set_status_led_config(device_class.STATUS_LED_CONFIG_ON))
+        self.status_led_show_heartbeat_action = QAction('Show Heartbeat', self)
+        self.status_led_show_heartbeat_action.triggered.connect(lambda: self.device.set_status_led_config(device_class.STATUS_LED_CONFIG_SHOW_HEARTBEAT))
+        self.status_led_show_status_action = QAction('Show Status', self)
+        self.status_led_show_status_action.triggered.connect(lambda: self.device.set_status_led_config(device_class.STATUS_LED_CONFIG_SHOW_STATUS))
+
+        self.extra_configs = [(0, 'Status LED:', [self.status_led_off_action,
+                                                  self.status_led_on_action,
+                                                  self.status_led_show_heartbeat_action,
+                                                  self.status_led_show_status_action])]
+
+        self.reset_action = QAction('Reset', self)
+        self.reset_action.triggered.connect(self.remove_and_reset)
+
+        self.extra_actions = [(0, None, [self.reset_action])]
 
     def remove_and_reset(self):
         get_main_window().remove_device_tab(self.uid)
         self.device.reset()
 
+    # overrides PluginBase.get_configs
+    def get_configs(self):
+        return PluginBase.get_configs(self) + self.extra_configs
+
+    # overrides PluginBase.get_actions
+    def get_actions(self):
+        return PluginBase.get_actions(self) + self.extra_actions
+
+    def get_status_led_config_async(self, config):
+        if config == self.device_class.STATUS_LED_CONFIG_OFF:
+            self.status_led_off_action.trigger()
+        elif config == self.device_class.STATUS_LED_CONFIG_ON:
+            self.status_led_on_action.trigger()
+        elif config == self.device_class.STATUS_LED_CONFIG_SHOW_HEARTBEAT:
+            self.status_led_show_heartbeat_action.trigger()
+        elif config == self.device_class.STATUS_LED_CONFIG_SHOW_STATUS:
+            self.status_led_show_status_action.trigger()
+
     def cb_bootloader_mode(self, mode):
         if not self.start_called and mode == self.device.BOOTLOADER_MODE_FIRMWARE and self.isVisible():
+            async_call(self.device.get_status_led_config, None, self.get_status_led_config_async, self.increase_error_count)
             self.start_called = True
             self.start()
         elif mode == self.device.BOOTLOADER_MODE_BOOTLOADER and self.isVisible():
@@ -57,6 +91,7 @@ class COMCUPluginBase(PluginBase):
         elif mode == self.device.BOOTLOADER_MODE_FIRMWARE and not self.isVisible():
             self.widget_bootloader.hide()
             self.show()
+            async_call(self.device.get_status_led_config, None, self.get_status_led_config_async, self.increase_error_count)
             self.start_called = True
             self.start()
 

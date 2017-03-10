@@ -146,7 +146,7 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
 
         reset = QAction('Reset', self)
         reset.triggered.connect(lambda: self.silent_stepper.reset())
-        self.set_actions(reset)
+        self.set_actions([(0, None, [reset])])
 
     def start(self):
         self.update_timer.start(100)

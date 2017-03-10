@@ -1014,7 +1014,7 @@ class RED(PluginBase, Ui_RED):
             action.triggered.connect(functools.partial(self.perform_action, param))
             actions.append(action)
 
-        self.set_actions(['System', actions])
+        self.set_actions([(0, 'System', actions)])
 
         self.dialog_update_tinkerforge_software = None
 

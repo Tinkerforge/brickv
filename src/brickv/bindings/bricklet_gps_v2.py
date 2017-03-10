@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-03-10.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -95,8 +95,9 @@ class BrickletGPSV2(Device):
     FIX_3D_FIX = 3
     FIX_LED_CONFIG_OFF = 0
     FIX_LED_CONFIG_ON = 1
-    FIX_LED_CONFIG_SHOW_FIX = 2
-    FIX_LED_CONFIG_SHOW_HEARTBEAT = 3
+    FIX_LED_CONFIG_SHOW_HEARTBEAT = 2
+    FIX_LED_CONFIG_SHOW_FIX = 3
+    FIX_LED_CONFIG_SHOW_PPS = 4
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -110,8 +111,8 @@ class BrickletGPSV2(Device):
     BOOTLOADER_STATUS_CRC_MISMATCH = 5
     STATUS_LED_CONFIG_OFF = 0
     STATUS_LED_CONFIG_ON = 1
-    STATUS_LED_CONFIG_SHOW_STATUS = 2
-    STATUS_LED_CONFIG_SHOW_HEARTBEAT = 3
+    STATUS_LED_CONFIG_SHOW_HEARTBEAT = 2
+    STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
         """
@@ -264,9 +265,9 @@ class BrickletGPSV2(Device):
         """
         Returns the current
 
-        * elevation (0°-90°),
-        * azimuth (0°-359°) and
-        * SNR (0dB-99dB)
+        * elevation (0° - 90°),
+        * azimuth (0° - 359°) and
+        * SNR (0dB - 99dB)
 
         for a given satellite and satellite system.
 
@@ -280,10 +281,11 @@ class BrickletGPSV2(Device):
     def set_fix_led_config(self, config):
         """
         Sets the fix LED configuration. By default the LED shows if
-        the Bricklet got a GPS fix yet. The LED blinks as long as there is no fix.
-        If a fix is established, the led stops blinking and turns on.
+        the Bricklet got a GPS fix yet. If a fix is established the LED turns on.
+        If there is no fix then the LED is turned off.
 
-        You can also turn the LED permanently on/off or show a heartbeat.
+        You can also turn the LED permanently on/off, show a heartbeat or let it blink
+        in sync with the PPS (pulse per second) output of the GPS module.
 
         If the Bricklet is in bootloader mode, the LED is off.
         """
