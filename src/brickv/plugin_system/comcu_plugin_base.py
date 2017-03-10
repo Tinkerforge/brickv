@@ -21,9 +21,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtGui import QAction
+
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.callback_emulator import CallbackEmulator
 from brickv.async_call import async_call
+from brickv.utils import get_main_window
 
 class COMCUPluginBase(PluginBase):
     def __init__(self, device_class, ipcon, device_info, override_base_name=None):
@@ -34,6 +37,14 @@ class COMCUPluginBase(PluginBase):
         self.cbe_bootloader_mode = CallbackEmulator(self.device.get_bootloader_mode,
                                                     self.cb_bootloader_mode,
                                                     self.increase_error_count)
+
+        reset = QAction('Reset', self)
+        reset.triggered.connect(self.remove_and_reset)
+        self.set_actions(reset)
+
+    def remove_and_reset(self):
+        get_main_window().remove_device_tab(self.uid)
+        self.device.reset()
 
     def cb_bootloader_mode(self, mode):
         if not self.start_called and mode == self.device.BOOTLOADER_MODE_FIRMWARE and self.isVisible():

@@ -653,17 +653,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if something_changed_ref[0]:
                 self.update_tree_view()
         elif enumeration_type == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
-            for device_info in infos.get_device_infos():
-                if device_info.uid == uid:
-                    self.tab_widget.setCurrentIndex(0)
-                    self.remove_device_info(device_info.uid)
+            self.remove_device_tab(uid)
 
-                if device_info.type == 'brick':
-                    for port in device_info.bricklets:
-                        if device_info.bricklets[port] and device_info.bricklets[port].uid == uid:
-                            device_info.bricklets[port] = None
+    def remove_device_tab(self, uid):
+        for device_info in infos.get_device_infos():
+            if device_info.uid == uid:
+                self.tab_widget.setCurrentIndex(0)
+                self.remove_device_info(device_info.uid)
 
-            self.update_tree_view()
+            if device_info.type == 'brick':
+                for port in device_info.bricklets:
+                    if device_info.bricklets[port] and device_info.bricklets[port].uid == uid:
+                        device_info.bricklets[port] = None
+
+        self.update_tree_view()
 
     def hack_to_remove_red_brick_tab(self, red_brick_uid):
         for device_info in infos.get_device_infos():
