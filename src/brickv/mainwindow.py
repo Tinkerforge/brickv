@@ -427,34 +427,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                        self.tab_widget.setTabEnabled(index, False))
 
         layout = QVBoxLayout(tab_window)
-        info_bar = QHBoxLayout()
+        info_bar_1 = QHBoxLayout()
+        info_bar_2 = QHBoxLayout()
 
         # uid
-        info_bar.addWidget(QLabel('UID:'))
+        info_bar_1.addWidget(QLabel('UID:'))
 
         label = QLabel('{0}'.format(device_info.uid))
         label.setTextInteractionFlags(Qt.TextSelectableByMouse |
                                       Qt.TextSelectableByKeyboard)
 
-        info_bar.addWidget(label)
-        info_bar.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
-
-        # connected uid
-        if device_info.connected_uid != '0':
-            info_bar.addWidget(QLabel('Connected to:'))
-
-            button = QToolButton()
-            button.setText(device_info.connected_uid)
-            button.clicked.connect(lambda: self.show_plugin(device_info.connected_uid))
-
-            info_bar.addWidget(button)
-            info_bar.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
-
-        # position
-        info_bar.addWidget(QLabel('Position:'))
-        info_bar.addWidget(QLabel('{0}'.format(device_info.position.upper())))
-
-        info_bar.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+        info_bar_1.addWidget(label)
+        info_bar_1.addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Preferred))
 
         # firmware version
         label_version_name = QLabel('Version:')
@@ -464,17 +448,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             label_version_name.setText('FW Version:')
             label_version.setText(infos.get_version_string(device_info.plugin.firmware_version))
 
-        info_bar.addWidget(label_version_name)
-        info_bar.addWidget(label_version)
-
-        info_bar.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
-
-        # timeouts
-        info_bar.addWidget(QLabel('Timeouts:'))
-        label_timeouts = QLabel('0')
-        info_bar.addWidget(label_timeouts)
-
-        layout.addLayout(info_bar)
+        info_bar_1.addWidget(label_version_name)
+        info_bar_1.addWidget(label_version)
+        info_bar_1.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
         # actions
         actions = device_info.plugin.get_actions()
@@ -484,21 +460,72 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 button = QPushButton(actions.text())
                 button.clicked.connect(actions.trigger)
             else:
-                button = QToolButton()
-                button.setText(actions[0])
-                button.setPopupMode(QToolButton.InstantPopup)
-                button.setToolButtonStyle(Qt.ToolButtonTextOnly)
-                button.setArrowType(Qt.DownArrow)
-                button.setAutoRaise(True)
-
+                button = QPushButton(actions[0])
                 menu = QMenu(actions[0])
+
                 button.setMenu(menu)
 
                 for action in actions[1]:
                     menu.addAction(action)
 
-            info_bar.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding))
-            info_bar.addWidget(button)
+            info_bar_1.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+            info_bar_1.addWidget(button)
+
+        def more(button, info_bar):
+            visible = button.text() == 'More'
+
+            if visible:
+                button.setText('Less')
+            else:
+                button.setText('More')
+
+            for i in range(info_bar.count()):
+                widget = info_bar.itemAt(i).widget()
+
+                if widget != None:
+                    widget.setVisible(visible)
+
+        more_button = QPushButton('More')
+        more_button.clicked.connect(lambda: more(more_button, info_bar_2))
+
+        if actions == None:
+            info_bar_1.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+
+        info_bar_1.addWidget(more_button)
+
+        layout.addLayout(info_bar_1)
+
+        # connected uid
+        if device_info.connected_uid != '0':
+            info_bar_2.addWidget(QLabel('Connected to:'))
+
+            button = QToolButton()
+            button.setText(device_info.connected_uid)
+            button.clicked.connect(lambda: self.show_plugin(device_info.connected_uid))
+
+            info_bar_2.addWidget(button)
+            info_bar_2.addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Preferred))
+
+        # position
+        info_bar_2.addWidget(QLabel('Position:'))
+        info_bar_2.addWidget(QLabel('{0}'.format(device_info.position.upper())))
+        info_bar_2.addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Preferred))
+
+        # timeouts
+        info_bar_2.addWidget(QLabel('Timeouts:'))
+
+        label_timeouts = QLabel('0')
+
+        info_bar_2.addWidget(label_timeouts)
+        info_bar_2.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+
+        for i in range(info_bar_2.count()):
+            widget = info_bar_2.itemAt(i).widget()
+
+            if widget != None:
+                widget.hide()
+
+        layout.addLayout(info_bar_2)
 
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
@@ -512,7 +539,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             device_info.plugin.widget_bootloader = COMCUBootloader(ipcon, device_info)
             device_info.plugin.widget_bootloader.hide()
             layout.addWidget(device_info.plugin.widget_bootloader)
-        layout.addWidget(device_info.plugin)
+        layout.addWidget(device_info.plugin, 1)
 
         return tab_window
 
