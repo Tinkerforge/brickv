@@ -272,13 +272,18 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
 
         self.dot_counter = self.dot_counter % NUM_LEDS
 
+        index = self.dot_counter
+        line = self.dot_counter // 8
+        if line % 2:
+            index = line*8 + (7 - (self.dot_counter % 8))
+
         r_val = [0]*NUM_LEDS
         g_val = [0]*NUM_LEDS
         b_val = [0]*NUM_LEDS
 
-        r_val[self.dot_counter] = r
-        g_val[self.dot_counter] = g
-        b_val[self.dot_counter] = b
+        r_val[index] = r
+        g_val[index] = g
+        b_val[index] = b
 
         self.scribble_area.array_draw(r_val, g_val, b_val)
         self.set_rgb(r_val, g_val, b_val)
