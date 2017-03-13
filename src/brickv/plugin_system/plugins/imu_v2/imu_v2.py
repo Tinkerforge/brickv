@@ -260,6 +260,11 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.alive = True
         self.callback_counter = 0
 
+        self.status_led_action = QAction('Status LED', self)
+        self.status_led_action.setCheckable(True)
+        self.status_led_action.toggled.connect(lambda checked: self.imu.enable_status_led() if checked else self.imu.disable_status_led())
+        self.set_configs([(0, None, [self.status_led_action])])
+
         reset = QAction('Reset', self)
         reset.triggered.connect(lambda: self.imu.reset())
         self.set_actions([(0, None, [reset])])
@@ -267,6 +272,9 @@ class IMUV2(PluginBase, Ui_IMUV2):
     def start(self):
         if not self.alive:
             return
+
+        async_call(self.imu.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
+        async_call(self.imu.are_leds_on, None, self.checkbox_leds.setChecked, self.increase_error_count)
 
         self.gl_layout.activate()
         self.cbe_all_data.set_period(50)

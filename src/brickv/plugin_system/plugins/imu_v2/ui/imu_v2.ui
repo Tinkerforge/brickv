@@ -703,7 +703,7 @@
          <item>
           <widget class="QCheckBox" name="checkbox_leds">
            <property name="text">
-            <string>Enable LEDs</string>
+            <string>Enable Orientation and Direction LEDs</string>
            </property>
            <property name="checked">
             <bool>true</bool>

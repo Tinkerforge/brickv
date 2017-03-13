@@ -148,6 +148,14 @@ in the image above, then press "Save Orientation".""")
         self.calibrate = None
         self.alive = True
 
+        if self.firmware_version >= (2, 3, 1):
+            self.status_led_action = QAction('Status LED', self)
+            self.status_led_action.setCheckable(True)
+            self.status_led_action.toggled.connect(lambda checked: self.imu.enable_status_led() if checked else self.imu.disable_status_led())
+            self.set_configs([(0, None, [self.status_led_action])])
+        else:
+            self.status_led_action = None
+
         if self.firmware_version >= (1, 0, 7):
             reset = QAction('Reset', self)
             reset.triggered.connect(lambda: self.imu.reset())
@@ -156,6 +164,9 @@ in the image above, then press "Save Orientation".""")
     def start(self):
         if not self.alive:
             return
+
+        if self.firmware_version >= (2, 3, 1):
+            async_call(self.imu.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
 
         self.gl_layout.activate()
         self.cbe_all_data.set_period(100)

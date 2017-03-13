@@ -107,12 +107,23 @@ class Stepper(PluginBase, Ui_Stepper):
         self.mv  = 0
         self.mod = 0
 
+        if self.firmware_version >= (2, 3, 1):
+            self.status_led_action = QAction('Status LED', self)
+            self.status_led_action.setCheckable(True)
+            self.status_led_action.toggled.connect(lambda checked: self.stepper.enable_status_led() if checked else self.stepper.disable_status_led())
+            self.set_configs([(0, None, [self.status_led_action])])
+        else:
+            self.status_led_action = None
+
         if self.firmware_version >= (1, 1, 4):
             reset = QAction('Reset', self)
             reset.triggered.connect(lambda: self.stepper.reset())
             self.set_actions([(0, None, [reset])])
 
     def start(self):
+        if self.firmware_version >= (2, 3, 1):
+            async_call(self.stepper.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
+
         self.update_timer.start(100)
         self.update_start()
 

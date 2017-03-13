@@ -217,12 +217,23 @@ class Servo(PluginBase, Ui_Servo):
         self.update_done_event = Event()
         self.update_done_event.set()
 
+        if self.firmware_version >= (2, 3, 1):
+            self.status_led_action = QAction('Status LED', self)
+            self.status_led_action.setCheckable(True)
+            self.status_led_action.toggled.connect(lambda checked: self.servo.enable_status_led() if checked else self.servo.disable_status_led())
+            self.set_configs([(0, None, [self.status_led_action])])
+        else:
+            self.status_led_action = None
+
         if self.firmware_version >= (1, 1, 3):
             reset = QAction('Reset', self)
             reset.triggered.connect(lambda: self.servo.reset())
             self.set_actions([(0, None, [reset])])
 
     def start(self):
+        if self.firmware_version >= (2, 3, 1):
+            async_call(self.servo.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
+
         self.alive = True
         self.test_event.clear()
         self.update_done_event.set()

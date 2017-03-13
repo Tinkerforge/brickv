@@ -97,6 +97,14 @@ class DC(PluginBase, Ui_DC):
                                                      self.update_velocity,
                                                      self.increase_error_count)
 
+        if self.firmware_version >= (2, 3, 1):
+            self.status_led_action = QAction('Status LED', self)
+            self.status_led_action.setCheckable(True)
+            self.status_led_action.toggled.connect(lambda checked: self.dc.enable_status_led() if checked else self.dc.disable_status_led())
+            self.set_configs([(0, None, [self.status_led_action])])
+        else:
+            self.status_led_action = None
+
         if self.firmware_version >= (1, 1, 3):
             reset = QAction('Reset', self)
             reset.triggered.connect(lambda: self.dc.reset())
@@ -110,6 +118,9 @@ class DC(PluginBase, Ui_DC):
 #            self.enable_encoder_checkbox.setEnabled(False)
 
     def start(self):
+        if self.firmware_version >= (2, 3, 1):
+            async_call(self.dc.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
+
         self.update_timer.start(1000)
         self.cbe_current_velocity.set_period(100)
         self.update_start()
