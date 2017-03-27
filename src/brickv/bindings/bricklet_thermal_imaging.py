@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-03-10.      #
+# This file was automatically generated on 2017-03-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -24,6 +24,10 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
+GetImageLowLevel = namedtuple('ImageLowLevel', ['stream_chunk_offset', 'stream_chunk_data'])
+GetRawImageLowLevel = namedtuple('RawImageLowLevel', ['stream_chunk_offset', 'stream_chunk_data'])
+GetStatistics = namedtuple('Statistics', ['video_scene_statistics', 'spotmeter_statistics', 'temperatures', 'status'])
+GetAutomaticGainControlConfig = namedtuple('AutomaticGainControlConfig', ['region_of_interest', 'dampening_factor', 'clip_limit', 'empty_counts'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -35,14 +39,23 @@ class BrickletThermalImaging(Device):
     DEVICE_IDENTIFIER = 278
     DEVICE_DISPLAY_NAME = 'Thermal Imaging Bricklet'
 
-    CALLBACK_GREY_SCALE_IMAGE_LOW_LEVEL = 3
-    CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL = 4
+    CALLBACK_IMAGE_LOW_LEVEL = 12
+    CALLBACK_RAW_IMAGE_LOW_LEVEL = 13
 
-    CALLBACK_GREY_SCALE_IMAGE = -3
-    CALLBACK_TEMPERATURE_IMAGE = -4
+    CALLBACK_IMAGE = -12
+    CALLBACK_RAW_IMAGE = -13
 
-    FUNCTION_SET_CALLBACK_CONFIG = 1
-    FUNCTION_GET_CALLBACK_CONFIG = 2
+    FUNCTION_GET_IMAGE_LOW_LEVEL = 1
+    FUNCTION_GET_RAW_IMAGE_LOW_LEVEL = 2
+    FUNCTION_GET_STATISTICS = 3
+    FUNCTION_SET_RESOLUTION = 4
+    FUNCTION_GET_RESOLUTION = 5
+    FUNCTION_SET_SPOTMETER_CONFIG = 6
+    FUNCTION_GET_SPOTMETER_CONFIG = 7
+    FUNCTION_SET_AUTOMATIC_GAIN_CONTROL_CONFIG = 8
+    FUNCTION_GET_AUTOMATIC_GAIN_CONTROL_CONFIG = 9
+    FUNCTION_SET_CALLBACK_CONFIG = 10
+    FUNCTION_GET_CALLBACK_CONFIG = 11
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -56,6 +69,11 @@ class BrickletThermalImaging(Device):
     FUNCTION_READ_UID = 249
     FUNCTION_GET_IDENTITY = 255
 
+    RESOLUTION_0_TO_6553_KELVIN = 0
+    RESOLUTION_0_TO_655_KELVIN = 1
+    CALLBACK_CONFIG_CALLBACK_OFF = 0
+    CALLBACK_CONFIG_CALLBACK_IMAGE = 1
+    CALLBACK_CONFIG_CALLBACK_RAW_IMAGE = 2
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -81,10 +99,19 @@ class BrickletThermalImaging(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletThermalImaging.FUNCTION_GET_IMAGE_LOW_LEVEL] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletThermalImaging.FUNCTION_GET_RAW_IMAGE_LOW_LEVEL] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletThermalImaging.FUNCTION_GET_STATISTICS] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletThermalImaging.FUNCTION_SET_RESOLUTION] = BrickletThermalImaging.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletThermalImaging.FUNCTION_GET_RESOLUTION] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletThermalImaging.FUNCTION_SET_SPOTMETER_CONFIG] = BrickletThermalImaging.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletThermalImaging.FUNCTION_GET_SPOTMETER_CONFIG] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletThermalImaging.FUNCTION_SET_AUTOMATIC_GAIN_CONTROL_CONFIG] = BrickletThermalImaging.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletThermalImaging.FUNCTION_GET_AUTOMATIC_GAIN_CONTROL_CONFIG] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_SET_CALLBACK_CONFIG] = BrickletThermalImaging.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_CALLBACK_CONFIG] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletThermalImaging.CALLBACK_GREY_SCALE_IMAGE_LOW_LEVEL] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletThermalImaging.CALLBACK_IMAGE_LOW_LEVEL] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletThermalImaging.CALLBACK_RAW_IMAGE_LOW_LEVEL] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_SET_BOOTLOADER_MODE] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_BOOTLOADER_MODE] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -98,11 +125,65 @@ class BrickletThermalImaging(Device):
         self.response_expected[BrickletThermalImaging.FUNCTION_READ_UID] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_IDENTITY] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletThermalImaging.CALLBACK_GREY_SCALE_IMAGE_LOW_LEVEL] = 'H 62B'
-        self.callback_formats[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = 'H 31H'
+        self.callback_formats[BrickletThermalImaging.CALLBACK_IMAGE_LOW_LEVEL] = 'H 62B'
+        self.callback_formats[BrickletThermalImaging.CALLBACK_RAW_IMAGE_LOW_LEVEL] = 'H 31H'
 
-        self.low_level_callbacks[BrickletThermalImaging.CALLBACK_GREY_SCALE_IMAGE_LOW_LEVEL] = [BrickletThermalImaging.CALLBACK_GREY_SCALE_IMAGE, {'stream': {'fixed_total_length': 4800}}, None]
-        self.low_level_callbacks[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = [BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE, {'stream': {'fixed_total_length': 4800}}, None]
+        self.low_level_callbacks[BrickletThermalImaging.CALLBACK_IMAGE_LOW_LEVEL] = [BrickletThermalImaging.CALLBACK_IMAGE, {'stream': {'fixed_total_length': 4800}}, None]
+        self.low_level_callbacks[BrickletThermalImaging.CALLBACK_RAW_IMAGE_LOW_LEVEL] = [BrickletThermalImaging.CALLBACK_RAW_IMAGE, {'stream': {'fixed_total_length': 4800}}, None]
+
+    def get_image_low_level(self):
+        """
+
+        """
+        return GetImageLowLevel(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_IMAGE_LOW_LEVEL, (), '', 'H 62B'))
+
+    def get_raw_image_low_level(self):
+        """
+
+        """
+        return GetRawImageLowLevel(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_RAW_IMAGE_LOW_LEVEL, (), '', 'H 31H'))
+
+    def get_statistics(self):
+        """
+
+        """
+        return GetStatistics(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_STATISTICS, (), '', '4H 4H 8H H'))
+
+    def set_resolution(self, resolution):
+        """
+
+        """
+        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_RESOLUTION, (resolution,), 'B', '')
+
+    def get_resolution(self):
+        """
+
+        """
+        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_RESOLUTION, (), '', 'B')
+
+    def set_spotmeter_config(self, region_of_interest):
+        """
+
+        """
+        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_SPOTMETER_CONFIG, (region_of_interest,), '4B', '')
+
+    def get_spotmeter_config(self):
+        """
+
+        """
+        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_SPOTMETER_CONFIG, (), '', '4B')
+
+    def set_automatic_gain_control_config(self, region_of_interest, dampening_factor, clip_limit, empty_counts):
+        """
+
+        """
+        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_AUTOMATIC_GAIN_CONTROL_CONFIG, (region_of_interest, dampening_factor, clip_limit, empty_counts), '4B H 2H H', '')
+
+    def get_automatic_gain_control_config(self):
+        """
+
+        """
+        return GetAutomaticGainControlConfig(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_AUTOMATIC_GAIN_CONTROL_CONFIG, (), '', '4B H 2H H'))
 
     def set_callback_config(self, callback_config):
         """
@@ -245,6 +326,106 @@ class BrickletThermalImaging(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def get_image(self):
+        stream_extra = (,)
+        stream_total_length = 4800
+        stream_chunk_offset = 0
+        stream_result = None
+        stream_data = (,)
+        stream_out_of_sync = False
+
+        STREAM_CHUNK_OFFSET_NO_DATA = (1 << 16) - 1 # FIXME: make this depend on the stream_chunk_offset type
+
+        with self.stream_lock:
+            if stream_total_length == None: # no fixed-stream-length
+                stream_result = self.get_image_low_level()
+                stream_extra = stream_result[:-2] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+                stream_total_length = stream_result.stream_total_length
+                stream_chunk_offset = stream_result.stream_chunk_offset
+                stream_data = stream_result.stream_chunk_data
+
+            if stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA:
+                raise Error(Error.STREAM_NO_DATA, 'Stream has no data')
+            elif stream_chunk_offset != 0: # stream out-of-sync
+                # discard remaining stream to bring it back in-sync
+                while stream_chunk_offset + 62 < stream_total_length:
+                    # FIXME: validate that total length is identical for all low-level getters of a stream
+                    stream_chunk_offset = self.get_image_low_level().stream_chunk_offset
+
+                raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+
+            # FIXME: validate chunk offset < total length
+
+            while len(stream_data) < stream_total_length:
+                stream_result = self.get_image_low_level()
+                stream_extra = stream_result[:-2] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+                stream_chunk_offset = stream_result.stream_chunk_offset
+
+                # FIXME: validate that total length is identical for all low-level getters of a stream
+
+                if stream_chunk_offset != len(stream_data): # stream out-of-sync
+                    # discard remaining stream to bring it back in-sync
+                    while stream_chunk_offset + 62 < stream_total_length:
+                        # FIXME: validate that total length is identical for all low-level getters of a stream
+                        stream_chunk_offset = self.get_image_low_level().stream_chunk_offset
+
+                    raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+
+        if len(stream_extra) > 0:
+            return stream_extra + (stream_data[:stream_total_length],)
+        else:
+            return stream_data[:stream_total_length]
+
+    def get_raw_image(self):
+        stream_extra = (,)
+        stream_total_length = 4800
+        stream_chunk_offset = 0
+        stream_result = None
+        stream_data = (,)
+        stream_out_of_sync = False
+
+        STREAM_CHUNK_OFFSET_NO_DATA = (1 << 16) - 1 # FIXME: make this depend on the stream_chunk_offset type
+
+        with self.stream_lock:
+            if stream_total_length == None: # no fixed-stream-length
+                stream_result = self.get_raw_image_low_level()
+                stream_extra = stream_result[:-2] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+                stream_total_length = stream_result.stream_total_length
+                stream_chunk_offset = stream_result.stream_chunk_offset
+                stream_data = stream_result.stream_chunk_data
+
+            if stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA:
+                raise Error(Error.STREAM_NO_DATA, 'Stream has no data')
+            elif stream_chunk_offset != 0: # stream out-of-sync
+                # discard remaining stream to bring it back in-sync
+                while stream_chunk_offset + 31 < stream_total_length:
+                    # FIXME: validate that total length is identical for all low-level getters of a stream
+                    stream_chunk_offset = self.get_raw_image_low_level().stream_chunk_offset
+
+                raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+
+            # FIXME: validate chunk offset < total length
+
+            while len(stream_data) < stream_total_length:
+                stream_result = self.get_raw_image_low_level()
+                stream_extra = stream_result[:-2] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+                stream_chunk_offset = stream_result.stream_chunk_offset
+
+                # FIXME: validate that total length is identical for all low-level getters of a stream
+
+                if stream_chunk_offset != len(stream_data): # stream out-of-sync
+                    # discard remaining stream to bring it back in-sync
+                    while stream_chunk_offset + 31 < stream_total_length:
+                        # FIXME: validate that total length is identical for all low-level getters of a stream
+                        stream_chunk_offset = self.get_raw_image_low_level().stream_chunk_offset
+
+                    raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+
+        if len(stream_extra) > 0:
+            return stream_extra + (stream_data[:stream_total_length],)
+        else:
+            return stream_data[:stream_total_length]
 
     def register_callback(self, id_, callback):
         """

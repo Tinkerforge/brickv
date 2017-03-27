@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-03-07.      #
+# This file was automatically generated on 2017-03-23.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -8,6 +8,8 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
+
+#### __DEVICE_IS_NOT_RELEASED__ ####
 
 try:
     from collections import namedtuple
@@ -72,8 +74,8 @@ class BrickletRGBLEDMatrix(Device):
     BOOTLOADER_STATUS_CRC_MISMATCH = 5
     STATUS_LED_CONFIG_OFF = 0
     STATUS_LED_CONFIG_ON = 1
-    STATUS_LED_CONFIG_SHOW_STATUS = 2
-    STATUS_LED_CONFIG_SHOW_HEARTBEAT = 3
+    STATUS_LED_CONFIG_SHOW_HEARTBEAT = 2
+    STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
         """

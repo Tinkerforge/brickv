@@ -94,6 +94,8 @@ class Error(Exception):
     INVALID_PARAMETER = -9
     NOT_SUPPORTED = -10
     UNKNOWN_ERROR_CODE = -11
+    STREAM_NO_DATA = -12
+    STREAM_OUT_OF_SYNC = -13
 
     def __init__(self, value, description):
         self.value = value
@@ -130,6 +132,7 @@ class Device:
         self.expected_response_sequence_number = None # protected by request_lock
         self.response_queue = Queue()
         self.request_lock = Lock()
+        self.stream_lock = Lock()
 
         self.response_expected = [Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID] * 256
         self.response_expected[IPConnection.FUNCTION_ENUMERATE] = Device.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -808,7 +811,7 @@ class IPConnection:
                 cb(*self.deserialize_data(payload, form))
 
         if function_id in device.low_level_callbacks:
-            llcb = device.low_level_callbacks[function_id]
+            llcb = device.low_level_callbacks[function_id] # [hlfid, options, state]
             llform = device.callback_formats[function_id] # FIXME: currently assuming that llform is longer than 1
             values = self.deserialize_data(payload, llform)
             stream = llcb[1].get('stream', None)
@@ -818,33 +821,40 @@ class IPConnection:
                 fixed_total_length = stream.get('fixed_total_length', None)
 
                 if fixed_total_length == None:
-                    extra = tuple(list(values)[:-3])
+                    extra = values[:-3]
                     total_length = values[-3]
                 else:
-                    extra = tuple(list(values)[:-2])
+                    extra = values[:-2]
                     total_length = fixed_total_length
 
                 # FIXME: validate that extra parameters are identical for all low-level callback of a stream
+                # FIXME: validate that total length is identical for all low-level callback of a stream
 
-                chunk_offset = values[-2]
+                chunk_offset = values[-2] # FIXME: validate chunk offset < total length
                 chunk_data = values[-1]
 
-                if llcb[2] == None:
-                    if chunk_offset == 0:
+                # FIXME: expose stream status constants
+                STREAM_STATUS_COMPLETE = 0
+                STREAM_STATUS_OUT_OF_SYNC = 1
+
+                if llcb[2] == None: # no stream in-progress
+                    if chunk_offset == 0: # stream starts
                         llcb[2] = chunk_data
 
-                        if len(llcb[2]) >= total_length:
-                            result = (0,) + extra + (llcb[2][:total_length],) # FIXME: add stream result constant
+                        if len(llcb[2]) >= total_length: # stream complete
+                            result = (STREAM_STATUS_COMPLETE,) + extra + (llcb[2][:total_length],)
                             llcb[2] = None
-                else:
-                    if chunk_offset != len(llcb[2]):
-                        result = (1,) + extra + (llcb[2] + [0]*(total_length - len(llcb[2])),) # FIXME: add stream result constant, need to handle padding for non-int types
+                    else: # ignore tail of current stream, wait for next stream start
+                        pass
+                else: # stream in-progress
+                    if chunk_offset != len(llcb[2]): # stream out-of-sync, abort it and return partial result
+                        result = (STREAM_STATUS_OUT_OF_SYNC,) + extra + (llcb[2] + (0,)*(total_length - len(llcb[2])),) # FIXME: need to handle padding for non-int types
                         llcb[2] = None
-                    else:
+                    else: # stream in-sync
                         llcb[2] += chunk_data
 
-                        if len(llcb[2]) >= total_length:
-                            result = (0,) + extra + (llcb[2][:total_length],) # FIXME: add stream result constant
+                        if len(llcb[2]) >= total_length: # stream complete
+                            result = (STREAM_STATUS_COMPLETE,) + extra + (llcb[2][:total_length],)
                             llcb[2] = None
 
                 if result != None and llcb[0] in device.registered_callbacks:

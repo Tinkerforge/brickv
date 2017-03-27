@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-03-06.      #
+# This file was automatically generated on 2017-03-27.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -887,110 +887,116 @@ class BrickletRS485(Device):
     def modbus_answer_read_coils_request(self, request_id, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
-        result = None
+        stream_result = None
 
-        while stream_chunk_offset < stream_total_length:
-            stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 59]
+        with self.stream_lock:
+            while stream_chunk_offset < stream_total_length:
+                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 59]
 
-            if len(stream_chunk_data) < 59:
-                stream_chunk_data.extend([0]*(59 - len(stream_chunk_data)))
+                if len(stream_chunk_data) < 59:
+                    stream_chunk_data.extend([0]*(59 - len(stream_chunk_data)))
 
-            # FIXME: validate that the result of all the low-level calls is identical
-            result = self.modbus_answer_read_coils_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
+                # FIXME: validate that the result of all the low-level calls is identical
+                stream_result = self.modbus_answer_read_coils_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
-            stream_chunk_offset += 59
+                stream_chunk_offset += 59
 
-        return result
+        return stream_result
 
     def modbus_answer_read_holding_registers_request(self, request_id, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
-        result = None
+        stream_result = None
 
-        while stream_chunk_offset < stream_total_length:
-            stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 29]
+        with self.stream_lock:
+            while stream_chunk_offset < stream_total_length:
+                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 29]
 
-            if len(stream_chunk_data) < 29:
-                stream_chunk_data.extend([0]*(29 - len(stream_chunk_data)))
+                if len(stream_chunk_data) < 29:
+                    stream_chunk_data.extend([0]*(29 - len(stream_chunk_data)))
 
-            # FIXME: validate that the result of all the low-level calls is identical
-            result = self.modbus_answer_read_holding_registers_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
+                # FIXME: validate that the result of all the low-level calls is identical
+                stream_result = self.modbus_answer_read_holding_registers_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
-            stream_chunk_offset += 29
+                stream_chunk_offset += 29
 
-        return result
+        return stream_result
 
     def modbus_write_multiple_coils(self, slave_address, starting_address, count, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
-        result = None
+        stream_result = None
 
-        while stream_chunk_offset < stream_total_length:
-            stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 54]
+        with self.stream_lock:
+            while stream_chunk_offset < stream_total_length:
+                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 54]
 
-            if len(stream_chunk_data) < 54:
-                stream_chunk_data.extend([0]*(54 - len(stream_chunk_data)))
+                if len(stream_chunk_data) < 54:
+                    stream_chunk_data.extend([0]*(54 - len(stream_chunk_data)))
 
-            # FIXME: validate that the result of all the low-level calls is identical
-            result = self.modbus_write_multiple_coils_low_level(slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data)
+                # FIXME: validate that the result of all the low-level calls is identical
+                stream_result = self.modbus_write_multiple_coils_low_level(slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
-            stream_chunk_offset += 54
+                stream_chunk_offset += 54
 
-        return result
+        return stream_result
 
     def modbus_write_multiple_registers(self, slave_address, starting_address, count, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
-        result = None
+        stream_result = None
 
-        while stream_chunk_offset < stream_total_length:
-            stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 27]
+        with self.stream_lock:
+            while stream_chunk_offset < stream_total_length:
+                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 27]
 
-            if len(stream_chunk_data) < 27:
-                stream_chunk_data.extend([0]*(27 - len(stream_chunk_data)))
+                if len(stream_chunk_data) < 27:
+                    stream_chunk_data.extend([0]*(27 - len(stream_chunk_data)))
 
-            # FIXME: validate that the result of all the low-level calls is identical
-            result = self.modbus_write_multiple_registers_low_level(slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data)
+                # FIXME: validate that the result of all the low-level calls is identical
+                stream_result = self.modbus_write_multiple_registers_low_level(slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
-            stream_chunk_offset += 27
+                stream_chunk_offset += 27
 
-        return result
+        return stream_result
 
     def modbus_answer_read_discrete_inputs_request(self, request_id, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
-        result = None
+        stream_result = None
 
-        while stream_chunk_offset < stream_total_length:
-            stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 59]
+        with self.stream_lock:
+            while stream_chunk_offset < stream_total_length:
+                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 59]
 
-            if len(stream_chunk_data) < 59:
-                stream_chunk_data.extend([0]*(59 - len(stream_chunk_data)))
+                if len(stream_chunk_data) < 59:
+                    stream_chunk_data.extend([0]*(59 - len(stream_chunk_data)))
 
-            # FIXME: validate that the result of all the low-level calls is identical
-            result = self.modbus_answer_read_discrete_inputs_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
+                # FIXME: validate that the result of all the low-level calls is identical
+                stream_result = self.modbus_answer_read_discrete_inputs_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
-            stream_chunk_offset += 59
+                stream_chunk_offset += 59
 
-        return result
+        return stream_result
 
     def modbus_answer_read_input_registers_request(self, request_id, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
-        result = None
+        stream_result = None
 
-        while stream_chunk_offset < stream_total_length:
-            stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 29]
+        with self.stream_lock:
+            while stream_chunk_offset < stream_total_length:
+                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 29]
 
-            if len(stream_chunk_data) < 29:
-                stream_chunk_data.extend([0]*(29 - len(stream_chunk_data)))
+                if len(stream_chunk_data) < 29:
+                    stream_chunk_data.extend([0]*(29 - len(stream_chunk_data)))
 
-            # FIXME: validate that the result of all the low-level calls is identical
-            result = self.modbus_answer_read_input_registers_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
+                # FIXME: validate that the result of all the low-level calls is identical
+                stream_result = self.modbus_answer_read_input_registers_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
-            stream_chunk_offset += 29
+                stream_chunk_offset += 29
 
-        return result
+        return stream_result
 
     def register_callback(self, id_, callback):
         """
