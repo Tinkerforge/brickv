@@ -354,6 +354,11 @@ try:
 except ValueError:
     from bricklet_voltage_current import BrickletVoltageCurrent
 
+try:
+    from .bricklet_xmc1400_breakout import BrickletXMC1400Breakout
+except ValueError:
+    from bricklet_xmc1400_breakout import BrickletXMC1400Breakout
+
 
 DEVICE_CLASSES = {
 BrickDC.DEVICE_IDENTIFIER: BrickDC,
@@ -425,6 +430,7 @@ BrickletTilt.DEVICE_IDENTIFIER: BrickletTilt,
 BrickletUVLight.DEVICE_IDENTIFIER: BrickletUVLight,
 BrickletVoltage.DEVICE_IDENTIFIER: BrickletVoltage,
 BrickletVoltageCurrent.DEVICE_IDENTIFIER: BrickletVoltageCurrent,
+BrickletXMC1400Breakout.DEVICE_IDENTIFIER: BrickletXMC1400Breakout,
 }
 
 def get_device_class(device_identifier):
