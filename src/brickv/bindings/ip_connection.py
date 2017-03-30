@@ -821,10 +821,10 @@ class IPConnection:
                 fixed_total_length = stream.get('fixed_total_length', None)
 
                 if fixed_total_length == None:
-                    extra = values[:-3]
+                    extra = tuple(values[:-3])
                     total_length = values[-3]
                 else:
-                    extra = values[:-2]
+                    extra = tuple(values[:-2])
                     total_length = fixed_total_length
 
                 # FIXME: validate that extra parameters are identical for all low-level callback of a stream
