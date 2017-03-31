@@ -375,9 +375,10 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
             self.thermal_image.new_image_data(data, is_16bit=True)
             async_call(self.thermal_imaging.get_statistics, None, self.cb_statistics, self.increase_error_count)
 
-    def kelvin_to_degstr(self, value):
-#            return "{}".format(value)
-        if self.valid_resolution == 0:
+    def kelvin_to_degstr(self, value, res = None):
+        if res == None:
+            res = self.valid_resolution
+        if res == 0:
             return "{0:.2f}".format(value/10.0 - 273.15)
         else:
             return "{0:.2f}".format(value/100.0 - 273.15)
@@ -392,6 +393,53 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
         self.spotmeter_minimum_label.setText(spot_min)
         self.spotmeter_maximum_label.setText(spot_max)
         self.spotmeter_pixel_count_label.setText(spot_pix)
+        
+        temp_fpa = self.kelvin_to_degstr(data.temperatures[0], 1)
+        temp_fpa_ffc = self.kelvin_to_degstr(data.temperatures[1], 1)
+        temp_housing = self.kelvin_to_degstr(data.temperatures[2], 1)
+        temp_housing_ffc = self.kelvin_to_degstr(data.temperatures[3], 1)
+        self.temp_fpa_label.setText(temp_fpa)
+        self.temp_fpa_ffc_label.setText(temp_fpa_ffc)
+        self.temp_housing_label.setText(temp_housing)
+        self.temp_housing_ffc_label.setText(temp_housing_ffc)
+        
+        sheet_green  = "QLabel { color: green; }"
+        sheet_orange = "QLabel { color: orange; }"
+        sheet_red    = "QLabel { color: red; }"
+        
+        if data.status & 0b1:
+            self.ffc_desired_label.setStyleSheet(sheet_orange)
+            self.ffc_desired_label.setText('Yes')
+        else:
+            self.ffc_desired_label.setStyleSheet(sheet_green)
+            self.ffc_desired_label.setText('No')
+            
+        if data.status & 0b110 == 0b000:
+            self.ffc_state_label.setStyleSheet(sheet_orange)
+            self.ffc_state_label.setText('Never Commanded')
+        elif data.status & 0b110 == 0b010:
+            self.ffc_state_label.setStyleSheet(sheet_orange)
+            self.ffc_state_label.setText('Imminent')
+        elif data.status & 0b110 == 0b100:
+            self.ffc_state_label.setStyleSheet(sheet_orange)
+            self.ffc_state_label.setText('In Progress')
+        elif data.status & 0b110 == 0b110:
+            self.ffc_state_label.setStyleSheet(sheet_green)
+            self.ffc_state_label.setText('Complete')
+            
+        if data.status & 0b10000:
+            self.shutter_lockout_label.setStyleSheet(sheet_red)
+            self.shutter_lockout_label.setText('Yes')
+        else:
+            self.shutter_lockout_label.setStyleSheet(sheet_green)
+            self.shutter_lockout_label.setText('No')
+        
+        if data.status & 0b100000:
+            self.overtemp_label.setStyleSheet(sheet_red)
+            self.overtemp_label.setText('Yes')
+        else:
+            self.overtemp_label.setStyleSheet(sheet_green)
+            self.overtemp_label.setText('No')
         
     def cb_get_high_contrast_config(self, data):
         self.thermal_image.agc_roi_from = QPoint(data.region_of_interest[0]*self.thermal_image.image_pixel_width,data.region_of_interest[1]*self.thermal_image.image_pixel_width)
