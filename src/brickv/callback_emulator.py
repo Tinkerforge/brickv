@@ -25,6 +25,8 @@ import threading
 
 from PyQt4.QtCore import QObject, pyqtSignal
 
+from brickv.bindings.ip_connection import Error
+
 class CallbackEmulator(QObject):
     qtcb_data = pyqtSignal(object)
     qtcb_error = pyqtSignal()
@@ -62,7 +64,7 @@ class CallbackEmulator(QObject):
 
         try:
             data = self.data_getter()
-        except:
+        except Error:
             self.qtcb_error.emit()
 
             # an error occurred, retry in 5 seconds if period was not set
