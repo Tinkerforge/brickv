@@ -4898,7 +4898,7 @@ dict_provider = \
                                     'network-id': {'@mcc': '274',
                                                    '@mnc': '11'}},
                             'name': 'Nova'},
-                           {'gsm': {'apn': [{'@value': 'wap.simi.is',
+                           {'gsm': {'apn': [{'@value': 'internet',
                                              'dns': ['194.105.224.1',
                                                      '212.30.200.200'],
                                              'plan': {'@type': 'postpaid'},
