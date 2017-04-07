@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -86,7 +86,7 @@ class BrickletNFCRFID(Device):
         self.response_expected[BrickletNFCRFID.CALLBACK_STATE_CHANGED] = BrickletNFCRFID.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletNFCRFID.FUNCTION_GET_IDENTITY] = BrickletNFCRFID.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletNFCRFID.CALLBACK_STATE_CHANGED] = 'B ?'
+        self.callback_formats[BrickletNFCRFID.CALLBACK_STATE_CHANGED] = 'B !'
 
 
     def request_tag_id(self, tag_type):
@@ -155,7 +155,7 @@ class BrickletNFCRFID(Device):
 
         The same approach is used analogously for the other API functions.
         """
-        return GetState(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_STATE, (), '', 'B ?'))
+        return GetState(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_STATE, (), '', 'B !'))
 
     def authenticate_mifare_classic_page(self, page, key_number, key):
         """

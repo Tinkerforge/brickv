@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -109,7 +109,7 @@ class BrickletPiezoSpeaker(Device):
 
         Returns *true* after the calibration finishes.
         """
-        return self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_CALIBRATE, (), '', '?')
+        return self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_CALIBRATE, (), '', '!')
 
     def get_identity(self):
         """

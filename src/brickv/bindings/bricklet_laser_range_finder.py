@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -338,7 +338,7 @@ class BrickletLaserRangeFinder(Device):
         """
         Returns *true* if the laser is enabled, *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_IS_LASER_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_IS_LASER_ENABLED, (), '', '!')
 
     def get_sensor_hardware_version(self):
         """
@@ -385,7 +385,7 @@ class BrickletLaserRangeFinder(Device):
 
         .. versionadded:: 2.0.3$nbsp;(Plugin)
         """
-        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_CONFIGURATION, (acquisition_count, enable_quick_termination, threshold_value, measurement_frequency), 'B ? B H', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_CONFIGURATION, (acquisition_count, enable_quick_termination, threshold_value, measurement_frequency), 'B ! B H', '')
 
     def get_configuration(self):
         """
@@ -393,7 +393,7 @@ class BrickletLaserRangeFinder(Device):
 
         .. versionadded:: 2.0.3$nbsp;(Plugin)
         """
-        return GetConfiguration(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_CONFIGURATION, (), '', 'B ? B H'))
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_CONFIGURATION, (), '', 'B ! B H'))
 
     def get_identity(self):
         """

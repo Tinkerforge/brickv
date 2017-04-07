@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -164,7 +164,7 @@ class BrickServo(Device):
         """
         Returns *true* if the specified servo is enabled, *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_ENABLED, (servo_num,), 'B', '?')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_ENABLED, (servo_num,), 'B', '!')
 
     def set_position(self, servo_num, position):
         """
@@ -436,7 +436,7 @@ class BrickServo(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_POSITION_REACHED_CALLBACK_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_POSITION_REACHED_CALLBACK_ENABLED, (), '', '!')
 
     def enable_velocity_reached_callback(self):
         """
@@ -464,7 +464,7 @@ class BrickServo(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED, (), '', '!')
 
     def get_send_timeout_count(self, communication_method):
         """
@@ -511,7 +511,7 @@ class BrickServo(Device):
 
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '!')
 
     def get_protocol1_bricklet_name(self, port):
         """

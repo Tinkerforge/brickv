@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -449,7 +449,7 @@ class BrickMaster(Device):
         """
         Returns *true* if a Chibi Extension is available to be used by the Master Brick.
         """
-        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_CHIBI_PRESENT, (), '', '?')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_CHIBI_PRESENT, (), '', '!')
 
     def set_chibi_address(self, address):
         """
@@ -582,7 +582,7 @@ class BrickMaster(Device):
         """
         Returns *true* if a RS485 Extension is available to be used by the Master Brick.
         """
-        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_RS485_PRESENT, (), '', '?')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_RS485_PRESENT, (), '', '!')
 
     def set_rs485_address(self, address):
         """
@@ -666,7 +666,7 @@ class BrickMaster(Device):
         """
         Returns *true* if a WIFI Extension is available to be used by the Master Brick.
         """
-        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_WIFI_PRESENT, (), '', '?')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_WIFI_PRESENT, (), '', '!')
 
     def set_wifi_configuration(self, ssid, connection, ip, subnet_mask, gateway, port):
         """
@@ -1124,7 +1124,7 @@ class BrickMaster(Device):
 
         .. versionadded:: 2.1.0$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_ETHERNET_PRESENT, (), '', '?')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_ETHERNET_PRESENT, (), '', '!')
 
     def set_ethernet_configuration(self, connection, ip, subnet_mask, gateway, port):
         """
@@ -1305,7 +1305,7 @@ class BrickMaster(Device):
 
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_WIFI2_PRESENT, (), '', '?')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_WIFI2_PRESENT, (), '', '!')
 
     def start_wifi2_bootloader(self):
         """
@@ -1434,7 +1434,7 @@ class BrickMaster(Device):
 
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
-        return GetWifi2Status(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_STATUS, (), '', '? B 4B 4B 4B 6B I I b ? 4B 4B 4B 6B I I B'))
+        return GetWifi2Status(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_STATUS, (), '', '! B 4B 4B 4B 6B I I b ! 4B 4B 4B 6B I I B'))
 
     def set_wifi2_client_configuration(self, enable, ssid, ip, subnet_mask, gateway, mac_address, bssid):
         """
@@ -1468,7 +1468,7 @@ class BrickMaster(Device):
 
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
-        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_CLIENT_CONFIGURATION, (enable, ssid, ip, subnet_mask, gateway, mac_address, bssid), '? 32s 4B 4B 4B 6B 6B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_CLIENT_CONFIGURATION, (enable, ssid, ip, subnet_mask, gateway, mac_address, bssid), '! 32s 4B 4B 4B 6B 6B', '')
 
     def get_wifi2_client_configuration(self):
         """
@@ -1476,7 +1476,7 @@ class BrickMaster(Device):
 
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
-        return GetWifi2ClientConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_CLIENT_CONFIGURATION, (), '', '? 32s 4B 4B 4B 6B 6B'))
+        return GetWifi2ClientConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_CLIENT_CONFIGURATION, (), '', '! 32s 4B 4B 4B 6B 6B'))
 
     def set_wifi2_client_hostname(self, hostname):
         """
@@ -1561,7 +1561,7 @@ class BrickMaster(Device):
 
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
-        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_AP_CONFIGURATION, (enable, ssid, ip, subnet_mask, gateway, encryption, hidden, channel, mac_address), '? 32s 4B 4B 4B B ? B 6B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_AP_CONFIGURATION, (enable, ssid, ip, subnet_mask, gateway, encryption, hidden, channel, mac_address), '! 32s 4B 4B 4B B ! B 6B', '')
 
     def get_wifi2_ap_configuration(self):
         """
@@ -1569,7 +1569,7 @@ class BrickMaster(Device):
 
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
-        return GetWifi2APConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_AP_CONFIGURATION, (), '', '? 32s 4B 4B 4B B ? B 6B'))
+        return GetWifi2APConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_AP_CONFIGURATION, (), '', '! 32s 4B 4B 4B B ! B 6B'))
 
     def set_wifi2_ap_password(self, password):
         """
@@ -1637,7 +1637,7 @@ class BrickMaster(Device):
 
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_WIFI2_STATUS_LED_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_WIFI2_STATUS_LED_ENABLED, (), '', '!')
 
     def set_wifi2_mesh_configuration(self, enable, root_ip, root_subnet_mask, root_gateway, router_bssid, group_id, group_ssid_prefix, gateway_ip, gateway_port):
         """
@@ -1675,7 +1675,7 @@ class BrickMaster(Device):
 
         .. versionadded:: 2.4.2$nbsp;(Firmware)
         """
-        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_MESH_CONFIGURATION, (enable, root_ip, root_subnet_mask, root_gateway, router_bssid, group_id, group_ssid_prefix, gateway_ip, gateway_port), '? 4B 4B 4B 6B 6B 16s 4B H', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_MESH_CONFIGURATION, (enable, root_ip, root_subnet_mask, root_gateway, router_bssid, group_id, group_ssid_prefix, gateway_ip, gateway_port), '! 4B 4B 4B 6B 6B 16s 4B H', '')
 
     def get_wifi2_mesh_configuration(self):
         """
@@ -1685,7 +1685,7 @@ class BrickMaster(Device):
 
         .. versionadded:: 2.4.2$nbsp;(Firmware)
         """
-        return GetWifi2MeshConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_CONFIGURATION, (), '', '? 4B 4B 4B 6B 6B 16s 4B H'))
+        return GetWifi2MeshConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_CONFIGURATION, (), '', '! 4B 4B 4B 6B 6B 16s 4B H'))
 
     def set_wifi2_mesh_router_ssid(self, ssid):
         """
@@ -1753,7 +1753,7 @@ class BrickMaster(Device):
 
         .. versionadded:: 2.4.2$nbsp;(Firmware)
         """
-        return GetWifi2MeshCommonStatus(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_COMMON_STATUS, (), '', 'B ? ? H I I'))
+        return GetWifi2MeshCommonStatus(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_COMMON_STATUS, (), '', 'B ! ! H I I'))
 
     def get_wifi2_mesh_client_status(self):
         """
@@ -1820,7 +1820,7 @@ class BrickMaster(Device):
 
         .. versionadded:: 2.3.2$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '!')
 
     def get_protocol1_bricklet_name(self, port):
         """

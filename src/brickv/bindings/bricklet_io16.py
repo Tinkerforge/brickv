@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -134,7 +134,7 @@ class BrickletIO16(Device):
 
         The default configuration is input with pull-up.
         """
-        self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_PORT_CONFIGURATION, (port, selection_mask, direction, value), 'c B c ?', '')
+        self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_PORT_CONFIGURATION, (port, selection_mask, direction, value), 'c B c !', '')
 
     def get_port_configuration(self, port):
         """
@@ -248,7 +248,7 @@ class BrickletIO16(Device):
 
         .. versionadded:: 2.0.3$nbsp;(Plugin)
         """
-        return self.ipcon.send_request(self, BrickletIO16.FUNCTION_GET_EDGE_COUNT, (pin, reset_counter), 'B ?', 'I')
+        return self.ipcon.send_request(self, BrickletIO16.FUNCTION_GET_EDGE_COUNT, (pin, reset_counter), 'B !', 'I')
 
     def set_edge_count_config(self, pin, edge_type, debounce):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -263,7 +263,7 @@ class BrickDC(Device):
         """
         Returns *true* if the driver chip is enabled, *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_IS_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_IS_ENABLED, (), '', '!')
 
     def set_minimum_voltage(self, voltage):
         """
@@ -371,7 +371,7 @@ class BrickDC(Device):
 
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '!')
 
     def get_protocol1_bricklet_name(self, port):
         """

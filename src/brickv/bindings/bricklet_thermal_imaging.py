@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-03-30.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -373,6 +373,8 @@ class BrickletThermalImaging(Device):
 
                     raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
 
+                stream_data += stream_result.stream_chunk_data
+
         if len(stream_extra) > 0:
             return stream_extra + (stream_data[:stream_total_length],)
         else:
@@ -422,6 +424,8 @@ class BrickletThermalImaging(Device):
                         stream_chunk_offset = self.get_temperature_image_low_level().stream_chunk_offset
 
                     raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+
+                stream_data += stream_result.stream_chunk_data
 
         if len(stream_extra) > 0:
             return stream_extra + (stream_data[:stream_total_length],)

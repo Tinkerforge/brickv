@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -250,13 +250,13 @@ class BrickletMotorizedPoti(Device):
         """
         TODO
         """
-        self.ipcon.send_request(self, BrickletMotorizedPoti.FUNCTION_SET_MOTOR_POSITION, (position, disable_after_reach), 'H ?', '')
+        self.ipcon.send_request(self, BrickletMotorizedPoti.FUNCTION_SET_MOTOR_POSITION, (position, disable_after_reach), 'H !', '')
 
     def get_motor_position(self):
         """
         TODO
         """
-        return GetMotorPosition(*self.ipcon.send_request(self, BrickletMotorizedPoti.FUNCTION_GET_MOTOR_POSITION, (), '', 'H ?'))
+        return GetMotorPosition(*self.ipcon.send_request(self, BrickletMotorizedPoti.FUNCTION_GET_MOTOR_POSITION, (), '', 'H !'))
 
     def enable_motor(self):
         """
@@ -274,7 +274,7 @@ class BrickletMotorizedPoti(Device):
         """
         TODO
         """
-        return self.ipcon.send_request(self, BrickletMotorizedPoti.FUNCTION_IS_MOTOR_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickletMotorizedPoti.FUNCTION_IS_MOTOR_ENABLED, (), '', '!')
 
     def get_identity(self):
         """

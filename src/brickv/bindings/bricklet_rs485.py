@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-03-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -44,29 +44,29 @@ class BrickletRS485(Device):
 
     CALLBACK_READ_CALLBACK = 41
     CALLBACK_ERROR_COUNT = 42
-    CALLBACK_MODBUS_READ_COILS_REQUEST = 43
-    CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL = 44
-    CALLBACK_MODBUS_READ_HOLDING_REGISTERS_REQUEST = 45
-    CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL = 46
-    CALLBACK_MODBUS_WRITE_SINGLE_COIL_REQUEST = 47
-    CALLBACK_MODBUS_WRITE_SINGLE_COIL_RESPONSE = 48
-    CALLBACK_MODBUS_WRITE_SINGLE_REGISTER_REQUEST = 49
-    CALLBACK_MODBUS_WRITE_SINGLE_REGISTER_RESPONSE = 50
-    CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL = 51
-    CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_RESPONSE = 52
-    CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL = 53
-    CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_RESPONSE = 54
-    CALLBACK_MODBUS_READ_DISCRETE_INPUTS_REQUEST = 55
-    CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL = 56
-    CALLBACK_MODBUS_READ_INPUT_REGISTERS_REQUEST = 57
-    CALLBACK_MODBUS_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL = 58
+    CALLBACK_MODBUS_SLAVE_READ_COILS_REQUEST = 43
+    CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL = 44
+    CALLBACK_MODBUS_SLAVE_READ_HOLDING_REGISTERS_REQUEST = 45
+    CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL = 46
+    CALLBACK_MODBUS_SLAVE_WRITE_SINGLE_COIL_REQUEST = 47
+    CALLBACK_MODBUS_MASTER_WRITE_SINGLE_COIL_RESPONSE = 48
+    CALLBACK_MODBUS_SLAVE_WRITE_SINGLE_REGISTER_REQUEST = 49
+    CALLBACK_MODBUS_MASTER_WRITE_SINGLE_REGISTER_RESPONSE = 50
+    CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL = 51
+    CALLBACK_MODBUS_MASTER_WRITE_MULTIPLE_COILS_RESPONSE = 52
+    CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL = 53
+    CALLBACK_MODBUS_MASTER_WRITE_MULTIPLE_REGISTERS_RESPONSE = 54
+    CALLBACK_MODBUS_SLAVE_READ_DISCRETE_INPUTS_REQUEST = 55
+    CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL = 56
+    CALLBACK_MODBUS_SLAVE_READ_INPUT_REGISTERS_REQUEST = 57
+    CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL = 58
 
-    CALLBACK_MODBUS_READ_COILS_RESPONSE = -44
-    CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE = -46
-    CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_REQUEST = -51
-    CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_REQUEST = -53
-    CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE = -56
-    CALLBACK_MODBUS_READ_INPUT_REGISTERS_RESPONSE = -58
+    CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE = -44
+    CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE = -46
+    CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST = -51
+    CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_REGISTERS_REQUEST = -53
+    CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE = -56
+    CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE = -58
 
     FUNCTION_WRITE = 1
     FUNCTION_READ = 2
@@ -91,23 +91,23 @@ class BrickletRS485(Device):
     FUNCTION_IS_ERROR_COUNT_CALLBACK_ENABLED = 21
     FUNCTION_GET_ERROR_COUNT = 22
     FUNCTION_GET_MODBUS_COMMON_ERROR_COUNT = 23
-    FUNCTION_MODBUS_REPORT_EXCEPTION = 24
-    FUNCTION_MODBUS_ANSWER_READ_COILS_REQUEST_LOW_LEVEL = 25
-    FUNCTION_MODBUS_READ_COILS = 26
-    FUNCTION_MODBUS_ANSWER_READ_HOLDING_REGISTERS_REQUEST_LOW_LEVEL = 27
-    FUNCTION_MODBUS_READ_HOLDING_REGISTERS = 28
-    FUNCTION_MODBUS_ANSWER_WRITE_SINGLE_COIL_REQUEST = 29
-    FUNCTION_MODBUS_WRITE_SINGLE_COIL = 30
-    FUNCTION_MODBUS_ANSWER_WRITE_SINGLE_REGISTER_REQUEST = 31
-    FUNCTION_MODBUS_WRITE_SINGLE_REGISTER = 32
-    FUNCTION_MODBUS_ANSWER_WRITE_MULTIPLE_COILS_REQUEST = 33
-    FUNCTION_MODBUS_WRITE_MULTIPLE_COILS_LOW_LEVEL = 34
-    FUNCTION_MODBUS_ANSWER_WRITE_MULTIPLE_REGISTERS_REQUEST = 35
-    FUNCTION_MODBUS_WRITE_MULTIPLE_REGISTERS_LOW_LEVEL = 36
-    FUNCTION_MODBUS_ANSWER_READ_DISCRETE_INPUTS_REQUEST_LOW_LEVEL = 37
-    FUNCTION_MODBUS_READ_DISCRETE_INPUTS = 38
-    FUNCTION_MODBUS_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL = 39
-    FUNCTION_MODBUS_READ_INPUT_REGISTERS = 40
+    FUNCTION_MODBUS_SLAVE_REPORT_EXCEPTION = 24
+    FUNCTION_MODBUS_SLAVE_ANSWER_READ_COILS_REQUEST_LOW_LEVEL = 25
+    FUNCTION_MODBUS_MASTER_READ_COILS = 26
+    FUNCTION_MODBUS_SLAVE_ANSWER_READ_HOLDING_REGISTERS_REQUEST_LOW_LEVEL = 27
+    FUNCTION_MODBUS_MASTER_READ_HOLDING_REGISTERS = 28
+    FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_SINGLE_COIL_REQUEST = 29
+    FUNCTION_MODBUS_MASTER_WRITE_SINGLE_COIL = 30
+    FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_SINGLE_REGISTER_REQUEST = 31
+    FUNCTION_MODBUS_MASTER_WRITE_SINGLE_REGISTER = 32
+    FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_MULTIPLE_COILS_REQUEST = 33
+    FUNCTION_MODBUS_MASTER_WRITE_MULTIPLE_COILS_LOW_LEVEL = 34
+    FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_MULTIPLE_REGISTERS_REQUEST = 35
+    FUNCTION_MODBUS_MASTER_WRITE_MULTIPLE_REGISTERS_LOW_LEVEL = 36
+    FUNCTION_MODBUS_SLAVE_ANSWER_READ_DISCRETE_INPUTS_REQUEST_LOW_LEVEL = 37
+    FUNCTION_MODBUS_MASTER_READ_DISCRETE_INPUTS = 38
+    FUNCTION_MODBUS_SLAVE_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL = 39
+    FUNCTION_MODBUS_MASTER_READ_INPUT_REGISTERS = 40
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -143,6 +143,12 @@ class BrickletRS485(Device):
     ERROR_LED_CONFIG_ON = 1
     ERROR_LED_CONFIG_SHOW_HEARTBEAT = 2
     ERROR_LED_CONFIG_SHOW_ERROR = 3
+    EXCEPTION_CODE_TIMEOUT = -1
+    EXCEPTION_CODE_SUCCESS = 0
+    EXCEPTION_CODE_ILLEGAL_FUNCTION = 1
+    EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS = 2
+    EXCEPTION_CODE_ILLEGAL_DATA_VALUE = 3
+    EXCEPTION_CODE_SLAVE_DEVICE_FAILURE = 4
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -191,41 +197,41 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_IS_ERROR_COUNT_CALLBACK_ENABLED] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_MODBUS_COMMON_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_REPORT_EXCEPTION] = BrickletRS485.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_COILS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_READ_COILS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_HOLDING_REGISTERS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_READ_HOLDING_REGISTERS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_WRITE_SINGLE_COIL_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_WRITE_SINGLE_COIL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_WRITE_SINGLE_REGISTER_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_WRITE_SINGLE_REGISTER] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_WRITE_MULTIPLE_COILS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_WRITE_MULTIPLE_COILS_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_WRITE_MULTIPLE_REGISTERS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_WRITE_MULTIPLE_REGISTERS_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_DISCRETE_INPUTS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_READ_DISCRETE_INPUTS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_MODBUS_READ_INPUT_REGISTERS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_SLAVE_REPORT_EXCEPTION] = BrickletRS485.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_READ_COILS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_READ_COILS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_READ_HOLDING_REGISTERS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_READ_HOLDING_REGISTERS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_SINGLE_COIL_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_SINGLE_COIL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_SINGLE_REGISTER_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_SINGLE_REGISTER] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_MULTIPLE_COILS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_MULTIPLE_COILS_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_MULTIPLE_REGISTERS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_MULTIPLE_REGISTERS_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_READ_DISCRETE_INPUTS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_READ_DISCRETE_INPUTS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_READ_INPUT_REGISTERS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.CALLBACK_READ_CALLBACK] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_COILS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_WRITE_SINGLE_COIL_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_WRITE_SINGLE_COIL_RESPONSE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_WRITE_SINGLE_REGISTER_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_WRITE_SINGLE_REGISTER_RESPONSE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_RESPONSE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_RESPONSE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_INPUT_REGISTERS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_COILS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_HOLDING_REGISTERS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_SINGLE_COIL_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_SINGLE_COIL_RESPONSE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_SINGLE_REGISTER_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_SINGLE_REGISTER_RESPONSE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_MULTIPLE_COILS_RESPONSE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_MULTIPLE_REGISTERS_RESPONSE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_DISCRETE_INPUTS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_INPUT_REGISTERS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_SET_BOOTLOADER_MODE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_BOOTLOADER_MODE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -241,29 +247,29 @@ class BrickletRS485(Device):
 
         self.callback_formats[BrickletRS485.CALLBACK_READ_CALLBACK] = '60c B'
         self.callback_formats[BrickletRS485.CALLBACK_ERROR_COUNT] = 'I I'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_COILS_REQUEST] = 'B H H'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL] = 'B b H H 58B'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_REQUEST] = 'B H H'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = 'B b H H 29H'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_WRITE_SINGLE_COIL_REQUEST] = 'B H H'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_WRITE_SINGLE_COIL_RESPONSE] = 'B b H H'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_WRITE_SINGLE_REGISTER_REQUEST] = 'B H H'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_WRITE_SINGLE_REGISTER_RESPONSE] = 'B b H H'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL] = 'B H H H H 55B'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_RESPONSE] = 'B b H H'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL] = 'B H H H H 27H'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_RESPONSE] = 'B b H H'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_REQUEST] = 'B H H'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = 'B b H H 58B'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_INPUT_REGISTERS_REQUEST] = 'B H H'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = 'B b H H 29H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_COILS_REQUEST] = 'B H H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL] = 'B b H H 464!'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_HOLDING_REGISTERS_REQUEST] = 'B H H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = 'B b H H 29H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_SINGLE_COIL_REQUEST] = 'B H !'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_SINGLE_COIL_RESPONSE] = 'B b'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_SINGLE_REGISTER_REQUEST] = 'B H H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_SINGLE_REGISTER_RESPONSE] = 'B b'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL] = 'B H H H H 440!'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_MULTIPLE_COILS_RESPONSE] = 'B b'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL] = 'B H H H H 27H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_MULTIPLE_REGISTERS_RESPONSE] = 'B b'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_DISCRETE_INPUTS_REQUEST] = 'B H H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = 'B b H H 464!'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_INPUT_REGISTERS_REQUEST] = 'B H H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = 'B b H H 29H'
 
-        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_READ_COILS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
-        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
-        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_REQUEST, {'stream': {'fixed_total_length': None}}, None]
-        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_REQUEST, {'stream': {'fixed_total_length': None}}, None]
-        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
-        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_READ_INPUT_REGISTERS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST, {'stream': {'fixed_total_length': None}}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_REGISTERS_REQUEST, {'stream': {'fixed_total_length': None}}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
 
     def write(self, message, length):
         """
@@ -311,7 +317,7 @@ class BrickletRS485(Device):
         Returns *true* if the :cb:`Read Callback` callback is enabled,
         *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_IS_READ_CALLBACK_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_IS_READ_CALLBACK_ENABLED, (), '', '!')
 
     def set_rs485_configuration(self, baudrate, parity, stopbits, wordlength, duplex):
         """
@@ -457,7 +463,7 @@ class BrickletRS485(Device):
         Returns *true* if the :cb:`Error Count` callback is enabled,
         *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_IS_ERROR_COUNT_CALLBACK_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_IS_ERROR_COUNT_CALLBACK_ENABLED, (), '', '!')
 
     def get_error_count(self):
         """
@@ -479,17 +485,17 @@ class BrickletRS485(Device):
         """
         return GetModbusCommonErrorCount(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_MODBUS_COMMON_ERROR_COUNT, (), '', 'I I I I I I I'))
 
-    def modbus_report_exception(self, request_id, exception_code):
+    def modbus_slave_report_exception(self, request_id, exception_code):
         """
-        In Modbus slave mode this function can be used to report a modbus exception for
+        In Modbus slave mode this function can be used to report a Modbus exception for
         a Modbus master request.
 
         * Request ID: Request ID of the request received by the slave.
         * Exception Code: Modbus exception code to report to the Modbus master.
         """
-        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_REPORT_EXCEPTION, (request_id, exception_code), 'B B', '')
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_REPORT_EXCEPTION, (request_id, exception_code), 'B b', '')
 
-    def modbus_answer_read_coils_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
+    def modbus_slave_answer_read_coils_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
         In Modbus slave mode this function can be used to answer a master request to
         read coils.
@@ -497,12 +503,12 @@ class BrickletRS485(Device):
         * Request ID: Request ID of the corresponding request that is being answered.
         * Data: Data that is to be sent to the Modbus master for the corresponding request.
 
-        This function must be called from the :cb:`Modbus Read Coils Request` callback
+        This function must be called from the :cb:`Modbus Slave Read Coils Request` callback
         with the Request ID as provided by the argument of the callback.
         """
-        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_COILS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 59B', '')
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_READ_COILS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 472!', '')
 
-    def modbus_read_coils(self, slave_address, starting_address, count):
+    def modbus_master_read_coils(self, slave_address, starting_address, count):
         """
         In Modbus master mode this function can be used to read coils from a slave.
 
@@ -514,14 +520,14 @@ class BrickletRS485(Device):
         the current request initiated by the Modbus master. In case of failure the returned
         request ID will be 0.
 
-        When successful this function will also invoke the :cb:`Modbus Read Coils Response`
+        When successful this function will also invoke the :cb:`Modbus Master Read Coils Response`
         callback. In this callback the Request ID provided by the callback argument must be
         matched with the Request ID returned from this function to verify that the callback
         is indeed for a particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_READ_COILS, (slave_address, starting_address, count), 'B H H', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_READ_COILS, (slave_address, starting_address, count), 'B H H', 'B')
 
-    def modbus_answer_read_holding_registers_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
+    def modbus_slave_answer_read_holding_registers_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
         In Modbus slave mode this function can be used to answer a master request to
         read holding registers.
@@ -529,12 +535,12 @@ class BrickletRS485(Device):
         * Request ID: Request ID of the corresponding request that is being answered.
         * Data: Data that is to be sent to the Modbus master for the corresponding request.
 
-        This function must be called from the :cb:`Modbus Read Holding Registers Request`
+        This function must be called from the :cb:`Modbus Slave Read Holding Registers Request`
         callback with the Request ID as provided by the argument of the callback.
         """
-        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_HOLDING_REGISTERS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 29H', '')
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_READ_HOLDING_REGISTERS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 29H', '')
 
-    def modbus_read_holding_registers(self, slave_address, starting_address, count):
+    def modbus_master_read_holding_registers(self, slave_address, starting_address, count):
         """
         In Modbus master mode this function can be used to read holding registers from a slave.
 
@@ -546,29 +552,27 @@ class BrickletRS485(Device):
         the current request initiated by the Modbus master. In case of failure the returned
         request ID will be 0.
 
-        When successful this function will also invoke the :cb:`Modbus Read Holding Registers Response`
+        When successful this function will also invoke the :cb:`Modbus Master Read Holding Registers Response`
         callback. In this callback the Request ID provided by the callback argument must be matched
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_READ_HOLDING_REGISTERS, (slave_address, starting_address, count), 'B H H', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_READ_HOLDING_REGISTERS, (slave_address, starting_address, count), 'B H H', 'B')
 
-    def modbus_answer_write_single_coil_request(self, request_id, coil_address, coil_value):
+    def modbus_slave_answer_write_single_coil_request(self, request_id):
         """
         In Modbus slave mode this function can be used to answer a master request to
         write a single coil.
 
         * Request ID: Request ID of the corresponding request that is being answered.
-        * Coil Address: Address of the coil to write.
-        * Coil Value: Value to be written.
 
-        This function must be called from the :cb:`Modbus Write Single Coil Request`
+        This function must be called from the :cb:`Modbus Slave Write Single Coil Request`
         callback with the Request ID, Coil Address and Coil Value as provided by the
         arguments of the callback.
         """
-        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_WRITE_SINGLE_COIL_REQUEST, (request_id, coil_address, coil_value), 'B H H', '')
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_SINGLE_COIL_REQUEST, (request_id,), 'B', '')
 
-    def modbus_write_single_coil(self, slave_address, coil_address, coil_value):
+    def modbus_master_write_single_coil(self, slave_address, coil_address, coil_value):
         """
         In Modbus master mode this function can be used to write a single coil of a slave.
 
@@ -580,29 +584,27 @@ class BrickletRS485(Device):
         the current request initiated by the Modbus master. In case of failure the returned
         request ID will be 0.
 
-        When successful this function will also invoke the :cb:`Modbus Write Single Coil Response`
+        When successful this function will also invoke the :cb:`Modbus Master Write Single Coil Response`
         callback. In this callback the Request ID provided by the callback argument must be matched
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_WRITE_SINGLE_COIL, (slave_address, coil_address, coil_value), 'B H H', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_SINGLE_COIL, (slave_address, coil_address, coil_value), 'B H !', 'B')
 
-    def modbus_answer_write_single_register_request(self, request_id, register_address, register_value):
+    def modbus_slave_answer_write_single_register_request(self, request_id):
         """
         In Modbus slave mode this function can be used to answer a master request to
         write a single register.
 
         * Request ID: Request ID of the corresponding request that is being answered.
-        * Register Address: Address of the register to write.
-        * Register Value: Value to be written.
 
-        This function must be called from the :cb:`Modbus Write Single Register Request`
+        This function must be called from the :cb:`Modbus Slave Write Single Register Request`
         callback with the Request ID, Register Address and Register Value as provided by
         the arguments of the callback.
         """
-        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_WRITE_SINGLE_REGISTER_REQUEST, (request_id, register_address, register_value), 'B H H', '')
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_SINGLE_REGISTER_REQUEST, (request_id,), 'B', '')
 
-    def modbus_write_single_register(self, slave_address, register_address, register_value):
+    def modbus_master_write_single_register(self, slave_address, register_address, register_value):
         """
         In Modbus master mode this function can be used to write a single register of a
         slave.
@@ -615,29 +617,27 @@ class BrickletRS485(Device):
         the current request initiated by the Modbus master. In case of failure the returned
         request ID will be 0.
 
-        When successful this function will also invoke the :cb:`Modbus Write Single Register Response`
+        When successful this function will also invoke the :cb:`Modbus Master Write Single Register Response`
         callback. In this callback the Request ID provided by the callback argument must be matched
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_WRITE_SINGLE_REGISTER, (slave_address, register_address, register_value), 'B H H', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_SINGLE_REGISTER, (slave_address, register_address, register_value), 'B H H', 'B')
 
-    def modbus_answer_write_multiple_coils_request(self, request_id, starting_address, count):
+    def modbus_slave_answer_write_multiple_coils_request(self, request_id):
         """
         In Modbus slave mode this function can be used to answer a master request to
         write multiple coils.
 
         * Request ID: Request ID of the corresponding request that is being answered.
-        * Starting Address: Starting address of the write.
-        * Count: Number of coils to write.
 
-        This function must be called from the :cb:`Modbus Write Multiple Coils Request`
+        This function must be called from the :cb:`Modbus Slave Write Multiple Coils Request`
         callback with the Request ID, Starting Address and Count as provided by the
         arguments of the callback.
         """
-        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_WRITE_MULTIPLE_COILS_REQUEST, (request_id, starting_address, count), 'B H H', '')
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_MULTIPLE_COILS_REQUEST, (request_id,), 'B', '')
 
-    def modbus_write_multiple_coils_low_level(self, slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data):
+    def modbus_master_write_multiple_coils_low_level(self, slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
         In Modbus master mode this function can be used to write multiple coils of a slave.
 
@@ -649,29 +649,27 @@ class BrickletRS485(Device):
         the current request initiated by the Modbus master. In case of failure the returned
         request ID will be 0.
 
-        When successful this function will also invoke the :cb:`Modbus Write Multiple Coils Response`
+        When successful this function will also invoke the :cb:`Modbus Master Write Multiple Coils Response`
         callback. In this callback the Request ID provided by the callback argument must be matched
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_WRITE_MULTIPLE_COILS_LOW_LEVEL, (slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H H H 54B', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_MULTIPLE_COILS_LOW_LEVEL, (slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H H H 432!', 'B')
 
-    def modbus_answer_write_multiple_registers_request(self, request_id, starting_address, count):
+    def modbus_slave_answer_write_multiple_registers_request(self, request_id):
         """
         In Modbus slave mode this function can be used to answer a master request to
         write multiple registers.
 
         * Request ID: Request ID of the corresponding request that is being answered.
-        * Starting Address: Starting address of the write.
-        * Count: Number of registers to write.
 
-        This function must be called from the :cb:`Modbus Write Multiple Registers Request`
+        This function must be called from the :cb:`Modbus Slave Write Multiple Registers Request`
         callback with the Request ID, Starting Address and Count as provided by the
         arguments of the callback.
         """
-        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_WRITE_MULTIPLE_REGISTERS_REQUEST, (request_id, starting_address, count), 'B H H', '')
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_MULTIPLE_REGISTERS_REQUEST, (request_id,), 'B', '')
 
-    def modbus_write_multiple_registers_low_level(self, slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data):
+    def modbus_master_write_multiple_registers_low_level(self, slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
         In Modbus master mode this function can be used to write multiple registers of a slave.
 
@@ -683,14 +681,14 @@ class BrickletRS485(Device):
         the current request initiated by the Modbus master. In case of failure the returned
         request ID will be 0.
 
-        When successful this function will also invoke the :cb:`Modbus Write Multiple Registers Response`
+        When successful this function will also invoke the :cb:`Modbus Master Write Multiple Registers Response`
         callback. In this callback the Request ID provided by the callback argument must be matched
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_WRITE_MULTIPLE_REGISTERS_LOW_LEVEL, (slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H H H 27H', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_MULTIPLE_REGISTERS_LOW_LEVEL, (slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H H H 27H', 'B')
 
-    def modbus_answer_read_discrete_inputs_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
+    def modbus_slave_answer_read_discrete_inputs_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
         In Modbus slave mode this function can be used to answer a master request to
         read discrete inputs.
@@ -698,12 +696,12 @@ class BrickletRS485(Device):
         * Request ID: Request ID of the corresponding request that is being answered.
         * Data: Data that is to be sent to the Modbus master for the corresponding request.
 
-        This function must be called from the :cb:`Modbus Read Discrete Inputs Request`
+        This function must be called from the :cb:`Modbus Slave Read Discrete Inputs Request`
         callback with the Request ID as provided by the argument of the callback.
         """
-        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_DISCRETE_INPUTS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 59B', '')
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_READ_DISCRETE_INPUTS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 472!', '')
 
-    def modbus_read_discrete_inputs(self, slave_address, starting_address, count):
+    def modbus_master_read_discrete_inputs(self, slave_address, starting_address, count):
         """
         In Modbus master mode this function can be used to read discrete inputs from a slave.
 
@@ -715,14 +713,14 @@ class BrickletRS485(Device):
         the current request initiated by the Modbus master. In case of failure the returned
         request ID will be 0.
 
-        When successful this function will also invoke the :cb:`Modbus Read Discrete Inputs Response`
+        When successful this function will also invoke the :cb:`Modbus Master Read Discrete Inputs Response`
         callback. In this callback the Request ID provided by the callback argument must be matched
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_READ_DISCRETE_INPUTS, (slave_address, starting_address, count), 'B H H', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_READ_DISCRETE_INPUTS, (slave_address, starting_address, count), 'B H H', 'B')
 
-    def modbus_answer_read_input_registers_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
+    def modbus_slave_answer_read_input_registers_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
         In Modbus slave mode this function can be used to answer a master request to
         read input registers.
@@ -730,12 +728,12 @@ class BrickletRS485(Device):
         * Request ID: Request ID of the corresponding request that is being answered.
         * Data: Data that is to be sent to the Modbus master for the corresponding request.
 
-        This function must be called from the :cb:`Modbus Read Input Registers Request` callback
+        This function must be called from the :cb:`Modbus Slave Read Input Registers Request` callback
         with the Request ID as provided by the argument of the callback.
         """
-        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 29H', '')
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL, (request_id, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H 29H', '')
 
-    def modbus_read_input_registers(self, slave_address, starting_address, count):
+    def modbus_master_read_input_registers(self, slave_address, starting_address, count):
         """
         In Modbus master mode this function can be used to read input registers from a slave.
 
@@ -747,12 +745,12 @@ class BrickletRS485(Device):
         the current request initiated by the Modbus master. In case of failure the returned
         request ID will be 0.
 
-        When successful this function will also invoke the :cb:`Modbus Read Input Registers Response`
+        When successful this function will also invoke the :cb:`Modbus Master Read Input Registers Response`
         callback. In this callback the Request ID provided by the callback argument must be matched
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_READ_INPUT_REGISTERS, (slave_address, starting_address, count), 'B H H', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_READ_INPUT_REGISTERS, (slave_address, starting_address, count), 'B H H', 'B')
 
     def get_spitfp_error_count(self):
         """
@@ -884,26 +882,26 @@ class BrickletRS485(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def modbus_answer_read_coils_request(self, request_id, data):
+    def modbus_slave_answer_read_coils_request(self, request_id, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
         stream_result = None
 
         with self.stream_lock:
             while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 59]
+                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 472]
 
-                if len(stream_chunk_data) < 59:
-                    stream_chunk_data.extend([0]*(59 - len(stream_chunk_data)))
+                if len(stream_chunk_data) < 472:
+                    stream_chunk_data.extend([False]*(472 - len(stream_chunk_data)))
 
                 # FIXME: validate that the result of all the low-level calls is identical
-                stream_result = self.modbus_answer_read_coils_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
+                stream_result = self.modbus_slave_answer_read_coils_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
-                stream_chunk_offset += 59
+                stream_chunk_offset += 472
 
         return stream_result
 
-    def modbus_answer_read_holding_registers_request(self, request_id, data):
+    def modbus_slave_answer_read_holding_registers_request(self, request_id, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
         stream_result = None
@@ -916,32 +914,32 @@ class BrickletRS485(Device):
                     stream_chunk_data.extend([0]*(29 - len(stream_chunk_data)))
 
                 # FIXME: validate that the result of all the low-level calls is identical
-                stream_result = self.modbus_answer_read_holding_registers_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
+                stream_result = self.modbus_slave_answer_read_holding_registers_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
                 stream_chunk_offset += 29
 
         return stream_result
 
-    def modbus_write_multiple_coils(self, slave_address, starting_address, count, data):
+    def modbus_master_write_multiple_coils(self, slave_address, starting_address, count, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
         stream_result = None
 
         with self.stream_lock:
             while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 54]
+                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 432]
 
-                if len(stream_chunk_data) < 54:
-                    stream_chunk_data.extend([0]*(54 - len(stream_chunk_data)))
+                if len(stream_chunk_data) < 432:
+                    stream_chunk_data.extend([False]*(432 - len(stream_chunk_data)))
 
                 # FIXME: validate that the result of all the low-level calls is identical
-                stream_result = self.modbus_write_multiple_coils_low_level(slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data)
+                stream_result = self.modbus_master_write_multiple_coils_low_level(slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
-                stream_chunk_offset += 54
+                stream_chunk_offset += 432
 
         return stream_result
 
-    def modbus_write_multiple_registers(self, slave_address, starting_address, count, data):
+    def modbus_master_write_multiple_registers(self, slave_address, starting_address, count, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
         stream_result = None
@@ -954,32 +952,32 @@ class BrickletRS485(Device):
                     stream_chunk_data.extend([0]*(27 - len(stream_chunk_data)))
 
                 # FIXME: validate that the result of all the low-level calls is identical
-                stream_result = self.modbus_write_multiple_registers_low_level(slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data)
+                stream_result = self.modbus_master_write_multiple_registers_low_level(slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
                 stream_chunk_offset += 27
 
         return stream_result
 
-    def modbus_answer_read_discrete_inputs_request(self, request_id, data):
+    def modbus_slave_answer_read_discrete_inputs_request(self, request_id, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
         stream_result = None
 
         with self.stream_lock:
             while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 59]
+                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 472]
 
-                if len(stream_chunk_data) < 59:
-                    stream_chunk_data.extend([0]*(59 - len(stream_chunk_data)))
+                if len(stream_chunk_data) < 472:
+                    stream_chunk_data.extend([False]*(472 - len(stream_chunk_data)))
 
                 # FIXME: validate that the result of all the low-level calls is identical
-                stream_result = self.modbus_answer_read_discrete_inputs_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
+                stream_result = self.modbus_slave_answer_read_discrete_inputs_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
-                stream_chunk_offset += 59
+                stream_chunk_offset += 472
 
         return stream_result
 
-    def modbus_answer_read_input_registers_request(self, request_id, data):
+    def modbus_slave_answer_read_input_registers_request(self, request_id, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
         stream_result = None
@@ -992,7 +990,7 @@ class BrickletRS485(Device):
                     stream_chunk_data.extend([0]*(29 - len(stream_chunk_data)))
 
                 # FIXME: validate that the result of all the low-level calls is identical
-                stream_result = self.modbus_answer_read_input_registers_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
+                stream_result = self.modbus_slave_answer_read_input_registers_request_low_level(request_id, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
                 stream_chunk_offset += 29
 

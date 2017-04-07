@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -394,7 +394,7 @@ class BrickletLEDStrip(Device):
 
         .. versionadded:: 2.0.6$nbsp;(Plugin)
         """
-        return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_IS_FRAME_RENDERED_CALLBACK_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_IS_FRAME_RENDERED_CALLBACK_ENABLED, (), '', '!')
 
     def get_identity(self):
         """

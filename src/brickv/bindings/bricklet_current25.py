@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -134,7 +134,7 @@ class BrickletCurrent25(Device):
         .. note::
          To reset this value you have to power cycle the Bricklet.
         """
-        return self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_IS_OVER_CURRENT, (), '', '?')
+        return self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_IS_OVER_CURRENT, (), '', '!')
 
     def get_analog_value(self):
         """

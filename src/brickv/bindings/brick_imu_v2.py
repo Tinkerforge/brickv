@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -376,7 +376,7 @@ class BrickIMUV2(Device):
         Returns *true* if the orientation and direction LEDs of the IMU Brick
         are on, *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_ARE_LEDS_ON, (), '', '?')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_ARE_LEDS_ON, (), '', '!')
 
     def save_calibration(self):
         """
@@ -391,7 +391,7 @@ class BrickIMUV2(Device):
         This function is used by the calibration window of the Brick Viewer, you
         should not need to call it in your program.
         """
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SAVE_CALIBRATION, (), '', '?')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SAVE_CALIBRATION, (), '', '!')
 
     def set_acceleration_period(self, period):
         """
@@ -602,7 +602,7 @@ class BrickIMUV2(Device):
         """
         Returns *true* if the status LED is enabled, *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '!')
 
     def get_protocol1_bricklet_name(self, port):
         """

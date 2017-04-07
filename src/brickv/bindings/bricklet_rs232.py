@@ -151,7 +151,7 @@ class BrickletRS232(Device):
         Returns *true* if the :cb:`Read Callback` callback is enabled,
         *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickletRS232.FUNCTION_IS_READ_CALLBACK_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickletRS232.FUNCTION_IS_READ_CALLBACK_ENABLED, (), '', '!')
 
     def set_configuration(self, baudrate, parity, stopbits, wordlength, hardware_flowcontrol, software_flowcontrol):
         """

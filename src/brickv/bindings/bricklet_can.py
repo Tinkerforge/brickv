@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-03-10.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -121,7 +121,7 @@ class BrickletCAN(Device):
         arbitration or because the CAN transceiver is currently disabled due to a high
         write error level (see :func:`Get Error Log`).
         """
-        return self.ipcon.send_request(self, BrickletCAN.FUNCTION_WRITE_FRAME, (frame_type, identifier, data, length), 'B I 8B B', '?')
+        return self.ipcon.send_request(self, BrickletCAN.FUNCTION_WRITE_FRAME, (frame_type, identifier, data, length), 'B I 8B B', '!')
 
     def read_frame(self):
         """
@@ -143,7 +143,7 @@ class BrickletCAN(Device):
         Instead of polling with this function, you can also use callbacks. See the
         :func:`Enable Frame Read Callback` function and the :cb:`Frame Read` callback.
         """
-        return ReadFrame(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_READ_FRAME, (), '', '? B I 8B B'))
+        return ReadFrame(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_READ_FRAME, (), '', '! B I 8B B'))
 
     def enable_frame_read_callback(self):
         """
@@ -165,7 +165,7 @@ class BrickletCAN(Device):
         """
         Returns *true* if the :cb:`Frame Read` callback is enabled, *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickletCAN.FUNCTION_IS_FRAME_READ_CALLBACK_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickletCAN.FUNCTION_IS_FRAME_READ_CALLBACK_ENABLED, (), '', '!')
 
     def set_configuration(self, baud_rate, transceiver_mode, write_timeout):
         """
@@ -305,7 +305,7 @@ class BrickletCAN(Device):
           function. Using the :cb:`Frame Read` callback ensures that the read buffer
           can not overflow.
         """
-        return GetErrorLog(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_ERROR_LOG, (), '', 'B B ? I I I'))
+        return GetErrorLog(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_ERROR_LOG, (), '', 'B B ! I I I'))
 
     def get_identity(self):
         """

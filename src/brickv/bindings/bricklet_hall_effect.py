@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -73,14 +73,14 @@ class BrickletHallEffect(Device):
         self.response_expected[BrickletHallEffect.CALLBACK_EDGE_COUNT] = BrickletHallEffect.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletHallEffect.FUNCTION_GET_IDENTITY] = BrickletHallEffect.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletHallEffect.CALLBACK_EDGE_COUNT] = 'I ?'
+        self.callback_formats[BrickletHallEffect.CALLBACK_EDGE_COUNT] = 'I !'
 
 
     def get_value(self):
         """
         Returns *true* if a magnetic field of 35 Gauss (3.5mT) or greater is detected.
         """
-        return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_VALUE, (), '', '?')
+        return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_VALUE, (), '', '!')
 
     def get_edge_count(self, reset_counter):
         """
@@ -91,7 +91,7 @@ class BrickletHallEffect(Device):
         If you set the reset counter to *true*, the count is set back to 0
         directly after it is read.
         """
-        return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT, (reset_counter,), '?', 'I')
+        return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT, (reset_counter,), '!', 'I')
 
     def set_edge_count_config(self, edge_type, debounce):
         """
@@ -168,7 +168,7 @@ class BrickletHallEffect(Device):
         current count and the current value (see :func:`Get Value` and
         :func:`Get Edge Count`).
         """
-        return EdgeInterrupt(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_EDGE_INTERRUPT, (), '', 'I ?'))
+        return EdgeInterrupt(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_EDGE_INTERRUPT, (), '', 'I !'))
 
     def get_identity(self):
         """

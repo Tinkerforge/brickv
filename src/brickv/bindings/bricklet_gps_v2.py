@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-03-10.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -164,7 +164,7 @@ class BrickletGPSV2(Device):
 
         self.callback_formats[BrickletGPSV2.CALLBACK_PULSE_PER_SECOND] = ''
         self.callback_formats[BrickletGPSV2.CALLBACK_COORDINATES] = 'I c I c'
-        self.callback_formats[BrickletGPSV2.CALLBACK_STATUS] = '? B'
+        self.callback_formats[BrickletGPSV2.CALLBACK_STATUS] = '! B'
         self.callback_formats[BrickletGPSV2.CALLBACK_ALTITUDE] = 'i i'
         self.callback_formats[BrickletGPSV2.CALLBACK_MOTION] = 'I I'
         self.callback_formats[BrickletGPSV2.CALLBACK_DATE_TIME] = 'I I'
@@ -191,7 +191,7 @@ class BrickletGPSV2(Device):
         There is also a :ref:`green LED <gps_v2_bricklet_fix_led>` on the Bricklet that
         indicates the fix status.
         """
-        return GetStatus(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_STATUS, (), '', '? B'))
+        return GetStatus(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_STATUS, (), '', '! B'))
 
     def get_altitude(self):
         """

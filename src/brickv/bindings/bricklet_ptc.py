@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -273,7 +273,7 @@ class BrickletPTC(Device):
         returns *false*, there is either no Pt100 or Pt1000 sensor connected,
         the sensor is connected incorrectly or the sensor itself is faulty.
         """
-        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_IS_SENSOR_CONNECTED, (), '', '?')
+        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_IS_SENSOR_CONNECTED, (), '', '!')
 
     def set_wire_mode(self, mode):
         """

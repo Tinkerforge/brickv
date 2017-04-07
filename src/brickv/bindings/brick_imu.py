@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -293,7 +293,7 @@ class BrickIMU(Device):
         Returns *true* if the orientation and direction LEDs of the IMU Brick
         are on, *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickIMU.FUNCTION_ARE_LEDS_ON, (), '', '?')
+        return self.ipcon.send_request(self, BrickIMU.FUNCTION_ARE_LEDS_ON, (), '', '!')
 
     def set_acceleration_range(self, range):
         """
@@ -517,7 +517,7 @@ class BrickIMU(Device):
 
         .. versionadded:: 2.0.2$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickIMU.FUNCTION_IS_ORIENTATION_CALCULATION_ON, (), '', '?')
+        return self.ipcon.send_request(self, BrickIMU.FUNCTION_IS_ORIENTATION_CALCULATION_ON, (), '', '!')
 
     def get_send_timeout_count(self, communication_method):
         """
@@ -564,7 +564,7 @@ class BrickIMU(Device):
 
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickIMU.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickIMU.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '!')
 
     def get_protocol1_bricklet_name(self, port):
         """

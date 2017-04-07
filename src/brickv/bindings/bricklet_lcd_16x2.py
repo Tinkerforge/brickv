@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -115,7 +115,7 @@ class BrickletLCD16x2(Device):
         """
         Returns *true* if the backlight is on and *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_IS_BACKLIGHT_ON, (), '', '?')
+        return self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_IS_BACKLIGHT_ON, (), '', '!')
 
     def set_config(self, cursor, blinking):
         """
@@ -126,13 +126,13 @@ class BrickletLCD16x2(Device):
 
         The default is (false, false).
         """
-        self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_SET_CONFIG, (cursor, blinking), '? ?', '')
+        self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_SET_CONFIG, (cursor, blinking), '! !', '')
 
     def get_config(self):
         """
         Returns the configuration as set by :func:`Set Config`.
         """
-        return GetConfig(*self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_GET_CONFIG, (), '', '? ?'))
+        return GetConfig(*self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_GET_CONFIG, (), '', '! !'))
 
     def is_button_pressed(self, button):
         """
@@ -141,7 +141,7 @@ class BrickletLCD16x2(Device):
         If you want to react on button presses and releases it is recommended to use the
         :cb:`Button Pressed` and :cb:`Button Released` callbacks.
         """
-        return self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_IS_BUTTON_PRESSED, (button,), 'B', '?')
+        return self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_IS_BUTTON_PRESSED, (button,), 'B', '!')
 
     def set_custom_character(self, index, character):
         """

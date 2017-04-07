@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -124,7 +124,7 @@ class BrickletJoystick(Device):
         It is recommended to use the :cb:`Pressed` and :cb:`Released` callbacks
         to handle the button.
         """
-        return self.ipcon.send_request(self, BrickletJoystick.FUNCTION_IS_PRESSED, (), '', '?')
+        return self.ipcon.send_request(self, BrickletJoystick.FUNCTION_IS_PRESSED, (), '', '!')
 
     def get_analog_value(self):
         """

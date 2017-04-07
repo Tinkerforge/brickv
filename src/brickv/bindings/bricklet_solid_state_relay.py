@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -59,7 +59,7 @@ class BrickletSolidStateRelay(Device):
         self.response_expected[BrickletSolidStateRelay.CALLBACK_MONOFLOP_DONE] = BrickletSolidStateRelay.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletSolidStateRelay.FUNCTION_GET_IDENTITY] = BrickletSolidStateRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletSolidStateRelay.CALLBACK_MONOFLOP_DONE] = '?'
+        self.callback_formats[BrickletSolidStateRelay.CALLBACK_MONOFLOP_DONE] = '!'
 
 
     def set_state(self, state):
@@ -70,13 +70,13 @@ class BrickletSolidStateRelay(Device):
 
         The default value is *false*.
         """
-        self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_SET_STATE, (state,), '?', '')
+        self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_SET_STATE, (state,), '!', '')
 
     def get_state(self):
         """
         Returns the state of the relay, *true* means on and *false* means off.
         """
-        return self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_GET_STATE, (), '', '?')
+        return self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_GET_STATE, (), '', '!')
 
     def set_monoflop(self, state, time):
         """
@@ -93,7 +93,7 @@ class BrickletSolidStateRelay(Device):
         of two seconds. The relay will be on all the time. If now the RS485
         connection is lost, the relay will turn off in at most two seconds.
         """
-        self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_SET_MONOFLOP, (state, time), '? I', '')
+        self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_SET_MONOFLOP, (state, time), '! I', '')
 
     def get_monoflop(self):
         """
@@ -103,7 +103,7 @@ class BrickletSolidStateRelay(Device):
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
-        return GetMonoflop(*self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_GET_MONOFLOP, (), '', '? I I'))
+        return GetMonoflop(*self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_GET_MONOFLOP, (), '', '! I I'))
 
     def get_identity(self):
         """

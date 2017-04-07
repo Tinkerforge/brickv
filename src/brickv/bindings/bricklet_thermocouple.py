@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -101,7 +101,7 @@ class BrickletThermocouple(Device):
 
         self.callback_formats[BrickletThermocouple.CALLBACK_TEMPERATURE] = 'i'
         self.callback_formats[BrickletThermocouple.CALLBACK_TEMPERATURE_REACHED] = 'i'
-        self.callback_formats[BrickletThermocouple.CALLBACK_ERROR_STATE] = '? ?'
+        self.callback_formats[BrickletThermocouple.CALLBACK_ERROR_STATE] = '! !'
 
 
     def get_temperature(self):
@@ -231,7 +231,7 @@ class BrickletThermocouple(Device):
         You can use the func:`ErrorState` callback to automatically get triggered
         when the error state changes.
         """
-        return GetErrorState(*self.ipcon.send_request(self, BrickletThermocouple.FUNCTION_GET_ERROR_STATE, (), '', '? ?'))
+        return GetErrorState(*self.ipcon.send_request(self, BrickletThermocouple.FUNCTION_GET_ERROR_STATE, (), '', '! !'))
 
     def get_identity(self):
         """

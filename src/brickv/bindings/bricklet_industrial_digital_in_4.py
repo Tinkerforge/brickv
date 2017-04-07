@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -182,7 +182,7 @@ class BrickletIndustrialDigitalIn4(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
-        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_EDGE_COUNT, (pin, reset_counter), 'B ?', 'I')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_EDGE_COUNT, (pin, reset_counter), 'B !', 'I')
 
     def set_edge_count_config(self, selection_mask, edge_type, debounce):
         """

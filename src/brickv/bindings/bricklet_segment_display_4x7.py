@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -78,14 +78,14 @@ class BrickletSegmentDisplay4x7(Device):
         The brightness can be set between 0 (dark) and 7 (bright). The colon
         parameter turns the colon of the display on or off.
         """
-        self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_SET_SEGMENTS, (segments, brightness, colon), '4B B ?', '')
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_SET_SEGMENTS, (segments, brightness, colon), '4B B !', '')
 
     def get_segments(self):
         """
         Returns the segment, brightness and color data as set by
         :func:`Set Segments`.
         """
-        return GetSegments(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_SEGMENTS, (), '', '4B B ?'))
+        return GetSegments(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_SEGMENTS, (), '', '4B B !'))
 
     def start_counter(self, value_from, value_to, increment, length):
         """

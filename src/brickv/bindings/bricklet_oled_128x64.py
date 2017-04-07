@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -112,13 +112,13 @@ class BrickletOLED128x64(Device):
 
         The default values are contrast 143 and inverting off.
         """
-        self.ipcon.send_request(self, BrickletOLED128x64.FUNCTION_SET_DISPLAY_CONFIGURATION, (contrast, invert), 'B ?', '')
+        self.ipcon.send_request(self, BrickletOLED128x64.FUNCTION_SET_DISPLAY_CONFIGURATION, (contrast, invert), 'B !', '')
 
     def get_display_configuration(self):
         """
         Returns the configuration as set by :func:`Set Display Configuration`.
         """
-        return GetDisplayConfiguration(*self.ipcon.send_request(self, BrickletOLED128x64.FUNCTION_GET_DISPLAY_CONFIGURATION, (), '', 'B ?'))
+        return GetDisplayConfiguration(*self.ipcon.send_request(self, BrickletOLED128x64.FUNCTION_GET_DISPLAY_CONFIGURATION, (), '', 'B !'))
 
     def write_line(self, line, position, text):
         """

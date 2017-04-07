@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -95,7 +95,7 @@ class BrickletRotaryEncoder(Device):
         Turning the encoder to the left decrements the counter,
         so a negative count is possible.
         """
-        return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_COUNT, (reset,), '?', 'i')
+        return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_COUNT, (reset,), '!', 'i')
 
     def set_count_callback_period(self, period):
         """
@@ -170,7 +170,7 @@ class BrickletRotaryEncoder(Device):
         It is recommended to use the :cb:`Pressed` and :cb:`Released` callbacks
         to handle the button.
         """
-        return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_IS_PRESSED, (), '', '?')
+        return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_IS_PRESSED, (), '', '!')
 
     def get_identity(self):
         """

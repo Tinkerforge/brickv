@@ -55,22 +55,22 @@ class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_error = pyqtSignal(int)
 
     # Modbus specific.
-    qtcb_modbus_read_coils_request = pyqtSignal(int, int, int)
-    qtcb_modbus_read_coils_response = pyqtSignal(int, int, int, object)
-    qtcb_modbus_read_holding_registers_request = pyqtSignal(int, int, int)
-    qtcb_modbus_read_holding_registers_response = pyqtSignal(int, int, int, object)
-    qtcb_modbus_write_single_coil_request = pyqtSignal(int, int, int)
-    qtcb_modbus_write_single_coil_response = pyqtSignal(int, int, int, int)
-    qtcb_modbus_write_single_register_request = pyqtSignal(int, int, int)
-    qtcb_modbus_write_single_register_response = pyqtSignal(int, int, int, int)
-    qtcb_modbus_write_multiple_coils_request = pyqtSignal(int, int, int, int, object)
-    qtcb_modbus_write_multiple_coils_response = pyqtSignal(int, int, int, int)
-    qtcb_modbus_write_multiple_registers_request = pyqtSignal(int, int, int, int, object)
-    qtcb_modbus_write_multiple_registers_response = pyqtSignal(int, int, int, int)
-    qtcb_modbus_read_discrete_inputs_request = pyqtSignal(int, int, int)
-    qtcb_modbus_read_discrete_inputs_response = pyqtSignal(int, int, int, object)
-    qtcb_modbus_read_input_registers_request = pyqtSignal(int, int, int)
-    qtcb_modbus_read_input_registers_response = pyqtSignal(int, int, int, object)
+    qtcb_modbus_slave_read_coils_request = pyqtSignal(int, int, int)
+    qtcb_modbus_master_read_coils_response = pyqtSignal(int, int, int, object)
+    qtcb_modbus_slave_read_holding_registers_request = pyqtSignal(int, int, int)
+    qtcb_modbus_master_read_holding_registers_response = pyqtSignal(int, int, int, object)
+    qtcb_modbus_slave_write_single_coil_request = pyqtSignal(int, int, int)
+    qtcb_modbus_master_write_single_coil_response = pyqtSignal(int, int)
+    qtcb_modbus_slave_write_single_register_request = pyqtSignal(int, int, int)
+    qtcb_modbus_master_write_single_register_response = pyqtSignal(int, int)
+    qtcb_modbus_slave_write_multiple_coils_request = pyqtSignal(int, int, int, int, object)
+    qtcb_modbus_master_write_multiple_coils_response = pyqtSignal(int, int)
+    qtcb_modbus_slave_write_multiple_registers_request = pyqtSignal(int, int, int, int, object)
+    qtcb_modbus_master_write_multiple_registers_response = pyqtSignal(int, int)
+    qtcb_modbus_slave_read_discrete_inputs_request = pyqtSignal(int, int, int)
+    qtcb_modbus_master_read_discrete_inputs_response = pyqtSignal(int, int, int, object)
+    qtcb_modbus_slave_read_input_registers_request = pyqtSignal(int, int, int)
+    qtcb_modbus_master_read_input_registers_response = pyqtSignal(int, int, int, object)
 
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletRS485, *args)
@@ -88,74 +88,74 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.qtcb_read.connect(self.cb_read)
 
         # Modbus specific.
-        self.qtcb_modbus_read_coils_request.connect(self.cb_modbus_read_coils_request)
-        self.qtcb_modbus_read_coils_response.connect(self.cb_modbus_read_coils_response)
-        self.qtcb_modbus_read_holding_registers_request.connect(self.cb_modbus_read_holding_registers_request)
-        self.qtcb_modbus_read_holding_registers_response.connect(self.cb_modbus_read_holding_registers_response)
-        self.qtcb_modbus_write_single_coil_request.connect(self.cb_modbus_write_single_coil_request)
-        self.qtcb_modbus_write_single_coil_response.connect(self.cb_modbus_write_single_coil_response)
-        self.qtcb_modbus_write_single_register_request.connect(self.cb_modbus_write_single_register_request)
-        self.qtcb_modbus_write_single_register_response.connect(self.cb_modbus_write_single_register_response)
-        self.qtcb_modbus_write_multiple_coils_request.connect(self.cb_modbus_write_multiple_coils_request)
-        self.qtcb_modbus_write_multiple_coils_response.connect(self.cb_modbus_write_multiple_coils_response)
-        self.qtcb_modbus_write_multiple_registers_request.connect(self.cb_modbus_write_multiple_registers_request)
-        self.qtcb_modbus_write_multiple_registers_response.connect(self.cb_modbus_write_multiple_registers_response)
-        self.qtcb_modbus_read_discrete_inputs_request.connect(self.cb_modbus_read_discrete_inputs_request)
-        self.qtcb_modbus_read_discrete_inputs_response.connect(self.cb_modbus_read_discrete_inputs_response)
-        self.qtcb_modbus_read_input_registers_request.connect(self.cb_modbus_read_input_registers_request)
-        self.qtcb_modbus_read_input_registers_response.connect(self.cb_modbus_read_input_registers_response)
+        self.qtcb_modbus_slave_read_coils_request.connect(self.cb_modbus_slave_read_coils_request)
+        self.qtcb_modbus_master_read_coils_response.connect(self.cb_modbus_master_read_coils_response)
+        self.qtcb_modbus_slave_read_holding_registers_request.connect(self.cb_modbus_slave_read_holding_registers_request)
+        self.qtcb_modbus_master_read_holding_registers_response.connect(self.cb_modbus_master_read_holding_registers_response)
+        self.qtcb_modbus_slave_write_single_coil_request.connect(self.cb_modbus_slave_write_single_coil_request)
+        self.qtcb_modbus_master_write_single_coil_response.connect(self.cb_modbus_master_write_single_coil_response)
+        self.qtcb_modbus_slave_write_single_register_request.connect(self.cb_modbus_slave_write_single_register_request)
+        self.qtcb_modbus_master_write_single_register_response.connect(self.cb_modbus_master_write_single_register_response)
+        self.qtcb_modbus_slave_write_multiple_coils_request.connect(self.cb_modbus_slave_write_multiple_coils_request)
+        self.qtcb_modbus_master_write_multiple_coils_response.connect(self.cb_modbus_master_write_multiple_coils_response)
+        self.qtcb_modbus_slave_write_multiple_registers_request.connect(self.cb_modbus_slave_write_multiple_registers_request)
+        self.qtcb_modbus_master_write_multiple_registers_response.connect(self.cb_modbus_master_write_multiple_registers_response)
+        self.qtcb_modbus_slave_read_discrete_inputs_request.connect(self.cb_modbus_slave_read_discrete_inputs_request)
+        self.qtcb_modbus_master_read_discrete_inputs_response.connect(self.cb_modbus_master_read_discrete_inputs_response)
+        self.qtcb_modbus_slave_read_input_registers_request.connect(self.cb_modbus_slave_read_input_registers_request)
+        self.qtcb_modbus_master_read_input_registers_response.connect(self.cb_modbus_master_read_input_registers_response)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_READ_CALLBACK,
+        self.rs485.register_callback(self.rs485.CALLBACK_READ,
                                      self.qtcb_read.emit)
 
         # Modbus specific.
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_COILS_REQUEST,
-                                     self.qtcb_modbus_read_coils_request.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_SLAVE_READ_COILS_REQUEST,
+                                     self.qtcb_modbus_slave_read_coils_request.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_COILS_RESPONSE,
-                                     self.qtcb_modbus_read_coils_response.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE,
+                                     self.qtcb_modbus_master_read_coils_response.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_REQUEST,
-                                     self.qtcb_modbus_read_holding_registers_request.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_SLAVE_READ_HOLDING_REGISTERS_REQUEST,
+                                     self.qtcb_modbus_slave_read_holding_registers_request.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_HOLDING_REGISTERS_RESPONSE,
-                                     self.qtcb_modbus_read_holding_registers_response.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE,
+                                     self.qtcb_modbus_master_read_holding_registers_response.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_WRITE_SINGLE_COIL_REQUEST,
-                                     self.qtcb_modbus_write_single_coil_request.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_SLAVE_WRITE_SINGLE_COIL_REQUEST,
+                                     self.qtcb_modbus_slave_write_single_coil_request.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_WRITE_SINGLE_COIL_RESPONSE,
-                                     self.qtcb_modbus_write_single_coil_response.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_MASTER_WRITE_SINGLE_COIL_RESPONSE,
+                                     self.qtcb_modbus_master_write_single_coil_response.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_WRITE_SINGLE_REGISTER_REQUEST,
-                                     self.qtcb_modbus_write_single_register_request.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_SLAVE_WRITE_SINGLE_REGISTER_REQUEST,
+                                     self.qtcb_modbus_slave_write_single_register_request.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_WRITE_SINGLE_REGISTER_RESPONSE,
-                                     self.qtcb_modbus_write_single_register_response.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_MASTER_WRITE_SINGLE_REGISTER_RESPONSE,
+                                     self.qtcb_modbus_master_write_single_register_response.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_REQUEST,
-                                     self.qtcb_modbus_write_multiple_coils_request.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST,
+                                     self.qtcb_modbus_slave_write_multiple_coils_request.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_WRITE_MULTIPLE_COILS_RESPONSE,
-                                     self.qtcb_modbus_write_multiple_coils_response.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_MASTER_WRITE_MULTIPLE_COILS_RESPONSE,
+                                     self.qtcb_modbus_master_write_multiple_coils_response.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_REQUEST,
-                                     self.qtcb_modbus_write_multiple_registers_request.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_REGISTERS_REQUEST,
+                                     self.qtcb_modbus_slave_write_multiple_registers_request.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_WRITE_MULTIPLE_REGISTERS_RESPONSE,
-                                     self.qtcb_modbus_write_multiple_registers_response.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_MASTER_WRITE_MULTIPLE_REGISTERS_RESPONSE,
+                                     self.qtcb_modbus_master_write_multiple_registers_response.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_REQUEST,
-                                     self.qtcb_modbus_read_discrete_inputs_request.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_SLAVE_READ_DISCRETE_INPUTS_REQUEST,
+                                     self.qtcb_modbus_slave_read_discrete_inputs_request.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_DISCRETE_INPUTS_RESPONSE,
-                                     self.qtcb_modbus_read_discrete_inputs_response.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE,
+                                     self.qtcb_modbus_master_read_discrete_inputs_response.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_INPUT_REGISTERS_REQUEST,
-                                     self.qtcb_modbus_read_input_registers_request.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_SLAVE_READ_INPUT_REGISTERS_REQUEST,
+                                     self.qtcb_modbus_slave_read_input_registers_request.emit)
 
-        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_READ_INPUT_REGISTERS_RESPONSE,
-                                     self.qtcb_modbus_read_input_registers_response.emit)
+        self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE,
+                                     self.qtcb_modbus_master_read_input_registers_response.emit)
 
         self.rs485_input_combobox.addItem("")
         self.rs485_input_combobox.lineEdit().setMaxLength(58)
@@ -267,66 +267,62 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                             self.modbus_master_request_timeout_spinbox.value())
 
         if self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_COILS:
-            rid = self.rs485.modbus_read_coils(self.modbus_master_slave_address_spinbox.value(),
-                                               self.modbus_master_param1_spinbox.value(),
-                                               self.modbus_master_param2_spinbox.value())
+            rid = self.rs485.modbus_master_read_coils(self.modbus_master_slave_address_spinbox.value(),
+                                                      self.modbus_master_param1_spinbox.value(),
+                                                      self.modbus_master_param2_spinbox.value())
             if rid == 0:
-                # Error.
+                # Error. FIXME: report it to the user
                 return
 
             self.modbus_master_send_button.setEnabled(False)
 
         elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_HOLDING_REGISTERS:
-            rid = self.rs485.modbus_read_holding_registers(self.modbus_master_slave_address_spinbox.value(),
-                                                           self.modbus_master_param1_spinbox.value(),
-                                                           self.modbus_master_param2_spinbox.value())
+            rid = self.rs485.modbus_master_read_holding_registers(self.modbus_master_slave_address_spinbox.value(),
+                                                                  self.modbus_master_param1_spinbox.value(),
+                                                                  self.modbus_master_param2_spinbox.value())
             if rid == 0:
-                # Error.
+                # Error. FIXME: report it to the user
                 return
 
             self.modbus_master_send_button.setEnabled(False)
 
         elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_SINGLE_COIL:
             if self.modbus_master_param2_spinbox.value() > 0:
-                param2 = 65280
+                param2 = True
             else:
-                param2 = 0
+                param2 = False
 
-            rid = self.rs485.modbus_write_single_coil(self.modbus_master_slave_address_spinbox.value(),
-                                                      self.modbus_master_param1_spinbox.value(),
-                                                      param2)
+            rid = self.rs485.modbus_master_write_single_coil(self.modbus_master_slave_address_spinbox.value(),
+                                                             self.modbus_master_param1_spinbox.value(),
+                                                             param2)
             if rid == 0:
-                # Error.
+                # Error. FIXME: report it to the user
                 return
 
             self.modbus_master_send_button.setEnabled(False)
 
         elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_SINGLE_REGISTER:
-            rid = self.rs485.modbus_write_single_register(self.modbus_master_slave_address_spinbox.value(),
-                                                          self.modbus_master_param1_spinbox.value(),
-                                                          self.modbus_master_param2_spinbox.value())
+            rid = self.rs485.modbus_master_write_single_register(self.modbus_master_slave_address_spinbox.value(),
+                                                                 self.modbus_master_param1_spinbox.value(),
+                                                                 self.modbus_master_param2_spinbox.value())
             if rid == 0:
-                # Error.
+                # Error. FIXME: report it to the user
                 return
 
             self.modbus_master_send_button.setEnabled(False)
 
         elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_MULTIPLE_COILS:
             data = []
-            q, r = divmod(self.modbus_master_param2_spinbox.value(), 8)
 
-            if r != 0:
-                q = q + 1
+            for i in range(self.modbus_master_param2_spinbox.value()):
+                data.append(random.randint(0, 1) == 1)
 
-            for i in range(q):
-                data.append(random.randint(1, 255))
-
-            rid = self.rs485.modbus_write_multiple_coils(self.modbus_master_slave_address_spinbox.value(),
-                                                         self.modbus_master_param1_spinbox.value(),
-                                                         self.modbus_master_param2_spinbox.value(),
-                                                         data)
+            rid = self.rs485.modbus_master_write_multiple_coils(self.modbus_master_slave_address_spinbox.value(),
+                                                                self.modbus_master_param1_spinbox.value(),
+                                                                self.modbus_master_param2_spinbox.value(),
+                                                                data)
             if rid == 0:
-                # Error.
+                # Error. FIXME: report it to the user
                 return
 
             self.modbus_master_send_button.setEnabled(False)
@@ -335,34 +331,34 @@ class RS485(COMCUPluginBase, Ui_RS485):
             data = []
 
             for i in range(self.modbus_master_param2_spinbox.value()):
-                data.append(random.randint(1, 65535))
+                data.append(random.randint(0, 65535))
 
-            rid = self.rs485.modbus_write_multiple_registers(self.modbus_master_slave_address_spinbox.value(),
-                                                             self.modbus_master_param1_spinbox.value(),
-                                                             self.modbus_master_param2_spinbox.value(),
-                                                             data)
+            rid = self.rs485.modbus_master_write_multiple_registers(self.modbus_master_slave_address_spinbox.value(),
+                                                                    self.modbus_master_param1_spinbox.value(),
+                                                                    self.modbus_master_param2_spinbox.value(),
+                                                                    data)
             if rid == 0:
-                # Error.
+                # Error. FIXME: report it to the user
                 return
 
             self.modbus_master_send_button.setEnabled(False)
 
         elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_DISCRETE_INPUTS:
-            rid = self.rs485.modbus_read_discrete_inputs(self.modbus_master_slave_address_spinbox.value(),
-                                                         self.modbus_master_param1_spinbox.value(),
-                                                         self.modbus_master_param2_spinbox.value())
+            rid = self.rs485.modbus_master_read_discrete_inputs(self.modbus_master_slave_address_spinbox.value(),
+                                                                self.modbus_master_param1_spinbox.value(),
+                                                                self.modbus_master_param2_spinbox.value())
             if rid == 0:
-                # Error.
+                # Error. FIXME: report it to the user
                 return
 
             self.modbus_master_send_button.setEnabled(False)
 
         elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_INPUT_REGISTERS:
-            rid = self.rs485.modbus_read_input_registers(self.modbus_master_slave_address_spinbox.value(),
-                                                         self.modbus_master_param1_spinbox.value(),
-                                                         self.modbus_master_param2_spinbox.value())
+            rid = self.rs485.modbus_master_read_input_registers(self.modbus_master_slave_address_spinbox.value(),
+                                                                self.modbus_master_param1_spinbox.value(),
+                                                                self.modbus_master_param2_spinbox.value())
             if rid == 0:
-                # Error.
+                # Error. FIXME: report it to the user
                 return
 
             self.modbus_master_send_button.setEnabled(False)
@@ -482,7 +478,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.text.insertPlainText(ascii)
         self.text.moveCursor(QTextCursor.End)
 
-    def cb_modbus_read_coils_request(self, request_id, starting_address, count):
+    def cb_modbus_slave_read_coils_request(self, request_id, starting_address, count):
         a = 'READ COILS REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -494,37 +490,32 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         data = []
 
-        q, r = divmod(count, 8)
+        for i in range(count):
+            data.append(random.randint(0, 1) == 1)
 
-        if r != 0:
-            q = q + 1
-
-        for i in range(q):
-            data.append(random.randint(1, 255))
-
-        self.rs485.modbus_answer_read_coils_request(request_id, data)
+        self.rs485.modbus_slave_answer_read_coils_request(request_id, data)
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
         self.text.moveCursor(QTextCursor.End)
 
-    def cb_modbus_read_coils_response(self,
-                                      reconstruction_status,
-                                      request_id,
-                                      exception_code,
-                                      data):
+    def cb_modbus_master_read_coils_response(self,
+                                             request_id,
+                                             exception_code,
+                                             stream_status,
+                                             data):
         if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
             a = 'READ COILS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
                 '\n\n'
         else:
             a = 'READ COILS RESPONSE: ' + \
-                'EXCEPTION CODE=' + \
-                str(exception_code) + \
-                ', REQUEST ID=' + \
+                'REQUEST ID=' + \
                 str(request_id) + \
-                ', RECONSTRUCTION STATUS=' + \
-                str(reconstruction_status) + \
+                ', EXCEPTION CODE=' + \
+                str(exception_code) + \
+                ', STREAM STATUS=' + \
+                str(stream_status) + \
                 ', DATA=' + \
                 str(data) + \
                 '\n\n'
@@ -535,10 +526,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.modbus_master_send_button.setEnabled(True)
 
-    def cb_modbus_read_holding_registers_request(self,
-                                                 request_id,
-                                                 starting_address,
-                                                 count):
+    def cb_modbus_slave_read_holding_registers_request(self,
+                                                       request_id,
+                                                       starting_address,
+                                                       count):
         a = 'READ HOLDING REGISTERS REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -551,30 +542,30 @@ class RS485(COMCUPluginBase, Ui_RS485):
         data = []
 
         for i in range(count):
-            data.append(random.randint(1, 65535))
+            data.append(random.randint(0, 65535))
 
-        self.rs485.modbus_answer_read_holding_registers_request(request_id, data)
+        self.rs485.modbus_slave_answer_read_holding_registers_request(request_id, data)
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
         self.text.moveCursor(QTextCursor.End)
 
-    def cb_modbus_read_holding_registers_response(self,
-                                                  reconstruction_status,
-                                                  request_id,
-                                                  exception_code,
-                                                  data):
+    def cb_modbus_master_read_holding_registers_response(self,
+                                                         request_id,
+                                                         exception_code,
+                                                         stream_status,
+                                                         data):
         if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
             a = 'READ HOLDING REGISTERS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
                 '\n\n'
         else:
             a = 'READ HOLDING REGISTERS RESPONSE: ' + \
-                'EXCEPTION CODE=' + \
-                str(exception_code) + \
-                ', REQUEST ID=' + \
+                'REQUEST ID=' + \
                 str(request_id) + \
-                ', RECONSTRUCTION STATUS=' + \
+                ', EXCEPTION CODE=' + \
+                str(exception_code) + \
+                ', STREAM STATUS=' + \
                 str(reconstruction_status) + \
                 ', DATA=' + \
                 str(data) + \
@@ -586,10 +577,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.modbus_master_send_button.setEnabled(True)
 
-    def cb_modbus_write_single_coil_request(self,
-                                            request_id,
-                                            coil_address,
-                                            coil_value):
+    def cb_modbus_slave_write_single_coil_request(self,
+                                                  request_id,
+                                                  coil_address,
+                                                  coil_value):
         a = 'WRITE SINGLE COIL REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -599,19 +590,15 @@ class RS485(COMCUPluginBase, Ui_RS485):
             str(coil_value) + \
             '\n\n'
 
-        self.rs485.modbus_answer_write_single_coil_request(request_id,
-                                                           coil_address,
-                                                           coil_value)
+        self.rs485.modbus_slave_answer_write_single_coil_request(request_id)
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
         self.text.moveCursor(QTextCursor.End)
 
-    def cb_modbus_write_single_coil_response(self,
-                                             request_id,
-                                             exception_code,
-                                             coil_address,
-                                             coil_data):
+    def cb_modbus_master_write_single_coil_response(self,
+                                                    request_id,
+                                                    exception_code):
         if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
             a = 'WRITE SINGLE COIL RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
@@ -622,10 +609,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 str(request_id) + \
                 ', EXCEPTION CODE=' + \
                 str(exception_code) + \
-                ', COIL ADDRESS=' + \
-                str(coil_address) + \
-                ', COIL DATA=' + \
-                str(coil_data) + \
                 '\n\n'
 
         self.text.moveCursor(QTextCursor.End)
@@ -634,10 +617,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.modbus_master_send_button.setEnabled(True)
 
-    def cb_modbus_write_single_register_request(self,
-                                                request_id,
-                                                register_address,
-                                                register_value):
+    def cb_modbus_slave_write_single_register_request(self,
+                                                      request_id,
+                                                      register_address,
+                                                      register_value):
         a = 'WRITE SINGLE REGISTER REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -647,19 +630,15 @@ class RS485(COMCUPluginBase, Ui_RS485):
             str(register_value) + \
             '\n\n'
 
-        self.rs485.modbus_answer_write_single_register_request(request_id,
-                                                               register_address,
-                                                               register_value)
+        self.rs485.modbus_slave_answer_write_single_register_request(request_id)
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
         self.text.moveCursor(QTextCursor.End)
 
-    def cb_modbus_write_single_register_response(self,
-                                                 request_id,
-                                                 exception_code,
-                                                 register_address,
-                                                 register_data):
+    def cb_modbus_master_write_single_register_response(self,
+                                                        request_id,
+                                                        exception_code):
         if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
             a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
@@ -670,10 +649,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 str(request_id) + \
                 ', EXCEPTION CODE=' + \
                 str(exception_code) + \
-                ', REGISTER ADDRESS=' + \
-                str(register_address) + \
-                ', REGISTER DATA=' + \
-                str(register_data) + \
                 '\n\n'
 
         self.text.moveCursor(QTextCursor.End)
@@ -682,39 +657,35 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.modbus_master_send_button.setEnabled(True)
 
-    def cb_modbus_write_multiple_coils_request(self,
-                                               reconstruction_status,
-                                               request_id,
-                                               starting_address,
-                                               count,
-                                               data):
+    def cb_modbus_slave_write_multiple_coils_request(self,
+                                                     request_id,
+                                                     starting_address,
+                                                     count,
+                                                     stream_status,
+                                                     data):
 
         a = 'WRITE MULTIPLE COILS REQUEST: ' + \
-            'RECONSTRUCTION STATUS=' + \
-            str(reconstruction_status) + \
-            ', REQUEST ID=' + \
+            'REQUEST ID=' + \
             str(request_id) + \
             ', STARTING ADDRESS=' + \
             str(starting_address) + \
             ', COUNT=' + \
             str(count) + \
+            ', STREAM STATUS=' + \
+            str(stream_status) + \
             ', DATA=' + \
             str(data) + \
             '\n\n'
 
-        self.rs485.modbus_answer_write_multiple_coils_request(request_id,
-                                                              starting_address,
-                                                              count)
+        self.rs485.modbus_slave_answer_write_multiple_coils_request(request_id)
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
         self.text.moveCursor(QTextCursor.End)
 
-    def cb_modbus_write_multiple_coils_response(self,
-                                                request_id,
-                                                exception_code,
-                                                starting_address,
-                                                count):
+    def cb_modbus_master_write_multiple_coils_response(self,
+                                                       request_id,
+                                                       exception_code):
         if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
             a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
@@ -725,10 +696,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 str(request_id) + \
                 ', EXCEPTION CODE=' + \
                 str(exception_code) + \
-                ', STARTING ADDRESS=' + \
-                str(starting_address) + \
-                ', COUNT=' + \
-                str(count) + \
                 '\n\n'
 
         self.text.moveCursor(QTextCursor.End)
@@ -737,39 +704,35 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.modbus_master_send_button.setEnabled(True)
 
-    def cb_modbus_write_multiple_registers_request(self,
-                                                   reconstruction_status,
-                                                   request_id,
-                                                   starting_address,
-                                                   count,
-                                                   data):
+    def cb_modbus_slave_write_multiple_registers_request(self,
+                                                         request_id,
+                                                         starting_address,
+                                                         count,
+                                                         stream_status,
+                                                         data):
 
         a = 'WRITE MULTIPLE REGISTERS REQUEST: ' + \
-            'RECONSTRUCTION STATUS=' + \
-            str(reconstruction_status) + \
-            ', REQUEST ID=' + \
+            'REQUEST ID=' + \
             str(request_id) + \
             ', STARTING ADDRESS=' + \
             str(starting_address) + \
             ', COUNT=' + \
             str(count) + \
+            ', STREAM STATUS=' + \
+            str(stream_status) + \
             ', DATA=' + \
             str(data) + \
             '\n\n'
 
-        self.rs485.modbus_answer_write_multiple_registers_request(request_id,
-                                                                  starting_address,
-                                                                  count)
+        self.rs485.modbus_slave_answer_write_multiple_registers_request(request_id)
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
         self.text.moveCursor(QTextCursor.End)
 
-    def cb_modbus_write_multiple_registers_response(self,
-                                                    request_id,
-                                                    exception_code,
-                                                    starting_address,
-                                                    count):
+    def cb_modbus_master_write_multiple_registers_response(self,
+                                                           request_id,
+                                                           exception_code):
         if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
             a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
@@ -779,10 +742,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 'REQUEST ID=' + \
                 str(request_id) + \
                 ', EXCEPTION CODE=' + \
-                str(exception_code) + \
-                ', STARTING ADDRESS=' + \
-                str(starting_address) + \
-                ', COUNT=' + \
                 str(count) + \
                 '\n\n'
 
@@ -792,7 +751,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.modbus_master_send_button.setEnabled(True)
 
-    def cb_modbus_read_discrete_inputs_request(self, request_id, starting_address, count):
+    def cb_modbus_slave_read_discrete_inputs_request(self,
+                                                     request_id,
+                                                     starting_address,
+                                                     count):
         a = 'READ DISCRETE INPUTS REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -804,37 +766,32 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         data = []
 
-        q, r = divmod(count, 8)
+        for i in range(count):
+            data.append(random.randint(0, 1) == 1)
 
-        if r != 0:
-            q = q + 1
-
-        for i in range(q):
-            data.append(random.randint(1, 255))
-
-        self.rs485.modbus_answer_read_discrete_inputs_request(request_id, data)
+        self.rs485.modbus_slave_answer_read_discrete_inputs_request(request_id, data)
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
         self.text.moveCursor(QTextCursor.End)
 
-    def cb_modbus_read_discrete_inputs_response(self,
-                                                reconstruction_status,
-                                                request_id,
-                                                exception_code,
-                                                data):
+    def cb_modbus_master_read_discrete_inputs_response(self,
+                                                       request_id,
+                                                       exception_code,
+                                                       stream_status,
+                                                       data):
         if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
             a = 'READ DISCRETE INPUTS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
                 '\n\n'
         else:
             a = 'READ DISCRETE INPUTS RESPONSE: ' + \
-                'EXCEPTION CODE=' + \
-                str(exception_code) + \
-                ', REQUEST ID=' + \
+                'REQUEST ID=' + \
                 str(request_id) + \
-                ', RECONSTRUCTION STATUS=' + \
-                str(reconstruction_status) + \
+                ', EXCEPTION CODE=' + \
+                str(exception_code) + \
+                ', STREAM STATUS=' + \
+                str(stream_status) + \
                 ', DATA=' + \
                 str(data) + \
                 '\n\n'
@@ -845,10 +802,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.modbus_master_send_button.setEnabled(True)
 
-    def cb_modbus_read_input_registers_request(self,
-                                               request_id,
-                                               starting_address,
-                                               count):
+    def cb_modbus_slave_read_input_registers_request(self,
+                                                     request_id,
+                                                     starting_address,
+                                                     count):
         a = 'READ INPUT REGISTERS REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -861,31 +818,31 @@ class RS485(COMCUPluginBase, Ui_RS485):
         data = []
 
         for i in range(count):
-            data.append(random.randint(1, 65535))
+            data.append(random.randint(0, 65535))
 
-        self.rs485.modbus_answer_read_input_registers_request(request_id, data)
+        self.rs485.modbus_slave_answer_read_input_registers_request(request_id, data)
 
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(a)
         self.text.moveCursor(QTextCursor.End)
 
-    def cb_modbus_read_input_registers_response(self,
-                                                reconstruction_status,
-                                                request_id,
-                                                exception_code,
-                                                data):
+    def cb_modbus_master_read_input_registers_response(self,
+                                                       request_id,
+                                                       exception_code,
+                                                       stream_status,
+                                                       data):
         if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
             a = 'READ DISCRETE REGISTERS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
                 '\n\n'
         else:
             a = 'READ INPUT REGISTERS RESPONSE: ' + \
-                'EXCEPTION CODE=' + \
-                str(exception_code) + \
-                ', REQUEST ID=' + \
+                'REQUEST ID=' + \
                 str(request_id) + \
-                ', RECONSTRUCTION STATUS=' + \
-                str(reconstruction_status) + \
+                ', EXCEPTION CODE=' + \
+                str(exception_code) + \
+                ', STREAM STATUS=' + \
+                str(stream_status) + \
                 ', DATA=' + \
                 str(data) + \
                 '\n\n'

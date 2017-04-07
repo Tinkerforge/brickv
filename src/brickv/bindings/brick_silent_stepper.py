@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-02-27.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -365,13 +365,13 @@ class BrickSilentStepper(Device):
 
         The default is 1/256-step with interpolation on.
         """
-        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_STEP_CONFIGURATION, (step_resolution, interpolation), 'B ?', '')
+        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_STEP_CONFIGURATION, (step_resolution, interpolation), 'B !', '')
 
     def get_step_configuration(self):
         """
         Returns the step mode as set by :func:`Set Step Configuration`.
         """
-        return GetStepConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_STEP_CONFIGURATION, (), '', 'B ?'))
+        return GetStepConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_STEP_CONFIGURATION, (), '', 'B !'))
 
     def drive_forward(self):
         """
@@ -463,7 +463,7 @@ class BrickSilentStepper(Device):
         """
         Returns *true* if the driver chip is enabled, *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_IS_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_IS_ENABLED, (), '', '!')
 
     def set_basic_configuration(self, standstill_current, motor_run_current, standstill_delay_time, power_down_time, stealth_threshold, coolstep_threshold, classic_threshold, high_velocity_chopper_mode):
         """
@@ -514,13 +514,13 @@ class BrickSilentStepper(Device):
         * Classic Threshold: 1000
         * High Velocity Shopper Mode: false
         """
-        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_BASIC_CONFIGURATION, (standstill_current, motor_run_current, standstill_delay_time, power_down_time, stealth_threshold, coolstep_threshold, classic_threshold, high_velocity_chopper_mode), 'H H H H H H H ?', '')
+        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_BASIC_CONFIGURATION, (standstill_current, motor_run_current, standstill_delay_time, power_down_time, stealth_threshold, coolstep_threshold, classic_threshold, high_velocity_chopper_mode), 'H H H H H H H !', '')
 
     def get_basic_configuration(self):
         """
         Returns the configuration as set by :func:`Set Basic Configuration`.
         """
-        return GetBasicConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_BASIC_CONFIGURATION, (), '', 'H H H H H H H ?'))
+        return GetBasicConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_BASIC_CONFIGURATION, (), '', 'H H H H H H H !'))
 
     def set_spreadcycle_configuration(self, slow_decay_duration, enable_random_slow_decay, fast_decay_duration, hysteresis_start_value, hysteresis_end_value, sinewave_offset, chopper_mode, comperator_blank_time, fast_decay_without_comperator):
         """
@@ -575,13 +575,13 @@ class BrickSilentStepper(Device):
         * Comperator Blank Time: 1
         * Fast Decay Without Comperator: false
         """
-        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_SPREADCYCLE_CONFIGURATION, (slow_decay_duration, enable_random_slow_decay, fast_decay_duration, hysteresis_start_value, hysteresis_end_value, sinewave_offset, chopper_mode, comperator_blank_time, fast_decay_without_comperator), 'B ? B B b b B B ?', '')
+        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_SPREADCYCLE_CONFIGURATION, (slow_decay_duration, enable_random_slow_decay, fast_decay_duration, hysteresis_start_value, hysteresis_end_value, sinewave_offset, chopper_mode, comperator_blank_time, fast_decay_without_comperator), 'B ! B B b b B B !', '')
 
     def get_spreadcycle_configuration(self):
         """
         Returns the configuration as set by :func:`Set Basic Configuration`.
         """
-        return GetSpreadcycleConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_SPREADCYCLE_CONFIGURATION, (), '', 'B ? B B b b B B ?'))
+        return GetSpreadcycleConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_SPREADCYCLE_CONFIGURATION, (), '', 'B ! B B b b B B !'))
 
     def set_stealth_configuration(self, enable_stealth, amplitude, gradient, enable_autoscale, force_symmetric, freewheel_mode):
         """
@@ -618,13 +618,13 @@ class BrickSilentStepper(Device):
         * Force Symmetric: false
         * Freewheel Mode: 0 (Normal)
         """
-        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_STEALTH_CONFIGURATION, (enable_stealth, amplitude, gradient, enable_autoscale, force_symmetric, freewheel_mode), '? B B ? ? B', '')
+        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_STEALTH_CONFIGURATION, (enable_stealth, amplitude, gradient, enable_autoscale, force_symmetric, freewheel_mode), '! B B ! ! B', '')
 
     def get_stealth_configuration(self):
         """
         Returns the configuration as set by :func:`Set Stealth Configuration`.
         """
-        return GetStealthConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_STEALTH_CONFIGURATION, (), '', '? B B ? ? B'))
+        return GetStealthConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_STEALTH_CONFIGURATION, (), '', '! B B ! ! B'))
 
     def set_coolstep_configuration(self, minimum_stallguard_value, maximum_stallguard_value, current_up_step_width, current_down_step_width, minimum_current, stallguard_threshold_value, stallguard_mode):
         """
@@ -694,13 +694,13 @@ class BrickSilentStepper(Device):
         * Disable Short To Ground Protection: 0
         * Synchronize Phase Frequency: 0
         """
-        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_MISC_CONFIGURATION, (disable_short_to_ground_protection, synchronize_phase_frequency), '? B', '')
+        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_MISC_CONFIGURATION, (disable_short_to_ground_protection, synchronize_phase_frequency), '! B', '')
 
     def get_misc_configuration(self):
         """
         Returns the configuration as set by :func:`Set Misc Configuration`.
         """
-        return GetMiscConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_MISC_CONFIGURATION, (), '', '? B'))
+        return GetMiscConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_MISC_CONFIGURATION, (), '', '! B'))
 
     def get_driver_status(self):
         """
@@ -729,7 +729,7 @@ class BrickSilentStepper(Device):
         * Stealth Voltage Amplitude: Shows the actual PWM scaling. In Stealth mode it can be used to detect motor load and
           stall if autoscale is enabled (see :func:`Set Stealth Configuration`).
         """
-        return GetDriverStatus(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_DRIVER_STATUS, (), '', 'B B B ? B ? B B'))
+        return GetDriverStatus(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_DRIVER_STATUS, (), '', 'B B B ! B ! B B'))
 
     def set_minimum_voltage(self, voltage):
         """
@@ -828,7 +828,7 @@ class BrickSilentStepper(Device):
         """
         Returns *true* if the status LED is enabled, *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '!')
 
     def get_protocol1_bricklet_name(self, port):
         """
