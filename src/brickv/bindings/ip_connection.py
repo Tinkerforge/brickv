@@ -108,6 +108,9 @@ class Device:
     RESPONSE_EXPECTED_TRUE = 3 # setter
     RESPONSE_EXPECTED_FALSE = 4 # setter, default
 
+    STREAM_STATUS_COMPLETE = 0
+    STREAM_STATUS_OUT_OF_SYNC = 1
+
     def __init__(self, uid, ipcon):
         """
         Creates the device object with the unique device ID *uid* and adds
@@ -830,28 +833,24 @@ class IPConnection:
                 chunk_offset = values[-2] # FIXME: validate chunk offset < total length
                 chunk_data = values[-1]
 
-                # FIXME: expose stream status constants
-                STREAM_STATUS_COMPLETE = 0
-                STREAM_STATUS_OUT_OF_SYNC = 1
-
                 if llcb[2] == None: # no stream in-progress
                     if chunk_offset == 0: # stream starts
                         llcb[2] = chunk_data
 
                         if len(llcb[2]) >= total_length: # stream complete
-                            result = extra + (STREAM_STATUS_COMPLETE,) + (llcb[2][:total_length],)
+                            result = extra + (Device.STREAM_STATUS_COMPLETE,) + (llcb[2][:total_length],)
                             llcb[2] = None
                     else: # ignore tail of current stream, wait for next stream start
                         pass
                 else: # stream in-progress
-                    if chunk_offset != len(llcb[2]): # stream out-of-sync, abort it and return partial result
-                        result = extra + (STREAM_STATUS_OUT_OF_SYNC,) + (llcb[2] + (0,)*(total_length - len(llcb[2])),) # FIXME: need to handle padding for non-int types
+                    if chunk_offset != len(llcb[2]): # stream out-of-sync
+                        result = extra + (Device.STREAM_STATUS_OUT_OF_SYNC,) + (None,)
                         llcb[2] = None
                     else: # stream in-sync
                         llcb[2] += chunk_data
 
                         if len(llcb[2]) >= total_length: # stream complete
-                            result = extra + (STREAM_STATUS_COMPLETE,) + (llcb[2][:total_length],)
+                            result = extra + (Device.STREAM_STATUS_COMPLETE,) + (llcb[2][:total_length],)
                             llcb[2] = None
 
                 if result != None and llcb[0] in device.registered_callbacks:

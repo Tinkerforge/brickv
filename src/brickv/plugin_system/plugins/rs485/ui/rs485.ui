@@ -100,7 +100,7 @@
         <bool>true</bool>
        </property>
        <property name="maxCount">
-        <number>100</number>
+        <number>65534</number>
        </property>
        <property name="insertPolicy">
         <enum>QComboBox::InsertAtBottom</enum>

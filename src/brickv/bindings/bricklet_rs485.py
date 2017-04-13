@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-04-07.      #
+# This file was automatically generated on 2017-04-13.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -24,7 +24,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
-Read = namedtuple('Read', ['message', 'length'])
+ReadLowLevel = namedtuple('ReadLowLevel', ['stream_total_length', 'stream_chunk_offset', 'stream_chunk_data'])
 GetRS485Configuration = namedtuple('RS485Configuration', ['baudrate', 'parity', 'stopbits', 'wordlength', 'duplex'])
 GetModbusConfiguration = namedtuple('ModbusConfiguration', ['slave_address', 'master_request_timeout'])
 GetBufferConfig = namedtuple('BufferConfig', ['send_buffer_size', 'receive_buffer_size'])
@@ -42,7 +42,7 @@ class BrickletRS485(Device):
     DEVICE_IDENTIFIER = 277
     DEVICE_DISPLAY_NAME = 'RS485 Bricklet'
 
-    CALLBACK_READ = 41
+    CALLBACK_READ_LOW_LEVEL = 41
     CALLBACK_ERROR_COUNT = 42
     CALLBACK_MODBUS_SLAVE_READ_COILS_REQUEST = 43
     CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL = 44
@@ -61,6 +61,7 @@ class BrickletRS485(Device):
     CALLBACK_MODBUS_SLAVE_READ_INPUT_REGISTERS_REQUEST = 57
     CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL = 58
 
+    CALLBACK_READ = -41
     CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE = -44
     CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE = -46
     CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST = -51
@@ -68,8 +69,8 @@ class BrickletRS485(Device):
     CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE = -56
     CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE = -58
 
-    FUNCTION_WRITE = 1
-    FUNCTION_READ = 2
+    FUNCTION_WRITE_LOW_LEVEL = 1
+    FUNCTION_READ_LOW_LEVEL = 2
     FUNCTION_ENABLE_READ_CALLBACK = 3
     FUNCTION_DISABLE_READ_CALLBACK = 4
     FUNCTION_IS_READ_CALLBACK_ENABLED = 5
@@ -174,8 +175,8 @@ class BrickletRS485(Device):
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[BrickletRS485.FUNCTION_WRITE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.FUNCTION_READ] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_WRITE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_READ_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_ENABLE_READ_CALLBACK] = BrickletRS485.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS485.FUNCTION_DISABLE_READ_CALLBACK] = BrickletRS485.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS485.FUNCTION_IS_READ_CALLBACK_ENABLED] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -214,7 +215,7 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_READ_DISCRETE_INPUTS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_READ_INPUT_REGISTERS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.CALLBACK_READ] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_READ_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_COILS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -245,7 +246,7 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_READ_UID] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_IDENTITY] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletRS485.CALLBACK_READ] = '60c B'
+        self.callback_formats[BrickletRS485.CALLBACK_READ_LOW_LEVEL] = 'H H 60c'
         self.callback_formats[BrickletRS485.CALLBACK_ERROR_COUNT] = 'I I'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_COILS_REQUEST] = 'B H H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL] = 'B b H H 464!'
@@ -264,6 +265,7 @@ class BrickletRS485(Device):
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_INPUT_REGISTERS_REQUEST] = 'B H H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = 'B b H H 29H'
 
+        self.low_level_callbacks[BrickletRS485.CALLBACK_READ_LOW_LEVEL] = [BrickletRS485.CALLBACK_READ, {'stream': {'fixed_total_length': None}}, None]
         self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
         self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
         self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST, {'stream': {'fixed_total_length': None}}, None]
@@ -271,30 +273,26 @@ class BrickletRS485(Device):
         self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
         self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
 
-    def write(self, message, length):
+    def write_low_level(self, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
-        Writes a string of up to 60 characters to the RS485 interface. The string
-        can be binary data, ASCII or similar is not necessary.
+        Writes characters to the RS485 interface. The characters can be binary data,
+        ASCII or similar is not necessary.
 
-        The length of the string has to be given as an additional parameter.
-
-        The return value is the number of bytes that could be written.
+        The return value is the number of characters that were written.
 
         See :func:`Set RS485 Configuration` for configuration possibilities
         regarding baudrate, parity and so on.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_WRITE, (message, length), '60c B', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_WRITE_LOW_LEVEL, (stream_total_length, stream_chunk_offset, stream_chunk_data), 'H H 59c', 'B')
 
-    def read(self):
+    def read_low_level(self, length):
         """
-        Returns the currently buffered message. The maximum length
-        of message is 60. If the length is given as 0, there was no
-        new data available.
+        Returns up to *length* characters from receive buffer.
 
         Instead of polling with this function, you can also use
         callbacks. See :func:`Enable Read Callback` and :cb:`Read` callback.
         """
-        return Read(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_READ, (), '', '60c B'))
+        return ReadLowLevel(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_READ_LOW_LEVEL, (length,), 'H', 'H H 60c'))
 
     def enable_read_callback(self):
         """
@@ -881,6 +879,87 @@ class BrickletRS485(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def write(self, data):
+        stream_extra = ()
+        stream_total_written = 0
+        stream_total_length = len(data)
+        stream_chunk_offset = 0
+
+        with self.stream_lock:
+            while stream_chunk_offset < stream_total_length:
+                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 59]
+
+                if len(stream_chunk_data) < 59:
+                    stream_chunk_data.extend(['\x00']*(59 - len(stream_chunk_data)))
+
+                stream_result = self.write_low_level(stream_total_length, stream_chunk_offset, stream_chunk_data)
+                stream_extra = stream_result[:-1] # FIXME: validate that the extra of all the low-level calls is identical
+                stream_chunk_written = stream_result[-1]
+                stream_total_written += stream_chunk_written
+
+                # either last chunk or short write
+                if stream_chunk_written < 59:
+                    break
+
+                stream_chunk_offset += 59
+
+        if len(stream_extra) > 0:
+            return stream_extra + (stream_total_written,) # FIXME: need to return this as a namedtuple
+        else:
+            return stream_total_written
+
+    def read(self, length):
+        stream_extra = ()
+        stream_total_length = None
+        stream_chunk_offset = 0
+        stream_result = None
+        stream_data = ()
+        stream_out_of_sync = False
+
+        STREAM_CHUNK_OFFSET_NO_DATA = (1 << 16) - 1 # FIXME: make this depend on the stream_chunk_offset type
+
+        with self.stream_lock:
+            if stream_total_length == None: # no fixed-stream-length
+                stream_result = self.read_low_level(length)
+                stream_extra = stream_result[:-3] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+                stream_total_length = stream_result.stream_total_length
+                stream_chunk_offset = stream_result.stream_chunk_offset
+                stream_data = stream_result.stream_chunk_data
+
+            if stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA:
+                raise Error(Error.STREAM_NO_DATA, 'Stream has no data')
+            elif stream_chunk_offset != 0: # stream out-of-sync
+                # discard remaining stream to bring it back in-sync
+                while stream_chunk_offset + 60 < stream_total_length:
+                    # FIXME: validate that total length is identical for all low-level getters of a stream
+                    stream_chunk_offset = self.read_low_level(length).stream_chunk_offset
+
+                raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+
+            # FIXME: validate chunk offset < total length
+
+            while len(stream_data) < stream_total_length:
+                stream_result = self.read_low_level(length)
+                stream_extra = stream_result[:-3] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+                stream_chunk_offset = stream_result.stream_chunk_offset
+
+                # FIXME: validate that total length is identical for all low-level getters of a stream
+
+                if stream_chunk_offset != len(stream_data): # stream out-of-sync
+                    # discard remaining stream to bring it back in-sync
+                    while stream_chunk_offset + 60 < stream_total_length:
+                        # FIXME: validate that total length is identical for all low-level getters of a stream
+                        stream_chunk_offset = self.read_low_level(length).stream_chunk_offset
+
+                    raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+
+                stream_data += stream_result.stream_chunk_data
+
+        if len(stream_extra) > 0:
+            return stream_extra + (stream_data[:stream_total_length],) # FIXME: need to return this as a namedtuple
+        else:
+            return stream_data[:stream_total_length]
 
     def modbus_slave_answer_read_coils_request(self, request_id, data):
         stream_total_length = len(data)

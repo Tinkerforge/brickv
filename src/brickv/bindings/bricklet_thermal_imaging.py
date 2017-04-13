@@ -381,7 +381,7 @@ class BrickletThermalImaging(Device):
                 stream_data += stream_result.stream_chunk_data
 
         if len(stream_extra) > 0:
-            return stream_extra + (stream_data[:stream_total_length],)
+            return stream_extra + (stream_data[:stream_total_length],) # FIXME: need to return this as a namedtuple
         else:
             return stream_data[:stream_total_length]
 
@@ -433,7 +433,7 @@ class BrickletThermalImaging(Device):
                 stream_data += stream_result.stream_chunk_data
 
         if len(stream_extra) > 0:
-            return stream_extra + (stream_data[:stream_total_length],)
+            return stream_extra + (stream_data[:stream_total_length],) # FIXME: need to return this as a namedtuple
         else:
             return stream_data[:stream_total_length]
 

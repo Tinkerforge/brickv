@@ -158,7 +158,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                      self.qtcb_modbus_master_read_input_registers_response.emit)
 
         self.rs485_input_combobox.addItem("")
-        self.rs485_input_combobox.lineEdit().setMaxLength(58)
         self.rs485_input_combobox.lineEdit().returnPressed.connect(self.input_changed)
 
         self.rs485_input_line_ending_lineedit.setValidator(HexValidator())
@@ -447,8 +446,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.configuration_changed()
 
-    def cb_read(self, message, length):
-        s = ''.join(message[:length])
+    def cb_read(self, data):
+        s = ''.join(data)
 
         self.hextext.appendData(s)
 
@@ -886,18 +885,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
     def input_changed(self):
         text = self.rs485_input_combobox.currentText().encode('utf-8') + self.get_line_ending()
-        c = ['\0']*60
+        c = ['\0']*len(text)
         for i, t in enumerate(text):
             c[i] = t
 
-        length = len(text)
-        written = 0
-        while length != 0:
-            written = self.rs485.write(c, length)
-            c = c[written:]
-            c = c + ['\0']*written
-            length = length - written
-
+        self.rs485.write(c)
         self.rs485_input_combobox.setCurrentIndex(0)
 
     def get_rs485_configuration_async(self, conf):
