@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-04-07.      #
+# This file was automatically generated on 2017-04-13.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -146,7 +146,12 @@ class BrickletThermalImaging(Device):
 
     def get_statistics(self):
         """
-
+        Status:
+        * bit 0: FFC desired
+        * bit 1-2: FFC never commanded, FFC imminent, FFC in progress, FFC complete
+        * bit 3: AGC State
+        * bit 4: Shutter lockout
+        * bit 5: Overtemp shut down imminent
         """
         return GetStatistics(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_STATISTICS, (), '', '4H 4H B H'))
 
