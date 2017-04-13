@@ -922,7 +922,7 @@ class IPConnection:
 
                 if len(o) > 1:
                     for i in range(int(o.replace('!', ''))):
-                        y.append(x[i // 8] & (i % 8) != 0)
+                        y.append(x[i // 8] & (1 << (i % 8)) != 0)
                 else:
                     y.append(x[0] != 0)
 
