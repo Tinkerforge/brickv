@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-03-23.      #
+# This file was automatically generated on 2017-04-07.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -34,8 +34,10 @@ class BrickletRS232(Device):
     DEVICE_IDENTIFIER = 254
     DEVICE_DISPLAY_NAME = 'RS232 Bricklet'
 
-    CALLBACK_READ_CALLBACK = 8
-    CALLBACK_ERROR_CALLBACK = 9
+    CALLBACK_READ = 8
+    CALLBACK_ERROR = 9
+    CALLBACK_READ_CALLBACK = 8 # for backward compatibility
+    CALLBACK_ERROR_CALLBACK = 9 # for backward compatibility
 
 
     FUNCTION_WRITE = 1
@@ -96,13 +98,13 @@ class BrickletRS232(Device):
         self.response_expected[BrickletRS232.FUNCTION_IS_READ_CALLBACK_ENABLED] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232.FUNCTION_SET_CONFIGURATION] = BrickletRS232.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletRS232.FUNCTION_GET_CONFIGURATION] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS232.CALLBACK_READ_CALLBACK] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS232.CALLBACK_ERROR_CALLBACK] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS232.CALLBACK_READ] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS232.CALLBACK_ERROR] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS232.FUNCTION_SET_BREAK_CONDITION] = BrickletRS232.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletRS232.FUNCTION_GET_IDENTITY] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletRS232.CALLBACK_READ_CALLBACK] = '60c B'
-        self.callback_formats[BrickletRS232.CALLBACK_ERROR_CALLBACK] = 'B'
+        self.callback_formats[BrickletRS232.CALLBACK_READ] = '60c B'
+        self.callback_formats[BrickletRS232.CALLBACK_ERROR] = 'B'
 
 
     def write(self, message, length):
@@ -126,13 +128,13 @@ class BrickletRS232(Device):
         new data available.
 
         Instead of polling with this function, you can also use
-        callbacks. See :func:`Enable Read Callback` and :cb:`Read Callback` callback.
+        callbacks. See :func:`Enable Read Callback` and :cb:`Read` callback.
         """
         return Read(*self.ipcon.send_request(self, BrickletRS232.FUNCTION_READ, (), '', '60c B'))
 
     def enable_read_callback(self):
         """
-        Enables the :cb:`Read Callback` callback.
+        Enables the :cb:`Read` callback.
 
         By default the callback is disabled.
         """
@@ -140,7 +142,7 @@ class BrickletRS232(Device):
 
     def disable_read_callback(self):
         """
-        Disables the :cb:`Read Callback` callback.
+        Disables the :cb:`Read` callback.
 
         By default the callback is disabled.
         """
@@ -148,7 +150,7 @@ class BrickletRS232(Device):
 
     def is_read_callback_enabled(self):
         """
-        Returns *true* if the :cb:`Read Callback` callback is enabled,
+        Returns *true* if the :cb:`Read` callback is enabled,
         *false* otherwise.
         """
         return self.ipcon.send_request(self, BrickletRS232.FUNCTION_IS_READ_CALLBACK_ENABLED, (), '', '!')

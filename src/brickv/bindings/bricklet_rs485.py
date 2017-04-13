@@ -42,7 +42,7 @@ class BrickletRS485(Device):
     DEVICE_IDENTIFIER = 277
     DEVICE_DISPLAY_NAME = 'RS485 Bricklet'
 
-    CALLBACK_READ_CALLBACK = 41
+    CALLBACK_READ = 41
     CALLBACK_ERROR_COUNT = 42
     CALLBACK_MODBUS_SLAVE_READ_COILS_REQUEST = 43
     CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL = 44
@@ -214,7 +214,7 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_READ_DISCRETE_INPUTS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_READ_INPUT_REGISTERS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.CALLBACK_READ_CALLBACK] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS485.CALLBACK_READ] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_COILS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -245,7 +245,7 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_READ_UID] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_IDENTITY] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletRS485.CALLBACK_READ_CALLBACK] = '60c B'
+        self.callback_formats[BrickletRS485.CALLBACK_READ] = '60c B'
         self.callback_formats[BrickletRS485.CALLBACK_ERROR_COUNT] = 'I I'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_COILS_REQUEST] = 'B H H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL] = 'B b H H 464!'
@@ -292,13 +292,13 @@ class BrickletRS485(Device):
         new data available.
 
         Instead of polling with this function, you can also use
-        callbacks. See :func:`Enable Read Callback` and :cb:`Read Callback` callback.
+        callbacks. See :func:`Enable Read Callback` and :cb:`Read` callback.
         """
         return Read(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_READ, (), '', '60c B'))
 
     def enable_read_callback(self):
         """
-        Enables the :cb:`Read Callback` callback.
+        Enables the :cb:`Read` callback.
 
         By default the callback is disabled.
         """
@@ -306,7 +306,7 @@ class BrickletRS485(Device):
 
     def disable_read_callback(self):
         """
-        Disables the :cb:`Read Callback` callback.
+        Disables the :cb:`Read` callback.
 
         By default the callback is disabled.
         """
@@ -314,7 +314,7 @@ class BrickletRS485(Device):
 
     def is_read_callback_enabled(self):
         """
-        Returns *true* if the :cb:`Read Callback` callback is enabled,
+        Returns *true* if the :cb:`Read` callback is enabled,
         *false* otherwise.
         """
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_IS_READ_CALLBACK_ENABLED, (), '', '!')
@@ -422,7 +422,7 @@ class BrickletRS485(Device):
         The send buffer holds data that is given by :func:`Write` and
         can not be written yet. The receive buffer holds data that is
         received through RS485 but could not yet be send to the
-        user, either by :func:`Read` or through :cb:`Read Callback` callback.
+        user, either by :func:`Read` or through :cb:`Read` callback.
 
         The default configuration is 5120 byte (5kb) per buffer.
         """

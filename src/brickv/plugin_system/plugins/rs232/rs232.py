@@ -50,13 +50,13 @@ class RS232(PluginBase, Ui_RS232):
         self.read_callback_was_enabled = False
 
         self.qtcb_read.connect(self.cb_read)
-        self.rs232.register_callback(self.rs232.CALLBACK_READ_CALLBACK,
+        self.rs232.register_callback(self.rs232.CALLBACK_READ,
                                      self.qtcb_read.emit)
 
         if has_errors:
             self.label_no_error_support.hide()
             self.qtcb_error.connect(self.cb_error)
-            self.rs232.register_callback(self.rs232.CALLBACK_ERROR_CALLBACK,
+            self.rs232.register_callback(self.rs232.CALLBACK_ERROR,
                                          self.qtcb_error.emit)
         else:
             self.widget_errors.hide()
