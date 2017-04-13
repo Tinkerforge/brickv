@@ -146,7 +146,7 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
 
         self.status_led_action = QAction('Status LED', self)
         self.status_led_action.setCheckable(True)
-        self.status_led_action.toggled.connect(lambda checked: self.stepper.enable_status_led() if checked else self.stepper.disable_status_led())
+        self.status_led_action.toggled.connect(lambda checked: self.silent_stepper.enable_status_led() if checked else self.silent_stepper.disable_status_led())
         self.set_configs([(0, None, [self.status_led_action])])
 
         reset = QAction('Reset', self)
@@ -154,7 +154,7 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         self.set_actions([(0, None, [reset])])
 
     def start(self):
-        async_call(self.stepper.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
+        async_call(self.silent_stepper.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
 
         self.update_timer.start(100)
         self.update_start()
