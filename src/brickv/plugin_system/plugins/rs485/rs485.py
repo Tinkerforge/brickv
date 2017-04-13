@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 
 import random
 
-from PyQt4.QtGui import QTextCursor, QAction
+from PyQt4.QtGui import QTextCursor, QAction, QMessageBox
 from PyQt4.QtCore import pyqtSignal
 
 from brickv.bindings.bricklet_rs485 import BrickletRS485
@@ -34,6 +34,7 @@ from brickv.hex_validator import HexValidator
 from brickv.callback_emulator import CallbackEmulator
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.rs485.qhexedit import QHexeditWidget
+from brickv.utils import get_main_window
 
 MODE_RS485 = 0
 MODE_MODBUS_SLAVE_RTU = 1
@@ -49,6 +50,8 @@ MODBUS_F_IDX_READ_DISCRETE_INPUTS = 6
 MODBUS_F_IDX_READ_INPUT_REGISTERS = 7
 
 MODBUS_EXCEPTION_REQUEST_TIMEOUT = -1
+
+MSG_ERR_REQUEST_PROCESS = "Failed to process the request"
 
 class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_read = pyqtSignal(object, int)
@@ -248,6 +251,12 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                   self.error_led_show_heartbeat_action,
                                                   self.error_led_show_error_action])]
 
+    def popup_ok(self, msg):
+        QMessageBox.information(get_main_window(), self.device_info.name, msg)
+
+    def popup_fail(self, msg):
+        QMessageBox.critical(get_main_window(), self.device_info.name, msg)
+
     def toggle_gui_group(self, group, toggle):
         for e in group:
             if toggle:
@@ -266,22 +275,34 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                             self.modbus_master_request_timeout_spinbox.value())
 
         if self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_COILS:
-            rid = self.rs485.modbus_master_read_coils(self.modbus_master_slave_address_spinbox.value(),
-                                                      self.modbus_master_param1_spinbox.value(),
-                                                      self.modbus_master_param2_spinbox.value())
-            if rid == 0:
-                # Error. FIXME: report it to the user
+            try:
+                rid = self.rs485.modbus_master_read_coils(self.modbus_master_slave_address_spinbox.value(),
+                                                          self.modbus_master_param1_spinbox.value(),
+                                                          self.modbus_master_param2_spinbox.value())
+            except Exception as e:
+                self.popup_fail(str(e))
+                self.modbus_master_send_button.setEnabled(True)
+
                 return
+
+            if rid == 0:
+                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
 
             self.modbus_master_send_button.setEnabled(False)
 
         elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_HOLDING_REGISTERS:
-            rid = self.rs485.modbus_master_read_holding_registers(self.modbus_master_slave_address_spinbox.value(),
-                                                                  self.modbus_master_param1_spinbox.value(),
-                                                                  self.modbus_master_param2_spinbox.value())
-            if rid == 0:
-                # Error. FIXME: report it to the user
+            try:
+                rid = self.rs485.modbus_master_read_holding_registers(self.modbus_master_slave_address_spinbox.value(),
+                                                                      self.modbus_master_param1_spinbox.value(),
+                                                                      self.modbus_master_param2_spinbox.value())
+            except Exception as e:
+                self.popup_fail(str(e))
+                self.modbus_master_send_button.setEnabled(True)
+
                 return
+
+            if rid == 0:
+                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
 
             self.modbus_master_send_button.setEnabled(False)
 
@@ -291,22 +312,34 @@ class RS485(COMCUPluginBase, Ui_RS485):
             else:
                 param2 = False
 
-            rid = self.rs485.modbus_master_write_single_coil(self.modbus_master_slave_address_spinbox.value(),
-                                                             self.modbus_master_param1_spinbox.value(),
-                                                             param2)
-            if rid == 0:
-                # Error. FIXME: report it to the user
+            try:
+                rid = self.rs485.modbus_master_write_single_coil(self.modbus_master_slave_address_spinbox.value(),
+                                                                 self.modbus_master_param1_spinbox.value(),
+                                                                 param2)
+            except Exception as e:
+                self.popup_fail(str(e))
+                self.modbus_master_send_button.setEnabled(True)
+
                 return
+
+            if rid == 0:
+                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
 
             self.modbus_master_send_button.setEnabled(False)
 
         elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_SINGLE_REGISTER:
-            rid = self.rs485.modbus_master_write_single_register(self.modbus_master_slave_address_spinbox.value(),
-                                                                 self.modbus_master_param1_spinbox.value(),
-                                                                 self.modbus_master_param2_spinbox.value())
-            if rid == 0:
-                # Error. FIXME: report it to the user
+            try:
+                rid = self.rs485.modbus_master_write_single_register(self.modbus_master_slave_address_spinbox.value(),
+                                                                     self.modbus_master_param1_spinbox.value(),
+                                                                     self.modbus_master_param2_spinbox.value())
+            except Exception as e:
+                self.popup_fail(str(e))
+                self.modbus_master_send_button.setEnabled(True)
+
                 return
+
+            if rid == 0:
+                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
 
             self.modbus_master_send_button.setEnabled(False)
 
@@ -316,13 +349,19 @@ class RS485(COMCUPluginBase, Ui_RS485):
             for i in range(self.modbus_master_param2_spinbox.value()):
                 data.append(random.randint(0, 1) == 1)
 
-            rid = self.rs485.modbus_master_write_multiple_coils(self.modbus_master_slave_address_spinbox.value(),
-                                                                self.modbus_master_param1_spinbox.value(),
-                                                                self.modbus_master_param2_spinbox.value(),
-                                                                data)
-            if rid == 0:
-                # Error. FIXME: report it to the user
+            try:
+                rid = self.rs485.modbus_master_write_multiple_coils(self.modbus_master_slave_address_spinbox.value(),
+                                                                    self.modbus_master_param1_spinbox.value(),
+                                                                    self.modbus_master_param2_spinbox.value(),
+                                                                    data)
+            except Exception as e:
+                self.popup_fail(str(e))
+                self.modbus_master_send_button.setEnabled(True)
+
                 return
+
+            if rid == 0:
+                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
 
             self.modbus_master_send_button.setEnabled(False)
 
@@ -332,33 +371,51 @@ class RS485(COMCUPluginBase, Ui_RS485):
             for i in range(self.modbus_master_param2_spinbox.value()):
                 data.append(random.randint(0, 65535))
 
-            rid = self.rs485.modbus_master_write_multiple_registers(self.modbus_master_slave_address_spinbox.value(),
-                                                                    self.modbus_master_param1_spinbox.value(),
-                                                                    self.modbus_master_param2_spinbox.value(),
-                                                                    data)
-            if rid == 0:
-                # Error. FIXME: report it to the user
+            try:
+                rid = self.rs485.modbus_master_write_multiple_registers(self.modbus_master_slave_address_spinbox.value(),
+                                                                        self.modbus_master_param1_spinbox.value(),
+                                                                        self.modbus_master_param2_spinbox.value(),
+                                                                        data)
+            except Exception as e:
+                self.popup_fail(str(e))
+                self.modbus_master_send_button.setEnabled(True)
+
                 return
+
+            if rid == 0:
+                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
 
             self.modbus_master_send_button.setEnabled(False)
 
         elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_DISCRETE_INPUTS:
-            rid = self.rs485.modbus_master_read_discrete_inputs(self.modbus_master_slave_address_spinbox.value(),
-                                                                self.modbus_master_param1_spinbox.value(),
-                                                                self.modbus_master_param2_spinbox.value())
-            if rid == 0:
-                # Error. FIXME: report it to the user
+            try:
+                rid = self.rs485.modbus_master_read_discrete_inputs(self.modbus_master_slave_address_spinbox.value(),
+                                                                    self.modbus_master_param1_spinbox.value(),
+                                                                    self.modbus_master_param2_spinbox.value())
+            except Exception as e:
+                self.popup_fail(str(e))
+                self.modbus_master_send_button.setEnabled(True)
+
                 return
+
+            if rid == 0:
+                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
 
             self.modbus_master_send_button.setEnabled(False)
 
         elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_INPUT_REGISTERS:
-            rid = self.rs485.modbus_master_read_input_registers(self.modbus_master_slave_address_spinbox.value(),
-                                                                self.modbus_master_param1_spinbox.value(),
-                                                                self.modbus_master_param2_spinbox.value())
-            if rid == 0:
-                # Error. FIXME: report it to the user
+            try:
+                rid = self.rs485.modbus_master_read_input_registers(self.modbus_master_slave_address_spinbox.value(),
+                                                                    self.modbus_master_param1_spinbox.value(),
+                                                                    self.modbus_master_param2_spinbox.value())
+            except Exception as e:
+                self.popup_fail(str(e))
+                self.modbus_master_send_button.setEnabled(True)
+
                 return
+
+            if rid == 0:
+                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
 
             self.modbus_master_send_button.setEnabled(False)
 
