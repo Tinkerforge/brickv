@@ -566,7 +566,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 ', EXCEPTION CODE=' + \
                 str(exception_code) + \
                 ', STREAM STATUS=' + \
-                str(reconstruction_status) + \
+                str(stream_status) + \
                 ', DATA=' + \
                 str(data) + \
                 '\n\n'
@@ -742,7 +742,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 'REQUEST ID=' + \
                 str(request_id) + \
                 ', EXCEPTION CODE=' + \
-                str(count) + \
+                str(exception_code) + \
                 '\n\n'
 
         self.text.moveCursor(QTextCursor.End)
