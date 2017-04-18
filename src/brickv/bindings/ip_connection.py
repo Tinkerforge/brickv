@@ -1042,17 +1042,11 @@ class IPConnection:
                         raise ValueError('Incorrect bool list length')
 
                     p = [0]*int(math.ceil(len(d) / 8.0))
-                    a = 0
 
                     for i, b in enumerate(d):
                         if b:
-                            a |= 1 << (i % 8)
+                            p[i // 8] |= 1 << (i % 8)
 
-                        if i > 0 and i % 8 == 0:
-                            p[i // 8] = a
-                            a = 0
-
-                    p[i // 8] = a
                     request += struct.pack('<{0}B'.format(len(p)), *p)
                 else:
                     request += struct.pack('<?', d)

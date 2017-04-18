@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-04-13.      #
+# This file was automatically generated on 2017-04-18.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -344,7 +344,7 @@ class BrickletRS485(Device):
         * Slave Address: Address to be used as the Modbus slave address in Modbus slave mode. Valid Modbus slave address range is 0 to 247.
         * Master Request Timeout: Specifies how long the master should wait for a response from a slave in milliseconds when in Modbus master mode.
 
-        The default is: Slave Address = 1 and Master Request Timeout = 1000 milliseconds or 1 second.
+        The default is: Slave Address = 1 and Master Request Timeout = 1000 milliseconds (1 second).
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_MODBUS_CONFIGURATION, (slave_address, master_request_timeout), 'B I', '')
 
@@ -356,11 +356,11 @@ class BrickletRS485(Device):
 
     def set_mode(self, mode):
         """
-        Sets the mode of the Bricklet in which it operates. Available options:
+        Sets the mode of the Bricklet in which it operates. Available options are
 
-        * RS485: Switches the operating mode of the bricklet to RS485 mode.
-        * Modbus Slave RTU: Switches the operating mode of the bricklet to Modbus Slave RTU mode.
-        * Modbus Master RTU. Switches the operating mode of the bricklet to Modbus Master RTU mode.
+        * RS485,
+        * Modbus Slave RTU and
+        * Modbus Master RTU.
 
         The default is: RS485 mode.
         """
