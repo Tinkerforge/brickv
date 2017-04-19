@@ -109,10 +109,10 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         self.fast_decay_duration_spin.valueChanged.connect(self.spreadcycle_configuration_changed)
         self.hysteresis_start_value_spin.valueChanged.connect(self.spreadcycle_configuration_changed)
         self.hysteresis_end_value_spin.valueChanged.connect(self.spreadcycle_configuration_changed)
-        self.sinewave_offset_spin.valueChanged.connect(self.spreadcycle_configuration_changed)
+        self.sine_wave_offset_spin.valueChanged.connect(self.spreadcycle_configuration_changed)
         self.chopper_mode_combo.currentIndexChanged.connect(self.spreadcycle_configuration_changed)
-        self.comperator_blank_time_combo.currentIndexChanged.connect(self.spreadcycle_configuration_changed)
-        self.fast_decay_without_comperator_checkbox.stateChanged.connect(self.spreadcycle_configuration_changed)
+        self.comparator_blank_time_combo.currentIndexChanged.connect(self.spreadcycle_configuration_changed)
+        self.fast_decay_without_comparator_checkbox.stateChanged.connect(self.spreadcycle_configuration_changed)
 
         # Stealth Configuration
         self.enable_stealth_checkbox.stateChanged.connect(self.stealth_configuration_changed)
@@ -217,13 +217,13 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         fast_decay_duration = self.fast_decay_duration_spin.value()
         hysteresis_start_value = self.hysteresis_start_value_spin.value()
         hysteresis_end_value = self.hysteresis_end_value_spin.value()
-        sinewave_offset = self.sinewave_offset_spin.value()
+        sine_wave_offset = self.sine_wave_offset_spin.value()
         chopper_mode = self.chopper_mode_combo.currentIndex()
-        comperator_blank_time = self.comperator_blank_time_combo.currentIndex()
-        fast_decay_without_comperator = self.fast_decay_without_comperator_checkbox.isChecked()
+        comparator_blank_time = self.comparator_blank_time_combo.currentIndex()
+        fast_decay_without_comparator = self.fast_decay_without_comparator_checkbox.isChecked()
 
         try:
-            self.silent_stepper.set_spreadcycle_configuration(slow_decay_duration, enable_random_slow_decay, fast_decay_duration, hysteresis_start_value, hysteresis_end_value, sinewave_offset, chopper_mode, comperator_blank_time, fast_decay_without_comperator)
+            self.silent_stepper.set_spreadcycle_configuration(slow_decay_duration, enable_random_slow_decay, fast_decay_duration, hysteresis_start_value, hysteresis_end_value, sine_wave_offset, chopper_mode, comparator_blank_time, fast_decay_without_comparator)
         except ip_connection.Error:
             return
 
@@ -529,21 +529,21 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         self.hysteresis_end_value_spin.setValue(conf.hysteresis_end_value)
         self.hysteresis_end_value_spin.blockSignals(False)
 
-        self.sinewave_offset_spin.blockSignals(True)
-        self.sinewave_offset_spin.setValue(conf.sinewave_offset)
-        self.sinewave_offset_spin.blockSignals(False)
+        self.sine_wave_offset_spin.blockSignals(True)
+        self.sine_wave_offset_spin.setValue(conf.sine_wave_offset)
+        self.sine_wave_offset_spin.blockSignals(False)
 
         self.chopper_mode_combo.blockSignals(True)
         self.chopper_mode_combo.setCurrentIndex(conf.chopper_mode)
         self.chopper_mode_combo.blockSignals(False)
 
         self.standstill_current_spin.blockSignals(True)
-        self.comperator_blank_time_combo.setCurrentIndex(conf.comperator_blank_time)
+        self.comparator_blank_time_combo.setCurrentIndex(conf.comparator_blank_time)
         self.standstill_current_spin.blockSignals(False)
 
-        self.fast_decay_without_comperator_checkbox.blockSignals(True)
-        self.fast_decay_without_comperator_checkbox.setChecked(conf.fast_decay_without_comperator)
-        self.fast_decay_without_comperator_checkbox.blockSignals(False)
+        self.fast_decay_without_comparator_checkbox.blockSignals(True)
+        self.fast_decay_without_comparator_checkbox.setChecked(conf.fast_decay_without_comparator)
+        self.fast_decay_without_comparator_checkbox.blockSignals(False)
 
 
     def get_stealth_configuration_async(self, conf):

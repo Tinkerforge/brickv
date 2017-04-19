@@ -1357,7 +1357,7 @@ steps/s²</string>
              <item row="5" column="0">
               <widget class="QLabel" name="label_32">
                <property name="text">
-                <string>Sinewave Offset</string>
+                <string>Sine Wave Offset</string>
                </property>
               </widget>
              </item>
@@ -1390,7 +1390,7 @@ steps/s²</string>
               </widget>
              </item>
              <item row="5" column="1">
-              <widget class="QSpinBox" name="sinewave_offset_spin">
+              <widget class="QSpinBox" name="sine_wave_offset_spin">
                <property name="minimum">
                 <number>-3</number>
                </property>
@@ -1438,7 +1438,7 @@ steps/s²</string>
               </widget>
              </item>
              <item row="8" column="1">
-              <widget class="QCheckBox" name="fast_decay_without_comperator_checkbox">
+              <widget class="QCheckBox" name="fast_decay_without_comparator_checkbox">
                <property name="text">
                 <string/>
                </property>
@@ -1468,7 +1468,7 @@ steps/s²</string>
              <item row="8" column="0">
               <widget class="QLabel" name="label_34">
                <property name="text">
-                <string>Fast Decay Without Comperator</string>
+                <string>Fast Decay Without Comparator</string>
                </property>
               </widget>
              </item>
@@ -1489,12 +1489,12 @@ steps/s²</string>
              <item row="7" column="0">
               <widget class="QLabel" name="label_64">
                <property name="text">
-                <string>Comperator Blank Time</string>
+                <string>Comparator Blank Time</string>
                </property>
               </widget>
              </item>
              <item row="7" column="1">
-              <widget class="QComboBox" name="comperator_blank_time_combo">
+              <widget class="QComboBox" name="comparator_blank_time_combo">
                <item>
                 <property name="text">
                  <string>16 clocks</string>
