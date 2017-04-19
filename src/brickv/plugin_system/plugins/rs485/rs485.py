@@ -52,6 +52,7 @@ MODBUS_F_IDX_READ_INPUT_REGISTERS = 7
 MODBUS_EXCEPTION_REQUEST_TIMEOUT = -1
 
 MSG_ERR_REQUEST_PROCESS = "Failed to process the request"
+MSG_ERR_NOT_MODBUS_MASTER = "The Bricklet needs to be in Modbus master mode to perform this operation"
 
 class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_read = pyqtSignal(int, object)
@@ -84,6 +85,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.cbe_error_count = CallbackEmulator(self.rs485.get_error_count,
                                                 self.cb_error_count,
                                                 self.increase_error_count)
+
+        self.cbe_error_count_modbus = CallbackEmulator(self.rs485.get_modbus_common_error_count,
+                                                       self.cb_error_count_modbus,
+                                                       self.increase_error_count)
 
         self.read_callback_was_enabled = False
 
@@ -176,12 +181,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         # Modbus specific.
         self.modbus_slave_address_spinbox.valueChanged.connect(self.configuration_changed)
-        self.modbus_master_slave_address_spinbox.valueChanged.connect(self.configuration_changed)
-        self.modbus_master_param1_spinbox.valueChanged.connect(self.configuration_changed)
-        self.modbus_master_param2_spinbox.valueChanged.connect(self.configuration_changed)
-        self.modbus_master_function_combobox.currentIndexChanged.connect(self.modbus_master_function_changed)
-        self.modbus_master_request_timeout_spinbox.valueChanged.connect(self.configuration_changed)
         self.modbus_master_param2_spinbox.valueChanged.connect(self.modbus_master_param2_changed)
+        self.modbus_master_function_combobox.currentIndexChanged.connect(self.modbus_master_function_changed)
 
         self.hextext = QHexeditWidget(self.text.font())
         self.hextext.hide()
@@ -201,12 +202,38 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.modbus_master_function_combobox.setCurrentIndex(-1)
         self.modbus_master_function_combobox.setCurrentIndex(0)
 
-        self.gui_group_rs485 = [self.rs485_input_label,
+        self.gui_group_rs485 = [self.label_error_overrun_name,
+                                self.label_error_overrun,
+                                self.label_error_parity_name,
+                                self.label_error_parity,
+                                self.label_error_stream_name,
+                                self.label_error_stream,
+                                self.rs485_input_label,
                                 self.rs485_input_combobox,
                                 self.rs485_input_line_ending_combobox,
                                 self.rs485_input_line_ending_lineedit]
 
-        self.gui_group_modbus_master = [self.modbus_master_function_label,
+        self.gui_group_modbus_master = [self.label_error_overrun_name,
+                                        self.label_error_overrun,
+                                        self.label_error_parity_name,
+                                        self.label_error_parity,
+                                        self.label_error_stream_name,
+                                        self.label_error_stream,
+                                        self.label_error_modbus_timeout_name,
+                                        self.label_error_modbus_timeout,
+                                        self.label_error_modbus_checksum_name,
+                                        self.label_error_modbus_checksum,
+                                        self.label_error_modbus_frame_size_name,
+                                        self.label_error_modbus_frame_size,
+                                        self.label_error_modbus_illegal_function_name,
+                                        self.label_error_modbus_illegal_function,
+                                        self.label_error_modbus_illegal_data_address_name,
+                                        self.label_error_modbus_illegal_data_address,
+                                        self.label_error_modbus_illegal_data_value_name,
+                                        self.label_error_modbus_illegal_data_value,
+                                        self.label_error_modbus_slave_device_failure_name,
+                                        self.label_error_modbus_slave_device_failure,
+                                        self.modbus_master_function_label,
                                         self.modbus_master_function_combobox,
                                         self.modbus_master_slave_address_label,
                                         self.modbus_master_slave_address_spinbox,
@@ -218,7 +245,27 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                         self.modbus_master_request_timeout_spinbox,
                                         self.modbus_master_send_button]
 
-        self.gui_group_modbus_slave = [self.modbus_slave_address_label,
+        self.gui_group_modbus_slave = [self.label_error_overrun_name,
+                                       self.label_error_overrun,
+                                       self.label_error_parity_name,
+                                       self.label_error_parity,
+                                       self.label_error_stream_name,
+                                       self.label_error_stream,
+                                       self.label_error_modbus_timeout_name,
+                                       self.label_error_modbus_timeout,
+                                       self.label_error_modbus_checksum_name,
+                                       self.label_error_modbus_checksum,
+                                       self.label_error_modbus_frame_size_name,
+                                       self.label_error_modbus_frame_size,
+                                       self.label_error_modbus_illegal_function_name,
+                                       self.label_error_modbus_illegal_function,
+                                       self.label_error_modbus_illegal_data_address_name,
+                                       self.label_error_modbus_illegal_data_address,
+                                       self.label_error_modbus_illegal_data_value_name,
+                                       self.label_error_modbus_illegal_data_value,
+                                       self.label_error_modbus_slave_device_failure_name,
+                                       self.label_error_modbus_slave_device_failure,
+                                       self.modbus_slave_address_label,
                                        self.modbus_slave_address_spinbox]
 
         self.mode_changed(0)
@@ -271,8 +318,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
                     self.modbus_master_param2_spinbox.setValue(65280)
 
     def master_send_clicked(self):
-        self.rs485.set_modbus_configuration(self.modbus_slave_address_spinbox.value(),
-                                            self.modbus_master_request_timeout_spinbox.value())
+        if self.rs485.get_mode() != self.rs485.MODE_MODBUS_MASTER_RTU:
+            self.popup_fail(MSG_ERR_NOT_MODBUS_MASTER)
+
+            return
 
         if self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_COILS:
             try:
@@ -487,14 +536,14 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
     def mode_changed(self, mode):
         if mode == MODE_RS485:
-            self.toggle_gui_group(self.gui_group_rs485, True)
             self.toggle_gui_group(self.gui_group_modbus_slave, False)
             self.toggle_gui_group(self.gui_group_modbus_master, False)
+            self.toggle_gui_group(self.gui_group_rs485, True)
 
         elif mode == MODE_MODBUS_SLAVE_RTU:
             self.toggle_gui_group(self.gui_group_rs485, False)
-            self.toggle_gui_group(self.gui_group_modbus_slave, True)
             self.toggle_gui_group(self.gui_group_modbus_master, False)
+            self.toggle_gui_group(self.gui_group_modbus_slave, True)
 
         elif mode == MODE_MODBUS_MASTER_RTU:
             self.toggle_gui_group(self.gui_group_rs485, False)
@@ -1044,6 +1093,15 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.label_error_overrun.setText(str(error.overrun_error_count))
         self.label_error_parity.setText(str(error.parity_error_count))
 
+    def cb_error_count_modbus(self, error):
+        self.label_error_modbus_timeout.setText(str(error.timeout_error_count))
+        self.label_error_modbus_checksum.setText(str(error.checksum_error_count))
+        self.label_error_modbus_frame_size.setText(str(error.frame_too_big_error_count))
+        self.label_error_modbus_illegal_function.setText(str(error.illegal_function_error_count))
+        self.label_error_modbus_illegal_data_address.setText(str(error.illegal_data_address_error_count))
+        self.label_error_modbus_illegal_data_value.setText(str(error.illegal_data_value_error_count))
+        self.label_error_modbus_slave_device_failure.setText(str(error.slave_device_failure_error_count))
+
     def get_communication_led_config_async(self, config):
         if config == BrickletRS485.COMMUNICATION_LED_CONFIG_OFF:
             self.com_led_off_action.trigger()
@@ -1075,9 +1133,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
         async_call(self.rs485.get_modbus_configuration, None, self.get_modbus_configuration_async, self.increase_error_count)
         async_call(self.rs485.get_mode, None, self.get_mode_async, self.increase_error_count)
         self.cbe_error_count.set_period(250)
+        self.cbe_error_count_modbus.set_period(250)
 
     def stop(self):
         self.cbe_error_count.set_period(0)
+        self.cbe_error_count_modbus.set_period(0)
         if not self.read_callback_was_enabled:
             try:
                 async_call(self.rs485.disable_read_callback, None, None, None)

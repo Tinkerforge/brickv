@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>718</width>
+    <width>773</width>
     <height>739</height>
    </rect>
   </property>
@@ -500,13 +500,228 @@
    </item>
    <item>
     <widget class="QWidget" name="widget_errors" native="true">
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QGridLayout" name="gridLayout_5">
       <property name="margin">
        <number>0</number>
       </property>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
+      <item row="0" column="0">
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="1" column="4">
+         <widget class="QLabel" name="label_error_modbus_checksum_name">
+          <property name="text">
+           <string>Checksum Errors:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="label_error_modbus_timeout_name">
+          <property name="text">
+           <string>Timeouts:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="9">
+         <spacer name="horizontalSpacer_8">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="3">
+         <spacer name="horizontalSpacer_9">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="7">
+         <widget class="QLabel" name="label_error_modbus_frame_size_name">
+          <property name="text">
+           <string>Frame Size Errors:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="9" colspan="4">
+         <spacer name="horizontalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="11">
+         <widget class="QLabel" name="label_error_modbus_slave_device_failure">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="6">
+         <spacer name="horizontalSpacer_12">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="8">
+         <widget class="QLabel" name="label_error_modbus_frame_size">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="5">
+         <widget class="QLabel" name="label_error_modbus_checksum">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="6">
+         <spacer name="horizontalSpacer_10">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="10">
+         <widget class="QLabel" name="label_error_modbus_slave_device_failure_name">
+          <property name="text">
+           <string>Slave Device Failure:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="label_error_modbus_illegal_function_name">
+          <property name="text">
+           <string>Illegal Function:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLabel" name="label_error_modbus_timeout">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <spacer name="horizontalSpacer_13">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0">
+         <spacer name="horizontalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="12">
+         <spacer name="horizontalSpacer_11">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="4">
+         <widget class="QLabel" name="label_error_modbus_illegal_data_address_name">
+          <property name="text">
+           <string>Illegal Data Address:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLabel" name="label_error_modbus_illegal_function">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="8">
+         <widget class="QLabel" name="label_error_modbus_illegal_data_value">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="5">
+         <widget class="QLabel" name="label_error_modbus_illegal_data_address">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="7">
+         <widget class="QLabel" name="label_error_modbus_illegal_data_value_name">
+          <property name="text">
+           <string>Illegal Data Value:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <spacer name="horizontalSpacer_7">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="0">
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -519,21 +734,21 @@
           </property>
          </spacer>
         </item>
-        <item>
-         <widget class="QLabel" name="label_9">
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_error_overrun_name">
           <property name="text">
            <string>Overrun Error Count:</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="2">
          <widget class="QLabel" name="label_error_overrun">
           <property name="text">
            <string>0</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="3">
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -546,21 +761,21 @@
           </property>
          </spacer>
         </item>
-        <item>
-         <widget class="QLabel" name="label_11">
+        <item row="0" column="4">
+         <widget class="QLabel" name="label_error_parity_name">
           <property name="text">
            <string>Parity Error Count:</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="5">
          <widget class="QLabel" name="label_error_parity">
           <property name="text">
            <string>0</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="6">
          <spacer name="horizontalSpacer_3">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -573,21 +788,21 @@
           </property>
          </spacer>
         </item>
-        <item>
-         <widget class="QLabel" name="label_5">
+        <item row="0" column="7">
+         <widget class="QLabel" name="label_error_stream_name">
           <property name="text">
            <string>Stream Error Count:</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="8">
          <widget class="QLabel" name="label_error_stream">
           <property name="text">
            <string>0</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="9" colspan="4">
          <spacer name="horizontalSpacer_4">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
