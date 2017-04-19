@@ -54,8 +54,7 @@ MODBUS_EXCEPTION_REQUEST_TIMEOUT = -1
 MSG_ERR_REQUEST_PROCESS = "Failed to process the request"
 
 class RS485(COMCUPluginBase, Ui_RS485):
-    qtcb_read = pyqtSignal(object, int)
-    qtcb_error = pyqtSignal(int)
+    qtcb_read = pyqtSignal(int, object)
 
     # Modbus specific.
     qtcb_modbus_slave_read_coils_request = pyqtSignal(int, int, int)
@@ -196,6 +195,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.error_overrun = 0
         self.error_parity = 0
+        self.error_stream_oos = 0
         self.last_char = ''
 
         self.modbus_master_function_combobox.setCurrentIndex(-1)
@@ -503,7 +503,14 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.configuration_changed()
 
-    def cb_read(self, data):
+    def cb_read(self, stream_status, data):
+        if stream_status == self.rs485.STREAM_STATUS_OUT_OF_SYNC:
+            # Increase stream error counter
+            self.error_stream_oos = self.error_stream_oos + 1
+            self.label_error_stream.setText(str(self.error_stream_oos))
+
+            return
+
         s = ''.join(data)
 
         self.hextext.appendData(s)
@@ -560,6 +567,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                              exception_code,
                                              stream_status,
                                              data):
+        if stream_status == self.rs485.STREAM_STATUS_OUT_OF_SYNC:
+            # Increase stream error counter
+            self.error_stream_oos = self.error_stream_oos + 1
+            self.label_error_stream.setText(str(self.error_stream_oos))
+
         if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
             a = 'READ COILS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
@@ -611,6 +623,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                          exception_code,
                                                          stream_status,
                                                          data):
+        if stream_status == self.rs485.STREAM_STATUS_OUT_OF_SYNC:
+            # Increase stream error counter
+            self.error_stream_oos = self.error_stream_oos + 1
+            self.label_error_stream.setText(str(self.error_stream_oos))
+
         if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
             a = 'READ HOLDING REGISTERS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
@@ -719,6 +736,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                      count,
                                                      stream_status,
                                                      data):
+        if stream_status == self.rs485.STREAM_STATUS_OUT_OF_SYNC:
+            # Increase stream error counter
+            self.error_stream_oos = self.error_stream_oos + 1
+            self.label_error_stream.setText(str(self.error_stream_oos))
 
         a = 'WRITE MULTIPLE COILS REQUEST: ' + \
             'REQUEST ID=' + \
@@ -766,6 +787,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                          count,
                                                          stream_status,
                                                          data):
+
+        if stream_status == self.rs485.STREAM_STATUS_OUT_OF_SYNC:
+            # Increase stream error counter
+            self.error_stream_oos = self.error_stream_oos + 1
+            self.label_error_stream.setText(str(self.error_stream_oos))
 
         a = 'WRITE MULTIPLE REGISTERS REQUEST: ' + \
             'REQUEST ID=' + \
@@ -836,6 +862,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                        exception_code,
                                                        stream_status,
                                                        data):
+        if stream_status == self.rs485.STREAM_STATUS_OUT_OF_SYNC:
+            # Increase stream error counter
+            self.error_stream_oos = self.error_stream_oos + 1
+            self.label_error_stream.setText(str(self.error_stream_oos))
+
         if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
             a = 'READ DISCRETE INPUTS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
@@ -887,6 +918,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                        exception_code,
                                                        stream_status,
                                                        data):
+        if stream_status == self.rs485.STREAM_STATUS_OUT_OF_SYNC:
+            # Increase stream error counter
+            self.error_stream_oos = self.error_stream_oos + 1
+            self.label_error_stream.setText(str(self.error_stream_oos))
+
         if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
             a = 'READ DISCRETE REGISTERS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
