@@ -57,7 +57,6 @@ class XMC1400Breakout(COMCUPluginBase, Ui_XMC1400Breakout):
 
         self.xmc1400_breakout = self.device
 
-
     def start(self):
         pass
 
@@ -72,5 +71,4 @@ class XMC1400Breakout(COMCUPluginBase, Ui_XMC1400Breakout):
 
     @staticmethod
     def has_device_identifier(device_identifier):
-        print(device_identifier)
         return device_identifier == BrickletXMC1400Breakout.DEVICE_IDENTIFIER
