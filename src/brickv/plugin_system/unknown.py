@@ -36,15 +36,24 @@ class Unknown(PluginBase):
 
         layout = QVBoxLayout()
         layout.addStretch()
-        label = QLabel("""The Brick or Bricklet with
+        label = QLabel("""The {6} with
+
    * device ID {0},
    * UID {1},
    * position {2},
    * firmware version {3}.{4}.{5}
+
 is not yet supported.
 
-Please update Brick Viewer!""".format(info.device_identifier, info.uid, info.position, info.firmware_version_installed[0], info.firmware_version_installed[1], info.firmware_version_installed[2]))
-#        label.setAlignment(Qt.AlignHCenter)
+Please update Brick Viewer!""".format(info.device_identifier,
+                                      info.uid,
+                                      info.position,
+                                      info.firmware_version_installed[0],
+                                      info.firmware_version_installed[1],
+                                      info.firmware_version_installed[2],
+                                      'Brick' if str(info.device_identifier).startswith('1') else 'Bricklet'))
+
+        #label.setAlignment(Qt.AlignHCenter)
         layout.addWidget(label)
         layout.addStretch()
 
