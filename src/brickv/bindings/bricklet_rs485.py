@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-04-18.      #
+# This file was automatically generated on 2017-04-20.      #
 #                                                           #
 # Python Bindings Version 2.1.11                            #
 #                                                           #
@@ -508,7 +508,8 @@ class BrickletRS485(Device):
 
     def modbus_master_read_coils(self, slave_address, starting_address, count):
         """
-        In Modbus master mode this function can be used to read coils from a slave.
+        In Modbus master mode this function can be used to read coils from a slave. This
+        function creates a Modbus function code 1 request.
 
         * Slave Address: Address of the target Modbus slave.
         * Starting Address: Starting address of the read.
@@ -541,6 +542,7 @@ class BrickletRS485(Device):
     def modbus_master_read_holding_registers(self, slave_address, starting_address, count):
         """
         In Modbus master mode this function can be used to read holding registers from a slave.
+        This function creates a Modbus function code 3 request.
 
         * Slave Address: Address of the target Modbus slave.
         * Starting Address: Starting address of the read.
@@ -573,6 +575,7 @@ class BrickletRS485(Device):
     def modbus_master_write_single_coil(self, slave_address, coil_address, coil_value):
         """
         In Modbus master mode this function can be used to write a single coil of a slave.
+        This function creates a Modbus function code 5 request.
 
         * Slave Address: Address of the target Modbus slave.
         * Coil Address: Address of the coil.
@@ -605,7 +608,7 @@ class BrickletRS485(Device):
     def modbus_master_write_single_register(self, slave_address, register_address, register_value):
         """
         In Modbus master mode this function can be used to write a single register of a
-        slave.
+        slave. This function creates a Modbus function code 6 request.
 
         * Slave Address: Address of the target Modbus slave.
         * Register Address: Address of the register.
@@ -635,9 +638,10 @@ class BrickletRS485(Device):
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_MULTIPLE_COILS_REQUEST, (request_id,), 'B', '')
 
-    def modbus_master_write_multiple_coils_low_level(self, slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data):
+    def modbus_master_write_multiple_coils_low_level(self, slave_address, starting_address, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
         In Modbus master mode this function can be used to write multiple coils of a slave.
+        This function creates a Modbus function code 15 request.
 
         * Slave Address: Address of the target Modbus slave.
         * Starting Address: Starting address of the write.
@@ -652,7 +656,7 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_MULTIPLE_COILS_LOW_LEVEL, (slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H H H 432!', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_MULTIPLE_COILS_LOW_LEVEL, (slave_address, starting_address, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H H 432!', 'B')
 
     def modbus_slave_answer_write_multiple_registers_request(self, request_id):
         """
@@ -667,9 +671,10 @@ class BrickletRS485(Device):
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_MULTIPLE_REGISTERS_REQUEST, (request_id,), 'B', '')
 
-    def modbus_master_write_multiple_registers_low_level(self, slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data):
+    def modbus_master_write_multiple_registers_low_level(self, slave_address, starting_address, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
         In Modbus master mode this function can be used to write multiple registers of a slave.
+        This function creates a Modbus function code 16 request.
 
         * Slave Address: Address of the target Modbus slave.
         * Starting Address: Starting Address of the write.
@@ -684,7 +689,7 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_MULTIPLE_REGISTERS_LOW_LEVEL, (slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H H H 27H', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_MULTIPLE_REGISTERS_LOW_LEVEL, (slave_address, starting_address, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H H 27H', 'B')
 
     def modbus_slave_answer_read_discrete_inputs_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
@@ -702,6 +707,7 @@ class BrickletRS485(Device):
     def modbus_master_read_discrete_inputs(self, slave_address, starting_address, count):
         """
         In Modbus master mode this function can be used to read discrete inputs from a slave.
+        This function creates a Modbus function code 2 request.
 
         * Slave Address: Address of the target Modbus slave.
         * Starting Address: Starting address of the read.
@@ -734,6 +740,7 @@ class BrickletRS485(Device):
     def modbus_master_read_input_registers(self, slave_address, starting_address, count):
         """
         In Modbus master mode this function can be used to read input registers from a slave.
+        This function creates a Modbus function code 4 request.
 
         * Slave Address: Address of the target Modbus slave.
         * Starting Address: Starting address of the read.
@@ -1005,7 +1012,7 @@ class BrickletRS485(Device):
 
         return stream_result
 
-    def modbus_master_write_multiple_coils(self, slave_address, starting_address, count, data):
+    def modbus_master_write_multiple_coils(self, slave_address, starting_address, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
         stream_result = None
@@ -1018,13 +1025,13 @@ class BrickletRS485(Device):
                     stream_chunk_data.extend([False]*(432 - len(stream_chunk_data)))
 
                 # FIXME: validate that the result of all the low-level calls is identical
-                stream_result = self.modbus_master_write_multiple_coils_low_level(slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data)
+                stream_result = self.modbus_master_write_multiple_coils_low_level(slave_address, starting_address, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
                 stream_chunk_offset += 432
 
         return stream_result
 
-    def modbus_master_write_multiple_registers(self, slave_address, starting_address, count, data):
+    def modbus_master_write_multiple_registers(self, slave_address, starting_address, data):
         stream_total_length = len(data)
         stream_chunk_offset = 0
         stream_result = None
@@ -1037,7 +1044,7 @@ class BrickletRS485(Device):
                     stream_chunk_data.extend([0]*(27 - len(stream_chunk_data)))
 
                 # FIXME: validate that the result of all the low-level calls is identical
-                stream_result = self.modbus_master_write_multiple_registers_low_level(slave_address, starting_address, count, stream_total_length, stream_chunk_offset, stream_chunk_data)
+                stream_result = self.modbus_master_write_multiple_registers_low_level(slave_address, starting_address, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
                 stream_chunk_offset += 27
 
