@@ -49,8 +49,6 @@ MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS = 5
 MODBUS_F_IDX_READ_DISCRETE_INPUTS = 6
 MODBUS_F_IDX_READ_INPUT_REGISTERS = 7
 
-MODBUS_EXCEPTION_REQUEST_TIMEOUT = -1
-
 MSG_ERR_REQUEST_PROCESS = "Failed to process the request"
 MSG_ERR_NOT_MODBUS_MASTER = "The Bricklet needs to be in Modbus master mode to perform this operation"
 
@@ -619,9 +617,37 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.error_stream_oos = self.error_stream_oos + 1
             self.label_error_stream.setText(str(self.error_stream_oos))
 
-        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+            a = 'READ COILS RESPONSE: ' + \
+                'STREAM OUT OF SYNC' + \
+                '\n\n'
+
+            self.text.moveCursor(QTextCursor.End)
+            self.text.insertPlainText(a)
+            self.text.moveCursor(QTextCursor.End)
+
+            self.modbus_master_send_button.setEnabled(True)
+
+            return
+
+        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
             a = 'READ COILS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
+            a = 'READ COILS RESPONSE: ' + \
+                'RECEIVED ILLEGAL FUNCTION CODE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
+            a = 'READ COILS RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA ADDRESS' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
+            a = 'READ COILS RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA VALUE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
+            a = 'READ COILS RESPONSE: ' + \
+                'SLAVE DEVICE FAILURE' + \
                 '\n\n'
         else:
             a = 'READ COILS RESPONSE: ' + \
@@ -675,9 +701,37 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.error_stream_oos = self.error_stream_oos + 1
             self.label_error_stream.setText(str(self.error_stream_oos))
 
-        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+            a = 'READ HOLDING REGISTERS RESPONSE: ' + \
+                'STREAM OUT OF SYNC' + \
+                '\n\n'
+
+            self.text.moveCursor(QTextCursor.End)
+            self.text.insertPlainText(a)
+            self.text.moveCursor(QTextCursor.End)
+
+            self.modbus_master_send_button.setEnabled(True)
+
+            return
+
+        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
             a = 'READ HOLDING REGISTERS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
+            a = 'READ HOLDING REGISTERS RESPONSE: ' + \
+                'RECEIVED ILLEGAL FUNCTION CODE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
+            a = 'READ HOLDING REGISTERS RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA ADDRESS' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
+            a = 'READ HOLDING REGISTERS RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA VALUE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
+            a = 'READ HOLDING REGISTERS RESPONSE: ' + \
+                'SLAVE DEVICE FAILURE' + \
                 '\n\n'
         else:
             a = 'READ HOLDING REGISTERS RESPONSE: ' + \
@@ -719,9 +773,25 @@ class RS485(COMCUPluginBase, Ui_RS485):
     def cb_modbus_master_write_single_coil_response(self,
                                                     request_id,
                                                     exception_code):
-        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
             a = 'WRITE SINGLE COIL RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
+            a = 'WRITE SINGLE COIL RESPONSE: ' + \
+                'RECEIVED ILLEGAL FUNCTION CODE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
+            a = 'WRITE SINGLE COIL RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA ADDRESS' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
+            a = 'WRITE SINGLE COIL RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA VALUE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
+            a = 'WRITE SINGLE COIL RESPONSE: ' + \
+                'SLAVE DEVICE FAILURE' + \
                 '\n\n'
         else:
             a = 'WRITE SINGLE COIL RESPONSE: ' + \
@@ -759,9 +829,25 @@ class RS485(COMCUPluginBase, Ui_RS485):
     def cb_modbus_master_write_single_register_response(self,
                                                         request_id,
                                                         exception_code):
-        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
             a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
+            a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
+                'RECEIVED ILLEGAL FUNCTION CODE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
+            a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA ADDRESS' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
+            a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA VALUE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
+            a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
+                'SLAVE DEVICE FAILURE' + \
                 '\n\n'
         else:
             a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
@@ -810,9 +896,25 @@ class RS485(COMCUPluginBase, Ui_RS485):
     def cb_modbus_master_write_multiple_coils_response(self,
                                                        request_id,
                                                        exception_code):
-        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
             a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
+            a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
+                'RECEIVED ILLEGAL FUNCTION CODE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
+            a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA ADDRESS' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
+            a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA VALUE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
+            a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
+                'SLAVE DEVICE FAILURE' + \
                 '\n\n'
         else:
             a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
@@ -862,9 +964,25 @@ class RS485(COMCUPluginBase, Ui_RS485):
     def cb_modbus_master_write_multiple_registers_response(self,
                                                            request_id,
                                                            exception_code):
-        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
             a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
+            a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
+                'RECEIVED ILLEGAL FUNCTION CODE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
+            a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA ADDRESS' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
+            a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA VALUE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
+            a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
+                'SLAVE DEVICE FAILURE' + \
                 '\n\n'
         else:
             a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
@@ -914,9 +1032,37 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.error_stream_oos = self.error_stream_oos + 1
             self.label_error_stream.setText(str(self.error_stream_oos))
 
-        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
+            a = 'READ DISCRETE INPUTS RESPONSE: ' + \
+                'STREAM OUT OF SYNC' + \
+                '\n\n'
+
+            self.text.moveCursor(QTextCursor.End)
+            self.text.insertPlainText(a)
+            self.text.moveCursor(QTextCursor.End)
+
+            self.modbus_master_send_button.setEnabled(True)
+
+            return
+
+        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
             a = 'READ DISCRETE INPUTS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
+            a = 'READ DISCRETE INPUTS RESPONSE: ' + \
+                'RECEIVED ILLEGAL FUNCTION CODE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
+            a = 'READ DISCRETE INPUTS RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA ADDRESS' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
+            a = 'READ DISCRETE INPUTS RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA VALUE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
+            a = 'READ DISCRETE INPUTS RESPONSE: ' + \
+                'SLAVE DEVICE FAILURE' + \
                 '\n\n'
         else:
             a = 'READ DISCRETE INPUTS RESPONSE: ' + \
@@ -970,9 +1116,37 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.error_stream_oos = self.error_stream_oos + 1
             self.label_error_stream.setText(str(self.error_stream_oos))
 
-        if exception_code == MODBUS_EXCEPTION_REQUEST_TIMEOUT:
-            a = 'READ DISCRETE REGISTERS RESPONSE: ' + \
+            a = 'READ INPUT REGISTERS RESPONSE: ' + \
+                'STREAM OUT OF SYNC' + \
+                '\n\n'
+
+            self.text.moveCursor(QTextCursor.End)
+            self.text.insertPlainText(a)
+            self.text.moveCursor(QTextCursor.End)
+
+            self.modbus_master_send_button.setEnabled(True)
+
+            return
+
+        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
+            a = 'READ INPUT REGISTERS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
+            a = 'READ INPUT REGISTERS RESPONSE: ' + \
+                'RECEIVED ILLEGAL FUNCTION CODE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
+            a = 'READ INPUT REGISTERS RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA ADDRESS' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
+            a = 'READ INPUT REGISTERS RESPONSE: ' + \
+                'RECEIVED ILLEGAL DATA VALUE' + \
+                '\n\n'
+        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
+            a = 'READ INPUT REGISTERS RESPONSE: ' + \
+                'SLAVE DEVICE FAILURE' + \
                 '\n\n'
         else:
             a = 'READ INPUT REGISTERS RESPONSE: ' + \
