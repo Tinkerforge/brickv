@@ -549,7 +549,7 @@
         <item row="1" column="7">
          <widget class="QLabel" name="label_error_modbus_frame_size_name">
           <property name="text">
-           <string>Frame Size Errors:</string>
+           <string>Max Frame Size Errors:</string>
           </property>
          </widget>
         </item>
