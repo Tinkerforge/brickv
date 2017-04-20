@@ -401,7 +401,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
             try:
                 rid = self.rs485.modbus_master_write_multiple_coils(self.modbus_master_slave_address_spinbox.value(),
                                                                     self.modbus_master_param1_spinbox.value(),
-                                                                    self.modbus_master_param2_spinbox.value(),
                                                                     data)
             except Exception as e:
                 self.popup_fail(str(e))
@@ -423,7 +422,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
             try:
                 rid = self.rs485.modbus_master_write_multiple_registers(self.modbus_master_slave_address_spinbox.value(),
                                                                         self.modbus_master_param1_spinbox.value(),
-                                                                        self.modbus_master_param2_spinbox.value(),
                                                                         data)
             except Exception as e:
                 self.popup_fail(str(e))
