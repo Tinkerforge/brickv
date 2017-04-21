@@ -1009,7 +1009,7 @@ class RED(PluginBase, Ui_RED):
 
         actions = []
 
-        for param, name in enumerate(['Restart Brick Daemon', 'Reboot RED Brick', 'Shut down RED Brick', 'Update Tinkerforge Software']):
+        for param, name in enumerate(['Restart Brick Daemon', 'Reboot RED Brick', 'Shut down RED Brick']):# FIXME: disabled for now'Update Tinkerforge Software'
             action = QAction(name, self)
             action.triggered.connect(functools.partial(self.perform_action, param))
             actions.append(action)
