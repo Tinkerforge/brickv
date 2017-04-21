@@ -28,7 +28,7 @@ import traceback
 from PyQt4.QtGui import QWidget
 
 from brickv.bindings.ip_connection import IPConnection
-from brickv.bindings.bricklet_gps_v2 import GPSV2
+#from brickv.bindings.bricklet_gps_v2 import GPSV2
 
 class PluginBase(QWidget, object):
     PLUGIN_STATE_STOPPED = 0
@@ -66,8 +66,8 @@ class PluginBase(QWidget, object):
             # To be able to do this we instanciate the GPSV2 class. It has all of the
             # functions necessary to flash (the FIDs are at the same position for all
             # new Bricklets) and no other function is used during flashing.
-            if override_base_name == 'Unknown':
-                self.device = GPSV2(self.uid, self.ipcon)
+            #if override_base_name == 'Unknown':
+            #    self.device = GPSV2(self.uid, self.ipcon)
 
         if self.is_hardware_version_relevant():
             self.name = '{0} {1}.{2}'.format(self.base_name,
