@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-04-20.      #
+# This file was automatically generated on 2017-04-21.      #
 #                                                           #
-# Python Bindings Version 2.1.11                            #
+# Python Bindings Version 2.1.12                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -290,7 +290,9 @@ class BrickletRS485(Device):
         Returns up to *length* characters from receive buffer.
 
         Instead of polling with this function, you can also use
-        callbacks. See :func:`Enable Read Callback` and :cb:`Read` callback.
+        callbacks. But note that this function will return available
+        data only when the read callback is disabled.
+        See :func:`Enable Read Callback` and :cb:`Read` callback.
         """
         return ReadLowLevel(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_READ_LOW_LEVEL, (length,), 'H', 'H H 60c'))
 
