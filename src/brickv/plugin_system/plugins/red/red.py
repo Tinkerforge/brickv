@@ -209,7 +209,7 @@ Please make sure that your internet connection is working.'
                                        self.update_info['temp_dir'],
                                        posixpath.join(self.update_info['temp_dir'], 'brickv_linux_latest.deb'))
 
-            for d in self.update_info['bindings']:
+            for d in sorted(self.update_info['bindings'], key=lambda d: d['name']):
                 if not d['update']:
                     continue
 
@@ -506,7 +506,7 @@ Please make sure that your internet connection is working.'
         if self.update_info['brickv']['update']:
             msg += self.FMT_LI.format('Brick Viewer', self.update_info['brickv']['from'], self.update_info['brickv']['to'])
 
-        for d in self.update_info['bindings']:
+        for d in sorted(self.update_info['bindings'], key=lambda d: d['name']):
             if not d['update']:
                 continue
 
