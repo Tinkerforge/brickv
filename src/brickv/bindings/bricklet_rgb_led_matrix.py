@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-03-23.      #
+# This file was automatically generated on 2017-04-21.      #
 #                                                           #
-# Python Bindings Version 2.1.11                            #
+# Python Bindings Version 2.1.12                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #

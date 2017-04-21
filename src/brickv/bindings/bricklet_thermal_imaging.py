@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-04-13.      #
+# This file was automatically generated on 2017-04-21.      #
 #                                                           #
-# Python Bindings Version 2.1.11                            #
+# Python Bindings Version 2.1.12                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -352,6 +352,7 @@ class BrickletThermalImaging(Device):
                 stream_data = stream_result.stream_chunk_data
 
             if stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA:
+                # FIXME: return and empty list or None instead of this exception
                 raise Error(Error.STREAM_NO_DATA, 'Stream has no data')
             elif stream_chunk_offset != 0: # stream out-of-sync
                 # discard remaining stream to bring it back in-sync
@@ -404,6 +405,7 @@ class BrickletThermalImaging(Device):
                 stream_data = stream_result.stream_chunk_data
 
             if stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA:
+                # FIXME: return and empty list or None instead of this exception
                 raise Error(Error.STREAM_NO_DATA, 'Stream has no data')
             elif stream_chunk_offset != 0: # stream out-of-sync
                 # discard remaining stream to bring it back in-sync

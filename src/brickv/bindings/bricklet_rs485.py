@@ -941,6 +941,7 @@ class BrickletRS485(Device):
                 stream_data = stream_result.stream_chunk_data
 
             if stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA:
+                # FIXME: return and empty list or None instead of this exception
                 raise Error(Error.STREAM_NO_DATA, 'Stream has no data')
             elif stream_chunk_offset != 0: # stream out-of-sync
                 # discard remaining stream to bring it back in-sync

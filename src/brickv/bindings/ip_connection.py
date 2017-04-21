@@ -91,7 +91,7 @@ class Error(Exception):
     INVALID_PARAMETER = -9
     NOT_SUPPORTED = -10
     UNKNOWN_ERROR_CODE = -11
-    STREAM_NO_DATA = -12
+    STREAM_NO_DATA = -12 # FIXME: remove this error code
     STREAM_OUT_OF_SYNC = -13
 
     def __init__(self, value, description):
