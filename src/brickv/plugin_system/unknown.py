@@ -38,16 +38,16 @@ class Unknown(PluginBase):
         layout.addStretch()
         label = QLabel("""The {6} with
 
-   * device ID {0},
-   * UID {1},
-   * position {2},
-   * firmware version {3}.{4}.{5}
+   * Device Identifier: {0}
+   * UID: {1}
+   * Position: {2}
+   * FW Version: {3}.{4}.{5}
 
 is not yet supported.
 
 Please update Brick Viewer!""".format(info.device_identifier,
                                       info.uid,
-                                      info.position,
+                                      info.position.upper(),
                                       info.firmware_version_installed[0],
                                       info.firmware_version_installed[1],
                                       info.firmware_version_installed[2],
