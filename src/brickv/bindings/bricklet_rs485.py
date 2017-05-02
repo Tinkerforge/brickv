@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-04-21.      #
+# This file was automatically generated on 2017-04-24.      #
 #                                                           #
 # Python Bindings Version 2.1.12                            #
 #                                                           #
@@ -887,15 +887,15 @@ class BrickletRS485(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def write(self, data):
+    def write(self, message):
         stream_extra = ()
         stream_total_written = 0
-        stream_total_length = len(data)
+        stream_total_length = len(message)
         stream_chunk_offset = 0
 
         with self.stream_lock:
             while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 59]
+                stream_chunk_data = message[stream_chunk_offset:stream_chunk_offset + 59]
 
                 if len(stream_chunk_data) < 59:
                     stream_chunk_data.extend(['\x00']*(59 - len(stream_chunk_data)))
@@ -975,14 +975,14 @@ class BrickletRS485(Device):
         else:
             return stream_data[:stream_total_length]
 
-    def modbus_slave_answer_read_coils_request(self, request_id, data):
-        stream_total_length = len(data)
+    def modbus_slave_answer_read_coils_request(self, request_id, coils):
+        stream_total_length = len(coils)
         stream_chunk_offset = 0
         stream_result = None
 
         with self.stream_lock:
             while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 472]
+                stream_chunk_data = coils[stream_chunk_offset:stream_chunk_offset + 472]
 
                 if len(stream_chunk_data) < 472:
                     stream_chunk_data.extend([False]*(472 - len(stream_chunk_data)))
@@ -994,14 +994,14 @@ class BrickletRS485(Device):
 
         return stream_result
 
-    def modbus_slave_answer_read_holding_registers_request(self, request_id, data):
-        stream_total_length = len(data)
+    def modbus_slave_answer_read_holding_registers_request(self, request_id, holding_registers):
+        stream_total_length = len(holding_registers)
         stream_chunk_offset = 0
         stream_result = None
 
         with self.stream_lock:
             while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 29]
+                stream_chunk_data = holding_registers[stream_chunk_offset:stream_chunk_offset + 29]
 
                 if len(stream_chunk_data) < 29:
                     stream_chunk_data.extend([0]*(29 - len(stream_chunk_data)))
@@ -1013,14 +1013,14 @@ class BrickletRS485(Device):
 
         return stream_result
 
-    def modbus_master_write_multiple_coils(self, slave_address, starting_address, data):
-        stream_total_length = len(data)
+    def modbus_master_write_multiple_coils(self, slave_address, starting_address, coils):
+        stream_total_length = len(coils)
         stream_chunk_offset = 0
         stream_result = None
 
         with self.stream_lock:
             while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 432]
+                stream_chunk_data = coils[stream_chunk_offset:stream_chunk_offset + 432]
 
                 if len(stream_chunk_data) < 432:
                     stream_chunk_data.extend([False]*(432 - len(stream_chunk_data)))
@@ -1032,14 +1032,14 @@ class BrickletRS485(Device):
 
         return stream_result
 
-    def modbus_master_write_multiple_registers(self, slave_address, starting_address, data):
-        stream_total_length = len(data)
+    def modbus_master_write_multiple_registers(self, slave_address, starting_address, registers):
+        stream_total_length = len(registers)
         stream_chunk_offset = 0
         stream_result = None
 
         with self.stream_lock:
             while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 27]
+                stream_chunk_data = registers[stream_chunk_offset:stream_chunk_offset + 27]
 
                 if len(stream_chunk_data) < 27:
                     stream_chunk_data.extend([0]*(27 - len(stream_chunk_data)))
@@ -1051,14 +1051,14 @@ class BrickletRS485(Device):
 
         return stream_result
 
-    def modbus_slave_answer_read_discrete_inputs_request(self, request_id, data):
-        stream_total_length = len(data)
+    def modbus_slave_answer_read_discrete_inputs_request(self, request_id, discrete_inputs):
+        stream_total_length = len(discrete_inputs)
         stream_chunk_offset = 0
         stream_result = None
 
         with self.stream_lock:
             while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 472]
+                stream_chunk_data = discrete_inputs[stream_chunk_offset:stream_chunk_offset + 472]
 
                 if len(stream_chunk_data) < 472:
                     stream_chunk_data.extend([False]*(472 - len(stream_chunk_data)))
@@ -1070,14 +1070,14 @@ class BrickletRS485(Device):
 
         return stream_result
 
-    def modbus_slave_answer_read_input_registers_request(self, request_id, data):
-        stream_total_length = len(data)
+    def modbus_slave_answer_read_input_registers_request(self, request_id, input_registers):
+        stream_total_length = len(input_registers)
         stream_chunk_offset = 0
         stream_result = None
 
         with self.stream_lock:
             while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + 29]
+                stream_chunk_data = input_registers[stream_chunk_offset:stream_chunk_offset + 29]
 
                 if len(stream_chunk_data) < 29:
                     stream_chunk_data.extend([0]*(29 - len(stream_chunk_data)))
