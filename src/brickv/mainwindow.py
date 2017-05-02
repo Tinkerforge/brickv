@@ -451,6 +451,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         info_bars[0].addWidget(label_version_name)
         info_bars[0].addWidget(label_version)
+        info_bars[0].addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Preferred))
+
+        # timeouts
+        info_bars[0].addWidget(QLabel('Timeouts:'))
+
+        label_timeouts = QLabel('0')
+
+        info_bars[0].addWidget(label_timeouts)
         info_bars[0].addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
         # connected uid
@@ -467,14 +475,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # position
         info_bars[1].addWidget(QLabel('Position:'))
         info_bars[1].addWidget(QLabel('{0}'.format(device_info.position.upper())))
-        info_bars[1].addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Preferred))
-
-        # timeouts
-        info_bars[1].addWidget(QLabel('Timeouts:'))
-
-        label_timeouts = QLabel('0')
-
-        info_bars[1].addWidget(label_timeouts)
         info_bars[1].addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
         # configs
