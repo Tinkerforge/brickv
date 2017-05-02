@@ -657,7 +657,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if device_info.type == 'bricklet':
                 for brick_info in infos.get_brick_infos():
                     if brick_info.uid == device_info.connected_uid:
-                        if brick_info.bricklets[position] != device_info:
+                        if position in brick_info.bricklets and brick_info.bricklets[position] != device_info:
                             brick_info.bricklets[position] = device_info
                             something_changed_ref[0] = True
             elif device_info.type == 'brick':
