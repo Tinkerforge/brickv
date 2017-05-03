@@ -293,7 +293,7 @@ class SAMBA(object):
 
         return uid2 << 32 | uid1
 
-    def flash(self, firmware, imu_calibration, lock_imu_calibration_pages):
+    def flash(self, firmware, imu_calibration, lock_imu_calibration_pages, reboot=True):
         # Split firmware into pages
         firmware_pages = []
         offset = 0
@@ -386,11 +386,12 @@ class SAMBA(object):
         self.write_flash_command(EEFC_FCR_FCMD_SGPB, 1)
         self.wait_for_flash_ready('after setting Boot-from-Flash flag', sgpb=True)
 
-        # Boot
-        try:
-            self.reset()
-        except SAMBAException as e:
-            raise SAMBARebootError(str(e))
+        # Reboot
+        if reboot:
+            try:
+                self.reset()
+            except SAMBAException as e:
+                raise SAMBARebootError(str(e))
 
     def reset_progress(self, title, length):
         if self.progress != None:
