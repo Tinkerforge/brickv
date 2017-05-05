@@ -369,3 +369,4 @@
 
 <unknown>: 2.3.9 (<unknown>)
 - Add update mechanism for API bindings and Brick Viewer on RED Brick
+- Add check box for setting of WIFI password (old pw is not returned anymore)
