@@ -57,21 +57,21 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
     # Modbus specific.
     qtcb_modbus_slave_read_coils_request = pyqtSignal(int, int, int)
-    qtcb_modbus_master_read_coils_response = pyqtSignal(int, int, int, object)
+    qtcb_modbus_master_read_coils_response = pyqtSignal(int, int, object)
     qtcb_modbus_slave_read_holding_registers_request = pyqtSignal(int, int, int)
-    qtcb_modbus_master_read_holding_registers_response = pyqtSignal(int, int, int, object)
+    qtcb_modbus_master_read_holding_registers_response = pyqtSignal(int, int, object)
     qtcb_modbus_slave_write_single_coil_request = pyqtSignal(int, int, int)
     qtcb_modbus_master_write_single_coil_response = pyqtSignal(int, int)
     qtcb_modbus_slave_write_single_register_request = pyqtSignal(int, int, int)
     qtcb_modbus_master_write_single_register_response = pyqtSignal(int, int)
-    qtcb_modbus_slave_write_multiple_coils_request = pyqtSignal(int, int, int, int, object)
+    qtcb_modbus_slave_write_multiple_coils_request = pyqtSignal(int, int, int, object)
     qtcb_modbus_master_write_multiple_coils_response = pyqtSignal(int, int)
-    qtcb_modbus_slave_write_multiple_registers_request = pyqtSignal(int, int, int, int, object)
+    qtcb_modbus_slave_write_multiple_registers_request = pyqtSignal(int, int, int, object)
     qtcb_modbus_master_write_multiple_registers_response = pyqtSignal(int, int)
     qtcb_modbus_slave_read_discrete_inputs_request = pyqtSignal(int, int, int)
-    qtcb_modbus_master_read_discrete_inputs_response = pyqtSignal(int, int, int, object)
+    qtcb_modbus_master_read_discrete_inputs_response = pyqtSignal(int, int, object)
     qtcb_modbus_slave_read_input_registers_request = pyqtSignal(int, int, int)
-    qtcb_modbus_master_read_input_registers_response = pyqtSignal(int, int, int, object)
+    qtcb_modbus_master_read_input_registers_response = pyqtSignal(int, int, object)
 
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletRS485, *args)
@@ -295,6 +295,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                   self.error_led_on_action,
                                                   self.error_led_show_heartbeat_action,
                                                   self.error_led_show_error_action])]
+
+    def append_text(self, text):
+        self.text.moveCursor(QTextCursor.End)
+        self.text.insertPlainText(text)
+        self.text.moveCursor(QTextCursor.End)
 
     def popup_ok(self, msg):
         QMessageBox.information(get_main_window(), self.device_info.name, msg)
@@ -548,15 +553,15 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.configuration_changed()
 
-    def cb_read(self, stream_status, data):
-        if stream_status == self.rs485.STREAM_STATUS_OUT_OF_SYNC:
+    def cb_read(self, message):
+        if message == None:
             # Increase stream error counter
             self.error_stream_oos = self.error_stream_oos + 1
             self.label_error_stream.setText(str(self.error_stream_oos))
 
             return
 
-        s = ''.join(data)
+        s = ''.join(message)
 
         self.hextext.appendData(s)
 
@@ -582,9 +587,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
             else:
                 ascii += c
 
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(ascii)
-        self.text.moveCursor(QTextCursor.End)
+        self.append_text(ascii)
 
     def cb_modbus_slave_read_coils_request(self, request_id, starting_address, count):
         a = 'READ COILS REQUEST: ' + \
@@ -602,17 +605,13 @@ class RS485(COMCUPluginBase, Ui_RS485):
             data.append(random.randint(0, 1) == 1)
 
         self.rs485.modbus_slave_answer_read_coils_request(request_id, data)
-
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
+        self.append_text(a)
 
     def cb_modbus_master_read_coils_response(self,
                                              request_id,
                                              exception_code,
-                                             stream_status,
-                                             data):
-        if stream_status == self.rs485.STREAM_STATUS_OUT_OF_SYNC:
+                                             coils):
+        if coils == None:
             # Increase stream error counter
             self.error_stream_oos = self.error_stream_oos + 1
             self.label_error_stream.setText(str(self.error_stream_oos))
@@ -620,16 +619,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
             a = 'READ COILS RESPONSE: ' + \
                 'STREAM OUT OF SYNC' + \
                 '\n\n'
-
-            self.text.moveCursor(QTextCursor.End)
-            self.text.insertPlainText(a)
-            self.text.moveCursor(QTextCursor.End)
-
-            self.modbus_master_send_button.setEnabled(True)
-
-            return
-
-        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
+        elif exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
             a = 'READ COILS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
                 '\n\n'
@@ -655,16 +645,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 str(request_id) + \
                 ', EXCEPTION CODE=' + \
                 str(exception_code) + \
-                ', STREAM STATUS=' + \
-                str(stream_status) + \
-                ', DATA=' + \
-                str(data) + \
+                ', COILS=' + \
+                str(coils) + \
                 '\n\n'
 
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
-
+        self.append_text(a)
         self.modbus_master_send_button.setEnabled(True)
 
     def cb_modbus_slave_read_holding_registers_request(self,
@@ -686,17 +671,13 @@ class RS485(COMCUPluginBase, Ui_RS485):
             data.append(random.randint(0, 65535))
 
         self.rs485.modbus_slave_answer_read_holding_registers_request(request_id, data)
-
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
+        self.append_text(a)
 
     def cb_modbus_master_read_holding_registers_response(self,
                                                          request_id,
                                                          exception_code,
-                                                         stream_status,
-                                                         data):
-        if stream_status == self.rs485.STREAM_STATUS_OUT_OF_SYNC:
+                                                         holding_registers):
+        if holding_registers == None:
             # Increase stream error counter
             self.error_stream_oos = self.error_stream_oos + 1
             self.label_error_stream.setText(str(self.error_stream_oos))
@@ -704,16 +685,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
             a = 'READ HOLDING REGISTERS RESPONSE: ' + \
                 'STREAM OUT OF SYNC' + \
                 '\n\n'
-
-            self.text.moveCursor(QTextCursor.End)
-            self.text.insertPlainText(a)
-            self.text.moveCursor(QTextCursor.End)
-
-            self.modbus_master_send_button.setEnabled(True)
-
-            return
-
-        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
+        elif exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
             a = 'READ HOLDING REGISTERS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
                 '\n\n'
@@ -739,16 +711,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 str(request_id) + \
                 ', EXCEPTION CODE=' + \
                 str(exception_code) + \
-                ', STREAM STATUS=' + \
-                str(stream_status) + \
-                ', DATA=' + \
-                str(data) + \
+                ', HOLDING REGISTERS=' + \
+                str(holding_registers) + \
                 '\n\n'
 
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
-
+        self.append_text(a)
         self.modbus_master_send_button.setEnabled(True)
 
     def cb_modbus_slave_write_single_coil_request(self,
@@ -765,10 +732,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
             '\n\n'
 
         self.rs485.modbus_slave_answer_write_single_coil_request(request_id)
-
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
+        self.append_text(a)
 
     def cb_modbus_master_write_single_coil_response(self,
                                                     request_id,
@@ -801,10 +765,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 str(exception_code) + \
                 '\n\n'
 
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
-
+        self.append_text(a)
         self.modbus_master_send_button.setEnabled(True)
 
     def cb_modbus_slave_write_single_register_request(self,
@@ -821,10 +782,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
             '\n\n'
 
         self.rs485.modbus_slave_answer_write_single_register_request(request_id)
-
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
+        self.append_text(a)
 
     def cb_modbus_master_write_single_register_response(self,
                                                         request_id,
@@ -857,41 +815,36 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 str(exception_code) + \
                 '\n\n'
 
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
-
+        self.append_text(a)
         self.modbus_master_send_button.setEnabled(True)
 
     def cb_modbus_slave_write_multiple_coils_request(self,
                                                      request_id,
                                                      starting_address,
                                                      count,
-                                                     stream_status,
-                                                     data):
-        if stream_status == self.rs485.STREAM_STATUS_OUT_OF_SYNC:
+                                                     coils):
+        if coils == None:
             # Increase stream error counter
             self.error_stream_oos = self.error_stream_oos + 1
             self.label_error_stream.setText(str(self.error_stream_oos))
 
-        a = 'WRITE MULTIPLE COILS REQUEST: ' + \
-            'REQUEST ID=' + \
-            str(request_id) + \
-            ', STARTING ADDRESS=' + \
-            str(starting_address) + \
-            ', COUNT=' + \
-            str(count) + \
-            ', STREAM STATUS=' + \
-            str(stream_status) + \
-            ', DATA=' + \
-            str(data) + \
-            '\n\n'
+            a = 'WRITE MULTIPLE COILS REQUEST: ' + \
+                'STREAM OUT OF SYNC' + \
+                '\n\n'
+        else:
+            a = 'WRITE MULTIPLE COILS REQUEST: ' + \
+                'REQUEST ID=' + \
+                str(request_id) + \
+                ', STARTING ADDRESS=' + \
+                str(starting_address) + \
+                ', COUNT=' + \
+                str(count) + \
+                ', COILS=' + \
+                str(coils) + \
+                '\n\n'
 
         self.rs485.modbus_slave_answer_write_multiple_coils_request(request_id)
-
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
+        self.append_text(a)
 
     def cb_modbus_master_write_multiple_coils_response(self,
                                                        request_id,
@@ -924,42 +877,36 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 str(exception_code) + \
                 '\n\n'
 
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
-
+        self.append_text(a)
         self.modbus_master_send_button.setEnabled(True)
 
     def cb_modbus_slave_write_multiple_registers_request(self,
                                                          request_id,
                                                          starting_address,
                                                          count,
-                                                         stream_status,
-                                                         data):
-
-        if stream_status == self.rs485.STREAM_STATUS_OUT_OF_SYNC:
+                                                         registers):
+        if registers == None:
             # Increase stream error counter
             self.error_stream_oos = self.error_stream_oos + 1
             self.label_error_stream.setText(str(self.error_stream_oos))
 
-        a = 'WRITE MULTIPLE REGISTERS REQUEST: ' + \
-            'REQUEST ID=' + \
-            str(request_id) + \
-            ', STARTING ADDRESS=' + \
-            str(starting_address) + \
-            ', COUNT=' + \
-            str(count) + \
-            ', STREAM STATUS=' + \
-            str(stream_status) + \
-            ', DATA=' + \
-            str(data) + \
-            '\n\n'
+            a = 'WRITE MULTIPLE REGISTERS REQUEST: ' + \
+                'STREAM OUT OF SYNC' + \
+                '\n\n'
+        else:
+            a = 'WRITE MULTIPLE REGISTERS REQUEST: ' + \
+                'REQUEST ID=' + \
+                str(request_id) + \
+                ', STARTING ADDRESS=' + \
+                str(starting_address) + \
+                ', COUNT=' + \
+                str(count) + \
+                ', REGISTERS=' + \
+                str(registers) + \
+                '\n\n'
 
         self.rs485.modbus_slave_answer_write_multiple_registers_request(request_id)
-
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
+        self.append_text(a)
 
     def cb_modbus_master_write_multiple_registers_response(self,
                                                            request_id,
@@ -992,10 +939,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 str(exception_code) + \
                 '\n\n'
 
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
-
+        self.append_text(a)
         self.modbus_master_send_button.setEnabled(True)
 
     def cb_modbus_slave_read_discrete_inputs_request(self,
@@ -1017,17 +961,13 @@ class RS485(COMCUPluginBase, Ui_RS485):
             data.append(random.randint(0, 1) == 1)
 
         self.rs485.modbus_slave_answer_read_discrete_inputs_request(request_id, data)
-
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
+        self.append_text(a)
 
     def cb_modbus_master_read_discrete_inputs_response(self,
                                                        request_id,
                                                        exception_code,
-                                                       stream_status,
-                                                       data):
-        if stream_status == self.rs485.STREAM_STATUS_OUT_OF_SYNC:
+                                                       discrete_inputs):
+        if discrete_inputs == None:
             # Increase stream error counter
             self.error_stream_oos = self.error_stream_oos + 1
             self.label_error_stream.setText(str(self.error_stream_oos))
@@ -1035,16 +975,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
             a = 'READ DISCRETE INPUTS RESPONSE: ' + \
                 'STREAM OUT OF SYNC' + \
                 '\n\n'
-
-            self.text.moveCursor(QTextCursor.End)
-            self.text.insertPlainText(a)
-            self.text.moveCursor(QTextCursor.End)
-
-            self.modbus_master_send_button.setEnabled(True)
-
-            return
-
-        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
+        elif exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
             a = 'READ DISCRETE INPUTS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
                 '\n\n'
@@ -1070,16 +1001,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 str(request_id) + \
                 ', EXCEPTION CODE=' + \
                 str(exception_code) + \
-                ', STREAM STATUS=' + \
-                str(stream_status) + \
-                ', DATA=' + \
-                str(data) + \
+                ', DISCRETE INPUTS=' + \
+                str(discrete_inputs) + \
                 '\n\n'
 
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
-
+        self.append_text(a)
         self.modbus_master_send_button.setEnabled(True)
 
     def cb_modbus_slave_read_input_registers_request(self,
@@ -1101,17 +1027,13 @@ class RS485(COMCUPluginBase, Ui_RS485):
             data.append(random.randint(0, 65535))
 
         self.rs485.modbus_slave_answer_read_input_registers_request(request_id, data)
-
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
+        self.append_text(a)
 
     def cb_modbus_master_read_input_registers_response(self,
                                                        request_id,
                                                        exception_code,
-                                                       stream_status,
-                                                       data):
-        if stream_status == self.rs485.STREAM_STATUS_OUT_OF_SYNC:
+                                                       input_registers):
+        if input_registers == None:
             # Increase stream error counter
             self.error_stream_oos = self.error_stream_oos + 1
             self.label_error_stream.setText(str(self.error_stream_oos))
@@ -1119,16 +1041,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
             a = 'READ INPUT REGISTERS RESPONSE: ' + \
                 'STREAM OUT OF SYNC' + \
                 '\n\n'
-
-            self.text.moveCursor(QTextCursor.End)
-            self.text.insertPlainText(a)
-            self.text.moveCursor(QTextCursor.End)
-
-            self.modbus_master_send_button.setEnabled(True)
-
-            return
-
-        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
+        elif exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
             a = 'READ INPUT REGISTERS RESPONSE: ' + \
                 'REQUEST TIMEOUT' + \
                 '\n\n'
@@ -1154,16 +1067,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 str(request_id) + \
                 ', EXCEPTION CODE=' + \
                 str(exception_code) + \
-                ', STREAM STATUS=' + \
-                str(stream_status) + \
-                ', DATA=' + \
-                str(data) + \
+                ', INPUT REGISTERS=' + \
+                str(input_registers) + \
                 '\n\n'
 
-        self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(a)
-        self.text.moveCursor(QTextCursor.End)
-
+        self.append_text(a)
         self.modbus_master_send_button.setEnabled(True)
 
     def line_ending_changed(self):

@@ -6,18 +6,35 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>862</width>
-    <height>652</height>
+    <width>825</width>
+    <height>682</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_6">
+  <layout class="QHBoxLayout" name="horizontalLayout_6">
    <item>
-    <layout class="QVBoxLayout" name="main_vertical_layout">
-     <item>
-      <layout class="QHBoxLayout" name="thermal_image_layout_outer">
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>409</width>
+        <height>681</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
@@ -26,8 +43,14 @@
             <string>High Contrast Image Configuration</string>
            </property>
            <layout class="QGridLayout" name="gridLayout">
-            <item row="1" column="0">
+            <item row="0" column="0">
              <widget class="QLabel" name="label_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>1</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Region of Interest:</string>
               </property>
@@ -36,7 +59,7 @@
             <item row="2" column="0">
              <widget class="QLabel" name="label_4">
               <property name="text">
-               <string>Clip Limit:</string>
+               <string>High Clip Limit:</string>
               </property>
              </widget>
             </item>
@@ -61,53 +84,6 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <item>
-               <widget class="QLabel" name="label_6">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>High</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="agc_clip_limit_high_spin">
-                <property name="layoutDirection">
-                 <enum>Qt::LeftToRight</enum>
-                </property>
-                <property name="maximum">
-                 <number>4800</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_7">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Low</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="agc_clip_limit_low_spin">
-                <property name="maximum">
-                 <number>1024</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
             <item row="3" column="1">
              <widget class="QSpinBox" name="agc_dampening_factor_spin">
               <property name="maximum">
@@ -115,35 +91,50 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="0" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_3">
               <item>
                <widget class="QLabel" name="agc_roi_label">
-                <property name="minimumSize">
-                 <size>
-                  <width>200</width>
-                  <height>0</height>
-                 </size>
-                </property>
                 <property name="text">
                  <string>TBD</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="agc_roi_button">
+               <widget class="QToolButton" name="agc_roi_button">
                 <property name="text">
                  <string>Select</string>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="checked">
-                 <bool>false</bool>
                 </property>
                </widget>
               </item>
              </layout>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="agc_clip_limit_low_spin">
+              <property name="maximum">
+               <number>1024</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QSpinBox" name="agc_clip_limit_high_spin">
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
+              <property name="maximum">
+               <number>4800</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Low Clip Limit:</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -154,27 +145,109 @@
             <string>Spotmeter</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_8">
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_13">
               <property name="text">
-               <string>Region of Interest:</string>
+               <string>Temperature Minimum:</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="spotmeter_roi_label">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Temperature Mean:</string>
               </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_12">
+              <property name="text">
+               <string>Temperature Maximum:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_14">
+              <property name="text">
+               <string>Pixel Count</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" colspan="3">
+             <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <item>
+               <widget class="QLabel" name="label_8">
+                <property name="text">
+                 <string>Region of Interest:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="spotmeter_roi_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>1</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>TBD</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="spotmeter_roi_button">
+                <property name="text">
+                 <string>Select</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="spotmeter_minimum_label">
               <property name="text">
                <string>TBD</string>
               </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
              </widget>
             </item>
-            <item row="1" column="3">
+            <item row="2" column="1">
+             <widget class="QLabel" name="spotmeter_mean_label">
+              <property name="text">
+               <string>TBD</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLabel" name="spotmeter_maximum_label">
+              <property name="text">
+               <string>TBD</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QLabel" name="spotmeter_pixel_count_label">
+              <property name="text">
+               <string>TBD</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
              <widget class="QLabel" name="label_19">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -187,95 +260,17 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="3">
+            <item row="2" column="2">
              <widget class="QLabel" name="label_21">
               <property name="text">
                <string>°C</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="3">
+            <item row="3" column="2">
              <widget class="QLabel" name="label_20">
               <property name="text">
                <string>°C</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QLabel" name="spotmeter_minimum_label">
-              <property name="text">
-               <string>TBD</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2">
-             <widget class="QLabel" name="spotmeter_mean_label">
-              <property name="text">
-               <string>TBD</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
-             <widget class="QLabel" name="spotmeter_maximum_label">
-              <property name="text">
-               <string>TBD</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="2">
-             <widget class="QLabel" name="spotmeter_pixel_count_label">
-              <property name="text">
-               <string>TBD</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2" colspan="2">
-             <widget class="QPushButton" name="spotmeter_roi_button">
-              <property name="text">
-               <string>Select</string>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" colspan="2">
-             <widget class="QLabel" name="label_13">
-              <property name="text">
-               <string>Temperature Minimum:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0" colspan="2">
-             <widget class="QLabel" name="label_11">
-              <property name="text">
-               <string>Temperature Mean:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0" colspan="2">
-             <widget class="QLabel" name="label_12">
-              <property name="text">
-               <string>Temperature Maximum:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0" colspan="2">
-             <widget class="QLabel" name="label_14">
-              <property name="text">
-               <string>Pixel Count</string>
               </property>
              </widget>
             </item>
@@ -288,42 +283,75 @@
             <string>Radiometry</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
-            <item row="2" column="0">
+            <item row="1" column="0">
              <widget class="QLabel" name="label_15">
               <property name="text">
                <string>Temperature Focal Plain Array:</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
+            <item row="2" column="0">
              <widget class="QLabel" name="label_16">
               <property name="text">
                <string>Temperature Focal Plain Array @FFC:</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="0">
+            <item row="4" column="0">
              <widget class="QLabel" name="label_18">
               <property name="text">
                <string>Temperature Housing @FFC:</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_10">
-              <property name="text">
-               <string>Resolution:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
+            <item row="3" column="0">
              <widget class="QLabel" name="label_17">
               <property name="text">
                <string>Temperature Housing:</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="3">
+            <item row="4" column="1">
+             <widget class="QLabel" name="temp_housing_ffc_label">
+              <property name="text">
+               <string>TBD</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLabel" name="temp_housing_label">
+              <property name="text">
+               <string>TBD</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLabel" name="temp_fpa_ffc_label">
+              <property name="text">
+               <string>TBD</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="temp_fpa_label">
+              <property name="text">
+               <string>TBD</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
              <widget class="QLabel" name="label_22">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -336,80 +364,57 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="3">
+            <item row="2" column="2">
              <widget class="QLabel" name="label_23">
               <property name="text">
                <string>°C</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="3">
+            <item row="3" column="2">
              <widget class="QLabel" name="label_24">
               <property name="text">
                <string>°C</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="3">
+            <item row="4" column="2">
              <widget class="QLabel" name="label_25">
               <property name="text">
                <string>°C</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="2">
-             <widget class="QLabel" name="temp_fpa_label">
-              <property name="text">
-               <string>TBD</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
-             <widget class="QLabel" name="temp_fpa_ffc_label">
-              <property name="text">
-               <string>TBD</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="2">
-             <widget class="QLabel" name="temp_housing_label">
-              <property name="text">
-               <string>TBD</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="2">
-             <widget class="QLabel" name="temp_housing_ffc_label">
-              <property name="text">
-               <string>TBD</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2" colspan="2">
-             <widget class="QComboBox" name="resolution_box">
+            <item row="0" column="0" colspan="3">
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
               <item>
-               <property name="text">
-                <string>-273 to 6279°C</string>
-               </property>
+               <widget class="QLabel" name="label_10">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>1</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Resolution:</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <property name="text">
-                <string>-273 to 381°C</string>
-               </property>
+               <widget class="QComboBox" name="resolution_box">
+                <item>
+                 <property name="text">
+                  <string>-273 to 6279°C</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>-273 to 381°C</string>
+                 </property>
+                </item>
+               </widget>
               </item>
-             </widget>
+             </layout>
             </item>
            </layout>
           </widget>
@@ -420,85 +425,101 @@
             <string>Status</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_27">
-              <property name="text">
-               <string>FFC State:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="ffc_desired_label">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>TBD</string>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="0">
-             <widget class="QLabel" name="label_26">
-              <property name="text">
-               <string>FFC Desired:</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <widget class="QLabel" name="label_26">
+                <property name="text">
+                 <string>Flat Field Correction Desired:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="ffc_desired_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>1</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>TBD</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
-            <item row="3" column="1">
-             <widget class="QLabel" name="overtemp_label">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>TBD</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="ffc_state_label">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>TBD</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_29">
-              <property name="text">
-               <string>Overtemperature Shut-Down Imminent:</string>
-              </property>
-             </widget>
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_9">
+              <item>
+               <widget class="QLabel" name="label_27">
+                <property name="text">
+                 <string>Flat Field Correction State:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="ffc_state_label">
+                <property name="text">
+                 <string>TBD</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item row="2" column="0">
-             <widget class="QLabel" name="label_28">
-              <property name="text">
-               <string>Shutter Lockout:</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QLabel" name="label_28">
+                <property name="text">
+                 <string>Shutter Lockout:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="shutter_lockout_label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>1</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>TBD</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
-            <item row="2" column="1">
-             <widget class="QLabel" name="shutter_lockout_label">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>TBD</string>
-              </property>
-             </widget>
+            <item row="3" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <item>
+               <widget class="QLabel" name="label_29">
+                <property name="text">
+                 <string>Over-Temperature Shut-Down Imminent:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="overtemp_label">
+                <property name="text">
+                 <string>TBD</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
@@ -518,144 +539,23 @@
          </item>
         </layout>
        </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="thermal_image_layout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+        <widget class="QLabel" name="temperature_min">
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="thermal_image_layout">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QLabel" name="temperature_min">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_4">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QLabel" name="temperature_max">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Color Palette:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QComboBox" name="color_palette_box">
-             <item>
-              <property name="text">
-               <string>Standard</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Greyscale</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Hot Cold</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <item>
-            <widget class="QLabel" name="label_9">
-             <property name="text">
-              <string>Image:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QComboBox" name="image_combo">
-             <item>
-              <property name="text">
-               <string>High Contrast Image (9 FPS)</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Linear Temperature Image (4.5 FPS)</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_3">
+        <spacer name="horizontalSpacer_4">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -667,22 +567,110 @@
          </property>
         </spacer>
        </item>
+       <item>
+        <widget class="QLabel" name="temperature_max">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Color Palette:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QComboBox" name="color_palette_box">
+         <item>
+          <property name="text">
+           <string>Standard</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Greyscale</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Hot Cold</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Image:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QComboBox" name="image_combo">
+         <item>
+          <property name="text">
+           <string>High Contrast Image (9 FPS)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Linear Temperature Image (4.5 FPS)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
-   </item>
-   <item>
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

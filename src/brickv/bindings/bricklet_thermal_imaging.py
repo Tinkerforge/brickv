@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-04-21.      #
+# This file was automatically generated on 2017-05-05.      #
 #                                                           #
 # Python Bindings Version 2.1.12                            #
 #                                                           #
@@ -339,25 +339,26 @@ class BrickletThermalImaging(Device):
         stream_chunk_offset = 0
         stream_result = None
         stream_data = ()
-        stream_out_of_sync = False
 
         STREAM_CHUNK_OFFSET_NO_DATA = (1 << 16) - 1 # FIXME: make this depend on the stream_chunk_offset type
 
         with self.stream_lock:
-            if stream_total_length == None: # no fixed-stream-length
-                stream_result = self.get_high_contrast_image_low_level()
-                stream_extra = stream_result[:-2] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
-                stream_total_length = stream_result.stream_total_length
-                stream_chunk_offset = stream_result.stream_chunk_offset
-                stream_data = stream_result.stream_chunk_data
+            stream_result = self.get_high_contrast_image_low_level()
+            stream_extra = stream_result[:-2] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+            stream_chunk_offset = stream_result.stream_chunk_offset
+            stream_data = stream_result.stream_chunk_data
 
-            if stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA:
-                # FIXME: return and empty list or None instead of this exception
-                raise Error(Error.STREAM_NO_DATA, 'Stream has no data')
-            elif stream_chunk_offset != 0: # stream out-of-sync
+            if stream_total_length == None: # dynamic stream-total-length
+                stream_total_length = stream_result.stream_total_length
+            elif stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA: # fixed stream-total-length and no-data
+                stream_total_length = 0
+                stream_chunk_offset = 0
+
+            if stream_chunk_offset != 0: # stream out-of-sync
                 # discard remaining stream to bring it back in-sync
                 while stream_chunk_offset + 62 < stream_total_length:
                     # FIXME: validate that total length is identical for all low-level getters of a stream
+                    # FIXME: validate that stream_chunk_offset grows
                     stream_chunk_offset = self.get_high_contrast_image_low_level().stream_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
@@ -375,6 +376,7 @@ class BrickletThermalImaging(Device):
                     # discard remaining stream to bring it back in-sync
                     while stream_chunk_offset + 62 < stream_total_length:
                         # FIXME: validate that total length is identical for all low-level getters of a stream
+                        # FIXME: validate that stream_chunk_offset grows
                         stream_chunk_offset = self.get_high_contrast_image_low_level().stream_chunk_offset
 
                     raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
@@ -392,25 +394,26 @@ class BrickletThermalImaging(Device):
         stream_chunk_offset = 0
         stream_result = None
         stream_data = ()
-        stream_out_of_sync = False
 
         STREAM_CHUNK_OFFSET_NO_DATA = (1 << 16) - 1 # FIXME: make this depend on the stream_chunk_offset type
 
         with self.stream_lock:
-            if stream_total_length == None: # no fixed-stream-length
-                stream_result = self.get_temperature_image_low_level()
-                stream_extra = stream_result[:-2] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
-                stream_total_length = stream_result.stream_total_length
-                stream_chunk_offset = stream_result.stream_chunk_offset
-                stream_data = stream_result.stream_chunk_data
+            stream_result = self.get_temperature_image_low_level()
+            stream_extra = stream_result[:-2] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+            stream_chunk_offset = stream_result.stream_chunk_offset
+            stream_data = stream_result.stream_chunk_data
 
-            if stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA:
-                # FIXME: return and empty list or None instead of this exception
-                raise Error(Error.STREAM_NO_DATA, 'Stream has no data')
-            elif stream_chunk_offset != 0: # stream out-of-sync
+            if stream_total_length == None: # dynamic stream-total-length
+                stream_total_length = stream_result.stream_total_length
+            elif stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA: # fixed stream-total-length and no-data
+                stream_total_length = 0
+                stream_chunk_offset = 0
+
+            if stream_chunk_offset != 0: # stream out-of-sync
                 # discard remaining stream to bring it back in-sync
                 while stream_chunk_offset + 31 < stream_total_length:
                     # FIXME: validate that total length is identical for all low-level getters of a stream
+                    # FIXME: validate that stream_chunk_offset grows
                     stream_chunk_offset = self.get_temperature_image_low_level().stream_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
@@ -428,6 +431,7 @@ class BrickletThermalImaging(Device):
                     # discard remaining stream to bring it back in-sync
                     while stream_chunk_offset + 31 < stream_total_length:
                         # FIXME: validate that total length is identical for all low-level getters of a stream
+                        # FIXME: validate that stream_chunk_offset grows
                         stream_chunk_offset = self.get_temperature_image_low_level().stream_chunk_offset
 
                     raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')

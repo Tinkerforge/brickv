@@ -91,8 +91,7 @@ class Error(Exception):
     INVALID_PARAMETER = -9
     NOT_SUPPORTED = -10
     UNKNOWN_ERROR_CODE = -11
-    STREAM_NO_DATA = -12 # FIXME: remove this error code
-    STREAM_OUT_OF_SYNC = -13
+    STREAM_OUT_OF_SYNC = -12
 
     def __init__(self, value, description):
         self.value = value
@@ -107,9 +106,6 @@ class Device:
     RESPONSE_EXPECTED_ALWAYS_FALSE = 2 # callback
     RESPONSE_EXPECTED_TRUE = 3 # setter
     RESPONSE_EXPECTED_FALSE = 4 # setter, default
-
-    STREAM_STATUS_COMPLETE = 0
-    STREAM_STATUS_OUT_OF_SYNC = 1
 
     def __init__(self, uid, ipcon):
         """
@@ -838,19 +834,19 @@ class IPConnection:
                         llcb[2] = chunk_data
 
                         if len(llcb[2]) >= total_length: # stream complete
-                            result = extra + (Device.STREAM_STATUS_COMPLETE,) + (llcb[2][:total_length],)
+                            result = extra + (llcb[2][:total_length],)
                             llcb[2] = None
                     else: # ignore tail of current stream, wait for next stream start
                         pass
                 else: # stream in-progress
                     if chunk_offset != len(llcb[2]): # stream out-of-sync
-                        result = extra + (Device.STREAM_STATUS_OUT_OF_SYNC,) + (None,)
+                        result = extra + (None,)
                         llcb[2] = None
                     else: # stream in-sync
                         llcb[2] += chunk_data
 
                         if len(llcb[2]) >= total_length: # stream complete
-                            result = extra + (Device.STREAM_STATUS_COMPLETE,) + (llcb[2][:total_length],)
+                            result = extra + (llcb[2][:total_length],)
                             llcb[2] = None
 
                 if result != None and llcb[0] in device.registered_callbacks:
@@ -926,7 +922,7 @@ class IPConnection:
                 else:
                     y.append(x[0] != 0)
 
-                x = y
+                x = tuple(y)
 
             if len(x) > 1:
                 if 'c' in f:
