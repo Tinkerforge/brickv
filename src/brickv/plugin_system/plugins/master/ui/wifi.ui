@@ -573,7 +573,17 @@
          <item row="13" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout_21">
            <item>
+            <widget class="QCheckBox" name="wifi_change_key">
+             <property name="text">
+              <string>Change Key</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QLineEdit" name="wifi_key">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="toolTip">
               <string>WPA/WPA2: 8-63 chars
 WEP: 10 or 26 hexadecimal digits</string>
@@ -585,6 +595,9 @@ WEP: 10 or 26 hexadecimal digits</string>
            </item>
            <item>
             <widget class="QCheckBox" name="wifi_key_show">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>Show Characters</string>
              </property>

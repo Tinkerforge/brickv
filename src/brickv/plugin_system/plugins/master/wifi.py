@@ -50,8 +50,11 @@ class Wifi(QWidget, Ui_Wifi):
 
         self.wifi_password.setEchoMode(QLineEdit.Password)
         self.wifi_password_show.stateChanged.connect(self.wifi_password_show_state_changed)
+        
+        self.wifi_change_key.stateChanged.connect(self.wifi_change_key_changed)
 
         self.wifi_status = None
+        
 
     def start(self):
         if self.parent.firmware_version >= (1, 3, 0):
@@ -118,6 +121,14 @@ class Wifi(QWidget, Ui_Wifi):
                 self.wifi_secret.setEchoMode(QLineEdit.Normal)
             else:
                 self.wifi_secret.setEchoMode(QLineEdit.Password)
+        
+    def wifi_change_key_changed(self, state):
+        if state == Qt.Checked:
+            self.wifi_key.setEnabled(True)
+            self.wifi_key_show.setEnabled(True)
+        else:
+            self.wifi_key.setEnabled(False)
+            self.wifi_key_show.setEnabled(False)
 
     def wifi_auth_changed(self, state):
         if state == Qt.Checked:
@@ -162,16 +173,10 @@ class Wifi(QWidget, Ui_Wifi):
 
         eap_outer = eap_options & 0b00000011
         eap_inner = (eap_options & 0b00000100) >> 2
-        key = key.replace('\0', '')
 
         self.wifi_eap_outer_auth.setCurrentIndex(eap_outer)
         self.wifi_eap_inner_auth.setCurrentIndex(eap_inner)
         self.wifi_encryption.setCurrentIndex(encryption)
-
-        if key == '-' and self.parent.firmware_version >= (2, 0, 2):
-            async_call(self.master.get_long_wifi_key, None, self.get_long_wifi_key_async, self.parent.increase_error_count)
-        else:
-            self.wifi_key.setText(key)
 
         self.wifi_key_index.setValue(key_index)
 
@@ -562,39 +567,42 @@ class Wifi(QWidget, Ui_Wifi):
             self.popup_fail('Hostname cannot contain non-ASCII characters')
             return
 
-        try:
-            key = self.wifi_key.text().encode('ascii')
-        except:
-            self.popup_fail('Key cannot contain non-ASCII characters')
-            return
-
-        if '"' in key:
-            self.popup_fail('Key cannot contain quotation mark')
-            return
-
-        if self.wifi_encryption.currentText() in 'WEP':
-            if len(key) == 0:
-                self.popup_fail('WEP key cannot be empty')
-                return
-
+        key = '-'
+        if self.wifi_change_key.checkState() == Qt.Checked:
             try:
-                int(key, 16)
+                key = self.wifi_key.text().encode('ascii')
             except:
-                self.popup_fail('WEP key has to be in hexadecimal notation')
+                self.popup_fail('Key cannot contain non-ASCII characters')
                 return
-
-            if len(key) != 10 and len(key) != 26:
-                self.popup_fail('WEP key has to be either 10 or 26 hexadecimal digits long')
+    
+            if '"' in key:
+                self.popup_fail('Key cannot contain quotation mark')
                 return
+    
+            if self.wifi_encryption.currentText() in 'WEP':
+                if len(key) == 0:
+                    self.popup_fail('WEP key cannot be empty')
+                    return
+    
+                try:
+                    int(key, 16)
+                except:
+                    self.popup_fail('WEP key has to be in hexadecimal notation')
+                    return
+    
+                if len(key) != 10 and len(key) != 26:
+                    self.popup_fail('WEP key has to be either 10 or 26 hexadecimal digits long')
+                    return
 
-        long_key = key
-        if self.wifi_encryption.currentText() in 'WPA/WPA2':
-            if len(key) < 8:
-                self.popup_fail('WPA/WPA2 key has to be at least 8 chars long')
-                return
-
-            if self.parent.firmware_version >= (2, 0, 2) and len(key) > 50:
-                key = '-'
+            long_key = key
+            if self.wifi_encryption.currentText() in 'WPA/WPA2':
+                if len(key) < 8:
+                    self.popup_fail('WPA/WPA2 key has to be at least 8 chars long')
+                    return
+    
+                # Since we can't read the key anymore we have to always use the long key API
+                if self.parent.firmware_version >= (2, 0, 2):
+                    key = '-'
 
         key_index = self.wifi_key_index.value()
         eap_outer = self.wifi_eap_outer_auth.currentIndex()
@@ -640,7 +648,8 @@ class Wifi(QWidget, Ui_Wifi):
         self.master.set_wifi_encryption(encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length)
         self.master.set_wifi_configuration(ssid, connection, ip, sub, gw, port)
         if self.parent.firmware_version >= (2, 0, 2):
-            self.master.set_long_wifi_key(long_key)
+            if self.wifi_change_key.checkState() == Qt.Checked:
+                self.master.set_long_wifi_key(long_key)
         if self.parent.firmware_version >= (2, 0, 5):
             self.master.set_wifi_hostname(hostname)
         if self.parent.firmware_version >= (2, 2, 0):
@@ -649,9 +658,7 @@ class Wifi(QWidget, Ui_Wifi):
         power_mode_old = self.master.get_wifi_power_mode()
         encryption_old, key_old, key_index_old, eap_options_old, ca_certificate_length_old, client_certificate_length_old, private_key_length_old = self.master.get_wifi_encryption()
         ssid_old, connection_old, ip_old, sub_old, gw_old, port_old = self.master.get_wifi_configuration()
-        long_key_old = long_key
-        if self.parent.firmware_version >= (2, 0, 2):
-            long_key_old = self.master.get_long_wifi_key()
+        
         hostname_old = hostname
         if self.parent.firmware_version >= (2, 0, 5):
             hostname_old = self.master.get_wifi_hostname()
@@ -662,7 +669,7 @@ class Wifi(QWidget, Ui_Wifi):
         test_ok = False
 
         if power_mode == power_mode_old and \
-           encryption == encryption_old and key == key_old and \
+           encryption == encryption_old and \
            ssid == ssid_old and connection == connection_old and \
            ip == ip_old and sub == sub_old and gw == gw_old and \
            port == port_old and key_index == key_index_old and \
@@ -670,7 +677,6 @@ class Wifi(QWidget, Ui_Wifi):
            ca_certificate_length == ca_certificate_length_old and \
            client_certificate_length == client_certificate_length_old and \
            private_key_length == private_key_length_old and \
-           long_key == long_key_old and \
            hostname == hostname_old and \
            secret == secret_old:
             test_ok = True

@@ -147,6 +147,8 @@ class Wifi2(QWidget, Ui_Wifi2):
         self.wifi_client_password_show.stateChanged.connect(self.wifi_client_show_state_changed)
         self.wifi_ap_password_show.stateChanged.connect(self.wifi_ap_show_state_changed)
         self.wifi_mesh_router_password_show.stateChanged.connect(self.wifi_mesh_router_password_show_state_change)
+        self.wifi_client_change_password.stateChanged.connect(self.wifi_client_change_password_changed)
+        self.wifi_ap_change_password.stateChanged.connect(self.wifi_ap_change_password_changed)
 
         # Use passwords
         self.wifi_client_encryption_changed(1)
@@ -209,14 +211,8 @@ class Wifi2(QWidget, Ui_Wifi2):
         async_call(self.master.get_wifi2_client_hostname, None,
             self.get_wifi2_client_hostname_async, self.parent.increase_error_count)
 
-        async_call(self.master.get_wifi2_client_password, None,
-            self.get_wifi2_client_password_async, self.parent.increase_error_count)
-
         async_call(self.master.get_wifi2_ap_configuration, None,
             self.get_wifi2_ap_configuration_async, self.parent.increase_error_count)
-
-        async_call(self.master.get_wifi2_ap_password, None,
-            self.get_wifi2_ap_password_async, self.parent.increase_error_count)
 
         if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 1, 0):
             async_call(self.master.get_wifi2_mesh_configuration, None,
@@ -320,13 +316,6 @@ class Wifi2(QWidget, Ui_Wifi2):
 
     def get_wifi2_client_hostname_async(self, data):
         self.wifi_client_hostname.setText(data)
-
-    def get_wifi2_client_password_async(self, data):
-        self.wifi_client_password.setText(data)
-        if len(data) == 0:
-            self.wifi_client_encryption.setCurrentIndex(0)
-        else:
-            self.wifi_client_encryption.setCurrentIndex(1)
 
     def get_wifi2_ap_configuration_async(self, data):
         self.ap_enable = data.enable
@@ -433,11 +422,6 @@ class Wifi2(QWidget, Ui_Wifi2):
 
     def get_wifi2_mesh_router_ssid_async(self, data):
         self.wifi_mesh_router_ssid.setText(data)
-
-    def get_wifi2_ap_password_async(self, data):
-        self.wifi_ap_password.setText(data)
-        if data == '':
-            self.wifi_ap_encryption.setCurrentIndex(0)
 
     def save_clicked(self):
         try:
@@ -672,11 +656,13 @@ class Wifi2(QWidget, Ui_Wifi2):
             # Set client configuration.
             self.master.set_wifi2_client_configuration(client_enable, client_ssid, client_ip, client_sub, client_gw, client_mac, client_bssid)
             self.master.set_wifi2_client_hostname(client_hostname)
-            self.master.set_wifi2_client_password(client_password)
+            if self.wifi_client_change_password.checkState() == Qt.Checked:
+                self.master.set_wifi2_client_password(client_password)
 
             # Set AP configuration.
             self.master.set_wifi2_ap_configuration(ap_enable, ap_ssid, ap_ip, ap_sub, ap_gw, ap_encryption, ap_hide_ssid, ap_channel, ap_mac)
-            self.master.set_wifi2_ap_password(ap_password)
+            if self.wifi_ap_change_password.checkState() == Qt.Checked:
+                self.master.set_wifi2_ap_password(ap_password)
 
             if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 1, 0):
                 # Set mesh configuration.
@@ -815,6 +801,22 @@ class Wifi2(QWidget, Ui_Wifi2):
             show_group(self.mesh_router_bssid_group)
         else:
             hide_group(self.mesh_router_bssid_group)
+
+    def wifi_client_change_password_changed(self, state):
+        if state == Qt.Checked:
+            self.wifi_client_password.setEnabled(True)
+            self.wifi_client_password_show.setEnabled(True)
+        else:
+            self.wifi_client_password.setEnabled(False)
+            self.wifi_client_password_show.setEnabled(False)
+        
+    def wifi_ap_change_password_changed(self, state):
+        if state == Qt.Checked:
+            self.wifi_ap_password.setEnabled(True)
+            self.wifi_ap_password_show.setEnabled(True)
+        else:
+            self.wifi_ap_password.setEnabled(False)
+            self.wifi_ap_password_show.setEnabled(False)
 
     def wifi_secret_show_state_changed(self, state):
         if state == Qt.Checked:

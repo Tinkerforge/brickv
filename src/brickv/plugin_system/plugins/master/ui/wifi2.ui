@@ -23,8 +23,8 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>861</width>
+        <y>-432</y>
+        <width>859</width>
         <height>1655</height>
        </rect>
       </property>
@@ -477,7 +477,17 @@
               <item row="7" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_21">
                 <item>
+                 <widget class="QCheckBox" name="wifi_client_change_password">
+                  <property name="text">
+                   <string>Change Password</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QLineEdit" name="wifi_client_password">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="toolTip">
                    <string>WPA/WPA2: 8-63 chars
 WEP: 10 or 26 hexadecimal digits</string>
@@ -489,6 +499,9 @@ WEP: 10 or 26 hexadecimal digits</string>
                 </item>
                 <item>
                  <widget class="QCheckBox" name="wifi_client_password_show">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="text">
                    <string>Show Characters</string>
                   </property>
@@ -1048,7 +1061,20 @@ WEP: 10 or 26 hexadecimal digits</string>
               <item row="6" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_3">
                 <item>
+                 <widget class="QCheckBox" name="wifi_ap_change_password">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="text">
+                   <string>Change Password</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QLineEdit" name="wifi_ap_password">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="maxLength">
                    <number>64</number>
                   </property>
@@ -1056,6 +1082,9 @@ WEP: 10 or 26 hexadecimal digits</string>
                 </item>
                 <item>
                  <widget class="QCheckBox" name="wifi_ap_password_show">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="text">
                    <string>Show Characters</string>
                   </property>
