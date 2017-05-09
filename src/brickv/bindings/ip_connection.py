@@ -795,6 +795,49 @@ class IPConnection:
 
         device = self.devices[uid]
 
+        if function_id in device.low_level_callbacks:
+            llcb = device.low_level_callbacks[function_id] # [options, data]
+            form = device.callback_formats[function_id] # FIXME: currently assuming that form is longer than 1
+            values = self.deserialize_data(payload, form)
+            fixed_total_length = llcb[0].get('fixed_total_length', None)
+            result = None
+
+            if fixed_total_length == None:
+                extra = tuple(values[:-3])
+                total_length = values[-3]
+            else:
+                extra = tuple(values[:-2])
+                total_length = fixed_total_length
+
+            # FIXME: validate that extra parameters are identical for all low-level callbacks of a stream
+            # FIXME: validate that total length is identical for all low-level callbacks of a stream
+
+            chunk_offset = values[-2] # FIXME: validate chunk offset < total length
+            chunk_data = values[-1]
+
+            if llcb[1] == None: # no stream in-progress
+                if chunk_offset == 0: # stream starts
+                    llcb[1] = chunk_data
+
+                    if len(llcb[1]) >= total_length: # stream complete
+                        result = extra + (llcb[1][:total_length],)
+                        llcb[1] = None
+                else: # ignore tail of current stream, wait for next stream start
+                    pass
+            else: # stream in-progress
+                if chunk_offset != len(llcb[1]): # stream out-of-sync
+                    result = extra + (None,)
+                    llcb[1] = None
+                else: # stream in-sync
+                    llcb[1] += chunk_data
+
+                    if len(llcb[1]) >= total_length: # stream complete
+                        result = extra + (llcb[1][:total_length],)
+                        llcb[1] = None
+
+            if result != None and -function_id in device.registered_callbacks:
+                device.registered_callbacks[-function_id](*result)
+
         if function_id in device.registered_callbacks:
             cb = device.registered_callbacks[function_id]
             form = device.callback_formats[function_id]
@@ -805,52 +848,6 @@ class IPConnection:
                 cb(self.deserialize_data(payload, form))
             else:
                 cb(*self.deserialize_data(payload, form))
-
-        if function_id in device.low_level_callbacks:
-            llcb = device.low_level_callbacks[function_id] # [hlfid, options, state]
-            llform = device.callback_formats[function_id] # FIXME: currently assuming that llform is longer than 1
-            values = self.deserialize_data(payload, llform)
-            stream = llcb[1].get('stream', None)
-
-            if stream != None:
-                result = None
-                fixed_total_length = stream.get('fixed_total_length', None)
-
-                if fixed_total_length == None:
-                    extra = tuple(values[:-3])
-                    total_length = values[-3]
-                else:
-                    extra = tuple(values[:-2])
-                    total_length = fixed_total_length
-
-                # FIXME: validate that extra parameters are identical for all low-level callback of a stream
-                # FIXME: validate that total length is identical for all low-level callback of a stream
-
-                chunk_offset = values[-2] # FIXME: validate chunk offset < total length
-                chunk_data = values[-1]
-
-                if llcb[2] == None: # no stream in-progress
-                    if chunk_offset == 0: # stream starts
-                        llcb[2] = chunk_data
-
-                        if len(llcb[2]) >= total_length: # stream complete
-                            result = extra + (llcb[2][:total_length],)
-                            llcb[2] = None
-                    else: # ignore tail of current stream, wait for next stream start
-                        pass
-                else: # stream in-progress
-                    if chunk_offset != len(llcb[2]): # stream out-of-sync
-                        result = extra + (None,)
-                        llcb[2] = None
-                    else: # stream in-sync
-                        llcb[2] += chunk_data
-
-                        if len(llcb[2]) >= total_length: # stream complete
-                            result = extra + (llcb[2][:total_length],)
-                            llcb[2] = None
-
-                if result != None and llcb[0] in device.registered_callbacks:
-                    device.registered_callbacks[llcb[0]](*result)
 
     def callback_loop(self, callback):
         while True:
@@ -1132,7 +1129,7 @@ class IPConnection:
 
         if sequence_number == 0:
             if function_id in device.registered_callbacks or \
-               function_id in device.low_level_callbacks: # FIXME: better lookup
+               function_id in device.low_level_callbacks:
                 self.callback.queue.put((IPConnection.QUEUE_PACKET, packet))
             return
 

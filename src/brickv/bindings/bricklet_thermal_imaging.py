@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-05.      #
+# This file was automatically generated on 2017-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.12                            #
 #                                                           #
@@ -129,8 +129,8 @@ class BrickletThermalImaging(Device):
         self.callback_formats[BrickletThermalImaging.CALLBACK_HIGH_CONTRAST_IMAGE_LOW_LEVEL] = 'H 62B'
         self.callback_formats[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = 'H 31H'
 
-        self.low_level_callbacks[BrickletThermalImaging.CALLBACK_HIGH_CONTRAST_IMAGE_LOW_LEVEL] = [BrickletThermalImaging.CALLBACK_HIGH_CONTRAST_IMAGE, {'stream': {'fixed_total_length': 4800}}, None]
-        self.low_level_callbacks[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = [BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE, {'stream': {'fixed_total_length': 4800}}, None]
+        self.low_level_callbacks[BrickletThermalImaging.CALLBACK_HIGH_CONTRAST_IMAGE_LOW_LEVEL] = [{'fixed_total_length': 4800}, None]
+        self.low_level_callbacks[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = [{'fixed_total_length': 4800}, None]
 
     def get_high_contrast_image_low_level(self):
         """
@@ -359,7 +359,9 @@ class BrickletThermalImaging(Device):
                 while stream_chunk_offset + 62 < stream_total_length:
                     # FIXME: validate that total length is identical for all low-level getters of a stream
                     # FIXME: validate that stream_chunk_offset grows
-                    stream_chunk_offset = self.get_high_contrast_image_low_level().stream_chunk_offset
+                    stream_result = self.get_high_contrast_image_low_level()
+                    stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
+                    stream_chunk_offset = stream_result.stream_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
 
@@ -368,6 +370,7 @@ class BrickletThermalImaging(Device):
             while len(stream_data) < stream_total_length:
                 stream_result = self.get_high_contrast_image_low_level()
                 stream_extra = stream_result[:-2] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+                stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
                 stream_chunk_offset = stream_result.stream_chunk_offset
 
                 # FIXME: validate that total length is identical for all low-level getters of a stream
@@ -377,7 +380,9 @@ class BrickletThermalImaging(Device):
                     while stream_chunk_offset + 62 < stream_total_length:
                         # FIXME: validate that total length is identical for all low-level getters of a stream
                         # FIXME: validate that stream_chunk_offset grows
-                        stream_chunk_offset = self.get_high_contrast_image_low_level().stream_chunk_offset
+                        stream_result = self.get_high_contrast_image_low_level()
+                        stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
+                        stream_chunk_offset = stream_result.stream_chunk_offset
 
                     raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
 
@@ -414,7 +419,9 @@ class BrickletThermalImaging(Device):
                 while stream_chunk_offset + 31 < stream_total_length:
                     # FIXME: validate that total length is identical for all low-level getters of a stream
                     # FIXME: validate that stream_chunk_offset grows
-                    stream_chunk_offset = self.get_temperature_image_low_level().stream_chunk_offset
+                    stream_result = self.get_temperature_image_low_level()
+                    stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
+                    stream_chunk_offset = stream_result.stream_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
 
@@ -423,6 +430,7 @@ class BrickletThermalImaging(Device):
             while len(stream_data) < stream_total_length:
                 stream_result = self.get_temperature_image_low_level()
                 stream_extra = stream_result[:-2] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+                stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
                 stream_chunk_offset = stream_result.stream_chunk_offset
 
                 # FIXME: validate that total length is identical for all low-level getters of a stream
@@ -432,7 +440,9 @@ class BrickletThermalImaging(Device):
                     while stream_chunk_offset + 31 < stream_total_length:
                         # FIXME: validate that total length is identical for all low-level getters of a stream
                         # FIXME: validate that stream_chunk_offset grows
-                        stream_chunk_offset = self.get_temperature_image_low_level().stream_chunk_offset
+                        stream_result = self.get_temperature_image_low_level()
+                        stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
+                        stream_chunk_offset = stream_result.stream_chunk_offset
 
                     raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
 

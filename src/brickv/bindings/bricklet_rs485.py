@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-05.      #
+# This file was automatically generated on 2017-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.12                            #
 #                                                           #
@@ -36,7 +36,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletRS485(Device):
     """
-    Communicates with RS485 devices with full- or half-duplex
+    Communicates with RS485/Modbus devices with full- or half-duplex
     """
 
     DEVICE_IDENTIFIER = 277
@@ -150,6 +150,11 @@ class BrickletRS485(Device):
     EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS = 2
     EXCEPTION_CODE_ILLEGAL_DATA_VALUE = 3
     EXCEPTION_CODE_SLAVE_DEVICE_FAILURE = 4
+    EXCEPTION_CODE_ACKNOWLEDGE = 5
+    EXCEPTION_CODE_SLAVE_DEVICE_BUSY = 6
+    EXCEPTION_CODE_MEMORY_PARITY_ERROR = 8
+    EXCEPTION_CODE_GATEWAY_PATH_UNAVAILABLE = 10
+    EXCEPTION_CODE_GATEWAY_TARGET_DEVICE_FAILED_TO_RESPOND = 11
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -265,13 +270,13 @@ class BrickletRS485(Device):
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_INPUT_REGISTERS_REQUEST] = 'B H H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = 'B b H H 29H'
 
-        self.low_level_callbacks[BrickletRS485.CALLBACK_READ_LOW_LEVEL] = [BrickletRS485.CALLBACK_READ, {'stream': {'fixed_total_length': None}}, None]
-        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
-        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
-        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST, {'stream': {'fixed_total_length': None}}, None]
-        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_REGISTERS_REQUEST, {'stream': {'fixed_total_length': None}}, None]
-        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
-        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = [BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE, {'stream': {'fixed_total_length': None}}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_READ_LOW_LEVEL] = [{'fixed_total_length': None}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL] = [{'fixed_total_length': None}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = [{'fixed_total_length': None}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL] = [{'fixed_total_length': None}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL] = [{'fixed_total_length': None}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = [{'fixed_total_length': None}, None]
+        self.low_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = [{'fixed_total_length': None}, None]
 
     def write_low_level(self, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
@@ -501,7 +506,7 @@ class BrickletRS485(Device):
         read coils.
 
         * Request ID: Request ID of the corresponding request that is being answered.
-        * Data: Data that is to be sent to the Modbus master for the corresponding request.
+        * Coils: Data that is to be sent to the Modbus master for the corresponding request.
 
         This function must be called from the :cb:`Modbus Slave Read Coils Request` callback
         with the Request ID as provided by the argument of the callback.
@@ -534,7 +539,7 @@ class BrickletRS485(Device):
         read holding registers.
 
         * Request ID: Request ID of the corresponding request that is being answered.
-        * Data: Data that is to be sent to the Modbus master for the corresponding request.
+        * Holding Registers: Data that is to be sent to the Modbus master for the corresponding request.
 
         This function must be called from the :cb:`Modbus Slave Read Holding Registers Request`
         callback with the Request ID as provided by the argument of the callback.
@@ -569,8 +574,7 @@ class BrickletRS485(Device):
         * Request ID: Request ID of the corresponding request that is being answered.
 
         This function must be called from the :cb:`Modbus Slave Write Single Coil Request`
-        callback with the Request ID, Coil Address and Coil Value as provided by the
-        arguments of the callback.
+        callback with the Request ID as provided by the arguments of the callback.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_SINGLE_COIL_REQUEST, (request_id,), 'B', '')
 
@@ -635,8 +639,7 @@ class BrickletRS485(Device):
         * Request ID: Request ID of the corresponding request that is being answered.
 
         This function must be called from the :cb:`Modbus Slave Write Multiple Coils Request`
-        callback with the Request ID, Starting Address and Count as provided by the
-        arguments of the callback.
+        callback with the Request ID of the callback.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_MULTIPLE_COILS_REQUEST, (request_id,), 'B', '')
 
@@ -667,8 +670,7 @@ class BrickletRS485(Device):
         * Request ID: Request ID of the corresponding request that is being answered.
 
         This function must be called from the :cb:`Modbus Slave Write Multiple Registers Request`
-        callback with the Request ID, Starting Address and Count as provided by the
-        arguments of the callback.
+        callback with the Request ID of the callback.
         """
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_MULTIPLE_REGISTERS_REQUEST, (request_id,), 'B', '')
 
@@ -697,7 +699,7 @@ class BrickletRS485(Device):
         read discrete inputs.
 
         * Request ID: Request ID of the corresponding request that is being answered.
-        * Data: Data that is to be sent to the Modbus master for the corresponding request.
+        * Discrete Inputs: Data that is to be sent to the Modbus master for the corresponding request.
 
         This function must be called from the :cb:`Modbus Slave Read Discrete Inputs Request`
         callback with the Request ID as provided by the argument of the callback.
@@ -730,7 +732,7 @@ class BrickletRS485(Device):
         read input registers.
 
         * Request ID: Request ID of the corresponding request that is being answered.
-        * Data: Data that is to be sent to the Modbus master for the corresponding request.
+        * Input Registers: Data that is to be sent to the Modbus master for the corresponding request.
 
         This function must be called from the :cb:`Modbus Slave Read Input Registers Request` callback
         with the Request ID as provided by the argument of the callback.
@@ -911,9 +913,8 @@ class BrickletRS485(Device):
 
                 stream_total_written += stream_chunk_written
 
-                # either last chunk or short write
                 if stream_chunk_written < 59:
-                    break
+                    break # either last chunk or short write
 
                 stream_chunk_offset += 59
 
@@ -948,7 +949,9 @@ class BrickletRS485(Device):
                 while stream_chunk_offset + 60 < stream_total_length:
                     # FIXME: validate that total length is identical for all low-level getters of a stream
                     # FIXME: validate that stream_chunk_offset grows
-                    stream_chunk_offset = self.read_low_level(length).stream_chunk_offset
+                    stream_result = self.read_low_level(length)
+                    stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
+                    stream_chunk_offset = stream_result.stream_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
 
@@ -957,6 +960,7 @@ class BrickletRS485(Device):
             while len(stream_data) < stream_total_length:
                 stream_result = self.read_low_level(length)
                 stream_extra = stream_result[:-3] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+                stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
                 stream_chunk_offset = stream_result.stream_chunk_offset
 
                 # FIXME: validate that total length is identical for all low-level getters of a stream
@@ -966,7 +970,9 @@ class BrickletRS485(Device):
                     while stream_chunk_offset + 60 < stream_total_length:
                         # FIXME: validate that total length is identical for all low-level getters of a stream
                         # FIXME: validate that stream_chunk_offset grows
-                        stream_chunk_offset = self.read_low_level(length).stream_chunk_offset
+                        stream_result = self.read_low_level(length)
+                        stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
+                        stream_chunk_offset = stream_result.stream_chunk_offset
 
                     raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
 

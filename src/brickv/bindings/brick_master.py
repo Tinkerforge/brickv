@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-04-21.      #
+# This file was automatically generated on 2017-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.12                            #
 #                                                           #
@@ -757,6 +757,9 @@ class BrickMaster(Device):
     def get_wifi_encryption(self):
         """
         Returns the encryption as set by :func:`Set Wifi Encryption`.
+
+        .. note::
+         Since Master Brick Firmware version 2.4.4 the key is not returned anymore.
         """
         return GetWifiEncryption(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_ENCRYPTION, (), '', 'B 50s B B H H H'))
 
@@ -905,6 +908,9 @@ class BrickMaster(Device):
     def get_long_wifi_key(self):
         """
         Returns the encryption key as set by :func:`Set Long Wifi Key`.
+
+        .. note::
+         Since Master Brick firmware version 2.4.4 the key is not returned anymore.
 
         .. versionadded:: 2.0.2$nbsp;(Firmware)
         """
@@ -1520,6 +1526,10 @@ class BrickMaster(Device):
         """
         Returns the client password as set by :func:`Set Wifi2 Client Password`.
 
+        .. note::
+         Since WIFI Extension 2.0 firmware version 2.1.3 the password is not
+         returned anymore.
+
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_CLIENT_PASSWORD, (), '', '64s')
@@ -1589,6 +1599,10 @@ class BrickMaster(Device):
     def get_wifi2_ap_password(self):
         """
         Returns the access point password as set by :func:`Set Wifi2 AP Password`.
+
+        .. note::
+         Since WIFI Extension 2.0 firmware version 2.1.3 the password is not
+         returned anymore.
 
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """

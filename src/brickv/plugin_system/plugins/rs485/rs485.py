@@ -53,7 +53,7 @@ MSG_ERR_REQUEST_PROCESS = "Failed to process the request"
 MSG_ERR_NOT_MODBUS_MASTER = "The Bricklet needs to be in Modbus master mode to perform this operation"
 
 class RS485(COMCUPluginBase, Ui_RS485):
-    qtcb_read = pyqtSignal(int, object)
+    qtcb_read = pyqtSignal(object)
 
     # Modbus specific.
     qtcb_modbus_slave_read_coils_request = pyqtSignal(int, int, int)
