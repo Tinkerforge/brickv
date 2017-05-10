@@ -253,21 +253,21 @@ class BrickletRS485(Device):
 
         self.callback_formats[BrickletRS485.CALLBACK_READ_LOW_LEVEL] = 'H H 60c'
         self.callback_formats[BrickletRS485.CALLBACK_ERROR_COUNT] = 'I I'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_COILS_REQUEST] = 'B H H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_COILS_REQUEST] = 'B I H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL] = 'B b H H 464!'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_HOLDING_REGISTERS_REQUEST] = 'B H H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_HOLDING_REGISTERS_REQUEST] = 'B I H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = 'B b H H 29H'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_SINGLE_COIL_REQUEST] = 'B H !'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_SINGLE_COIL_REQUEST] = 'B I !'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_SINGLE_COIL_RESPONSE] = 'B b'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_SINGLE_REGISTER_REQUEST] = 'B H H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_SINGLE_REGISTER_REQUEST] = 'B I H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_SINGLE_REGISTER_RESPONSE] = 'B b'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL] = 'B H H H 440!'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL] = 'B I H H 440!'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_MULTIPLE_COILS_RESPONSE] = 'B b'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL] = 'B H H H 27H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL] = 'B I H H 27H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_MULTIPLE_REGISTERS_RESPONSE] = 'B b'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_DISCRETE_INPUTS_REQUEST] = 'B H H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_DISCRETE_INPUTS_REQUEST] = 'B I H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = 'B b H H 464!'
-        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_INPUT_REGISTERS_REQUEST] = 'B H H'
+        self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_INPUT_REGISTERS_REQUEST] = 'B I H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = 'B b H H 29H'
 
         self.low_level_callbacks[BrickletRS485.CALLBACK_READ_LOW_LEVEL] = [{'fixed_total_length': None}, None]
@@ -288,7 +288,7 @@ class BrickletRS485(Device):
         See :func:`Set RS485 Configuration` for configuration possibilities
         regarding baudrate, parity and so on.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_WRITE_LOW_LEVEL, (stream_total_length, stream_chunk_offset, stream_chunk_data), 'H H 59c', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_WRITE_LOW_LEVEL, (stream_total_length, stream_chunk_offset, stream_chunk_data), 'H H 60c', 'B')
 
     def read_low_level(self, length):
         """
@@ -531,7 +531,7 @@ class BrickletRS485(Device):
         matched with the Request ID returned from this function to verify that the callback
         is indeed for a particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_READ_COILS, (slave_address, starting_address, count), 'B H H', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_READ_COILS, (slave_address, starting_address, count), 'B I H', 'B')
 
     def modbus_slave_answer_read_holding_registers_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
@@ -564,7 +564,7 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_READ_HOLDING_REGISTERS, (slave_address, starting_address, count), 'B H H', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_READ_HOLDING_REGISTERS, (slave_address, starting_address, count), 'B I H', 'B')
 
     def modbus_slave_answer_write_single_coil_request(self, request_id):
         """
@@ -596,7 +596,7 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_SINGLE_COIL, (slave_address, coil_address, coil_value), 'B H !', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_SINGLE_COIL, (slave_address, coil_address, coil_value), 'B I !', 'B')
 
     def modbus_slave_answer_write_single_register_request(self, request_id):
         """
@@ -629,7 +629,7 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_SINGLE_REGISTER, (slave_address, register_address, register_value), 'B H H', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_SINGLE_REGISTER, (slave_address, register_address, register_value), 'B I H', 'B')
 
     def modbus_slave_answer_write_multiple_coils_request(self, request_id):
         """
@@ -660,7 +660,7 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_MULTIPLE_COILS_LOW_LEVEL, (slave_address, starting_address, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H H 432!', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_MULTIPLE_COILS_LOW_LEVEL, (slave_address, starting_address, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B I H H 440!', 'B')
 
     def modbus_slave_answer_write_multiple_registers_request(self, request_id):
         """
@@ -691,7 +691,7 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_MULTIPLE_REGISTERS_LOW_LEVEL, (slave_address, starting_address, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B H H H 27H', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_WRITE_MULTIPLE_REGISTERS_LOW_LEVEL, (slave_address, starting_address, stream_total_length, stream_chunk_offset, stream_chunk_data), 'B I H H 27H', 'B')
 
     def modbus_slave_answer_read_discrete_inputs_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
@@ -724,7 +724,7 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_READ_DISCRETE_INPUTS, (slave_address, starting_address, count), 'B H H', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_READ_DISCRETE_INPUTS, (slave_address, starting_address, count), 'B I H', 'B')
 
     def modbus_slave_answer_read_input_registers_request_low_level(self, request_id, stream_total_length, stream_chunk_offset, stream_chunk_data):
         """
@@ -757,7 +757,7 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
-        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_READ_INPUT_REGISTERS, (slave_address, starting_address, count), 'B H H', 'B')
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_READ_INPUT_REGISTERS, (slave_address, starting_address, count), 'B I H', 'B')
 
     def get_spitfp_error_count(self):
         """
@@ -897,10 +897,10 @@ class BrickletRS485(Device):
 
         with self.stream_lock:
             while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = message[stream_chunk_offset:stream_chunk_offset + 59]
+                stream_chunk_data = message[stream_chunk_offset:stream_chunk_offset + 60]
 
-                if len(stream_chunk_data) < 59:
-                    stream_chunk_data.extend(['\x00']*(59 - len(stream_chunk_data)))
+                if len(stream_chunk_data) < 60:
+                    stream_chunk_data.extend(['\x00']*(60 - len(stream_chunk_data)))
 
                 stream_result = self.write_low_level(stream_total_length, stream_chunk_offset, stream_chunk_data)
 
@@ -913,10 +913,10 @@ class BrickletRS485(Device):
 
                 stream_total_written += stream_chunk_written
 
-                if stream_chunk_written < 59:
+                if stream_chunk_written < 60:
                     break # either last chunk or short write
 
-                stream_chunk_offset += 59
+                stream_chunk_offset += 60
 
         if len(stream_extra) > 0:
             return stream_extra + (stream_total_written,) # FIXME: need to return this as a namedtuple
@@ -1028,15 +1028,15 @@ class BrickletRS485(Device):
 
         with self.stream_lock:
             while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = coils[stream_chunk_offset:stream_chunk_offset + 432]
+                stream_chunk_data = coils[stream_chunk_offset:stream_chunk_offset + 440]
 
-                if len(stream_chunk_data) < 432:
-                    stream_chunk_data.extend([False]*(432 - len(stream_chunk_data)))
+                if len(stream_chunk_data) < 440:
+                    stream_chunk_data.extend([False]*(440 - len(stream_chunk_data)))
 
                 # FIXME: validate that the result of all the low-level calls is identical
                 stream_result = self.modbus_master_write_multiple_coils_low_level(slave_address, starting_address, stream_total_length, stream_chunk_offset, stream_chunk_data)
 
-                stream_chunk_offset += 432
+                stream_chunk_offset += 440
 
         return stream_result
 

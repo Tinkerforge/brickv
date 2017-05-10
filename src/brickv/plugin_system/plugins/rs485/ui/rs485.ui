@@ -274,8 +274,11 @@
      </item>
      <item row="3" column="1" colspan="3">
       <widget class="QSpinBox" name="modbus_master_param1_spinbox">
+       <property name="minimum">
+        <number>1</number>
+       </property>
        <property name="maximum">
-        <number>65535</number>
+        <number>65536</number>
        </property>
       </widget>
      </item>

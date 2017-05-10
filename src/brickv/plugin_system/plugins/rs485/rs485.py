@@ -472,24 +472,18 @@ class RS485(COMCUPluginBase, Ui_RS485):
     def modbus_master_function_changed(self, function):
         if function == MODBUS_F_IDX_READ_COILS:
             self.modbus_master_param1_label.setText('Starting Address:')
-            self.modbus_master_param1_spinbox.setMinimum(0)
-            self.modbus_master_param1_spinbox.setMaximum(65535)
             self.modbus_master_param2_label.setText('Number of Coils:')
             self.modbus_master_param2_spinbox.setMinimum(1)
             self.modbus_master_param2_spinbox.setMaximum(2000)
 
         elif function == MODBUS_F_IDX_READ_HOLDING_REGISTERS:
             self.modbus_master_param1_label.setText('Starting Address:')
-            self.modbus_master_param1_spinbox.setMinimum(0)
-            self.modbus_master_param1_spinbox.setMaximum(65535)
             self.modbus_master_param2_label.setText('Number of Registers:')
             self.modbus_master_param2_spinbox.setMinimum(1)
             self.modbus_master_param2_spinbox.setMaximum(125)
 
         elif function == MODBUS_F_IDX_WRITE_SINGLE_COIL:
             self.modbus_master_param1_label.setText('Coil Address:')
-            self.modbus_master_param1_spinbox.setMinimum(0)
-            self.modbus_master_param1_spinbox.setMaximum(65535)
             self.modbus_master_param2_label.setText('Coil Value:')
             self.modbus_master_param2_spinbox.setMinimum(0)
             self.modbus_master_param2_spinbox.setMaximum(1)
@@ -497,40 +491,30 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         elif function == MODBUS_F_IDX_WRITE_SINGLE_REGISTER:
             self.modbus_master_param1_label.setText('Register Address:')
-            self.modbus_master_param1_spinbox.setMinimum(0)
-            self.modbus_master_param1_spinbox.setMaximum(65535)
             self.modbus_master_param2_label.setText('Register Value:')
             self.modbus_master_param2_spinbox.setMinimum(0)
             self.modbus_master_param2_spinbox.setMaximum(65535)
 
         elif function == MODBUS_F_IDX_WRITE_MULTIPLE_COILS:
             self.modbus_master_param1_label.setText('Starting Address:')
-            self.modbus_master_param1_spinbox.setMinimum(0)
-            self.modbus_master_param1_spinbox.setMaximum(65535)
             self.modbus_master_param2_label.setText('Number of Coils:')
             self.modbus_master_param2_spinbox.setMinimum(1)
             self.modbus_master_param2_spinbox.setMaximum(1968)
 
         elif function == MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS:
             self.modbus_master_param1_label.setText('Starting Address:')
-            self.modbus_master_param1_spinbox.setMinimum(0)
-            self.modbus_master_param1_spinbox.setMaximum(65535)
             self.modbus_master_param2_label.setText('Number of Registers:')
             self.modbus_master_param2_spinbox.setMinimum(1)
             self.modbus_master_param2_spinbox.setMaximum(123)
 
         elif function == MODBUS_F_IDX_READ_DISCRETE_INPUTS:
             self.modbus_master_param1_label.setText('Starting Address:')
-            self.modbus_master_param1_spinbox.setMinimum(0)
-            self.modbus_master_param1_spinbox.setMaximum(65535)
             self.modbus_master_param2_label.setText('Number of Coils:')
             self.modbus_master_param2_spinbox.setMinimum(1)
             self.modbus_master_param2_spinbox.setMaximum(2000)
 
         elif function == MODBUS_F_IDX_READ_INPUT_REGISTERS:
             self.modbus_master_param1_label.setText('Starting Address:')
-            self.modbus_master_param1_spinbox.setMinimum(0)
-            self.modbus_master_param1_spinbox.setMaximum(65535)
             self.modbus_master_param2_label.setText('Number of Registers:')
             self.modbus_master_param2_spinbox.setMinimum(1)
             self.modbus_master_param2_spinbox.setMaximum(125)
