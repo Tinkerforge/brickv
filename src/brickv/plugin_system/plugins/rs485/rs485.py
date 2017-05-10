@@ -324,6 +324,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
             return
 
+        self.rs485.set_modbus_configuration(self.modbus_slave_address_spinbox.value(),
+                                            self.modbus_master_request_timeout_spinbox.value())
+
         if self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_COILS:
             try:
                 rid = self.rs485.modbus_master_read_coils(self.modbus_master_slave_address_spinbox.value(),
@@ -1138,17 +1141,12 @@ class RS485(COMCUPluginBase, Ui_RS485):
         stopbits = self.stopbits_spinbox.value()
         wordlength = self.wordlength_spinbox.value()
         duplex = self.duplex_combobox.currentIndex()
-        modbus_slave_address = self.modbus_slave_address_spinbox.value()
-        modbus_master_request_timeout = self.modbus_master_request_timeout_spinbox.value()
 
         self.rs485.set_rs485_configuration(baudrate,
                                            parity,
                                            stopbits,
                                            wordlength,
                                            duplex)
-
-        self.rs485.set_modbus_configuration(modbus_slave_address,
-                                            modbus_master_request_timeout)
 
         self.rs485.set_mode(mode)
 
