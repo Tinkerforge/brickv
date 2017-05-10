@@ -22,8 +22,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import random
-
 from PyQt4.QtGui import QTextCursor, QAction, QMessageBox
 from PyQt4.QtCore import pyqtSignal
 
@@ -399,7 +397,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
             data = []
 
             for i in range(self.modbus_master_param2_spinbox.value()):
-                data.append(random.randint(0, 1) == 1)
+                if i % 2:
+                    data.append(False)
+                else:
+                    data.append(True)
 
             try:
                 rid = self.rs485.modbus_master_write_multiple_coils(self.modbus_master_slave_address_spinbox.value(),
@@ -420,7 +421,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
             data = []
 
             for i in range(self.modbus_master_param2_spinbox.value()):
-                data.append(random.randint(0, 65535))
+                data.append(i + 1)
 
             try:
                 rid = self.rs485.modbus_master_write_multiple_registers(self.modbus_master_slave_address_spinbox.value(),
@@ -586,7 +587,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
         data = []
 
         for i in range(count):
-            data.append(random.randint(0, 1) == 1)
+            if i % 2:
+                data.append(False)
+            else:
+                data.append(True)
 
         self.rs485.modbus_slave_answer_read_coils_request(request_id, data)
         self.append_text(a)
@@ -652,7 +656,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         data = []
 
         for i in range(count):
-            data.append(random.randint(0, 65535))
+            data.append(i + 1)
 
         self.rs485.modbus_slave_answer_read_holding_registers_request(request_id, data)
         self.append_text(a)
@@ -940,7 +944,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
         data = []
 
         for i in range(count):
-            data.append(random.randint(0, 1) == 1)
+            if i % 2:
+                data.append(False)
+            else:
+                data.append(True)
 
         self.rs485.modbus_slave_answer_read_discrete_inputs_request(request_id, data)
         self.append_text(a)
@@ -1006,7 +1013,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         data = []
 
         for i in range(count):
-            data.append(random.randint(0, 65535))
+            data.append(i + 1)
 
         self.rs485.modbus_slave_answer_read_input_registers_request(request_id, data)
         self.append_text(a)
