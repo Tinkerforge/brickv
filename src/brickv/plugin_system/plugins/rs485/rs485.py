@@ -64,9 +64,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_modbus_master_write_single_coil_response = pyqtSignal(int, int)
     qtcb_modbus_slave_write_single_register_request = pyqtSignal(int, int, int)
     qtcb_modbus_master_write_single_register_response = pyqtSignal(int, int)
-    qtcb_modbus_slave_write_multiple_coils_request = pyqtSignal(int, int, int, object)
+    qtcb_modbus_slave_write_multiple_coils_request = pyqtSignal(int, int, object)
     qtcb_modbus_master_write_multiple_coils_response = pyqtSignal(int, int)
-    qtcb_modbus_slave_write_multiple_registers_request = pyqtSignal(int, int, int, object)
+    qtcb_modbus_slave_write_multiple_registers_request = pyqtSignal(int, int, object)
     qtcb_modbus_master_write_multiple_registers_response = pyqtSignal(int, int)
     qtcb_modbus_slave_read_discrete_inputs_request = pyqtSignal(int, int, int)
     qtcb_modbus_master_read_discrete_inputs_response = pyqtSignal(int, int, object)
@@ -821,7 +821,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
     def cb_modbus_slave_write_multiple_coils_request(self,
                                                      request_id,
                                                      starting_address,
-                                                     count,
                                                      coils):
         if coils == None:
             # Increase stream error counter
@@ -838,7 +837,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 ', STARTING ADDRESS=' + \
                 str(starting_address) + \
                 ', COUNT=' + \
-                str(count) + \
+                str(len(coils)) + \
                 ', COILS=' + \
                 str(coils) + \
                 '\n\n'
@@ -883,7 +882,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
     def cb_modbus_slave_write_multiple_registers_request(self,
                                                          request_id,
                                                          starting_address,
-                                                         count,
                                                          registers):
         if registers == None:
             # Increase stream error counter
@@ -900,7 +898,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 ', STARTING ADDRESS=' + \
                 str(starting_address) + \
                 ', COUNT=' + \
-                str(count) + \
+                str(len(registers)) + \
                 ', REGISTERS=' + \
                 str(registers) + \
                 '\n\n'
