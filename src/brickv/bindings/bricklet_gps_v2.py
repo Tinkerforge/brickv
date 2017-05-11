@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-04-21.      #
+# This file was automatically generated on 2017-05-11.      #
 #                                                           #
 # Python Bindings Version 2.1.12                            #
 #                                                           #
@@ -29,7 +29,7 @@ GetStatus = namedtuple('Status', ['has_fix', 'satellites_view'])
 GetAltitude = namedtuple('Altitude', ['altitude', 'geoidal_separation'])
 GetMotion = namedtuple('Motion', ['course', 'speed'])
 GetDateTime = namedtuple('DateTime', ['date', 'time'])
-GetSatelliteSystemStatus = namedtuple('SatelliteSystemStatus', ['satellites', 'fix', 'pdop', 'hdop', 'vdop'])
+GetSatelliteSystemStatusLowLevel = namedtuple('SatelliteSystemStatusLowLevel', ['satellite_numbers_length', 'satellite_numbers_data', 'fix', 'pdop', 'hdop', 'vdop'])
 GetSatelliteStatus = namedtuple('SatelliteStatus', ['elevation', 'azimuth', 'snr'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -56,7 +56,7 @@ class BrickletGPSV2(Device):
     FUNCTION_GET_MOTION = 4
     FUNCTION_GET_DATE_TIME = 5
     FUNCTION_RESTART = 6
-    FUNCTION_GET_SATELLITE_SYSTEM_STATUS = 7
+    FUNCTION_GET_SATELLITE_SYSTEM_STATUS_LOW_LEVEL = 7
     FUNCTION_GET_SATELLITE_STATUS = 8
     FUNCTION_SET_FIX_LED_CONFIG = 9
     FUNCTION_GET_FIX_LED_CONFIG = 10
@@ -129,7 +129,7 @@ class BrickletGPSV2(Device):
         self.response_expected[BrickletGPSV2.FUNCTION_GET_MOTION] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_GET_DATE_TIME] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_RESTART] = BrickletGPSV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletGPSV2.FUNCTION_GET_SATELLITE_SYSTEM_STATUS] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPSV2.FUNCTION_GET_SATELLITE_SYSTEM_STATUS_LOW_LEVEL] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_GET_SATELLITE_STATUS] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_SET_FIX_LED_CONFIG] = BrickletGPSV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletGPSV2.FUNCTION_GET_FIX_LED_CONFIG] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -242,7 +242,7 @@ class BrickletGPSV2(Device):
         """
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_RESTART, (restart_type,), 'B', '')
 
-    def get_satellite_system_status(self, satellite_system):
+    def get_satellite_system_status_low_level(self, satellite_system):
         """
         Returns the
 
@@ -259,7 +259,7 @@ class BrickletGPSV2(Device):
         the numbers of the satellites that are currently utilized. The number 0 is not
         a valid satellite number and can be ignored in the list.
         """
-        return GetSatelliteSystemStatus(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_SATELLITE_SYSTEM_STATUS, (satellite_system,), 'B', '12b B H H H'))
+        return GetSatelliteSystemStatusLowLevel(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_SATELLITE_SYSTEM_STATUS_LOW_LEVEL, (satellite_system,), 'B', 'B 12B B H H H'))
 
     def get_satellite_status(self, satellite_system, satellite_number):
         """
