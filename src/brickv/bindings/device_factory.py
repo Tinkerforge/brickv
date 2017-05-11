@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-04-21.      #
+# This file was automatically generated on 2017-05-11.      #
 #                                                           #
-# Python Bindings Version 2.1.12                            #
+# Python Bindings Version 2.1.13                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -143,6 +143,11 @@ try:
     from .bricklet_gps import BrickletGPS
 except ValueError:
     from bricklet_gps import BrickletGPS
+
+try:
+    from .bricklet_gps_v2 import BrickletGPSV2
+except ValueError:
+    from bricklet_gps_v2 import BrickletGPSV2
 
 try:
     from .bricklet_hall_effect import BrickletHallEffect
@@ -388,6 +393,7 @@ BrickletDualButton.DEVICE_IDENTIFIER: BrickletDualButton,
 BrickletDualRelay.DEVICE_IDENTIFIER: BrickletDualRelay,
 BrickletDustDetector.DEVICE_IDENTIFIER: BrickletDustDetector,
 BrickletGPS.DEVICE_IDENTIFIER: BrickletGPS,
+BrickletGPSV2.DEVICE_IDENTIFIER: BrickletGPSV2,
 BrickletHallEffect.DEVICE_IDENTIFIER: BrickletHallEffect,
 BrickletHumidity.DEVICE_IDENTIFIER: BrickletHumidity,
 BrickletIndustrialAnalogOut.DEVICE_IDENTIFIER: BrickletIndustrialAnalogOut,
