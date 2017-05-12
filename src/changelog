@@ -357,7 +357,7 @@
 - Fix check for downloading firmwares from tinkerforge.com
 - Remove error prone Protocol 1 Bricklet detection logic
 
-2017-04-21: 2.3.8 (<unknown>)
+2017-04-21: 2.3.8 (637824e)
 - Add support for Silent Stepper Brick
 - Add support for LIDAR-Lite sensor hardware version 3 to Laser Range Finder
   Bricklet plugin
@@ -367,6 +367,8 @@
 - Split identifier into extended and standard part in CAN Bricklet plugin
 - Reorganize plugin info bar to fit more elements
 
-<unknown>: 2.3.9 (<unknown>)
+2017-05-12: 2.3.9 (<unknown>)
+- Add support for GPS Bricklet 2.0
 - Add update mechanism for API bindings and Brick Viewer on RED Brick
-- Add check box for setting of WIFI password (old pw is not returned anymore)
+- Add checkbox for setting the WIFI Extension (2.0) password, old password is
+  not shown anymore
