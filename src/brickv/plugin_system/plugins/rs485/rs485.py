@@ -1150,6 +1150,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.rs485.set_mode(mode)
 
+        if mode == MODE_MODBUS_MASTER_RTU or mode == MODE_MODBUS_SLAVE_RTU:
+            self.rs485.set_modbus_configuration(self.modbus_slave_address_spinbox.value(),
+                                                self.modbus_master_request_timeout_spinbox.value())
+
         self.apply_button.setEnabled(False)
 
     def is_read_callback_enabled_async(self, enabled):
