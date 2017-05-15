@@ -262,7 +262,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                        self.label_error_modbus_slave_device_failure_name,
                                        self.label_error_modbus_slave_device_failure,
                                        self.modbus_slave_address_label,
-                                       self.modbus_slave_address_spinbox]
+                                       self.modbus_slave_address_spinbox,
+                                       self.modbus_slave_respond_checkbox]
 
         self.mode_changed(0)
 
@@ -578,6 +579,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.append_text(ascii)
 
     def cb_modbus_slave_read_coils_request(self, request_id, starting_address, count):
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
+
         a = 'READ COILS REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -647,6 +651,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                        request_id,
                                                        starting_address,
                                                        count):
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
+
         a = 'READ HOLDING REGISTERS REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -713,6 +720,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                   request_id,
                                                   coil_address,
                                                   coil_value):
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
+
         a = 'WRITE SINGLE COIL REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -763,6 +773,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                       request_id,
                                                       register_address,
                                                       register_value):
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
+
         a = 'WRITE SINGLE REGISTER REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -813,6 +826,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                      request_id,
                                                      starting_address,
                                                      coils):
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
+
         if coils == None:
             # Increase stream error counter
             self.error_stream_oos = self.error_stream_oos + 1
@@ -874,6 +890,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                          request_id,
                                                          starting_address,
                                                          registers):
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
+
         if registers == None:
             # Increase stream error counter
             self.error_stream_oos = self.error_stream_oos + 1
@@ -935,6 +954,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                      request_id,
                                                      starting_address,
                                                      count):
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
+
         a = 'READ DISCRETE INPUTS REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -1004,6 +1026,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                      request_id,
                                                      starting_address,
                                                      count):
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
+
         a = 'READ INPUT REGISTERS REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
