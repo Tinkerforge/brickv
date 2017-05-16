@@ -125,7 +125,7 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
         self.gps_counter = (self.gps_counter + 1) % 33
 
         if counter == 0:
-            return counter, self.gps.get_satellite_system_status_low_level(self.gps.SATELLITE_SYSTEM_GPS) # FIXME: replace with high-level function
+            return counter, self.gps.get_satellite_system_status(self.gps.SATELLITE_SYSTEM_GPS)
         else:
             return counter, self.gps.get_satellite_status(self.gps.SATELLITE_SYSTEM_GPS, counter)
 
@@ -134,7 +134,7 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
         self.glo_counter = (self.glo_counter + 1) % 33
 
         if counter == 0:
-            return counter, self.gps.get_satellite_system_status_low_level(self.gps.SATELLITE_SYSTEM_GLONASS) # FIXME: replace with high-level function
+            return counter, self.gps.get_satellite_system_status(self.gps.SATELLITE_SYSTEM_GLONASS)
         else:
             return counter, self.gps.get_satellite_status(self.gps.SATELLITE_SYSTEM_GLONASS, counter)
 
@@ -173,12 +173,10 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
         str_vdop = '%.2f' % (data.vdop/100.0,)
         dop.setText(str(str_pdop) + ' / ' + str(str_hdop) + ' / ' + str(str_vdop))
 
-        sats = data.satellite_numbers_data[:data.satellite_numbers_length]
-
-        if len(sats) == 0:
+        if len(data.satellite_numbers) == 0:
             used.setText('None')
         else:
-            used.setText(', '.join(map(str, sats)))
+            used.setText(', '.join(map(str, data.satellite_numbers)))
 
     def update_table(self, table_model, num, data):
         table_model.setItem(num-1, 0, QStandardItem(str(data.elevation)))

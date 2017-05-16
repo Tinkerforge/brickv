@@ -1,22 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 # Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
-
-from threading import Thread, Lock, Semaphore
-
-try:
-    from threading import current_thread # Python 2.6
-except ImportError:
-    from threading import currentThread as current_thread # Python 2.5
-
-try:
-    from queue import Queue, Empty # Python 3
-except ImportError:
-    from Queue import Queue, Empty # Python 2
 
 import struct
 import socket
@@ -27,15 +15,12 @@ import math
 import hmac
 import hashlib
 import errno
+import threading
 
 try:
-    from collections import namedtuple
+    import queue # Python 3
 except ImportError:
-    def namedtuple(typename, field_names, verbose=False, rename=False):
-        def ntuple(*args):
-            return args
-
-        return ntuple
+    import Queue as queue # Python 2
 
 def get_uid_from_data(data):
     return struct.unpack('<I', data[0:4])[0]
@@ -53,22 +38,26 @@ def get_error_code_from_data(data):
     return (struct.unpack('<B', data[7:8])[0] >> 6) & 0x03
 
 BASE58 = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
+
 def base58encode(value):
     encoded = ''
+
     while value >= 58:
         div, mod = divmod(value, 58)
         encoded = BASE58[mod] + encoded
         value = div
-    encoded = BASE58[value] + encoded
-    return encoded
+
+    return BASE58[value] + encoded
 
 def base58decode(encoded):
     value = 0
     column_multiplier = 1
+
     for c in encoded[::-1]:
         column = BASE58.index(c)
         value += column * column_multiplier
         column_multiplier *= 58
+
     return value
 
 def uid64_to_uid32(uid64):
@@ -123,12 +112,12 @@ class Device:
         self.api_version = (0, 0, 0)
         self.registered_callbacks = {}
         self.callback_formats = {}
-        self.low_level_callbacks = {}
+        self.high_level_callbacks = {}
         self.expected_response_function_id = None # protected by request_lock
         self.expected_response_sequence_number = None # protected by request_lock
-        self.response_queue = Queue()
-        self.request_lock = Lock()
-        self.stream_lock = Lock()
+        self.response_queue = queue.Queue()
+        self.request_lock = threading.Lock()
+        self.stream_lock = threading.Lock()
 
         self.response_expected = [Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID] * 256
         self.response_expected[IPConnection.FUNCTION_ENUMERATE] = Device.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -305,24 +294,24 @@ class IPConnection:
         self.auto_reconnect = True
         self.auto_reconnect_allowed = False
         self.auto_reconnect_pending = False
-        self.sequence_number_lock = Lock()
+        self.sequence_number_lock = threading.Lock()
         self.next_sequence_number = 0 # protected by sequence_number_lock
-        self.authentication_lock = Lock() # protects authentication handshake
+        self.authentication_lock = threading.Lock() # protects authentication handshake
         self.next_authentication_nonce = 0 # protected by authentication_lock
         self.devices = {}
         self.registered_callbacks = {}
         self.socket = None # protected by socket_lock
         self.socket_id = 0 # protected by socket_lock
-        self.socket_lock = Lock()
-        self.socket_send_lock = Lock()
+        self.socket_lock = threading.Lock()
+        self.socket_send_lock = threading.Lock()
         self.receive_flag = False
         self.receive_thread = None
         self.callback = None
         self.disconnect_probe_flag = False
         self.disconnect_probe_queue = None
         self.disconnect_probe_thread = None
-        self.waiter = Semaphore()
-        self.brickd = BrickDaemon("2", self)
+        self.waiter = threading.Semaphore()
+        self.brickd = BrickDaemon('2', self)
 
     def connect(self, host, port):
         """
@@ -376,7 +365,7 @@ class IPConnection:
                              IPConnection.DISCONNECT_REASON_REQUEST, None)))
         callback.queue.put((IPConnection.QUEUE_EXIT, None))
 
-        if current_thread() is not callback.thread:
+        if threading.current_thread() is not callback.thread:
             callback.thread.join()
 
     def authenticate(self, secret):
@@ -528,12 +517,12 @@ class IPConnection:
         if self.callback is None:
             try:
                 self.callback = IPConnection.CallbackContext()
-                self.callback.queue = Queue()
+                self.callback.queue = queue.Queue()
                 self.callback.packet_dispatch_allowed = False
-                self.callback.lock = Lock()
-                self.callback.thread = Thread(name='Callback-Processor',
-                                              target=self.callback_loop,
-                                              args=(self.callback, ))
+                self.callback.lock = threading.Lock()
+                self.callback.thread = threading.Thread(name='Callback-Processor',
+                                                        target=self.callback_loop,
+                                                        args=(self.callback, ))
                 self.callback.thread.daemon = True
                 self.callback.thread.start()
             except:
@@ -563,7 +552,7 @@ class IPConnection:
                 if not is_auto_reconnect:
                     self.callback.queue.put((IPConnection.QUEUE_EXIT, None))
 
-                    if current_thread() is not self.callback.thread:
+                    if threading.current_thread() is not self.callback.thread:
                         self.callback.thread.join()
 
                     self.callback = None
@@ -577,10 +566,10 @@ class IPConnection:
         # create disconnect probe thread
         try:
             self.disconnect_probe_flag = True
-            self.disconnect_probe_queue = Queue()
-            self.disconnect_probe_thread = Thread(name='Disconnect-Prober',
-                                                  target=self.disconnect_probe_loop,
-                                                  args=(self.disconnect_probe_queue, ))
+            self.disconnect_probe_queue = queue.Queue()
+            self.disconnect_probe_thread = threading.Thread(name='Disconnect-Prober',
+                                                            target=self.disconnect_probe_loop,
+                                                            args=(self.disconnect_probe_queue, ))
             self.disconnect_probe_thread.daemon = True
             self.disconnect_probe_thread.start()
         except:
@@ -595,7 +584,7 @@ class IPConnection:
                 if not is_auto_reconnect:
                     self.callback.queue.put((IPConnection.QUEUE_EXIT, None))
 
-                    if current_thread() is not self.callback.thread:
+                    if threading.current_thread() is not self.callback.thread:
                         self.callback.thread.join()
 
                     self.callback = None
@@ -608,9 +597,9 @@ class IPConnection:
 
         try:
             self.receive_flag = True
-            self.receive_thread = Thread(name='Brickd-Receiver',
-                                         target=self.receive_loop,
-                                         args=(self.socket_id, ))
+            self.receive_thread = threading.Thread(name='Brickd-Receiver',
+                                                   target=self.receive_loop,
+                                                   args=(self.socket_id, ))
             self.receive_thread.daemon = True
             self.receive_thread.start()
         except:
@@ -622,7 +611,7 @@ class IPConnection:
                 if not is_auto_reconnect:
                     self.callback.queue.put((IPConnection.QUEUE_EXIT, None))
 
-                    if current_thread() is not self.callback.thread:
+                    if threading.current_thread() is not self.callback.thread:
                         self.callback.thread.join()
 
                     self.callback = None
@@ -653,7 +642,7 @@ class IPConnection:
         # stop dispatching packet callbacks before ending the receive
         # thread to avoid timeout exceptions due to callback functions
         # trying to call getters
-        if current_thread() is not self.callback.thread:
+        if threading.current_thread() is not self.callback.thread:
             # FIXME: cannot hold callback lock here because this can
             #        deadlock due to an ordering problem with the socket lock
             #with self.callback.lock:
@@ -795,48 +784,59 @@ class IPConnection:
 
         device = self.devices[uid]
 
-        if function_id in device.low_level_callbacks:
-            llcb = device.low_level_callbacks[function_id] # [options, data]
+        if -function_id in device.high_level_callbacks:
+            hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]
             form = device.callback_formats[function_id] # FIXME: currently assuming that form is longer than 1
-            values = self.deserialize_data(payload, form)
-            fixed_total_length = llcb[0].get('fixed_total_length', None)
-            result = None
+            llvalues = self.deserialize_data(payload, form)
+            fixed_total_length = hlcb[1]['fixed_total_length']
+            has_data = False
+            data = None
 
-            if fixed_total_length == None:
-                extra = tuple(values[:-3])
-                total_length = values[-3]
+            if hlcb[1]['fixed_total_length'] != None:
+                total_length = hlcb[1]['fixed_total_length']
             else:
-                extra = tuple(values[:-2])
-                total_length = fixed_total_length
+                total_length = llvalues[hlcb[0].index('stream_total_length')]
 
-            # FIXME: validate that extra parameters are identical for all low-level callbacks of a stream
-            # FIXME: validate that total length is identical for all low-level callbacks of a stream
+            if not hlcb[1]['single_chunk']:
+                chunk_offset = llvalues[hlcb[0].index('stream_chunk_offset')]
+            else:
+                chunk_offset = 0
 
-            chunk_offset = values[-2] # FIXME: validate chunk offset < total length
-            chunk_data = values[-1]
+            chunk_data = llvalues[hlcb[0].index('stream_chunk_data')]
 
-            if llcb[1] == None: # no stream in-progress
+            if hlcb[2] == None: # no stream in-progress
                 if chunk_offset == 0: # stream starts
-                    llcb[1] = chunk_data
+                    hlcb[2] = chunk_data
 
-                    if len(llcb[1]) >= total_length: # stream complete
-                        result = extra + (llcb[1][:total_length],)
-                        llcb[1] = None
+                    if len(hlcb[2]) >= total_length: # stream complete
+                        has_data = True
+                        data = hlcb[2][:total_length]
+                        hlcb[2] = None
                 else: # ignore tail of current stream, wait for next stream start
                     pass
             else: # stream in-progress
-                if chunk_offset != len(llcb[1]): # stream out-of-sync
-                    result = extra + (None,)
-                    llcb[1] = None
+                if chunk_offset != len(hlcb[2]): # stream out-of-sync
+                    has_data = True
+                    data = None
+                    hlcb[2] = None
                 else: # stream in-sync
-                    llcb[1] += chunk_data
+                    hlcb[2] += chunk_data
 
-                    if len(llcb[1]) >= total_length: # stream complete
-                        result = extra + (llcb[1][:total_length],)
-                        llcb[1] = None
+                    if len(hlcb[2]) >= total_length: # stream complete
+                        has_data = True
+                        data = hlcb[2][:total_length]
+                        hlcb[2] = None
 
-            if result != None and -function_id in device.registered_callbacks:
-                device.registered_callbacks[-function_id](*result)
+            if has_data and -function_id in device.registered_callbacks:
+                result = []
+
+                for role, llvalue in zip(hlcb[0], llvalues):
+                    if role == 'stream_chunk_data':
+                        result.append(data)
+                    elif role == None or not role.startswith('stream_'):
+                        result.append(llvalue)
+
+                device.registered_callbacks[-function_id](*tuple(result))
 
         if function_id in device.registered_callbacks:
             cb = device.registered_callbacks[function_id]
@@ -875,7 +875,7 @@ class IPConnection:
             try:
                 disconnect_probe_queue.get(True, IPConnection.DISCONNECT_PROBE_INTERVAL)
                 break
-            except Empty:
+            except queue.Empty:
                 pass
 
             if self.disconnect_probe_flag:
@@ -1075,7 +1075,7 @@ class IPConnection:
                             # ignore old responses that arrived after the timeout expired, but before setting
                             # expected_response_function_id and expected_response_sequence_number back to None
                             break
-                except Empty:
+                except queue.Empty:
                     msg = 'Did not receive response for function {0} in time'.format(function_id)
                     raise Error(Error.TIMEOUT, msg)
                 finally:
@@ -1129,7 +1129,7 @@ class IPConnection:
 
         if sequence_number == 0:
             if function_id in device.registered_callbacks or \
-               function_id in device.low_level_callbacks:
+               -function_id in device.high_level_callbacks:
                 self.callback.queue.put((IPConnection.QUEUE_PACKET, packet))
             return
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-11.      #
+# This file was automatically generated on 2017-05-16.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -9,13 +9,7 @@
 # to the generators git repository on tinkerforge.com       #
 #############################################################
 
-try:
-    from collections import namedtuple
-except ImportError:
-    try:
-        from .ip_connection import namedtuple
-    except ValueError:
-        from ip_connection import namedtuple
+from collections import namedtuple
 
 try:
     from .ip_connection import Device, IPConnection, Error
@@ -31,6 +25,7 @@ GetSatelliteSystemStatusLowLevel = namedtuple('SatelliteSystemStatusLowLevel', [
 GetSatelliteStatus = namedtuple('SatelliteStatus', ['elevation', 'azimuth', 'snr'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
+GetSatelliteSystemStatus = namedtuple('SatelliteSystemStatus', ['satellite_numbers', 'fix', 'pdop', 'hdop', 'vdop'])
 
 class BrickletGPSV2(Device):
     """
@@ -514,6 +509,20 @@ class BrickletGPSV2(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def get_satellite_system_status(self, satellite_system):
+        satellite_numbers_result = self.get_satellite_system_status_low_level(satellite_system)
+        satellite_numbers_length = satellite_numbers_result.satellite_numbers_length
+        satellite_numbers_data = satellite_numbers_result.satellite_numbers_data
+
+        result = {}
+
+        for field in ['fix', 'pdop', 'hdop', 'vdop']:
+            result[field] = getattr(satellite_numbers_result, field)
+
+        result['satellite_numbers'] = satellite_numbers_data[:satellite_numbers_length]
+
+        return GetSatelliteSystemStatus(**result)
 
     def register_callback(self, id_, callback):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-11.      #
+# This file was automatically generated on 2017-05-16.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -11,21 +11,15 @@
 
 #### __DEVICE_IS_NOT_RELEASED__ ####
 
-try:
-    from collections import namedtuple
-except ImportError:
-    try:
-        from .ip_connection import namedtuple
-    except ValueError:
-        from ip_connection import namedtuple
+from collections import namedtuple
 
 try:
     from .ip_connection import Device, IPConnection, Error
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
-GetHighContrastImageLowLevel = namedtuple('HighContrastImageLowLevel', ['stream_chunk_offset', 'stream_chunk_data'])
-GetTemperatureImageLowLevel = namedtuple('TemperatureImageLowLevel', ['stream_chunk_offset', 'stream_chunk_data'])
+GetHighContrastImageLowLevel = namedtuple('HighContrastImageLowLevel', ['image_chunk_offset', 'image_chunk_data'])
+GetTemperatureImageLowLevel = namedtuple('TemperatureImageLowLevel', ['image_chunk_offset', 'image_chunk_data'])
 GetStatistics = namedtuple('Statistics', ['spotmeter_statistics', 'temperatures', 'resolution', 'status'])
 GetHighContrastConfig = namedtuple('HighContrastConfig', ['region_of_interest', 'dampening_factor', 'clip_limit', 'empty_counts'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
@@ -129,8 +123,8 @@ class BrickletThermalImaging(Device):
         self.callback_formats[BrickletThermalImaging.CALLBACK_HIGH_CONTRAST_IMAGE_LOW_LEVEL] = 'H 62B'
         self.callback_formats[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = 'H 31H'
 
-        self.low_level_callbacks[BrickletThermalImaging.CALLBACK_HIGH_CONTRAST_IMAGE_LOW_LEVEL] = [{'fixed_total_length': 4800}, None]
-        self.low_level_callbacks[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = [{'fixed_total_length': 4800}, None]
+        self.high_level_callbacks[BrickletThermalImaging.CALLBACK_HIGH_CONTRAST_IMAGE] = [('stream_chunk_offset', 'stream_chunk_data'), {'fixed_total_length': 4800, 'single_chunk': False}, None]
+        self.high_level_callbacks[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE] = [('stream_chunk_offset', 'stream_chunk_data'), {'fixed_total_length': 4800, 'single_chunk': False}, None]
 
     def get_high_contrast_image_low_level(self):
         """
@@ -334,124 +328,92 @@ class BrickletThermalImaging(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def get_high_contrast_image(self):
-        stream_extra = ()
-        stream_total_length = 4800
-        stream_chunk_offset = 0
-        stream_result = None
-        stream_data = ()
-
-        STREAM_CHUNK_OFFSET_NO_DATA = (1 << 16) - 1 # FIXME: make this depend on the stream_chunk_offset type
+        image_total_length = 4800
+        image_chunk_result = None
+        image_chunk_offset = 0
+        image_data = ()
 
         with self.stream_lock:
-            stream_result = self.get_high_contrast_image_low_level()
-            stream_extra = stream_result[:-2] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
-            stream_chunk_offset = stream_result.stream_chunk_offset
-            stream_data = stream_result.stream_chunk_data
+            image_chunk_result = self.get_high_contrast_image_low_level()
+            image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
+            image_chunk_offset = image_chunk_result.image_chunk_offset
+            image_data = image_chunk_result.image_chunk_data
 
-            if stream_total_length == None: # dynamic stream-total-length
-                stream_total_length = stream_result.stream_total_length
-            elif stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA: # fixed stream-total-length and no-data
-                stream_total_length = 0
-                stream_chunk_offset = 0
+            if image_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
+                image_total_length = 0
+                image_chunk_offset = 0
+                image_data = ()
 
-            if stream_chunk_offset != 0: # stream out-of-sync
+            if image_chunk_offset != 0: # stream out-of-sync
                 # discard remaining stream to bring it back in-sync
-                while stream_chunk_offset + 62 < stream_total_length:
-                    # FIXME: validate that total length is identical for all low-level getters of a stream
-                    # FIXME: validate that stream_chunk_offset grows
-                    stream_result = self.get_high_contrast_image_low_level()
-                    stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
-                    stream_chunk_offset = stream_result.stream_chunk_offset
+                while image_chunk_offset + 62 < image_total_length:
+                    image_chunk_result = self.get_high_contrast_image_low_level()
+                    image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
+                    image_chunk_offset = image_chunk_result.image_chunk_offset
 
-                raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+                raise Error(Error.STREAM_OUT_OF_SYNC, 'image stream is out-of-sync')
 
-            # FIXME: validate chunk offset < total length
+            while len(image_data) < image_total_length:
+                image_chunk_result = self.get_high_contrast_image_low_level()
+                image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
+                image_chunk_offset = image_chunk_result.image_chunk_offset
 
-            while len(stream_data) < stream_total_length:
-                stream_result = self.get_high_contrast_image_low_level()
-                stream_extra = stream_result[:-2] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
-                stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
-                stream_chunk_offset = stream_result.stream_chunk_offset
-
-                # FIXME: validate that total length is identical for all low-level getters of a stream
-
-                if stream_chunk_offset != len(stream_data): # stream out-of-sync
+                if image_chunk_offset != len(image_data): # stream out-of-sync
                     # discard remaining stream to bring it back in-sync
-                    while stream_chunk_offset + 62 < stream_total_length:
-                        # FIXME: validate that total length is identical for all low-level getters of a stream
-                        # FIXME: validate that stream_chunk_offset grows
-                        stream_result = self.get_high_contrast_image_low_level()
-                        stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
-                        stream_chunk_offset = stream_result.stream_chunk_offset
+                    while image_chunk_offset + 62 < image_total_length:
+                        image_chunk_result = self.get_high_contrast_image_low_level()
+                        image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
+                        image_chunk_offset = image_chunk_result.image_chunk_offset
 
-                    raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+                    raise Error(Error.STREAM_OUT_OF_SYNC, 'image stream is out-of-sync')
 
-                stream_data += stream_result.stream_chunk_data
+                image_data += image_chunk_result.image_chunk_data
 
-        if len(stream_extra) > 0:
-            return stream_extra + (stream_data[:stream_total_length],) # FIXME: need to return this as a namedtuple
-        else:
-            return stream_data[:stream_total_length]
+        return image_data[:image_total_length]
 
     def get_temperature_image(self):
-        stream_extra = ()
-        stream_total_length = 4800
-        stream_chunk_offset = 0
-        stream_result = None
-        stream_data = ()
-
-        STREAM_CHUNK_OFFSET_NO_DATA = (1 << 16) - 1 # FIXME: make this depend on the stream_chunk_offset type
+        image_total_length = 4800
+        image_chunk_result = None
+        image_chunk_offset = 0
+        image_data = ()
 
         with self.stream_lock:
-            stream_result = self.get_temperature_image_low_level()
-            stream_extra = stream_result[:-2] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
-            stream_chunk_offset = stream_result.stream_chunk_offset
-            stream_data = stream_result.stream_chunk_data
+            image_chunk_result = self.get_temperature_image_low_level()
+            image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
+            image_chunk_offset = image_chunk_result.image_chunk_offset
+            image_data = image_chunk_result.image_chunk_data
 
-            if stream_total_length == None: # dynamic stream-total-length
-                stream_total_length = stream_result.stream_total_length
-            elif stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA: # fixed stream-total-length and no-data
-                stream_total_length = 0
-                stream_chunk_offset = 0
+            if image_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
+                image_total_length = 0
+                image_chunk_offset = 0
+                image_data = ()
 
-            if stream_chunk_offset != 0: # stream out-of-sync
+            if image_chunk_offset != 0: # stream out-of-sync
                 # discard remaining stream to bring it back in-sync
-                while stream_chunk_offset + 31 < stream_total_length:
-                    # FIXME: validate that total length is identical for all low-level getters of a stream
-                    # FIXME: validate that stream_chunk_offset grows
-                    stream_result = self.get_temperature_image_low_level()
-                    stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
-                    stream_chunk_offset = stream_result.stream_chunk_offset
+                while image_chunk_offset + 31 < image_total_length:
+                    image_chunk_result = self.get_temperature_image_low_level()
+                    image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
+                    image_chunk_offset = image_chunk_result.image_chunk_offset
 
-                raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+                raise Error(Error.STREAM_OUT_OF_SYNC, 'image stream is out-of-sync')
 
-            # FIXME: validate chunk offset < total length
+            while len(image_data) < image_total_length:
+                image_chunk_result = self.get_temperature_image_low_level()
+                image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
+                image_chunk_offset = image_chunk_result.image_chunk_offset
 
-            while len(stream_data) < stream_total_length:
-                stream_result = self.get_temperature_image_low_level()
-                stream_extra = stream_result[:-2] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
-                stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
-                stream_chunk_offset = stream_result.stream_chunk_offset
-
-                # FIXME: validate that total length is identical for all low-level getters of a stream
-
-                if stream_chunk_offset != len(stream_data): # stream out-of-sync
+                if image_chunk_offset != len(image_data): # stream out-of-sync
                     # discard remaining stream to bring it back in-sync
-                    while stream_chunk_offset + 31 < stream_total_length:
-                        # FIXME: validate that total length is identical for all low-level getters of a stream
-                        # FIXME: validate that stream_chunk_offset grows
-                        stream_result = self.get_temperature_image_low_level()
-                        stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
-                        stream_chunk_offset = stream_result.stream_chunk_offset
+                    while image_chunk_offset + 31 < image_total_length:
+                        image_chunk_result = self.get_temperature_image_low_level()
+                        image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
+                        image_chunk_offset = image_chunk_result.image_chunk_offset
 
-                    raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+                    raise Error(Error.STREAM_OUT_OF_SYNC, 'image stream is out-of-sync')
 
-                stream_data += stream_result.stream_chunk_data
+                image_data += image_chunk_result.image_chunk_data
 
-        if len(stream_extra) > 0:
-            return stream_extra + (stream_data[:stream_total_length],) # FIXME: need to return this as a namedtuple
-        else:
-            return stream_data[:stream_total_length]
+        return image_data[:image_total_length]
 
     def register_callback(self, id_, callback):
         """

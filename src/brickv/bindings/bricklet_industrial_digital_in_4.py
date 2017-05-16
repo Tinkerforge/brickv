@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-11.      #
+# This file was automatically generated on 2017-05-16.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -9,13 +9,7 @@
 # to the generators git repository on tinkerforge.com       #
 #############################################################
 
-try:
-    from collections import namedtuple
-except ImportError:
-    try:
-        from .ip_connection import namedtuple
-    except ValueError:
-        from ip_connection import namedtuple
+from collections import namedtuple
 
 try:
     from .ip_connection import Device, IPConnection, Error
