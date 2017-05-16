@@ -257,8 +257,8 @@ class ThermalImage(QWidget):
                 self.parent.update_spotmeter_roi_data()
 
 class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
-    qtcb_high_contrast_image = pyqtSignal(tuple)
-    qtcb_temperature_image = pyqtSignal(tuple)
+    qtcb_high_contrast_image = pyqtSignal(object)
+    qtcb_temperature_image = pyqtSignal(object)
 
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletThermalImaging, *args)
@@ -355,11 +355,11 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
         async_call(self.thermal_imaging.set_spotmeter_config, (roi,), None, self.increase_error_count)
 
     def update_agc_roi_label(self):
-        from_x, from_y, to_x, to_y =  self.get_agc_roi()
+        from_x, from_y, to_x, to_y = self.get_agc_roi()
         self.agc_roi_label.setText('from <b>[{0}, {1}]</b> to <b>[{2}, {3}]</b>'.format(from_x, from_y, to_x, to_y))
 
     def update_spotmeter_roi_label(self):
-        from_x, from_y, to_x, to_y =  self.get_spotmeter_roi()
+        from_x, from_y, to_x, to_y = self.get_spotmeter_roi()
         self.spotmeter_roi_label.setText('from <b>[{0}, {1}]</b> to <b>[{2}, {3}]</b>'.format(from_x, from_y, to_x, to_y))
 
     def cb_roi_button(self):
