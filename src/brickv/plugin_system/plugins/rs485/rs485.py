@@ -579,9 +579,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.append_text(ascii)
 
     def cb_modbus_slave_read_coils_request(self, request_id, starting_address, count):
-        if not self.modbus_slave_respond_checkbox.isChecked():
-            return
-
         a = 'READ COILS REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -590,6 +587,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
             ', COUNT=' + \
             str(count) + \
             '\n\n'
+
+        self.append_text(a)
+
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
 
         data = []
 
@@ -600,7 +602,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 data.append(True)
 
         self.rs485.modbus_slave_answer_read_coils_request(request_id, data)
-        self.append_text(a)
 
     def cb_modbus_master_read_coils_response(self,
                                              request_id,
@@ -651,9 +652,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                        request_id,
                                                        starting_address,
                                                        count):
-        if not self.modbus_slave_respond_checkbox.isChecked():
-            return
-
         a = 'READ HOLDING REGISTERS REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -663,13 +661,17 @@ class RS485(COMCUPluginBase, Ui_RS485):
             str(count) + \
             '\n\n'
 
+        self.append_text(a)
+
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
+
         data = []
 
         for i in range(count):
             data.append(i + 1)
 
         self.rs485.modbus_slave_answer_read_holding_registers_request(request_id, data)
-        self.append_text(a)
 
     def cb_modbus_master_read_holding_registers_response(self,
                                                          request_id,
@@ -720,9 +722,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                   request_id,
                                                   coil_address,
                                                   coil_value):
-        if not self.modbus_slave_respond_checkbox.isChecked():
-            return
-
         a = 'WRITE SINGLE COIL REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -732,8 +731,12 @@ class RS485(COMCUPluginBase, Ui_RS485):
             str(coil_value) + \
             '\n\n'
 
-        self.rs485.modbus_slave_answer_write_single_coil_request(request_id)
         self.append_text(a)
+
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
+
+        self.rs485.modbus_slave_answer_write_single_coil_request(request_id)
 
     def cb_modbus_master_write_single_coil_response(self,
                                                     request_id,
@@ -773,9 +776,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                       request_id,
                                                       register_address,
                                                       register_value):
-        if not self.modbus_slave_respond_checkbox.isChecked():
-            return
-
         a = 'WRITE SINGLE REGISTER REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -785,8 +785,12 @@ class RS485(COMCUPluginBase, Ui_RS485):
             str(register_value) + \
             '\n\n'
 
-        self.rs485.modbus_slave_answer_write_single_register_request(request_id)
         self.append_text(a)
+
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
+
+        self.rs485.modbus_slave_answer_write_single_register_request(request_id)
 
     def cb_modbus_master_write_single_register_response(self,
                                                         request_id,
@@ -826,9 +830,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                      request_id,
                                                      starting_address,
                                                      coils):
-        if not self.modbus_slave_respond_checkbox.isChecked():
-            return
-
         if coils == None:
             # Increase stream error counter
             self.error_stream_oos = self.error_stream_oos + 1
@@ -849,8 +850,12 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 str(coils) + \
                 '\n\n'
 
-        self.rs485.modbus_slave_answer_write_multiple_coils_request(request_id)
         self.append_text(a)
+
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
+
+        self.rs485.modbus_slave_answer_write_multiple_coils_request(request_id)
 
     def cb_modbus_master_write_multiple_coils_response(self,
                                                        request_id,
@@ -890,9 +895,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                          request_id,
                                                          starting_address,
                                                          registers):
-        if not self.modbus_slave_respond_checkbox.isChecked():
-            return
-
         if registers == None:
             # Increase stream error counter
             self.error_stream_oos = self.error_stream_oos + 1
@@ -913,8 +915,12 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 str(registers) + \
                 '\n\n'
 
-        self.rs485.modbus_slave_answer_write_multiple_registers_request(request_id)
         self.append_text(a)
+
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
+
+        self.rs485.modbus_slave_answer_write_multiple_registers_request(request_id)
 
     def cb_modbus_master_write_multiple_registers_response(self,
                                                            request_id,
@@ -954,9 +960,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                      request_id,
                                                      starting_address,
                                                      count):
-        if not self.modbus_slave_respond_checkbox.isChecked():
-            return
-
         a = 'READ DISCRETE INPUTS REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -965,6 +968,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
             ', COUNT=' + \
             str(count) + \
             '\n\n'
+
+        self.append_text(a)
+
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
 
         data = []
 
@@ -975,7 +983,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 data.append(True)
 
         self.rs485.modbus_slave_answer_read_discrete_inputs_request(request_id, data)
-        self.append_text(a)
 
     def cb_modbus_master_read_discrete_inputs_response(self,
                                                        request_id,
@@ -1026,9 +1033,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                      request_id,
                                                      starting_address,
                                                      count):
-        if not self.modbus_slave_respond_checkbox.isChecked():
-            return
-
         a = 'READ INPUT REGISTERS REQUEST: ' + \
             'REQUEST ID=' + \
             str(request_id) + \
@@ -1038,13 +1042,17 @@ class RS485(COMCUPluginBase, Ui_RS485):
             str(count) + \
             '\n\n'
 
+        self.append_text(a)
+
+        if not self.modbus_slave_respond_checkbox.isChecked():
+            return
+
         data = []
 
         for i in range(count):
             data.append(i + 1)
 
         self.rs485.modbus_slave_answer_read_input_registers_request(request_id, data)
-        self.append_text(a)
 
     def cb_modbus_master_read_input_registers_response(self,
                                                        request_id,
