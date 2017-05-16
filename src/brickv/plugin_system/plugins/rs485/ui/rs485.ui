@@ -312,7 +312,7 @@
      <item row="6" column="0" colspan="4">
       <widget class="QCheckBox" name="modbus_slave_respond_checkbox">
        <property name="text">
-        <string>Respond to Modbus requests</string>
+        <string>Automatically Respond to Modbus Requests</string>
        </property>
       </widget>
      </item>
