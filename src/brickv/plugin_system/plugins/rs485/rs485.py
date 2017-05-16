@@ -1123,12 +1123,17 @@ class RS485(COMCUPluginBase, Ui_RS485):
         return line_ending
 
     def input_changed(self):
+        pos = 0
+        written = 0
         text = self.rs485_input_combobox.currentText().encode('utf-8') + self.get_line_ending()
         c = ['\0']*len(text)
         for i, t in enumerate(text):
             c[i] = t
 
-        self.rs485.write(c)
+        while pos < len(c):
+            written = self.rs485.write(c[pos:])
+            pos = pos + written
+
         self.rs485_input_combobox.setCurrentIndex(0)
 
     def get_rs485_configuration_async(self, conf):
