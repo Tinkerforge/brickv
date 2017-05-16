@@ -108,6 +108,9 @@
                 <property name="text">
                  <string>Select</string>
                 </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
                </widget>
               </item>
              </layout>
@@ -202,6 +205,9 @@
                <widget class="QToolButton" name="spotmeter_roi_button">
                 <property name="text">
                  <string>Select</string>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
