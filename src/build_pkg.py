@@ -121,7 +121,7 @@ def prepare_manifest(root_path):
                     excluded_patterns.append('prune brickv/plugin_system/plugins/{0}'.format(plugin_name))
                     excluded_patterns.append('recursive-exclude brickv/bindings bricklet_{0}.py'.format(plugin_name))
         else:
-            raise Exception('No bindings found corresponding to plugin {0}'.format(plugin))
+            raise Exception('No bindings found corresponding to plugin {0}'.format(plugin_name))
 
     specialize_template('MANIFEST.in.template', 'MANIFEST.in',
                         {'<<EXCLUDES>>': '\n'.join(excluded_patterns)})
