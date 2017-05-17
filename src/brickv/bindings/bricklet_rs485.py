@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-16.      #
+# This file was automatically generated on 2017-05-17.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -342,7 +342,7 @@ class BrickletRS485(Device):
         """
         Sets the configuration for the RS485 Modbus communication. Available options:
 
-        * Slave Address: Address to be used as the Modbus slave address in Modbus slave mode. Valid Modbus slave address range is 0 to 247.
+        * Slave Address: Address to be used as the Modbus slave address in Modbus slave mode. Valid Modbus slave address range is 1 to 247.
         * Master Request Timeout: Specifies how long the master should wait for a response from a slave in milliseconds when in Modbus master mode.
 
         The default is: Slave Address = 1 and Master Request Timeout = 1000 milliseconds (1 second).
@@ -892,11 +892,7 @@ class BrickletRS485(Device):
         if message_total_length == 0:
             message_chunk_data = ['\x00'] * 60
             message_chunk_result = self.write_low_level(message_total_length, message_chunk_offset, message_chunk_data)
-
-            if isinstance(message_chunk_result, namedtuple):
-                message_total_written = message_chunk_result.message_chunk_written
-            else:
-                message_total_written = message_chunk_result
+            message_total_written = message_chunk_result
         else:
             with self.stream_lock:
                 while message_chunk_offset < message_total_length:
@@ -906,12 +902,7 @@ class BrickletRS485(Device):
                         message_chunk_data.extend(['\x00'] * (60 - len(message_chunk_data)))
 
                     message_chunk_result = self.write_low_level(message_total_length, message_chunk_offset, message_chunk_data)
-
-                    if isinstance(message_chunk_result, namedtuple):
-                        message_chunk_written = message_chunk_result.message_chunk_written
-                    else:
-                        message_chunk_written = message_chunk_result
-
+                    message_chunk_written = message_chunk_result
                     message_total_written += message_chunk_written
 
                     if message_chunk_written < 60:

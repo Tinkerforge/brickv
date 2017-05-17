@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-16.      #
+# This file was automatically generated on 2017-05-17.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -62,7 +62,6 @@ class BrickSilentStepper(Device):
     FUNCTION_STOP = 18
     FUNCTION_GET_STACK_INPUT_VOLTAGE = 19
     FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE = 20
-    FUNCTION_GET_CURRENT_CONSUMPTION = 21
     FUNCTION_SET_MOTOR_CURRENT = 22
     FUNCTION_GET_MOTOR_CURRENT = 23
     FUNCTION_ENABLE = 24
@@ -177,7 +176,6 @@ class BrickSilentStepper(Device):
         self.response_expected[BrickSilentStepper.FUNCTION_STOP] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickSilentStepper.FUNCTION_GET_STACK_INPUT_VOLTAGE] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickSilentStepper.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickSilentStepper.FUNCTION_GET_CURRENT_CONSUMPTION] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickSilentStepper.FUNCTION_SET_MOTOR_CURRENT] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickSilentStepper.FUNCTION_GET_MOTOR_CURRENT] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickSilentStepper.FUNCTION_ENABLE] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
@@ -412,12 +410,6 @@ class BrickSilentStepper(Device):
          stack voltage
         """
         return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 'H')
-
-    def get_current_consumption(self):
-        """
-        Returns the current consumption of the motor in mA.
-        """
-        return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_CURRENT_CONSUMPTION, (), '', 'H')
 
     def set_motor_current(self, current):
         """
@@ -719,6 +711,9 @@ class BrickSilentStepper(Device):
         * Motor Stalled: Is true if a motor stall was detected.
 
         * Actual Motor Current: Indicates the actual current control scaling as used in Coolstep mode.
+          The returned value is between 0 and 31. It represents a multiplier of 1/32 to 32/32 of the
+          ``Motor Run Current`` as set by :func:`Set Basic Configuration`. Example: If a ``Motor Run Current``
+          of 1000mA was set and the returned value is 15, the ``Actual Motor Current` is 16/32*1000mA = 500mA.
 
         * Stallguard Result: Indicates the load of the motor. A lower value signals a higher load. Per trial and error
           you can find out which value corresponds to a suitable torque for the velocity used in your application.
@@ -774,6 +769,14 @@ class BrickSilentStepper(Device):
         Returns the following parameters: The current velocity,
         the current position, the remaining steps, the stack voltage, the external
         voltage and the current consumption of the stepper motor.
+
+        The current consumption is calculated by multiplying the ``Actual Motor Current``
+        value (see :func:`Set Basic Configuration`) with the ``Motor Run Current``
+        (see :func:`Get Driver Status`). This is an internal calculation of the
+        driver, not an independent external measurement.
+
+        The current consumption calculation was broken up to firmware 2.0.1, it is fixed
+        since firmware 2.0.2.
 
         There is also a callback for this function, see :cb:`All Data` callback.
         """
