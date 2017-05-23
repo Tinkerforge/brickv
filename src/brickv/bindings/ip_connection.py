@@ -788,14 +788,14 @@ class IPConnection:
             hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]
             form = device.callback_formats[function_id] # FIXME: currently assuming that form is longer than 1
             llvalues = self.deserialize_data(payload, form)
-            fixed_total_length = hlcb[1]['fixed_total_length']
+            fixed_length = hlcb[1]['fixed_length']
             has_data = False
             data = None
 
-            if hlcb[1]['fixed_total_length'] != None:
-                total_length = hlcb[1]['fixed_total_length']
+            if hlcb[1]['fixed_length'] != None:
+                length = hlcb[1]['fixed_length']
             else:
-                total_length = llvalues[hlcb[0].index('stream_total_length')]
+                length = llvalues[hlcb[0].index('stream_length')]
 
             if not hlcb[1]['single_chunk']:
                 chunk_offset = llvalues[hlcb[0].index('stream_chunk_offset')]
@@ -808,9 +808,9 @@ class IPConnection:
                 if chunk_offset == 0: # stream starts
                     hlcb[2] = chunk_data
 
-                    if len(hlcb[2]) >= total_length: # stream complete
+                    if len(hlcb[2]) >= length: # stream complete
                         has_data = True
-                        data = hlcb[2][:total_length]
+                        data = hlcb[2][:length]
                         hlcb[2] = None
                 else: # ignore tail of current stream, wait for next stream start
                     pass
@@ -822,9 +822,9 @@ class IPConnection:
                 else: # stream in-sync
                     hlcb[2] += chunk_data
 
-                    if len(hlcb[2]) >= total_length: # stream complete
+                    if len(hlcb[2]) >= length: # stream complete
                         has_data = True
-                        data = hlcb[2][:total_length]
+                        data = hlcb[2][:length]
                         hlcb[2] = None
 
             if has_data and -function_id in device.registered_callbacks:

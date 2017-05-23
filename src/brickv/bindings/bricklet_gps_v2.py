@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-16.      #
+# This file was automatically generated on 2017-05-23.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -511,18 +511,27 @@ class BrickletGPSV2(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def get_satellite_system_status(self, satellite_system):
+        """
+        Returns the
+
+        * satellite numbers list
+        * fix value,
+        * PDOP value,
+        * HDOP value and
+        * VDOP value
+
+        for a given satellite system. Currently GPS and GLONASS are supported, Galileo
+        is not yet supported.
+
+        The GPS and GLONASS satellites have unique numbers and the satellite list gives
+        the numbers of the satellites that are currently utilized. The number 0 is not
+        a valid satellite number and can be ignored in the list.
+        """
         satellite_numbers_result = self.get_satellite_system_status_low_level(satellite_system)
         satellite_numbers_length = satellite_numbers_result.satellite_numbers_length
         satellite_numbers_data = satellite_numbers_result.satellite_numbers_data
 
-        result = {}
-
-        for field in ['fix', 'pdop', 'hdop', 'vdop']:
-            result[field] = getattr(satellite_numbers_result, field)
-
-        result['satellite_numbers'] = satellite_numbers_data[:satellite_numbers_length]
-
-        return GetSatelliteSystemStatus(**result)
+        return GetSatelliteSystemStatus(satellite_numbers_data[:satellite_numbers_length], satellite_numbers_result.fix, satellite_numbers_result.pdop, satellite_numbers_result.hdop, satellite_numbers_result.vdop)
 
     def register_callback(self, id_, callback):
         """

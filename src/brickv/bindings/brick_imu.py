@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-16.      #
+# This file was automatically generated on 2017-05-23.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -22,6 +22,7 @@ GetAngularVelocity = namedtuple('AngularVelocity', ['x', 'y', 'z'])
 GetAllData = namedtuple('AllData', ['acc_x', 'acc_y', 'acc_z', 'mag_x', 'mag_y', 'mag_z', 'ang_x', 'ang_y', 'ang_z', 'temperature'])
 GetOrientation = namedtuple('Orientation', ['roll', 'pitch', 'yaw'])
 GetQuaternion = namedtuple('Quaternion', ['x', 'y', 'z', 'w'])
+GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -75,6 +76,9 @@ class BrickIMU(Device):
     FUNCTION_ORIENTATION_CALCULATION_OFF = 38
     FUNCTION_IS_ORIENTATION_CALCULATION_ON = 39
     FUNCTION_GET_SEND_TIMEOUT_COUNT = 233
+    FUNCTION_SET_SPITFP_BAUDRATE = 234
+    FUNCTION_GET_SPITFP_BAUDRATE = 235
+    FUNCTION_GET_SPITFP_ERROR_COUNT = 237
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -147,6 +151,9 @@ class BrickIMU(Device):
         self.response_expected[BrickIMU.FUNCTION_ORIENTATION_CALCULATION_OFF] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_IS_ORIENTATION_CALCULATION_ON] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_SEND_TIMEOUT_COUNT] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_SET_SPITFP_BAUDRATE] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_GET_SPITFP_BAUDRATE] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_ENABLE_STATUS_LED] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_DISABLE_STATUS_LED] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_IS_STATUS_LED_ENABLED] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -525,6 +532,52 @@ class BrickIMU(Device):
         .. versionadded:: 2.3.3$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
+
+    def set_spitfp_baudrate(self, bricklet_port, baudrate):
+        """
+        Sets the baudrate for a specific Bricklet port ('a' - 'd'). The
+        baudrate can be in the range 400000 to 2000000.
+
+        If you want to increase the throughput of Bricklets you can increase
+        the baudrate. If you get a high error count because of high
+        interference (see :func:`Get SPITFP Error Count`) you can decrease the
+        baudrate.
+
+        Regulatory testing is done with the default baudrate. If CE compatability
+        or similar is necessary in you applications we recommend to not change
+        the baudrate.
+
+        The default baudrate for all ports is 1400000.
+
+        .. versionadded:: 2.3.3$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickIMU.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', '')
+
+    def get_spitfp_baudrate(self, bricklet_port):
+        """
+        Returns the baudrate for a given Bricklet port, see :func:`Set SPITFP Baudrate`.
+
+        .. versionadded:: 2.3.3$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
+
+    def get_spitfp_error_count(self, bricklet_port):
+        """
+        Returns the error count for the communication between Brick and Bricklet.
+
+        The errors are divided into
+
+        * ACK checksum errors,
+        * message checksum errors,
+        * frameing errors and
+        * overflow errors.
+
+        The errors counts are for errors that occur on the Brick side. All
+        Bricklets have a similar function that returns the errors on the Bricklet side.
+
+        .. versionadded:: 2.3.3$nbsp;(Firmware)
+        """
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
 
     def enable_status_led(self):
         """

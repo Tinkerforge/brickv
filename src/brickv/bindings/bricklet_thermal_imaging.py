@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-16.      #
+# This file was automatically generated on 2017-05-23.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -123,8 +123,8 @@ class BrickletThermalImaging(Device):
         self.callback_formats[BrickletThermalImaging.CALLBACK_HIGH_CONTRAST_IMAGE_LOW_LEVEL] = 'H 62B'
         self.callback_formats[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = 'H 31H'
 
-        self.high_level_callbacks[BrickletThermalImaging.CALLBACK_HIGH_CONTRAST_IMAGE] = [('stream_chunk_offset', 'stream_chunk_data'), {'fixed_total_length': 4800, 'single_chunk': False}, None]
-        self.high_level_callbacks[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE] = [('stream_chunk_offset', 'stream_chunk_data'), {'fixed_total_length': 4800, 'single_chunk': False}, None]
+        self.high_level_callbacks[BrickletThermalImaging.CALLBACK_HIGH_CONTRAST_IMAGE] = [('stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': 4800, 'single_chunk': False}, None]
+        self.high_level_callbacks[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE] = [('stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': 4800, 'single_chunk': False}, None]
 
     def get_high_contrast_image_low_level(self):
         """
@@ -328,92 +328,72 @@ class BrickletThermalImaging(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def get_high_contrast_image(self):
-        image_total_length = 4800
-        image_chunk_result = None
-        image_chunk_offset = 0
-        image_data = ()
+        """
+
+        """
+        image_length = 4800
 
         with self.stream_lock:
             image_chunk_result = self.get_high_contrast_image_low_level()
-            image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
             image_chunk_offset = image_chunk_result.image_chunk_offset
-            image_data = image_chunk_result.image_chunk_data
 
             if image_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
-                image_total_length = 0
+                image_length = 0
                 image_chunk_offset = 0
+                image_out_of_sync = False
                 image_data = ()
+            else:
+                image_out_of_sync = image_chunk_offset != 0
+                image_data = image_chunk_result.image_chunk_data
 
-            if image_chunk_offset != 0: # stream out-of-sync
-                # discard remaining stream to bring it back in-sync
-                while image_chunk_offset + 62 < image_total_length:
-                    image_chunk_result = self.get_high_contrast_image_low_level()
-                    image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
-                    image_chunk_offset = image_chunk_result.image_chunk_offset
-
-                raise Error(Error.STREAM_OUT_OF_SYNC, 'image stream is out-of-sync')
-
-            while len(image_data) < image_total_length:
+            while not image_out_of_sync and len(image_data) < image_length:
                 image_chunk_result = self.get_high_contrast_image_low_level()
-                image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
                 image_chunk_offset = image_chunk_result.image_chunk_offset
-
-                if image_chunk_offset != len(image_data): # stream out-of-sync
-                    # discard remaining stream to bring it back in-sync
-                    while image_chunk_offset + 62 < image_total_length:
-                        image_chunk_result = self.get_high_contrast_image_low_level()
-                        image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
-                        image_chunk_offset = image_chunk_result.image_chunk_offset
-
-                    raise Error(Error.STREAM_OUT_OF_SYNC, 'image stream is out-of-sync')
-
+                image_out_of_sync = image_chunk_offset != len(image_data)
                 image_data += image_chunk_result.image_chunk_data
 
-        return image_data[:image_total_length]
+            if image_out_of_sync: # discard remaining stream to bring it back in-sync
+                while image_chunk_offset + 62 < image_length:
+                    image_chunk_result = self.get_high_contrast_image_low_level()
+                    image_chunk_offset = image_chunk_result.image_chunk_offset
+
+                raise Error(Error.STREAM_OUT_OF_SYNC, 'Image stream is out-of-sync')
+
+        return image_data[:image_length]
 
     def get_temperature_image(self):
-        image_total_length = 4800
-        image_chunk_result = None
-        image_chunk_offset = 0
-        image_data = ()
+        """
+
+        """
+        image_length = 4800
 
         with self.stream_lock:
             image_chunk_result = self.get_temperature_image_low_level()
-            image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
             image_chunk_offset = image_chunk_result.image_chunk_offset
-            image_data = image_chunk_result.image_chunk_data
 
             if image_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
-                image_total_length = 0
+                image_length = 0
                 image_chunk_offset = 0
+                image_out_of_sync = False
                 image_data = ()
+            else:
+                image_out_of_sync = image_chunk_offset != 0
+                image_data = image_chunk_result.image_chunk_data
 
-            if image_chunk_offset != 0: # stream out-of-sync
-                # discard remaining stream to bring it back in-sync
-                while image_chunk_offset + 31 < image_total_length:
-                    image_chunk_result = self.get_temperature_image_low_level()
-                    image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
-                    image_chunk_offset = image_chunk_result.image_chunk_offset
-
-                raise Error(Error.STREAM_OUT_OF_SYNC, 'image stream is out-of-sync')
-
-            while len(image_data) < image_total_length:
+            while not image_out_of_sync and len(image_data) < image_length:
                 image_chunk_result = self.get_temperature_image_low_level()
-                image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
                 image_chunk_offset = image_chunk_result.image_chunk_offset
-
-                if image_chunk_offset != len(image_data): # stream out-of-sync
-                    # discard remaining stream to bring it back in-sync
-                    while image_chunk_offset + 31 < image_total_length:
-                        image_chunk_result = self.get_temperature_image_low_level()
-                        image_total_length = getattr(image_chunk_result, 'image_total_length', image_total_length)
-                        image_chunk_offset = image_chunk_result.image_chunk_offset
-
-                    raise Error(Error.STREAM_OUT_OF_SYNC, 'image stream is out-of-sync')
-
+                image_out_of_sync = image_chunk_offset != len(image_data)
                 image_data += image_chunk_result.image_chunk_data
 
-        return image_data[:image_total_length]
+            if image_out_of_sync: # discard remaining stream to bring it back in-sync
+                while image_chunk_offset + 31 < image_length:
+                    image_chunk_result = self.get_temperature_image_low_level()
+                    image_chunk_offset = image_chunk_result.image_chunk_offset
+
+                raise Error(Error.STREAM_OUT_OF_SYNC, 'Image stream is out-of-sync')
+
+        return image_data[:image_length]
 
     def register_callback(self, id_, callback):
         """

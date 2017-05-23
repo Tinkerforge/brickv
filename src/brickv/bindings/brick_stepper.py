@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-16.      #
+# This file was automatically generated on 2017-05-23.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -18,6 +18,7 @@ except ValueError:
 
 GetSpeedRamping = namedtuple('SpeedRamping', ['acceleration', 'deacceleration'])
 GetAllData = namedtuple('AllData', ['current_velocity', 'current_position', 'remaining_steps', 'stack_voltage', 'external_voltage', 'current_consumption'])
+GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -73,6 +74,9 @@ class BrickStepper(Device):
     FUNCTION_SET_ALL_DATA_PERIOD = 38
     FUNCTION_GET_ALL_DATA_PERIOD = 39
     FUNCTION_GET_SEND_TIMEOUT_COUNT = 233
+    FUNCTION_SET_SPITFP_BAUDRATE = 234
+    FUNCTION_GET_SPITFP_BAUDRATE = 235
+    FUNCTION_GET_SPITFP_ERROR_COUNT = 237
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -151,6 +155,9 @@ class BrickStepper(Device):
         self.response_expected[BrickStepper.CALLBACK_ALL_DATA] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickStepper.CALLBACK_NEW_STATE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickStepper.FUNCTION_GET_SEND_TIMEOUT_COUNT] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_SET_SPITFP_BAUDRATE] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_SPITFP_BAUDRATE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickStepper.FUNCTION_ENABLE_STATUS_LED] = BrickStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickStepper.FUNCTION_DISABLE_STATUS_LED] = BrickStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickStepper.FUNCTION_IS_STATUS_LED_ENABLED] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -537,6 +544,52 @@ class BrickStepper(Device):
         .. versionadded:: 2.3.4$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
+
+    def set_spitfp_baudrate(self, bricklet_port, baudrate):
+        """
+        Sets the baudrate for a specific Bricklet port ('a' - 'd'). The
+        baudrate can be in the range 400000 to 2000000.
+
+        If you want to increase the throughput of Bricklets you can increase
+        the baudrate. If you get a high error count because of high
+        interference (see :func:`Get SPITFP Error Count`) you can decrease the
+        baudrate.
+
+        Regulatory testing is done with the default baudrate. If CE compatability
+        or similar is necessary in you applications we recommend to not change
+        the baudrate.
+
+        The default baudrate for all ports is 1400000.
+
+        .. versionadded:: 2.3.3$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', '')
+
+    def get_spitfp_baudrate(self, bricklet_port):
+        """
+        Returns the baudrate for a given Bricklet port, see :func:`Set SPITFP Baudrate`.
+
+        .. versionadded:: 2.3.3$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
+
+    def get_spitfp_error_count(self, bricklet_port):
+        """
+        Returns the error count for the communication between Brick and Bricklet.
+
+        The errors are divided into
+
+        * ACK checksum errors,
+        * message checksum errors,
+        * frameing errors and
+        * overflow errors.
+
+        The errors counts are for errors that occur on the Brick side. All
+        Bricklets have a similar function that returns the errors on the Bricklet side.
+
+        .. versionadded:: 2.3.3$nbsp;(Firmware)
+        """
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
 
     def enable_status_led(self):
         """
