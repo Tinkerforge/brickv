@@ -72,6 +72,14 @@ def uid64_to_uid32(uid64):
 
     return uid32
 
+def create_chunk_data(data, chunk_offset, chunk_length, chunk_padding):
+    chunk_data = data[chunk_offset:chunk_offset + chunk_length]
+
+    if len(chunk_data) < chunk_length:
+        chunk_data += [chunk_padding] * (chunk_length - len(chunk_data))
+
+    return chunk_data
+
 class Error(Exception):
     TIMEOUT = -1
     NOT_ADDED = -6 # obsolete since v2.0

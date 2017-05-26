@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-23.      #
+# This file was automatically generated on 2017-05-26.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -14,9 +14,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error
+    from .ip_connection import Device, IPConnection, Error, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error
+    from ip_connection import Device, IPConnection, Error, create_chunk_data
 
 ReadLowLevel = namedtuple('ReadLowLevel', ['message_length', 'message_chunk_offset', 'message_chunk_data'])
 GetRS485Configuration = namedtuple('RS485Configuration', ['baudrate', 'parity', 'stopbits', 'wordlength', 'duplex'])
@@ -898,21 +898,17 @@ class BrickletRS485(Device):
         message_chunk_offset = 0
 
         if message_length == 0:
-            message_chunk_data = ['\x00'] * 60
-            message_chunk_result = self.write_low_level(message_length, message_chunk_offset, message_chunk_data)
-            message_written = message_chunk_result
+            message_chunk_data = ['\0'] * 60
+            ret = self.write_low_level(message_length, message_chunk_offset, message_chunk_data)
+            message_written = ret
         else:
             message_written = 0
 
             with self.stream_lock:
                 while message_chunk_offset < message_length:
-                    message_chunk_data = message[message_chunk_offset:message_chunk_offset + 60]
-
-                    if len(message_chunk_data) < 60:
-                        message_chunk_data += ['\x00'] * (60 - len(message_chunk_data))
-
-                    message_chunk_result = self.write_low_level(message_length, message_chunk_offset, message_chunk_data)
-                    message_chunk_written = message_chunk_result
+                    message_chunk_data = create_chunk_data(message, message_chunk_offset, 60, '\0')
+                    ret = self.write_low_level(message_length, message_chunk_offset, message_chunk_data)
+                    message_chunk_written = ret
                     message_written += message_chunk_written
 
                     if message_chunk_written < 60:
@@ -932,24 +928,24 @@ class BrickletRS485(Device):
         See :func:`Enable Read Callback` and :cb:`Read` callback.
         """
         with self.stream_lock:
-            message_chunk_result = self.read_low_level(length)
-            message_length = message_chunk_result.message_length
-            message_chunk_offset = message_chunk_result.message_chunk_offset
+            ret = self.read_low_level(length)
+            message_length = ret.message_length
+            message_chunk_offset = ret.message_chunk_offset
             message_out_of_sync = message_chunk_offset != 0
-            message_data = message_chunk_result.message_chunk_data
+            message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
-                message_chunk_result = self.read_low_level(length)
-                message_length = message_chunk_result.message_length
-                message_chunk_offset = message_chunk_result.message_chunk_offset
+                ret = self.read_low_level(length)
+                message_length = ret.message_length
+                message_chunk_offset = ret.message_chunk_offset
                 message_out_of_sync = message_chunk_offset != len(message_data)
-                message_data += message_chunk_result.message_chunk_data
+                message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
                 while message_chunk_offset + 60 < message_length:
-                    message_chunk_result = self.read_low_level(length)
-                    message_length = message_chunk_result.message_length
-                    message_chunk_offset = message_chunk_result.message_chunk_offset
+                    ret = self.read_low_level(length)
+                    message_length = ret.message_length
+                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -972,19 +968,15 @@ class BrickletRS485(Device):
 
         if coils_length == 0:
             coils_chunk_data = [False] * 472
-            result = self.modbus_slave_answer_read_coils_request_low_level(request_id, coils_length, coils_chunk_offset, coils_chunk_data)
+            ret = self.modbus_slave_answer_read_coils_request_low_level(request_id, coils_length, coils_chunk_offset, coils_chunk_data)
         else:
             with self.stream_lock:
                 while coils_chunk_offset < coils_length:
-                    coils_chunk_data = coils[coils_chunk_offset:coils_chunk_offset + 472]
-
-                    if len(coils_chunk_data) < 472:
-                        coils_chunk_data += [False] * (472 - len(coils_chunk_data))
-
-                    result = self.modbus_slave_answer_read_coils_request_low_level(request_id, coils_length, coils_chunk_offset, coils_chunk_data)
+                    coils_chunk_data = create_chunk_data(coils, coils_chunk_offset, 472, False)
+                    ret = self.modbus_slave_answer_read_coils_request_low_level(request_id, coils_length, coils_chunk_offset, coils_chunk_data)
                     coils_chunk_offset += 472
 
-        return result
+        return ret
 
     def modbus_slave_answer_read_holding_registers_request(self, request_id, holding_registers):
         """
@@ -1003,19 +995,15 @@ class BrickletRS485(Device):
 
         if holding_registers_length == 0:
             holding_registers_chunk_data = [0] * 29
-            result = self.modbus_slave_answer_read_holding_registers_request_low_level(request_id, holding_registers_length, holding_registers_chunk_offset, holding_registers_chunk_data)
+            ret = self.modbus_slave_answer_read_holding_registers_request_low_level(request_id, holding_registers_length, holding_registers_chunk_offset, holding_registers_chunk_data)
         else:
             with self.stream_lock:
                 while holding_registers_chunk_offset < holding_registers_length:
-                    holding_registers_chunk_data = holding_registers[holding_registers_chunk_offset:holding_registers_chunk_offset + 29]
-
-                    if len(holding_registers_chunk_data) < 29:
-                        holding_registers_chunk_data += [0] * (29 - len(holding_registers_chunk_data))
-
-                    result = self.modbus_slave_answer_read_holding_registers_request_low_level(request_id, holding_registers_length, holding_registers_chunk_offset, holding_registers_chunk_data)
+                    holding_registers_chunk_data = create_chunk_data(holding_registers, holding_registers_chunk_offset, 29, 0)
+                    ret = self.modbus_slave_answer_read_holding_registers_request_low_level(request_id, holding_registers_length, holding_registers_chunk_offset, holding_registers_chunk_data)
                     holding_registers_chunk_offset += 29
 
-        return result
+        return ret
 
     def modbus_master_write_multiple_coils(self, slave_address, starting_address, coils):
         """
@@ -1040,19 +1028,15 @@ class BrickletRS485(Device):
 
         if coils_length == 0:
             coils_chunk_data = [False] * 440
-            result = self.modbus_master_write_multiple_coils_low_level(slave_address, starting_address, coils_length, coils_chunk_offset, coils_chunk_data)
+            ret = self.modbus_master_write_multiple_coils_low_level(slave_address, starting_address, coils_length, coils_chunk_offset, coils_chunk_data)
         else:
             with self.stream_lock:
                 while coils_chunk_offset < coils_length:
-                    coils_chunk_data = coils[coils_chunk_offset:coils_chunk_offset + 440]
-
-                    if len(coils_chunk_data) < 440:
-                        coils_chunk_data += [False] * (440 - len(coils_chunk_data))
-
-                    result = self.modbus_master_write_multiple_coils_low_level(slave_address, starting_address, coils_length, coils_chunk_offset, coils_chunk_data)
+                    coils_chunk_data = create_chunk_data(coils, coils_chunk_offset, 440, False)
+                    ret = self.modbus_master_write_multiple_coils_low_level(slave_address, starting_address, coils_length, coils_chunk_offset, coils_chunk_data)
                     coils_chunk_offset += 440
 
-        return result
+        return ret
 
     def modbus_master_write_multiple_registers(self, slave_address, starting_address, registers):
         """
@@ -1077,19 +1061,15 @@ class BrickletRS485(Device):
 
         if registers_length == 0:
             registers_chunk_data = [0] * 27
-            result = self.modbus_master_write_multiple_registers_low_level(slave_address, starting_address, registers_length, registers_chunk_offset, registers_chunk_data)
+            ret = self.modbus_master_write_multiple_registers_low_level(slave_address, starting_address, registers_length, registers_chunk_offset, registers_chunk_data)
         else:
             with self.stream_lock:
                 while registers_chunk_offset < registers_length:
-                    registers_chunk_data = registers[registers_chunk_offset:registers_chunk_offset + 27]
-
-                    if len(registers_chunk_data) < 27:
-                        registers_chunk_data += [0] * (27 - len(registers_chunk_data))
-
-                    result = self.modbus_master_write_multiple_registers_low_level(slave_address, starting_address, registers_length, registers_chunk_offset, registers_chunk_data)
+                    registers_chunk_data = create_chunk_data(registers, registers_chunk_offset, 27, 0)
+                    ret = self.modbus_master_write_multiple_registers_low_level(slave_address, starting_address, registers_length, registers_chunk_offset, registers_chunk_data)
                     registers_chunk_offset += 27
 
-        return result
+        return ret
 
     def modbus_slave_answer_read_discrete_inputs_request(self, request_id, discrete_inputs):
         """
@@ -1108,19 +1088,15 @@ class BrickletRS485(Device):
 
         if discrete_inputs_length == 0:
             discrete_inputs_chunk_data = [False] * 472
-            result = self.modbus_slave_answer_read_discrete_inputs_request_low_level(request_id, discrete_inputs_length, discrete_inputs_chunk_offset, discrete_inputs_chunk_data)
+            ret = self.modbus_slave_answer_read_discrete_inputs_request_low_level(request_id, discrete_inputs_length, discrete_inputs_chunk_offset, discrete_inputs_chunk_data)
         else:
             with self.stream_lock:
                 while discrete_inputs_chunk_offset < discrete_inputs_length:
-                    discrete_inputs_chunk_data = discrete_inputs[discrete_inputs_chunk_offset:discrete_inputs_chunk_offset + 472]
-
-                    if len(discrete_inputs_chunk_data) < 472:
-                        discrete_inputs_chunk_data += [False] * (472 - len(discrete_inputs_chunk_data))
-
-                    result = self.modbus_slave_answer_read_discrete_inputs_request_low_level(request_id, discrete_inputs_length, discrete_inputs_chunk_offset, discrete_inputs_chunk_data)
+                    discrete_inputs_chunk_data = create_chunk_data(discrete_inputs, discrete_inputs_chunk_offset, 472, False)
+                    ret = self.modbus_slave_answer_read_discrete_inputs_request_low_level(request_id, discrete_inputs_length, discrete_inputs_chunk_offset, discrete_inputs_chunk_data)
                     discrete_inputs_chunk_offset += 472
 
-        return result
+        return ret
 
     def modbus_slave_answer_read_input_registers_request(self, request_id, input_registers):
         """
@@ -1139,19 +1115,15 @@ class BrickletRS485(Device):
 
         if input_registers_length == 0:
             input_registers_chunk_data = [0] * 29
-            result = self.modbus_slave_answer_read_input_registers_request_low_level(request_id, input_registers_length, input_registers_chunk_offset, input_registers_chunk_data)
+            ret = self.modbus_slave_answer_read_input_registers_request_low_level(request_id, input_registers_length, input_registers_chunk_offset, input_registers_chunk_data)
         else:
             with self.stream_lock:
                 while input_registers_chunk_offset < input_registers_length:
-                    input_registers_chunk_data = input_registers[input_registers_chunk_offset:input_registers_chunk_offset + 29]
-
-                    if len(input_registers_chunk_data) < 29:
-                        input_registers_chunk_data += [0] * (29 - len(input_registers_chunk_data))
-
-                    result = self.modbus_slave_answer_read_input_registers_request_low_level(request_id, input_registers_length, input_registers_chunk_offset, input_registers_chunk_data)
+                    input_registers_chunk_data = create_chunk_data(input_registers, input_registers_chunk_offset, 29, 0)
+                    ret = self.modbus_slave_answer_read_input_registers_request_low_level(request_id, input_registers_length, input_registers_chunk_offset, input_registers_chunk_data)
                     input_registers_chunk_offset += 29
 
-        return result
+        return ret
 
     def register_callback(self, id_, callback):
         """

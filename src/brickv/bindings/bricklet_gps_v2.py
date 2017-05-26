@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-23.      #
+# This file was automatically generated on 2017-05-26.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error
+    from .ip_connection import Device, IPConnection, Error, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error
+    from ip_connection import Device, IPConnection, Error, create_chunk_data
 
 GetCoordinates = namedtuple('Coordinates', ['latitude', 'ns', 'longitude', 'ew'])
 GetStatus = namedtuple('Status', ['has_fix', 'satellites_view'])
@@ -527,11 +527,11 @@ class BrickletGPSV2(Device):
         the numbers of the satellites that are currently utilized. The number 0 is not
         a valid satellite number and can be ignored in the list.
         """
-        satellite_numbers_result = self.get_satellite_system_status_low_level(satellite_system)
-        satellite_numbers_length = satellite_numbers_result.satellite_numbers_length
-        satellite_numbers_data = satellite_numbers_result.satellite_numbers_data
+        ret = self.get_satellite_system_status_low_level(satellite_system)
+        satellite_numbers_length = ret.satellite_numbers_length
+        satellite_numbers_data = ret.satellite_numbers_data
 
-        return GetSatelliteSystemStatus(satellite_numbers_data[:satellite_numbers_length], satellite_numbers_result.fix, satellite_numbers_result.pdop, satellite_numbers_result.hdop, satellite_numbers_result.vdop)
+        return GetSatelliteSystemStatus(satellite_numbers_data[:satellite_numbers_length], ret.fix, ret.pdop, ret.hdop, ret.vdop)
 
     def register_callback(self, id_, callback):
         """
