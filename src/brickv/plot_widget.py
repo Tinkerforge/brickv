@@ -27,10 +27,15 @@ import math
 import functools
 import bisect
 
+from collections import namedtuple
+
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
                         QPainter, QSizePolicy, QFontMetrics, QPixmap, \
-                        QIcon, QColor, QPainterPath, QLabel, QTransform
+                        QIcon, QColor, QPainterPath, QLabel, QTransform, \
+                        QSpinBox
 from PyQt4.QtCore import QTimer, Qt, QSize, QRectF, QLineF
+
+MovingAverageConfig = namedtuple('MovingAverageConfig', ['min_length', 'max_length', 'callback'])
 
 EPSILON = 0.000001
 DEBUG = False
@@ -799,7 +804,7 @@ class PlotWidget(QWidget):
                  scales_visible=True, curve_outer_border_visible=True,
                  curve_motion_granularity=10, canvas_color=QColor(245, 245, 245),
                  external_timer=None, key='top-value', extra_key_widgets=None,
-                 update_interval=0.1, curve_start='left'):
+                 update_interval=0.1, curve_start='left', moving_average_config=None):
         QWidget.__init__(self, parent)
 
         self.setMinimumSize(300, 250)
@@ -900,6 +905,24 @@ class PlotWidget(QWidget):
         else:
             v2layout.addWidget(self.plot)
 
+        self.moving_average_config = moving_average_config
+        if moving_average_config != None:
+            self.moving_average_label = QLabel('Moving Average Length:')
+            self.moving_average_spinbox = QSpinBox()
+            self.moving_average_spinbox.setMinimum(moving_average_config.min_length)
+            self.moving_average_spinbox.setMaximum(moving_average_config.max_length)
+            self.moving_average_spinbox.setSingleStep(1)
+
+            self.moving_average_layout = QHBoxLayout()
+            self.moving_average_layout.addStretch()
+            self.moving_average_layout.addWidget(self.moving_average_label)
+            self.moving_average_layout.addWidget(self.moving_average_spinbox)
+            self.moving_average_layout.addStretch()
+
+            self.moving_average_spinbox.valueChanged.connect(self.moving_average_spinbox_value_changed)
+
+            v2layout.addLayout(self.moving_average_layout)
+
         if external_timer == None:
             self.timer = QTimer(self)
             self.timer.timeout.connect(self.add_new_data)
@@ -907,6 +930,19 @@ class PlotWidget(QWidget):
         else:
             # assuming that the external timer runs with the configured interval
             external_timer.timeout.connect(self.add_new_data)
+
+    def set_moving_average_value(self, value):
+        self.moving_average_spinbox.blockSignals(True)
+        self.moving_average_spinbox.setValue(value)
+        self.moving_average_spinbox.blockSignals(False)
+
+    def get_moving_average_value(self):
+        return self.moving_average_spinbox.value()
+
+    def moving_average_spinbox_value_changed(self, value):
+        if self.moving_average_config != None:
+            if self.moving_average_config.callback != None:
+                self.moving_average_config.callback(value)
 
     # overrides QWidget.showEvent
     def showEvent(self, event):
