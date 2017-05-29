@@ -24,6 +24,7 @@ from brickv.plugin_system.plugins.gps_v2 import device_class as gps_v2
 from brickv.plugin_system.plugins.hall_effect import device_class as hall_effect
 from brickv.plugin_system.plugins.heart_rate import device_class as heart_rate
 from brickv.plugin_system.plugins.humidity import device_class as humidity
+from brickv.plugin_system.plugins.humidity_v2 import device_class as humidity_v2
 from brickv.plugin_system.plugins.imu import device_class as imu
 from brickv.plugin_system.plugins.imu_v2 import device_class as imu_v2
 from brickv.plugin_system.plugins.industrial_analog_out import device_class as industrial_analog_out
@@ -59,6 +60,7 @@ from brickv.plugin_system.plugins.real_time_clock import device_class as real_ti
 from brickv.plugin_system.plugins.red import device_class as red
 from brickv.plugin_system.plugins.remote_switch import device_class as remote_switch
 from brickv.plugin_system.plugins.rgb_led import device_class as rgb_led
+from brickv.plugin_system.plugins.rgb_led_button import device_class as rgb_led_button
 from brickv.plugin_system.plugins.rgb_led_matrix import device_class as rgb_led_matrix
 from brickv.plugin_system.plugins.rotary_encoder import device_class as rotary_encoder
 from brickv.plugin_system.plugins.rotary_poti import device_class as rotary_poti
@@ -107,6 +109,7 @@ device_classes = [
     hall_effect,
     heart_rate,
     humidity,
+    humidity_v2,
     imu,
     imu_v2,
     industrial_analog_out,
@@ -142,6 +145,7 @@ device_classes = [
     red,
     remote_switch,
     rgb_led,
+    rgb_led_button,
     rgb_led_matrix,
     rotary_encoder,
     rotary_poti,
