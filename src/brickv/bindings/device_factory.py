@@ -300,6 +300,11 @@ except ValueError:
     from bricklet_rgb_led import BrickletRGBLED
 
 try:
+    from .bricklet_rgb_led_button import BrickletRGBLEDButton
+except ValueError:
+    from bricklet_rgb_led_button import BrickletRGBLEDButton
+
+try:
     from .bricklet_rotary_encoder import BrickletRotaryEncoder
 except ValueError:
     from bricklet_rotary_encoder import BrickletRotaryEncoder
@@ -424,6 +429,7 @@ BrickletPTC.DEVICE_IDENTIFIER: BrickletPTC,
 BrickletRealTimeClock.DEVICE_IDENTIFIER: BrickletRealTimeClock,
 BrickletRemoteSwitch.DEVICE_IDENTIFIER: BrickletRemoteSwitch,
 BrickletRGBLED.DEVICE_IDENTIFIER: BrickletRGBLED,
+BrickletRGBLEDButton.DEVICE_IDENTIFIER: BrickletRGBLEDButton,
 BrickletRotaryEncoder.DEVICE_IDENTIFIER: BrickletRotaryEncoder,
 BrickletRotaryPoti.DEVICE_IDENTIFIER: BrickletRotaryPoti,
 BrickletRS232.DEVICE_IDENTIFIER: BrickletRS232,
