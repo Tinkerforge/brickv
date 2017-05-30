@@ -17,6 +17,7 @@ from brickv.plugin_system.plugins.distance_ir import device_class as distance_ir
 from brickv.plugin_system.plugins.distance_us import device_class as distance_us
 from brickv.plugin_system.plugins.dual_button import device_class as dual_button
 from brickv.plugin_system.plugins.dual_relay import device_class as dual_relay
+from brickv.plugin_system.plugins.dual_relay_v2 import device_class as dual_relay_v2
 from brickv.plugin_system.plugins.dust_detector import device_class as dust_detector
 from brickv.plugin_system.plugins.gas_detector import device_class as gas_detector
 from brickv.plugin_system.plugins.gps import device_class as gps
@@ -102,6 +103,7 @@ device_classes = [
     distance_us,
     dual_button,
     dual_relay,
+    dual_relay_v2,
     dust_detector,
     gas_detector,
     gps,

@@ -135,6 +135,11 @@ except ValueError:
     from bricklet_dual_relay import BrickletDualRelay
 
 try:
+    from .bricklet_dual_relay_v2 import BrickletDualRelayV2
+except ValueError:
+    from bricklet_dual_relay_v2 import BrickletDualRelayV2
+
+try:
     from .bricklet_dust_detector import BrickletDustDetector
 except ValueError:
     from bricklet_dust_detector import BrickletDustDetector
@@ -396,6 +401,7 @@ BrickletDistanceIR.DEVICE_IDENTIFIER: BrickletDistanceIR,
 BrickletDistanceUS.DEVICE_IDENTIFIER: BrickletDistanceUS,
 BrickletDualButton.DEVICE_IDENTIFIER: BrickletDualButton,
 BrickletDualRelay.DEVICE_IDENTIFIER: BrickletDualRelay,
+BrickletDualRelayV2.DEVICE_IDENTIFIER: BrickletDualRelayV2,
 BrickletDustDetector.DEVICE_IDENTIFIER: BrickletDustDetector,
 BrickletGPS.DEVICE_IDENTIFIER: BrickletGPS,
 BrickletGPSV2.DEVICE_IDENTIFIER: BrickletGPSV2,
