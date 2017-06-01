@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Motorized Poti Plugin
-Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Motorized LinearPoti Plugin
+Copyright (C) 2015-2017 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2016 Matthias Bolte <matthias@tinkerforge.com>
 
 motorized_poti.py: Motorized Poti Plugin implementation
@@ -23,22 +23,23 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QSlider, QCheckBox, QFrame
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QSlider, QCheckBox, QFrame, QComboBox
 
-from brickv.plugin_system.plugin_base import PluginBase
-from brickv.bindings.bricklet_motorized_poti import BrickletMotorizedPoti
+from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
+from brickv.bindings.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
 from brickv.plot_widget import PlotWidget, FixedSizeLabel
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
+from PyQt4.Qt import QComboBox
 
 class MotorPositionLabel(FixedSizeLabel):
     def setText(self, text):
-        text = "Motor Position: " + text
+        text = "Motor Target Position: " + text
         super(MotorPositionLabel, self).setText(text)
 
-class MotorizedPoti(PluginBase):
+class MotorizedLinearPoti(COMCUPluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletMotorizedPoti, *args)
+        COMCUPluginBase.__init__(self, BrickletMotorizedLinearPoti, *args)
 
         self.mp = self.device
 
@@ -51,24 +52,33 @@ class MotorizedPoti(PluginBase):
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(0, 100)
         self.slider.setMinimumWidth(200)
+        self.slider.setEnabled(False)
 
-        plots = [('Position', Qt.red, lambda: self.current_position, str)]
+        plots = [('Potentiometer Position', Qt.red, lambda: self.current_position, str)]
         self.plot_widget = PlotWidget('Position', plots, extra_key_widgets=[self.slider],
                                       curve_motion_granularity=40, update_interval=0.025)
 
         self.motor_slider = QSlider(Qt.Horizontal)
         self.motor_slider.setRange(0, 100)
-        self.motor_slider.sliderReleased.connect(self.motor_slider_released)
-        self.motor_slider.sliderMoved.connect(self.motor_slider_moved)
-        self.motor_enable = QCheckBox("Enable Motor")
-        self.motor_enable.stateChanged.connect(self.motor_enable_changed)
+        self.motor_slider.valueChanged.connect(self.motor_slider_value_changed)
+        self.motor_hold_position = QCheckBox("Hold Position")
+        self.motor_drive_mode = QComboBox()
+        self.motor_drive_mode.addItem('Fast')
+        self.motor_drive_mode.addItem('Smooth')
+        
+        def get_motor_slider_value():
+            return self.motor_slider.value()
+        
+        self.motor_hold_position.stateChanged.connect(lambda x: self.motor_slider_value_changed(get_motor_slider_value()))
+        self.motor_drive_mode.currentIndexChanged.connect(lambda x: self.motor_slider_value_changed(get_motor_slider_value()))
 
-        self.motor_position_label = MotorPositionLabel('Motor Position:')
+        self.motor_position_label = MotorPositionLabel('Motor Target Position:')
 
         hlayout = QHBoxLayout()
         hlayout.addWidget(self.motor_position_label)
         hlayout.addWidget(self.motor_slider)
-        hlayout.addWidget(self.motor_enable)
+        hlayout.addWidget(self.motor_drive_mode)
+        hlayout.addWidget(self.motor_hold_position)
 
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
@@ -82,7 +92,6 @@ class MotorizedPoti(PluginBase):
     def start(self):
         async_call(self.mp.get_position, None, self.cb_position, self.increase_error_count)
         async_call(self.mp.get_motor_position, None, self.cb_motor_position, self.increase_error_count)
-        async_call(self.mp.is_motor_enabled, None, self.cb_is_motor_enabled, self.increase_error_count)
 
         self.cbe_position.set_period(25)
         self.plot_widget.stop = False
@@ -95,31 +104,31 @@ class MotorizedPoti(PluginBase):
         pass
 
     def get_url_part(self):
-        return 'motorized_poti'
+        return 'motorized_linear_poti'
 
     @staticmethod
     def has_device_identifier(device_identifier):
-        return device_identifier == BrickletMotorizedPoti.DEVICE_IDENTIFIER
+        return device_identifier == BrickletMotorizedLinearPoti.DEVICE_IDENTIFIER
 
     def cb_position(self, position):
         self.current_position = position
         self.slider.setValue(position)
 
-    def cb_motor_position(self, motor_position):
-        self.motor_slider.setValue(motor_position.position)
-        self.motor_slider_moved(motor_position.position)
+    def cb_motor_position(self, motor):
+        self.motor_slider.blockSignals(True)
+        self.motor_hold_position.blockSignals(True)
+        self.motor_drive_mode.blockSignals(True)
 
-    def cb_is_motor_enabled(self, enabled):
-        self.motor_enable.setChecked(enabled)
+        self.motor_hold_position.setChecked(motor.hold_position)
+        self.motor_drive_mode.setCurrentIndex(motor.drive_mode)
+        self.motor_position_label.setText(str(motor.position))
+        self.motor_slider.setValue(motor.position)
 
-    def motor_slider_moved(self, position):
+        self.motor_slider.blockSignals(False)
+        self.motor_hold_position.blockSignals(False)
+        self.motor_drive_mode.blockSignals(False)
+
+    
+    def motor_slider_value_changed(self, position):
         self.motor_position_label.setText(str(position))
-
-    def motor_slider_released(self):
-        self.mp.set_motor_position(self.motor_slider.value(), False)
-
-    def motor_enable_changed(self, state):
-        if self.motor_enable.isChecked():
-            self.mp.enable_motor()
-        else:
-            self.mp.disable_motor()
+        self.mp.set_motor_position(self.motor_slider.value(), self.motor_drive_mode.currentIndex(), self.motor_hold_position.isChecked())

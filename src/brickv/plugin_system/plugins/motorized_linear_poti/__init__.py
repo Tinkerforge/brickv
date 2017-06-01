@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Motorized Poti Plugin
-Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2015-2017 Olaf Lüke <olaf@tinkerforge.com>
 
 __init__.py: Package initialization
 
@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugins.motorized_poti.motorized_poti import MotorizedPoti
+from brickv.plugin_system.plugins.motorized_linear_poti.motorized_linear_poti import MotorizedLinearPoti
 
-device_class = MotorizedPoti
+device_class = MotorizedLinearPoti
