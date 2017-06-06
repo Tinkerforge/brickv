@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -83,12 +83,6 @@ class BrickletJoystick(Device):
         self.response_expected[BrickletJoystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletJoystick.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletJoystick.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletJoystick.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletJoystick.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletJoystick.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletJoystick.CALLBACK_POSITION] = BrickletJoystick.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletJoystick.CALLBACK_ANALOG_VALUE] = BrickletJoystick.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletJoystick.CALLBACK_POSITION_REACHED] = BrickletJoystick.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletJoystick.CALLBACK_ANALOG_VALUE_REACHED] = BrickletJoystick.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletJoystick.CALLBACK_PRESSED] = BrickletJoystick.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletJoystick.CALLBACK_RELEASED] = BrickletJoystick.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletJoystick.FUNCTION_GET_IDENTITY] = BrickletJoystick.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletJoystick.CALLBACK_POSITION] = 'h h'

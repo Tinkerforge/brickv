@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -71,8 +71,6 @@ class BrickletRealTimeClock(Device):
         self.response_expected[BrickletRealTimeClock.FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD] = BrickletRealTimeClock.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRealTimeClock.FUNCTION_SET_ALARM] = BrickletRealTimeClock.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRealTimeClock.FUNCTION_GET_ALARM] = BrickletRealTimeClock.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRealTimeClock.CALLBACK_DATE_TIME] = BrickletRealTimeClock.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRealTimeClock.CALLBACK_ALARM] = BrickletRealTimeClock.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRealTimeClock.FUNCTION_GET_IDENTITY] = BrickletRealTimeClock.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletRealTimeClock.CALLBACK_DATE_TIME] = 'H B B B B B B B q'

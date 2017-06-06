@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -75,10 +75,6 @@ class BrickletAmbientLight(Device):
         self.response_expected[BrickletAmbientLight.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAmbientLight.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletAmbientLight.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletAmbientLight.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAmbientLight.CALLBACK_ILLUMINANCE] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletAmbientLight.CALLBACK_ANALOG_VALUE] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletAmbientLight.CALLBACK_ILLUMINANCE_REACHED] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletAmbientLight.CALLBACK_ANALOG_VALUE_REACHED] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletAmbientLight.FUNCTION_GET_IDENTITY] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletAmbientLight.CALLBACK_ILLUMINANCE] = 'H'

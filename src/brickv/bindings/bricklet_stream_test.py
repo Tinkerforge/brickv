@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -277,24 +277,6 @@ class BrickletStreamTest(Device):
         self.response_expected[BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_SUFFIX_1_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_SUFFIX_2_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_FULL_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletStreamTest.CALLBACK_NORMAL_READ_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_PREFIX_1_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_PREFIX_2_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_SUFFIX_1_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_SUFFIX_2_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_FULL_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_FIXED_READ_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_PREFIX_1_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_PREFIX_2_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_SUFFIX_1_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_SUFFIX_2_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_FULL_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_SINGLE_READ_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_PREFIX_1_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_PREFIX_2_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_SUFFIX_1_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_SUFFIX_2_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_FULL_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletStreamTest.FUNCTION_GET_IDENTITY] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletStreamTest.CALLBACK_NORMAL_READ_LOW_LEVEL] = 'H H 60c'
@@ -1087,10 +1069,9 @@ class BrickletStreamTest(Device):
                 while message_chunk_offset < message_length:
                     message_chunk_data = create_chunk_data(message, message_chunk_offset, 60, '\0')
                     ret = self.short_write_low_level(message_length, message_chunk_offset, message_chunk_data)
-                    message_chunk_written = ret
-                    message_written += message_chunk_written
+                    message_written += ret
 
-                    if message_chunk_written < 60:
+                    if ret < 60:
                         break # either last chunk or short write
 
                     message_chunk_offset += 60
@@ -1116,10 +1097,9 @@ class BrickletStreamTest(Device):
                 while message_chunk_offset < message_length:
                     message_chunk_data = create_chunk_data(message, message_chunk_offset, 59, '\0')
                     ret = self.short_write_extra_in_prefix_1_low_level(extra, message_length, message_chunk_offset, message_chunk_data)
-                    message_chunk_written = ret
-                    message_written += message_chunk_written
+                    message_written += ret
 
-                    if message_chunk_written < 59:
+                    if ret < 59:
                         break # either last chunk or short write
 
                     message_chunk_offset += 59
@@ -1145,10 +1125,9 @@ class BrickletStreamTest(Device):
                 while message_chunk_offset < message_length:
                     message_chunk_data = create_chunk_data(message, message_chunk_offset, 58, '\0')
                     ret = self.short_write_extra_in_prefix_2_low_level(extra_1, extra_2, message_length, message_chunk_offset, message_chunk_data)
-                    message_chunk_written = ret
-                    message_written += message_chunk_written
+                    message_written += ret
 
-                    if message_chunk_written < 58:
+                    if ret < 58:
                         break # either last chunk or short write
 
                     message_chunk_offset += 58
@@ -1174,10 +1153,9 @@ class BrickletStreamTest(Device):
                 while message_chunk_offset < message_length:
                     message_chunk_data = create_chunk_data(message, message_chunk_offset, 59, '\0')
                     ret = self.short_write_extra_in_suffix_1_low_level(message_length, message_chunk_offset, message_chunk_data, extra)
-                    message_chunk_written = ret
-                    message_written += message_chunk_written
+                    message_written += ret
 
-                    if message_chunk_written < 59:
+                    if ret < 59:
                         break # either last chunk or short write
 
                     message_chunk_offset += 59
@@ -1203,10 +1181,9 @@ class BrickletStreamTest(Device):
                 while message_chunk_offset < message_length:
                     message_chunk_data = create_chunk_data(message, message_chunk_offset, 58, '\0')
                     ret = self.short_write_extra_in_suffix_2_low_level(message_length, message_chunk_offset, message_chunk_data, extra_1, extra_2)
-                    message_chunk_written = ret
-                    message_written += message_chunk_written
+                    message_written += ret
 
-                    if message_chunk_written < 58:
+                    if ret < 58:
                         break # either last chunk or short write
 
                     message_chunk_offset += 58
@@ -1232,10 +1209,9 @@ class BrickletStreamTest(Device):
                 while message_chunk_offset < message_length:
                     message_chunk_data = create_chunk_data(message, message_chunk_offset, 60, '\0')
                     ret = self.short_write_extra_out_prefix_1_low_level(message_length, message_chunk_offset, message_chunk_data)
-                    message_chunk_written = ret.message_chunk_written
-                    message_written += message_chunk_written
+                    message_written += ret.message_chunk_written
 
-                    if message_chunk_written < 60:
+                    if ret.message_chunk_written < 60:
                         break # either last chunk or short write
 
                     message_chunk_offset += 60
@@ -1261,10 +1237,9 @@ class BrickletStreamTest(Device):
                 while message_chunk_offset < message_length:
                     message_chunk_data = create_chunk_data(message, message_chunk_offset, 60, '\0')
                     ret = self.short_write_extra_out_prefix_2_low_level(message_length, message_chunk_offset, message_chunk_data)
-                    message_chunk_written = ret.message_chunk_written
-                    message_written += message_chunk_written
+                    message_written += ret.message_chunk_written
 
-                    if message_chunk_written < 60:
+                    if ret.message_chunk_written < 60:
                         break # either last chunk or short write
 
                     message_chunk_offset += 60
@@ -1290,10 +1265,9 @@ class BrickletStreamTest(Device):
                 while message_chunk_offset < message_length:
                     message_chunk_data = create_chunk_data(message, message_chunk_offset, 60, '\0')
                     ret = self.short_write_extra_out_suffix_1_low_level(message_length, message_chunk_offset, message_chunk_data)
-                    message_chunk_written = ret.message_chunk_written
-                    message_written += message_chunk_written
+                    message_written += ret.message_chunk_written
 
-                    if message_chunk_written < 60:
+                    if ret.message_chunk_written < 60:
                         break # either last chunk or short write
 
                     message_chunk_offset += 60
@@ -1319,10 +1293,9 @@ class BrickletStreamTest(Device):
                 while message_chunk_offset < message_length:
                     message_chunk_data = create_chunk_data(message, message_chunk_offset, 60, '\0')
                     ret = self.short_write_extra_out_suffix_2_low_level(message_length, message_chunk_offset, message_chunk_data)
-                    message_chunk_written = ret.message_chunk_written
-                    message_written += message_chunk_written
+                    message_written += ret.message_chunk_written
 
-                    if message_chunk_written < 60:
+                    if ret.message_chunk_written < 60:
                         break # either last chunk or short write
 
                     message_chunk_offset += 60
@@ -1348,10 +1321,9 @@ class BrickletStreamTest(Device):
                 while message_chunk_offset < message_length:
                     message_chunk_data = create_chunk_data(message, message_chunk_offset, 56, '\0')
                     ret = self.short_write_extra_full_low_level(extra_1, message_length, extra_2, message_chunk_offset, extra_3, message_chunk_data, extra_4)
-                    message_chunk_written = ret.message_chunk_written
-                    message_written += message_chunk_written
+                    message_written += ret.message_chunk_written
 
-                    if message_chunk_written < 56:
+                    if ret.message_chunk_written < 56:
                         break # either last chunk or short write
 
                     message_chunk_offset += 56
@@ -1653,22 +1625,19 @@ class BrickletStreamTest(Device):
         with self.stream_lock:
             ret = self.normal_read_low_level()
             message_length = ret.message_length
-            message_chunk_offset = ret.message_chunk_offset
-            message_out_of_sync = message_chunk_offset != 0
+            message_out_of_sync = ret.message_chunk_offset != 0
             message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.normal_read_low_level()
                 message_length = ret.message_length
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 60 < message_length:
+                while ret.message_chunk_offset + 60 < message_length:
                     ret = self.normal_read_low_level()
                     message_length = ret.message_length
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -1681,22 +1650,19 @@ class BrickletStreamTest(Device):
         with self.stream_lock:
             ret = self.normal_read_extra_in_1_low_level(extra)
             message_length = ret.message_length
-            message_chunk_offset = ret.message_chunk_offset
-            message_out_of_sync = message_chunk_offset != 0
+            message_out_of_sync = ret.message_chunk_offset != 0
             message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.normal_read_extra_in_1_low_level(extra)
                 message_length = ret.message_length
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 60 < message_length:
+                while ret.message_chunk_offset + 60 < message_length:
                     ret = self.normal_read_extra_in_1_low_level(extra)
                     message_length = ret.message_length
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -1709,22 +1675,19 @@ class BrickletStreamTest(Device):
         with self.stream_lock:
             ret = self.normal_read_extra_in_2_low_level(extra_1, extra_2)
             message_length = ret.message_length
-            message_chunk_offset = ret.message_chunk_offset
-            message_out_of_sync = message_chunk_offset != 0
+            message_out_of_sync = ret.message_chunk_offset != 0
             message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.normal_read_extra_in_2_low_level(extra_1, extra_2)
                 message_length = ret.message_length
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 60 < message_length:
+                while ret.message_chunk_offset + 60 < message_length:
                     ret = self.normal_read_extra_in_2_low_level(extra_1, extra_2)
                     message_length = ret.message_length
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -1737,22 +1700,19 @@ class BrickletStreamTest(Device):
         with self.stream_lock:
             ret = self.normal_read_extra_out_prefix_1_low_level()
             message_length = ret.message_length
-            message_chunk_offset = ret.message_chunk_offset
-            message_out_of_sync = message_chunk_offset != 0
+            message_out_of_sync = ret.message_chunk_offset != 0
             message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.normal_read_extra_out_prefix_1_low_level()
                 message_length = ret.message_length
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 59 < message_length:
+                while ret.message_chunk_offset + 59 < message_length:
                     ret = self.normal_read_extra_out_prefix_1_low_level()
                     message_length = ret.message_length
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -1765,22 +1725,19 @@ class BrickletStreamTest(Device):
         with self.stream_lock:
             ret = self.normal_read_extra_out_prefix_2_low_level()
             message_length = ret.message_length
-            message_chunk_offset = ret.message_chunk_offset
-            message_out_of_sync = message_chunk_offset != 0
+            message_out_of_sync = ret.message_chunk_offset != 0
             message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.normal_read_extra_out_prefix_2_low_level()
                 message_length = ret.message_length
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 58 < message_length:
+                while ret.message_chunk_offset + 58 < message_length:
                     ret = self.normal_read_extra_out_prefix_2_low_level()
                     message_length = ret.message_length
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -1793,22 +1750,19 @@ class BrickletStreamTest(Device):
         with self.stream_lock:
             ret = self.normal_read_extra_out_suffix_1_low_level()
             message_length = ret.message_length
-            message_chunk_offset = ret.message_chunk_offset
-            message_out_of_sync = message_chunk_offset != 0
+            message_out_of_sync = ret.message_chunk_offset != 0
             message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.normal_read_extra_out_suffix_1_low_level()
                 message_length = ret.message_length
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 59 < message_length:
+                while ret.message_chunk_offset + 59 < message_length:
                     ret = self.normal_read_extra_out_suffix_1_low_level()
                     message_length = ret.message_length
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -1821,22 +1775,19 @@ class BrickletStreamTest(Device):
         with self.stream_lock:
             ret = self.normal_read_extra_out_suffix_2_low_level()
             message_length = ret.message_length
-            message_chunk_offset = ret.message_chunk_offset
-            message_out_of_sync = message_chunk_offset != 0
+            message_out_of_sync = ret.message_chunk_offset != 0
             message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.normal_read_extra_out_suffix_2_low_level()
                 message_length = ret.message_length
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 58 < message_length:
+                while ret.message_chunk_offset + 58 < message_length:
                     ret = self.normal_read_extra_out_suffix_2_low_level()
                     message_length = ret.message_length
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -1849,22 +1800,19 @@ class BrickletStreamTest(Device):
         with self.stream_lock:
             ret = self.normal_read_extra_out_full_low_level()
             message_length = ret.message_length
-            message_chunk_offset = ret.message_chunk_offset
-            message_out_of_sync = message_chunk_offset != 0
+            message_out_of_sync = ret.message_chunk_offset != 0
             message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.normal_read_extra_out_full_low_level()
                 message_length = ret.message_length
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 56 < message_length:
+                while ret.message_chunk_offset + 56 < message_length:
                     ret = self.normal_read_extra_out_full_low_level()
                     message_length = ret.message_length
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -1878,27 +1826,23 @@ class BrickletStreamTest(Device):
 
         with self.stream_lock:
             ret = self.fixed_read_low_level()
-            message_chunk_offset = ret.message_chunk_offset
 
-            if message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
+            if ret.message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
                 message_length = 0
-                message_chunk_offset = 0
                 message_out_of_sync = False
                 message_data = ()
             else:
-                message_out_of_sync = message_chunk_offset != 0
+                message_out_of_sync = ret.message_chunk_offset != 0
                 message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.fixed_read_low_level()
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 62 < message_length:
+                while ret.message_chunk_offset + 62 < message_length:
                     ret = self.fixed_read_low_level()
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -1912,27 +1856,23 @@ class BrickletStreamTest(Device):
 
         with self.stream_lock:
             ret = self.fixed_read_extra_in_1_low_level(extra)
-            message_chunk_offset = ret.message_chunk_offset
 
-            if message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
+            if ret.message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
                 message_length = 0
-                message_chunk_offset = 0
                 message_out_of_sync = False
                 message_data = ()
             else:
-                message_out_of_sync = message_chunk_offset != 0
+                message_out_of_sync = ret.message_chunk_offset != 0
                 message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.fixed_read_extra_in_1_low_level(extra)
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 62 < message_length:
+                while ret.message_chunk_offset + 62 < message_length:
                     ret = self.fixed_read_extra_in_1_low_level(extra)
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -1946,27 +1886,23 @@ class BrickletStreamTest(Device):
 
         with self.stream_lock:
             ret = self.fixed_read_extra_in_2_low_level(extra_1, extra_2)
-            message_chunk_offset = ret.message_chunk_offset
 
-            if message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
+            if ret.message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
                 message_length = 0
-                message_chunk_offset = 0
                 message_out_of_sync = False
                 message_data = ()
             else:
-                message_out_of_sync = message_chunk_offset != 0
+                message_out_of_sync = ret.message_chunk_offset != 0
                 message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.fixed_read_extra_in_2_low_level(extra_1, extra_2)
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 62 < message_length:
+                while ret.message_chunk_offset + 62 < message_length:
                     ret = self.fixed_read_extra_in_2_low_level(extra_1, extra_2)
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -1980,27 +1916,23 @@ class BrickletStreamTest(Device):
 
         with self.stream_lock:
             ret = self.fixed_read_extra_out_prefix_1_low_level()
-            message_chunk_offset = ret.message_chunk_offset
 
-            if message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
+            if ret.message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
                 message_length = 0
-                message_chunk_offset = 0
                 message_out_of_sync = False
                 message_data = ()
             else:
-                message_out_of_sync = message_chunk_offset != 0
+                message_out_of_sync = ret.message_chunk_offset != 0
                 message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.fixed_read_extra_out_prefix_1_low_level()
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 61 < message_length:
+                while ret.message_chunk_offset + 61 < message_length:
                     ret = self.fixed_read_extra_out_prefix_1_low_level()
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -2014,27 +1946,23 @@ class BrickletStreamTest(Device):
 
         with self.stream_lock:
             ret = self.fixed_read_extra_out_prefix_2_low_level()
-            message_chunk_offset = ret.message_chunk_offset
 
-            if message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
+            if ret.message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
                 message_length = 0
-                message_chunk_offset = 0
                 message_out_of_sync = False
                 message_data = ()
             else:
-                message_out_of_sync = message_chunk_offset != 0
+                message_out_of_sync = ret.message_chunk_offset != 0
                 message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.fixed_read_extra_out_prefix_2_low_level()
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 60 < message_length:
+                while ret.message_chunk_offset + 60 < message_length:
                     ret = self.fixed_read_extra_out_prefix_2_low_level()
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -2048,27 +1976,23 @@ class BrickletStreamTest(Device):
 
         with self.stream_lock:
             ret = self.fixed_read_extra_out_suffix_1_low_level()
-            message_chunk_offset = ret.message_chunk_offset
 
-            if message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
+            if ret.message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
                 message_length = 0
-                message_chunk_offset = 0
                 message_out_of_sync = False
                 message_data = ()
             else:
-                message_out_of_sync = message_chunk_offset != 0
+                message_out_of_sync = ret.message_chunk_offset != 0
                 message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.fixed_read_extra_out_suffix_1_low_level()
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 61 < message_length:
+                while ret.message_chunk_offset + 61 < message_length:
                     ret = self.fixed_read_extra_out_suffix_1_low_level()
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -2082,27 +2006,23 @@ class BrickletStreamTest(Device):
 
         with self.stream_lock:
             ret = self.fixed_read_extra_out_suffix_2_low_level()
-            message_chunk_offset = ret.message_chunk_offset
 
-            if message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
+            if ret.message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
                 message_length = 0
-                message_chunk_offset = 0
                 message_out_of_sync = False
                 message_data = ()
             else:
-                message_out_of_sync = message_chunk_offset != 0
+                message_out_of_sync = ret.message_chunk_offset != 0
                 message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.fixed_read_extra_out_suffix_2_low_level()
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 60 < message_length:
+                while ret.message_chunk_offset + 60 < message_length:
                     ret = self.fixed_read_extra_out_suffix_2_low_level()
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -2116,27 +2036,23 @@ class BrickletStreamTest(Device):
 
         with self.stream_lock:
             ret = self.fixed_read_extra_out_full_low_level()
-            message_chunk_offset = ret.message_chunk_offset
 
-            if message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
+            if ret.message_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
                 message_length = 0
-                message_chunk_offset = 0
                 message_out_of_sync = False
                 message_data = ()
             else:
-                message_out_of_sync = message_chunk_offset != 0
+                message_out_of_sync = ret.message_chunk_offset != 0
                 message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.fixed_read_extra_out_full_low_level()
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 59 < message_length:
+                while ret.message_chunk_offset + 59 < message_length:
                     ret = self.fixed_read_extra_out_full_low_level()
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
@@ -2147,80 +2063,64 @@ class BrickletStreamTest(Device):
 
         """
         ret = self.single_read_low_level()
-        message_length = ret.message_length
-        message_data = ret.message_data
 
-        return message_data[:message_length]
+        return ret.message_data[:ret.message_length]
 
     def single_read_extra_in_1(self, extra):
         """
 
         """
         ret = self.single_read_extra_in_1_low_level(extra)
-        message_length = ret.message_length
-        message_data = ret.message_data
 
-        return message_data[:message_length]
+        return ret.message_data[:ret.message_length]
 
     def single_read_extra_in_2(self, extra_1, extra_2):
         """
 
         """
         ret = self.single_read_extra_in_2_low_level(extra_1, extra_2)
-        message_length = ret.message_length
-        message_data = ret.message_data
 
-        return message_data[:message_length]
+        return ret.message_data[:ret.message_length]
 
     def single_read_extra_out_prefix_1(self):
         """
 
         """
         ret = self.single_read_extra_out_prefix_1_low_level()
-        message_length = ret.message_length
-        message_data = ret.message_data
 
-        return SingleReadExtraOutPrefix1(ret.extra, message_data[:message_length])
+        return SingleReadExtraOutPrefix1(ret.extra, ret.message_data[:ret.message_length])
 
     def single_read_extra_out_prefix_2(self):
         """
 
         """
         ret = self.single_read_extra_out_prefix_2_low_level()
-        message_length = ret.message_length
-        message_data = ret.message_data
 
-        return SingleReadExtraOutPrefix2(ret.extra_1, ret.extra_2, message_data[:message_length])
+        return SingleReadExtraOutPrefix2(ret.extra_1, ret.extra_2, ret.message_data[:ret.message_length])
 
     def single_read_extra_out_suffix_1(self):
         """
 
         """
         ret = self.single_read_extra_out_suffix_1_low_level()
-        message_length = ret.message_length
-        message_data = ret.message_data
 
-        return SingleReadExtraOutSuffix1(message_data[:message_length], ret.extra)
+        return SingleReadExtraOutSuffix1(ret.message_data[:ret.message_length], ret.extra)
 
     def single_read_extra_out_suffix_2(self):
         """
 
         """
         ret = self.single_read_extra_out_suffix_2_low_level()
-        message_length = ret.message_length
-        message_data = ret.message_data
 
-        return SingleReadExtraOutSuffix2(message_data[:message_length], ret.extra_1, ret.extra_2)
+        return SingleReadExtraOutSuffix2(ret.message_data[:ret.message_length], ret.extra_1, ret.extra_2)
 
     def single_read_extra_out_full(self):
         """
 
         """
         ret = self.single_read_extra_out_full_low_level()
-        message_length = ret.message_length
-        message_data = ret.message_data
 
-        return SingleReadExtraOutFull(ret.extra_1, ret.extra_2, message_data[:message_length], ret.extra_3)
+        return SingleReadExtraOutFull(ret.extra_1, ret.extra_2, ret.message_data[:ret.message_length], ret.extra_3)
 
     def register_callback(self, id_, callback):
         """

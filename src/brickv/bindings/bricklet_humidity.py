@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -75,10 +75,6 @@ class BrickletHumidity(Device):
         self.response_expected[BrickletHumidity.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletHumidity.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHumidity.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletHumidity.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletHumidity.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletHumidity.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHumidity.CALLBACK_HUMIDITY] = BrickletHumidity.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletHumidity.CALLBACK_ANALOG_VALUE] = BrickletHumidity.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletHumidity.CALLBACK_HUMIDITY_REACHED] = BrickletHumidity.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletHumidity.CALLBACK_ANALOG_VALUE_REACHED] = BrickletHumidity.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletHumidity.FUNCTION_GET_IDENTITY] = BrickletHumidity.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletHumidity.CALLBACK_HUMIDITY] = 'H'

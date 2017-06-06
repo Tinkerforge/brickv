@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -58,7 +58,6 @@ class BrickletDualButton(Device):
         self.response_expected[BrickletDualButton.FUNCTION_SET_LED_STATE] = BrickletDualButton.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDualButton.FUNCTION_GET_LED_STATE] = BrickletDualButton.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDualButton.FUNCTION_GET_BUTTON_STATE] = BrickletDualButton.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDualButton.CALLBACK_STATE_CHANGED] = BrickletDualButton.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletDualButton.FUNCTION_SET_SELECTED_LED_STATE] = BrickletDualButton.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDualButton.FUNCTION_GET_IDENTITY] = BrickletDualButton.RESPONSE_EXPECTED_ALWAYS_TRUE
 

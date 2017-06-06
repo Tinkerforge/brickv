@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -80,11 +80,6 @@ class BrickletCurrent25(Device):
         self.response_expected[BrickletCurrent25.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletCurrent25.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCurrent25.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletCurrent25.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletCurrent25.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletCurrent25.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletCurrent25.CALLBACK_CURRENT] = BrickletCurrent25.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletCurrent25.CALLBACK_ANALOG_VALUE] = BrickletCurrent25.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletCurrent25.CALLBACK_CURRENT_REACHED] = BrickletCurrent25.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletCurrent25.CALLBACK_ANALOG_VALUE_REACHED] = BrickletCurrent25.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletCurrent25.CALLBACK_OVER_CURRENT] = BrickletCurrent25.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletCurrent25.FUNCTION_GET_IDENTITY] = BrickletCurrent25.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletCurrent25.CALLBACK_CURRENT] = 'h'

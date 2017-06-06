@@ -100,9 +100,8 @@ class Error(Exception):
 class Device:
     RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0
     RESPONSE_EXPECTED_ALWAYS_TRUE = 1 # getter
-    RESPONSE_EXPECTED_ALWAYS_FALSE = 2 # callback
-    RESPONSE_EXPECTED_TRUE = 3 # setter
-    RESPONSE_EXPECTED_FALSE = 4 # setter, default
+    RESPONSE_EXPECTED_TRUE = 2 # setter
+    RESPONSE_EXPECTED_FALSE = 3 # setter, default
 
     def __init__(self, uid, ipcon):
         """
@@ -128,14 +127,12 @@ class Device:
         self.stream_lock = threading.Lock()
 
         self.response_expected = [Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID] * 256
-        self.response_expected[IPConnection.FUNCTION_ENUMERATE] = Device.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[IPConnection.FUNCTION_ADC_CALIBRATE] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[IPConnection.FUNCTION_GET_ADC_CALIBRATION] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_UID] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_UID] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[IPConnection.CALLBACK_ENUMERATE] = Device.RESPONSE_EXPECTED_ALWAYS_FALSE
 
         ipcon.devices[self.uid] = self # FIXME: maybe use a weakref here
 
@@ -199,7 +196,7 @@ class Device:
         if flag == Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID:
             raise ValueError('Invalid function ID {0}'.format(function_id))
 
-        if flag in [Device.RESPONSE_EXPECTED_ALWAYS_TRUE, Device.RESPONSE_EXPECTED_ALWAYS_FALSE]:
+        if flag == Device.RESPONSE_EXPECTED_ALWAYS_TRUE:
             raise ValueError('Response Expected flag cannot be changed for function ID {0}'.format(function_id))
 
         if bool(response_expected):

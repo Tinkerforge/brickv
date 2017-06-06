@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -57,7 +57,6 @@ class BrickletIndustrialQuadRelay(Device):
         self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_SET_GROUP] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_GROUP] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_AVAILABLE_FOR_GROUP] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletIndustrialQuadRelay.CALLBACK_MONOFLOP_DONE] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_SET_SELECTED_VALUES] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_IDENTITY] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-31.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -91,13 +91,11 @@ class BrickletMotorizedLinearPoti(Device):
         self.response_expected[BrickletMotorizedLinearPoti.FUNCTION_GET_POSITION] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMotorizedLinearPoti.FUNCTION_SET_POSITION_CALLBACK_CONFIGURATION] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletMotorizedLinearPoti.FUNCTION_GET_POSITION_CALLBACK_CONFIGURATION] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletMotorizedLinearPoti.CALLBACK_POSITION] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletMotorizedLinearPoti.FUNCTION_SET_MOTOR_POSITION] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletMotorizedLinearPoti.FUNCTION_GET_MOTOR_POSITION] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMotorizedLinearPoti.FUNCTION_CALIBRATE] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletMotorizedLinearPoti.FUNCTION_SET_POSITION_REACHED_CALLBACK_CONFIGURATION] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletMotorizedLinearPoti.FUNCTION_GET_POSITION_REACHED_CALLBACK_CONFIGURATION] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletMotorizedLinearPoti.CALLBACK_POSITION_REACHED] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletMotorizedLinearPoti.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMotorizedLinearPoti.FUNCTION_SET_BOOTLOADER_MODE] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMotorizedLinearPoti.FUNCTION_GET_BOOTLOADER_MODE] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE

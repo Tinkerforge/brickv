@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -51,7 +51,6 @@ class BrickletMultiTouch(Device):
         self.response_expected[BrickletMultiTouch.FUNCTION_RECALIBRATE] = BrickletMultiTouch.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletMultiTouch.FUNCTION_SET_ELECTRODE_CONFIG] = BrickletMultiTouch.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletMultiTouch.FUNCTION_GET_ELECTRODE_CONFIG] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletMultiTouch.CALLBACK_TOUCH_STATE] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletMultiTouch.FUNCTION_SET_ELECTRODE_SENSITIVITY] = BrickletMultiTouch.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletMultiTouch.FUNCTION_GET_ELECTRODE_SENSITIVITY] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMultiTouch.FUNCTION_GET_IDENTITY] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_TRUE

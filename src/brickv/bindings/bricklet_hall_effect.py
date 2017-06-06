@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -64,7 +64,6 @@ class BrickletHallEffect(Device):
         self.response_expected[BrickletHallEffect.FUNCTION_SET_EDGE_COUNT_CALLBACK_PERIOD] = BrickletHallEffect.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletHallEffect.FUNCTION_GET_EDGE_COUNT_CALLBACK_PERIOD] = BrickletHallEffect.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHallEffect.FUNCTION_EDGE_INTERRUPT] = BrickletHallEffect.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHallEffect.CALLBACK_EDGE_COUNT] = BrickletHallEffect.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletHallEffect.FUNCTION_GET_IDENTITY] = BrickletHallEffect.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletHallEffect.CALLBACK_EDGE_COUNT] = 'I !'

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -64,8 +64,6 @@ class BrickletDustDetector(Device):
         self.response_expected[BrickletDustDetector.FUNCTION_GET_DUST_DENSITY_CALLBACK_THRESHOLD] = BrickletDustDetector.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDustDetector.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletDustDetector.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletDustDetector.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletDustDetector.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDustDetector.CALLBACK_DUST_DENSITY] = BrickletDustDetector.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletDustDetector.CALLBACK_DUST_DENSITY_REACHED] = BrickletDustDetector.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletDustDetector.FUNCTION_SET_MOVING_AVERAGE] = BrickletDustDetector.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDustDetector.FUNCTION_GET_MOVING_AVERAGE] = BrickletDustDetector.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDustDetector.FUNCTION_GET_IDENTITY] = BrickletDustDetector.RESPONSE_EXPECTED_ALWAYS_TRUE

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -88,8 +88,6 @@ class BrickletColor(Device):
         self.response_expected[BrickletColor.FUNCTION_GET_COLOR_CALLBACK_THRESHOLD] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletColor.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletColor.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletColor.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletColor.CALLBACK_COLOR] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletColor.CALLBACK_COLOR_REACHED] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletColor.FUNCTION_LIGHT_ON] = BrickletColor.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletColor.FUNCTION_LIGHT_OFF] = BrickletColor.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletColor.FUNCTION_IS_LIGHT_ON] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -101,8 +99,6 @@ class BrickletColor(Device):
         self.response_expected[BrickletColor.FUNCTION_GET_ILLUMINANCE_CALLBACK_PERIOD] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletColor.FUNCTION_SET_COLOR_TEMPERATURE_CALLBACK_PERIOD] = BrickletColor.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletColor.FUNCTION_GET_COLOR_TEMPERATURE_CALLBACK_PERIOD] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletColor.CALLBACK_ILLUMINANCE] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletColor.CALLBACK_COLOR_TEMPERATURE] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletColor.FUNCTION_GET_IDENTITY] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletColor.CALLBACK_COLOR] = 'H H H H'

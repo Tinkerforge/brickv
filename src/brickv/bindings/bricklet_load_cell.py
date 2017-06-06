@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -86,8 +86,6 @@ class BrickletLoadCell(Device):
         self.response_expected[BrickletLoadCell.FUNCTION_TARE] = BrickletLoadCell.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLoadCell.FUNCTION_SET_CONFIGURATION] = BrickletLoadCell.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLoadCell.FUNCTION_GET_CONFIGURATION] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletLoadCell.CALLBACK_WEIGHT] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletLoadCell.CALLBACK_WEIGHT_REACHED] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLoadCell.FUNCTION_GET_IDENTITY] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletLoadCell.CALLBACK_WEIGHT] = 'i'

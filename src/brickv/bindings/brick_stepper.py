@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -143,8 +143,6 @@ class BrickStepper(Device):
         self.response_expected[BrickStepper.FUNCTION_GET_DECAY] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickStepper.FUNCTION_SET_MINIMUM_VOLTAGE] = BrickStepper.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickStepper.FUNCTION_GET_MINIMUM_VOLTAGE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickStepper.CALLBACK_UNDER_VOLTAGE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickStepper.CALLBACK_POSITION_REACHED] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickStepper.FUNCTION_SET_SYNC_RECT] = BrickStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickStepper.FUNCTION_IS_SYNC_RECT] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickStepper.FUNCTION_SET_TIME_BASE] = BrickStepper.RESPONSE_EXPECTED_FALSE
@@ -152,8 +150,6 @@ class BrickStepper(Device):
         self.response_expected[BrickStepper.FUNCTION_GET_ALL_DATA] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickStepper.FUNCTION_SET_ALL_DATA_PERIOD] = BrickStepper.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickStepper.FUNCTION_GET_ALL_DATA_PERIOD] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickStepper.CALLBACK_ALL_DATA] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickStepper.CALLBACK_NEW_STATE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickStepper.FUNCTION_GET_SEND_TIMEOUT_COUNT] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickStepper.FUNCTION_SET_SPITFP_BAUDRATE] = BrickStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickStepper.FUNCTION_GET_SPITFP_BAUDRATE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE

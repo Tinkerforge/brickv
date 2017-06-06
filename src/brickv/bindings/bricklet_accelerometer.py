@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -95,8 +95,6 @@ class BrickletAccelerometer(Device):
         self.response_expected[BrickletAccelerometer.FUNCTION_LED_ON] = BrickletAccelerometer.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletAccelerometer.FUNCTION_LED_OFF] = BrickletAccelerometer.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletAccelerometer.FUNCTION_IS_LED_ON] = BrickletAccelerometer.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAccelerometer.CALLBACK_ACCELERATION] = BrickletAccelerometer.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletAccelerometer.CALLBACK_ACCELERATION_REACHED] = BrickletAccelerometer.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletAccelerometer.FUNCTION_GET_IDENTITY] = BrickletAccelerometer.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletAccelerometer.CALLBACK_ACCELERATION] = 'h h h'

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -52,7 +52,6 @@ class BrickletTilt(Device):
         self.response_expected[BrickletTilt.FUNCTION_ENABLE_TILT_STATE_CALLBACK] = BrickletTilt.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletTilt.FUNCTION_DISABLE_TILT_STATE_CALLBACK] = BrickletTilt.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletTilt.FUNCTION_IS_TILT_STATE_CALLBACK_ENABLED] = BrickletTilt.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletTilt.CALLBACK_TILT_STATE] = BrickletTilt.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletTilt.FUNCTION_GET_IDENTITY] = BrickletTilt.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletTilt.CALLBACK_TILT_STATE] = 'B'

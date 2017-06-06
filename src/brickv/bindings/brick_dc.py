@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -106,10 +106,6 @@ class BrickDC(Device):
         self.response_expected[BrickDC.FUNCTION_GET_DRIVE_MODE] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickDC.FUNCTION_SET_CURRENT_VELOCITY_PERIOD] = BrickDC.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickDC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickDC.CALLBACK_UNDER_VOLTAGE] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickDC.CALLBACK_EMERGENCY_SHUTDOWN] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickDC.CALLBACK_VELOCITY_REACHED] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickDC.CALLBACK_CURRENT_VELOCITY] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickDC.FUNCTION_GET_SEND_TIMEOUT_COUNT] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickDC.FUNCTION_SET_SPITFP_BAUDRATE] = BrickDC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickDC.FUNCTION_GET_SPITFP_BAUDRATE] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE

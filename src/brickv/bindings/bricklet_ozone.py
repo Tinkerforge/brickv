@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -81,10 +81,6 @@ class BrickletOzone(Device):
         self.response_expected[BrickletOzone.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletOzone.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletOzone.FUNCTION_SET_MOVING_AVERAGE] = BrickletOzone.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletOzone.FUNCTION_GET_MOVING_AVERAGE] = BrickletOzone.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletOzone.CALLBACK_OZONE_CONCENTRATION] = BrickletOzone.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletOzone.CALLBACK_ANALOG_VALUE] = BrickletOzone.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletOzone.CALLBACK_OZONE_CONCENTRATION_REACHED] = BrickletOzone.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletOzone.CALLBACK_ANALOG_VALUE_REACHED] = BrickletOzone.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletOzone.FUNCTION_GET_IDENTITY] = BrickletOzone.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletOzone.CALLBACK_OZONE_CONCENTRATION] = 'H'

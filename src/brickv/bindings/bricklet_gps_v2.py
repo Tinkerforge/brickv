@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -136,12 +136,6 @@ class BrickletGPSV2(Device):
         self.response_expected[BrickletGPSV2.FUNCTION_GET_MOTION_CALLBACK_PERIOD] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPSV2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletGPSV2.CALLBACK_PULSE_PER_SECOND] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletGPSV2.CALLBACK_COORDINATES] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletGPSV2.CALLBACK_STATUS] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletGPSV2.CALLBACK_ALTITUDE] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletGPSV2.CALLBACK_MOTION] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletGPSV2.CALLBACK_DATE_TIME] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletGPSV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -528,10 +522,8 @@ class BrickletGPSV2(Device):
         a valid satellite number and can be ignored in the list.
         """
         ret = self.get_satellite_system_status_low_level(satellite_system)
-        satellite_numbers_length = ret.satellite_numbers_length
-        satellite_numbers_data = ret.satellite_numbers_data
 
-        return GetSatelliteSystemStatus(satellite_numbers_data[:satellite_numbers_length], ret.fix, ret.pdop, ret.hdop, ret.vdop)
+        return GetSatelliteSystemStatus(ret.satellite_numbers_data[:ret.satellite_numbers_length], ret.fix, ret.pdop, ret.hdop, ret.vdop)
 
     def register_callback(self, id_, callback):
         """

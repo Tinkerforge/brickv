@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -50,8 +50,6 @@ class BrickletPiezoSpeaker(Device):
         self.response_expected[BrickletPiezoSpeaker.FUNCTION_BEEP] = BrickletPiezoSpeaker.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletPiezoSpeaker.FUNCTION_MORSE_CODE] = BrickletPiezoSpeaker.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletPiezoSpeaker.FUNCTION_CALIBRATE] = BrickletPiezoSpeaker.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletPiezoSpeaker.CALLBACK_BEEP_FINISHED] = BrickletPiezoSpeaker.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletPiezoSpeaker.CALLBACK_MORSE_CODE_FINISHED] = BrickletPiezoSpeaker.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletPiezoSpeaker.FUNCTION_GET_IDENTITY] = BrickletPiezoSpeaker.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletPiezoSpeaker.CALLBACK_BEEP_FINISHED] = ''

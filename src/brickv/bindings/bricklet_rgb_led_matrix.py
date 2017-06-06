@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -90,7 +90,6 @@ class BrickletRGBLEDMatrix(Device):
         self.response_expected[BrickletRGBLEDMatrix.FUNCTION_GET_FRAME_DURATION] = BrickletRGBLEDMatrix.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDMatrix.FUNCTION_DRAW_FRAME] = BrickletRGBLEDMatrix.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletRGBLEDMatrix.FUNCTION_GET_SUPPLY_VOLTAGE] = BrickletRGBLEDMatrix.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRGBLEDMatrix.CALLBACK_FRAME_STARTED] = BrickletRGBLEDMatrix.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRGBLEDMatrix.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletRGBLEDMatrix.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDMatrix.FUNCTION_SET_BOOTLOADER_MODE] = BrickletRGBLEDMatrix.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDMatrix.FUNCTION_GET_BOOTLOADER_MODE] = BrickletRGBLEDMatrix.RESPONSE_EXPECTED_ALWAYS_TRUE

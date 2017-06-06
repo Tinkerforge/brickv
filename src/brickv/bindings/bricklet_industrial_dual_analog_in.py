@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -81,8 +81,6 @@ class BrickletIndustrialDualAnalogIn(Device):
         self.response_expected[BrickletIndustrialDualAnalogIn.FUNCTION_SET_CALIBRATION] = BrickletIndustrialDualAnalogIn.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDualAnalogIn.FUNCTION_GET_CALIBRATION] = BrickletIndustrialDualAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualAnalogIn.FUNCTION_GET_ADC_VALUES] = BrickletIndustrialDualAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE] = BrickletIndustrialDualAnalogIn.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE_REACHED] = BrickletIndustrialDualAnalogIn.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletIndustrialDualAnalogIn.FUNCTION_GET_IDENTITY] = BrickletIndustrialDualAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE] = 'B i'

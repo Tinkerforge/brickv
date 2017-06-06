@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -70,8 +70,6 @@ class BrickletIndustrialDual020mA(Device):
         self.response_expected[BrickletIndustrialDual020mA.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletIndustrialDual020mA.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDual020mA.FUNCTION_SET_SAMPLE_RATE] = BrickletIndustrialDual020mA.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDual020mA.FUNCTION_GET_SAMPLE_RATE] = BrickletIndustrialDual020mA.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletIndustrialDual020mA.CALLBACK_CURRENT] = BrickletIndustrialDual020mA.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletIndustrialDual020mA.CALLBACK_CURRENT_REACHED] = BrickletIndustrialDual020mA.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletIndustrialDual020mA.FUNCTION_GET_IDENTITY] = BrickletIndustrialDual020mA.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletIndustrialDual020mA.CALLBACK_CURRENT] = 'B i'

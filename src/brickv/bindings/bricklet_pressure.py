@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -88,10 +88,6 @@ class BrickletPressure(Device):
         self.response_expected[BrickletPressure.FUNCTION_GET_SENSOR_TYPE] = BrickletPressure.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPressure.FUNCTION_SET_MOVING_AVERAGE] = BrickletPressure.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletPressure.FUNCTION_GET_MOVING_AVERAGE] = BrickletPressure.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletPressure.CALLBACK_PRESSURE] = BrickletPressure.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletPressure.CALLBACK_ANALOG_VALUE] = BrickletPressure.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletPressure.CALLBACK_PRESSURE_REACHED] = BrickletPressure.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletPressure.CALLBACK_ANALOG_VALUE_REACHED] = BrickletPressure.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletPressure.FUNCTION_GET_IDENTITY] = BrickletPressure.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletPressure.CALLBACK_PRESSURE] = 'i'

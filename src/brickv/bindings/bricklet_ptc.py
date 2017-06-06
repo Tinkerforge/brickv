@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -85,10 +85,6 @@ class BrickletPTC(Device):
         self.response_expected[BrickletPTC.FUNCTION_GET_RESISTANCE_CALLBACK_THRESHOLD] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPTC.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletPTC.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletPTC.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletPTC.CALLBACK_TEMPERATURE] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletPTC.CALLBACK_TEMPERATURE_REACHED] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletPTC.CALLBACK_RESISTANCE] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletPTC.CALLBACK_RESISTANCE_REACHED] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletPTC.FUNCTION_SET_NOISE_REJECTION_FILTER] = BrickletPTC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletPTC.FUNCTION_GET_NOISE_REJECTION_FILTER] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPTC.FUNCTION_IS_SENSOR_CONNECTED] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_TRUE

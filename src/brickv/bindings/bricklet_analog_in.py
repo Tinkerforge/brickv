@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -85,10 +85,6 @@ class BrickletAnalogIn(Device):
         self.response_expected[BrickletAnalogIn.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAnalogIn.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletAnalogIn.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletAnalogIn.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAnalogIn.CALLBACK_VOLTAGE] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletAnalogIn.CALLBACK_ANALOG_VALUE] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletAnalogIn.CALLBACK_VOLTAGE_REACHED] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletAnalogIn.CALLBACK_ANALOG_VALUE_REACHED] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletAnalogIn.FUNCTION_SET_RANGE] = BrickletAnalogIn.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletAnalogIn.FUNCTION_GET_RANGE] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAnalogIn.FUNCTION_SET_AVERAGING] = BrickletAnalogIn.RESPONSE_EXPECTED_FALSE

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -106,12 +106,6 @@ class BrickletVoltageCurrent(Device):
         self.response_expected[BrickletVoltageCurrent.FUNCTION_GET_POWER_CALLBACK_THRESHOLD] = BrickletVoltageCurrent.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletVoltageCurrent.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletVoltageCurrent.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletVoltageCurrent.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletVoltageCurrent.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletVoltageCurrent.CALLBACK_CURRENT] = BrickletVoltageCurrent.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletVoltageCurrent.CALLBACK_VOLTAGE] = BrickletVoltageCurrent.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletVoltageCurrent.CALLBACK_POWER] = BrickletVoltageCurrent.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletVoltageCurrent.CALLBACK_CURRENT_REACHED] = BrickletVoltageCurrent.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletVoltageCurrent.CALLBACK_VOLTAGE_REACHED] = BrickletVoltageCurrent.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletVoltageCurrent.CALLBACK_POWER_REACHED] = BrickletVoltageCurrent.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletVoltageCurrent.FUNCTION_GET_IDENTITY] = BrickletVoltageCurrent.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletVoltageCurrent.CALLBACK_CURRENT] = 'i'

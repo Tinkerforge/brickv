@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -180,15 +180,6 @@ class BrickIMUV2(Device):
         self.response_expected[BrickIMUV2.FUNCTION_GET_QUATERNION_PERIOD] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_SET_ALL_DATA_PERIOD] = BrickIMUV2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_GET_ALL_DATA_PERIOD] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickIMUV2.CALLBACK_ACCELERATION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickIMUV2.CALLBACK_MAGNETIC_FIELD] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickIMUV2.CALLBACK_ANGULAR_VELOCITY] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickIMUV2.CALLBACK_TEMPERATURE] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickIMUV2.CALLBACK_LINEAR_ACCELERATION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickIMUV2.CALLBACK_GRAVITY_VECTOR] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickIMUV2.CALLBACK_ORIENTATION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickIMUV2.CALLBACK_QUATERNION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickIMUV2.CALLBACK_ALL_DATA] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickIMUV2.FUNCTION_SET_SENSOR_CONFIGURATION] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMUV2.FUNCTION_GET_SENSOR_CONFIGURATION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_SET_SENSOR_FUSION_MODE] = BrickIMUV2.RESPONSE_EXPECTED_FALSE

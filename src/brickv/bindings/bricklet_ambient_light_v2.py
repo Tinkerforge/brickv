@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -82,8 +82,6 @@ class BrickletAmbientLightV2(Device):
         self.response_expected[BrickletAmbientLightV2.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletAmbientLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAmbientLightV2.FUNCTION_SET_CONFIGURATION] = BrickletAmbientLightV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletAmbientLightV2.FUNCTION_GET_CONFIGURATION] = BrickletAmbientLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAmbientLightV2.CALLBACK_ILLUMINANCE] = BrickletAmbientLightV2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletAmbientLightV2.CALLBACK_ILLUMINANCE_REACHED] = BrickletAmbientLightV2.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletAmbientLightV2.FUNCTION_GET_IDENTITY] = BrickletAmbientLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletAmbientLightV2.CALLBACK_ILLUMINANCE] = 'I'

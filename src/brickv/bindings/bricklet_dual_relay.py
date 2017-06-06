@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -52,7 +52,6 @@ class BrickletDualRelay(Device):
         self.response_expected[BrickletDualRelay.FUNCTION_GET_STATE] = BrickletDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDualRelay.FUNCTION_SET_MONOFLOP] = BrickletDualRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDualRelay.FUNCTION_GET_MONOFLOP] = BrickletDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDualRelay.CALLBACK_MONOFLOP_DONE] = BrickletDualRelay.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletDualRelay.FUNCTION_SET_SELECTED_STATE] = BrickletDualRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDualRelay.FUNCTION_GET_IDENTITY] = BrickletDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
 

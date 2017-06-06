@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-29.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -94,11 +94,9 @@ class BrickletHumidityV2(Device):
         self.response_expected[BrickletHumidityV2.FUNCTION_GET_HUMIDITY] = BrickletHumidityV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHumidityV2.FUNCTION_SET_HUMIDITY_CALLBACK_CONFIGURATION] = BrickletHumidityV2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletHumidityV2.FUNCTION_GET_HUMIDITY_CALLBACK_CONFIGURATION] = BrickletHumidityV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHumidityV2.CALLBACK_HUMIDITY] = BrickletHumidityV2.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletHumidityV2.FUNCTION_GET_TEMPERATURE] = BrickletHumidityV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHumidityV2.FUNCTION_SET_TEMPERATURE_CALLBACK_CONFIGURATION] = BrickletHumidityV2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletHumidityV2.FUNCTION_GET_TEMPERATURE_CALLBACK_CONFIGURATION] = BrickletHumidityV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHumidityV2.CALLBACK_TEMPERATURE] = BrickletHumidityV2.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletHumidityV2.FUNCTION_SET_HEATER_CONFIGURATION] = BrickletHumidityV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletHumidityV2.FUNCTION_GET_HEATER_CONFIGURATION] = BrickletHumidityV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHumidityV2.FUNCTION_SET_MOVING_AVERAGE_CONFIGURATION] = BrickletHumidityV2.RESPONSE_EXPECTED_FALSE

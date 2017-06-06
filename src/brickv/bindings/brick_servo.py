@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -121,9 +121,6 @@ class BrickServo(Device):
         self.response_expected[BrickServo.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickServo.FUNCTION_SET_MINIMUM_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickServo.FUNCTION_GET_MINIMUM_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickServo.CALLBACK_UNDER_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickServo.CALLBACK_POSITION_REACHED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickServo.CALLBACK_VELOCITY_REACHED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickServo.FUNCTION_ENABLE_POSITION_REACHED_CALLBACK] = BrickServo.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickServo.FUNCTION_DISABLE_POSITION_REACHED_CALLBACK] = BrickServo.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickServo.FUNCTION_IS_POSITION_REACHED_CALLBACK_ENABLED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE

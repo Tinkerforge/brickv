@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -62,8 +62,6 @@ class BrickletCO2(Device):
         self.response_expected[BrickletCO2.FUNCTION_GET_CO2_CONCENTRATION_CALLBACK_THRESHOLD] = BrickletCO2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCO2.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletCO2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletCO2.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletCO2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletCO2.CALLBACK_CO2_CONCENTRATION] = BrickletCO2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletCO2.CALLBACK_CO2_CONCENTRATION_REACHED] = BrickletCO2.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletCO2.FUNCTION_GET_IDENTITY] = BrickletCO2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletCO2.CALLBACK_CO2_CONCENTRATION] = 'H'

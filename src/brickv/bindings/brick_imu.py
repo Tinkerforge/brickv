@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -141,12 +141,6 @@ class BrickIMU(Device):
         self.response_expected[BrickIMU.FUNCTION_GET_ORIENTATION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_SET_QUATERNION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_QUATERNION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickIMU.CALLBACK_ACCELERATION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickIMU.CALLBACK_MAGNETIC_FIELD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickIMU.CALLBACK_ANGULAR_VELOCITY] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickIMU.CALLBACK_ALL_DATA] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickIMU.CALLBACK_ORIENTATION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickIMU.CALLBACK_QUATERNION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickIMU.FUNCTION_ORIENTATION_CALCULATION_ON] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_ORIENTATION_CALCULATION_OFF] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_IS_ORIENTATION_CALCULATION_ON] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE

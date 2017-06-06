@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -80,8 +80,6 @@ class BrickletGasDetector(Device):
         self.response_expected[BrickletGasDetector.FUNCTION_HEATER_ON] = BrickletGasDetector.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletGasDetector.FUNCTION_HEATER_OFF] = BrickletGasDetector.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletGasDetector.FUNCTION_IS_HEATER_ON] = BrickletGasDetector.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletGasDetector.CALLBACK_VALUE] = BrickletGasDetector.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletGasDetector.CALLBACK_VALUE_REACHED] = BrickletGasDetector.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletGasDetector.FUNCTION_GET_IDENTITY] = BrickletGasDetector.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletGasDetector.CALLBACK_VALUE] = 'H'

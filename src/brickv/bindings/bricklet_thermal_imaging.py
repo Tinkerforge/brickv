@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -105,8 +105,6 @@ class BrickletThermalImaging(Device):
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_HIGH_CONTRAST_CONFIG] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_SET_IMAGE_TRANSFER_CONFIG] = BrickletThermalImaging.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_IMAGE_TRANSFER_CONFIG] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletThermalImaging.CALLBACK_HIGH_CONTRAST_IMAGE_LOW_LEVEL] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_SET_BOOTLOADER_MODE] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_BOOTLOADER_MODE] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -335,27 +333,23 @@ class BrickletThermalImaging(Device):
 
         with self.stream_lock:
             ret = self.get_high_contrast_image_low_level()
-            image_chunk_offset = ret.image_chunk_offset
 
-            if image_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
+            if ret.image_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
                 image_length = 0
-                image_chunk_offset = 0
                 image_out_of_sync = False
                 image_data = ()
             else:
-                image_out_of_sync = image_chunk_offset != 0
+                image_out_of_sync = ret.image_chunk_offset != 0
                 image_data = ret.image_chunk_data
 
             while not image_out_of_sync and len(image_data) < image_length:
                 ret = self.get_high_contrast_image_low_level()
-                image_chunk_offset = ret.image_chunk_offset
-                image_out_of_sync = image_chunk_offset != len(image_data)
+                image_out_of_sync = ret.image_chunk_offset != len(image_data)
                 image_data += ret.image_chunk_data
 
             if image_out_of_sync: # discard remaining stream to bring it back in-sync
-                while image_chunk_offset + 62 < image_length:
+                while ret.image_chunk_offset + 62 < image_length:
                     ret = self.get_high_contrast_image_low_level()
-                    image_chunk_offset = ret.image_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Image stream is out-of-sync')
 
@@ -369,27 +363,23 @@ class BrickletThermalImaging(Device):
 
         with self.stream_lock:
             ret = self.get_temperature_image_low_level()
-            image_chunk_offset = ret.image_chunk_offset
 
-            if image_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
+            if ret.image_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
                 image_length = 0
-                image_chunk_offset = 0
                 image_out_of_sync = False
                 image_data = ()
             else:
-                image_out_of_sync = image_chunk_offset != 0
+                image_out_of_sync = ret.image_chunk_offset != 0
                 image_data = ret.image_chunk_data
 
             while not image_out_of_sync and len(image_data) < image_length:
                 ret = self.get_temperature_image_low_level()
-                image_chunk_offset = ret.image_chunk_offset
-                image_out_of_sync = image_chunk_offset != len(image_data)
+                image_out_of_sync = ret.image_chunk_offset != len(image_data)
                 image_data += ret.image_chunk_data
 
             if image_out_of_sync: # discard remaining stream to bring it back in-sync
-                while image_chunk_offset + 31 < image_length:
+                while ret.image_chunk_offset + 31 < image_length:
                     ret = self.get_temperature_image_low_level()
-                    image_chunk_offset = ret.image_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Image stream is out-of-sync')
 

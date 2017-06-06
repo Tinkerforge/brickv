@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -79,10 +79,6 @@ class BrickletDistanceIR(Device):
         self.response_expected[BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDistanceIR.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletDistanceIR.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletDistanceIR.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDistanceIR.CALLBACK_DISTANCE] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletDistanceIR.CALLBACK_ANALOG_VALUE] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletDistanceIR.CALLBACK_DISTANCE_REACHED] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletDistanceIR.CALLBACK_ANALOG_VALUE_REACHED] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletDistanceIR.FUNCTION_GET_IDENTITY] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletDistanceIR.CALLBACK_DISTANCE] = 'H'

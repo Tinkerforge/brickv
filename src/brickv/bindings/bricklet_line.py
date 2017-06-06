@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -62,8 +62,6 @@ class BrickletLine(Device):
         self.response_expected[BrickletLine.FUNCTION_GET_REFLECTIVITY_CALLBACK_THRESHOLD] = BrickletLine.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLine.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletLine.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletLine.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletLine.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletLine.CALLBACK_REFLECTIVITY] = BrickletLine.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletLine.CALLBACK_REFLECTIVITY_REACHED] = BrickletLine.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLine.FUNCTION_GET_IDENTITY] = BrickletLine.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletLine.CALLBACK_REFLECTIVITY] = 'H'

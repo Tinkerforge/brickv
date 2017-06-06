@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -61,8 +61,6 @@ class BrickletLCD16x2(Device):
         self.response_expected[BrickletLCD16x2.FUNCTION_SET_CONFIG] = BrickletLCD16x2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLCD16x2.FUNCTION_GET_CONFIG] = BrickletLCD16x2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLCD16x2.FUNCTION_IS_BUTTON_PRESSED] = BrickletLCD16x2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletLCD16x2.CALLBACK_BUTTON_PRESSED] = BrickletLCD16x2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletLCD16x2.CALLBACK_BUTTON_RELEASED] = BrickletLCD16x2.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLCD16x2.FUNCTION_SET_CUSTOM_CHARACTER] = BrickletLCD16x2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLCD16x2.FUNCTION_GET_CUSTOM_CHARACTER] = BrickletLCD16x2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLCD16x2.FUNCTION_GET_IDENTITY] = BrickletLCD16x2.RESPONSE_EXPECTED_ALWAYS_TRUE

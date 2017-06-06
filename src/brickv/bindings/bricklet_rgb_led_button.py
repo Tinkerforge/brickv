@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-29.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -8,6 +8,8 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
+
+#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -77,7 +79,6 @@ class BrickletRGBLEDButton(Device):
         self.response_expected[BrickletRGBLEDButton.FUNCTION_SET_COLOR] = BrickletRGBLEDButton.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletRGBLEDButton.FUNCTION_GET_COLOR] = BrickletRGBLEDButton.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDButton.FUNCTION_GET_BUTTON_STATE] = BrickletRGBLEDButton.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRGBLEDButton.CALLBACK_BUTTON_STATE_CHANGED] = BrickletRGBLEDButton.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRGBLEDButton.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletRGBLEDButton.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDButton.FUNCTION_SET_BOOTLOADER_MODE] = BrickletRGBLEDButton.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDButton.FUNCTION_GET_BOOTLOADER_MODE] = BrickletRGBLEDButton.RESPONSE_EXPECTED_ALWAYS_TRUE

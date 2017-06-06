@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -70,9 +70,6 @@ class BrickletHeartRate(Device):
         self.response_expected[BrickletHeartRate.FUNCTION_GET_HEART_RATE_CALLBACK_THRESHOLD] = BrickletHeartRate.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHeartRate.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletHeartRate.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletHeartRate.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletHeartRate.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHeartRate.CALLBACK_HEART_RATE] = BrickletHeartRate.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletHeartRate.CALLBACK_HEART_RATE_REACHED] = BrickletHeartRate.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletHeartRate.CALLBACK_BEAT_STATE_CHANGED] = BrickletHeartRate.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletHeartRate.FUNCTION_ENABLE_BEAT_STATE_CHANGED_CALLBACK] = BrickletHeartRate.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletHeartRate.FUNCTION_DISABLE_BEAT_STATE_CHANGED_CALLBACK] = BrickletHeartRate.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletHeartRate.FUNCTION_IS_BEAT_STATE_CHANGED_CALLBACK_ENABLED] = BrickletHeartRate.RESPONSE_EXPECTED_ALWAYS_TRUE

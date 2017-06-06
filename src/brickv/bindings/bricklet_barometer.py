@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -83,10 +83,6 @@ class BrickletBarometer(Device):
         self.response_expected[BrickletBarometer.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletBarometer.FUNCTION_SET_REFERENCE_AIR_PRESSURE] = BrickletBarometer.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletBarometer.FUNCTION_GET_CHIP_TEMPERATURE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletBarometer.CALLBACK_AIR_PRESSURE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletBarometer.CALLBACK_ALTITUDE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletBarometer.CALLBACK_AIR_PRESSURE_REACHED] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletBarometer.CALLBACK_ALTITUDE_REACHED] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletBarometer.FUNCTION_GET_REFERENCE_AIR_PRESSURE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletBarometer.FUNCTION_SET_AVERAGING] = BrickletBarometer.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletBarometer.FUNCTION_GET_AVERAGING] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE

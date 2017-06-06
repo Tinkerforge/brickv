@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -101,10 +101,6 @@ class BrickletLaserRangeFinder(Device):
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_ENABLE_LASER] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_DISABLE_LASER] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_IS_LASER_ENABLED] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletLaserRangeFinder.CALLBACK_DISTANCE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletLaserRangeFinder.CALLBACK_VELOCITY] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletLaserRangeFinder.CALLBACK_DISTANCE_REACHED] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletLaserRangeFinder.CALLBACK_VELOCITY_REACHED] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_SENSOR_HARDWARE_VERSION] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_SET_CONFIGURATION] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_CONFIGURATION] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE

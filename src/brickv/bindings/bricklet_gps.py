@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -89,11 +89,6 @@ class BrickletGPS(Device):
         self.response_expected[BrickletGPS.FUNCTION_GET_MOTION_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPS.FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletGPS.FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletGPS.CALLBACK_COORDINATES] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletGPS.CALLBACK_STATUS] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletGPS.CALLBACK_ALTITUDE] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletGPS.CALLBACK_MOTION] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletGPS.CALLBACK_DATE_TIME] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletGPS.FUNCTION_GET_IDENTITY] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletGPS.CALLBACK_COORDINATES] = 'I c I c H H H H'

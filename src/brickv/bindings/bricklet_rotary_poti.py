@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -75,10 +75,6 @@ class BrickletRotaryPoti(Device):
         self.response_expected[BrickletRotaryPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletRotaryPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRotaryPoti.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletRotaryPoti.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRotaryPoti.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletRotaryPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRotaryPoti.CALLBACK_POSITION] = BrickletRotaryPoti.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRotaryPoti.CALLBACK_ANALOG_VALUE] = BrickletRotaryPoti.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRotaryPoti.CALLBACK_POSITION_REACHED] = BrickletRotaryPoti.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRotaryPoti.CALLBACK_ANALOG_VALUE_REACHED] = BrickletRotaryPoti.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRotaryPoti.FUNCTION_GET_IDENTITY] = BrickletRotaryPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletRotaryPoti.CALLBACK_POSITION] = 'h'

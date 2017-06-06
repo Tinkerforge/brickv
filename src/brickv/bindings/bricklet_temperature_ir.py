@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -79,10 +79,6 @@ class BrickletTemperatureIR(Device):
         self.response_expected[BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletTemperatureIR.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletTemperatureIR.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletTemperatureIR.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE_REACHED] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE_REACHED] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletTemperatureIR.FUNCTION_GET_IDENTITY] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE] = 'h'

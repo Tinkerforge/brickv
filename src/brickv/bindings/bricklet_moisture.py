@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -64,8 +64,6 @@ class BrickletMoisture(Device):
         self.response_expected[BrickletMoisture.FUNCTION_GET_MOISTURE_CALLBACK_THRESHOLD] = BrickletMoisture.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMoisture.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletMoisture.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletMoisture.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletMoisture.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletMoisture.CALLBACK_MOISTURE] = BrickletMoisture.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletMoisture.CALLBACK_MOISTURE_REACHED] = BrickletMoisture.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletMoisture.FUNCTION_SET_MOVING_AVERAGE] = BrickletMoisture.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletMoisture.FUNCTION_GET_MOVING_AVERAGE] = BrickletMoisture.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMoisture.FUNCTION_GET_IDENTITY] = BrickletMoisture.RESPONSE_EXPECTED_ALWAYS_TRUE

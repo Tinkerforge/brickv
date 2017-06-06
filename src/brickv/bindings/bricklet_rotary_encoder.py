@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -65,11 +65,7 @@ class BrickletRotaryEncoder(Device):
         self.response_expected[BrickletRotaryEncoder.FUNCTION_GET_COUNT_CALLBACK_THRESHOLD] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRotaryEncoder.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletRotaryEncoder.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRotaryEncoder.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRotaryEncoder.CALLBACK_COUNT] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRotaryEncoder.CALLBACK_COUNT_REACHED] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRotaryEncoder.FUNCTION_IS_PRESSED] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRotaryEncoder.CALLBACK_PRESSED] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRotaryEncoder.CALLBACK_RELEASED] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRotaryEncoder.FUNCTION_GET_IDENTITY] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletRotaryEncoder.CALLBACK_COUNT] = 'i'

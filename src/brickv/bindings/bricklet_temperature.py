@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -66,8 +66,6 @@ class BrickletTemperature(Device):
         self.response_expected[BrickletTemperature.FUNCTION_GET_TEMPERATURE_CALLBACK_THRESHOLD] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletTemperature.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletTemperature.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletTemperature.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletTemperature.CALLBACK_TEMPERATURE] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletTemperature.CALLBACK_TEMPERATURE_REACHED] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletTemperature.FUNCTION_SET_I2C_MODE] = BrickletTemperature.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletTemperature.FUNCTION_GET_I2C_MODE] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletTemperature.FUNCTION_GET_IDENTITY] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_TRUE

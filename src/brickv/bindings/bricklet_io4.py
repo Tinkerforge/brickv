@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -72,10 +72,8 @@ class BrickletIO4(Device):
         self.response_expected[BrickletIO4.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO4.FUNCTION_SET_INTERRUPT] = BrickletIO4.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletIO4.FUNCTION_GET_INTERRUPT] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletIO4.CALLBACK_INTERRUPT] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletIO4.FUNCTION_SET_MONOFLOP] = BrickletIO4.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIO4.FUNCTION_GET_MONOFLOP] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletIO4.CALLBACK_MONOFLOP_DONE] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletIO4.FUNCTION_SET_SELECTED_VALUES] = BrickletIO4.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIO4.FUNCTION_GET_EDGE_COUNT] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO4.FUNCTION_SET_EDGE_COUNT_CONFIG] = BrickletIO4.RESPONSE_EXPECTED_FALSE

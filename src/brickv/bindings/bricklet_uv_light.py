@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -62,8 +62,6 @@ class BrickletUVLight(Device):
         self.response_expected[BrickletUVLight.FUNCTION_GET_UV_LIGHT_CALLBACK_THRESHOLD] = BrickletUVLight.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletUVLight.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletUVLight.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletUVLight.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletUVLight.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletUVLight.CALLBACK_UV_LIGHT] = BrickletUVLight.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletUVLight.CALLBACK_UV_LIGHT_REACHED] = BrickletUVLight.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletUVLight.FUNCTION_GET_IDENTITY] = BrickletUVLight.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletUVLight.CALLBACK_UV_LIGHT] = 'I'

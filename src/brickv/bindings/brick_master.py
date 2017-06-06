@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -329,12 +329,6 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_GET_USB_VOLTAGE_CALLBACK_THRESHOLD] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickMaster.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickMaster.CALLBACK_STACK_CURRENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickMaster.CALLBACK_STACK_VOLTAGE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickMaster.CALLBACK_USB_VOLTAGE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickMaster.CALLBACK_STACK_CURRENT_REACHED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickMaster.CALLBACK_STACK_VOLTAGE_REACHED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickMaster.CALLBACK_USB_VOLTAGE_REACHED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickMaster.FUNCTION_IS_ETHERNET_PRESENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SET_ETHERNET_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_ETHERNET_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE

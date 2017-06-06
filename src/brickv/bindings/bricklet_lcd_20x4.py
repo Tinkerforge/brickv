@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -65,8 +65,6 @@ class BrickletLCD20x4(Device):
         self.response_expected[BrickletLCD20x4.FUNCTION_SET_CONFIG] = BrickletLCD20x4.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLCD20x4.FUNCTION_GET_CONFIG] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLCD20x4.FUNCTION_IS_BUTTON_PRESSED] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletLCD20x4.CALLBACK_BUTTON_PRESSED] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletLCD20x4.CALLBACK_BUTTON_RELEASED] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLCD20x4.FUNCTION_SET_CUSTOM_CHARACTER] = BrickletLCD20x4.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLCD20x4.FUNCTION_GET_CUSTOM_CHARACTER] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLCD20x4.FUNCTION_SET_DEFAULT_TEXT] = BrickletLCD20x4.RESPONSE_EXPECTED_FALSE

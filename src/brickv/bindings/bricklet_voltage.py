@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -75,10 +75,6 @@ class BrickletVoltage(Device):
         self.response_expected[BrickletVoltage.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletVoltage.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletVoltage.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletVoltage.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletVoltage.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletVoltage.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletVoltage.CALLBACK_VOLTAGE] = BrickletVoltage.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletVoltage.CALLBACK_ANALOG_VALUE] = BrickletVoltage.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletVoltage.CALLBACK_VOLTAGE_REACHED] = BrickletVoltage.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletVoltage.CALLBACK_ANALOG_VALUE_REACHED] = BrickletVoltage.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletVoltage.FUNCTION_GET_IDENTITY] = BrickletVoltage.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletVoltage.CALLBACK_VOLTAGE] = 'H'

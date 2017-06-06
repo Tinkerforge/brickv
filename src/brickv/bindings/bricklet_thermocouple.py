@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -85,12 +85,9 @@ class BrickletThermocouple(Device):
         self.response_expected[BrickletThermocouple.FUNCTION_GET_TEMPERATURE_CALLBACK_THRESHOLD] = BrickletThermocouple.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermocouple.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletThermocouple.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletThermocouple.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletThermocouple.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletThermocouple.CALLBACK_TEMPERATURE] = BrickletThermocouple.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletThermocouple.CALLBACK_TEMPERATURE_REACHED] = BrickletThermocouple.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletThermocouple.FUNCTION_SET_CONFIGURATION] = BrickletThermocouple.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletThermocouple.FUNCTION_GET_CONFIGURATION] = BrickletThermocouple.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermocouple.FUNCTION_GET_ERROR_STATE] = BrickletThermocouple.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletThermocouple.CALLBACK_ERROR_STATE] = BrickletThermocouple.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletThermocouple.FUNCTION_GET_IDENTITY] = BrickletThermocouple.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletThermocouple.CALLBACK_TEMPERATURE] = 'i'

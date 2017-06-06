@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-06.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -57,7 +57,6 @@ class BrickletIndustrialDigitalOut4(Device):
         self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_SET_GROUP] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_GROUP] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_AVAILABLE_FOR_GROUP] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletIndustrialDigitalOut4.CALLBACK_MONOFLOP_DONE] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_SET_SELECTED_VALUES] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_IDENTITY] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_TRUE
 
