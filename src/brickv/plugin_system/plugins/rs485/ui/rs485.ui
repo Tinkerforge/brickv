@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>773</width>
-    <height>739</height>
+    <height>740</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -482,12 +482,12 @@
        </item>
        <item>
         <property name="text">
-         <string>Modbus Slave RTU</string>
+         <string>Modbus Master RTU</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Modbus Master RTU</string>
+         <string>Modbus Slave RTU</string>
         </property>
        </item>
       </widget>

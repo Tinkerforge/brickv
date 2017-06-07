@@ -35,8 +35,8 @@ from brickv.plugin_system.plugins.rs485.qhexedit import QHexeditWidget
 from brickv.utils import get_main_window
 
 MODE_RS485 = 0
-MODE_MODBUS_SLAVE_RTU = 1
-MODE_MODBUS_MASTER_RTU = 2
+MODE_MODBUS_MASTER_RTU = 1
+MODE_MODBUS_SLAVE_RTU = 2
 
 MODBUS_F_IDX_READ_COILS = 0
 MODBUS_F_IDX_READ_HOLDING_REGISTERS = 1

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-26.      #
+# This file was automatically generated on 2017-06-07.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -128,8 +128,8 @@ class BrickletRS485(Device):
     DUPLEX_HALF = 0
     DUPLEX_FULL = 1
     MODE_RS485 = 0
-    MODE_MODBUS_SLAVE_RTU = 1
-    MODE_MODBUS_MASTER_RTU = 2
+    MODE_MODBUS_MASTER_RTU = 1
+    MODE_MODBUS_SLAVE_RTU = 2
     COMMUNICATION_LED_CONFIG_OFF = 0
     COMMUNICATION_LED_CONFIG_ON = 1
     COMMUNICATION_LED_CONFIG_SHOW_HEARTBEAT = 2
@@ -214,24 +214,6 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_READ_DISCRETE_INPUTS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_READ_INPUT_REGISTERS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS485.CALLBACK_READ_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_COILS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_HOLDING_REGISTERS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_HOLDING_REGISTERS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_SINGLE_COIL_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_SINGLE_COIL_RESPONSE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_SINGLE_REGISTER_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_SINGLE_REGISTER_RESPONSE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_COILS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_MULTIPLE_COILS_RESPONSE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_REGISTERS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_WRITE_MULTIPLE_REGISTERS_RESPONSE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_DISCRETE_INPUTS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_INPUT_REGISTERS_REQUEST] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS485.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_SET_BOOTLOADER_MODE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_BOOTLOADER_MODE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -360,8 +342,8 @@ class BrickletRS485(Device):
         Sets the mode of the Bricklet in which it operates. Available options are
 
         * RS485,
-        * Modbus Slave RTU and
-        * Modbus Master RTU.
+        * Modbus Master RTU and
+        * Modbus Slave RTU.
 
         The default is: RS485 mode.
         """
@@ -908,10 +890,9 @@ class BrickletRS485(Device):
                 while message_chunk_offset < message_length:
                     message_chunk_data = create_chunk_data(message, message_chunk_offset, 60, '\0')
                     ret = self.write_low_level(message_length, message_chunk_offset, message_chunk_data)
-                    message_chunk_written = ret
-                    message_written += message_chunk_written
+                    message_written += ret
 
-                    if message_chunk_written < 60:
+                    if ret < 60:
                         break # either last chunk or short write
 
                     message_chunk_offset += 60
@@ -930,22 +911,19 @@ class BrickletRS485(Device):
         with self.stream_lock:
             ret = self.read_low_level(length)
             message_length = ret.message_length
-            message_chunk_offset = ret.message_chunk_offset
-            message_out_of_sync = message_chunk_offset != 0
+            message_out_of_sync = ret.message_chunk_offset != 0
             message_data = ret.message_chunk_data
 
             while not message_out_of_sync and len(message_data) < message_length:
                 ret = self.read_low_level(length)
                 message_length = ret.message_length
-                message_chunk_offset = ret.message_chunk_offset
-                message_out_of_sync = message_chunk_offset != len(message_data)
+                message_out_of_sync = ret.message_chunk_offset != len(message_data)
                 message_data += ret.message_chunk_data
 
             if message_out_of_sync: # discard remaining stream to bring it back in-sync
-                while message_chunk_offset + 60 < message_length:
+                while ret.message_chunk_offset + 60 < message_length:
                     ret = self.read_low_level(length)
                     message_length = ret.message_length
-                    message_chunk_offset = ret.message_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Message stream is out-of-sync')
 
