@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-11.      #
+# This file was automatically generated on 2017-06-10.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -133,11 +133,6 @@ try:
     from .bricklet_dual_relay import BrickletDualRelay
 except ValueError:
     from bricklet_dual_relay import BrickletDualRelay
-
-try:
-    from .bricklet_dual_relay_v2 import BrickletDualRelayV2
-except ValueError:
-    from bricklet_dual_relay_v2 import BrickletDualRelayV2
 
 try:
     from .bricklet_dust_detector import BrickletDustDetector
@@ -305,11 +300,6 @@ except ValueError:
     from bricklet_rgb_led import BrickletRGBLED
 
 try:
-    from .bricklet_rgb_led_button import BrickletRGBLEDButton
-except ValueError:
-    from bricklet_rgb_led_button import BrickletRGBLEDButton
-
-try:
     from .bricklet_rotary_encoder import BrickletRotaryEncoder
 except ValueError:
     from bricklet_rotary_encoder import BrickletRotaryEncoder
@@ -401,7 +391,6 @@ BrickletDistanceIR.DEVICE_IDENTIFIER: BrickletDistanceIR,
 BrickletDistanceUS.DEVICE_IDENTIFIER: BrickletDistanceUS,
 BrickletDualButton.DEVICE_IDENTIFIER: BrickletDualButton,
 BrickletDualRelay.DEVICE_IDENTIFIER: BrickletDualRelay,
-BrickletDualRelayV2.DEVICE_IDENTIFIER: BrickletDualRelayV2,
 BrickletDustDetector.DEVICE_IDENTIFIER: BrickletDustDetector,
 BrickletGPS.DEVICE_IDENTIFIER: BrickletGPS,
 BrickletGPSV2.DEVICE_IDENTIFIER: BrickletGPSV2,
@@ -435,7 +424,6 @@ BrickletPTC.DEVICE_IDENTIFIER: BrickletPTC,
 BrickletRealTimeClock.DEVICE_IDENTIFIER: BrickletRealTimeClock,
 BrickletRemoteSwitch.DEVICE_IDENTIFIER: BrickletRemoteSwitch,
 BrickletRGBLED.DEVICE_IDENTIFIER: BrickletRGBLED,
-BrickletRGBLEDButton.DEVICE_IDENTIFIER: BrickletRGBLEDButton,
 BrickletRotaryEncoder.DEVICE_IDENTIFIER: BrickletRotaryEncoder,
 BrickletRotaryPoti.DEVICE_IDENTIFIER: BrickletRotaryPoti,
 BrickletRS232.DEVICE_IDENTIFIER: BrickletRS232,

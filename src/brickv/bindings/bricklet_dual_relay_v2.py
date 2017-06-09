@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-05-30.      #
+# This file was automatically generated on 2017-06-10.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -81,7 +81,6 @@ class BrickletDualRelayV2(Device):
         self.response_expected[BrickletDualRelayV2.FUNCTION_GET_STATE] = BrickletDualRelayV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDualRelayV2.FUNCTION_SET_MONOFLOP] = BrickletDualRelayV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDualRelayV2.FUNCTION_GET_MONOFLOP] = BrickletDualRelayV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDualRelayV2.CALLBACK_MONOFLOP_DONE] = BrickletDualRelayV2.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletDualRelayV2.FUNCTION_SET_SELECTED_STATE] = BrickletDualRelayV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDualRelayV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletDualRelayV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDualRelayV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletDualRelayV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -286,13 +285,13 @@ class BrickletDualRelayV2(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletDualRelayV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id_, callback):
+    def register_callback(self, callback_id, function):
         """
-        Registers a callback with ID *id* to the function *callback*.
+        Registers the given *function* with the given *callback_id*.
         """
-        if callback is None:
-            self.registered_callbacks.pop(id_, None)
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
         else:
-            self.registered_callbacks[id_] = callback
+            self.registered_callbacks[callback_id] = function
 
 DualRelayV2 = BrickletDualRelayV2 # for backward compatibility
