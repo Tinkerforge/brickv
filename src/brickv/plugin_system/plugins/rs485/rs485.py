@@ -34,10 +34,6 @@ from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.rs485.qhexedit import QHexeditWidget
 from brickv.utils import get_main_window
 
-MODE_RS485 = 0
-MODE_MODBUS_MASTER_RTU = 1
-MODE_MODBUS_SLAVE_RTU = 2
-
 MODBUS_F_IDX_READ_COILS = 0
 MODBUS_F_IDX_READ_HOLDING_REGISTERS = 1
 MODBUS_F_IDX_WRITE_SINGLE_COIL = 2
@@ -265,7 +261,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                        self.modbus_slave_address_spinbox,
                                        self.modbus_slave_respond_checkbox]
 
-        self.mode_changed(0)
+        self.mode_changed(self.rs485.MODE_RS485)
 
         self.com_led_off_action = QAction('Off', self)
         self.com_led_off_action.triggered.connect(lambda: self.rs485.set_communication_led_config(BrickletRS485.COMMUNICATION_LED_CONFIG_OFF))
@@ -314,7 +310,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 e.hide()
 
     def modbus_master_param2_changed(self, value):
-        if self.mode_combobox.currentIndex() == MODE_MODBUS_MASTER_RTU and \
+        if self.mode_combobox.currentIndex() == self.rs485.MODE_MODBUS_MASTER_RTU and \
            self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_SINGLE_COIL:
                 if value > 0:
                     self.modbus_master_param2_spinbox.setValue(65280)
@@ -525,17 +521,17 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.modbus_master_param2_spinbox.setMaximum(125)
 
     def mode_changed(self, mode):
-        if mode == MODE_RS485:
+        if mode == self.rs485.MODE_RS485:
             self.toggle_gui_group(self.gui_group_modbus_slave, False)
             self.toggle_gui_group(self.gui_group_modbus_master, False)
             self.toggle_gui_group(self.gui_group_rs485, True)
 
-        elif mode == MODE_MODBUS_SLAVE_RTU:
+        elif mode == self.rs485.MODE_MODBUS_SLAVE_RTU:
             self.toggle_gui_group(self.gui_group_rs485, False)
             self.toggle_gui_group(self.gui_group_modbus_master, False)
             self.toggle_gui_group(self.gui_group_modbus_slave, True)
 
-        elif mode == MODE_MODBUS_MASTER_RTU:
+        elif mode == self.rs485.MODE_MODBUS_MASTER_RTU:
             self.toggle_gui_group(self.gui_group_rs485, False)
             self.toggle_gui_group(self.gui_group_modbus_slave, False)
             self.toggle_gui_group(self.gui_group_modbus_master, True)
@@ -1188,7 +1184,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.rs485.set_mode(mode)
 
-        if mode == MODE_MODBUS_MASTER_RTU or mode == MODE_MODBUS_SLAVE_RTU:
+        if mode == self.rs485.MODE_MODBUS_MASTER_RTU or mode == self.rs485.MODE_MODBUS_SLAVE_RTU:
             self.rs485.set_modbus_configuration(self.modbus_slave_address_spinbox.value(),
                                                 self.modbus_master_request_timeout_spinbox.value())
 
