@@ -318,7 +318,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
     def master_send_clicked(self):
         if self.rs485.get_mode() != self.rs485.MODE_MODBUS_MASTER_RTU:
             self.popup_fail(MSG_ERR_NOT_MODBUS_MASTER)
-
             return
 
         self.rs485.set_modbus_configuration(self.modbus_slave_address_spinbox.value(),
@@ -331,12 +330,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                           self.modbus_master_param2_spinbox.value())
             except Exception as e:
                 self.popup_fail(str(e))
-                self.modbus_master_send_button.setEnabled(True)
-
                 return
 
             if rid == 0:
                 self.popup_fail(MSG_ERR_REQUEST_PROCESS)
+                return
 
             self.modbus_master_send_button.setEnabled(False)
 
@@ -347,12 +345,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                                       self.modbus_master_param2_spinbox.value())
             except Exception as e:
                 self.popup_fail(str(e))
-                self.modbus_master_send_button.setEnabled(True)
-
                 return
 
             if rid == 0:
                 self.popup_fail(MSG_ERR_REQUEST_PROCESS)
+                return
 
             self.modbus_master_send_button.setEnabled(False)
 
@@ -368,12 +365,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                                  param2)
             except Exception as e:
                 self.popup_fail(str(e))
-                self.modbus_master_send_button.setEnabled(True)
-
                 return
 
             if rid == 0:
                 self.popup_fail(MSG_ERR_REQUEST_PROCESS)
+                return
 
             self.modbus_master_send_button.setEnabled(False)
 
@@ -384,12 +380,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                                      self.modbus_master_param2_spinbox.value())
             except Exception as e:
                 self.popup_fail(str(e))
-                self.modbus_master_send_button.setEnabled(True)
-
                 return
 
             if rid == 0:
                 self.popup_fail(MSG_ERR_REQUEST_PROCESS)
+                return
 
             self.modbus_master_send_button.setEnabled(False)
 
@@ -408,12 +403,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                                     data)
             except Exception as e:
                 self.popup_fail(str(e))
-                self.modbus_master_send_button.setEnabled(True)
-
                 return
 
             if rid == 0:
                 self.popup_fail(MSG_ERR_REQUEST_PROCESS)
+                return
 
             self.modbus_master_send_button.setEnabled(False)
 
@@ -429,12 +423,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                                         data)
             except Exception as e:
                 self.popup_fail(str(e))
-                self.modbus_master_send_button.setEnabled(True)
-
                 return
 
             if rid == 0:
                 self.popup_fail(MSG_ERR_REQUEST_PROCESS)
+                return
 
             self.modbus_master_send_button.setEnabled(False)
 
@@ -445,12 +438,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                                     self.modbus_master_param2_spinbox.value())
             except Exception as e:
                 self.popup_fail(str(e))
-                self.modbus_master_send_button.setEnabled(True)
-
                 return
 
             if rid == 0:
                 self.popup_fail(MSG_ERR_REQUEST_PROCESS)
+                return
 
             self.modbus_master_send_button.setEnabled(False)
 
@@ -461,12 +453,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                                     self.modbus_master_param2_spinbox.value())
             except Exception as e:
                 self.popup_fail(str(e))
-                self.modbus_master_send_button.setEnabled(True)
-
                 return
 
             if rid == 0:
                 self.popup_fail(MSG_ERR_REQUEST_PROCESS)
+                return
 
             self.modbus_master_send_button.setEnabled(False)
 
