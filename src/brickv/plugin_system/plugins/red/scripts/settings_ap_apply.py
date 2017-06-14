@@ -136,12 +136,6 @@ wpa_pairwise=TKIP
 # Pairwise cipher for RSN/WPA2 (default: use wpa_pairwise value)
 rsn_pairwise=CCMP
 
-# ieee80211n: Whether IEEE 802.11n (HT) is enabled
-# 0 = disabled (default)
-# 1 = enabled
-# Note: You will also need to enable WMM for full HT functionality.
-ieee80211n=1
-
 # Operation mode (a = IEEE 802.11a, b = IEEE 802.11b, g = IEEE 802.11g,
 # ad = IEEE 802.11ad (60 GHz); a/g options are used with IEEE 802.11n, too, to
 # specify band)
@@ -183,16 +177,16 @@ iface {0} inet static
     netmask {2}
 '''
 
-DEFAULT_DNSMASQ = '''# This file has five functions: 
-# 1) to completely disable starting dnsmasq, 
-# 2) to set DOMAIN_SUFFIX by running `dnsdomainname` 
+DEFAULT_DNSMASQ = '''# This file has five functions:
+# 1) to completely disable starting dnsmasq,
+# 2) to set DOMAIN_SUFFIX by running `dnsdomainname`
 # 3) to select an alternative config file
 #    by setting DNSMASQ_OPTS to --conf-file=<file>
 # 4) to tell dnsmasq to read the files in /etc/dnsmasq.d for
 #    more configuration variables.
 # 5) to stop the resolvconf package from controlling dnsmasq's
 #    idea of which upstream nameservers to use.
-# For upgraders from very old versions, all the shell variables set 
+# For upgraders from very old versions, all the shell variables set
 # here in previous versions are still honored by the init script
 # so if you just keep your old version of this file nothing will break.
 
@@ -209,16 +203,16 @@ ENABLED=1
 # in backups made by dpkg.
 CONFIG_DIR=/etc/dnsmasq.d,.dpkg-dist,.dpkg-old,.dpkg-new
 
-# If the resolvconf package is installed, dnsmasq will use its output 
-# rather than the contents of /etc/resolv.conf to find upstream 
+# If the resolvconf package is installed, dnsmasq will use its output
+# rather than the contents of /etc/resolv.conf to find upstream
 # nameservers. Uncommenting this line inhibits this behaviour.
-# Not that including a "resolv-file=<filename>" line in 
+# Not that including a "resolv-file=<filename>" line in
 # /etc/dnsmasq.conf is not enough to override resolvconf if it is
 # installed: the line below must be uncommented.
 #IGNORE_RESOLVCONF=yes
 '''
 
-def setup_nat():    
+def setup_nat():
     image_version = ''
 
     with open('/etc/tf_image_version', 'r') as fh_version:
@@ -232,7 +226,7 @@ def setup_nat():
 
     if not image_version or float(image_version) < MIN_VERSION_FOR_NAT:
         return
-    
+
     file_path_sysctl_conf = '/etc/sysctl.d/enable_ipv4_forward.conf'
     file_path_systemd_sh = '/usr/local/scripts/_tf_setup_ap_nat.sh'
     file_path_systemd_unit = '/etc/systemd/system/tf_setup_ap_nat.service'
@@ -242,7 +236,7 @@ def setup_nat():
         fh_sysctl.write('net.ipv4.ip_forward = 1\n')
 
     os.chmod(file_path_sysctl_conf, 0644)
-    
+
     if os.system('/sbin/sysctl -p ' + file_path_sysctl_conf + ' &> /dev/null') == 0:
         with open(file_path_systemd_sh, 'w') as fh_sh:
             fh_sh.write(SH_SETUP_AP_NAT.format(interface))
@@ -256,7 +250,7 @@ def setup_nat():
         if os.path.exists(file_path_systemd_timer):
             os.system('/bin/systemctl stop ' + file_path_systemd_timer +' &> /dev/null')
             os.system('/bin/systemctl disable ' + file_path_systemd_timer + ' &> /dev/null')
-        
+
         with open(file_path_systemd_unit, 'w') as fh_unit:
             fh_unit.write(UNIT_SETUP_AP_NAT.format(interface))
 
@@ -281,10 +275,10 @@ if len(argv) < 2:
 
 try:
     apply_dict = json.loads(argv[1])
-    
+
     if len(apply_dict) != 12:
         exit(1)
-    
+
     interface        = unicode(apply_dict['interface'])
     interface_ip     = unicode(apply_dict['interface_ip'])
     interface_mask   = unicode(apply_dict['interface_mask'])
@@ -346,17 +340,17 @@ try:
 
     if os.system('/bin/systemctl disable wicd &> /dev/null') != 0:
         exit(1)
-        
+
     if enabled_dns_dhcp:
         if os.system('/bin/systemctl enable dnsmasq &> /dev/null') != 0:
             exit(1)
-        
+
         if os.system('/bin/systemctl restart dnsmasq &> /dev/null') != 0:
             exit(1)
     else:
         if os.system('/bin/systemctl disable dnsmasq &> /dev/null') != 0:
             exit(1)
-        
+
         if os.system('/bin/systemctl stop dnsmasq &> /dev/null') != 0:
             exit(1)
 
