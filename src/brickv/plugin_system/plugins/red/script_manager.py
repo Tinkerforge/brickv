@@ -54,6 +54,7 @@ class ScriptInstance(QObject):
     def __init__(self):
         QObject.__init__(self)
 
+        self.name                      = None
         self.script                    = None
         self.process                   = None
         self.stdout                    = None
@@ -101,7 +102,7 @@ class ScriptInstance(QObject):
         self.qtcb_result.disconnect(self.result_callback)
 
 # stdout and stderr are either strings or None (UTF-8 decode error)
-ScriptResult = namedtuple('ScriptResult', 'stdout stderr exit_code')
+ScriptResult = namedtuple('ScriptResult', 'error stdout stderr exit_code')
 
 class ScriptManager(object):
     def __init__(self, session):
@@ -126,13 +127,14 @@ class ScriptManager(object):
                        execute_as_user=False):
         if not script_name in self.scripts:
             if result_callback != None:
-                result_callback(None) # We are still in GUI thread, use result_callback instead of signal
+                result_callback(ScriptResult('Script "{0}" is unknown'.format(script_name), None, None, None)) # We are still in GUI thread, use result_callback instead of signal
                 return
 
         if params == None:
             params = []
 
         si                           = ScriptInstance()
+        si.name                      = script_name
         si.script                    = self.scripts[script_name]
         si.result_callback           = result_callback
         si.params                    = params
@@ -151,14 +153,14 @@ class ScriptManager(object):
         try:
             self._init_script(si)
             return si
-        except:
+        except Exception as e:
             if si.result_callback != None:
                 si.qtcb_result.disconnect(si.result_callback)
 
             si.script.uploaded = False
 
             if si.result_callback != None:
-                si.result_callback(None) # We are still in GUI thread, use result_callback instead of signal
+                si.result_callback(ScriptResult('Could not initialize script "{0}": {1}'.format(si.name, e), None, None, None)) # We are still in GUI thread, use result_callback instead of signal
 
             script_instances.remove(si)
 
@@ -184,11 +186,11 @@ class ScriptManager(object):
             if execute:
                 self._execute_after_init(si)
 
-        def cb_error():
-            si.report_result(None)
+        def cb_error(exception):
+            si.report_result(ScriptResult('Could not async-initialize script "{0}": {1}'.format(si.name, exception), None, None, None))
             script_instances.remove(si)
 
-        async_call(self._init_script_async, si, cb_success, cb_error)
+        async_call(self._init_script_async, si, cb_success, cb_error, report_exception=True)
 
     def _init_script_async(self, si):
         si.script.upload_lock.acquire()
@@ -222,7 +224,7 @@ class ScriptManager(object):
         if error == None:
             self._execute_after_init(si)
         else:
-            si.report_result(None)
+            si.report_result(ScriptResult('Could not async-write script "{0}": {1}'.format(si.name, error), None, None, None))
             script_instances.remove(si)
 
     def _report_result_and_cleanup(self, si, result):
@@ -232,7 +234,7 @@ class ScriptManager(object):
 
     def _execute_after_init(self, si):
         if si.abort:
-            self._report_result_and_cleanup(si, None)
+            self._report_result_and_cleanup(si, ScriptResult('Script "{0}" aborted'.format(si.name), None, None, None))
             return
 
         try:
@@ -242,18 +244,22 @@ class ScriptManager(object):
                 si.stderr = si.stdout
             else:
                 si.stderr = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, si.max_length)
-        except:
-            self._report_result_and_cleanup(si, None)
+        except Exception as e:
+            self._report_result_and_cleanup(si, ScriptResult('Could not create pipes for script "{0}": {1}'.format(si.name, e), None, None, None))
             return
 
         # NOTE: this function will be called on the UI thread
         def cb_process_state_changed(si):
             # TODO: If we want to support returns > 1MB we need to do more work here,
             #       but it may not be necessary.
-            if not si.abort and si.process.state == REDProcess.STATE_EXITED:
+            if si.abort:
+                self._report_result_and_cleanup(si, ScriptResult('Script "{0}" aborted'.format(si.name), None, None, None))
+            elif si.process.state != REDProcess.STATE_EXITED:
+                self._report_result_and_cleanup(si, ScriptResult('Script "{0}" in wrong state: {1}'.format(si.name, si.process.state), None, None, None))
+            else:
                 def cb_stdout_read(result):
                     if result.error != None:
-                        self._report_result_and_cleanup(si, None)
+                        self._report_result_and_cleanup(si, ScriptResult('Could not read stdout for script "{0}": {1}'.format(si.name, result.error), None, None, None))
                         return
 
                     if si.decode_output_as_utf8:
@@ -267,11 +273,11 @@ class ScriptManager(object):
                     if si.redirect_stderr_to_stdout:
                         exit_code = si.process.exit_code
 
-                        self._report_result_and_cleanup(si, ScriptResult(out, u'', exit_code))
+                        self._report_result_and_cleanup(si, ScriptResult(None, out, u'', exit_code))
                     else:
                         def cb_stderr_read(result):
                             if result.error != None:
-                                self._report_result_and_cleanup(si, None)
+                                self._report_result_and_cleanup(si, ScriptResult('Could not read stderr for script "{0}": {1}'.format(si.name, result.error), None, None, None))
                                 return
 
                             if si.decode_output_as_utf8:
@@ -284,13 +290,11 @@ class ScriptManager(object):
 
                             exit_code = si.process.exit_code
 
-                            self._report_result_and_cleanup(si, ScriptResult(out, err, exit_code))
+                            self._report_result_and_cleanup(si, ScriptResult(None, out, err, exit_code))
 
                         si.stderr.read_async(si.max_length, cb_stderr_read)
 
                 si.stdout.read_async(si.max_length, cb_stdout_read)
-            else:
-                self._report_result_and_cleanup(si, None)
 
         si.process                        = REDProcess(self.session)
         si.process.state_changed_callback = lambda x: cb_process_state_changed(si)
@@ -334,12 +338,14 @@ class ScriptManager(object):
             # FIXME: Do we need a timeout here in case that the state_changed callback never comes?
             si.process.spawn(posixpath.join(SCRIPT_FOLDER, si.script.name + si.script.extension),
                              si.params, env, '/', uid, gid, self.devnull, si.stdout, si.stderr)
-        except:
-            self._report_result_and_cleanup(si, None)
+        except Exception as e:
+            self._report_result_and_cleanup(si, ScriptResult('Could not execute script "{0}": {1}'.format(si.name, e), None, None, None))
 
 def check_script_result(result, decode_stderr=False):
     if result == None:
-        return (False, u'Script error 1001: Internal error')
+        return (False, u'Script error 1001: Unexpected internal error')
+    elif result.error != None:
+        return (False, u'Script error 100X: {0}'.format(result.error))
     elif result.stdout == None:
         return (False, u'Script error 1002: Stdout not UTF-8 encoded')
     elif result.stderr == None:
