@@ -233,7 +233,7 @@ def build_macosx_pkg():
     system(codesign_command.format(os.path.join(frameworks_path, 'libssl.1.0.0.dylib')))
     system(codesign_command.format(os.path.join(frameworks_path, 'libtcl8.6.dylib')))
     system(codesign_command.format(os.path.join(frameworks_path, 'libtk8.6.dylib')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'libz.1.2.8.dylib')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'libz.1.2.11.dylib')))
     system(codesign_command.format(os.path.join(dist_path, 'Brickv.app', 'Contents', 'MacOS', 'python')))
     system(codesign_command.format(os.path.join(dist_path, 'Brickv.app')))
 
