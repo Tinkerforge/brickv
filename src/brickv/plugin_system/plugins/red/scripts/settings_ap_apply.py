@@ -8,6 +8,7 @@ import subprocess
 from sys import argv
 
 MIN_VERSION_FOR_NAT = 1.7
+VERSION_BEFORE_HOSTAPD_UPDATE_1 = 1.9
 
 SH_SETUP_AP_NAT = '''
 #! /bin/bash
@@ -136,6 +137,13 @@ wpa_pairwise=TKIP
 # Pairwise cipher for RSN/WPA2 (default: use wpa_pairwise value)
 rsn_pairwise=CCMP
 
+# ieee80211n: Whether IEEE 802.11n (HT) is enabled
+# 0 = disabled (default)
+# 1 = enabled
+# Note: You will also need to enable WMM for full HT functionality.
+#       This option is only valid for older hostapd version.
+{5}
+
 # Operation mode (a = IEEE 802.11a, b = IEEE 802.11b, g = IEEE 802.11g,
 # ad = IEEE 802.11ad (60 GHz); a/g options are used with IEEE 802.11n, too, to
 # specify band)
@@ -212,7 +220,7 @@ CONFIG_DIR=/etc/dnsmasq.d,.dpkg-dist,.dpkg-old,.dpkg-new
 #IGNORE_RESOLVCONF=yes
 '''
 
-def setup_nat():
+def get_image_version():
     image_version = ''
 
     with open('/etc/tf_image_version', 'r') as fh_version:
@@ -223,6 +231,11 @@ def setup_nat():
 
             if len(fh_version_lines_0_split) > 0:
                 image_version = fh_version_lines_0_split[0].strip()
+
+    return image_version
+
+def setup_nat():
+    image_version = get_image_version()
 
     if not image_version or float(image_version) < MIN_VERSION_FOR_NAT:
         return
@@ -299,10 +312,18 @@ try:
         fd_default_hostapd_conf.write('DAEMON_CONF="/etc/hostapd/hostapd.conf"')
 
     with open('/etc/hostapd/hostapd.conf', 'w') as fd_hostapd_conf:
+        image_version = get_image_version()
+
         if ssid_hidden:
-            fd_hostapd_conf.write(HOSTAPD_CONF.format(interface, ssid, channel, '2', wpa_key))
+            if not image_version or float(image_version) <= VERSION_BEFORE_HOSTAPD_UPDATE_1:
+                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface, ssid, channel, '2', wpa_key, 'ieee80211n=1'))
+            else:
+                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface, ssid, channel, '2', wpa_key, ''))
         else:
-            fd_hostapd_conf.write(HOSTAPD_CONF.format(interface, ssid, channel, '0', wpa_key))
+            if not image_version or float(image_version) <= VERSION_BEFORE_HOSTAPD_UPDATE_1:
+                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface, ssid, channel, '0', wpa_key, 'ieee80211n=1'))
+            else:
+                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface, ssid, channel, '0', wpa_key, ''))
 
     with open('/etc/dnsmasq.conf', 'w') as fd_dnsmasq_conf:
         if enabled_dns_dhcp:
