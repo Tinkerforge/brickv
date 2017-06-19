@@ -222,7 +222,6 @@ class SAMBA(object):
             self.flash_page_count = 512
             self.flash_page_size = 512
             self.flash_lockbit_count = 32
-            
         elif chipid_cidr in [CHIPID_CIDR_ATSAM4S16C_A, CHIPID_CIDR_ATSAM4S16C_B]:
             self.sam_series = 4
             self.flash_base = 0x400000
