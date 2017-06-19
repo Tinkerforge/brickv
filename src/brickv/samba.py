@@ -102,6 +102,8 @@ CHIPID_CIDR_ATSAM4S2B_A = 0x289B07E0
 CHIPID_CIDR_ATSAM4S2B_B = 0x289B07E1
 CHIPID_CIDR_ATSAM4S4C_A = 0x28AB09E0
 CHIPID_CIDR_ATSAM4S4C_B = 0x28AB09E1
+CHIPID_CIDR_ATSAM4S16C_A = 0x28AC0CE0
+CHIPID_CIDR_ATSAM4S16C_B = 0x28AC0CE1
 CHIPID_CIDR_ATSAM4E8C_A = 0xA3CC0CE0
 CHIPID_CIDR_ATSAM4E8C_B = 0xA3CC0CE1
 CHIPID_CIDR_ATSAM4E16E_A = 0xA3CC0CE0
@@ -220,6 +222,13 @@ class SAMBA(object):
             self.flash_page_count = 512
             self.flash_page_size = 512
             self.flash_lockbit_count = 32
+            
+        elif chipid_cidr in [CHIPID_CIDR_ATSAM4S16C_A, CHIPID_CIDR_ATSAM4S16C_B]:
+            self.sam_series = 4
+            self.flash_base = 0x400000
+            self.flash_page_count = 2048
+            self.flash_page_size = 512
+            self.flash_lockbit_count = 128
 
         # SAM4E
         elif chipid_cidr in [CHIPID_CIDR_ATSAM4E8C_A, CHIPID_CIDR_ATSAM4E8C_B] and \
