@@ -89,8 +89,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tree_view.doubleClicked.connect(self.item_double_clicked)
         self.set_tree_view_defaults()
 
-        # Remove dummy tab
-        self.tab_widget.removeTab(1)
+        self.tab_widget.removeTab(1) # remove dummy tab
+        self.tab_widget.setUsesScrollButtons(True) # force scroll buttons, otherwise they will be missing on Mac OS X
 
         self.name = '<unknown>'
         self.uid = '<unknown>'
