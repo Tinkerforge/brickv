@@ -293,11 +293,14 @@ if len(argv) < 2:
 
 try:
     apply_dict = json.loads(argv[1])
-
-    if len(apply_dict) != 13:
-        exit(1)
-
     image_version = get_image_version()
+
+    if not image_version or float(image_version) < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
+        if len(apply_dict) != 12:
+            exit(1)
+    else:
+        if len(apply_dict) != 13:
+            exit(1)
 
     interface        = unicode(apply_dict['interface'])
     interface_ip     = unicode(apply_dict['interface_ip'])
