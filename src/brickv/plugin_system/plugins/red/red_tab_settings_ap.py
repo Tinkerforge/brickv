@@ -246,7 +246,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                            cb_settings_ap_status)
 
     def slot_pbutton_ap_save_clicked(self):
-        def cb_settings_ap_apply(result):
+        def gui_after_apply(result):
             self.label_working_wait.hide()
             self.pbar_working_wait.hide()
             self.saving = False
@@ -263,6 +263,34 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
                                            'Error saving access point settings:\n\n' + result.stderr)
+
+        def cb_settings_ap_apply_2(result):
+            gui_after_apply(result)
+
+        def cb_settings_ap_status(result):
+            if result and not result.stderr and result.exit_code == 0:
+                ap_mode_status = json.loads(result.stdout)
+
+                if ap_mode_status['ap_incomplete_config'] or \
+                   ap_mode_status['ap_hardware_or_config_problem']:
+                        apply_dict['hostapd_driver'] = unicode('driver=rtl871xdrv')
+                        self.script_manager.execute_script('settings_ap_apply',
+                                                           cb_settings_ap_apply_2,
+                                                           [json.dumps(apply_dict)])
+                else:
+                    gui_after_apply(result)
+            else:
+                gui_after_apply(result)
+
+        def cb_settings_ap_apply(result):
+            if self.image_version.number >= (2, 0):
+                if result and not result.stderr and result.exit_code == 0:
+                    self.script_manager.execute_script('settings_ap_status',
+                                                       cb_settings_ap_status)
+                else:
+                    gui_after_apply(result)
+            else:
+                gui_after_apply(result)
 
         apply_dict = {'interface'       : None,
                       'interface_ip'    : None,
@@ -386,6 +414,9 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             apply_dict['dhcp_start']       = dhcp_start
             apply_dict['dhcp_end']         = dhcp_end
             apply_dict['dhcp_mask']        = dhcp_mask
+
+            if self.image_version.number >= (2, 0):
+                apply_dict['hostapd_driver'] = unicode('driver=nl80211')
 
             self.label_working_wait.show()
             self.pbar_working_wait.show()

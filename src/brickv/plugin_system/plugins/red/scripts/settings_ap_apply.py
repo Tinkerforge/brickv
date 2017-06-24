@@ -8,7 +8,7 @@ import subprocess
 from sys import argv
 
 MIN_VERSION_FOR_NAT = 1.7
-VERSION_BEFORE_HOSTAPD_UPDATE_1 = 1.9
+MIN_VERSION_FOR_HOSTAPD_UPDATE_1 = 2.0
 
 SH_SETUP_AP_NAT = '''
 #! /bin/bash
@@ -48,11 +48,16 @@ WantedBy=timers.target
 '''
 
 HOSTAPD_CONF = '''# AP netdevice name (without 'ap' postfix, i.e., wlan0 uses wlan0ap for
-# management frames with the Host AP driver); wlan0 with many nl80211 drivers
+# management frames with the Host AP driver); wlan0 with many nl80211 drivers.
 interface={0}
 
-# SSID to be used in IEEE 802.11 management frames
-ssid={1}
+# Hostapd driver to use to manage the interface.
+# Note: This option is only valid for newer hostapd version.
+#       For older version this parameter is not defined.
+{1}
+
+# SSID to be used in IEEE 802.11 management frames.
+ssid={2}
 
 # Channel number (IEEE 802.11)
 # (default: 0, i.e., not set)
@@ -62,7 +67,7 @@ ssid={1}
 # If CONFIG_ACS build option is enabled, the channel can be selected
 # automatically at run time by setting channel=acs_survey or channel=0, both of
 # which will enable the ACS survey based algorithm.
-channel={2}
+channel={3}
 
 # Station MAC address -based authentication
 # Please note that this kind of access control requires a driver that uses
@@ -89,7 +94,7 @@ auth_algs=1
 # 2 = clear SSID (ASCII 0), but keep the original length (this may be required
 #     with some clients that do not support empty SSID) and ignore probe
 #     requests for broadcast SSID
-ignore_broadcast_ssid={3}
+ignore_broadcast_ssid={4}
 
 # Enable WPA. Setting this variable configures the AP to require WPA (either
 # WPA-PSK or WPA-RADIUS/EAP based on other configuration). For WPA-PSK, either
@@ -110,7 +115,7 @@ wpa=2
 # so the PSK changes when ASCII passphrase is used and the SSID is changed.
 # wpa_psk (dot11RSNAConfigPSKValue)
 # wpa_passphrase (dot11RSNAConfigPSKPassPhrase)
-wpa_passphrase={4}
+wpa_passphrase={5}
 
 # Set of accepted key management algorithms (WPA-PSK, WPA-EAP, or both). The
 # entries are separated with a space. WPA-PSK-SHA256 and WPA-EAP-SHA256 can be
@@ -142,7 +147,7 @@ rsn_pairwise=CCMP
 # 1 = enabled
 # Note: You will also need to enable WMM for full HT functionality.
 #       This option is only valid for older hostapd version.
-{5}
+{6}
 
 # Operation mode (a = IEEE 802.11a, b = IEEE 802.11b, g = IEEE 802.11g,
 # ad = IEEE 802.11ad (60 GHz); a/g options are used with IEEE 802.11n, too, to
@@ -289,8 +294,10 @@ if len(argv) < 2:
 try:
     apply_dict = json.loads(argv[1])
 
-    if len(apply_dict) != 12:
+    if len(apply_dict) != 13:
         exit(1)
+
+    image_version = get_image_version()
 
     interface        = unicode(apply_dict['interface'])
     interface_ip     = unicode(apply_dict['interface_ip'])
@@ -305,6 +312,11 @@ try:
     dhcp_end         = unicode(apply_dict['dhcp_end'])
     dhcp_mask        = unicode(apply_dict['dhcp_mask'])
 
+    if not image_version or float(image_version) < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
+        hostapd_driver = ''
+    else:
+        hostapd_driver = unicode(apply_dict['hostapd_driver'])
+
     with open('/etc/default/dnsmasq', 'w') as fd_default_dnsmasq:
         fd_default_dnsmasq.write(DEFAULT_DNSMASQ)
 
@@ -312,18 +324,40 @@ try:
         fd_default_hostapd_conf.write('DAEMON_CONF="/etc/hostapd/hostapd.conf"')
 
     with open('/etc/hostapd/hostapd.conf', 'w') as fd_hostapd_conf:
-        image_version = get_image_version()
-
         if ssid_hidden:
-            if not image_version or float(image_version) <= VERSION_BEFORE_HOSTAPD_UPDATE_1:
-                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface, ssid, channel, '2', wpa_key, 'ieee80211n=1'))
+            if not image_version or float(image_version) < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
+                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface,
+                                                          hostapd_driver,
+                                                          ssid,
+                                                          channel,
+                                                          '2',
+                                                          wpa_key,
+                                                          'ieee80211n=1'))
             else:
-                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface, ssid, channel, '2', wpa_key, ''))
+                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface,
+                                                          hostapd_driver,
+                                                          ssid,
+                                                          channel,
+                                                          '2',
+                                                          wpa_key,
+                                                          ''))
         else:
-            if not image_version or float(image_version) <= VERSION_BEFORE_HOSTAPD_UPDATE_1:
-                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface, ssid, channel, '0', wpa_key, 'ieee80211n=1'))
+            if not image_version or float(image_version) < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
+                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface,
+                                                          hostapd_driver,
+                                                          ssid,
+                                                          channel,
+                                                          '0',
+                                                          wpa_key,
+                                                          'ieee80211n=1'))
             else:
-                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface, ssid, channel, '0', wpa_key, ''))
+                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface,
+                                                          hostapd_driver,
+                                                          ssid,
+                                                          channel,
+                                                          '0',
+                                                          wpa_key,
+                                                          ''))
 
     with open('/etc/dnsmasq.conf', 'w') as fd_dnsmasq_conf:
         if enabled_dns_dhcp:
