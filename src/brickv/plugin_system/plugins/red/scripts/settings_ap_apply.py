@@ -147,7 +147,7 @@ rsn_pairwise=CCMP
 # 1 = enabled
 # Note: You will also need to enable WMM for full HT functionality.
 #       This option is only valid for older hostapd version.
-{6}
+ieee80211n=1
 
 # Operation mode (a = IEEE 802.11a, b = IEEE 802.11b, g = IEEE 802.11g,
 # ad = IEEE 802.11ad (60 GHz); a/g options are used with IEEE 802.11n, too, to
@@ -328,39 +328,19 @@ try:
 
     with open('/etc/hostapd/hostapd.conf', 'w') as fd_hostapd_conf:
         if ssid_hidden:
-            if not image_version or float(image_version) < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
-                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface,
-                                                          hostapd_driver,
-                                                          ssid,
-                                                          channel,
-                                                          '2',
-                                                          wpa_key,
-                                                          'ieee80211n=1'))
-            else:
-                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface,
-                                                          hostapd_driver,
-                                                          ssid,
-                                                          channel,
-                                                          '2',
-                                                          wpa_key,
-                                                          ''))
+            fd_hostapd_conf.write(HOSTAPD_CONF.format(interface,
+                                                      hostapd_driver,
+                                                      ssid,
+                                                      channel,
+                                                      '2',
+                                                      wpa_key))
         else:
-            if not image_version or float(image_version) < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
-                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface,
-                                                          hostapd_driver,
-                                                          ssid,
-                                                          channel,
-                                                          '0',
-                                                          wpa_key,
-                                                          'ieee80211n=1'))
-            else:
-                fd_hostapd_conf.write(HOSTAPD_CONF.format(interface,
-                                                          hostapd_driver,
-                                                          ssid,
-                                                          channel,
-                                                          '0',
-                                                          wpa_key,
-                                                          ''))
+            fd_hostapd_conf.write(HOSTAPD_CONF.format(interface,
+                                                      hostapd_driver,
+                                                      ssid,
+                                                      channel,
+                                                      '0',
+                                                      wpa_key))
 
     with open('/etc/dnsmasq.conf', 'w') as fd_dnsmasq_conf:
         if enabled_dns_dhcp:
