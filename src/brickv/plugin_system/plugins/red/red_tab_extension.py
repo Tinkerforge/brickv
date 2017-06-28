@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 import struct
 import time
 
+from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QWidget, QMessageBox, QLabel
 
 from brickv.plugin_system.plugins.red.red_tab import REDTab
@@ -94,6 +95,56 @@ class RS485(QWidget, Ui_RS485):
         # Slave addresses
         slave_address = self.slave_text_to_int(self.config['slave_address'])
         self.lineedit_slave_addresses.setText(', '.join(map(str, slave_address)))
+
+        # Update data stuff
+        self.red_file_crc_error_count = None
+        self.update_interval_crc_error_count = 2000
+        self.timer_update_crc_error_count = QTimer()
+        self.timer_update_crc_error_count.timeout.connect(self.do_update_crc_error_count)
+
+    def start_update_data(self):
+        self.timer_update_crc_error_count.start(self.update_interval_crc_error_count)
+
+    def stop_update_data(self):
+        self.timer_update_crc_error_count.stop()
+
+    def cb_file_read(self, result):
+        self.red_file_crc_error_count.release()
+
+        if result.error == None:
+            do_update = True
+            config = config_parser.parse(result.data.decode('utf-8'))
+
+            try:
+                _ = int(config['crc_errors'])
+            except:
+                do_update = False
+
+            if do_update:
+                self.label_crc_errors.setText(config['crc_errors'])
+
+        self.timer_update_crc_error_count.start(self.update_interval_crc_error_count)
+
+    def cb_file_open_error(self):
+        self.label_crc_errors.setText('?')
+        self.timer_update_crc_error_count.start(self.update_interval_crc_error_count)
+
+    def cb_file_open(self, result):
+        if not isinstance(result, REDFile):
+            self.timer_update_crc_error_count.start(self.update_interval_crc_error_count)
+            return
+
+        self.red_file_crc_error_count = result
+        self.red_file_crc_error_count.read_async(self.red_file_crc_error_count.length, self.cb_file_read)
+
+    def do_update_crc_error_count(self):
+        self.timer_update_crc_error_count.stop()
+        self.red_file_crc_error_count = REDFile(self.session)
+
+        async_call(self.red_file_crc_error_count.open,
+                   ("/tmp/extension_rs485_crc_error_count.conf", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   self.cb_file_open,
+                   self.cb_file_open_error)
 
     def check_baudrate(self):
         supported = self.speed_spinbox.value() in self.supported_baudrates
@@ -240,6 +291,12 @@ class Ethernet(QWidget, Ui_Ethernet):
 
         self.ethernet_save.clicked.connect(self.save_clicked)
 
+    def start_update_data(self):
+        pass
+
+    def stop_update_data(self):
+        pass
+
     def save_clicked(self):
         new_config = {}
         new_config['type'] = 4
@@ -287,6 +344,12 @@ class Unsupported(QWidget, Ui_Unsupported):
 
         self.setupUi(self)
 
+    def start_update_data(self):
+        pass
+
+    def stop_update_data(self):
+        pass
+
 class REDTabExtension(REDTab, Ui_REDTabExtension):
     def __init__(self):
         REDTab.__init__(self)
@@ -295,6 +358,7 @@ class REDTabExtension(REDTab, Ui_REDTabExtension):
 
         self.red_file = [None, None]
         self.config_read_counter = 0
+        self.tabbed_extension_widgets = []
 
         self.tab_widget.hide()
 
@@ -318,9 +382,15 @@ class REDTabExtension(REDTab, Ui_REDTabExtension):
                 t = 0
 
             if t == 2:
-                self.tab_widget.addTab(RS485(self, extension, config), 'RS485')
+                self.tabbed_extension_widgets.append(RS485(self, extension, config))
+                self.tab_widget.addTab(self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1],
+                                       'RS485')
+                self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1].start_update_data()
             elif t == 4:
-                self.tab_widget.addTab(Ethernet(self, extension, config), 'Ethernet')
+                self.tabbed_extension_widgets.append(Ethernet(self, extension, config))
+                self.tab_widget.addTab(self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1],
+                                       'Ethernet')
+                self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1].start_update_data()
             else:
                 extension_name = 'Unkown Extension'
                 if t == 1:
@@ -330,7 +400,10 @@ class REDTabExtension(REDTab, Ui_REDTabExtension):
                 elif t == 5:
                     extension_name = 'WIFI Extension 2.0'
 
-                self.tab_widget.addTab(Unsupported(self, extension, config), extension_name)
+                self.tabbed_extension_widgets.append(Unsupported(self, extension, config))
+                self.tab_widget.addTab(self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1],
+                                       extension_name)
+                self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1].start_update_data()
 
         self.config_read_counter += 1
 
@@ -372,7 +445,10 @@ class REDTabExtension(REDTab, Ui_REDTabExtension):
                    lambda: self.cb_file_open_error(1))
 
     def tab_off_focus(self):
-        pass
+        for i in range(len(self.tabbed_extension_widgets)):
+            self.tabbed_extension_widgets[i].stop_update_data()
+
+        del self.tabbed_extension_widgets[:]
 
     def tab_destroy(self):
         pass
