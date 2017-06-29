@@ -135,8 +135,12 @@ class Calibration(QDialog, Ui_Calibration):
         self.button_optimize.clicked.connect(self.optimize)
         self.button_save.clicked.connect(self.save)
 
-        self.label_current_offset.setText('%.02f ppm (%d)' % (self.parent.offset * 2.17,
-                                                              self.parent.offset))
+        if abs(self.parent.offset * 2.17) <= 20.0:
+            color = '<font>'
+        else:
+            color = '<font color="#FF0000">'
+
+        self.label_current_offset.setText('%s%.02f ppm</font> (%d)' % (color, self.parent.offset * 2.17, self.parent.offset))
         self.spin_new_offset.setValue(self.parent.offset)
 
         self.measurment_thread = MeasurmentThread(self)
@@ -165,7 +169,12 @@ class Calibration(QDialog, Ui_Calibration):
         self.measurment_thread.start()
 
     def update_new_offset_label(self, new_offset):
-        self.label_new_offset.setText('%.02f ppm' % (new_offset * 2.17))
+        if abs(new_offset * 2.17) <= 20.0:
+            color = '<font>'
+        else:
+            color = '<font color="#FF0000">'
+
+        self.label_new_offset.setText('%s%.02f ppm</font>' % (color, new_offset * 2.17))
 
     def optimize(self):
         self.spin_new_offset.setValue(self.parent.offset + round(self.measured_ppm_avg / 2.17))
@@ -174,8 +183,13 @@ class Calibration(QDialog, Ui_Calibration):
         self.parent.offset = self.spin_new_offset.value()
 
         self.rtc.set_offset(self.parent.offset)
-        self.label_current_offset.setText('%.02f ppm (%d)' % (self.parent.offset * 2.17,
-                                                              self.parent.offset))
+
+        if abs(self.parent.offset * 2.17) <= 20.0:
+            color = '<font>'
+        else:
+            color = '<font color="#FF0000">'
+
+        self.label_current_offset.setText('%s%.02f ppm</font> (%d)' % (color, self.parent.offset * 2.17, self.parent.offset))
 
     def cb_measured_duration(self, local_duration, rtc_duration):
         rtc_hour = int(rtc_duration) / 3600
@@ -205,6 +219,12 @@ class Calibration(QDialog, Ui_Calibration):
                 self.measured_ppm_index = (self.measured_ppm_index + 1) % 600
 
             self.measured_ppm_avg = sum(self.measured_ppm_history) / len(self.measured_ppm_history)
+
+            if abs(self.measured_ppm_avg) <= 20.0:
+                measured_ppm_avg_color = '<font>'
+            else:
+                measured_ppm_avg_color = '<font color="#FF0000">'
+
             stddev_sum = 0
 
             for h in self.measured_ppm_history:
@@ -212,7 +232,13 @@ class Calibration(QDialog, Ui_Calibration):
 
             stddev = math.sqrt(stddev_sum / len(self.measured_ppm_history))
 
-            self.label_measured_offset.setText(u'%.03f ppm (%.03f ppm ± %.03f ppm)' % (self.measured_ppm, self.measured_ppm_avg, stddev))
+            if stddev <= 0.25 and local_duration > 60:
+                stddev_color = '008000'
+            else:
+                stddev_color = 'FF0000'
+
+            self.label_measured_offset.setText(u'%.03f ppm (%s%.03f ppm</font> <font color="#%s">± %.03f ppm</font>)' %
+                                               (self.measured_ppm, measured_ppm_avg_color, self.measured_ppm_avg, stddev_color, stddev))
         else:
             self.label_measured_offset.setText('undefined')
 
