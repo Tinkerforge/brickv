@@ -29,7 +29,7 @@ Section "Device"
         Driver          "fbdev"
         Option          "fbdev" "/dev/fb0"
         Option          "SwapbuffersWait" "true"
-        Option          "AccelMethod" "G2D"
+        Option          "AccelMethod" "CPU"
 EndSection
 '''
 
@@ -49,7 +49,7 @@ Section "Device"
         Driver          "fbturbo"
         Option          "fbdev" "/dev/fb0"
         Option          "SwapbuffersWait" "true"
-        Option          "AccelMethod" "G2D"
+        Option          "AccelMethod" "CPU"
 EndSection
 '''
 
@@ -187,7 +187,7 @@ elif command == 'APPLY':
             if os.path.isfile('/etc/xdg/autostart/wicd-tray.desktop'):
                 os.rename('/etc/xdg/autostart/wicd-tray.desktop',
                           '/etc/xdg/autostart/wicd-tray.desktop.block')
-            
+
             if os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.service') and \
                os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.timer'):
                     os.system('/bin/systemctl start /etc/systemd/system/tf_setup_ap_nat.service &> /dev/null')
@@ -210,7 +210,7 @@ elif command == 'APPLY':
 
             with open('/etc/network/interfaces', 'w') as fd_interfaces:
                 fd_interfaces.write(INTERFACES_CONF)
-            
+
             if os.path.isfile('/etc/xdg/autostart/wicd-tray.desktop.block'):
                 os.rename('/etc/xdg/autostart/wicd-tray.desktop.block',
                           '/etc/xdg/autostart/wicd-tray.desktop')
@@ -246,7 +246,7 @@ elif command == 'APPLY':
         else:
             if os.system('/bin/systemctl disable openhab') != 0:
                 exit(20)
-        
+
         if apply_dict['mobileinternet']:
             with open('/etc/tf_mobile_internet_enabled', 'w') as fd_ap_enabled:
                 pass
