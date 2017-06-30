@@ -125,7 +125,7 @@ elif command == 'APPLY':
                 os.remove('/etc/modprobe.d/mali-blacklist.conf')
 
             with open('/usr/share/X11/xorg.conf.d/99-sunxifb.conf', 'w') as fd_fbconf:
-                fd_fbconf.write()
+                fd_fbconf.write(SUNXI_FBTURBO_X11_DRIVER_CONF)
 
         else:
             lines = []
@@ -143,7 +143,7 @@ elif command == 'APPLY':
                 fd_w_malibl.write('blacklist mali')
 
             with open('/usr/share/X11/xorg.conf.d/99-sunxifb.conf', 'w') as fd_fbconf:
-                fd_fbconf.write()
+                fd_fbconf.write(SUNXI_FBDEV_X11_DRIVER_CONF)
 
         if apply_dict['desktopenv']:
             with open('/etc/tf_x11_enabled', 'w') as fd_x11_enabled:
