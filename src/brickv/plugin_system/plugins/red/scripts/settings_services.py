@@ -7,8 +7,6 @@ import subprocess
 import time
 import sys
 
-MIN_VERSION_FOR_CPU_ONLY_ACCELERATION = 2.0
-
 if len(sys.argv) < 2:
     sys.stderr.write(u'Missing parameters'.encode('utf-8'))
     exit(2)
@@ -30,8 +28,6 @@ Section "Device"
         Identifier      "Allwinner A10/A13 FBDEV"
         Driver          "fbdev"
         Option          "fbdev" "/dev/fb0"
-        Option          "SwapbuffersWait" "true"
-        Option          "AccelMethod" "{0}"
 EndSection
 '''
 
@@ -51,7 +47,7 @@ Section "Device"
         Driver          "fbturbo"
         Option          "fbdev" "/dev/fb0"
         Option          "SwapbuffersWait" "true"
-        Option          "AccelMethod" "{0}"
+        Option          "AccelMethod" "G2D"
 EndSection
 '''
 
@@ -59,20 +55,6 @@ INTERFACES_CONF = '''# interfaces(5) file used by ifup(8) and ifdown(8)
 auto lo
 iface lo inet loopback
 '''
-
-def get_image_version():
-    image_version = ''
-
-    with open('/etc/tf_image_version', 'r') as fh_version:
-        fh_version_lines = fh_version.readlines()
-
-        if len(fh_version_lines) > 0:
-            fh_version_lines_0_split = fh_version_lines[0].split(' ')
-
-            if len(fh_version_lines_0_split) > 0:
-                image_version = fh_version_lines_0_split[0].strip()
-
-    return image_version
 
 if command == 'CHECK':
     try:
@@ -143,14 +125,6 @@ elif command == 'APPLY':
                 os.remove('/etc/modprobe.d/mali-blacklist.conf')
 
             with open('/usr/share/X11/xorg.conf.d/99-sunxifb.conf', 'w') as fd_fbconf:
-                image_version = None
-                image_version = get_image_version()
-
-                if not image_version or float(image_version) < MIN_VERSION_FOR_CPU_ONLY_ACCELERATION:
-                    fd_fbconf.write(SUNXI_FBTURBO_X11_DRIVER_CONF.format('G2D'))
-                else:
-                    fd_fbconf.write(SUNXI_FBTURBO_X11_DRIVER_CONF.format('CPU'))
-
                 fd_fbconf.write()
 
         else:
@@ -169,14 +143,6 @@ elif command == 'APPLY':
                 fd_w_malibl.write('blacklist mali')
 
             with open('/usr/share/X11/xorg.conf.d/99-sunxifb.conf', 'w') as fd_fbconf:
-                image_version = None
-                image_version = get_image_version()
-
-                if not image_version or float(image_version) < MIN_VERSION_FOR_CPU_ONLY_ACCELERATION:
-                    fd_fbconf.write(SUNXI_FBDEV_X11_DRIVER_CONF.format('G2D'))
-                else:
-                    fd_fbconf.write(SUNXI_FBDEV_X11_DRIVER_CONF.format('CPU'))
-
                 fd_fbconf.write()
 
         if apply_dict['desktopenv']:
