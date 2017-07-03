@@ -496,7 +496,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.edit_custom_plugin.setEnabled(is_plugin_custom)
         self.button_plugin_browse.setEnabled(is_plugin_custom)
 
-
         is_extension_firmware_select = self.combo_extension_firmware.currentText() == SELECT
         is_extension_firmware_custom = self.combo_extension_firmware.currentText() == CUSTOM
         is_no_extension = self.combo_extension.currentText() == NO_EXTENSION
@@ -752,11 +751,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if self.current_bricklet_has_comcu():
             return base58encode(self.current_bricklet_device().read_uid())
 
-        device, port = self.current_device_and_port()
-        return self.parent.ipcon.read_bricklet_uid(device, port)
+        brick, port = self.current_brick_and_port()
+        return self.parent.ipcon.read_bricklet_uid(brick, port)
 
     def uid_save_clicked(self):
-        device, port = self.current_device_and_port()
+        brick, port = self.current_brick_and_port()
         uid = self.edit_uid.text()
 
         if len(uid) == 0:
@@ -778,9 +777,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         try:
             if self.current_bricklet_has_comcu():
-                self.current_bricklet_device().write_uid(base58decode(uid))
+                self.current_bricklet().write_uid(base58decode(uid))
             else:
-                self.parent.ipcon.write_bricklet_uid(device, port, uid)
+                self.parent.ipcon.write_bricklet_uid(brick, port, uid)
         except Error as e:
             self.popup_fail('Bricklet', 'Could not write UID: ' + error_to_name(e))
             return
@@ -865,12 +864,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def plugin_changed(self, index):
         self.update_ui_state()
 
-    def download_bricklet_plugin(self, progress, url_part, name, version, popup=False):
+    def download_bricklet_plugin(self, progress, url_part, has_comcu, name, version, popup=False):
         progress.setLabelText('Downloading {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
         progress.setMaximum(0)
         progress.show()
 
-        if self.current_bricklet_has_comcu():
+        if has_comcu:
             file_ext = 'zbin'
         else:
             file_ext = 'bin'
@@ -918,13 +917,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         return plugin
 
-    def write_bricklet_plugin(self, plugin, device, port, name, progress, popup=True):
-        if self.current_bricklet_has_comcu():
-            return self.write_bricklet_plugin_comcu(plugin, device, port, name, progress, popup)
+    def write_bricklet_plugin(self, plugin, brick, port, bricklet, name, progress, has_comcu, popup=True):
+        if has_comcu:
+            return self.write_bricklet_plugin_comcu(plugin, brick, port, bricklet, name, progress, popup)
         else:
-            return self.write_bricklet_plugin_standard(plugin, device, port, name, progress, popup)
+            return self.write_bricklet_plugin_standard(plugin, brick, port, bricklet, name, progress, popup)
 
-    def write_bricklet_plugin_comcu(self, plugin, device, port, name, progress, popup=True):
+    def write_bricklet_plugin_comcu(self, plugin, brick, port, bricklet, name, progress, popup=True):
         try:
             progress.setLabelText('Starting bootloader mode')
             progress.setMaximum(0)
@@ -966,18 +965,17 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 if popup:
                     self.popup_fail('Bricklet', 'Could not find magic number in firmware')
 
-            device = self.current_bricklet_device()
-            if device == None:
+            if brick == None:
                 progress.cancel()
                 if popup:
                     self.popup_fail('Bricklet', 'Could not find device object for flashing')
                 return False
 
-            device.set_bootloader_mode(device.BOOTLOADER_MODE_BOOTLOADER)
+            bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_BOOTLOADER)
             counter = 0
             while True:
                 try:
-                    if device.get_bootloader_mode() == device.BOOTLOADER_MODE_BOOTLOADER:
+                    if bricklet.get_bootloader_mode() == bricklet.BOOTLOADER_MODE_BOOTLOADER:
                         break
                 except:
                     pass
@@ -1005,11 +1003,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.setMaximum(len(index_list))
             progress.setValue(0)
             progress.show()
+
             for position in index_list:
                 start = position * 64
                 end = (position + 1) * 64
-                device.set_write_firmware_pointer(start)
-                device.write_firmware(plugin[start:end])
+                bricklet.set_write_firmware_pointer(start)
+                bricklet.write_firmware(plugin[start:end])
                 progress.setValue(position)
 
             progress.setLabelText('Changing from bootloader mode to firmware mode')
@@ -1017,7 +1016,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.setValue(0)
             progress.show()
 
-            mode_ret = device.set_bootloader_mode(device.BOOTLOADER_MODE_FIRMWARE)
+            mode_ret = bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_FIRMWARE)
             if mode_ret != 0 and mode_ret != 2: # 0 = ok, 2 = no change
                 error_str = ''
                 if mode_ret == 1:
@@ -1039,7 +1038,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             counter = 0
             while True:
                 try:
-                    if device.get_bootloader_mode() == device.BOOTLOADER_MODE_FIRMWARE:
+                    if bricklet.get_bootloader_mode() == bricklet.BOOTLOADER_MODE_FIRMWARE:
                         break
                 except:
                     pass
@@ -1061,7 +1060,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.cancel()
             return False
 
-    def write_bricklet_plugin_standard(self, plugin, device, port, name, progress, popup=True):
+    def write_bricklet_plugin_standard(self, plugin, brick, port, bricklet, name, progress, popup=True):
         # Write
         progress.setLabelText('Writing plugin: ' + name)
         progress.setMaximum(0)
@@ -1086,7 +1085,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         for chunk in plugin_chunks:
             try:
-                self.parent.ipcon.write_bricklet_plugin(device, port, position, chunk)
+                self.parent.ipcon.write_bricklet_plugin(brick, port, position, chunk)
             except Error as e:
                 progress.cancel()
                 if popup:
@@ -1112,7 +1111,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         for chunk in plugin_chunks:
             try:
-                read_chunk = list(self.parent.ipcon.read_bricklet_plugin(device, port, position))
+                read_chunk = list(self.parent.ipcon.read_bricklet_plugin(brick, port, position))
             except Error as e:
                 progress.cancel()
                 if popup:
@@ -1154,19 +1153,20 @@ class FlashingWindow(QDialog, Ui_Flashing):
             url_part = self.combo_plugin.itemData(self.combo_plugin.currentIndex())
             name = self.plugin_infos[url_part].name
             version = self.plugin_infos[url_part].firmware_version_latest
-            plugin = self.download_bricklet_plugin(progress, url_part, name, version, popup=True)
+            plugin = self.download_bricklet_plugin(progress, url_part, self.current_bricklet_has_comcu(), name, version, popup=True)
 
             if not plugin:
                 return
 
         # Flash plugin
-        device, port = self.current_device_and_port()
+        brick, port = self.current_brick_and_port()
+        bricklet = self.current_bricklet()
 
         if current_text == CUSTOM:
-            if not self.write_bricklet_plugin(plugin, device, port, os.path.split(plugin_file_name)[-1], progress):
+            if not self.write_bricklet_plugin(plugin, brick, port, bricklet, os.path.split(plugin_file_name)[-1], progress, self.current_bricklet_has_comcu()):
                 return
         else:
-            if not self.write_bricklet_plugin(plugin, device, port, name, progress):
+            if not self.write_bricklet_plugin(plugin, brick, port, bricklet, name, progress, self.current_bricklet_has_comcu()):
                 return
 
         progress.cancel()
@@ -1176,13 +1176,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
         else:
             self.popup_ok('Bricklet', 'Successfully flashed {0} Bricklet plugin {1}.{2}.{3}.\nNew plugin will be used after reset of the connected Brick.'.format(name, *version))
 
-    def current_device_and_port(self):
+    def current_brick_and_port(self):
         port_names = ['a', 'b', 'c', 'd']
 
-        return (self.current_device(),
+        return (self.current_brick(),
                 port_names[self.combo_port.currentIndex()])
 
-    def current_device(self):
+    def current_brick(self):
         try:
             return self.brick_infos[self.combo_brick.currentIndex()].plugin.device
         except:
@@ -1195,7 +1195,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         except:
             return None
 
-    def current_bricklet_device(self):
+    def current_bricklet(self):
         try:
             return self.current_bricklet_plugin().device
         except:
@@ -1236,7 +1236,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         for device_info in infos.get_bricklet_infos():
             if device_info.firmware_version_installed < device_info.firmware_version_latest:
-                plugin = self.download_bricklet_plugin(progress, device_info.url_part, device_info.name, device_info.firmware_version_latest)
+                plugin = self.download_bricklet_plugin(progress, device_info.url_part, device_info.plugin.has_comcu, device_info.name, device_info.firmware_version_latest)
 
                 if not plugin:
                     progress.cancel()
@@ -1244,7 +1244,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     return
 
                 brick = brick_for_bricklet(device_info)
-                if self.write_bricklet_plugin(plugin, brick.plugin.device, device_info.position, device_info.name, progress):
+                if self.write_bricklet_plugin(plugin, brick.plugin.device, device_info.position, device_info.plugin.device, device_info.name, progress, device_info.plugin.has_comcu):
                     bricks_to_reset.add(brick)
                 else:
                     progress.cancel()
