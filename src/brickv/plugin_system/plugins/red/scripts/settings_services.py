@@ -7,11 +7,27 @@ import subprocess
 import time
 import sys
 
+MAX_VERSION_WITH_CHKCONFIG = 1.9
+
 if len(sys.argv) < 2:
     sys.stderr.write(u'Missing parameters'.encode('utf-8'))
     exit(2)
 
 command = sys.argv[1]
+
+def get_image_version():
+    image_version = ''
+
+    with open('/etc/tf_image_version', 'r') as fh_version:
+        fh_version_lines = fh_version.readlines()
+
+        if len(fh_version_lines) > 0:
+            fh_version_lines_0_split = fh_version_lines[0].split(' ')
+
+            if len(fh_version_lines_0_split) > 0:
+                image_version = fh_version_lines_0_split[0].strip()
+
+    return image_version
 
 SUNXI_FBDEV_X11_DRIVER_CONF = '''
 # This is a minimal sample config file, which can be copied to
@@ -58,14 +74,8 @@ iface lo inet loopback
 
 if command == 'CHECK':
     try:
-        cmd = '/sbin/chkconfig | awk -F " " \'{print $1 "<==>" $2}\''
-        cmd_ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        image_version = get_image_version()
 
-        if cmd_ps.returncode:
-            exit(3)
-
-        init_script_list_str = cmd_ps.communicate()[0].strip()
-        init_script_list_list = init_script_list_str.splitlines()
         return_dict = {'gpu'              : None,
                        'desktopenv'       : None,
                        'webserver'        : None,
@@ -75,15 +85,48 @@ if command == 'CHECK':
                        'openhab'          : None,
                        'mobileinternet'   : None}
 
-        for script in init_script_list_list:
-            script_stat = script.split('<==>')
-            if len(script_stat) == 2:
-                if script_stat[0] == 'apache2':
-                    return_dict['webserver'] = script_stat[1] == 'on'
-                elif script_stat[0] == 'asplashscreen':
-                    return_dict['splashscreen'] = script_stat[1] == 'on'
-                elif script_stat[0] == 'openhab':
-                    return_dict['openhab'] = script_stat[1] == 'on'
+        if image_version and float(image_version) > MAX_VERSION_WITH_CHKCONFIG:
+            cmd_apache2 = '/bin/systemctl is-enabled apache2.service'
+            cmd_apache2_ps = subprocess.Popen(cmd_apache2, shell=True, stdout=subprocess.PIPE)
+
+            cmd_splashscreen = '/bin/systemctl is-enabled splashscreen.service'
+            cmd_splashscreen_ps = subprocess.Popen(cmd_splashscreen, shell=True, stdout=subprocess.PIPE)
+
+            cmd_openhab = '/bin/systemctl is-enabled openhab.service'
+            cmd_openhab_ps = subprocess.Popen(cmd_openhab, shell=True, stdout=subprocess.PIPE)
+
+            if cmd_apache2_ps.returncode or \
+               cmd_splashscreen_ps.returncode:
+                    exit(3)
+
+            if cmd_apache2_ps.communicate()[0].strip() == 'enabled':
+                return_dict['webserver'] = True
+
+            if cmd_splashscreen_ps.communicate()[0].strip() == 'enabled':
+                return_dict['splashscreen'] = True
+
+            if cmd_openhab_ps.returncode == 0:
+                if cmd_openhab_ps.communicate()[0].strip() == 'enabled':
+                    return_dict['openhab'] = True
+        else:
+            cmd = '/sbin/chkconfig | awk -F " " \'{print $1 "<==>" $2}\''
+            cmd_ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+
+            if cmd_ps.returncode:
+                exit(3)
+
+            init_script_list_str = cmd_ps.communicate()[0].strip()
+            init_script_list_list = init_script_list_str.splitlines()
+
+            for script in init_script_list_list:
+                script_stat = script.split('<==>')
+                if len(script_stat) == 2:
+                    if script_stat[0] == 'apache2':
+                        return_dict['webserver'] = script_stat[1] == 'on'
+                    elif script_stat[0] == 'asplashscreen':
+                        return_dict['splashscreen'] = script_stat[1] == 'on'
+                    elif script_stat[0] == 'openhab':
+                        return_dict['openhab'] = script_stat[1] == 'on'
 
         if return_dict['openhab'] == None:
             return_dict['openhab'] = False # openHAB is not installed at all
