@@ -7,7 +7,9 @@ import subprocess
 import time
 import sys
 
+MIN_VERSION_WITH_NAGIOS4 = 2.0
 MAX_VERSION_WITH_CHKCONFIG = 1.9
+IMAGE_VERSION = None
 
 if len(sys.argv) < 2:
     sys.stderr.write(u'Missing parameters'.encode('utf-8'))
@@ -72,10 +74,10 @@ auto lo
 iface lo inet loopback
 '''
 
+IMAGE_VERSION = get_image_version()
+
 if command == 'CHECK':
     try:
-        image_version = get_image_version()
-
         return_dict = {'gpu'              : None,
                        'desktopenv'       : None,
                        'webserver'        : None,
@@ -85,7 +87,7 @@ if command == 'CHECK':
                        'openhab'          : None,
                        'mobileinternet'   : None}
 
-        if image_version and float(image_version) > MAX_VERSION_WITH_CHKCONFIG:
+        if IMAGE_VERSION and float(IMAGE_VERSION) > MAX_VERSION_WITH_CHKCONFIG:
             cmd_apache2 = '/bin/systemctl is-enabled apache2.service'
             cmd_apache2_ps = subprocess.Popen(cmd_apache2, shell=True, stdout=subprocess.PIPE)
 
@@ -271,15 +273,23 @@ elif command == 'APPLY':
             with open('/etc/tf_server_monitoring_enabled', 'w') as fd_server_monitoring_enabled:
                 pass
 
-            if os.system('/bin/systemctl enable nagios3') != 0:
-                exit(17)
+            if not IMAGE_VERSION or float(IMAGE_VERSION) < MIN_VERSION_WITH_NAGIOS4:
+                if os.system('/bin/systemctl enable nagios3') != 0:
+                    exit(17)
+            else:
+                if os.system('/bin/systemctl enable nagios') != 0:
+                    exit(17)
 
         else:
             if os.path.isfile('/etc/tf_server_monitoring_enabled'):
                 os.remove('/etc/tf_server_monitoring_enabled')
 
-            if os.system('/bin/systemctl disable nagios3') != 0:
-                exit(18)
+            if not IMAGE_VERSION or float(IMAGE_VERSION) < MIN_VERSION_WITH_NAGIOS4:
+                if os.system('/bin/systemctl disable nagios3') != 0:
+                    exit(18)
+            else:
+                if os.system('/bin/systemctl disable nagios') != 0:
+                    exit(18)
 
         if apply_dict['openhab']:
             if os.system('/bin/systemctl enable openhab') != 0:
