@@ -90,6 +90,8 @@ if command == 'CHECK':
                        'mobileinternet'   : None}
 
         if IMAGE_VERSION and float(IMAGE_VERSION) > MAX_VERSION_WITH_CHKCONFIG:
+            # In this case we rely on STDOUT instead of exit code of the process
+            # because systemctl returns exit value of 1 in case a service is disabled
             cmd_apache2 = '/bin/systemctl is-enabled apache2.service'
             cmd_apache2_ps = subprocess.Popen(cmd_apache2, shell=True, stdout=subprocess.PIPE)
             cmd_apache2_stdout = cmd_apache2_ps.communicate()[0].strip()
@@ -102,9 +104,8 @@ if command == 'CHECK':
             cmd_openhab_ps = subprocess.Popen(cmd_openhab, shell=True, stdout=subprocess.PIPE)
             cmd_openhab_ps_stdout = cmd_openhab_ps.communicate()[0].strip()
 
-            if cmd_apache2_ps.returncode or \
-               cmd_splashscreen_ps.returncode:
-                    exit(3)
+            if not cmd_apache2_stdout or not cmd_splashscreen_ps_stdout:
+                exit(3)
 
             if cmd_apache2_stdout == 'enabled':
                 return_dict['webserver'] = True
@@ -116,7 +117,7 @@ if command == 'CHECK':
             else:
                 return_dict['splashscreen'] = False
 
-            if cmd_openhab_ps.returncode == 0:
+            if cmd_openhab_ps_stdout:
                 if cmd_openhab_ps_stdout == 'enabled':
                     return_dict['openhab'] = True
                 else:
