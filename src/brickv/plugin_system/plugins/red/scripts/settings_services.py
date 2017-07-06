@@ -9,6 +9,8 @@ import sys
 
 MIN_VERSION_WITH_NAGIOS4 = 2.0
 MAX_VERSION_WITH_CHKCONFIG = 1.9
+MAX_VERSION_WITH_ASPLASH_SCREEN = 1.9
+
 IMAGE_VERSION = None
 
 if len(sys.argv) < 2:
@@ -90,26 +92,37 @@ if command == 'CHECK':
         if IMAGE_VERSION and float(IMAGE_VERSION) > MAX_VERSION_WITH_CHKCONFIG:
             cmd_apache2 = '/bin/systemctl is-enabled apache2.service'
             cmd_apache2_ps = subprocess.Popen(cmd_apache2, shell=True, stdout=subprocess.PIPE)
+            cmd_apache2_stdout = cmd_apache2_ps.communicate()[0].strip()
 
             cmd_splashscreen = '/bin/systemctl is-enabled splashscreen.service'
             cmd_splashscreen_ps = subprocess.Popen(cmd_splashscreen, shell=True, stdout=subprocess.PIPE)
+            cmd_splashscreen_ps_stdout = cmd_splashscreen_ps.communicate()[0].strip()
 
             cmd_openhab = '/bin/systemctl is-enabled openhab.service'
             cmd_openhab_ps = subprocess.Popen(cmd_openhab, shell=True, stdout=subprocess.PIPE)
+            cmd_openhab_ps_stdout = cmd_openhab_ps.communicate()[0].strip()
 
             if cmd_apache2_ps.returncode or \
                cmd_splashscreen_ps.returncode:
                     exit(3)
 
-            if cmd_apache2_ps.communicate()[0].strip() == 'enabled':
+            if cmd_apache2_stdout == 'enabled':
                 return_dict['webserver'] = True
+            else:
+                return_dict['webserver'] = False
 
-            if cmd_splashscreen_ps.communicate()[0].strip() == 'enabled':
+            if cmd_splashscreen_ps_stdout == 'enabled':
                 return_dict['splashscreen'] = True
+            else:
+                return_dict['splashscreen'] = False
 
             if cmd_openhab_ps.returncode == 0:
-                if cmd_openhab_ps.communicate()[0].strip() == 'enabled':
+                if cmd_openhab_ps_stdout == 'enabled':
                     return_dict['openhab'] = True
+                else:
+                    return_dict['openhab'] = False
+            else:
+                return_dict['openhab'] = False
         else:
             cmd = '/sbin/chkconfig | awk -F " " \'{print $1 "<==>" $2}\''
             cmd_ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
@@ -130,8 +143,8 @@ if command == 'CHECK':
                     elif script_stat[0] == 'openhab':
                         return_dict['openhab'] = script_stat[1] == 'on'
 
-        if return_dict['openhab'] == None:
-            return_dict['openhab'] = False # openHAB is not installed at all
+            if return_dict['openhab'] == None:
+                return_dict['openhab'] = False # openHAB is not installed at all
 
         return_dict['desktopenv'] = os.path.isfile('/etc/tf_x11_enabled')
         return_dict['gpu'] = not os.path.isfile('/etc/modprobe.d/mali-blacklist.conf')
@@ -205,11 +218,19 @@ elif command == 'APPLY':
                 exit(7)
 
         if apply_dict['splashscreen']:
-            if os.system('/bin/systemctl enable asplashscreen') != 0:
-                exit(8)
+            if IMAGE_VERSION and float(IMAGE_VERSION) > MAX_VERSION_WITH_ASPLASH_SCREEN:
+                if os.system('/bin/systemctl enable splashscreen') != 0:
+                    exit(8)
+            else:
+                if os.system('/bin/systemctl enable asplashscreen') != 0:
+                    exit(8)
         else:
-            if os.system('/bin/systemctl disable asplashscreen') != 0:
-                exit(9)
+            if IMAGE_VERSION and float(IMAGE_VERSION) > MAX_VERSION_WITH_ASPLASH_SCREEN:
+                if os.system('/bin/systemctl disable splashscreen') != 0:
+                    exit(8)
+            else:
+                if os.system('/bin/systemctl disable asplashscreen') != 0:
+                    exit(9)
 
         if apply_dict['ap']:
             with open('/etc/tf_ap_enabled', 'w') as fd_ap_enabled:
