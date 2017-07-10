@@ -295,6 +295,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.label_sm_disabled.show()
             return
 
+        if self.image_version.number > (1, 9):
+            self.label_sm_url.setText('http://<red-brick-ip>/nagios')
+
         self.sarea_sm.show()
         self.slot_pbutton_sm_refresh_clicked()
 

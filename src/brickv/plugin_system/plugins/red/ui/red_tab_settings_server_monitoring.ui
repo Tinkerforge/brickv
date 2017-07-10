@@ -23,9 +23,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-67</y>
-        <width>839</width>
-        <height>822</height>
+        <y>-134</y>
+        <width>835</width>
+        <height>878</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
@@ -278,7 +278,7 @@
         </widget>
        </item>
        <item row="7" column="1">
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="label_sm_url">
          <property name="text">
           <string>http://&lt;red-brick-ip&gt;/nagios3</string>
          </property>
