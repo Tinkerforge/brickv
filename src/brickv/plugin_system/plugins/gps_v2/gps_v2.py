@@ -171,7 +171,7 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
         str_pdop = '%.2f' % (data.pdop/100.0,)
         str_hdop = '%.2f' % (data.hdop/100.0,)
         str_vdop = '%.2f' % (data.vdop/100.0,)
-        dop.setText(str(str_pdop) + ' / ' + str(str_hdop) + ' / ' + str(str_vdop))
+        dop.setText(str(str_vdop) + ' / ' + str(str_hdop) + ' / ' + str(str_pdop))
 
         if len(data.satellite_numbers) == 0:
             used.setText('None')
