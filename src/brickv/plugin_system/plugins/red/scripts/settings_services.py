@@ -10,6 +10,7 @@ import sys
 MIN_VERSION_WITH_NAGIOS4 = 2.0
 MAX_VERSION_WITH_CHKCONFIG = 1.9
 MAX_VERSION_WITH_ASPLASH_SCREEN = 1.9
+MAX_VERSION_WITH_GPU_2D_3D = 1.9
 
 IMAGE_VERSION = None
 
@@ -124,6 +125,8 @@ if command == 'CHECK':
                     return_dict['openhab'] = False
             else:
                 return_dict['openhab'] = False
+
+            return_dict['gpu'] = os.path.isfile('/etc/tf_gpu_2d_only')
         else:
             cmd = '/sbin/chkconfig | awk -F " " \'{print $1 "<==>" $2}\''
             cmd_ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
@@ -147,8 +150,9 @@ if command == 'CHECK':
             if return_dict['openhab'] == None:
                 return_dict['openhab'] = False # openHAB is not installed at all
 
+            return_dict['gpu'] = not os.path.isfile('/etc/modprobe.d/mali-blacklist.conf')
+
         return_dict['desktopenv'] = os.path.isfile('/etc/tf_x11_enabled')
-        return_dict['gpu'] = not os.path.isfile('/etc/modprobe.d/mali-blacklist.conf')
         return_dict['ap'] = os.path.isfile('/etc/tf_ap_enabled')
         return_dict['servermonitoring'] = os.path.isfile('/etc/tf_server_monitoring_enabled')
         return_dict['mobileinternet'] = os.path.isfile('/etc/tf_mobile_internet_enabled')
@@ -171,35 +175,43 @@ elif command == 'APPLY':
         if apply_dict['gpu']:
             lines = []
 
-            with open('/etc/modules', 'r') as fd_r_modules:
-                lines = fd_r_modules.readlines()
-                for i, l in enumerate(lines):
-                    if l.strip() == '#mali':
-                        lines[i] = l[1:]
+            if IMAGE_VERSION and float(IMAGE_VERSION) > MAX_VERSION_WITH_GPU_2D_3D:
+                with open('/etc/tf_gpu_2d_only', 'w') as fd_gpu_2d_only:
+                    pass
+            else:
+                with open('/etc/modules', 'r') as fd_r_modules:
+                    lines = fd_r_modules.readlines()
+                    for i, l in enumerate(lines):
+                        if l.strip() == '#mali':
+                            lines[i] = l[1:]
 
-            with open('/etc/modules', 'w') as fd_w_modules:
-                fd_w_modules.write(''.join(lines))
+                with open('/etc/modules', 'w') as fd_w_modules:
+                    fd_w_modules.write(''.join(lines))
 
-            if os.path.isfile('/etc/modprobe.d/mali-blacklist.conf'):
-                os.remove('/etc/modprobe.d/mali-blacklist.conf')
+                if os.path.isfile('/etc/modprobe.d/mali-blacklist.conf'):
+                    os.remove('/etc/modprobe.d/mali-blacklist.conf')
 
             with open('/usr/share/X11/xorg.conf.d/99-sunxifb.conf', 'w') as fd_fbconf:
                 fd_fbconf.write(SUNXI_FBTURBO_X11_DRIVER_CONF)
 
         else:
-            lines = []
-            with open('/etc/modules', 'r') as fd_r_modules:
-                lines = fd_r_modules.readlines()
+            if IMAGE_VERSION and float(IMAGE_VERSION) > MAX_VERSION_WITH_GPU_2D_3D:
+                if os.path.isfile('/etc/tf_gpu_2d_only'):
+                    os.remove('/etc/tf_gpu_2d_only')
+            else:
+                lines = []
+                with open('/etc/modules', 'r') as fd_r_modules:
+                    lines = fd_r_modules.readlines()
 
-                for i, l in enumerate(lines):
-                    if l.strip() == 'mali':
-                        lines[i] = '#'+l
+                    for i, l in enumerate(lines):
+                        if l.strip() == 'mali':
+                            lines[i] = '#'+l
 
-            with open('/etc/modules', 'w') as fd_w_modules:
-                fd_w_modules.write(''.join(lines))
+                with open('/etc/modules', 'w') as fd_w_modules:
+                    fd_w_modules.write(''.join(lines))
 
-            with open('/etc/modprobe.d/mali-blacklist.conf', 'w') as fd_w_malibl:
-                fd_w_malibl.write('blacklist mali')
+                with open('/etc/modprobe.d/mali-blacklist.conf', 'w') as fd_w_malibl:
+                    fd_w_malibl.write('blacklist mali')
 
             with open('/usr/share/X11/xorg.conf.d/99-sunxifb.conf', 'w') as fd_fbconf:
                 fd_fbconf.write(SUNXI_FBDEV_X11_DRIVER_CONF)
