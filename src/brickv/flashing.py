@@ -749,7 +749,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
     def read_current_uid(self):
         if self.current_bricklet_has_comcu():
-            return base58encode(self.current_bricklet_device().read_uid())
+            return base58encode(self.current_bricklet().read_uid())
 
         brick, port = self.current_brick_and_port()
         return self.parent.ipcon.read_bricklet_uid(brick, port)
