@@ -8,8 +8,6 @@ import subprocess
 from sys import argv
 from distutils.version import StrictVersion
 
-IMAGE_VERSION = None
-
 with open('/etc/tf_image_version', 'r') as f:
     IMAGE_VERSION = StrictVersion(f.read().split(' ')[0].strip())
 
@@ -232,7 +230,7 @@ CONFIG_DIR=/etc/dnsmasq.d,.dpkg-dist,.dpkg-old,.dpkg-new
 '''
 
 def setup_nat():
-    if not IMAGE_VERSION or IMAGE_VERSION < MIN_VERSION_FOR_NAT:
+    if IMAGE_VERSION < MIN_VERSION_FOR_NAT:
         return
 
     file_path_sysctl_conf = '/etc/sysctl.d/enable_ipv4_forward.conf'
@@ -284,7 +282,7 @@ if len(argv) < 2:
 try:
     apply_dict = json.loads(argv[1])
 
-    if not IMAGE_VERSION or IMAGE_VERSION < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
+    if IMAGE_VERSION < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
         if len(apply_dict) != 12:
             exit(1)
     else:
@@ -304,7 +302,7 @@ try:
     dhcp_end         = unicode(apply_dict['dhcp_end'])
     dhcp_mask        = unicode(apply_dict['dhcp_mask'])
 
-    if not IMAGE_VERSION or IMAGE_VERSION < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
+    if IMAGE_VERSION < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
         hostapd_driver = ''
     else:
         hostapd_driver = unicode(apply_dict['hostapd_driver'])

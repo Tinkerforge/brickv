@@ -8,8 +8,6 @@ import time
 import subprocess
 from distutils.version import StrictVersion
 
-IMAGE_VERSION = None
-
 with open('/etc/tf_image_version', 'r') as f:
     IMAGE_VERSION = StrictVersion(f.read().split(' ')[0].strip())
 
@@ -78,7 +76,7 @@ if command == 'CHECK':
                        'openhab'          : None,
                        'mobileinternet'   : None}
 
-        if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_CHKCONFIG:
+        if IMAGE_VERSION > MAX_VERSION_WITH_CHKCONFIG:
             # In this case we rely on STDOUT instead of exit code of the process
             # because systemctl returns exit value of 1 in case a service is disabled
             cmd_apache2 = '/bin/systemctl is-enabled apache2.service'
@@ -163,7 +161,7 @@ elif command == 'APPLY':
         if apply_dict['gpu']:
             lines = []
 
-            if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_GPU_2D_3D:
+            if IMAGE_VERSION > MAX_VERSION_WITH_GPU_2D_3D:
                 with open('/etc/tf_gpu_2d_only', 'w') as fd_gpu_2d_only:
                     pass
             else:
@@ -183,7 +181,7 @@ elif command == 'APPLY':
                 fd_fbconf.write(SUNXI_FBTURBO_X11_DRIVER_CONF)
 
         else:
-            if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_GPU_2D_3D:
+            if IMAGE_VERSION > MAX_VERSION_WITH_GPU_2D_3D:
                 if os.path.isfile('/etc/tf_gpu_2d_only'):
                     os.remove('/etc/tf_gpu_2d_only')
             else:
@@ -219,14 +217,14 @@ elif command == 'APPLY':
                 exit(7)
 
         if apply_dict['splashscreen']:
-            if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_ASPLASH_SCREEN:
+            if IMAGE_VERSION > MAX_VERSION_WITH_ASPLASH_SCREEN:
                 if os.system('/bin/systemctl enable splashscreen') != 0:
                     exit(8)
             else:
                 if os.system('/bin/systemctl enable asplashscreen') != 0:
                     exit(8)
         else:
-            if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_ASPLASH_SCREEN:
+            if IMAGE_VERSION > MAX_VERSION_WITH_ASPLASH_SCREEN:
                 if os.system('/bin/systemctl disable splashscreen') != 0:
                     exit(8)
             else:
@@ -295,7 +293,7 @@ elif command == 'APPLY':
             with open('/etc/tf_server_monitoring_enabled', 'w') as fd_server_monitoring_enabled:
                 pass
 
-            if not IMAGE_VERSION or IMAGE_VERSION < MIN_VERSION_WITH_NAGIOS4:
+            if IMAGE_VERSION < MIN_VERSION_WITH_NAGIOS4:
                 if os.system('/bin/systemctl enable nagios3') != 0:
                     exit(17)
             else:
@@ -306,7 +304,7 @@ elif command == 'APPLY':
             if os.path.isfile('/etc/tf_server_monitoring_enabled'):
                 os.remove('/etc/tf_server_monitoring_enabled')
 
-            if not IMAGE_VERSION or IMAGE_VERSION < MIN_VERSION_WITH_NAGIOS4:
+            if IMAGE_VERSION < MIN_VERSION_WITH_NAGIOS4:
                 if os.system('/bin/systemctl disable nagios3') != 0:
                     exit(18)
             else:
