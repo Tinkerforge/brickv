@@ -283,7 +283,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                 gui_after_apply(result)
 
         def cb_settings_ap_apply(result):
-            if self.image_version.number >= (2, 0):
+            if self.image_version.number >= (1, 10):
                 if result and not result.stderr and result.exit_code == 0:
                     self.script_manager.execute_script('settings_ap_status',
                                                        cb_settings_ap_status)
@@ -415,7 +415,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             apply_dict['dhcp_end']         = dhcp_end
             apply_dict['dhcp_mask']        = dhcp_mask
 
-            if self.image_version.number >= (2, 0):
+            if self.image_version.number >= (1, 10):
                 apply_dict['hostapd_driver'] = unicode('driver=nl80211')
 
             self.label_working_wait.show()
