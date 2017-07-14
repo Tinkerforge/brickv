@@ -846,8 +846,8 @@ class PlotWidget(QWidget):
                 self.key_items.append(label)
             else:
                 for i, config in enumerate(self.configs):
-                    pixmap = QPixmap(10, 1)
-                    QPainter(pixmap).fillRect(0, 0, 10, 1, config[1])
+                    pixmap = QPixmap(10, 2)
+                    QPainter(pixmap).fillRect(0, 0, 10, 2, config[1])
 
                     button = FixedSizeToolButton(self)
                     button.setText(config[0])
