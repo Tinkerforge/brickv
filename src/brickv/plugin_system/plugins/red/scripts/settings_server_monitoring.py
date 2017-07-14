@@ -10,16 +10,22 @@ import shlex
 import socket
 import argparse
 import subprocess
-from pynag import Model
 from sys import argv
 from time import sleep
-from tinkerforge.ip_connection import IPConnection
+from pynag import Model
+from distutils.version import StrictVersion
 from tinkerforge.bricklet_ptc import BrickletPTC
-from tinkerforge.bricklet_temperature import BrickletTemperature
+from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_humidity import BrickletHumidity
+from tinkerforge.bricklet_temperature import BrickletTemperature
 from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
 
-MIN_VERSION_WITH_NAGIOS4 = 2.0
+IMAGE_VERSION = None
+
+with open('/etc/tf_image_version', 'r') as f:
+    IMAGE_VERSION = StrictVersion(f.read().split(' ')[0].strip())
+
+MIN_VERSION_WITH_NAGIOS4 = StrictVersion('1.10')
 
 try:
     from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
@@ -30,24 +36,9 @@ except ImportError:
 if len(argv) < 2:
     exit(1)
 
-def get_image_version():
-    image_version = ''
-
-    with open('/etc/tf_image_version', 'r') as fh_version:
-        fh_version_lines = fh_version.readlines()
-
-        if len(fh_version_lines) > 0:
-            fh_version_lines_0_split = fh_version_lines[0].split(' ')
-
-            if len(fh_version_lines_0_split) > 0:
-                image_version = fh_version_lines_0_split[0].strip()
-
-    return image_version
-
-IMAGE_VERSION = get_image_version()
 FILE_PATH_CHECK_SCRIPT = '/usr/local/bin/check_tinkerforge.py'
 
-if not IMAGE_VERSION or float(IMAGE_VERSION) < MIN_VERSION_WITH_NAGIOS4:
+if not IMAGE_VERSION or IMAGE_VERSION < MIN_VERSION_WITH_NAGIOS4:
     FILE_PATH_TF_NAGIOS_CONFIGURATION = '/etc/nagios3/conf.d/tinkerforge.cfg'
 else:
     FILE_PATH_TF_NAGIOS_CONFIGURATION = '/usr/local/nagios/etc/objects/tinkerforge.cfg'
@@ -634,7 +625,7 @@ elif ACTION == 'APPLY':
             tf_contact.save()
             tf_contact_group.save()
 
-        if not IMAGE_VERSION or float(IMAGE_VERSION) < MIN_VERSION_WITH_NAGIOS4:
+        if not IMAGE_VERSION or IMAGE_VERSION < MIN_VERSION_WITH_NAGIOS4:
             if os.system('/bin/systemctl restart nagios3') != 0:
                 exit(1)
         else:
@@ -652,7 +643,7 @@ elif ACTION == 'APPLY_EMPTY':
         if os.path.isfile(FILE_PATH_TF_NAGIOS_CONFIGURATION):
             os.remove(FILE_PATH_TF_NAGIOS_CONFIGURATION)
 
-        if not IMAGE_VERSION or float(IMAGE_VERSION) < MIN_VERSION_WITH_NAGIOS4:
+        if not IMAGE_VERSION or IMAGE_VERSION < MIN_VERSION_WITH_NAGIOS4:
             if os.system('/bin/systemctl restart nagios3') != 0:
                 exit(1)
         else:

@@ -6,9 +6,15 @@ import json
 import netifaces
 import subprocess
 from sys import argv
+from distutils.version import StrictVersion
 
-MIN_VERSION_FOR_NAT = 1.7
-MIN_VERSION_FOR_HOSTAPD_UPDATE_1 = 2.0
+IMAGE_VERSION = None
+
+with open('/etc/tf_image_version', 'r') as f:
+    IMAGE_VERSION = StrictVersion(f.read().split(' ')[0].strip())
+
+MIN_VERSION_FOR_NAT = StrictVersion('1.7')
+MIN_VERSION_FOR_HOSTAPD_UPDATE_1 = StrictVersion('1.10')
 
 SH_SETUP_AP_NAT = '''
 #! /bin/bash
@@ -225,24 +231,8 @@ CONFIG_DIR=/etc/dnsmasq.d,.dpkg-dist,.dpkg-old,.dpkg-new
 #IGNORE_RESOLVCONF=yes
 '''
 
-def get_image_version():
-    image_version = ''
-
-    with open('/etc/tf_image_version', 'r') as fh_version:
-        fh_version_lines = fh_version.readlines()
-
-        if len(fh_version_lines) > 0:
-            fh_version_lines_0_split = fh_version_lines[0].split(' ')
-
-            if len(fh_version_lines_0_split) > 0:
-                image_version = fh_version_lines_0_split[0].strip()
-
-    return image_version
-
 def setup_nat():
-    image_version = get_image_version()
-
-    if not image_version or float(image_version) < MIN_VERSION_FOR_NAT:
+    if not IMAGE_VERSION or IMAGE_VERSION < MIN_VERSION_FOR_NAT:
         return
 
     file_path_sysctl_conf = '/etc/sysctl.d/enable_ipv4_forward.conf'
@@ -293,9 +283,8 @@ if len(argv) < 2:
 
 try:
     apply_dict = json.loads(argv[1])
-    image_version = get_image_version()
 
-    if not image_version or float(image_version) < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
+    if not IMAGE_VERSION or IMAGE_VERSION < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
         if len(apply_dict) != 12:
             exit(1)
     else:
@@ -315,7 +304,7 @@ try:
     dhcp_end         = unicode(apply_dict['dhcp_end'])
     dhcp_mask        = unicode(apply_dict['dhcp_mask'])
 
-    if not image_version or float(image_version) < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
+    if not IMAGE_VERSION or IMAGE_VERSION < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
         hostapd_driver = ''
     else:
         hostapd_driver = unicode(apply_dict['hostapd_driver'])
