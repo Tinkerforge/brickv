@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-06-21.      #
+# This file was automatically generated on 2017-07-17.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -205,8 +205,8 @@ class BrickletDMX(Device):
         """
         Sets the error LED configuration.
 
-        By default the error LED turns on if there is any error (see :cb:`Get Error Count`
-        callback). If you call this function with the SHOW ERROR option again, the LED
+        By default the error LED turns on if there is any error (see :cb:`Frame Error Count`
+        callback). If you call this function with the Show-Error option again, the LED
         will turn off until the next error occurs.
 
         You can also turn the LED permanently on/off or show a heartbeat.

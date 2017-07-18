@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-06-07.      #
+# This file was automatically generated on 2017-07-17.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -1103,13 +1103,13 @@ class BrickletRS485(Device):
 
         return ret
 
-    def register_callback(self, id_, callback):
+    def register_callback(self, callback_id, function):
         """
-        Registers a callback with ID *id* to the function *callback*.
+        Registers the given *function* with the given *callback_id*.
         """
-        if callback is None:
-            self.registered_callbacks.pop(id_, None)
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
         else:
-            self.registered_callbacks[id_] = callback
+            self.registered_callbacks[callback_id] = function
 
 RS485 = BrickletRS485 # for backward compatibility

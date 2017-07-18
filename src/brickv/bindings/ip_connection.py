@@ -178,8 +178,7 @@ class Device:
         Changes the response expected flag of the function specified by the
         *function_id* parameter. This flag can only be changed for setter
         (default value: *false*) and callback configuration functions
-        (default value: *true*). For getter functions it is always enabled
-        and callbacks it is always disabled.
+        (default value: *true*). For getter functions it is always enabled.
 
         Enabling the response expected flag for a setter function allows to
         detect timeouts and other error conditions calls of this setter as
@@ -506,14 +505,14 @@ class IPConnection:
         """
         self.waiter.release()
 
-    def register_callback(self, id_, callback):
+    def register_callback(self, callback_id, function):
         """
-        Registers a callback with ID *id* to the function *callback*.
+        Registers the given *function* with the given *callback_id*.
         """
-        if callback is None:
-            self.registered_callbacks.pop(id_, None)
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
         else:
-            self.registered_callbacks[id_] = callback
+            self.registered_callbacks[callback_id] = function
 
     def connect_unlocked(self, is_auto_reconnect):
         # NOTE: assumes that socket is None and socket_lock is locked
@@ -793,7 +792,6 @@ class IPConnection:
             hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]
             form = device.callback_formats[function_id] # FIXME: currently assuming that form is longer than 1
             llvalues = self.deserialize_data(payload, form)
-            fixed_length = hlcb[1]['fixed_length']
             has_data = False
             data = None
 
@@ -838,7 +836,7 @@ class IPConnection:
                 for role, llvalue in zip(hlcb[0], llvalues):
                     if role == 'stream_chunk_data':
                         result.append(data)
-                    elif role == None or not role.startswith('stream_'):
+                    elif role == None:
                         result.append(llvalue)
 
                 device.registered_callbacks[-function_id](*tuple(result))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-06-06.      #
+# This file was automatically generated on 2017-07-18.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -25,6 +25,7 @@ GetCoolstepConfiguration = namedtuple('CoolstepConfiguration', ['minimum_stallgu
 GetMiscConfiguration = namedtuple('MiscConfiguration', ['disable_short_to_ground_protection', 'synchronize_phase_frequency'])
 GetDriverStatus = namedtuple('DriverStatus', ['open_load', 'short_to_ground', 'over_temperature', 'motor_stalled', 'actual_motor_current', 'full_step_active', 'stallguard_result', 'stealth_voltage_amplitude'])
 GetAllData = namedtuple('AllData', ['current_velocity', 'current_position', 'remaining_steps', 'stack_voltage', 'external_voltage', 'current_consumption'])
+GetSPITFPBaudrateConfig = namedtuple('SPITFPBaudrateConfig', ['enable_dynamic_baudrate', 'minimum_dynamic_baudrate'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -86,6 +87,8 @@ class BrickSilentStepper(Device):
     FUNCTION_GET_ALL_DATA = 44
     FUNCTION_SET_ALL_DATA_PERIOD = 45
     FUNCTION_GET_ALL_DATA_PERIOD = 46
+    FUNCTION_SET_SPITFP_BAUDRATE_CONFIG = 231
+    FUNCTION_GET_SPITFP_BAUDRATE_CONFIG = 232
     FUNCTION_GET_SEND_TIMEOUT_COUNT = 233
     FUNCTION_SET_SPITFP_BAUDRATE = 234
     FUNCTION_GET_SPITFP_BAUDRATE = 235
@@ -203,6 +206,8 @@ class BrickSilentStepper(Device):
         self.response_expected[BrickSilentStepper.FUNCTION_GET_ALL_DATA] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickSilentStepper.FUNCTION_SET_ALL_DATA_PERIOD] = BrickSilentStepper.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickSilentStepper.FUNCTION_GET_ALL_DATA_PERIOD] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickSilentStepper.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickSilentStepper.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickSilentStepper.FUNCTION_GET_SEND_TIMEOUT_COUNT] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickSilentStepper.FUNCTION_SET_SPITFP_BAUDRATE] = BrickSilentStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickSilentStepper.FUNCTION_GET_SPITFP_BAUDRATE] = BrickSilentStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -716,7 +721,7 @@ class BrickSilentStepper(Device):
         * Actual Motor Current: Indicates the actual current control scaling as used in Coolstep mode.
           The returned value is between 0 and 31. It represents a multiplier of 1/32 to 32/32 of the
           ``Motor Run Current`` as set by :func:`Set Basic Configuration`. Example: If a ``Motor Run Current``
-          of 1000mA was set and the returned value is 15, the ``Actual Motor Current` is 16/32*1000mA = 500mA.
+          of 1000mA was set and the returned value is 15, the ``Actual Motor Current`` is 16/32*1000mA = 500mA.
 
         * Stallguard Result: Indicates the load of the motor. A lower value signals a higher load. Per trial and error
           you can find out which value corresponds to a suitable torque for the velocity used in your application.
@@ -798,6 +803,43 @@ class BrickSilentStepper(Device):
         """
         return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
 
+    def set_spitfp_baudrate_config(self, enable_dynamic_baudrate, minimum_dynamic_baudrate):
+        """
+        The SPITF protocol can be used with a dynamic baudrate. If the dynamic baudrate is
+        enabled, the Brick will try to adapt the baudrate for the communication
+        between Bricks and Bricklets according to the amount of data that is transferred.
+
+        The baudrate will be increased exponetially if lots of data is send/receieved and
+        decreased linearly if little data is send/received.
+
+        This lowers the baudrate in applications where little data is transferred (e.g.
+        a weather station) and increases the robustness. If there is lots of data to transfer
+        (e.g. Thermal Imaging Bricklet) it automatically increases the baudrate as needed.
+
+        In cases where some data has to transferred as fast as possible every few seconds
+        (e.g. RS485 Bricklet with a high baudrate but small payload) you may want to turn
+        the dynamic baudrate off to get the highest possible performance.
+
+        The maximum value of the baudrate can be set per port with the function
+        :func:`Set SPITFP Baudrate`. If the dynamic baudrate is disabled, the baudrate
+        as set by :func:`Set SPITFP Baudrate` will be used statically.
+
+        The minimum dynamic baudrate has a value range of 400000 to 2000000 baud.
+
+        By default dynamic baudrate is enabled and the minimum dynamic baudrate is 400000.
+
+        .. versionadded:: 2.0.4$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', '')
+
+    def get_spitfp_baudrate_config(self):
+        """
+        Returns the baudrate config, see :func:`Set SPITFP Baudrate Config`.
+
+        .. versionadded:: 2.0.4$nbsp;(Firmware)
+        """
+        return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', '! I'))
+
     def get_send_timeout_count(self, communication_method):
         """
         Returns the timeout count for the different communication methods.
@@ -818,6 +860,9 @@ class BrickSilentStepper(Device):
         the baudrate. If you get a high error count because of high
         interference (see :func:`Get SPITFP Error Count`) you can decrease the
         baudrate.
+
+        If the dynamic baudrate feature is enabled, the baudrate set by this
+        function corresponds to the maximum baudrate (see :func:`Set SPITFP Baudrate Config`).
 
         Regulatory testing is done with the default baudrate. If CE compatability
         or similar is necessary in you applications we recommend to not change
@@ -922,13 +967,13 @@ class BrickSilentStepper(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id_, callback):
+    def register_callback(self, callback_id, function):
         """
-        Registers a callback with ID *id* to the function *callback*.
+        Registers the given *function* with the given *callback_id*.
         """
-        if callback is None:
-            self.registered_callbacks.pop(id_, None)
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
         else:
-            self.registered_callbacks[id_] = callback
+            self.registered_callbacks[callback_id] = function
 
 SilentStepper = BrickSilentStepper # for backward compatibility

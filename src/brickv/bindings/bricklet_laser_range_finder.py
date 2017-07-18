@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-06-06.      #
+# This file was automatically generated on 2017-07-17.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -398,13 +398,13 @@ class BrickletLaserRangeFinder(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id_, callback):
+    def register_callback(self, callback_id, function):
         """
-        Registers a callback with ID *id* to the function *callback*.
+        Registers the given *function* with the given *callback_id*.
         """
-        if callback is None:
-            self.registered_callbacks.pop(id_, None)
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
         else:
-            self.registered_callbacks[id_] = callback
+            self.registered_callbacks[callback_id] = function
 
 LaserRangeFinder = BrickletLaserRangeFinder # for backward compatibility

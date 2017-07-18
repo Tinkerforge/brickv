@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-06-06.      #
+# This file was automatically generated on 2017-07-17.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -38,6 +38,7 @@ GetWifi2MeshConfiguration = namedtuple('Wifi2MeshConfiguration', ['enable', 'roo
 GetWifi2MeshCommonStatus = namedtuple('Wifi2MeshCommonStatus', ['status', 'root_node', 'root_candidate', 'connected_nodes', 'rx_count', 'tx_count'])
 GetWifi2MeshClientStatus = namedtuple('Wifi2MeshClientStatus', ['hostname', 'ip', 'subnet_mask', 'gateway', 'mac_address'])
 GetWifi2MeshAPStatus = namedtuple('Wifi2MeshAPStatus', ['ssid', 'ip', 'subnet_mask', 'gateway', 'mac_address'])
+GetSPITFPBaudrateConfig = namedtuple('SPITFPBaudrateConfig', ['enable_dynamic_baudrate', 'minimum_dynamic_baudrate'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -162,6 +163,8 @@ class BrickMaster(Device):
     FUNCTION_GET_WIFI2_MESH_COMMON_STATUS = 108
     FUNCTION_GET_WIFI2_MESH_CLIENT_STATUS = 109
     FUNCTION_GET_WIFI2_MESH_AP_STATUS = 110
+    FUNCTION_SET_SPITFP_BAUDRATE_CONFIG = 231
+    FUNCTION_GET_SPITFP_BAUDRATE_CONFIG = 232
     FUNCTION_GET_SEND_TIMEOUT_COUNT = 233
     FUNCTION_SET_SPITFP_BAUDRATE = 234
     FUNCTION_GET_SPITFP_BAUDRATE = 235
@@ -375,6 +378,8 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_MESH_COMMON_STATUS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_MESH_CLIENT_STATUS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_MESH_AP_STATUS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_SEND_TIMEOUT_COUNT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SET_SPITFP_BAUDRATE] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_SPITFP_BAUDRATE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -1784,6 +1789,43 @@ class BrickMaster(Device):
         """
         return GetWifi2MeshAPStatus(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_AP_STATUS, (), '', '32s 4B 4B 4B 6B'))
 
+    def set_spitfp_baudrate_config(self, enable_dynamic_baudrate, minimum_dynamic_baudrate):
+        """
+        The SPITF protocol can be used with a dynamic baudrate. If the dynamic baudrate is
+        enabled, the Brick will try to adapt the baudrate for the communication
+        between Bricks and Bricklets according to the amount of data that is transferred.
+
+        The baudrate will be increased exponetially if lots of data is send/receieved and
+        decreased linearly if little data is send/received.
+
+        This lowers the baudrate in applications where little data is transferred (e.g.
+        a weather station) and increases the robustness. If there is lots of data to transfer
+        (e.g. Thermal Imaging Bricklet) it automatically increases the baudrate as needed.
+
+        In cases where some data has to transferred as fast as possible every few seconds
+        (e.g. RS485 Bricklet with a high baudrate but small payload) you may want to turn
+        the dynamic baudrate off to get the highest possible performance.
+
+        The maximum value of the baudrate can be set per port with the function
+        :func:`Set SPITFP Baudrate`. If the dynamic baudrate is disabled, the baudrate
+        as set by :func:`Set SPITFP Baudrate` will be used statically.
+
+        The minimum dynamic baudrate has a value range of 400000 to 2000000 baud.
+
+        By default dynamic baudrate is enabled and the minimum dynamic baudrate is 400000.
+
+        .. versionadded:: 2.4.6$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', '')
+
+    def get_spitfp_baudrate_config(self):
+        """
+        Returns the baudrate config, see :func:`Set SPITFP Baudrate Config`.
+
+        .. versionadded:: 2.4.6$nbsp;(Firmware)
+        """
+        return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', '! I'))
+
     def get_send_timeout_count(self, communication_method):
         """
         Returns the timeout count for the different communication methods.
@@ -1806,6 +1848,9 @@ class BrickMaster(Device):
         the baudrate. If you get a high error count because of high
         interference (see :func:`Get SPITFP Error Count`) you can decrease the
         baudrate.
+
+        If the dynamic baudrate feature is enabled, the baudrate set by this
+        function corresponds to the maximum baudrate (see :func:`Set SPITFP Baudrate Config`).
 
         Regulatory testing is done with the default baudrate. If CE compatability
         or similar is necessary in you applications we recommend to not change
@@ -1922,13 +1967,13 @@ class BrickMaster(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def register_callback(self, id_, callback):
+    def register_callback(self, callback_id, function):
         """
-        Registers a callback with ID *id* to the function *callback*.
+        Registers the given *function* with the given *callback_id*.
         """
-        if callback is None:
-            self.registered_callbacks.pop(id_, None)
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
         else:
-            self.registered_callbacks[id_] = callback
+            self.registered_callbacks[callback_id] = function
 
 Master = BrickMaster # for backward compatibility
