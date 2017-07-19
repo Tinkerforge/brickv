@@ -36,9 +36,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>904</width>
-        <height>965</height>
+        <y>-70</y>
+        <width>905</width>
+        <height>925</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -53,10 +53,13 @@
             <item>
              <widget class="QFrame" name="frame_net_adv_functions">
               <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+               <enum>QFrame::NoFrame</enum>
               </property>
               <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
+               <enum>QFrame::Plain</enum>
+              </property>
+              <property name="lineWidth">
+               <number>0</number>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_5">
                <item>
