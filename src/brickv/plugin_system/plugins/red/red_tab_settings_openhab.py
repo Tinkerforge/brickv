@@ -101,10 +101,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
         self.image_version       = None # Set from REDTabSettings
         self.service_state       = None # Set from REDTabSettings
         self.action_in_progress  = False
-        self.configs             = [
-            ConfigFile('openhab.cfg', '/etc/openhab/configurations/openhab.cfg', self, deletable=False),
-            ConfigFile('logback.xml', '/etc/openhab/logback.xml', self, deletable=False)
-        ]
+        self.configs             = None
 
         self.recreate_widgets()
 
@@ -136,6 +133,17 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
             self.widget_controls.show()
             self.refresh_all_configs(None)
 
+        if self.image_version.number < (1, 10):
+            self.configs = [
+                ConfigFile('openhab.cfg', '/etc/openhab/configurations/openhab.cfg', self, deletable=False),
+                ConfigFile('logback.xml', '/etc/openhab/logback.xml', self, deletable=False)
+            ]
+        else:
+            self.configs = [
+                ConfigFile('tinkerforge.cfg', '/etc/openhab2/services/tinkerforge.cfg', self, deletable=False),
+                ConfigFile('org.ops4j.pax.logging.cfg', '/var/lib/openhab2/etc/org.ops4j.pax.logging.cfg', self, deletable=False)
+            ]
+
     def tab_off_focus(self):
         pass
 
@@ -144,7 +152,9 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
 
     def update_ui_state(self):
         index  = self.combo_config.currentIndex()
-        config = self.configs[index]
+
+        if self.configs:
+            config = self.configs[index]
 
         self.stacked_container.setCurrentIndex(index)
 
@@ -174,18 +184,19 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
 
         index = -1
 
-        for config in self.configs:
-            if config == None:
-                self.combo_config.insertSeparator(self.combo_config.count())
-                self.stacked_container.addWidget(QLabel('<dummy>'))
-            else:
-                config.index = self.combo_config.count()
+        if self.configs:
+            for config in self.configs:
+                if config == None:
+                    self.combo_config.insertSeparator(self.combo_config.count())
+                    self.stacked_container.addWidget(QLabel('<dummy>'))
+                else:
+                    config.index = self.combo_config.count()
 
-                self.combo_config.addItem(config.get_combo_item(), config.display_name)
-                self.stacked_container.addWidget(config.edit)
+                    self.combo_config.addItem(config.get_combo_item(), config.display_name)
+                    self.stacked_container.addWidget(config.edit)
 
-                if config.display_name == selected_display_name:
-                    index = config.index
+                    if config.display_name == selected_display_name:
+                        index = config.index
 
         if index >= 0:
             self.combo_config.setCurrentIndex(index)
@@ -285,22 +296,41 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
                 configs_by_basename = {}
 
                 for name in config_names['items']:
-                    configs_by_basename.setdefault(name[:-len('.items')], []).append((name, posixpath.join('/etc/openhab/configurations/items', name)))
+                    if self.image_version.number < (1, 10):
+                        configs_by_basename.setdefault(name[:-len('.items')], []).append((name, posixpath.join('/etc/openhab/configurations/items', name)))
+                    else:
+                        configs_by_basename.setdefault(name[:-len('.items')], []).append((name, posixpath.join('/etc/openhab2/items', name)))
 
                 for name in config_names['sitemaps']:
-                    configs_by_basename.setdefault(name[:-len('.sitemap')], []).append((name, posixpath.join('/etc/openhab/configurations/sitemaps', name)))
+                    if self.image_version.number < (1, 10):
+                        configs_by_basename.setdefault(name[:-len('.sitemap')], []).append((name, posixpath.join('/etc/openhab/configurations/sitemaps', name)))
+                    else:
+                        configs_by_basename.setdefault(name[:-len('.sitemap')], []).append((name, posixpath.join('/etc/openhab2/sitemaps', name)))
 
                 for name in config_names['rules']:
-                    configs_by_basename.setdefault(name[:-len('.rules')], []).append((name, posixpath.join('/etc/openhab/configurations/rules', name)))
+                    if self.image_version.number < (1, 10):
+                        configs_by_basename.setdefault(name[:-len('.rules')], []).append((name, posixpath.join('/etc/openhab/configurations/rules', name)))
+                    else:
+                        configs_by_basename.setdefault(name[:-len('.rules')], []).append((name, posixpath.join('/etc/openhab2/rules', name)))
 
                 for name in config_names['persistence']:
-                    configs_by_basename.setdefault(name[:-len('.persist')], []).append((name, posixpath.join('/etc/openhab/configurations/persistence', name)))
+                    if self.image_version.number < (1, 10):
+                        configs_by_basename.setdefault(name[:-len('.persist')], []).append((name, posixpath.join('/etc/openhab/configurations/persistence', name)))
+                    else:
+                        configs_by_basename.setdefault(name[:-len('.persist')], []).append((name, posixpath.join('/etc/openhab2/persistence', name)))
 
                 for name in config_names['scripts']:
-                    configs_by_basename.setdefault(name[:-len('.script')], []).append((name, posixpath.join('/etc/openhab/configurations/scripts', name)))
+                    if self.image_version.number < (1, 10):
+                        configs_by_basename.setdefault(name[:-len('.script')], []).append((name, posixpath.join('/etc/openhab/configurations/scripts', name)))
+                    else:
+                        configs_by_basename.setdefault(name[:-len('.script')], []).append((name, posixpath.join('/etc/openhab2/scripts', name)))
 
                 for name in config_names['transform']:
-                    configs_by_basename.setdefault(name[:-len('.transform')], []).append((name, posixpath.join('/etc/openhab/configurations/transform', name)))
+                    if self.image_version.number < (1, 10):
+                        configs_by_basename.setdefault(name[:-len('.transform')], []).append((name, posixpath.join('/etc/openhab/configurations/transform', name)))
+                    else:
+                        configs_by_basename.setdefault(name[:-len('.transform')], []).append((name, posixpath.join('/etc/openhab2/transform', name)))
+
             except Exception as e:
                 fatal_error(u'Received invalid config file collection: {0}'.format(e))
                 return
@@ -311,7 +341,10 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
                 if config != None:
                     old_configs[config.display_name] = config
 
-            self.configs = [old_configs['openhab.cfg'], old_configs['logback.xml']]
+            if self.image_version.number < (1, 10):
+                self.configs = [old_configs['openhab.cfg'], old_configs['logback.xml']]
+            else:
+                self.configs = [old_configs['tinkerforge.cfg'], old_configs['org.ops4j.pax.logging.cfg']]
 
             for key in sorted(configs_by_basename):
                 value = configs_by_basename[key]
@@ -371,17 +404,35 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
             return
 
         if endswith_items:
-            target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'items', name)
+            if self.image_version.number < (1, 10):
+                target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'items', name)
+            else:
+                target_path = posixpath.join('/', 'etc', 'openhab2', 'items', name)
         elif endswith_sitemap:
-            target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'sitemaps', name)
+            if self.image_version.number < (1, 10):
+                target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'sitemaps', name)
+            else:
+                target_path = posixpath.join('/', 'etc', 'openhab2', 'sitemaps', name)
         elif endswith_rules:
-            target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'rules', name)
+            if self.image_version.number < (1, 10):
+                target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'rules', name)
+            else:
+                target_path = posixpath.join('/', 'etc', 'openhab2', 'rules', name)
         elif endswith_persist:
-            target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'persistence', name)
+            if self.image_version.number < (1, 10):
+                target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'persistence', name)
+            else:
+                target_path = posixpath.join('/', 'etc', 'openhab2', 'persistence', name)
         elif endswith_script:
-            target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'scripts', name)
+            if self.image_version.number < (1, 10):
+                target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'scripts', name)
+            else:
+                target_path = posixpath.join('/', 'etc', 'openhab2', 'scripts', name)
         elif endswith_transform:
-            target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'transform', name)
+            if self.image_version.number < (1, 10):
+                target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'transform', name)
+            else:
+                target_path = posixpath.join('/', 'etc', 'openhab2', 'transform', name)
 
         def cb_open(red_file):
             red_file.release()
