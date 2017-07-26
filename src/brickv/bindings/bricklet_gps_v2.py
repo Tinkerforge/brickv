@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-17.      #
+# This file was automatically generated on 2017-07-26.      #
 #                                                           #
-# Python Bindings Version 2.1.13                            #
+# Python Bindings Version 2.1.14                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -233,7 +233,7 @@ class BrickletGPSV2(Device):
         """
         Returns the
 
-        * satellite numbers list
+        * satellite numbers list (up to 12 items)
         * fix value,
         * PDOP value,
         * HDOP value and
@@ -508,7 +508,7 @@ class BrickletGPSV2(Device):
         """
         Returns the
 
-        * satellite numbers list
+        * satellite numbers list (up to 12 items)
         * fix value,
         * PDOP value,
         * HDOP value and

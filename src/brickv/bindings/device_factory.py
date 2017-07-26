@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-06-10.      #
+# This file was automatically generated on 2017-07-26.      #
 #                                                           #
-# Python Bindings Version 2.1.13                            #
+# Python Bindings Version 2.1.14                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -315,6 +315,11 @@ except ValueError:
     from bricklet_rs232 import BrickletRS232
 
 try:
+    from .bricklet_rs485 import BrickletRS485
+except ValueError:
+    from bricklet_rs485 import BrickletRS485
+
+try:
     from .bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
 except ValueError:
     from bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
@@ -427,6 +432,7 @@ BrickletRGBLED.DEVICE_IDENTIFIER: BrickletRGBLED,
 BrickletRotaryEncoder.DEVICE_IDENTIFIER: BrickletRotaryEncoder,
 BrickletRotaryPoti.DEVICE_IDENTIFIER: BrickletRotaryPoti,
 BrickletRS232.DEVICE_IDENTIFIER: BrickletRS232,
+BrickletRS485.DEVICE_IDENTIFIER: BrickletRS485,
 BrickletSegmentDisplay4x7.DEVICE_IDENTIFIER: BrickletSegmentDisplay4x7,
 BrickletSolidStateRelay.DEVICE_IDENTIFIER: BrickletSolidStateRelay,
 BrickletSoundIntensity.DEVICE_IDENTIFIER: BrickletSoundIntensity,
