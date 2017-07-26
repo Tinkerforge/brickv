@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-17.      #
+# This file was automatically generated on 2017-07-25.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -742,6 +742,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -762,6 +765,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -782,6 +788,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -802,6 +811,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -822,6 +834,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -842,6 +857,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -862,6 +880,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -882,6 +903,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -907,7 +931,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = 0
 
         if len(message) != message_length:
-            raise Error(Error.INVALID_PARAMETER, 'Message has to be {0} items long'.format(message_length))
+            raise Error(Error.INVALID_PARAMETER, 'Message has to be exactly {0} items long'.format(message_length))
 
         with self.stream_lock:
             while message_chunk_offset < message_length:
@@ -926,7 +950,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = 0
 
         if len(message) != message_length:
-            raise Error(Error.INVALID_PARAMETER, 'Message has to be {0} items long'.format(message_length))
+            raise Error(Error.INVALID_PARAMETER, 'Message has to be exactly {0} items long'.format(message_length))
 
         with self.stream_lock:
             while message_chunk_offset < message_length:
@@ -945,7 +969,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = 0
 
         if len(message) != message_length:
-            raise Error(Error.INVALID_PARAMETER, 'Message has to be {0} items long'.format(message_length))
+            raise Error(Error.INVALID_PARAMETER, 'Message has to be exactly {0} items long'.format(message_length))
 
         with self.stream_lock:
             while message_chunk_offset < message_length:
@@ -964,7 +988,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = 0
 
         if len(message) != message_length:
-            raise Error(Error.INVALID_PARAMETER, 'Message has to be {0} items long'.format(message_length))
+            raise Error(Error.INVALID_PARAMETER, 'Message has to be exactly {0} items long'.format(message_length))
 
         with self.stream_lock:
             while message_chunk_offset < message_length:
@@ -983,7 +1007,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = 0
 
         if len(message) != message_length:
-            raise Error(Error.INVALID_PARAMETER, 'Message has to be {0} items long'.format(message_length))
+            raise Error(Error.INVALID_PARAMETER, 'Message has to be exactly {0} items long'.format(message_length))
 
         with self.stream_lock:
             while message_chunk_offset < message_length:
@@ -1002,7 +1026,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = 0
 
         if len(message) != message_length:
-            raise Error(Error.INVALID_PARAMETER, 'Message has to be {0} items long'.format(message_length))
+            raise Error(Error.INVALID_PARAMETER, 'Message has to be exactly {0} items long'.format(message_length))
 
         with self.stream_lock:
             while message_chunk_offset < message_length:
@@ -1021,7 +1045,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = 0
 
         if len(message) != message_length:
-            raise Error(Error.INVALID_PARAMETER, 'Message has to be {0} items long'.format(message_length))
+            raise Error(Error.INVALID_PARAMETER, 'Message has to be exactly {0} items long'.format(message_length))
 
         with self.stream_lock:
             while message_chunk_offset < message_length:
@@ -1040,7 +1064,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = 0
 
         if len(message) != message_length:
-            raise Error(Error.INVALID_PARAMETER, 'Message has to be {0} items long'.format(message_length))
+            raise Error(Error.INVALID_PARAMETER, 'Message has to be exactly {0} items long'.format(message_length))
 
         with self.stream_lock:
             while message_chunk_offset < message_length:
@@ -1054,6 +1078,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -1082,6 +1109,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -1110,6 +1140,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -1138,6 +1171,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -1166,6 +1202,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -1194,6 +1233,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -1222,6 +1264,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -1250,6 +1295,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -1278,6 +1326,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -1306,6 +1357,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0

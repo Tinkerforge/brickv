@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-17.      #
+# This file was automatically generated on 2017-07-25.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -367,6 +367,9 @@ class BrickletDMX(Device):
         """
 
         """
+        if len(frame) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Frame can be at most 65535 items long')
+
         frame = list(frame) # convert potential tuple to list
         frame_length = len(frame)
         frame_chunk_offset = 0

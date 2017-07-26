@@ -333,11 +333,11 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
 
     def update_image_combo(self):
         if self.image_combo.currentIndex() == 0:
-            async_call(self.thermal_imaging.set_image_transfer_config, BrickletThermalImaging.DATA_TRANSFER_CALLBACK_HIGH_CONTRAST_IMAGE, None, self.increase_error_count)
+            async_call(self.thermal_imaging.set_image_transfer_config, BrickletThermalImaging.IMAGE_TRANSFER_CALLBACK_HIGH_CONTRAST_IMAGE, None, self.increase_error_count)
             self.high_contrast_groupbox.show()
         else:
             self.high_contrast_groupbox.hide()
-            async_call(self.thermal_imaging.set_image_transfer_config, BrickletThermalImaging.DATA_TRANSFER_CALLBACK_TEMPERATURE_IMAGE, None, self.increase_error_count)
+            async_call(self.thermal_imaging.set_image_transfer_config, BrickletThermalImaging.IMAGE_TRANSFER_CALLBACK_TEMPERATURE_IMAGE, None, self.increase_error_count)
 
     def update_resolution(self):
         self.thermal_image.wait_for_minmax = 2
@@ -463,7 +463,7 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
         async_call(self.thermal_imaging.get_high_contrast_config, None, self.cb_get_high_contrast_config, self.increase_error_count)
         async_call(self.thermal_imaging.get_spotmeter_config, None, self.cb_get_spotmeter_config, self.increase_error_count)
         async_call(self.thermal_imaging.get_resolution, None, self.cb_get_resolution, self.increase_error_count)
-        self.thermal_imaging.set_image_transfer_config(BrickletThermalImaging.DATA_TRANSFER_CALLBACK_HIGH_CONTRAST_IMAGE)
+        self.thermal_imaging.set_image_transfer_config(BrickletThermalImaging.IMAGE_TRANSFER_CALLBACK_HIGH_CONTRAST_IMAGE)
         self.thermal_imaging.register_callback(self.thermal_imaging.CALLBACK_HIGH_CONTRAST_IMAGE, self.qtcb_high_contrast_image.emit)
         self.thermal_imaging.register_callback(self.thermal_imaging.CALLBACK_TEMPERATURE_IMAGE, self.qtcb_temperature_image.emit)
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-17.      #
+# This file was automatically generated on 2017-07-25.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -875,6 +875,9 @@ class BrickletRS485(Device):
         See :func:`Set RS485 Configuration` for configuration possibilities
         regarding baudrate, parity and so on.
         """
+        if len(message) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
+
         message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
@@ -940,6 +943,9 @@ class BrickletRS485(Device):
         This function must be called from the :cb:`Modbus Slave Read Coils Request` callback
         with the Request ID as provided by the argument of the callback.
         """
+        if len(coils) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Coils can be at most 65535 items long')
+
         coils = list(coils) # convert potential tuple to list
         coils_length = len(coils)
         coils_chunk_offset = 0
@@ -967,6 +973,9 @@ class BrickletRS485(Device):
         This function must be called from the :cb:`Modbus Slave Read Holding Registers Request`
         callback with the Request ID as provided by the argument of the callback.
         """
+        if len(holding_registers) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Holding Registers can be at most 65535 items long')
+
         holding_registers = list(holding_registers) # convert potential tuple to list
         holding_registers_length = len(holding_registers)
         holding_registers_chunk_offset = 0
@@ -1000,6 +1009,9 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
+        if len(coils) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Coils can be at most 65535 items long')
+
         coils = list(coils) # convert potential tuple to list
         coils_length = len(coils)
         coils_chunk_offset = 0
@@ -1033,6 +1045,9 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
+        if len(registers) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Registers can be at most 65535 items long')
+
         registers = list(registers) # convert potential tuple to list
         registers_length = len(registers)
         registers_chunk_offset = 0
@@ -1060,6 +1075,9 @@ class BrickletRS485(Device):
         This function must be called from the :cb:`Modbus Slave Read Discrete Inputs Request`
         callback with the Request ID as provided by the argument of the callback.
         """
+        if len(discrete_inputs) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Discrete Inputs can be at most 65535 items long')
+
         discrete_inputs = list(discrete_inputs) # convert potential tuple to list
         discrete_inputs_length = len(discrete_inputs)
         discrete_inputs_chunk_offset = 0
@@ -1087,6 +1105,9 @@ class BrickletRS485(Device):
         This function must be called from the :cb:`Modbus Slave Read Input Registers Request` callback
         with the Request ID as provided by the argument of the callback.
         """
+        if len(input_registers) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Input Registers can be at most 65535 items long')
+
         input_registers = list(input_registers) # convert potential tuple to list
         input_registers_length = len(input_registers)
         input_registers_chunk_offset = 0

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-17.      #
+# This file was automatically generated on 2017-07-25.      #
 #                                                           #
 # Python Bindings Version 2.1.13                            #
 #                                                           #
@@ -65,10 +65,10 @@ class BrickletThermalImaging(Device):
 
     RESOLUTION_0_TO_6553_KELVIN = 0
     RESOLUTION_0_TO_655_KELVIN = 1
-    DATA_TRANSFER_MANUAL_HIGH_CONTRAST_IMAGE = 0
-    DATA_TRANSFER_MANUAL_TEMPERATURE_IMAGE = 1
-    DATA_TRANSFER_CALLBACK_HIGH_CONTRAST_IMAGE = 2
-    DATA_TRANSFER_CALLBACK_TEMPERATURE_IMAGE = 3
+    IMAGE_TRANSFER_MANUAL_HIGH_CONTRAST_IMAGE = 0
+    IMAGE_TRANSFER_MANUAL_TEMPERATURE_IMAGE = 1
+    IMAGE_TRANSFER_CALLBACK_HIGH_CONTRAST_IMAGE = 2
+    IMAGE_TRANSFER_CALLBACK_TEMPERATURE_IMAGE = 3
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
