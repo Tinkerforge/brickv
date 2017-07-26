@@ -8,13 +8,15 @@ import time
 import subprocess
 from distutils.version import StrictVersion
 
-with open('/etc/tf_image_version', 'r') as f:
-    IMAGE_VERSION = StrictVersion(f.read().split(' ')[0].strip())
-
+IMAGE_VERSION = None
 MIN_VERSION_WITH_NAGIOS4 = StrictVersion('1.10')
 MAX_VERSION_WITH_CHKCONFIG = StrictVersion('1.9')
 MAX_VERSION_WITH_ASPLASH_SCREEN = StrictVersion('1.9')
 MAX_VERSION_WITH_GPU_2D_3D = StrictVersion('1.9')
+MIN_VERSION_WITH_OPENHAB2 = StrictVersion('1.10')
+
+with open('/etc/tf_image_version', 'r') as f:
+    IMAGE_VERSION = StrictVersion(f.read().split(' ')[0].strip())
 
 if len(sys.argv) < 2:
     sys.stderr.write(u'Missing parameters'.encode('utf-8'))
@@ -76,7 +78,7 @@ if command == 'CHECK':
                        'openhab'          : None,
                        'mobileinternet'   : None}
 
-        if IMAGE_VERSION > MAX_VERSION_WITH_CHKCONFIG:
+        if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_CHKCONFIG:
             # In this case we rely on STDOUT instead of exit code of the process
             # because systemctl returns exit value of 1 in case a service is disabled
             cmd_apache2 = '/bin/systemctl is-enabled apache2.service'
@@ -87,7 +89,7 @@ if command == 'CHECK':
             cmd_splashscreen_ps = subprocess.Popen(cmd_splashscreen, shell=True, stdout=subprocess.PIPE)
             cmd_splashscreen_ps_stdout = cmd_splashscreen_ps.communicate()[0].strip()
 
-            cmd_openhab = '/bin/systemctl is-enabled openhab.service'
+            cmd_openhab = '/bin/systemctl is-enabled openhab2.service'
             cmd_openhab_ps = subprocess.Popen(cmd_openhab, shell=True, stdout=subprocess.PIPE)
             cmd_openhab_ps_stdout = cmd_openhab_ps.communicate()[0].strip()
 
@@ -161,7 +163,7 @@ elif command == 'APPLY':
         if apply_dict['gpu']:
             lines = []
 
-            if IMAGE_VERSION > MAX_VERSION_WITH_GPU_2D_3D:
+            if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_GPU_2D_3D:
                 with open('/etc/tf_gpu_2d_only', 'w') as fd_gpu_2d_only:
                     pass
             else:
@@ -181,7 +183,7 @@ elif command == 'APPLY':
                 fd_fbconf.write(SUNXI_FBTURBO_X11_DRIVER_CONF)
 
         else:
-            if IMAGE_VERSION > MAX_VERSION_WITH_GPU_2D_3D:
+            if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_GPU_2D_3D:
                 if os.path.isfile('/etc/tf_gpu_2d_only'):
                     os.remove('/etc/tf_gpu_2d_only')
             else:
@@ -217,14 +219,14 @@ elif command == 'APPLY':
                 exit(7)
 
         if apply_dict['splashscreen']:
-            if IMAGE_VERSION > MAX_VERSION_WITH_ASPLASH_SCREEN:
+            if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_ASPLASH_SCREEN:
                 if os.system('/bin/systemctl enable splashscreen') != 0:
                     exit(8)
             else:
                 if os.system('/bin/systemctl enable asplashscreen') != 0:
                     exit(8)
         else:
-            if IMAGE_VERSION > MAX_VERSION_WITH_ASPLASH_SCREEN:
+            if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_ASPLASH_SCREEN:
                 if os.system('/bin/systemctl disable splashscreen') != 0:
                     exit(8)
             else:
@@ -293,30 +295,38 @@ elif command == 'APPLY':
             with open('/etc/tf_server_monitoring_enabled', 'w') as fd_server_monitoring_enabled:
                 pass
 
-            if IMAGE_VERSION < MIN_VERSION_WITH_NAGIOS4:
-                if os.system('/bin/systemctl enable nagios3') != 0:
+            if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NAGIOS4:
+                if os.system('/bin/systemctl enable nagios') != 0:
                     exit(17)
             else:
-                if os.system('/bin/systemctl enable nagios') != 0:
+                if os.system('/bin/systemctl enable nagios3') != 0:
                     exit(17)
 
         else:
             if os.path.isfile('/etc/tf_server_monitoring_enabled'):
                 os.remove('/etc/tf_server_monitoring_enabled')
 
-            if IMAGE_VERSION < MIN_VERSION_WITH_NAGIOS4:
-                if os.system('/bin/systemctl disable nagios3') != 0:
+            if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NAGIOS4:
+                if os.system('/bin/systemctl disable nagios') != 0:
                     exit(18)
             else:
-                if os.system('/bin/systemctl disable nagios') != 0:
+                if os.system('/bin/systemctl disable nagios3') != 0:
                     exit(18)
 
         if apply_dict['openhab']:
-            if os.system('/bin/systemctl enable openhab') != 0:
-                exit(19)
+            if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_OPENHAB2:
+                if os.system('/bin/systemctl enable openhab2') != 0:
+                    exit(19)
+            else:
+                if os.system('/bin/systemctl enable openhab') != 0:
+                    exit(19)
         else:
-            if os.system('/bin/systemctl disable openhab') != 0:
-                exit(20)
+            if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_OPENHAB2:
+                if os.system('/bin/systemctl disable openhab2') != 0:
+                    exit(20)
+            else:
+                if os.system('/bin/systemctl disable openhab') != 0:
+                    exit(20)
 
         if apply_dict['mobileinternet']:
             with open('/etc/tf_mobile_internet_enabled', 'w') as fd_ap_enabled:

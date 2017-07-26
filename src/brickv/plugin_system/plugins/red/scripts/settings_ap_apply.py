@@ -8,11 +8,12 @@ import subprocess
 from sys import argv
 from distutils.version import StrictVersion
 
-with open('/etc/tf_image_version', 'r') as f:
-    IMAGE_VERSION = StrictVersion(f.read().split(' ')[0].strip())
-
+IMAGE_VERSION = None
 MIN_VERSION_FOR_NAT = StrictVersion('1.7')
 MIN_VERSION_FOR_HOSTAPD_UPDATE_1 = StrictVersion('1.10')
+
+with open('/etc/tf_image_version', 'r') as f:
+    IMAGE_VERSION = StrictVersion(f.read().split(' ')[0].strip())
 
 SH_SETUP_AP_NAT = '''
 #! /bin/bash
@@ -230,7 +231,10 @@ CONFIG_DIR=/etc/dnsmasq.d,.dpkg-dist,.dpkg-old,.dpkg-new
 '''
 
 def setup_nat():
-    if IMAGE_VERSION < MIN_VERSION_FOR_NAT:
+    if IMAGE_VERSION and IMAGE_VERSION < MIN_VERSION_FOR_NAT:
+        return
+
+    if not IMAGE_VERSION:
         return
 
     file_path_sysctl_conf = '/etc/sysctl.d/enable_ipv4_forward.conf'
@@ -282,11 +286,11 @@ if len(argv) < 2:
 try:
     apply_dict = json.loads(argv[1])
 
-    if IMAGE_VERSION < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
-        if len(apply_dict) != 12:
+    if IMAGE_VERSION and  IMAGE_VERSION >= MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
+        if len(apply_dict) != 13:
             exit(1)
     else:
-        if len(apply_dict) != 13:
+        if len(apply_dict) != 12:
             exit(1)
 
     interface        = unicode(apply_dict['interface'])
@@ -302,10 +306,10 @@ try:
     dhcp_end         = unicode(apply_dict['dhcp_end'])
     dhcp_mask        = unicode(apply_dict['dhcp_mask'])
 
-    if IMAGE_VERSION < MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
-        hostapd_driver = ''
-    else:
+    if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
         hostapd_driver = unicode(apply_dict['hostapd_driver'])
+    else:
+        hostapd_driver = ''
 
     with open('/etc/default/dnsmasq', 'w') as fd_default_dnsmasq:
         fd_default_dnsmasq.write(DEFAULT_DNSMASQ)

@@ -20,10 +20,11 @@ from tinkerforge.bricklet_humidity import BrickletHumidity
 from tinkerforge.bricklet_temperature import BrickletTemperature
 from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
 
+IMAGE_VERSION = None
+MIN_VERSION_WITH_NAGIOS4 = StrictVersion('1.10')
+
 with open('/etc/tf_image_version', 'r') as f:
     IMAGE_VERSION = StrictVersion(f.read().split(' ')[0].strip())
-
-MIN_VERSION_WITH_NAGIOS4 = StrictVersion('1.10')
 
 try:
     from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
@@ -36,10 +37,10 @@ if len(argv) < 2:
 
 FILE_PATH_CHECK_SCRIPT = '/usr/local/bin/check_tinkerforge.py'
 
-if IMAGE_VERSION < MIN_VERSION_WITH_NAGIOS4:
-    FILE_PATH_TF_NAGIOS_CONFIGURATION = '/etc/nagios3/conf.d/tinkerforge.cfg'
-else:
+if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NAGIOS4:
     FILE_PATH_TF_NAGIOS_CONFIGURATION = '/usr/local/nagios/etc/objects/tinkerforge.cfg'
+else:
+    FILE_PATH_TF_NAGIOS_CONFIGURATION = '/etc/nagios3/conf.d/tinkerforge.cfg'
 
 SCRIPT_TINKERFORGE_CHECK = '''#!/usr/bin/env python
 # -*- coding: utf-8 -*-
@@ -623,12 +624,13 @@ elif ACTION == 'APPLY':
             tf_contact.save()
             tf_contact_group.save()
 
-        if IMAGE_VERSION < MIN_VERSION_WITH_NAGIOS4:
-            if os.system('/bin/systemctl restart nagios3') != 0:
-                exit(1)
-        else:
+        if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NAGIOS4:
             if os.system('/bin/systemctl restart nagios') != 0:
                 exit(1)
+        else:
+            if os.system('/bin/systemctl restart nagios3') != 0:
+                exit(1)
+
     except Exception as e:
         sys.stderr.write(unicode(e))
         exit(1)
@@ -641,11 +643,11 @@ elif ACTION == 'APPLY_EMPTY':
         if os.path.isfile(FILE_PATH_TF_NAGIOS_CONFIGURATION):
             os.remove(FILE_PATH_TF_NAGIOS_CONFIGURATION)
 
-        if IMAGE_VERSION < MIN_VERSION_WITH_NAGIOS4:
-            if os.system('/bin/systemctl restart nagios3') != 0:
+        if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NAGIOS4:
+            if os.system('/bin/systemctl restart nagios') != 0:
                 exit(1)
         else:
-            if os.system('/bin/systemctl restart nagios') != 0:
+            if os.system('/bin/systemctl restart nagios3') != 0:
                 exit(1)
 
     except Exception as e:
