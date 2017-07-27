@@ -39,6 +39,8 @@ from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 from brickv.async_call import async_call
 from brickv.plugin_system.plugins.red.ui_red_update_tinkerforge_software import Ui_REDUpdateTinkerforgeSoftware
 
+MAX_IMAGE_VERSION = (1, 9)
+
 class ImageVersion(object):
     string = None
     number = (0, 0)
@@ -1043,16 +1045,23 @@ class RED(PluginBase, Ui_RED):
 
                 if m != None:
                     try:
-                        self.image_version.string = image_version
                         self.image_version.number = (int(m.group(1)), int(m.group(2)))
                         self.image_version.flavor = m.group(3)
+                        self.image_version.string = image_version # set this last, because it is used as validity check
                     except:
-                        pass
+                        self.label_discovering.setText('Error: Could not parse Image Version: {0}'.format(image_version))
+                    else:
+                        if self.image_version.number > MAX_IMAGE_VERSION:
+                            self.label_discovering.setText('Image Version {0} is not yet supported. Please update Brick Viewer!'.format(image_version))
+                        else:
+                            self.label_discovering.hide()
+                            self.tab_widget.show()
+                            self.tab_widget_current_changed(self.tab_widget.currentIndex())
+                else:
+                    self.label_discovering.setText('Error: Could not parse Image Version: {0}'.format(image_version))
 
-                self.label_discovering.hide()
-                self.tab_widget.show()
-                self.tab_widget_current_changed(self.tab_widget.currentIndex())
-
+            self.label_discovering.setText('Discovering Image Version...')
+            self.label_discovering.show()
             async_call(read_image_version_async, REDFile(self.session), cb_success, None)
         else:
             self.tab_widget_current_changed(self.tab_widget.currentIndex())
@@ -1102,7 +1111,7 @@ class RED(PluginBase, Ui_RED):
                 tab.tab_off_focus()
 
     def perform_action(self, param):
-        if self.session == None:
+        if self.session == None or self.image_version.string == None or self.image_version.number > MAX_IMAGE_VERSION:
             return
 
         if param <= 2:
