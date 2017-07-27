@@ -36,9 +36,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-70</y>
-        <width>905</width>
-        <height>925</height>
+        <y>0</y>
+        <width>902</width>
+        <height>897</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -51,17 +51,11 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <widget class="QFrame" name="frame_net_adv_functions">
-              <property name="frameShape">
-               <enum>QFrame::NoFrame</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Plain</enum>
-              </property>
-              <property name="lineWidth">
-               <number>0</number>
-              </property>
+             <widget class="QWidget" name="widget_net_adv_functions" native="true">
               <layout class="QVBoxLayout" name="verticalLayout_5">
+               <property name="margin">
+                <number>0</number>
+               </property>
                <item>
                 <layout class="QGridLayout" name="gridLayout_5">
                  <item row="0" column="1">
@@ -246,59 +240,12 @@
            <layout class="QVBoxLayout" name="verticalLayout_7">
             <item>
              <layout class="QGridLayout" name="gridLayout_8">
-              <item row="0" column="0" colspan="2">
-               <widget class="QFrame" name="frame_working_please_wait">
-                <property name="frameShape">
-                 <enum>QFrame::NoFrame</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_10">
+              <item row="1" column="0" colspan="2">
+               <widget class="QWidget" name="widget_net_config" native="true">
+                <layout class="QGridLayout" name="gridLayout_4">
                  <property name="margin">
                   <number>0</number>
                  </property>
-                 <item>
-                  <widget class="QLabel" name="label_working_wait">
-                   <property name="text">
-                    <string>Working, please wait...</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QProgressBar" name="pbar_working_wait">
-                   <property name="maximum">
-                    <number>0</number>
-                   </property>
-                   <property name="value">
-                    <number>-1</number>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="textVisible">
-                    <bool>false</bool>
-                   </property>
-                   <property name="format">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item row="1" column="0" colspan="2">
-               <widget class="QFrame" name="frame_net_config">
-                <property name="frameShape">
-                 <enum>QFrame::NoFrame</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QGridLayout" name="gridLayout_4">
                  <item row="0" column="1" colspan="2">
                   <widget class="QComboBox" name="cbox_net_intf">
                    <property name="sizePolicy">
@@ -316,9 +263,6 @@
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                   </property>
-                   <property name="buddy">
-                    <cstring>tree_net_wireless_ap</cstring>
                    </property>
                   </widget>
                  </item>
@@ -351,9 +295,6 @@
                   <widget class="QLabel" name="label_31">
                    <property name="text">
                     <string>Interfaces:</string>
-                   </property>
-                   <property name="buddy">
-                    <cstring>cbox_net_intf</cstring>
                    </property>
                   </widget>
                  </item>
@@ -433,9 +374,6 @@
                    <property name="text">
                     <string>Address:</string>
                    </property>
-                   <property name="buddy">
-                    <cstring>cbox_net_conftype</cstring>
-                   </property>
                   </widget>
                  </item>
                  <item row="6" column="0">
@@ -443,18 +381,12 @@
                    <property name="text">
                     <string>Gateway:</string>
                    </property>
-                   <property name="buddy">
-                    <cstring>sbox_net_gw1</cstring>
-                   </property>
                   </widget>
                  </item>
                  <item row="5" column="0">
                   <widget class="QLabel" name="label_mask">
                    <property name="text">
                     <string>Subnet Mask:</string>
-                   </property>
-                   <property name="buddy">
-                    <cstring>sbox_net_mask1</cstring>
                    </property>
                   </widget>
                  </item>
@@ -605,9 +537,6 @@
                    <property name="text">
                     <string>WPA Key:</string>
                    </property>
-                   <property name="buddy">
-                    <cstring>ledit_net_wireless_key</cstring>
-                   </property>
                   </widget>
                  </item>
                  <item row="4" column="0">
@@ -615,18 +544,12 @@
                    <property name="text">
                     <string>IP:</string>
                    </property>
-                   <property name="buddy">
-                    <cstring>sbox_net_ip1</cstring>
-                   </property>
                   </widget>
                  </item>
                  <item row="7" column="0">
                   <widget class="QLabel" name="label_dns">
                    <property name="text">
                     <string>DNS:</string>
-                   </property>
-                   <property name="buddy">
-                    <cstring>sbox_net_dns1</cstring>
                    </property>
                   </widget>
                  </item>
@@ -807,6 +730,44 @@
                     </widget>
                    </item>
                   </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="0" column="0" colspan="2">
+               <widget class="QWidget" name="widget_working_please_wait" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_10">
+                 <property name="margin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_working_wait">
+                   <property name="text">
+                    <string>Working, please wait...</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QProgressBar" name="pbar_working_wait">
+                   <property name="maximum">
+                    <number>0</number>
+                   </property>
+                   <property name="value">
+                    <number>-1</number>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                   <property name="textVisible">
+                    <bool>false</bool>
+                   </property>
+                   <property name="format">
+                    <string/>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>

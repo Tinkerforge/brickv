@@ -289,7 +289,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         # Network fields
         self.address_configuration_gui(False)
         self.static_ip_configuration_gui(False)
-        self.frame_working_please_wait.hide()
+        self.widget_working_please_wait.hide()
         self.cbox_net_intf.currentIndexChanged.connect(self.slot_cbox_net_intf_current_idx_changed)
         self.cbox_net_conftype.currentIndexChanged.connect(self.slot_cbox_net_conftype_current_idx_changed)
         QtCore.QObject.connect(self.tree_net_wireless_ap.selectionModel(),
@@ -670,14 +670,14 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
     def update_gui(self, state):
         def show_work_in_progress():
-            self.frame_working_please_wait.show()
-            self.frame_net_config.setEnabled(False)
-            self.frame_net_adv_functions.setEnabled(False)
+            self.widget_working_please_wait.show()
+            self.widget_net_config.setEnabled(False)
+            self.widget_net_adv_functions.setEnabled(False)
 
         def hide_work_in_progress():
-            self.frame_working_please_wait.hide()
-            self.frame_net_config.setEnabled(True)
-            self.frame_net_adv_functions.setEnabled(True)
+            self.widget_working_please_wait.hide()
+            self.widget_net_config.setEnabled(True)
+            self.widget_net_adv_functions.setEnabled(True)
 
         if state == WORKING_STATE_REFRESH:
             self.work_in_progress = True
