@@ -367,8 +367,16 @@
 - Split identifier into extended and standard part in CAN Bricklet plugin
 - Reorganize plugin info bar to fit more elements
 
-2017-05-12: 2.3.9 (<unknown>)
+2017-05-12: 2.3.9 (2c1c8c4)
 - Add support for GPS Bricklet 2.0
 - Add update mechanism for API bindings and Brick Viewer on RED Brick
 - Add checkbox for setting the WIFI Extension (2.0) password, old password is
   not shown anymore
+
+2017-07-27: 2.3.10 (<unknown>)
+- Add support for RS485 Bricklet
+- Enable scroll buttons for main device tab bar on Mac OS X
+- Improve usability of Real-Time Clock Bricklets calibration dialog
+- Fix firmware auto-update for Co-MCU Bricklets
+- Fix order of DOP values in GPS Bricklet 2.0 plugin
+- Double plot legend line indicators thickness
