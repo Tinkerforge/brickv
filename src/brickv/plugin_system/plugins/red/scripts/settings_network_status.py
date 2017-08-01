@@ -6,7 +6,6 @@ import dbus
 import json
 import socket
 import netifaces
-import subprocess
 from wicd import dbusmanager as wicd_dbusmanager
 from wicd import misc as wicd_misc
 
@@ -46,7 +45,7 @@ except:
 try:
     # Initially return_dict['cstat_intf_active']['name'] None because this field is
     # appended with interface type and to avoid appending interface type when no interface is found
-    return_dict['cstat_intf_active']['name'] = None 
+    return_dict['cstat_intf_active']['name'] = None
     return_dict['cstat_intf_active']['type'] = '-'
     return_dict['cstat_intf_active']['ip'] = '-'
     return_dict['cstat_intf_active']['mask'] = '-'
@@ -58,7 +57,7 @@ try:
 
     if status[0] == wicd_misc.NOT_CONNECTED:
         return_dict['cstat_status'] = 'Not connected'
-        
+
     elif status[0] == wicd_misc.CONNECTING:
         return_dict['cstat_status'] = 'Connecting ({0})...'.format(status[1][0][0].upper() + status[1][0][1:])
 
