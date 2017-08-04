@@ -4,6 +4,7 @@
 import dbus
 import json
 import socket
+import traceback
 import netifaces
 
 TYPE_WIRELESS = 1
@@ -45,6 +46,7 @@ try:
         # NetworkManager not running
         exit(1)
 except:
+    traceback.print_exc()
     exit(1)
 
 def get_active_interface_info(interface, intf_type):
@@ -67,6 +69,7 @@ try:
     if hname != '':
         return_dict['cstat_hostname'] = hname
 except:
+    traceback.print_exc()
     exit(1)
 
 # Get default gateway
@@ -102,6 +105,7 @@ try:
 
         get_active_interface_info(gw_interface, gw_interface_type)
 except:
+    traceback.print_exc()
     exit(1)
 
 # Get status and active interface
@@ -155,6 +159,8 @@ try:
                     return_dict['cstat_status'] = return_dict['cstat_status'] + " to " + str(bytearray(active_ap_ssid))
 
                     break
+    else:
+        return_dict['cstat_status'] = 'Disconnected'
 except:
     return_dict['cstat_status'] = '-'
 
