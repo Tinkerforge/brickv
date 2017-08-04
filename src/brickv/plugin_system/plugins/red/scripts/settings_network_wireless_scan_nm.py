@@ -3,6 +3,7 @@
 
 import json
 import dbus
+import traceback
 
 NM_DEVICE_TYPE_WIFI = 2
 
@@ -24,11 +25,26 @@ try:
         # NetworkManager not running
         exit(1)
 except:
+    traceback.print_exc()
     exit(1)
 
 try:
+    # Try to request scan with all available WiFi interfaces. Ignore errors.
     nm_devices = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
                                 dbus_interface = DBUS_NM_INTERFACE).GetDevices()
+
+    try:
+        for device_object_path in nm_devices:
+            device_type = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
+                                         dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_INTERFACE, "DeviceType")
+
+            if device_type != NM_DEVICE_TYPE_WIFI:
+                continue
+
+            device_type = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
+                                         dbus_interface = DBUS_NM_DEVICE_WIRELESS_INTERFACE).RequestScan(dbus.Array([], signature = dbus.Signature("a{sv}")))
+    except:
+        pass
 
     for device_object_path in nm_devices:
         device_type = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
@@ -89,6 +105,7 @@ try:
         if len(return_dict) > 0:
             break
 except:
+    traceback.print_exc()
     exit(1)
 
 print(json.dumps(return_dict, separators=(',', ':')))
