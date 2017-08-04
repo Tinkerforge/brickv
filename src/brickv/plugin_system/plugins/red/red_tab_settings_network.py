@@ -23,6 +23,8 @@ Boston, MA 02111-1307, USA.
 """
 
 import json
+import socket
+import struct
 
 from PyQt4 import Qt, QtCore, QtGui
 
@@ -96,6 +98,52 @@ AP_NAME_COL_WIDTH = 300
 AP_CHANNEL_COL_WIDTH = 100
 AP_SECURITY_COL_WIDTH = 100
 AP_QUALITY_COL_WIDTH = 100
+
+CONNECTION_CONFIG_WIFI_DICT = {
+                                'connection':
+                                    {
+                                        'id': '_tf_brickv_wifi',
+                                        'interface-name': None,
+                                        'type': '802-11-wireless',
+                                        'autoconnect': True
+                                    },
+                                '802-11-wireless':
+                                    {
+                                        'ssid': None,
+                                        'bssid': None,
+                                        'hidden': None
+                                    },
+                                'ipv4':
+                                    {
+                                        'method': None,
+                                        'dns': None,
+                                        'address-data': None,
+                                        'gateway': None,
+                                        'dhcp-send-hostname': True
+                                    }
+                              }
+
+CONNECTION_CONFIG_ETHERNET_DICT = {
+                                    'connection':
+                                        {
+                                            'id': '_tf_brickv_ethernet',
+                                            'interface-name': None,
+                                            'type': '802-3-ethernet',
+                                            'autoconnect': True
+                                        },
+                                    '802-3-ethernet':
+                                        {
+                                            'auto-negotiate': True,
+                                        },
+                                    'ipv4':
+                                        {
+                                            'method': None,
+                                            'dns': None,
+                                            'address-data': None,
+                                            'gateway': None,
+                                            'dhcp-send-hostname': True
+                                        }
+                                   }
 
 class REDTabSettingsNetworkWirelessConnectHidden(QtGui.QDialog,
                                                  Ui_REDTabSettingsNetworkWirelessConnectHidden):
@@ -334,7 +382,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         return socket.inet_ntoa(struct.pack('!I', (1 << 32) - (1 << host_bits)))
 
     def netmask_to_cidr(self, netmask):
-        return sum([bin(int(x)).count("1") for x in netmask.split(".")])
+        return sum([bin(int(x)).count('1') for x in netmask.split('.')])
 
     def save_and_apply(self, iname, iname_previous):
         def cb_settings_network_apply(result):
@@ -395,21 +443,17 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                        'Settings | Network',
                                        'Error saving configuration.')
 
-        if self.image_version_lt_1_10:
-            config = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
-            stage = 1
+        config = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
+        stage = 1
 
-            async_call(self.manager_settings_conf_rfile.open,
-                       (MANAGER_SETTINGS_CONF_PATH,
-                       REDFile.FLAG_WRITE_ONLY |
-                       REDFile.FLAG_CREATE |
-                       REDFile.FLAG_NON_BLOCKING |
-                       REDFile.FLAG_TRUNCATE, 0o500, 0, 0),
-                       lambda x: cb_open(config, stage, x, iname_previous),
-                       cb_open_error)
-        else:
-            # TODO: Implement settings save and apply for Network Manager
-            pass
+        async_call(self.manager_settings_conf_rfile.open,
+                   (MANAGER_SETTINGS_CONF_PATH,
+                   REDFile.FLAG_WRITE_ONLY |
+                   REDFile.FLAG_CREATE |
+                   REDFile.FLAG_NON_BLOCKING |
+                   REDFile.FLAG_TRUNCATE, 0o500, 0, 0),
+                   lambda x: cb_open(config, stage, x, iname_previous),
+                   cb_open_error)
 
     def connect_wireless_hidden(self, parameters):
         if self.image_version_lt_1_10:
@@ -428,7 +472,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
             sections = self.network_all_data['wireless_settings'].sections()
 
-            # Set all existing config file AP "automatic" parameter to be false
+            # Set all existing config file AP 'automatic' parameter to be false
             for s in sections:
                 self.network_all_data['wireless_settings'].set(s, 'automatic', 'False')
 
@@ -833,7 +877,10 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                         ap_item.setData('', AP_KEY_USER_ROLE)
                 else:
                     try:
-                        _key = self.network_all_data['wireless_settings'].get('wifi-security', 'psk', '')
+                        if essid == self.network_all_data['wireless_settings'].get('wifi', 'ssid', ''):
+                            _key = self.network_all_data['wireless_settings'].get('wifi-security', 'psk', '')
+                        else:
+                            _key= ''
                         ap_item.setData(unicode(_key), AP_KEY_USER_ROLE)
                     except:
                         ap_item.setData('', AP_KEY_USER_ROLE)
@@ -889,59 +936,61 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                         ap_item.setData('0.0.0.0', AP_DNS_USER_ROLE)
                 else:
                     try:
-                        _mask = ''
-                        _address = ''
-                        _method = self.network_all_data['wireless_settings'].get('ipv4', 'method', '')
-                        if _method == '' or _method == 'None':
-                            ap_item.setData(CBOX_NET_CONTYPE_INDEX_DHCP,
-                                            AP_ADDRESS_CONF_USER_ROLE)
-                            ap_item.setData('0.0.0.0', AP_IP_USER_ROLE)
-                        elif _method == 'manual':
-                            _ip = self.network_all_data['wireless_settings'].get('ipv4', 'addresses', '')
-                            _address, _cidr = _ip.split('/')
-                            _mask = self.cidr_to_netmask(_cidr)
-                            if _address == '' or _address == 'None':
+                        if essid and \
+                           essid != self.network_all_data['wireless_settings'].get('wifi', 'ssid', ''):
                                 ap_item.setData(CBOX_NET_CONTYPE_INDEX_DHCP,
                                                 AP_ADDRESS_CONF_USER_ROLE)
                                 ap_item.setData('0.0.0.0', AP_IP_USER_ROLE)
-                            else:
-                                ap_item.setData(CBOX_NET_CONTYPE_INDEX_STATIC,
-                                                AP_ADDRESS_CONF_USER_ROLE)
-                                ap_item.setData(_address, AP_IP_USER_ROLE)
+                                ap_item.setData('0.0.0.0', AP_MASK_USER_ROLE)
+                                ap_item.setData('0.0.0.0', AP_GATEWAY_USER_ROLE)
+                                ap_item.setData('0.0.0.0', AP_DNS_USER_ROLE)
                         else:
-                            ap_item.setData(CBOX_NET_CONTYPE_INDEX_DHCP,
-                                            AP_ADDRESS_CONF_USER_ROLE)
-                            ap_item.setData('0.0.0.0', AP_IP_USER_ROLE)
+                            _ip = None
+                            _gw = None
+                            _dns = None
+                            _mask = None
+                            _method = self.network_all_data['wireless_settings'].get('ipv4', 'method', '')
+                            if _method == '' or _method == 'None':
+                                ap_item.setData(CBOX_NET_CONTYPE_INDEX_DHCP,
+                                                AP_ADDRESS_CONF_USER_ROLE)
+                                ap_item.setData('0.0.0.0', AP_IP_USER_ROLE)
+                                ap_item.setData('0.0.0.0', AP_MASK_USER_ROLE)
+                                ap_item.setData('0.0.0.0', AP_GATEWAY_USER_ROLE)
+                                ap_item.setData('0.0.0.0', AP_DNS_USER_ROLE)
+                            elif _method == 'manual':
+                                _cidr = ''
+                                _address1 = self.network_all_data['wireless_settings'].get('ipv4', 'address1', '')
+                                _ip, _cidr = _address1.split(',')[0].split('/')
+                                _mask = self.cidr_to_netmask(_cidr)
+                                _gw = _address1.split(',')[1]
+                                _dns = self.network_all_data['wireless_settings'].get('ipv4', 'dns', '').split(';')[0]
+                                if not _ip or not _gw or not _mask or not _dns:
+                                    ap_item.setData(CBOX_NET_CONTYPE_INDEX_DHCP,
+                                                    AP_ADDRESS_CONF_USER_ROLE)
+                                    ap_item.setData('0.0.0.0', AP_IP_USER_ROLE)
+                                    ap_item.setData('0.0.0.0', AP_MASK_USER_ROLE)
+                                    ap_item.setData('0.0.0.0', AP_GATEWAY_USER_ROLE)
+                                    ap_item.setData('0.0.0.0', AP_DNS_USER_ROLE)
+                                else:
+                                    ap_item.setData(CBOX_NET_CONTYPE_INDEX_STATIC,
+                                                    AP_ADDRESS_CONF_USER_ROLE)
+                                    ap_item.setData(_ip, AP_IP_USER_ROLE)
+                                    ap_item.setData(_mask, AP_MASK_USER_ROLE)
+                                    ap_item.setData(_gw, AP_GATEWAY_USER_ROLE)
+                                    ap_item.setData(_dns, AP_DNS_USER_ROLE)
+                            else:
+                                ap_item.setData(CBOX_NET_CONTYPE_INDEX_DHCP,
+                                                AP_ADDRESS_CONF_USER_ROLE)
+                                ap_item.setData('0.0.0.0', AP_IP_USER_ROLE)
+                                ap_item.setData('0.0.0.0', AP_MASK_USER_ROLE)
+                                ap_item.setData('0.0.0.0', AP_GATEWAY_USER_ROLE)
+                                ap_item.setData('0.0.0.0', AP_DNS_USER_ROLE)
                     except:
                         ap_item.setData(CBOX_NET_CONTYPE_INDEX_DHCP,
                                         AP_ADDRESS_CONF_USER_ROLE)
                         ap_item.setData('0.0.0.0', AP_IP_USER_ROLE)
-
-                    try:
-                        if _mask == '' or _ip == 'None':
-                            ap_item.setData('0.0.0.0', AP_MASK_USER_ROLE)
-                        else:
-                            ap_item.setData(_mask, AP_MASK_USER_ROLE)
-                    except:
                         ap_item.setData('0.0.0.0', AP_MASK_USER_ROLE)
-
-                    try:
-                        _gw = self.network_all_data['wireless_settings'].get('ipv4', 'gateway', '')
-                        if _gw == '' or _gw == 'None':
-                            ap_item.setData('0.0.0.0', AP_GATEWAY_USER_ROLE)
-                        else:
-                            ap_item.setData(_gw, AP_GATEWAY_USER_ROLE)
-                    except:
                         ap_item.setData('0.0.0.0', AP_GATEWAY_USER_ROLE)
-
-                    try:
-                        _dns = self.network_all_data['wireless_settings'].get('ipv4', 'dns', '')
-                        if _dns == '' or _dns == 'None':
-                            ap_item.setData('0.0.0.0', AP_DNS_USER_ROLE)
-                        else:
-                            _dns_split = _dns.split(',')
-                            ap_item.setData(_dns_split[0], AP_DNS_USER_ROLE)
-                    except:
                         ap_item.setData('0.0.0.0', AP_DNS_USER_ROLE)
 
                 quality_item = QtGui.QStandardItem(quality+'%')
@@ -1046,17 +1095,20 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                     try:
                                         _ip = 'None'
                                         _mask = 'None'
+                                        _ip_address = 'None'
                                         _method = self.network_all_data['wired_settings'].get('ipv4', 'method', 'None')
                                         if _method == 'None':
                                             _ip = 'None'
                                             _mask = 'None'
                                         elif _method == 'manual':
-                                            _ip = self.network_all_data['wired_settings'].get('ipv4', 'addresses', 'None')
-
-                                            if _ip != 'None':
-                                                _address, _cidr = _ip.split('/')
-                                                _ip = address
-
+                                            _cidr = None
+                                            _ip_address = self.network_all_data['wired_settings'].get('ipv4', 'address1', 'None')
+                                            _ip_address_split = _ip_address.split(',')
+                                            _ip, _cidr = _ip_address_split[0].split('/')
+                                            if _ip == 'None' or not _cidr:
+                                                _ip = 'None'
+                                                _mask = 'None'
+                                            else:
                                                 _mask = self.cidr_to_netmask(_cidr)
                                         else:
                                             _ip = 'None'
@@ -1064,7 +1116,6 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                     except:
                                         _ip = 'None'
                                         _mask = 'None'
-
                                 if _ip == 'None':
                                     self.cbox_net_intf.setItemData(idx_cbox, CBOX_NET_CONTYPE_INDEX_DHCP,
                                                                    INTERFACE_TYPE_WIRED_ADDRESS_CONF_USER_ROLE)
@@ -1127,7 +1178,12 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                                                            INTERFACE_TYPE_WIRED_MASK_USER_ROLE)
 
                                         try:
-                                            _gw = self.network_all_data['wired_settings'].get('ipv4', 'gateway', '')
+                                            _ip_address = self.network_all_data['wired_settings'].get('ipv4', 'address1', 'None')
+                                            _ip_address_split = _ip_address.split(',')
+                                            if len(_ip_address_split) < 2:
+                                                _gw == 'None'
+                                            else:
+                                                _gw = _ip_address_split[1]
                                             if _gw == '' or _gw == 'None':
                                                 self.cbox_net_intf.setItemData(idx_cbox, '0.0.0.0',
                                                                                INTERFACE_TYPE_WIRED_GATEWAY_USER_ROLE)
@@ -1144,7 +1200,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                                 self.cbox_net_intf.setItemData(idx_cbox, '0.0.0.0',
                                                                                INTERFACE_TYPE_WIRED_DNS_USER_ROLE)
                                             else:
-                                                _dns_split = _dns.split(',')
+                                                _dns_split = _dns.split(';')
                                                 self.cbox_net_intf.setItemData(idx_cbox, _dns_split[0],
                                                                                INTERFACE_TYPE_WIRED_DNS_USER_ROLE)
                                         except:
@@ -1378,38 +1434,114 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                            cb_settings_network_get_interfaces)
 
         if self.image_version_lt_1_10:
-            TextFile.read_async(self.session, MANAGER_SETTINGS_CONF_PATH,
+            TextFile.read_async(self.session,
+                                MANAGER_SETTINGS_CONF_PATH,
                                 lambda content: cb_text_file_content('manager_settings', content),
                                 lambda kind, error: cb_text_file_error('manager settings', kind, error))
 
-            TextFile.read_async(self.session, WIRELESS_SETTINGS_CONF_PATH,
+            TextFile.read_async(self.session,
+                                WIRELESS_SETTINGS_CONF_PATH,
                                 lambda content: cb_text_file_content('wireless_settings', content),
                                 lambda kind, error: cb_text_file_error('wireless settings', kind, error))
 
-            TextFile.read_async(self.session, WIRED_SETTINGS_CONF_PATH,
+            TextFile.read_async(self.session,
+                                WIRED_SETTINGS_CONF_PATH,
                                 lambda content: cb_text_file_content('wired_settings', content),
                                 lambda kind, error: cb_text_file_error('wired settings', kind, error))
         else:
-            TextFile.read_async(self.session, MANAGER_SETTINGS_CONF_PATH_NM,
+            TextFile.read_async(self.session,
+                                MANAGER_SETTINGS_CONF_PATH_NM,
                                 lambda content: cb_text_file_content('manager_settings', content),
                                 lambda kind, error: cb_text_file_error('manager settings', kind, error))
 
-            TextFile.read_async(self.session, WIRELESS_SETTINGS_CONF_PATH_NM,
+            TextFile.read_async(self.session,
+                                WIRELESS_SETTINGS_CONF_PATH_NM,
                                 lambda content: cb_text_file_content('wireless_settings', content),
                                 lambda kind, error: cb_text_file_error('wireless settings', kind, error))
 
-            TextFile.read_async(self.session, WIRED_SETTINGS_CONF_PATH_NM,
+            TextFile.read_async(self.session,
+                                WIRED_SETTINGS_CONF_PATH_NM,
                                 lambda content: cb_text_file_content('wired_settings', content),
                                 lambda kind, error: cb_text_file_error('wired settings', kind, error))
 
+    def check_get_ap_item(self):
+        ap_item = None
+        item = self.ap_tree_model.itemFromIndex(self.tree_net_wireless_ap.selectedIndexes()[0])
+        ap_col = item.data(AP_COL_USER_ROLE)
+
+        if ap_col == AP_COL:
+            ap_item = item
+
+        if ap_item:
+            apname = ap_item.data(AP_NAME_USER_ROLE)
+            enc_method = ap_item.data(AP_ENCRYPTION_METHOD_USER_ROLE)
+            enc = ap_item.data(AP_ENCRYPTION_USER_ROLE)
+            key = self.ledit_net_wireless_key.text()
+
+        if not apname:
+            self.update_gui(WORKING_STATE_DONE)
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       'Settings | Network',
+                                       'Configure an access point first.')
+            return False, None
+        elif enc_method == AP_ENC_METHOD_UNSUPPORTED:
+            self.update_gui(WORKING_STATE_DONE)
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       'Settings | Network',
+                                       'Encryption method not supported.')
+            return False, None
+        elif enc == 'On' and not key:
+            self.update_gui(WORKING_STATE_DONE)
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       'Settings | Network',
+                                       'Please provide WPA key.')
+            return False, None
+
+        return True, ap_item
+
+    def get_static_ip_info(self):
+        ip = '.'.join((str(self.sbox_net_ip1.value()),
+                       str(self.sbox_net_ip2.value()),
+                       str(self.sbox_net_ip3.value()),
+                       str(self.sbox_net_ip4.value())))
+
+        mask = '.'.join((str(self.sbox_net_mask1.value()),
+                         str(self.sbox_net_mask2.value()),
+                         str(self.sbox_net_mask3.value()),
+                         str(self.sbox_net_mask4.value())))
+
+        gw = '.'.join((str(self.sbox_net_gw1.value()),
+                       str(self.sbox_net_gw2.value()),
+                       str(self.sbox_net_gw3.value()),
+                       str(self.sbox_net_gw4.value())))
+
+        dns = '.'.join((str(self.sbox_net_dns1.value()),
+                        str(self.sbox_net_dns2.value()),
+                        str(self.sbox_net_dns3.value()),
+                        str(self.sbox_net_dns4.value())))
+
+        return ip, mask, gw, dns
+
     def slot_network_connect_clicked(self):
+        def cb_settings_network_apply_nm(result):
+            self.update_gui(WORKING_STATE_DONE)
+            if result and result.stderr == '' and result.exit_code == 0:
+                QtGui.QMessageBox.information(get_main_window(),
+                                              'Settings | Network',
+                                              'Configuration saved.')
+                self.slot_network_conf_refresh_clicked()
+            else:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           'Settings | Network',
+                                           'Error saving configuration:\n\n' + result.stderr)
+
         cbox_cidx = self.cbox_net_intf.currentIndex()
 
         iname = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE)
         itype = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE)
 
-        if image_version_lt_1_10:
-            # Set all existing config file AP "automatic" parameter to be false
+        if self.image_version_lt_1_10:
+            # Set all existing config file AP 'automatic' parameter to be false
             sections = self.network_all_data['wireless_settings'].sections()
 
             for s in sections:
@@ -1421,108 +1553,73 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             if itype == INTERFACE_TYPE_WIRELESS:
                 self.update_gui(WORKING_STATE_CONNECT)
 
+                r = False
+                enc = None
+                key = None
                 ap_item = None
-                item = self.ap_tree_model.itemFromIndex(self.tree_net_wireless_ap.selectedIndexes()[0])
-                ap_col = item.data(AP_COL_USER_ROLE)
+                enc_method = None
+                address_conf = None
 
-                if ap_col == AP_COL:
-                    ap_item = item
+                r, ap_item = self.check_get_ap_item()
 
-                if ap_item:
-                    apname = ap_item.data(AP_NAME_USER_ROLE)
-                    enc_method = ap_item.data(AP_ENCRYPTION_METHOD_USER_ROLE)
-                    enc = ap_item.data(AP_ENCRYPTION_USER_ROLE)
-                    key = self.ledit_net_wireless_key.text()
+                if not r or not ap_item:
+                    return
 
-                if not apname:
-                    self.update_gui(WORKING_STATE_DONE)
-                    QtGui.QMessageBox.critical(get_main_window(),
-                                               'Settings | Network',
-                                               'Configure an access point first.')
-                    return
-                elif enc_method == AP_ENC_METHOD_UNSUPPORTED:
-                    self.update_gui(WORKING_STATE_DONE)
-                    QtGui.QMessageBox.critical(get_main_window(),
-                                               'Settings | Network',
-                                               'Encryption method not supported.')
-                    return
-                elif enc == 'On' and not key:
-                    self.update_gui(WORKING_STATE_DONE)
-                    QtGui.QMessageBox.critical(get_main_window(),
-                                               'Settings | Network',
-                                               'Please provide WPA key.')
-                    return
+                essid = ap_item.data(AP_NAME_USER_ROLE)
+                bssid = ap_item.data(AP_BSSID_USER_ROLE)
+                key = self.ledit_net_wireless_key.text()
+                enc = ap_item.data(AP_ENCRYPTION_USER_ROLE)
+                address_conf = self.cbox_net_conftype.currentIndex()
+                enc_method = ap_item.data(AP_ENCRYPTION_METHOD_USER_ROLE)
+
+                iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', 'None')
+                self.network_all_data['manager_settings'].set('Settings', 'wireless_interface', iname)
+
+                # Check BSSID section
+                if not self.network_all_data['wireless_settings'].has_section(bssid):
+                    self.network_all_data['wireless_settings'].add_section(bssid)
+
+                self.network_all_data['wireless_settings'].set(bssid, 'automatic', 'True')
+                self.network_all_data['wireless_settings'].set(bssid, 'essid', essid)
+                self.network_all_data['wireless_settings'].set(bssid, 'bssid', bssid)
+                self.network_all_data['wireless_settings'].set(bssid, 'use_static_dns', 'False')
+
+                self.network_all_data['wireless_settings'].set(bssid, 'broadcast', 'None')
+                self.network_all_data['wireless_settings'].set(bssid, 'search_domain', 'None')
+                self.network_all_data['wireless_settings'].set(bssid, 'dns_domain', 'None')
+                self.network_all_data['wireless_settings'].set(bssid, 'dns2', 'None')
+                self.network_all_data['wireless_settings'].set(bssid, 'dns3', 'None')
+
+                # Wireless DHCP config
+                if address_conf == CBOX_NET_CONTYPE_INDEX_DHCP:
+                    self.network_all_data['wireless_settings'].set(bssid, 'ip', 'None')
+                    self.network_all_data['wireless_settings'].set(bssid, 'netmask', 'None')
+                    self.network_all_data['wireless_settings'].set(bssid, 'gateway', 'None')
+                    self.network_all_data['wireless_settings'].set(bssid, 'dns1', 'None')
+                # Wireless static config
                 else:
-                    address_conf = self.cbox_net_conftype.currentIndex()
-                    essid = apname
-                    bssid = ap_item.data(AP_BSSID_USER_ROLE)
+                    ip, mask, gw, dns = self.get_static_ip_info()
 
-                    iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', 'None')
-                    self.network_all_data['manager_settings'].set('Settings', 'wireless_interface', iname)
+                    self.network_all_data['wireless_settings'].set(bssid, 'ip', ip)
+                    self.network_all_data['wireless_settings'].set(bssid, 'netmask', mask)
+                    self.network_all_data['wireless_settings'].set(bssid, 'gateway', gw)
+                    self.network_all_data['wireless_settings'].set(bssid, 'dns1', dns)
+                    self.network_all_data['wireless_settings'].set(bssid, 'use_static_dns', 'True')
 
-                    # Check BSSID section
-                    if not self.network_all_data['wireless_settings'].has_section(bssid):
-                        self.network_all_data['wireless_settings'].add_section(bssid)
+                if enc == 'On':
+                    self.network_all_data['wireless_settings'].set(bssid, 'encryption', 'True')
+                    self.network_all_data['wireless_settings'].set(bssid, 'enctype', 'wpa')
+                    self.network_all_data['wireless_settings'].set(bssid, 'key', key)
 
-                    self.network_all_data['wireless_settings'].set(bssid, 'automatic', 'True')
-                    self.network_all_data['wireless_settings'].set(bssid, 'essid', essid)
-                    self.network_all_data['wireless_settings'].set(bssid, 'bssid', bssid)
-                    self.network_all_data['wireless_settings'].set(bssid, 'use_static_dns', 'False')
-
-                    self.network_all_data['wireless_settings'].set(bssid, 'broadcast', 'None')
-                    self.network_all_data['wireless_settings'].set(bssid, 'search_domain', 'None')
-                    self.network_all_data['wireless_settings'].set(bssid, 'dns_domain', 'None')
-                    self.network_all_data['wireless_settings'].set(bssid, 'dns2', 'None')
-                    self.network_all_data['wireless_settings'].set(bssid, 'dns3', 'None')
-
-                    # Wireless DHCP config
-                    if address_conf == CBOX_NET_CONTYPE_INDEX_DHCP:
-                        self.network_all_data['wireless_settings'].set(bssid, 'ip', 'None')
-                        self.network_all_data['wireless_settings'].set(bssid, 'netmask', 'None')
-                        self.network_all_data['wireless_settings'].set(bssid, 'gateway', 'None')
-                        self.network_all_data['wireless_settings'].set(bssid, 'dns1', 'None')
-                    # Wireless static config
+                    if enc_method == AP_ENC_METHOD_WPA1:
+                        self.network_all_data['wireless_settings'].set(bssid, 'encryption_method', 'WPA1')
                     else:
-                        ip = '.'.join((str(self.sbox_net_ip1.value()),
-                                       str(self.sbox_net_ip2.value()),
-                                       str(self.sbox_net_ip3.value()),
-                                       str(self.sbox_net_ip4.value())))
-
-                        mask = '.'.join((str(self.sbox_net_mask1.value()),
-                                         str(self.sbox_net_mask2.value()),
-                                         str(self.sbox_net_mask3.value()),
-                                         str(self.sbox_net_mask4.value())))
-
-                        gw = '.'.join((str(self.sbox_net_gw1.value()),
-                                       str(self.sbox_net_gw2.value()),
-                                       str(self.sbox_net_gw3.value()),
-                                       str(self.sbox_net_gw4.value())))
-
-                        dns = '.'.join((str(self.sbox_net_dns1.value()),
-                                        str(self.sbox_net_dns2.value()),
-                                        str(self.sbox_net_dns3.value()),
-                                        str(self.sbox_net_dns4.value())))
-
-                        self.network_all_data['wireless_settings'].set(bssid, 'ip', ip)
-                        self.network_all_data['wireless_settings'].set(bssid, 'netmask', mask)
-                        self.network_all_data['wireless_settings'].set(bssid, 'gateway', gw)
-                        self.network_all_data['wireless_settings'].set(bssid, 'dns1', dns)
-                        self.network_all_data['wireless_settings'].set(bssid, 'use_static_dns', 'True')
-
-                    if enc == 'On':
-                        self.network_all_data['wireless_settings'].set(bssid, 'encryption', 'True')
-                        self.network_all_data['wireless_settings'].set(bssid, 'enctype', 'wpa')
-                        self.network_all_data['wireless_settings'].set(bssid, 'key', key)
-
-                        if enc_method == AP_ENC_METHOD_WPA1:
-                            self.network_all_data['wireless_settings'].set(bssid, 'encryption_method', 'WPA1')
-                        else:
-                            self.network_all_data['wireless_settings'].set(bssid, 'encryption_method', 'WPA2')
-                    else:
-                        self.network_all_data['wireless_settings'].remove_option(bssid, 'encryption')
-                        self.network_all_data['wireless_settings'].remove_option(bssid, 'enctype')
-                        self.network_all_data['wireless_settings'].remove_option(bssid, 'encryption_method')
-                        self.network_all_data['wireless_settings'].remove_option(bssid, 'key')
+                        self.network_all_data['wireless_settings'].set(bssid, 'encryption_method', 'WPA2')
+                else:
+                    self.network_all_data['wireless_settings'].remove_option(bssid, 'encryption')
+                    self.network_all_data['wireless_settings'].remove_option(bssid, 'enctype')
+                    self.network_all_data['wireless_settings'].remove_option(bssid, 'encryption_method')
+                    self.network_all_data['wireless_settings'].remove_option(bssid, 'key')
             # Wired
             else:
                 iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wired_interface', '')
@@ -1557,26 +1654,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                     self.update_gui(WORKING_STATE_CONNECT)
                     try:
                         self.network_all_data['manager_settings'].set('Settings', 'wired_interface', iname)
-
-                        ip = '.'.join((str(self.sbox_net_ip1.value()),
-                                       str(self.sbox_net_ip2.value()),
-                                       str(self.sbox_net_ip3.value()),
-                                       str(self.sbox_net_ip4.value())))
-
-                        mask = '.'.join((str(self.sbox_net_mask1.value()),
-                                         str(self.sbox_net_mask2.value()),
-                                         str(self.sbox_net_mask3.value()),
-                                         str(self.sbox_net_mask4.value())))
-
-                        gw = '.'.join((str(self.sbox_net_gw1.value()),
-                                       str(self.sbox_net_gw2.value()),
-                                       str(self.sbox_net_gw3.value()),
-                                       str(self.sbox_net_gw4.value())))
-
-                        dns = '.'.join((str(self.sbox_net_dns1.value()),
-                                        str(self.sbox_net_dns2.value()),
-                                        str(self.sbox_net_dns3.value()),
-                                        str(self.sbox_net_dns4.value())))
+                        ip, mask, gw, dns = self.get_static_ip_info()
 
                         self.network_all_data['wired_settings'].set('wired-default', 'ip', ip)
                         self.network_all_data['wired_settings'].set('wired-default', 'netmask', mask)
@@ -1598,8 +1676,72 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
             self.save_and_apply(iname, iname_previous)
         else:
-            # TODO: Implement connect button click for Network Manager
-            pass
+            connection_configuration = ''
+
+            self.update_gui(WORKING_STATE_CONNECT)
+
+            ip = ''
+            cidr = 0
+            ip_gw = ''
+            ip_dns = ''
+            ip_method = 'auto'
+            connection_config_dict = None
+            address_conf = self.cbox_net_conftype.currentIndex()
+
+            if address_conf != CBOX_NET_CONTYPE_INDEX_DHCP:
+                ip_method = 'manual'
+                ip, mask, ip_gw, ip_dns = self.get_static_ip_info()
+                cidr = self.netmask_to_cidr(mask)
+
+            # Wireless
+            if itype == INTERFACE_TYPE_WIRELESS:
+                r = False
+                enc = None
+                key = None
+                ap_item = None
+
+                r, ap_item = self.check_get_ap_item()
+
+                if not r or not ap_item:
+                    return
+
+                essid = ap_item.data(AP_NAME_USER_ROLE)
+                bssid = ap_item.data(AP_BSSID_USER_ROLE)
+                key = self.ledit_net_wireless_key.text()
+                enc = ap_item.data(AP_ENCRYPTION_USER_ROLE)
+                connection_config_dict = CONNECTION_CONFIG_WIFI_DICT
+
+                connection_config_dict['connection']['interface-name'] = iname
+                connection_config_dict['802-11-wireless']['ssid'] = essid
+                connection_config_dict['802-11-wireless']['bssid'] = bssid
+                connection_config_dict['802-11-wireless']['hidden'] = False
+                connection_config_dict['ipv4']['method'] = ip_method
+                connection_config_dict['ipv4']['dns'] = ip_dns
+                connection_config_dict['ipv4']['address-data'] = {'address': ip, 'prefix': cidr}
+                connection_config_dict['ipv4']['gateway'] = ip_gw
+
+                if '802-11-wireless-security' in connection_config_dict:
+                    del connection_config_dict['802-11-wireless-security']
+
+                if enc == 'On':
+                    connection_config_dict['802-11-wireless-security'] = {}
+                    connection_config_dict['802-11-wireless-security']['auth-alg'] = 'open'
+                    connection_config_dict['802-11-wireless-security']['key-mgmt'] = 'wpa-psk'
+                    connection_config_dict['802-11-wireless-security']['psk'] = key
+                    connection_config_dict['802-11-wireless-security']['psk-flags'] = 0
+            # Wired
+            else:
+                connection_config_dict = CONNECTION_CONFIG_ETHERNET_DICT
+
+                connection_config_dict['connection']['interface-name'] = iname
+                connection_config_dict['ipv4']['method'] = ip_method
+                connection_config_dict['ipv4']['dns'] = ip_dns
+                connection_config_dict['ipv4']['address-data'] = {'address': ip, 'prefix': cidr}
+                connection_config_dict['ipv4']['gateway'] = ip_gw
+
+            self.script_manager.execute_script('settings_network_apply_nm',
+                                               cb_settings_network_apply_nm,
+                                               [json.dumps(connection_config_dict)])
 
     def slot_change_hostname_clicked(self):
         def cb_settings_network_change_hostname(result):
