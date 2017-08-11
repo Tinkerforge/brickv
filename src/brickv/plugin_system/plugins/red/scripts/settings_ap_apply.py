@@ -3,6 +3,7 @@
 
 import os
 import json
+import traceback
 import netifaces
 import subprocess
 from sys import argv
@@ -10,6 +11,7 @@ from distutils.version import StrictVersion
 
 IMAGE_VERSION = None
 MIN_VERSION_FOR_NAT = StrictVersion('1.7')
+MIN_VERSION_WITH_NM = StrictVersion('1.10')
 MIN_VERSION_FOR_HOSTAPD_UPDATE_1 = StrictVersion('1.10')
 
 with open('/etc/tf_image_version', 'r') as f:
@@ -364,11 +366,18 @@ try:
         if os.system('/sbin/ifconfig '+intf+' up &> /dev/null') != 0:
             exit(1)
 
-    if os.system('/bin/systemctl stop wicd &> /dev/null') != 0:
-        exit(1)
+    if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
+        if os.system('/bin/systemctl stop network-manager &> /dev/null') != 0:
+            exit(1)
 
-    if os.system('/bin/systemctl disable wicd &> /dev/null') != 0:
-        exit(1)
+        if os.system('/bin/systemctl disable network-manager &> /dev/null') != 0:
+            exit(1)
+    else:
+        if os.system('/bin/systemctl stop wicd &> /dev/null') != 0:
+            exit(1)
+
+        if os.system('/bin/systemctl disable wicd &> /dev/null') != 0:
+            exit(1)
 
     if enabled_dns_dhcp:
         if os.system('/bin/systemctl enable dnsmasq &> /dev/null') != 0:
@@ -392,4 +401,5 @@ try:
         exit(1)
 
 except:
+    traceback.print_exc()
     exit(1)

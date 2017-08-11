@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import os
+import subprocess
 from sys import argv
 from reconfigure.configs import HostsConfig
 
+CMD_DHCLIENT = '/sbin/dhclient &> /dev/null'
 FILE_PATH_HOSTS = '/etc/hosts'
 BIN_HOSTNAMECTL = '/usr/bin/hostnamectl'
 CMD_HOSTNAMECTL = BIN_HOSTNAMECTL + ' --static set-hostname '
@@ -43,6 +45,10 @@ try:
 
     if os.system(CMD_HOSTNAMECTL) != 0:
         exit(1)
+
+    try:
+        subprocess.call(CMD_DHCLIENT, shell=True)
+    except:
+        pass
 except:
     exit(1)
-

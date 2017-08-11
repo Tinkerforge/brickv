@@ -26,6 +26,11 @@ DBUS_NM_SETTINGS_OBJECT_PATH = "/org/freedesktop/NetworkManager/Settings"
 DBUS_NM_DEVICE_WIRELESS_INTERFACE = "org.freedesktop.NetworkManager.Device.Wireless"
 DBUS_NM_SETTINGS_CONNECTION_INTERFACE = "org.freedesktop.NetworkManager.Settings.Connection"
 
+C_PARSER_WIFI = ConfigParser.ConfigParser()
+C_PARSER_ETHERNET = ConfigParser.ConfigParser()
+WIFI_CONNECTION_FILE_PATH = "/etc/NetworkManager/system-connections/_tf_brickv_wifi"
+ETHERNET_CONNECTION_FILE_PATH = "/etc/NetworkManager/system-connections/_tf_brickv_ethernet"
+
 if len(argv) != 2:
     exit (1)
 
@@ -103,7 +108,7 @@ try:
             dbus.ByteArray(connection_config["802-11-wireless"]["ssid"])
 
         # Prepare PSK flags entry.
-        if '802-11-wireless-security' in connection_config:
+        if "802-11-wireless-security" in connection_config:
             connection_config["802-11-wireless-security"]["psk-flags"] = \
                 dbus.UInt32(connection_config["802-11-wireless-security"]["psk-flags"])
 
@@ -192,8 +197,6 @@ try:
 
     if connection_config["connection"]["type"] == "802-11-wireless":
         data_connection_file = None
-        c_parser = ConfigParser.ConfigParser()
-        connection_file_path = "/etc/NetworkManager/system-connections/_tf_brickv_wifi"
         added_connection_settings = \
             dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, added_connection_object_path),
                            dbus_interface = DBUS_NM_SETTINGS_CONNECTION_INTERFACE).GetSettings()
@@ -207,17 +210,20 @@ try:
 
         # Rename connection file.
         os.rename("/etc/NetworkManager/system-connections/" + added_connection_settings["connection"]["id"],
-                  connection_file_path)
+                  WIFI_CONNECTION_FILE_PATH)
 
         # Modify connection file.
-        c_parser.read(connection_file_path)
+        C_PARSER_WIFI.read(WIFI_CONNECTION_FILE_PATH)
 
-        c_parser.set("connection", "id", "_tf_brickv_wifi")
+        C_PARSER_WIFI.set("connection", "id", "_tf_brickv_wifi")
+        C_PARSER_WIFI.set("connection",
+                     "interface-name",
+                     connection_config["connection"]["interface-name"])
 
-        if '802-11-wireless-security' in connection_config:
-            c_parser.set("wifi-security", "auth-alg", "open")
-            c_parser.set("wifi-security", "psk-flags", 0)
-            c_parser.set("wifi-security", "psk", connection_config["802-11-wireless-security"]["psk"])
+        if "802-11-wireless-security" in connection_config:
+            C_PARSER_WIFI.set("wifi-security", "auth-alg", "open")
+            C_PARSER_WIFI.set("wifi-security", "psk-flags", 0)
+            C_PARSER_WIFI.set("wifi-security", "psk", connection_config["802-11-wireless-security"]["psk"])
 
         if connection_config["ipv4"]["method"] == "manual":
             wifi_address1 = connection_config["ipv4"]["address-data"][0]["address"] + \
@@ -226,14 +232,21 @@ try:
                             "," + \
                             connection_config["ipv4"]["gateway"]
 
-            c_parser.set("ipv4", "address1", wifi_address1)
-            c_parser.set("ipv4", "dns", dns_org + ";")
-            c_parser.set("ipv4", "method", "manual")
+            C_PARSER_WIFI.set("ipv4", "address1", wifi_address1)
+            C_PARSER_WIFI.set("ipv4", "dns", dns_org + ";")
+            C_PARSER_WIFI.set("ipv4", "method", "manual")
         else:
-            c_parser.set("ipv4", "method", "auto")
+            C_PARSER_WIFI.set("ipv4", "method", "auto")
 
-        with open(connection_file_path, "w") as fh_connection:
-            c_parser.write(fh_connection)
+        with open(WIFI_CONNECTION_FILE_PATH, "w") as fh_connection:
+            C_PARSER_WIFI.write(fh_connection)
+
+        if os.path.isfile(ETHERNET_CONNECTION_FILE_PATH):
+            C_PARSER_ETHERNET.read(ETHERNET_CONNECTION_FILE_PATH)
+            C_PARSER_ETHERNET.set("connection", "autoconnect", "false")
+
+            with open(ETHERNET_CONNECTION_FILE_PATH, "w") as fh_connection:
+                C_PARSER_ETHERNET.write(fh_connection)
 
         # Reload connections.
         r = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_SETTINGS_OBJECT_PATH),
@@ -247,7 +260,17 @@ try:
                            dbus_interface = DBUS_NM_INTERFACE).ActivateConnection(added_connection_object_path,
                                                                                   device_object_path,
                                                                                   connection_specific_object)
+    else:
+        if os.path.isfile(WIFI_CONNECTION_FILE_PATH):
+            C_PARSER_WIFI.read(WIFI_CONNECTION_FILE_PATH)
+            C_PARSER_WIFI.set("connection", "autoconnect", "false")
 
+            with open(WIFI_CONNECTION_FILE_PATH, "w") as fh_connection:
+                C_PARSER_WIFI.write(fh_connection)
+
+        # Reload connections.
+        r = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_SETTINGS_OBJECT_PATH),
+                           dbus_interface = DBUS_NM_SETTINGS_INTERFACE).ReloadConnections()
 except:
     traceback.print_exc()
     exit(1)

@@ -92,12 +92,12 @@ try:
                         encryption_method = "Unsupported"
 
             apdict = {
-                        'essid': str(bytearray(ap_props["Ssid"])),
-                        'bssid': ap_props["HwAddress"],
-                        'channel': ap_props["Frequency"],
-                        'encryption': encryption,
-                        'encryption_method': encryption_method,
-                        'quality': int(ap_props["Strength"])
+                        "essid": str(bytearray(ap_props["Ssid"])),
+                        "bssid": ap_props["HwAddress"],
+                        "channel": ap_props["Frequency"],
+                        "encryption": encryption,
+                        "encryption_method": encryption_method,
+                        "quality": int(ap_props["Strength"])
                      }
 
             return_dict[nidx] = apdict
@@ -108,4 +108,4 @@ except:
     traceback.print_exc()
     exit(1)
 
-print(json.dumps(return_dict, separators=(',', ':')))
+print(json.dumps(return_dict, separators=(",", ":")))

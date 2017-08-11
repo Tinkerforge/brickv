@@ -31,11 +31,11 @@ DBUS_NM_AP_INTERFACE = "org.freedesktop.NetworkManager.AccessPoint"
 DBUS_NM_DEVICE_WIRELESS_INTERFACE = "org.freedesktop.NetworkManager.Device.Wireless"
 
 return_dict = {}
-return_dict['cstat_hostname'] = None
-return_dict['cstat_status'] = None
-return_dict['cstat_intf_active'] = {'name': None, 'type': None, 'ip': None, 'mask': None}
-return_dict['cstat_gateway'] = None
-return_dict['cstat_dns'] = None
+return_dict["cstat_hostname"] = None
+return_dict["cstat_status"] = None
+return_dict["cstat_intf_active"] = {"name": None, "type": None, "ip": None, "mask": None}
+return_dict["cstat_gateway"] = None
+return_dict["cstat_dns"] = None
 
 nm_state = None
 gw_interface = None
@@ -51,23 +51,23 @@ except:
 
 def get_active_interface_info(interface, intf_type):
     try:
-        ip = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]['addr']
-        netmask = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]['netmask']
-        return_dict['cstat_intf_active']['name'] = interface
-        return_dict['cstat_intf_active']['type'] = intf_type
-        return_dict['cstat_intf_active']['ip'] = ip
-        return_dict['cstat_intf_active']['mask'] = netmask
+        ip = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]["addr"]
+        netmask = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]["netmask"]
+        return_dict["cstat_intf_active"]["name"] = interface
+        return_dict["cstat_intf_active"]["type"] = intf_type
+        return_dict["cstat_intf_active"]["ip"] = ip
+        return_dict["cstat_intf_active"]["mask"] = netmask
     except:
-        return_dict['cstat_intf_active']['name'] = None
-        return_dict['cstat_intf_active']['type'] = '-'
-        return_dict['cstat_intf_active']['ip'] = '-'
-        return_dict['cstat_intf_active']['mask'] = '-'
+        return_dict["cstat_intf_active"]["name"] = None
+        return_dict["cstat_intf_active"]["type"] = "-"
+        return_dict["cstat_intf_active"]["ip"] = "-"
+        return_dict["cstat_intf_active"]["mask"] = "-"
 
 # Get hostname
 try:
     hname = unicode(socket.gethostname())
-    if hname != '':
-        return_dict['cstat_hostname'] = hname
+    if hname != "":
+        return_dict["cstat_hostname"] = hname
 except:
     traceback.print_exc()
     exit(1)
@@ -76,9 +76,9 @@ except:
 try:
     gws = netifaces.gateways()
 
-    if 'default' in gws and netifaces.AF_INET in gws['default']:
-        return_dict['cstat_gateway'] = gws['default'][netifaces.AF_INET][0]
-        gw_interface = gws['default'][netifaces.AF_INET][1]
+    if "default" in gws and netifaces.AF_INET in gws["default"]:
+        return_dict["cstat_gateway"] = gws["default"][netifaces.AF_INET][0]
+        gw_interface = gws["default"][netifaces.AF_INET][1]
 
         nm_devices = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
                                     dbus_interface = DBUS_NM_INTERFACE).GetDevices()
@@ -114,26 +114,26 @@ try:
         nm_state = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
                                   dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_INTERFACE, "State")
 
-        return_dict['cstat_status'] = ""
+        return_dict["cstat_status"] = ""
 
         if nm_state == NM_STATE_UNKNOWN:
-            return_dict['cstat_status'] = "Unknown"
+            return_dict["cstat_status"] = "Unknown"
         elif nm_state == NM_STATE_ASLEEP:
-            return_dict['cstat_status'] = "Sleeping"
+            return_dict["cstat_status"] = "Sleeping"
         elif nm_state == NM_STATE_DISCONNECTED:
-            return_dict['cstat_status'] = "Disconnected"
+            return_dict["cstat_status"] = "Disconnected"
         elif nm_state == NM_STATE_DISCONNECTING:
-            return_dict['cstat_status'] = "Disconnecting"
+            return_dict["cstat_status"] = "Disconnecting"
         elif nm_state == NM_STATE_CONNECTING:
-            return_dict['cstat_status'] = "Connecting"
+            return_dict["cstat_status"] = "Connecting"
         elif nm_state == NM_STATE_CONNECTED_LOCAL:
-            return_dict['cstat_status'] = "Disconnected"
+            return_dict["cstat_status"] = "Disconnected"
         elif nm_state == NM_STATE_CONNECTED_SITE:
-            return_dict['cstat_status'] = "Connected Local"
+            return_dict["cstat_status"] = "Connected Local"
         elif nm_state == NM_STATE_CONNECTED_GLOBAL:
-            return_dict['cstat_status'] = "Connected"
+            return_dict["cstat_status"] = "Connected"
         else:
-            return_dict['cstat_status'] = "Unknown"
+            return_dict["cstat_status"] = "Unknown"
 
         if nm_state == NM_STATE_CONNECTED_SITE or nm_state == NM_STATE_CONNECTED_GLOBAL:
             if gw_interface_type == TYPE_WIRELESS:
@@ -156,31 +156,31 @@ try:
                     active_ap_ssid = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_active_ap_object_path),
                                                     dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_AP_INTERFACE, "Ssid")
 
-                    return_dict['cstat_status'] = return_dict['cstat_status'] + " to " + str(bytearray(active_ap_ssid))
+                    return_dict["cstat_status"] = return_dict["cstat_status"] + " to " + str(bytearray(active_ap_ssid))
 
                     break
     else:
-        return_dict['cstat_status'] = 'Disconnected'
+        return_dict["cstat_status"] = "Disconnected"
 except:
-    return_dict['cstat_status'] = '-'
+    return_dict["cstat_status"] = "-"
 
 # Get DNS
 try:
-    with open('/etc/resolv.conf', 'r') as rcf:
+    with open("/etc/resolv.conf", "r") as rcf:
         dns_servers = []
         lines = rcf.readlines()
 
         for l in lines:
-            l_splitted = l.split(' ')
+            l_splitted = l.split(" ")
 
-            if l_splitted[0] == 'nameserver' and l_splitted[1] != '':
+            if l_splitted[0] == "nameserver" and l_splitted[1] != "":
                 dns_servers.append(l_splitted[1].strip())
 
         if len(dns_servers) <= 0:
-            return_dict['cstat_dns'] = '-'
+            return_dict["cstat_dns"] = "-"
         else:
-            return_dict['cstat_dns'] = ', '.join(dns_servers)
+            return_dict["cstat_dns"] = ", ".join(dns_servers)
 except:
-    return_dict['cstat_dns'] = None
+    return_dict["cstat_dns"] = None
 
-print(json.dumps(return_dict, separators=(',', ':')))
+print(json.dumps(return_dict, separators=(",", ":")))

@@ -14,6 +14,7 @@ MAX_VERSION_WITH_CHKCONFIG = StrictVersion('1.9')
 MAX_VERSION_WITH_ASPLASH_SCREEN = StrictVersion('1.9')
 MAX_VERSION_WITH_GPU_2D_3D = StrictVersion('1.9')
 MIN_VERSION_WITH_OPENHAB2 = StrictVersion('1.10')
+MIN_VERSION_WITH_NM = StrictVersion('1.10')
 
 with open('/etc/tf_image_version', 'r') as f:
     IMAGE_VERSION = StrictVersion(f.read().split(' ')[0].strip())
@@ -243,15 +244,22 @@ elif command == 'APPLY':
             if os.system('/bin/systemctl enable dnsmasq') != 0:
                 exit(11)
 
-            if os.system('/bin/systemctl disable wicd') != 0:
-                exit(12)
+            if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
+                if os.system('/bin/systemctl disable network-manager') != 0:
+                    exit(12)
+            else:
+                if os.system('/bin/systemctl disable wicd') != 0:
+                    exit(12)
 
             if os.path.isfile('/etc/network/interfaces.ap'):
                 os.rename('/etc/network/interfaces.ap', '/etc/network/interfaces')
 
-            if os.path.isfile('/etc/xdg/autostart/wicd-tray.desktop'):
-                os.rename('/etc/xdg/autostart/wicd-tray.desktop',
-                          '/etc/xdg/autostart/wicd-tray.desktop.block')
+            if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
+                pass
+            else:
+                if os.path.isfile('/etc/xdg/autostart/wicd-tray.desktop'):
+                    os.rename('/etc/xdg/autostart/wicd-tray.desktop',
+                              '/etc/xdg/autostart/wicd-tray.desktop.block')
 
             if os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.service') and \
                os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.timer'):
@@ -270,15 +278,22 @@ elif command == 'APPLY':
             if os.system('/bin/systemctl disable dnsmasq') != 0:
                 exit(14)
 
-            if os.system('/bin/systemctl enable wicd ') != 0:
-                exit(15)
+            if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
+                if os.system('/bin/systemctl enable network-manager') != 0:
+                    exit(15)
+            else:
+                if os.system('/bin/systemctl enable wicd') != 0:
+                    exit(15)
 
             with open('/etc/network/interfaces', 'w') as fd_interfaces:
                 fd_interfaces.write(INTERFACES_CONF)
 
-            if os.path.isfile('/etc/xdg/autostart/wicd-tray.desktop.block'):
-                os.rename('/etc/xdg/autostart/wicd-tray.desktop.block',
-                          '/etc/xdg/autostart/wicd-tray.desktop')
+            if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
+                pass
+            else:
+                if os.path.isfile('/etc/xdg/autostart/wicd-tray.desktop.block'):
+                    os.rename('/etc/xdg/autostart/wicd-tray.desktop.block',
+                              '/etc/xdg/autostart/wicd-tray.desktop')
 
             if os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.service') and \
                os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.timer'):
