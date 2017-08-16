@@ -367,10 +367,7 @@ try:
             exit(1)
 
     if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
-        if os.system('/bin/systemctl stop network-manager &> /dev/null') != 0:
-            exit(1)
-
-        if os.system('/bin/systemctl disable network-manager &> /dev/null') != 0:
+        if os.system('/usr/bin/nmcli radio wifi off &> /dev/null') != 0:
             exit(1)
     else:
         if os.system('/bin/systemctl stop wicd &> /dev/null') != 0:
