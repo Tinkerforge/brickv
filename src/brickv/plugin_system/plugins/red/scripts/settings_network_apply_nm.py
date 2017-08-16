@@ -25,6 +25,7 @@ DBUS_NM_SETTINGS_INTERFACE = "org.freedesktop.NetworkManager.Settings"
 DBUS_NM_SETTINGS_OBJECT_PATH = "/org/freedesktop/NetworkManager/Settings"
 DBUS_NM_DEVICE_WIRELESS_INTERFACE = "org.freedesktop.NetworkManager.Device.Wireless"
 DBUS_NM_SETTINGS_CONNECTION_INTERFACE = "org.freedesktop.NetworkManager.Settings.Connection"
+DBUS_NM_SETTINGS_CONNECTION_ACTIVE_INTERFACE = 'org.freedesktop.NetworkManager.Connection.Active'
 
 C_PARSER_WIFI = ConfigParser.ConfigParser()
 C_PARSER_ETHERNET = ConfigParser.ConfigParser()
@@ -45,12 +46,21 @@ try:
     active_connection_object_path = None
     connection_config = json.loads(argv[1])
 
-    # Disable all active wifi and ethernet connections.
+    # Deactivate target WiFi and ethernet connections.
     active_connection_object_paths = \
         dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
                        dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_INTERFACE, "ActiveConnections")
 
     for active_connection_object_path in active_connection_object_paths:
+        connection_object_path = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, active_connection_object_path),
+                                                dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_SETTINGS_CONNECTION_ACTIVE_INTERFACE, "Connection")
+        connection_settings = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, connection_object_path),
+                                             dbus_interface = DBUS_NM_SETTINGS_CONNECTION_INTERFACE).GetSettings()
+
+        if connection_settings["connection"]["id"] != "_tf_brickv_wifi" \
+           and connection_settings["connection"]["id"] != "_tf_brickv_ethernet":
+                continue
+
         dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
                        dbus_interface = DBUS_NM_INTERFACE).DeactivateConnection(active_connection_object_path)
 
