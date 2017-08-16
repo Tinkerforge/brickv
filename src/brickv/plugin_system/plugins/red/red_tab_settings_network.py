@@ -99,51 +99,57 @@ AP_CHANNEL_COL_WIDTH = 100
 AP_SECURITY_COL_WIDTH = 100
 AP_QUALITY_COL_WIDTH = 100
 
-CONNECTION_CONFIG_WIFI_DICT = {
-                                'connection':
-                                    {
-                                        'id': '_tf_brickv_wifi',
-                                        'interface-name': None,
-                                        'type': '802-11-wireless',
-                                        'autoconnect': True
-                                    },
-                                '802-11-wireless':
-                                    {
-                                        'ssid': None,
-                                        'bssid': None,
-                                        'hidden': None
-                                    },
-                                'ipv4':
-                                    {
-                                        'method': None,
-                                        'dns': None,
-                                        'address-data': None,
-                                        'gateway': None,
-                                        'dhcp-send-hostname': True
-                                    }
-                              }
+CONNECTION_CONFIG_WIFI_DICT = \
+    {
+        'connection':
+        {
+            'id': '_tf_brickv_wifi',
+            'interface-name': None,
+            'type': '802-11-wireless',
+            'autoconnect': True
+        },
 
-CONNECTION_CONFIG_ETHERNET_DICT = {
-                                    'connection':
-                                        {
-                                            'id': '_tf_brickv_ethernet',
-                                            'interface-name': None,
-                                            'type': '802-3-ethernet',
-                                            'autoconnect': True
-                                        },
-                                    '802-3-ethernet':
-                                        {
-                                            'auto-negotiate': True,
-                                        },
-                                    'ipv4':
-                                        {
-                                            'method': None,
-                                            'dns': None,
-                                            'address-data': None,
-                                            'gateway': None,
-                                            'dhcp-send-hostname': True
-                                        }
-                                   }
+        '802-11-wireless':
+        {
+            'ssid': None,
+            'bssid': None,
+            'hidden': None
+        },
+
+        'ipv4':
+        {
+            'method': None,
+            'dns': None,
+            'address-data': None,
+            'gateway': None,
+            'dhcp-send-hostname': True
+        }
+    }
+
+CONNECTION_CONFIG_ETHERNET_DICT = \
+    {
+        'connection':
+        {
+            'id': '_tf_brickv_ethernet',
+            'interface-name': None,
+            'type': '802-3-ethernet',
+            'autoconnect': True
+        },
+
+        '802-3-ethernet':
+        {
+            'auto-negotiate': True
+        },
+
+        'ipv4':
+        {
+            'method': None,
+            'dns': None,
+            'address-data': None,
+            'gateway': None,
+            'dhcp-send-hostname': True
+        }
+    }
 
 class REDTabSettingsNetworkWirelessConnectHidden(QtGui.QDialog,
                                                  Ui_REDTabSettingsNetworkWirelessConnectHidden):
@@ -358,7 +364,10 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         self.pbutton_net_conf_change_hostname.setDisabled(self.image_version.number < (1, 7))
         self.label_net_conf_change_hostname_hint.setVisible(self.image_version.number < (1, 7))
 
-        self.image_version_lt_1_10 = self.image_version.number < (1, 10)
+        if not self.image_version:
+            self.image_version_lt_1_10 = True
+        else:
+            self.image_version_lt_1_10 = self.image_version.number < (1, 10)
 
         if not self.image_version_lt_1_10:
             item_channel = self.ap_tree_model.takeHorizontalHeaderItem(1)
