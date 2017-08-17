@@ -1222,7 +1222,6 @@ try:
                            dbus_interface = DBUS_NM_SETTINGS_INTERFACE).AddConnection(gsm_connection_config_nm)
 
             c_parser_brickv_gsm.read('/etc/NetworkManager/system-connections/_tf_brickv_gsm')
-            c_parser_brickv_gsm.set('ipv4', 'route-metric', 0)
 
             with open('/etc/NetworkManager/system-connections/_tf_brickv_gsm', 'w') as fh:
                 c_parser_brickv_gsm.write(fh)
