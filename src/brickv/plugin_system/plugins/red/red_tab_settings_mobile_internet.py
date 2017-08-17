@@ -80,6 +80,8 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         self.is_tab_on_focus = False
         self.working = False
 
+        self.image_version_lt_1_10 = True
+
         self.sarea_mi.hide()
 
         regex_sim_card_pin = QtCore.QRegExp('\\d+')
@@ -106,6 +108,11 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         if self.image_version.number < (1, 7):
             self.update_gui(EVENT_GUI_INIT_UNSUPPORTED)
             return
+
+        if not self.image_version:
+            self.image_version_lt_1_10 = True
+        else:
+            self.image_version_lt_1_10 = self.image_version.number < (1, 10)
 
         # Check if the service is enabled
         if not self.service_state.mobileinternet:
@@ -375,7 +382,11 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
 
             for dict_modem in dict_configuration['modem_list']:
                 self.cbox_mi_modem.addItem(dict_modem['name'])
-                self.cbox_mi_modem.setItemData(self.cbox_mi_modem.count() - 1, dict_modem['vid_pid'])
+
+                if self.image_version_lt_1_10:
+                    self.cbox_mi_modem.setItemData(self.cbox_mi_modem.count() - 1, dict_modem['vid_pid'])
+                else:
+                    self.cbox_mi_modem.setItemData(self.cbox_mi_modem.count() - 1, dict_modem['imei'])
 
         if self.cbox_mi_modem.isEnabled():
             self.pbutton_mi_connect.setEnabled(True)

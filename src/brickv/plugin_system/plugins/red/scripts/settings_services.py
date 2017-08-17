@@ -245,7 +245,7 @@ elif command == 'APPLY':
                 exit(11)
 
             if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
-                if os.system('/bin/systemctl disable network-manager') != 0:
+                if os.system('/usr/bin/nmcli radio wifi off') != 0:
                     exit(12)
             else:
                 if os.system('/bin/systemctl disable wicd') != 0:
@@ -279,7 +279,7 @@ elif command == 'APPLY':
                 exit(14)
 
             if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
-                if os.system('/bin/systemctl enable network-manager') != 0:
+                if os.system('/usr/bin/nmcli radio wifi on') != 0:
                     exit(15)
             else:
                 if os.system('/bin/systemctl enable wicd') != 0:
@@ -344,19 +344,51 @@ elif command == 'APPLY':
                     exit(20)
 
         if apply_dict['mobileinternet']:
-            with open('/etc/tf_mobile_internet_enabled', 'w') as fd_ap_enabled:
-                pass
+            if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
+                if not os.path.isfile('/etc/tf_mobile_internet_enabled.disabled'):
+                    with open('/etc/tf_mobile_internet_enabled', 'w') as fd_ap_enabled:
+                        pass
+                else:
+                    os.rename('/etc/tf_mobile_internet_enabled.disabled',
+                              '/etc/tf_mobile_internet_enabled')
 
-            if os.path.isfile('/etc/systemd/system/tf_mobile_internet.service'):
-                if os.system('/bin/systemctl enable tf_mobile_internet') != 0:
-                    exit(21)
+                if os.path.isfile('/etc/systemd/system/tf_mobile_internet_nm.service') \
+                   and os.path.isfile('/etc/systemd/system/tf_mobile_internet_nm.timer'):
+                        if os.system('/bin/systemctl enable tf_mobile_internet_nm.service') != 0:
+                            exit(21)
+
+                        if os.system('/bin/systemctl enable tf_mobile_internet_nm.timer') != 0:
+                            exit(21)
+            else:
+                with open('/etc/tf_mobile_internet_enabled', 'w') as fd_ap_enabled:
+                    pass
+
+                if os.path.isfile('/etc/systemd/system/tf_mobile_internet.service'):
+                    if os.system('/bin/systemctl enable tf_mobile_internet') != 0:
+                        exit(21)
         else:
-            if os.path.isfile('/etc/tf_mobile_internet_enabled'):
-                os.remove('/etc/tf_mobile_internet_enabled')
+            if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
+                if not os.path.isfile('/etc/tf_mobile_internet_enabled'):
+                    with open('/etc/tf_mobile_internet_enabled.disabled', 'w') as fd_ap_enabled:
+                        pass
+                else:
+                    os.rename('/etc/tf_mobile_internet_enabled',
+                              '/etc/tf_mobile_internet_enabled.disabled')
 
-            if os.path.isfile('/etc/systemd/system/tf_mobile_internet.service'):
-                if os.system('/bin/systemctl disable tf_mobile_internet') != 0:
-                    exit(22)
+                if os.path.isfile('/etc/systemd/system/tf_mobile_internet_nm.service') \
+                   and os.path.isfile('/etc/systemd/system/tf_mobile_internet_nm.timer'):
+                        if os.system('/bin/systemctl disable tf_mobile_internet_nm.service') != 0:
+                            exit(22)
+
+                        if os.system('/bin/systemctl disable tf_mobile_internet_nm.timer') != 0:
+                            exit(22)
+            else:
+                if os.path.isfile('/etc/tf_mobile_internet_enabled'):
+                    os.remove('/etc/tf_mobile_internet_enabled')
+
+                if os.path.isfile('/etc/systemd/system/tf_mobile_internet.service'):
+                    if os.system('/bin/systemctl disable tf_mobile_internet') != 0:
+                        exit(22)
 
         exit(0)
 
