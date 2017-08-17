@@ -845,20 +845,6 @@ def populate_dict_status():
             dbus.Interface(dbus.SystemBus().get_object(DBUS_MM_BUS_NAME, o),
                            dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_MM_MODEM_INTERFACE, 'PrimaryPort')
 
-        '''
-        dict_status['ip'] = \
-            netifaces.ifaddresses('ppp0')[netifaces.AF_INET][0]['addr']
-        dict_status['subnet_mask'] = \
-            netifaces.ifaddresses('ppp0')[netifaces.AF_INET][0]['netmask']
-
-        dict_status['dns'] = get_DNS()
-
-        gws = netifaces.gateways()
-
-        if 'default' in gws and netifaces.AF_INET in gws['default']:
-            dict_status['gateway'] = gws['default'][netifaces.AF_INET][0]
-        '''
-
         nm_devices = \
             dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
                            dbus_interface = DBUS_NM_INTERFACE).GetDevices()
