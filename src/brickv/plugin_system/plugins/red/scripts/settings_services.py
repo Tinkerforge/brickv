@@ -346,8 +346,9 @@ elif command == 'APPLY':
         if apply_dict['mobileinternet']:
             if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
                 if not os.path.isfile('/etc/tf_mobile_internet_enabled.disabled'):
-                    with open('/etc/tf_mobile_internet_enabled', 'w') as fd_ap_enabled:
-                        pass
+                    if not os.path.isfile('/etc/tf_mobile_internet_enabled'):
+                        with open('/etc/tf_mobile_internet_enabled', 'w') as fd_ap_enabled:
+                            pass
                 else:
                     os.rename('/etc/tf_mobile_internet_enabled.disabled',
                               '/etc/tf_mobile_internet_enabled')
@@ -369,8 +370,9 @@ elif command == 'APPLY':
         else:
             if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
                 if not os.path.isfile('/etc/tf_mobile_internet_enabled'):
-                    with open('/etc/tf_mobile_internet_enabled.disabled', 'w') as fd_ap_enabled:
-                        pass
+                    if not os.path.isfile('/etc/tf_mobile_internet_enabled.disabled'):
+                        with open('/etc/tf_mobile_internet_enabled.disabled', 'w') as fd_ap_disabled:
+                            pass
                 else:
                     os.rename('/etc/tf_mobile_internet_enabled',
                               '/etc/tf_mobile_internet_enabled.disabled')
