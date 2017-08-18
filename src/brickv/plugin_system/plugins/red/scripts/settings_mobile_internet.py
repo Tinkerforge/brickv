@@ -224,6 +224,23 @@ interface_name = c_parser_brickv_gsm.get('connection', 'interface-name', '')
 if not interface_name:
     exit(0)
 
+active_connection_object_paths = \
+    dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
+                   dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_INTERFACE, 'ActiveConnections')
+
+for active_connection_object_path in active_connection_object_paths:
+    connection_object_path = \
+        dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, active_connection_object_path),
+                       dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_SETTINGS_CONNECTION_ACTIVE_INTERFACE, 'Connection')
+    connection_settings = \
+        dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, connection_object_path),
+                       dbus_interface = DBUS_NM_SETTINGS_CONNECTION_INTERFACE).GetSettings()
+
+    if not connection_settings['connection']['interface-name'] \
+       or connection_settings['connection']['interface-name'] != interface_name:
+            dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
+                           dbus_interface = DBUS_NM_INTERFACE).DeactivateConnection(active_connection_object_path)
+
 modem_object_path_list = get_mm_modem_object_paths()
 
 for o in modem_object_path_list:

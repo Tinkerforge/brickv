@@ -17,6 +17,143 @@ MIN_VERSION_FOR_HOSTAPD_UPDATE_1 = StrictVersion('1.10')
 with open('/etc/tf_image_version', 'r') as f:
     IMAGE_VERSION = StrictVersion(f.read().split(' ')[0].strip())
 
+PY_SETUP_AP_NAT = '''
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*
+
+import os
+import dbus
+import ConfigParser
+from xml.dom import minidom
+
+DBUS_MM_BUS_NAME = 'org.freedesktop.ModemManager1'
+DBUS_MM_OBJECT_PATH = '/org/freedesktop/ModemManager1'
+DBUS_MM_SIM_INTERFACE = 'org.freedesktop.ModemManager1.Sim'
+DBUS_PROPERTIES_INTERFACE = 'org.freedesktop.DBus.Properties'
+DBUS_MM_MODEM_INTERFACE = 'org.freedesktop.ModemManager1.Modem'
+DBUS_MM_BEARER_INTERFACE = 'org.freedesktop.ModemManager1.Bearer'
+DBUS_MM_MODEM_OBJECT_PATH = '/org/freedesktop/ModemManager1/Modem'
+DBUS_INTROSPECTABLE_INTERFACE = 'org.freedesktop.DBus.Introspectable'
+DBUS_MM_MODEM_SIMPLE_INTERFACE = 'org.freedesktop.ModemManager1.Modem.Simple'
+
+DBUS_NM_BUS_NAME = 'org.freedesktop.NetworkManager'
+DBUS_NM_INTERFACE = 'org.freedesktop.NetworkManager'
+DBUS_NM_OBJECT_PATH = '/org/freedesktop/NetworkManager'
+DBUS_PROPERTIES_INTERFACE = 'org.freedesktop.DBus.Properties'
+DBUS_NM_DEVICE_INTERFACE = 'org.freedesktop.NetworkManager.Device'
+DBUS_NM_AP_INTERFACE = 'org.freedesktop.NetworkManager.AccessPoint'
+DBUS_NM_SETTINGS_INTERFACE = 'org.freedesktop.NetworkManager.Settings'
+DBUS_NM_SETTINGS_OBJECT_PATH = '/org/freedesktop/NetworkManager/Settings'
+DBUS_NM_DEVICE_WIRELESS_INTERFACE = 'org.freedesktop.NetworkManager.Device.Wireless'
+DBUS_NM_SETTINGS_CONNECTION_INTERFACE = 'org.freedesktop.NetworkManager.Settings.Connection'
+DBUS_NM_SETTINGS_CONNECTION_ACTIVE_INTERFACE = 'org.freedesktop.NetworkManager.Connection.Active'
+
+NM_DEVICE_TYPE_MODEM = 8
+NM_DEVICE_STATE_ACTIVATED = 100
+
+def deactivate_ethernet_connections():
+    active_connection_object_paths = \
+        dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
+                       dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_INTERFACE, 'ActiveConnections')
+
+    for active_connection_object_path in active_connection_object_paths:
+        connection_object_path = \
+            dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, active_connection_object_path),
+                           dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_SETTINGS_CONNECTION_ACTIVE_INTERFACE, 'Connection')
+        connection_settings = \
+            dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, connection_object_path),
+                           dbus_interface = DBUS_NM_SETTINGS_CONNECTION_INTERFACE).GetSettings()
+
+        if connection_settings['connection']['type'] != 'ethernet' \
+           and connection_settings['connection']['type'] != '802-3-ethernet':
+                continue
+
+        dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
+                       dbus_interface = DBUS_NM_INTERFACE).DeactivateConnection(active_connection_object_path)
+
+def get_mm_modem_object_paths():
+    modem_object_path_list = []
+
+    xml = dbus.Interface(dbus.SystemBus().get_object(DBUS_MM_BUS_NAME,
+                                                     DBUS_MM_MODEM_OBJECT_PATH),
+                         dbus_interface = DBUS_INTROSPECTABLE_INTERFACE).Introspect()
+    xml_parsed = minidom.parseString(xml)
+    items = xml_parsed.getElementsByTagName('node')
+
+    items.pop(0)
+
+    for i in items:
+        try:
+            v = int(i.attributes['name'].value)
+        except:
+            continue
+
+        modem_object_path_list.append('/org/freedesktop/ModemManager1/Modem/' + str(v))
+
+    return modem_object_path_list
+
+modem_imei = ''
+modem_primary_port = ''
+c_parser_config = ConfigParser.ConfigParser()
+
+deactivate_ethernet_connections()
+
+if not os.path.isfile('/etc/tf_mobile_internet_enabled'):
+    exit(0)
+
+c_parser_config.read('/etc/tf_mobile_internet_enabled')
+modem_imei = c_parser_config.get('configuration', 'modem-imei', '')
+
+if not modem_imei:
+    exit(0)
+
+modem_object_path_list = get_mm_modem_object_paths()
+
+for o in modem_object_path_list:
+    ip_interface_found = False
+
+    imei = \
+        dbus.Interface(dbus.SystemBus().get_object(DBUS_MM_BUS_NAME, o),
+                       dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_MM_MODEM_INTERFACE, 'EquipmentIdentifier')
+
+    if imei != modem_imei:
+        continue
+
+    modem_primary_port = \
+        dbus.Interface(dbus.SystemBus().get_object(DBUS_MM_BUS_NAME, o),
+                       dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_MM_MODEM_INTERFACE, 'PrimaryPort')
+
+    nm_devices = \
+        dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
+                       dbus_interface = DBUS_NM_INTERFACE).GetDevices()
+
+    for device_object_path in nm_devices:
+        device_properties = \
+            dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
+                           dbus_interface = DBUS_PROPERTIES_INTERFACE).GetAll(DBUS_NM_DEVICE_INTERFACE)
+
+        if device_properties['DeviceType'] != NM_DEVICE_TYPE_MODEM:
+            continue
+
+        if device_properties['State'] != NM_DEVICE_STATE_ACTIVATED:
+            continue
+
+        if device_properties['Interface'] != modem_primary_port:
+            continue
+
+        os.system('/sbin/iptables -t nat -D POSTROUTING -o ' + device_properties['IpInterface'] + ' -j MASQUERADE &> /dev/null')
+        os.system('/sbin/iptables -D FORWARD -i {0} -j ACCEPT &> /dev/null')
+        os.system('/sbin/iptables -t nat -A POSTROUTING -o ' + device_properties['IpInterface'] + ' -j MASQUERADE &> /dev/null')
+        os.system('/sbin/iptables -A FORWARD -i {0} -j ACCEPT &> /dev/null')
+
+        ip_interface_found = True
+
+        break
+
+    if ip_interface_found:
+        break
+'''
+
 SH_SETUP_AP_NAT = '''
 #! /bin/bash
 
@@ -37,7 +174,7 @@ After=network.target network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash /usr/local/scripts/_tf_setup_ap_nat.sh
+ExecStart={0}
 
 [Install]
 WantedBy=multi-user.target
@@ -241,6 +378,7 @@ def setup_nat():
 
     file_path_sysctl_conf = '/etc/sysctl.d/enable_ipv4_forward.conf'
     file_path_systemd_sh = '/usr/local/scripts/_tf_setup_ap_nat.sh'
+    file_path_systemd_py = '/usr/local/scripts/_tf_setup_ap_nat.py'
     file_path_systemd_unit = '/etc/systemd/system/tf_setup_ap_nat.service'
     file_path_systemd_timer = '/etc/systemd/system/tf_setup_ap_nat.timer'
 
@@ -250,10 +388,16 @@ def setup_nat():
     os.chmod(file_path_sysctl_conf, 0644)
 
     if os.system('/sbin/sysctl -p ' + file_path_sysctl_conf + ' &> /dev/null') == 0:
-        with open(file_path_systemd_sh, 'w') as fh_sh:
-            fh_sh.write(SH_SETUP_AP_NAT.format(interface))
+        if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
+            with open(file_path_systemd_py, 'w') as fh_py:
+                fh_py.write(PY_SETUP_AP_NAT.format(interface))
 
-        os.chmod(file_path_systemd_sh, 0755)
+            os.chmod(file_path_systemd_py, 0755)
+        else:
+            with open(file_path_systemd_sh, 'w') as fh_sh:
+                fh_sh.write(SH_SETUP_AP_NAT.format(interface))
+
+            os.chmod(file_path_systemd_sh, 0755)
 
         if os.path.exists(file_path_systemd_unit):
             os.system('/bin/systemctl stop ' + file_path_systemd_unit + ' &> /dev/null')
@@ -264,7 +408,10 @@ def setup_nat():
             os.system('/bin/systemctl disable ' + file_path_systemd_timer + ' &> /dev/null')
 
         with open(file_path_systemd_unit, 'w') as fh_unit:
-            fh_unit.write(UNIT_SETUP_AP_NAT.format(interface))
+            if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
+                fh_unit.write(UNIT_SETUP_AP_NAT.format('/usr/bin/python ' + file_path_systemd_py))
+            else:
+                fh_unit.write(UNIT_SETUP_AP_NAT.format('/bin/bash ' + file_path_systemd_sh))
 
         with open(file_path_systemd_timer, 'w') as fh_timer:
             fh_timer.write(TIMER_SETUP_AP_NAT)

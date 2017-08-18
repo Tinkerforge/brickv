@@ -52,10 +52,12 @@ try:
                        dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_INTERFACE, "ActiveConnections")
 
     for active_connection_object_path in active_connection_object_paths:
-        connection_object_path = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, active_connection_object_path),
-                                                dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_SETTINGS_CONNECTION_ACTIVE_INTERFACE, "Connection")
-        connection_settings = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, connection_object_path),
-                                             dbus_interface = DBUS_NM_SETTINGS_CONNECTION_INTERFACE).GetSettings()
+        connection_object_path = \
+            dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, active_connection_object_path),
+                           dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_SETTINGS_CONNECTION_ACTIVE_INTERFACE, "Connection")
+        connection_settings = \
+            dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, connection_object_path),
+                           dbus_interface = DBUS_NM_SETTINGS_CONNECTION_INTERFACE).GetSettings()
 
         if connection_settings["connection"]["id"] != "_tf_brickv_wifi" \
            and connection_settings["connection"]["id"] != "_tf_brickv_ethernet":
