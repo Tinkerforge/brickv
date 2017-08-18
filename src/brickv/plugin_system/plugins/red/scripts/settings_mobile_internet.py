@@ -236,6 +236,10 @@ for active_connection_object_path in active_connection_object_paths:
         dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, connection_object_path),
                        dbus_interface = DBUS_NM_SETTINGS_CONNECTION_INTERFACE).GetSettings()
 
+    if not connection_settings['connection']['type'] \
+       or connection_settings['connection']['type'] != 'gsm':
+            continue
+
     if not connection_settings['connection']['interface-name'] \
        or connection_settings['connection']['interface-name'] != interface_name:
             dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
@@ -1236,7 +1240,6 @@ try:
                 try:
                     os.system('/bin/systemctl stop tf_mobile_internet_nm.timer &> /dev/null')
                     os.system('/bin/systemctl disable tf_mobile_internet_nm.timer &> /dev/null')
-                    os.remove(FILE_UNIT_TIMER)
                 except:
                     pass
 
@@ -1244,12 +1247,8 @@ try:
                 try:
                     os.system('/bin/systemctl stop tf_mobile_internet_nm.service &> /dev/null')
                     os.system('/bin/systemctl disable tf_mobile_internet_nm.service &> /dev/null')
-                    os.remove(FILE_UNIT_TF_MOBILE_INTERNET_NM)
                 except:
                     pass
-
-            if os.path.isfile(FILE_UNIT_TARGET_SCRIPT):
-                os.remove(FILE_UNIT_TARGET_SCRIPT)
 
             with open(FILE_UNIT_TARGET_SCRIPT, 'w') as fh:
                 fh.write(PY_TF_MOBILE_INTERNET)
