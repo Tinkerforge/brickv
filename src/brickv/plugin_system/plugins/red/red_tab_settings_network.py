@@ -744,6 +744,10 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             self.chkbox_net_wireless_key_show.setChecked(False)
             self.chkbox_net_wireless_key_show.show()
             self.pbutton_net_wireless_connect_hidden.setEnabled(True)
+
+            # FIXME: This is only for the demo image, fix it for final release
+            if not self.image_version_lt_1_10:
+                self.pbutton_net_wireless_connect_hidden.setEnabled(False)
         else:
             self.label_ap.hide()
             self.tree_net_wireless_ap.hide()
