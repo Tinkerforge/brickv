@@ -27,6 +27,16 @@ DBUS_NM_DEVICE_WIRELESS_INTERFACE = "org.freedesktop.NetworkManager.Device.Wirel
 DBUS_NM_SETTINGS_CONNECTION_INTERFACE = "org.freedesktop.NetworkManager.Settings.Connection"
 DBUS_NM_SETTINGS_CONNECTION_ACTIVE_INTERFACE = 'org.freedesktop.NetworkManager.Connection.Active'
 
+HIDDEN_AP_CMD_CON_RELOAD = "/usr/bin/nmcli connection reload"
+HIDDEN_AP_CMD_UP = "/usr/bin/nmcli connection up _tf_brickv_wifi"
+HIDDEN_AP_CMD_SET_PSK = "/usr/bin/nmcli connection modify _tf_brickv_wifi wifi-sec.psk {psk}"
+HIDDEN_AP_CMD_SET_HIDDEN = "/usr/bin/nmcli connection modify _tf_brickv_wifi wifi.hidden yes"
+HIDDEN_AP_CMD_SET_STATIC_DNS = "/usr/bin/nmcli connection modify _tf_brickv_wifi ipv4.dns \"{dns}\""
+HIDDEN_AP_CMD_SET_WPA_PSK = "/usr/bin/nmcli connection modify _tf_brickv_wifi wifi-sec.key-mgmt wpa-psk"
+HIDDEN_AP_CMD_ADD = "/usr/bin/nmcli connection add type wifi con-name _tf_brickv_wifi ifname {ifname} ssid {ssid}"
+HIDDEN_AP_CMD_ADD_STATIC_IP = \
+    "/usr/bin/nmcli connection add type wifi con-name _tf_brickv_wifi ifname {ifname} ssid {ssid} ip4 {ip4} gw4 {gw4}"
+
 C_PARSER_WIFI = ConfigParser.ConfigParser()
 C_PARSER_ETHERNET = ConfigParser.ConfigParser()
 WIFI_CONNECTION_FILE_PATH = "/etc/NetworkManager/system-connections/_tf_brickv_wifi"
@@ -36,7 +46,13 @@ if len(argv) != 2:
     exit (1)
 
 try:
+    ip_org = None
+    gw_org = None
+    psk_org = None
     dns_org = None
+    ssid_org = None
+    ifname_org = None
+    prefix_org = None
     wifi_address1 = None
     device_object_paths = None
     connection_type_to_delete = None
@@ -91,14 +107,19 @@ try:
     if not r:
         exit(1)
 
+    # Get the originals.
+    dns_org = connection_config["ipv4"]["dns"]
+    gw_org = connection_config["ipv4"]["gateway"]
+    ip_org = connection_config["ipv4"]["address-data"]["address"]
+    ifname_org = connection_config["connection"]["interface-name"]
+    prefix_org = connection_config["ipv4"]["address-data"]["prefix"]
+
     # Add new connection.
 
     # Prepare DNS entry.
-    dns_org = connection_config["ipv4"]["dns"]
-
     if connection_config["ipv4"]["dns"] != "":
         connection_config["ipv4"]["dns"] = \
-            [dbus.UInt32(struct.unpack("!L", socket.inet_aton(connection_config["ipv4"]["dns"]))[0])]
+            [dbus.UInt32(struct.unpack("L", socket.inet_aton(connection_config["ipv4"]["dns"]))[0])]
     else:
         connection_config["ipv4"]["dns"] = [dbus.UInt32(0L)]
 
@@ -115,6 +136,12 @@ try:
 
     # Do WiFi connection specific preparations.
     if connection_config["connection"]["type"] == "802-11-wireless":
+        # Get the originals.
+        ssid_org = connection_config["802-11-wireless"]["ssid"]
+
+        if "802-11-wireless-security" in connection_config:
+            psk_org = connection_config["802-11-wireless-security"]["psk"]
+
         # Prepare SSID entry.
         connection_config["802-11-wireless"]["ssid"] = \
             dbus.ByteArray(connection_config["802-11-wireless"]["ssid"])
@@ -124,35 +151,36 @@ try:
             connection_config["802-11-wireless-security"]["psk-flags"] = \
                 dbus.UInt32(connection_config["802-11-wireless-security"]["psk-flags"])
 
-        for device_object_path in device_object_paths:
-            device_type = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
-                                         dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_INTERFACE, "DeviceType")
+        if not connection_config['802-11-wireless']['hidden']:
+            for device_object_path in device_object_paths:
+                device_type = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
+                                             dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_INTERFACE, "DeviceType")
 
-            device_interface = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
-                                              dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_INTERFACE, "Interface")
+                device_interface = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
+                                                  dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_INTERFACE, "Interface")
 
-            if device_type != NM_DEVICE_TYPE_WIFI:
-                continue
-
-            if device_interface != connection_config["connection"]["interface-name"]:
-                continue
-
-            ap_object_paths = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
-                                             dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_WIRELESS_INTERFACE, "AccessPoints")
-
-            for ap_object_path in ap_object_paths:
-                ap_ssid = str(bytearray(dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, ap_object_path),
-                                        dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_AP_INTERFACE, "Ssid")))
-
-                if connection_config["802-11-wireless"]["ssid"] != ap_ssid:
+                if device_type != NM_DEVICE_TYPE_WIFI:
                     continue
 
-                connection_specific_object = ap_object_path
+                if device_interface != connection_config["connection"]["interface-name"]:
+                    continue
 
-                break
+                ap_object_paths = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
+                                                 dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_WIRELESS_INTERFACE, "AccessPoints")
 
-        if not connection_specific_object:
-            exit(1)
+                for ap_object_path in ap_object_paths:
+                    ap_ssid = str(bytearray(dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, ap_object_path),
+                                            dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_AP_INTERFACE, "Ssid")))
+
+                    if connection_config["802-11-wireless"]["ssid"] != ap_ssid:
+                        continue
+
+                    connection_specific_object = ap_object_path
+
+                    break
+
+            if not connection_specific_object:
+                exit(1)
 
     # Do ethernet connection specific preparations.
     elif connection_config["connection"]["type"] == "802-3-ethernet":
@@ -173,15 +201,59 @@ try:
     if not selected_device_object_path:
         exit(1)
 
-    added_connection_object_path, active_connection_object_path = \
-        dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
-                       dbus_interface = DBUS_NM_INTERFACE).AddAndActivateConnection(connection_config,
-                                                                                    device_object_path,
-                                                                                    connection_specific_object)
+    if connection_config["connection"]["type"] == "802-11-wireless":
+        if not connection_config['802-11-wireless']['hidden']:
+            added_connection_object_path, active_connection_object_path = \
+                dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
+                               dbus_interface = DBUS_NM_INTERFACE).AddAndActivateConnection(connection_config,
+                                                                                            device_object_path,
+                                                                                            connection_specific_object)
+            if not added_connection_object_path or \
+               not active_connection_object_path:
+                    exit(1)
+        else:
+            if connection_config["ipv4"]["method"] == "manual":
+                os.system(HIDDEN_AP_CMD_ADD_STATIC_IP.format(ifname = ifname_org,
+                                                             ssid = ssid_org,
+                                                             ip4 = ip_org + "/" + prefix_org,
+                                                             gw4 = gw_org))
 
-    if not added_connection_object_path or \
-       not active_connection_object_path:
-            exit(1)
+                os.system(HIDDEN_AP_CMD_SET_STATIC_DNS.format(dns = dns_org))
+            else:
+                os.system(HIDDEN_AP_CMD_ADD.format(ifname = ifname_org, ssid = ssid_org))
+
+            os.system(HIDDEN_AP_CMD_SET_HIDDEN)
+
+            if "802-11-wireless-security" in connection_config:
+                os.system(HIDDEN_AP_CMD_SET_WPA_PSK)
+                os.system(HIDDEN_AP_CMD_SET_PSK.format(psk = psk_org))
+
+                C_PARSER_WIFI.read(WIFI_CONNECTION_FILE_PATH)
+
+                C_PARSER_WIFI.set("wifi-security", "psk-flags", 0)
+
+                with open(WIFI_CONNECTION_FILE_PATH, "w") as fh:
+                    C_PARSER_WIFI.write(fh)
+
+            if os.path.isfile(ETHERNET_CONNECTION_FILE_PATH):
+                C_PARSER_ETHERNET.read(ETHERNET_CONNECTION_FILE_PATH)
+                C_PARSER_ETHERNET.set("connection", "autoconnect", "false")
+
+                with open(ETHERNET_CONNECTION_FILE_PATH, "w") as fh_connection:
+                    C_PARSER_ETHERNET.write(fh_connection)
+
+            os.system(HIDDEN_AP_CMD_CON_RELOAD)
+            os.system(HIDDEN_AP_CMD_UP)
+    else:
+        added_connection_object_path, active_connection_object_path = \
+            dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
+                           dbus_interface = DBUS_NM_INTERFACE).AddAndActivateConnection(connection_config,
+                                                                                        device_object_path,
+                                                                                        connection_specific_object)
+
+        if not added_connection_object_path or \
+           not active_connection_object_path:
+                exit(1)
 
     # Reload connections.
     r = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_SETTINGS_OBJECT_PATH),
@@ -208,70 +280,71 @@ try:
     # connection.
 
     if connection_config["connection"]["type"] == "802-11-wireless":
-        data_connection_file = None
-        added_connection_settings = \
-            dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, added_connection_object_path),
-                           dbus_interface = DBUS_NM_SETTINGS_CONNECTION_INTERFACE).GetSettings()
+        if not connection_config['802-11-wireless']['hidden']:
+            data_connection_file = None
+            added_connection_settings = \
+                dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, added_connection_object_path),
+                               dbus_interface = DBUS_NM_SETTINGS_CONNECTION_INTERFACE).GetSettings()
 
-        # Deactivate connection.
-        try:
-            dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
-                           dbus_interface = DBUS_NM_INTERFACE).DeactivateConnection(active_connection_object_path)
-        except:
-            pass
+            # Deactivate connection.
+            try:
+                dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
+                               dbus_interface = DBUS_NM_INTERFACE).DeactivateConnection(active_connection_object_path)
+            except:
+                pass
 
-        # Rename connection file.
-        os.rename("/etc/NetworkManager/system-connections/" + added_connection_settings["connection"]["id"],
-                  WIFI_CONNECTION_FILE_PATH)
+            # Rename connection file.
+            os.rename("/etc/NetworkManager/system-connections/" + added_connection_settings["connection"]["id"],
+                      WIFI_CONNECTION_FILE_PATH)
 
-        # Modify connection file.
-        C_PARSER_WIFI.read(WIFI_CONNECTION_FILE_PATH)
+            # Modify connection file.
+            C_PARSER_WIFI.read(WIFI_CONNECTION_FILE_PATH)
 
-        C_PARSER_WIFI.set("connection", "id", "_tf_brickv_wifi")
-        C_PARSER_WIFI.set("connection",
-                     "interface-name",
-                     connection_config["connection"]["interface-name"])
+            C_PARSER_WIFI.set("connection", "id", "_tf_brickv_wifi")
+            C_PARSER_WIFI.set("connection",
+                              "interface-name",
+                              connection_config["connection"]["interface-name"])
 
-        if "802-11-wireless-security" in connection_config:
-            C_PARSER_WIFI.set("wifi-security", "auth-alg", "open")
-            C_PARSER_WIFI.set("wifi-security", "psk-flags", 0)
-            C_PARSER_WIFI.set("wifi-security", "psk", connection_config["802-11-wireless-security"]["psk"])
+            if "802-11-wireless-security" in connection_config:
+                C_PARSER_WIFI.set("wifi-security", "auth-alg", "open")
+                C_PARSER_WIFI.set("wifi-security", "psk-flags", 0)
+                C_PARSER_WIFI.set("wifi-security", "psk", connection_config["802-11-wireless-security"]["psk"])
 
-        if connection_config["ipv4"]["method"] == "manual":
-            wifi_address1 = connection_config["ipv4"]["address-data"][0]["address"] + \
-                            "/" + \
-                            str(connection_config["ipv4"]["address-data"][0]["prefix"]) + \
-                            "," + \
-                            connection_config["ipv4"]["gateway"]
+            if connection_config["ipv4"]["method"] == "manual":
+                wifi_address1 = connection_config["ipv4"]["address-data"][0]["address"] + \
+                                "/" + \
+                                str(connection_config["ipv4"]["address-data"][0]["prefix"]) + \
+                                "," + \
+                                connection_config["ipv4"]["gateway"]
 
-            C_PARSER_WIFI.set("ipv4", "address1", wifi_address1)
-            C_PARSER_WIFI.set("ipv4", "dns", dns_org + ";")
-            C_PARSER_WIFI.set("ipv4", "method", "manual")
-        else:
-            C_PARSER_WIFI.set("ipv4", "method", "auto")
+                C_PARSER_WIFI.set("ipv4", "address1", wifi_address1)
+                C_PARSER_WIFI.set("ipv4", "dns", dns_org + ";")
+                C_PARSER_WIFI.set("ipv4", "method", "manual")
+            else:
+                C_PARSER_WIFI.set("ipv4", "method", "auto")
 
-        with open(WIFI_CONNECTION_FILE_PATH, "w") as fh_connection:
-            C_PARSER_WIFI.write(fh_connection)
+            with open(WIFI_CONNECTION_FILE_PATH, "w") as fh_connection:
+                C_PARSER_WIFI.write(fh_connection)
 
-        if os.path.isfile(ETHERNET_CONNECTION_FILE_PATH):
-            C_PARSER_ETHERNET.read(ETHERNET_CONNECTION_FILE_PATH)
-            C_PARSER_ETHERNET.set("connection", "autoconnect", "false")
+            if os.path.isfile(ETHERNET_CONNECTION_FILE_PATH):
+                C_PARSER_ETHERNET.read(ETHERNET_CONNECTION_FILE_PATH)
+                C_PARSER_ETHERNET.set("connection", "autoconnect", "false")
 
-            with open(ETHERNET_CONNECTION_FILE_PATH, "w") as fh_connection:
-                C_PARSER_ETHERNET.write(fh_connection)
+                with open(ETHERNET_CONNECTION_FILE_PATH, "w") as fh_connection:
+                    C_PARSER_ETHERNET.write(fh_connection)
 
-        # Reload connections.
-        r = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_SETTINGS_OBJECT_PATH),
-                           dbus_interface = DBUS_NM_SETTINGS_INTERFACE).ReloadConnections()
+            # Reload connections.
+            r = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_SETTINGS_OBJECT_PATH),
+                               dbus_interface = DBUS_NM_SETTINGS_INTERFACE).ReloadConnections()
 
-        if not r:
-            exit(1)
+            if not r:
+                exit(1)
 
-        active_connection_object_path = \
-            dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
-                           dbus_interface = DBUS_NM_INTERFACE).ActivateConnection(added_connection_object_path,
-                                                                                  device_object_path,
-                                                                                  connection_specific_object)
+            active_connection_object_path = \
+                dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
+                               dbus_interface = DBUS_NM_INTERFACE).ActivateConnection(added_connection_object_path,
+                                                                                      device_object_path,
+                                                                                      connection_specific_object)
     else:
         if os.path.isfile(WIFI_CONNECTION_FILE_PATH):
             C_PARSER_WIFI.read(WIFI_CONNECTION_FILE_PATH)

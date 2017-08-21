@@ -465,6 +465,18 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                    cb_open_error)
 
     def connect_wireless_hidden(self, parameters):
+        def cb_settings_network_apply_nm(result):
+            self.update_gui(WORKING_STATE_DONE)
+            if result and result.stderr == '' and result.exit_code == 0:
+                QtGui.QMessageBox.information(get_main_window(),
+                                              'Settings | Network',
+                                              'Configuration saved.')
+                self.slot_network_conf_refresh_clicked()
+            else:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           'Settings | Network',
+                                           'Error saving configuration:\n\n' + result.stderr)
+
         if self.image_version_lt_1_10:
             cbox_cidx = self.cbox_net_intf.currentIndex()
             itype = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE)
@@ -542,7 +554,62 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             self.save_and_apply(iname, iname_previous)
         else:
             # TODO: Implement hidden WiFi network connect for Network Manager
-            pass
+            cbox_cidx = self.cbox_net_intf.currentIndex()
+            itype = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE)
+            iname = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE)
+
+            if itype != INTERFACE_TYPE_WIRELESS:
+                return
+
+            self.update_gui(WORKING_STATE_CONNECT)
+
+            essid = parameters['essid']
+            bssid = parameters['bssid']
+            encryption_method = parameters['encryption_method']
+            key = parameters['key']
+            address_conf_type = parameters['address_conf_type']
+            ip = parameters['ip']
+            netmask = parameters['netmask']
+            ip_gw = parameters['gw']
+            ip_dns = parameters['dns']
+
+            cidr = 0
+            ip_method = 'auto'
+            connection_config_dict = None
+
+            if address_conf_type == CBOX_NET_CONTYPE_INDEX_STATIC:
+                ip_method = 'manual'
+                cidr = self.netmask_to_cidr(netmask)
+            else:
+                ip = '0'
+                ip_dns = '0'
+                ip_gw = '0'
+                cidr = 0
+
+            connection_config_dict = CONNECTION_CONFIG_WIFI_DICT
+
+            connection_config_dict['connection']['interface-name'] = iname
+            connection_config_dict['802-11-wireless']['ssid'] = essid
+            connection_config_dict['802-11-wireless']['bssid'] = bssid
+            connection_config_dict['802-11-wireless']['hidden'] = True
+            connection_config_dict['ipv4']['method'] = ip_method
+            connection_config_dict['ipv4']['dns'] = ip_dns
+            connection_config_dict['ipv4']['address-data'] = {'address': ip, 'prefix': cidr}
+            connection_config_dict['ipv4']['gateway'] = ip_gw
+
+            if '802-11-wireless-security' in connection_config_dict:
+                del connection_config_dict['802-11-wireless-security']
+
+            if encryption_method > 0:
+                connection_config_dict['802-11-wireless-security'] = {}
+                connection_config_dict['802-11-wireless-security']['auth-alg'] = 'open'
+                connection_config_dict['802-11-wireless-security']['key-mgmt'] = 'wpa-psk'
+                connection_config_dict['802-11-wireless-security']['psk'] = key
+                connection_config_dict['802-11-wireless-security']['psk-flags'] = 0
+
+            self.script_manager.execute_script('settings_network_apply_nm',
+                                               cb_settings_network_apply_nm,
+                                               [json.dumps(connection_config_dict)])
 
     def update_connect_button_state(self):
         self.pbutton_net_connect.setEnabled(True)
@@ -746,8 +813,8 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             self.pbutton_net_wireless_connect_hidden.setEnabled(True)
 
             # FIXME: This is only for the demo image, fix it for final release
-            if not self.image_version_lt_1_10:
-                self.pbutton_net_wireless_connect_hidden.setEnabled(False)
+            #if not self.image_version_lt_1_10:
+            #    self.pbutton_net_wireless_connect_hidden.setEnabled(False)
         else:
             self.label_ap.hide()
             self.tree_net_wireless_ap.hide()
@@ -1689,8 +1756,6 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
             self.save_and_apply(iname, iname_previous)
         else:
-            connection_configuration = ''
-
             self.update_gui(WORKING_STATE_CONNECT)
 
             ip = ''
