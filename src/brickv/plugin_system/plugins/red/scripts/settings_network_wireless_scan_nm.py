@@ -1,9 +1,11 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
+import os
 import json
 import dbus
 import traceback
+import ConfigParser
 
 NM_DEVICE_TYPE_WIFI = 2
 
@@ -19,6 +21,20 @@ DBUS_NM_AP_INTERFACE = "org.freedesktop.NetworkManager.AccessPoint"
 DBUS_NM_DEVICE_WIRELESS_INTERFACE = "org.freedesktop.NetworkManager.Device.Wireless"
 
 return_dict = {}
+config_wifi_ssid = None
+config_wifi_hidden = None
+c_parser_wifi_config = None
+
+if os.path.isfile("/etc/NetworkManager/system-connections/_tf_brickv_wifi"):
+    try:
+        c_parser_wifi_config = ConfigParser.ConfigParser()
+
+        c_parser_wifi_config.read("/etc/NetworkManager/system-connections/_tf_brickv_wifi")
+
+        config_wifi_ssid = c_parser_wifi_config.get("wifi", "ssid", "")
+        config_wifi_hidden = c_parser_wifi_config.get("wifi", "hidden", "")
+    except:
+        pass
 
 try:
     if DBUS_NM_BUS_NAME not in dbus.SystemBus().list_names():
@@ -58,9 +74,14 @@ try:
 
         for ap_object_path in ap_object_paths:
             nidx = ap_object_path.split("/")[-1]
-
             ap_props = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, ap_object_path),
                                       dbus_interface = DBUS_PROPERTIES_INTERFACE).GetAll(DBUS_NM_AP_INTERFACE)
+
+            if c_parser_wifi_config \
+               and config_wifi_ssid \
+               and config_wifi_hidden:
+                    if config_wifi_ssid == str(bytearray(ap_props["Ssid"])):
+                        continue
 
             flags = 0
             only_wpa1 = False
