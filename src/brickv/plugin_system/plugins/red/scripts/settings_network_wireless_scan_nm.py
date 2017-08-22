@@ -20,10 +20,23 @@ DBUS_NM_DEVICE_INTERFACE = "org.freedesktop.NetworkManager.Device"
 DBUS_NM_AP_INTERFACE = "org.freedesktop.NetworkManager.AccessPoint"
 DBUS_NM_DEVICE_WIRELESS_INTERFACE = "org.freedesktop.NetworkManager.Device.Wireless"
 
+FILE_CONNECTED_HIDDEN_WIFI_NETWORKS = "/etc/tf_connected_hidden_wifi_networks"
+
 return_dict = {}
 config_wifi_ssid = None
 config_wifi_hidden = None
 c_parser_wifi_config = None
+connected_hidden_wifi_networks = []
+
+if os.path.isfile(FILE_CONNECTED_HIDDEN_WIFI_NETWORKS):
+    hidden_wifi_networks = []
+
+    with open(FILE_CONNECTED_HIDDEN_WIFI_NETWORKS, "r") as fh:
+        hidden_wifi_networks = fh.readlines()
+
+    if len(hidden_wifi_networks) > 0:
+        for n in hidden_wifi_networks:
+            connected_hidden_wifi_networks.append(n.strip())
 
 if os.path.isfile("/etc/NetworkManager/system-connections/_tf_brickv_wifi"):
     try:
@@ -74,6 +87,7 @@ try:
 
         for ap_object_path in ap_object_paths:
             nidx = ap_object_path.split("/")[-1]
+            found_in_connected_hidden_wifi_networks = False
             ap_props = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, ap_object_path),
                                       dbus_interface = DBUS_PROPERTIES_INTERFACE).GetAll(DBUS_NM_AP_INTERFACE)
 
@@ -82,6 +96,15 @@ try:
                and config_wifi_hidden:
                     if config_wifi_ssid == str(bytearray(ap_props["Ssid"])):
                         continue
+
+            for n in connected_hidden_wifi_networks:
+                if n == str(bytearray(ap_props["Ssid"])):
+                    found_in_connected_hidden_wifi_networks = True
+
+                    break
+
+            if found_in_connected_hidden_wifi_networks:
+                continue
 
             flags = 0
             only_wpa1 = False

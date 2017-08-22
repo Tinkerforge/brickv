@@ -3,6 +3,7 @@
 
 import os
 import dbus
+import time
 import json
 import socket
 import struct
@@ -39,6 +40,7 @@ HIDDEN_AP_CMD_ADD_STATIC_IP = \
 
 C_PARSER_WIFI = ConfigParser.ConfigParser()
 C_PARSER_ETHERNET = ConfigParser.ConfigParser()
+CONNECTED_HIDDEN_WIFI_NETWORKS_FILE_PATH = "/etc/tf_connected_hidden_wifi_networks"
 WIFI_CONNECTION_FILE_PATH = "/etc/NetworkManager/system-connections/_tf_brickv_wifi"
 ETHERNET_CONNECTION_FILE_PATH = "/etc/NetworkManager/system-connections/_tf_brickv_ethernet"
 
@@ -54,8 +56,10 @@ try:
     ifname_org = None
     prefix_org = None
     wifi_address1 = None
+    hidden_wifi_networks = []
     device_object_paths = None
     connection_type_to_delete = None
+    hidden_wifi_network_found = False
     connection_specific_object = None
     selected_device_object_path = None
     added_connection_object_path = None
@@ -231,6 +235,7 @@ try:
                 C_PARSER_WIFI.read(WIFI_CONNECTION_FILE_PATH)
 
                 C_PARSER_WIFI.set("wifi-security", "psk-flags", 0)
+                C_PARSER_WIFI.set("wifi-security", "auth-alg", "open")
 
                 with open(WIFI_CONNECTION_FILE_PATH, "w") as fh:
                     C_PARSER_WIFI.write(fh)
@@ -243,7 +248,27 @@ try:
                     C_PARSER_ETHERNET.write(fh_connection)
 
             os.system(HIDDEN_AP_CMD_CON_RELOAD)
+
+            time.sleep(2)
+
             os.system(HIDDEN_AP_CMD_UP)
+
+            if not os.path.isfile(CONNECTED_HIDDEN_WIFI_NETWORKS_FILE_PATH):
+                with open(CONNECTED_HIDDEN_WIFI_NETWORKS_FILE_PATH, "w") as fh:
+                    fh.write(ssid_org + "\n")
+            else:
+                with open(CONNECTED_HIDDEN_WIFI_NETWORKS_FILE_PATH, "r") as fh:
+                    hidden_wifi_networks = fh.readlines()
+
+                for n in hidden_wifi_networks:
+                    if ssid_org == n.strip():
+                        hidden_wifi_network_found = True
+
+                        break
+
+                if not hidden_wifi_network_found:
+                    with open(CONNECTED_HIDDEN_WIFI_NETWORKS_FILE_PATH, "a") as fh:
+                        fh.write(ssid_org + "\n")
     else:
         added_connection_object_path, active_connection_object_path = \
             dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, DBUS_NM_OBJECT_PATH),
