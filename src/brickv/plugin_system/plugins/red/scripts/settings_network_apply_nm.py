@@ -219,7 +219,7 @@ try:
             if connection_config["ipv4"]["method"] == "manual":
                 os.system(HIDDEN_AP_CMD_ADD_STATIC_IP.format(ifname = ifname_org,
                                                              ssid = ssid_org,
-                                                             ip4 = ip_org + "/" + prefix_org,
+                                                             ip4 = ip_org + "/" + str(prefix_org),
                                                              gw4 = gw_org))
 
                 os.system(HIDDEN_AP_CMD_SET_STATIC_DNS.format(dns = dns_org))
