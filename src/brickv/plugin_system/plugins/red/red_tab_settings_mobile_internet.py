@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2015 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2015-2017 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 red_tab_settings_mobile_internet.py: RED settings mobile internet tab implementation
 

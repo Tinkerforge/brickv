@@ -68,6 +68,224 @@ auto lo
 iface lo inet loopback
 '''
 
+is_enabled_mi = None
+is_enabled_wicd = None
+is_enabled_mi_nm = None
+is_enabled_ap_nat = None
+is_enabled_nagios = None
+is_enabled_hostapd = None
+is_enabled_dnsmasq = None
+is_enabled_openhab = None
+is_enabled_web_server = None
+is_enabled_mi_nm_timer = None
+is_enabled_ap_nat_timer = None
+is_enabled_splashscreen = None
+
+def get_svc_states():
+    ps = None
+    ps_stdout = None
+
+    global is_enabled_mi
+    global is_enabled_wicd
+    global is_enabled_mi_nm
+    global is_enabled_ap_nat
+    global is_enabled_nagios
+    global is_enabled_hostapd
+    global is_enabled_dnsmasq
+    global is_enabled_openhab
+    global is_enabled_web_server
+    global is_enabled_mi_nm_timer
+    global is_enabled_ap_nat_timer
+    global is_enabled_splashscreen
+
+    # Sakis3G mobile internet
+    if not IMAGE_VERSION or IMAGE_VERSION < MIN_VERSION_WITH_NM:
+        if os.path.isfile('/etc/systemd/system/tf_mobile_internet.service'):
+            ps = subprocess.Popen('/bin/systemctl is-enabled tf_mobile_internet.service',
+                                  shell=True,
+                                  stdout=subprocess.PIPE)
+
+            ps_stdout = ps.communicate()[0].strip()
+
+            if ps_stdout and ps_stdout == 'disabled':
+                is_enabled_mi = False
+            elif ps_stdout and ps_stdout == 'enabled':
+                is_enabled_mi = True
+
+        # WICD
+        ps = subprocess.Popen('/bin/systemctl is-enabled wicd.service',
+                              shell=True,
+                              stdout=subprocess.PIPE)
+
+        ps_stdout = ps.communicate()[0].strip()
+
+        if ps_stdout and ps_stdout == 'disabled':
+            is_enabled_wicd = False
+        elif ps_stdout and ps_stdout == 'enabled':
+            is_enabled_wicd = True
+
+    # NetworkManager mobile internet service and timer
+    if os.path.isfile('/etc/systemd/system/tf_mobile_internet_nm.service'):
+        ps = subprocess.Popen('/bin/systemctl is-enabled tf_mobile_internet_nm.service',
+                              shell=True,
+                              stdout=subprocess.PIPE)
+
+        ps_stdout = ps.communicate()[0].strip()
+
+        if ps_stdout and ps_stdout == 'disabled':
+            is_enabled_mi_nm = False
+        elif ps_stdout and ps_stdout == 'enabled':
+            is_enabled_mi_nm = True
+
+    if os.path.isfile('/etc/systemd/system/tf_mobile_internet_nm.timer'):
+        ps = subprocess.Popen('/bin/systemctl is-enabled tf_mobile_internet_nm.timer',
+                              shell=True,
+                              stdout=subprocess.PIPE)
+
+        ps_stdout = ps.communicate()[0].strip()
+
+        if ps_stdout and ps_stdout == 'disabled':
+            is_enabled_mi_nm_timer = False
+        elif ps_stdout and ps_stdout == 'enabled':
+            is_enabled_mi_nm_timer = True
+
+    # AP NAT setup service and timer
+    if os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.service'):
+        ps = subprocess.Popen('/bin/systemctl is-enabled tf_setup_ap_nat.service',
+                              shell=True,
+                              stdout=subprocess.PIPE)
+
+        ps_stdout = ps.communicate()[0].strip()
+
+        if ps_stdout and ps_stdout == 'disabled':
+            is_enabled_ap_nat = False
+        elif ps_stdout and ps_stdout == 'enabled':
+            is_enabled_ap_nat = True
+    else:
+        is_enabled_ap_nat = False
+
+    if os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.timer'):
+        ps = subprocess.Popen('/bin/systemctl is-enabled tf_setup_ap_nat.timer',
+                              shell=True,
+                              stdout=subprocess.PIPE)
+
+        ps_stdout = ps.communicate()[0].strip()
+
+        if ps_stdout and ps_stdout == 'disabled':
+            is_enabled_ap_nat_timer = False
+        elif ps_stdout and ps_stdout == 'enabled':
+            is_enabled_ap_nat_timer = True
+    else:
+        is_enabled_ap_nat_timer = False
+
+    # Nagios
+    if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NAGIOS4:
+        ps = subprocess.Popen('/bin/systemctl is-enabled nagios.service',
+                              shell=True,
+                              stdout=subprocess.PIPE)
+
+        ps_stdout = ps.communicate()[0].strip()
+
+        if ps_stdout and ps_stdout == 'disabled':
+            is_enabled_nagios = False
+        elif ps_stdout and ps_stdout == 'enabled':
+            is_enabled_nagios = True
+    else:
+        ps = subprocess.Popen('/bin/systemctl is-enabled nagios3.service',
+                              shell=True,
+                              stdout=subprocess.PIPE)
+
+        ps_stdout = ps.communicate()[0].strip()
+
+        if ps_stdout and ps_stdout == 'disabled':
+            is_enabled_nagios = False
+        elif ps_stdout and ps_stdout == 'enabled':
+            is_enabled_nagios = True
+
+    # Hostpad
+    ps = subprocess.Popen('/bin/systemctl is-enabled hostapd.service',
+                          shell=True,
+                          stdout=subprocess.PIPE)
+
+    ps_stdout = ps.communicate()[0].strip()
+
+    if ps_stdout and ps_stdout == 'disabled':
+        is_enabled_hostapd = False
+    elif ps_stdout and ps_stdout == 'enabled':
+        is_enabled_hostapd = True
+
+    # Dnsmasq
+    ps = subprocess.Popen('/bin/systemctl is-enabled dnsmasq.service',
+                          shell=True,
+                          stdout=subprocess.PIPE)
+
+    ps_stdout = ps.communicate()[0].strip()
+
+    if ps_stdout and ps_stdout == 'disabled':
+        is_enabled_dnsmasq = False
+    elif ps_stdout and ps_stdout == 'enabled':
+        is_enabled_dnsmasq = True
+
+    # OpenHAB
+    if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_OPENHAB2:
+        ps = subprocess.Popen('/bin/systemctl is-enabled openhab2.service',
+                              shell=True,
+                              stdout=subprocess.PIPE)
+        ps_stdout = ps.communicate()[0].strip()
+
+        if ps_stdout and ps_stdout == 'disabled':
+            is_enabled_openhab = False
+        elif ps_stdout and ps_stdout == 'enabled':
+            is_enabled_openhab = True
+    else:
+        ps = subprocess.Popen('/bin/systemctl is-enabled openhab.service',
+                              shell=True,
+                              stdout=subprocess.PIPE)
+        ps_stdout = ps.communicate()[0].strip()
+
+        if ps_stdout and ps_stdout == 'disabled':
+            is_enabled_openhab = False
+        elif ps_stdout and ps_stdout == 'enabled':
+            is_enabled_openhab = True
+
+    # Webserver
+    ps = subprocess.Popen('/bin/systemctl is-enabled apache2.service',
+                          shell=True,
+                          stdout=subprocess.PIPE)
+
+    ps_stdout = ps.communicate()[0].strip()
+
+    if ps_stdout and ps_stdout == 'disabled':
+        is_enabled_web_server = False
+    elif ps_stdout and ps_stdout == 'enabled':
+        is_enabled_web_server = True
+
+    # Splashscreen
+    if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_ASPLASH_SCREEN:
+        ps = subprocess.Popen('/bin/systemctl is-enabled splashscreen.service',
+                              shell=True,
+                              stdout=subprocess.PIPE)
+
+        ps_stdout = ps.communicate()[0].strip()
+
+        if ps_stdout and ps_stdout == 'disabled':
+            is_enabled_splashscreen = False
+        elif ps_stdout and ps_stdout == 'enabled':
+            is_enabled_splashscreen = True
+    else:
+        ps = subprocess.Popen('/bin/systemctl is-enabled asplashscreen.service',
+                              shell=True,
+                              stdout=subprocess.PIPE)
+
+        ps_stdout = ps.communicate()[0].strip()
+
+        if ps_stdout and ps_stdout == 'disabled':
+            is_enabled_splashscreen = False
+        elif ps_stdout and ps_stdout == 'enabled':
+            is_enabled_splashscreen = True
+
+get_svc_states()
+
 if command == 'CHECK':
     try:
         return_dict = {'gpu'              : None,
@@ -80,38 +298,18 @@ if command == 'CHECK':
                        'mobileinternet'   : None}
 
         if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_CHKCONFIG:
-            # In this case we rely on STDOUT instead of exit code of the process
-            # because systemctl returns exit value of 1 in case a service is disabled
-            cmd_apache2 = '/bin/systemctl is-enabled apache2.service'
-            cmd_apache2_ps = subprocess.Popen(cmd_apache2, shell=True, stdout=subprocess.PIPE)
-            cmd_apache2_stdout = cmd_apache2_ps.communicate()[0].strip()
-
-            cmd_splashscreen = '/bin/systemctl is-enabled splashscreen.service'
-            cmd_splashscreen_ps = subprocess.Popen(cmd_splashscreen, shell=True, stdout=subprocess.PIPE)
-            cmd_splashscreen_ps_stdout = cmd_splashscreen_ps.communicate()[0].strip()
-
-            cmd_openhab = '/bin/systemctl is-enabled openhab2.service'
-            cmd_openhab_ps = subprocess.Popen(cmd_openhab, shell=True, stdout=subprocess.PIPE)
-            cmd_openhab_ps_stdout = cmd_openhab_ps.communicate()[0].strip()
-
-            if not cmd_apache2_stdout or not cmd_splashscreen_ps_stdout:
-                exit(3)
-
-            if cmd_apache2_stdout == 'enabled':
+            if is_enabled_web_server:
                 return_dict['webserver'] = True
             else:
                 return_dict['webserver'] = False
 
-            if cmd_splashscreen_ps_stdout == 'enabled':
+            if is_enabled_splashscreen:
                 return_dict['splashscreen'] = True
             else:
                 return_dict['splashscreen'] = False
 
-            if cmd_openhab_ps_stdout:
-                if cmd_openhab_ps_stdout == 'enabled':
-                    return_dict['openhab'] = True
-                else:
-                    return_dict['openhab'] = False
+            if is_enabled_openhab:
+                return_dict['openhab'] = True
             else:
                 return_dict['openhab'] = False
 
@@ -213,43 +411,52 @@ elif command == 'APPLY':
                 os.remove('/etc/tf_x11_enabled')
 
         if apply_dict['webserver']:
-            if os.system('/bin/systemctl enable apache2') != 0:
-                exit(6)
+            if is_enabled_web_server != None and not is_enabled_web_server:
+                if os.system('/bin/systemctl enable apache2') != 0:
+                    exit(6)
         else:
-            if os.system('/bin/systemctl disable apache2') != 0:
-                exit(7)
+            if is_enabled_web_server != None and is_enabled_web_server:
+                if os.system('/bin/systemctl disable apache2') != 0:
+                    exit(7)
 
         if apply_dict['splashscreen']:
             if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_ASPLASH_SCREEN:
-                if os.system('/bin/systemctl enable splashscreen') != 0:
-                    exit(8)
+                if is_enabled_splashscreen != None and not is_enabled_splashscreen:
+                    if os.system('/bin/systemctl enable splashscreen') != 0:
+                        exit(8)
             else:
-                if os.system('/bin/systemctl enable asplashscreen') != 0:
-                    exit(8)
+                if is_enabled_splashscreen != None and not is_enabled_splashscreen:
+                    if os.system('/bin/systemctl enable asplashscreen') != 0:
+                        exit(8)
         else:
             if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_ASPLASH_SCREEN:
-                if os.system('/bin/systemctl disable splashscreen') != 0:
-                    exit(8)
+                if is_enabled_splashscreen != None and is_enabled_splashscreen:
+                    if os.system('/bin/systemctl disable splashscreen') != 0:
+                        exit(8)
             else:
-                if os.system('/bin/systemctl disable asplashscreen') != 0:
-                    exit(9)
+                if is_enabled_splashscreen != None and is_enabled_splashscreen:
+                    if os.system('/bin/systemctl disable asplashscreen') != 0:
+                        exit(9)
 
         if apply_dict['ap']:
             with open('/etc/tf_ap_enabled', 'w') as fd_ap_enabled:
                 pass
 
-            if os.system('/bin/systemctl enable hostapd') != 0:
-                exit(10)
+            if is_enabled_hostapd != None and not is_enabled_hostapd:
+                if os.system('/bin/systemctl enable hostapd') != 0:
+                    exit(10)
 
-            if os.system('/bin/systemctl enable dnsmasq') != 0:
-                exit(11)
+            if is_enabled_dnsmasq != None and not is_enabled_dnsmasq:
+                if os.system('/bin/systemctl enable dnsmasq') != 0:
+                    exit(11)
 
             if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
                 if os.system('/usr/bin/nmcli radio wifi off') != 0:
                     exit(12)
             else:
-                if os.system('/bin/systemctl disable wicd') != 0:
-                    exit(12)
+                if is_enabled_wicd != None and is_enabled_wicd:
+                    if os.system('/bin/systemctl disable wicd') != 0:
+                        exit(12)
 
             if os.path.isfile('/etc/network/interfaces.ap'):
                 os.rename('/etc/network/interfaces.ap', '/etc/network/interfaces')
@@ -263,27 +470,31 @@ elif command == 'APPLY':
 
             if os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.service') and \
                os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.timer'):
-                    os.system('/bin/systemctl start /etc/systemd/system/tf_setup_ap_nat.service &> /dev/null')
-                    os.system('/bin/systemctl start /etc/systemd/system/tf_setup_ap_nat.timer &> /dev/null')
-                    os.system('/bin/systemctl enable /etc/systemd/system/tf_setup_ap_nat.service &> /dev/null')
-                    os.system('/bin/systemctl enable /etc/systemd/system/tf_setup_ap_nat.timer &> /dev/null')
+                    if is_enabled_ap_nat != None and not is_enabled_ap_nat:
+                        os.system('/bin/systemctl enable /etc/systemd/system/tf_setup_ap_nat.service &> /dev/null')
+
+                    if is_enabled_ap_nat_timer != None and not is_enabled_ap_nat_timer:
+                        os.system('/bin/systemctl enable /etc/systemd/system/tf_setup_ap_nat.timer &> /dev/null')
 
         else:
             if os.path.isfile('/etc/tf_ap_enabled'):
                 os.remove('/etc/tf_ap_enabled')
 
-            if os.system('/bin/systemctl disable hostapd') != 0:
-                exit(13)
+            if is_enabled_hostapd != None and is_enabled_hostapd:
+                if os.system('/bin/systemctl disable hostapd') != 0:
+                    exit(13)
 
-            if os.system('/bin/systemctl disable dnsmasq') != 0:
-                exit(14)
+            if is_enabled_dnsmasq != None and is_enabled_dnsmasq:
+                if os.system('/bin/systemctl disable dnsmasq') != 0:
+                    exit(14)
 
             if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
                 if os.system('/usr/bin/nmcli radio wifi on') != 0:
                     exit(15)
             else:
-                if os.system('/bin/systemctl enable wicd') != 0:
-                    exit(15)
+                if is_enabled_wicd != None and not is_enabled_wicd:
+                    if os.system('/bin/systemctl enable wicd') != 0:
+                        exit(15)
 
             with open('/etc/network/interfaces', 'w') as fd_interfaces:
                 fd_interfaces.write(INTERFACES_CONF)
@@ -297,51 +508,61 @@ elif command == 'APPLY':
 
             if os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.service') and \
                os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.timer'):
-                    os.system('/bin/systemctl stop /etc/systemd/system/tf_setup_ap_nat.service &> /dev/null')
-                    os.system('/bin/systemctl stop /etc/systemd/system/tf_setup_ap_nat.timer &> /dev/null')
-                    os.system('/bin/systemctl disable /etc/systemd/system/tf_setup_ap_nat.service &> /dev/null')
-                    os.system('/bin/systemctl disable /etc/systemd/system/tf_setup_ap_nat.timer &> /dev/null')
+                    if is_enabled_ap_nat != None and is_enabled_ap_nat:
+                        os.system('/bin/systemctl disable /etc/systemd/system/tf_setup_ap_nat.service &> /dev/null')
+
+                    if is_enabled_ap_nat_timer != None and is_enabled_ap_nat_timer:
+                        os.system('/bin/systemctl disable /etc/systemd/system/tf_setup_ap_nat.timer &> /dev/null')
 
         if apply_dict['servermonitoring']:
             if not apply_dict['webserver']:
-                if os.system('/bin/systemctl enable apache2') != 0:
-                    exit(16)
+                if is_enabled_web_server != None and not is_enabled_web_server:
+                    if os.system('/bin/systemctl enable apache2') != 0:
+                        exit(16)
 
             with open('/etc/tf_server_monitoring_enabled', 'w') as fd_server_monitoring_enabled:
                 pass
 
             if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NAGIOS4:
-                if os.system('/bin/systemctl enable nagios') != 0:
-                    exit(17)
+                if is_enabled_nagios != None and not is_enabled_nagios:
+                    if os.system('/bin/systemctl enable nagios') != 0:
+                        exit(17)
             else:
-                if os.system('/bin/systemctl enable nagios3') != 0:
-                    exit(17)
+                if is_enabled_nagios != None and not is_enabled_nagios:
+                    if os.system('/bin/systemctl enable nagios3') != 0:
+                        exit(17)
 
         else:
             if os.path.isfile('/etc/tf_server_monitoring_enabled'):
                 os.remove('/etc/tf_server_monitoring_enabled')
 
             if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NAGIOS4:
-                if os.system('/bin/systemctl disable nagios') != 0:
-                    exit(18)
+                if is_enabled_nagios != None and is_enabled_nagios:
+                    if os.system('/bin/systemctl disable nagios') != 0:
+                        exit(18)
             else:
-                if os.system('/bin/systemctl disable nagios3') != 0:
-                    exit(18)
+                if is_enabled_nagios != None and is_enabled_nagios:
+                    if os.system('/bin/systemctl disable nagios3') != 0:
+                        exit(18)
 
         if apply_dict['openhab']:
             if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_OPENHAB2:
-                if os.system('/bin/systemctl enable openhab2') != 0:
-                    exit(19)
+                if is_enabled_openhab != None and not is_enabled_openhab:
+                    if os.system('/bin/systemctl enable openhab2') != 0:
+                        exit(19)
             else:
-                if os.system('/bin/systemctl enable openhab') != 0:
-                    exit(19)
+                if is_enabled_openhab != None and not is_enabled_openhab:
+                    if os.system('/bin/systemctl enable openhab') != 0:
+                        exit(19)
         else:
             if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_OPENHAB2:
-                if os.system('/bin/systemctl disable openhab2') != 0:
-                    exit(20)
+                if is_enabled_openhab != None and is_enabled_openhab:
+                    if os.system('/bin/systemctl disable openhab2') != 0:
+                        exit(20)
             else:
-                if os.system('/bin/systemctl disable openhab') != 0:
-                    exit(20)
+                if is_enabled_openhab != None and is_enabled_openhab:
+                    if os.system('/bin/systemctl disable openhab') != 0:
+                        exit(20)
 
         if apply_dict['mobileinternet']:
             if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
@@ -355,18 +576,21 @@ elif command == 'APPLY':
 
                 if os.path.isfile('/etc/systemd/system/tf_mobile_internet_nm.service') \
                    and os.path.isfile('/etc/systemd/system/tf_mobile_internet_nm.timer'):
-                        if os.system('/bin/systemctl enable tf_mobile_internet_nm.service') != 0:
-                            exit(21)
+                        if is_enabled_mi_nm != None and not is_enabled_mi_nm:
+                            if os.system('/bin/systemctl enable tf_mobile_internet_nm.service') != 0:
+                                exit(21)
 
-                        if os.system('/bin/systemctl enable tf_mobile_internet_nm.timer') != 0:
-                            exit(21)
+                        if is_enabled_mi_nm_timer != None and not is_enabled_mi_nm_timer:
+                            if os.system('/bin/systemctl enable tf_mobile_internet_nm.timer') != 0:
+                                exit(21)
             else:
                 with open('/etc/tf_mobile_internet_enabled', 'w') as fd_ap_enabled:
                     pass
 
                 if os.path.isfile('/etc/systemd/system/tf_mobile_internet.service'):
-                    if os.system('/bin/systemctl enable tf_mobile_internet') != 0:
-                        exit(21)
+                    if is_enabled_mi != None and not is_enabled_mi:
+                        if os.system('/bin/systemctl enable tf_mobile_internet') != 0:
+                            exit(21)
         else:
             if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
                 if not os.path.isfile('/etc/tf_mobile_internet_enabled'):
@@ -379,18 +603,21 @@ elif command == 'APPLY':
 
                 if os.path.isfile('/etc/systemd/system/tf_mobile_internet_nm.service') \
                    and os.path.isfile('/etc/systemd/system/tf_mobile_internet_nm.timer'):
-                        if os.system('/bin/systemctl disable tf_mobile_internet_nm.service') != 0:
-                            exit(22)
+                        if is_enabled_mi_nm != None and is_enabled_mi_nm:
+                            if os.system('/bin/systemctl disable tf_mobile_internet_nm.service') != 0:
+                                exit(22)
 
-                        if os.system('/bin/systemctl disable tf_mobile_internet_nm.timer') != 0:
-                            exit(22)
+                        if is_enabled_mi_nm_timer != None and is_enabled_mi_nm_timer:
+                            if os.system('/bin/systemctl disable tf_mobile_internet_nm.timer') != 0:
+                                exit(22)
             else:
                 if os.path.isfile('/etc/tf_mobile_internet_enabled'):
                     os.remove('/etc/tf_mobile_internet_enabled')
 
                 if os.path.isfile('/etc/systemd/system/tf_mobile_internet.service'):
-                    if os.system('/bin/systemctl disable tf_mobile_internet') != 0:
-                        exit(22)
+                    if is_enabled_mi != None and is_enabled_mi:
+                        if os.system('/bin/systemctl disable tf_mobile_internet') != 0:
+                            exit(22)
 
         exit(0)
 

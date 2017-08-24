@@ -287,9 +287,7 @@ try:
     if not r:
         exit(1)
 
-    # FIXME:
-    #
-    # For WiFi connections after the connection is initially activated,
+    # FIXME: For WiFi connections after the connection is initially activated,
     #
     # 1. Rename the connection file on the disk as the name is derived
     #    from the AP SSID.

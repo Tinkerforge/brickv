@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import subprocess
 from sys import argv
 from reconfigure.configs import HostsConfig
 
@@ -47,7 +46,7 @@ try:
         exit(1)
 
     try:
-        subprocess.call(CMD_DHCLIENT, shell=True)
+        os.system(CMD_DHCLIENT)
     except:
         pass
 except:
