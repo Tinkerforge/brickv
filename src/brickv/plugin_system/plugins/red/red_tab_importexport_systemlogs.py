@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2017 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 red_tab_importexport_systemlogs.py: RED import/export system logs tab implementation
 
@@ -80,6 +81,8 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
         self.script_manager = None # Set from REDTabImportExport
         self.image_version  = None # Set from REDTabImportExport
         self.log_file       = None
+        self.image_version_lt_1_10 = True
+        self.populated_custom_log_files = False
         self.logs           = [
             SystemLog('brickd.log', '/var/log/brickd.log'),
             SystemLog('redapid.log', '/var/log/redapid.log'),
@@ -87,8 +90,8 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
             SystemLog('syslog', '/var/log/syslog'),
             SystemLog('kern.log', '/var/log/kern.log'),
             SystemLog('daemon.log', '/var/log/daemon.log'),
-            SystemLog('Xorg.0.log', '/var/log/Xorg.0.log'),
-            SystemLog('openhab.log', '/var/log/openhab/openhab.log')
+            #SystemLog('Xorg.0.log', '/var/log/Xorg.0.log'),
+            #SystemLog('openhab.log', '/var/log/openhab/openhab.log')
         ]
 
         while self.stacked_container.count() > 0:
@@ -110,7 +113,30 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
         self.stacked_container.setCurrentIndex(self.combo_log.currentIndex())
 
     def tab_on_focus(self):
-        pass
+        if not self.image_version:
+            self.image_version_lt_1_10 = True
+        else:
+            self.image_version_lt_1_10 = self.image_version.number < (1, 10)
+
+        if not self.populated_custom_log_files:
+            self.populated_custom_log_files = True
+
+            if self.image_version_lt_1_10:
+                self.logs.append(SystemLog('openhab.log', '/var/log/openhab/openhab.log'))
+            else:
+                self.logs.append(SystemLog('openhab.log', '/var/log/openhab2/openhab.log'))
+
+            self.combo_log.addItem(self.logs[-1].display_name)
+            self.stacked_container.addWidget(self.logs[-1].edit)
+
+            if self.image_version_lt_1_10:
+                self.logs.append(SystemLog('Xorg.0.log', '/var/log/Xorg.0.log'))
+
+            else:
+                self.logs.append(SystemLog('Xorg.0.log', '/home/tf/.local/share/xorg/Xorg.0.log'))
+
+            self.combo_log.addItem(self.logs[-1].display_name)
+            self.stacked_container.addWidget(self.logs[-1].edit)
 
     def tab_off_focus(self):
         pass
