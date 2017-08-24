@@ -103,7 +103,8 @@ def get_svc_states():
         if os.path.isfile('/etc/systemd/system/tf_mobile_internet.service'):
             ps = subprocess.Popen('/bin/systemctl is-enabled tf_mobile_internet.service',
                                   shell=True,
-                                  stdout=subprocess.PIPE)
+                                  stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE)
 
             ps_stdout = ps.communicate()[0].strip()
 
@@ -115,7 +116,8 @@ def get_svc_states():
         # WICD
         ps = subprocess.Popen('/bin/systemctl is-enabled wicd.service',
                               shell=True,
-                              stdout=subprocess.PIPE)
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
 
         ps_stdout = ps.communicate()[0].strip()
 
@@ -128,7 +130,8 @@ def get_svc_states():
     if os.path.isfile('/etc/systemd/system/tf_mobile_internet_nm.service'):
         ps = subprocess.Popen('/bin/systemctl is-enabled tf_mobile_internet_nm.service',
                               shell=True,
-                              stdout=subprocess.PIPE)
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
 
         ps_stdout = ps.communicate()[0].strip()
 
@@ -140,7 +143,8 @@ def get_svc_states():
     if os.path.isfile('/etc/systemd/system/tf_mobile_internet_nm.timer'):
         ps = subprocess.Popen('/bin/systemctl is-enabled tf_mobile_internet_nm.timer',
                               shell=True,
-                              stdout=subprocess.PIPE)
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
 
         ps_stdout = ps.communicate()[0].strip()
 
@@ -153,7 +157,8 @@ def get_svc_states():
     if os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.service'):
         ps = subprocess.Popen('/bin/systemctl is-enabled tf_setup_ap_nat.service',
                               shell=True,
-                              stdout=subprocess.PIPE)
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
 
         ps_stdout = ps.communicate()[0].strip()
 
@@ -167,7 +172,8 @@ def get_svc_states():
     if os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.timer'):
         ps = subprocess.Popen('/bin/systemctl is-enabled tf_setup_ap_nat.timer',
                               shell=True,
-                              stdout=subprocess.PIPE)
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
 
         ps_stdout = ps.communicate()[0].strip()
 
@@ -182,7 +188,8 @@ def get_svc_states():
     if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NAGIOS4:
         ps = subprocess.Popen('/bin/systemctl is-enabled nagios.service',
                               shell=True,
-                              stdout=subprocess.PIPE)
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
 
         ps_stdout = ps.communicate()[0].strip()
 
@@ -193,7 +200,8 @@ def get_svc_states():
     else:
         ps = subprocess.Popen('/bin/systemctl is-enabled nagios3.service',
                               shell=True,
-                              stdout=subprocess.PIPE)
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
 
         ps_stdout = ps.communicate()[0].strip()
 
@@ -205,7 +213,8 @@ def get_svc_states():
     # Hostpad
     ps = subprocess.Popen('/bin/systemctl is-enabled hostapd.service',
                           shell=True,
-                          stdout=subprocess.PIPE)
+                          stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE)
 
     ps_stdout = ps.communicate()[0].strip()
 
@@ -217,7 +226,8 @@ def get_svc_states():
     # Dnsmasq
     ps = subprocess.Popen('/bin/systemctl is-enabled dnsmasq.service',
                           shell=True,
-                          stdout=subprocess.PIPE)
+                          stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE)
 
     ps_stdout = ps.communicate()[0].strip()
 
@@ -230,7 +240,8 @@ def get_svc_states():
     if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_OPENHAB2:
         ps = subprocess.Popen('/bin/systemctl is-enabled openhab2.service',
                               shell=True,
-                              stdout=subprocess.PIPE)
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
         ps_stdout = ps.communicate()[0].strip()
 
         if ps_stdout and ps_stdout == 'disabled':
@@ -240,7 +251,8 @@ def get_svc_states():
     else:
         ps = subprocess.Popen('/bin/systemctl is-enabled openhab.service',
                               shell=True,
-                              stdout=subprocess.PIPE)
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
         ps_stdout = ps.communicate()[0].strip()
 
         if ps_stdout and ps_stdout == 'disabled':
@@ -251,7 +263,8 @@ def get_svc_states():
     # Webserver
     ps = subprocess.Popen('/bin/systemctl is-enabled apache2.service',
                           shell=True,
-                          stdout=subprocess.PIPE)
+                          stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE)
 
     ps_stdout = ps.communicate()[0].strip()
 
@@ -264,7 +277,8 @@ def get_svc_states():
     if IMAGE_VERSION and IMAGE_VERSION > MAX_VERSION_WITH_ASPLASH_SCREEN:
         ps = subprocess.Popen('/bin/systemctl is-enabled splashscreen.service',
                               shell=True,
-                              stdout=subprocess.PIPE)
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
 
         ps_stdout = ps.communicate()[0].strip()
 
@@ -275,7 +289,8 @@ def get_svc_states():
     else:
         ps = subprocess.Popen('/bin/systemctl is-enabled asplashscreen.service',
                               shell=True,
-                              stdout=subprocess.PIPE)
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
 
         ps_stdout = ps.communicate()[0].strip()
 
@@ -316,7 +331,9 @@ if command == 'CHECK':
             return_dict['gpu'] = os.path.isfile('/etc/tf_gpu_2d_only')
         else:
             cmd = '/sbin/chkconfig | awk -F " " \'{print $1 "<==>" $2}\''
-            cmd_ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+            cmd_ps = subprocess.Popen(cmd, shell=True,
+                                      stdout=subprocess.PIPE,
+                                      stderr=subprocess.PIPE)
 
             if cmd_ps.returncode:
                 exit(3)
