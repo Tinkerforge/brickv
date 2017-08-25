@@ -30,6 +30,7 @@ import functools
 
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
+from distutils.version import StrictVersion
 from PyQt4.QtGui import QLabel, QVBoxLayout, QAction
 
 from brickv.plugin_system.plugin_base import PluginBase
@@ -566,10 +567,10 @@ Please make sure that your internet connection is working.'
                 found = True
                 d['to'] = version_to
                 d['display_name'] = display_name
-                version_to = ''.join(version_to.split('.')).strip()
-                version_from = ''.join(d['from'].split('.')).strip()
+                version_to = StrictVersion(d['to'].strip())
+                version_from = StrictVersion(d['from'].strip())
 
-                if int(version_to) > int(version_from):
+                if version_to > version_from:
                     updates_available = True
                     d['update'] = True
                 else:
@@ -693,7 +694,7 @@ Please make sure that your internet connection is working.'
                 self.set_current_state(self.STATE_NO_UPDATES_AVAILABLE)
 
                 if result and result.stdout and result.exit_code == 0:
-                    updates_available = False
+                    updates_available_main = False
                     update_info = {'brickv': {},
                                    'processed': 0,
                                    'temp_dir': '',
@@ -793,12 +794,12 @@ Please make sure that your internet connection is working.'
                         else:
                             if l_split[0] == 'tools' and l_split[1] == 'brickv':
                                 update_info['brickv']['to'] = l_split[2]
-                                version_to = ''.join(l_split[2].split('.')).strip()
                                 update_info['brickv']['display_name'] = 'Brick Viewer'
-                                version_from = ''.join(update_info['brickv']['from'].split('.')).strip()
+                                version_to = StrictVersion(l_split[2].strip())
+                                version_from = StrictVersion(update_info['brickv']['from'].strip())
 
-                                if int(version_to) > int(version_from):
-                                    updates_available = True
+                                if version_to > version_from:
+                                    updates_available_main = True
                                     update_info['brickv']['update'] = True
                                 else:
                                     update_info['brickv']['update'] = False
@@ -818,6 +819,9 @@ Please make sure that your internet connection is working.'
 
                                         return
 
+                                    if updates_available:
+                                        updates_available_main = True
+
                                 elif l_split[1] == 'csharp':
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
@@ -828,6 +832,9 @@ Please make sure that your internet connection is working.'
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
 
                                         return
+
+                                    if updates_available:
+                                        updates_available_main = True
 
                                 elif l_split[1] == 'delphi':
                                     found, updates_available = self.update_latest_version_info(update_info,
@@ -840,6 +847,9 @@ Please make sure that your internet connection is working.'
 
                                         return
 
+                                    if updates_available:
+                                        updates_available_main = True
+
                                 elif l_split[1] == 'java':
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
@@ -850,6 +860,9 @@ Please make sure that your internet connection is working.'
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
 
                                         return
+
+                                    if updates_available:
+                                        updates_available_main = True
 
                                 elif l_split[1] == 'javascript':
                                     found, updates_available = self.update_latest_version_info(update_info,
@@ -862,6 +875,9 @@ Please make sure that your internet connection is working.'
 
                                         return
 
+                                    if updates_available:
+                                        updates_available_main = True
+
                                 elif l_split[1] == 'matlab':
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
@@ -872,6 +888,9 @@ Please make sure that your internet connection is working.'
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
 
                                         return
+
+                                    if updates_available:
+                                        updates_available_main = True
 
                                 elif l_split[1] == 'perl':
                                     found, updates_available = self.update_latest_version_info(update_info,
@@ -884,6 +903,9 @@ Please make sure that your internet connection is working.'
 
                                         return
 
+                                    if updates_available:
+                                        updates_available_main = True
+
                                 elif l_split[1] == 'php':
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
@@ -894,6 +916,9 @@ Please make sure that your internet connection is working.'
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
 
                                         return
+
+                                    if updates_available:
+                                        updates_available_main = True
 
                                 elif l_split[1] == 'python':
                                     found, updates_available = self.update_latest_version_info(update_info,
@@ -906,6 +931,9 @@ Please make sure that your internet connection is working.'
 
                                         return
 
+                                    if updates_available:
+                                        updates_available_main = True
+
                                 elif l_split[1] == 'ruby':
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
@@ -916,6 +944,9 @@ Please make sure that your internet connection is working.'
                                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
 
                                         return
+
+                                    if updates_available:
+                                        updates_available_main = True
 
                                 elif l_split[1] == 'shell':
                                     found, updates_available = self.update_latest_version_info(update_info,
@@ -928,6 +959,9 @@ Please make sure that your internet connection is working.'
 
                                         return
 
+                                    if updates_available:
+                                        updates_available_main = True
+
                                 elif l_split[1] == 'vbnet':
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
@@ -939,6 +973,8 @@ Please make sure that your internet connection is working.'
 
                                         return
 
+                                    if updates_available:
+                                        updates_available_main = True
                 else:
                     if result and result.stderr:
                         msg = self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + ':\n' + result.stderr + '\n\n'
@@ -958,7 +994,7 @@ Please make sure that your internet connection is working.'
 
                     return
 
-                if updates_available:
+                if updates_available_main:
                     self.set_current_state(self.STATE_UPDATES_AVAILABLE)
                     self.do_update_available_message(update_info)
                 else:
