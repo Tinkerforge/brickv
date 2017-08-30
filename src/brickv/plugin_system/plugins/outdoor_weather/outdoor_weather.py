@@ -49,7 +49,6 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
     def data_timeout(self):
         if len(self.identifiers) > 0:
             identifier = int(str(self.combo_identifier.itemText(self.combo_identifier.currentIndex())))
-            print("data_timeout", identifier)
             async_call(lambda: self.outdoor_weather.get_weather_station_data(identifier), None, self.cb_weather_station_data, self.increase_error_count)
         else:
             pass # TODO
@@ -71,7 +70,6 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
                 self.combo_identifier.setCurrentIndex(index)
         
         self.data_timeout()
-        print(identifiers)
         
     def cb_weather_station_data(self, data):
         self.label_temperature.setText("{:.1f}".format(data.temperature/10.0))
@@ -93,8 +91,6 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
             
         self.label_wind_direction.setText(wind_direction)
             
-        print(data)
-
     def start(self):
         async_call(self.outdoor_weather.get_weather_station_identifiers, None, self.cb_weather_station_identifiers, self.increase_error_count)
          
