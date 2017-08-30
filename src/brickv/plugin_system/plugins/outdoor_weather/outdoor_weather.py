@@ -42,13 +42,18 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
                                                 self.cb_weather_station_identifiers,
                                                 self.increase_error_count)
         
+        self.combo_identifier.currentIndexChanged.connect(self.data_timeout)
+        
         self.identifiers = []
         self.data_timer = QTimer()
         self.data_timer.timeout.connect(self.data_timeout)
         
     def data_timeout(self):
         if len(self.identifiers) > 0:
-            identifier = int(str(self.combo_identifier.itemText(self.combo_identifier.currentIndex())))
+            try:
+                identifier = int(str(self.combo_identifier.itemText(self.combo_identifier.currentIndex())))
+            except:
+                return
             async_call(lambda: self.outdoor_weather.get_weather_station_data(identifier), None, self.cb_weather_station_data, self.increase_error_count)
         else:
             pass # TODO
