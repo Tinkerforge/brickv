@@ -1150,13 +1150,35 @@ class RED(PluginBase, Ui_RED):
         if self.session == None or self.image_version.string == None or self.image_version.number > MAX_IMAGE_VERSION:
             return
 
-        if param <= 2:
+        # Restart Brick Daemon
+        if param == 0:
             def cb(result):
-                if result == None or result.stderr != '':
-                    pass # TODO: Error popup?
+                if result and (result.exit_code == None or result.exit_code != 0):
+                    if result.stderr:
+                        QtGui.QMessageBox.critical(get_main_window(), 'Failed to restart Brick Daemon', result.stderr)
+                    else:
+                        QtGui.QMessageBox.critical(get_main_window(), 'Failed to restart Brick Daemon', result.error)
 
-            self.script_manager.execute_script('restart_reboot_shutdown', cb, [str(param)])
+            self.script_manager.execute_script('restart_brickd', None)
 
+        # Reboot or shutdown RED Brick
+        elif param == 1 or param == 2:
+            def cb(result):
+                if result and (result.exit_code == None or result.exit_code != 0):
+                    if param == 1:
+                        if result.stderr:
+                            QtGui.QMessageBox.critical(get_main_window(), 'Failed to reboot RED Brick', result.stderr)
+                        else:
+                            QtGui.QMessageBox.critical(get_main_window(), 'Failed to reboot RED Brick', result.error)
+                    else:
+                        if result.stderr:
+                            QtGui.QMessageBox.critical(get_main_window(), 'Failed to shutdown RED Brick', result.stderr)
+                        else:
+                            QtGui.QMessageBox.critical(get_main_window(), 'Failed to shutdown RED Brick', result.error)
+
+            self.script_manager.execute_script('restart_reboot_shutdown_systemd', cb, [str(param)])
+
+        # Update Tinkerforge software
         elif param == 3:
             self.dialog_update_tinkerforge_software = REDUpdateTinkerforgeSoftware(self, self.session, self.script_manager)
             self.dialog_update_tinkerforge_software.exec_()
