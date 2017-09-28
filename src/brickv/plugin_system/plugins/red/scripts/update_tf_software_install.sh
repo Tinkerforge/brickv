@@ -50,7 +50,10 @@ case "$1" in
     ;;
 
   "javascript")
-    /usr/bin/unzip -q -d $2/bindings/javascript $3 &> /dev/null
+    /usr/bin/unzip -q -d $2/bindings/javascript $3 &> /dev/null && \
+    cd $2/bindings/javascript/nodejs &> /dev/null && \
+    $(/usr/bin/which npm) uninstall -g tinkerforge &> /dev/null; \
+    $(/usr/bin/which npm) install -g tinkerforge.tgz &> /dev/null
 
     ;;
 
