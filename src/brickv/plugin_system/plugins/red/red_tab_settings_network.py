@@ -310,6 +310,8 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         self.network_stat_work_in_progress = False
         self.ap_mode = False
 
+        self.is_connecting = False
+
         self.label_net_disabled.hide()
         self.sarea_net.hide()
 
@@ -395,6 +397,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
     def save_and_apply(self, iname, iname_previous):
         def cb_settings_network_apply(result):
+            self.is_connecting = False
             self.update_gui(WORKING_STATE_DONE)
             if result and result.stderr == '' and result.exit_code == 0:
                 QtGui.QMessageBox.information(get_main_window(),
@@ -411,6 +414,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 red_file.release()
 
                 if result is not None:
+                    self.is_connecting = False
                     self.update_gui(WORKING_STATE_DONE)
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
@@ -446,6 +450,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             red_file.write_async(config, lambda x: cb_write(red_file, stage, x, iname_previous), None)
 
         def cb_open_error():
+            self.is_connecting = False
             self.update_gui(WORKING_STATE_DONE)
 
             QtGui.QMessageBox.critical(get_main_window(),
@@ -463,6 +468,8 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                    REDFile.FLAG_TRUNCATE, 0o500, 0, 0),
                    lambda x: cb_open(config, stage, x, iname_previous),
                    cb_open_error)
+
+        self.is_connecting = True
 
     def connect_wireless_hidden(self, parameters):
         def cb_settings_network_apply_nm(result):
@@ -673,7 +680,14 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             self.network_all_data['status'] = json.loads(result.stdout)
 
             # Populating the current network status section and hostname
-            if self.network_all_data['status'] is not None:
+            if self.is_connecting:
+                self.label_net_gen_cstat_status.setText(unicode('Connecting'))
+                self.label_net_gen_cstat_intf.setText('-')
+                self.label_net_gen_cstat_ip.setText('-')
+                self.label_net_gen_cstat_mask.setText('-')
+                self.label_net_gen_cstat_gateway.setText('-')
+                self.label_net_gen_cstat_dns.setText('-')
+            elif self.network_all_data['status'] is not None:
                 self.label_net_hostname.setText(self.network_all_data['status']['cstat_hostname'])
 
                 self.label_net_gen_cstat_status.setText(unicode(self.network_all_data['status']['cstat_status']))
@@ -703,7 +717,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 else:
                     self.label_net_gen_cstat_dns.setText('-')
             else:
-                self.label_net_hostname.setText('')
+                self.label_net_hostname.setText('-')
                 self.label_net_gen_cstat_intf.setText('-')
                 self.label_net_gen_cstat_ip.setText('-')
                 self.label_net_gen_cstat_mask.setText('-')
@@ -1599,6 +1613,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
     def slot_network_connect_clicked(self):
         def cb_settings_network_apply_nm(result):
+            self.is_connecting = False
             self.update_gui(WORKING_STATE_DONE)
             if result and result.stderr == '' and result.exit_code == 0:
                 QtGui.QMessageBox.information(get_main_window(),
@@ -1611,7 +1626,6 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                            'Error saving configuration:\n\n' + result.stderr)
 
         cbox_cidx = self.cbox_net_intf.currentIndex()
-
         iname = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE)
         itype = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE)
 
@@ -1815,6 +1829,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             self.script_manager.execute_script('settings_network_apply_nm',
                                                cb_settings_network_apply_nm,
                                                [json.dumps(connection_config_dict)])
+            self.is_connecting = True
 
     def slot_change_hostname_clicked(self):
         def cb_settings_network_change_hostname(result):
