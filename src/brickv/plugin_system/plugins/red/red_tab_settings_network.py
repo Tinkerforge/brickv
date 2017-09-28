@@ -680,7 +680,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             self.network_all_data['status'] = json.loads(result.stdout)
 
             # Populating the current network status section and hostname
-            if self.is_connecting:
+            if self.is_connecting and not self.image_version_lt_1_10:
                 self.label_net_gen_cstat_status.setText(unicode('Connecting'))
                 self.label_net_gen_cstat_intf.setText('-')
                 self.label_net_gen_cstat_ip.setText('-')
