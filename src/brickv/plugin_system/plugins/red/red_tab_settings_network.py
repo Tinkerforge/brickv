@@ -1613,14 +1613,15 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
     def slot_network_connect_clicked(self):
         def cb_settings_network_apply_nm(result):
-            self.is_connecting = False
             self.update_gui(WORKING_STATE_DONE)
             if result and result.stderr == '' and result.exit_code == 0:
                 QtGui.QMessageBox.information(get_main_window(),
                                               'Settings | Network',
                                               'Configuration saved.')
+                self.is_connecting = False
                 self.slot_network_conf_refresh_clicked()
             else:
+                self.is_connecting = False
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
                                            'Error saving configuration:\n\n' + result.stderr)
