@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetSpeedRamping = namedtuple('SpeedRamping', ['acceleration', 'deacceleration'])
 GetAllData = namedtuple('AllData', ['current_velocity', 'current_position', 'remaining_steps', 'stack_voltage', 'external_voltage', 'current_consumption'])
@@ -181,6 +181,8 @@ class BrickStepper(Device):
         either :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` or
         :func:`Drive Backward`.
         """
+        velocity = int(velocity)
+
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_MAX_VELOCITY, (velocity,), 'H', '')
 
     def get_max_velocity(self):
@@ -210,6 +212,9 @@ class BrickStepper(Device):
 
         The default value is 1000 for both
         """
+        acceleration = int(acceleration)
+        deacceleration = int(deacceleration)
+
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SPEED_RAMPING, (acceleration, deacceleration), 'H H', '')
 
     def get_speed_ramping(self):
@@ -238,6 +243,8 @@ class BrickStepper(Device):
         set the current position to 0 when some kind of starting position
         is reached (e.g. when a CNC machine reaches a corner).
         """
+        position = int(position)
+
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_CURRENT_POSITION, (position,), 'i', '')
 
     def get_current_position(self):
@@ -262,6 +269,8 @@ class BrickStepper(Device):
         a call of :func:`Set Steps` with the parameter
         (*x* - :func:`Get Current Position`).
         """
+        position = int(position)
+
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_TARGET_POSITION, (position,), 'i', '')
 
     def get_target_position(self):
@@ -277,6 +286,8 @@ class BrickStepper(Device):
         The velocity, acceleration and deacceleration as set by
         :func:`Set Max Velocity` and :func:`Set Speed Ramping` will be used.
         """
+        steps = int(steps)
+
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_STEPS, (steps,), 'i', '')
 
     def get_steps(self):
@@ -308,6 +319,8 @@ class BrickStepper(Device):
 
         The default value is 8 (Eighth Step).
         """
+        mode = int(mode)
+
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_STEP_MODE, (mode,), 'B', '')
 
     def get_step_mode(self):
@@ -380,6 +393,8 @@ class BrickStepper(Device):
          Do not set this value above the specifications of your stepper motor.
          Otherwise it may damage your motor.
         """
+        current = int(current)
+
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_MOTOR_CURRENT, (current,), 'H', '')
 
     def get_motor_current(self):
@@ -438,6 +453,8 @@ class BrickStepper(Device):
          or the maximum motor speed is too slow, you should try to tinker with
          the decay value
         """
+        decay = int(decay)
+
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_DECAY, (decay,), 'H', '')
 
     def get_decay(self):
@@ -456,6 +473,8 @@ class BrickStepper(Device):
 
         The default value is 8V.
         """
+        voltage = int(voltage)
+
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
 
     def get_minimum_voltage(self):
@@ -483,6 +502,8 @@ class BrickStepper(Device):
 
         The default value is *false*.
         """
+        sync_rect = bool(sync_rect)
+
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SYNC_RECT, (sync_rect,), '!', '')
 
     def is_sync_rect(self):
@@ -502,6 +523,8 @@ class BrickStepper(Device):
 
         The default value is 1.
         """
+        time_base = int(time_base)
+
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_TIME_BASE, (time_base,), 'I', '')
 
     def get_time_base(self):
@@ -525,6 +548,8 @@ class BrickStepper(Device):
         Sets the period in ms with which the :cb:`All Data` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_ALL_DATA_PERIOD, (period,), 'I', '')
 
     def get_all_data_period(self):
@@ -560,6 +585,9 @@ class BrickStepper(Device):
 
         .. versionadded:: 2.3.6$nbsp;(Firmware)
         """
+        enable_dynamic_baudrate = bool(enable_dynamic_baudrate)
+        minimum_dynamic_baudrate = int(minimum_dynamic_baudrate)
+
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', '')
 
     def get_spitfp_baudrate_config(self):
@@ -581,6 +609,8 @@ class BrickStepper(Device):
 
         .. versionadded:: 2.3.4$nbsp;(Firmware)
         """
+        communication_method = int(communication_method)
+
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
 
     def set_spitfp_baudrate(self, bricklet_port, baudrate):
@@ -604,6 +634,9 @@ class BrickStepper(Device):
 
         .. versionadded:: 2.3.3$nbsp;(Firmware)
         """
+        bricklet_port = create_char(bricklet_port)
+        baudrate = int(baudrate)
+
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', '')
 
     def get_spitfp_baudrate(self, bricklet_port):
@@ -612,6 +645,8 @@ class BrickStepper(Device):
 
         .. versionadded:: 2.3.3$nbsp;(Firmware)
         """
+        bricklet_port = create_char(bricklet_port)
+
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
 
     def get_spitfp_error_count(self, bricklet_port):
@@ -630,6 +665,8 @@ class BrickStepper(Device):
 
         .. versionadded:: 2.3.3$nbsp;(Firmware)
         """
+        bricklet_port = create_char(bricklet_port)
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
 
     def enable_status_led(self):
@@ -674,6 +711,8 @@ class BrickStepper(Device):
         This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
         plugins.
         """
+        port = create_char(port)
+
         return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 'B 3B 40s'))
 
     def get_chip_temperature(self):

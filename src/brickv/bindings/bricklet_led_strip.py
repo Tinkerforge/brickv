@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetRGBValues = namedtuple('RGBValues', ['r', 'g', 'b'])
 GetRGBWValues = namedtuple('RGBWValues', ['r', 'g', 'b', 'w'])
@@ -160,6 +160,12 @@ class BrickletLEDStrip(Device):
         information. A call of :func:`Set RGB Values` with index + length above the
         bounds is ignored completely.
         """
+        index = int(index)
+        length = int(length)
+        r = list(map(int, r))
+        g = list(map(int, g))
+        b = list(map(int, b))
+
         self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_RGB_VALUES, (index, length, r, g, b), 'H B 16B 16B 16B', '')
 
     def get_rgb_values(self, index, length):
@@ -169,6 +175,9 @@ class BrickletLEDStrip(Device):
 
         The values are the last values that were set by :func:`Set RGB Values`.
         """
+        index = int(index)
+        length = int(length)
+
         return GetRGBValues(*self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_RGB_VALUES, (index, length), 'H B', '16B 16B 16B'))
 
     def set_frame_duration(self, duration):
@@ -182,6 +191,8 @@ class BrickletLEDStrip(Device):
 
         Default value: 100ms (10 frames per second).
         """
+        duration = int(duration)
+
         self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_FRAME_DURATION, (duration,), 'H', '')
 
     def get_frame_duration(self):
@@ -219,6 +230,8 @@ class BrickletLEDStrip(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        frequency = int(frequency)
+
         self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_CLOCK_FREQUENCY, (frequency,), 'I', '')
 
     def get_clock_frequency(self):
@@ -244,6 +257,8 @@ class BrickletLEDStrip(Device):
 
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
+        chip = int(chip)
+
         self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_CHIP_TYPE, (chip,), 'H', '')
 
     def get_chip_type(self):
@@ -312,6 +327,13 @@ class BrickletLEDStrip(Device):
 
         .. versionadded:: 2.0.6$nbsp;(Plugin)
         """
+        index = int(index)
+        length = int(length)
+        r = list(map(int, r))
+        g = list(map(int, g))
+        b = list(map(int, b))
+        w = list(map(int, w))
+
         self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_RGBW_VALUES, (index, length, r, g, b, w), 'H B 12B 12B 12B 12B', '')
 
     def get_rgbw_values(self, index, length):
@@ -323,6 +345,9 @@ class BrickletLEDStrip(Device):
 
         .. versionadded:: 2.0.6$nbsp;(Plugin)
         """
+        index = int(index)
+        length = int(length)
+
         return GetRGBWValues(*self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_RGBW_VALUES, (index, length), 'H B', '12B 12B 12B 12B'))
 
     def set_channel_mapping(self, mapping):
@@ -351,6 +376,8 @@ class BrickletLEDStrip(Device):
 
         .. versionadded:: 2.0.6$nbsp;(Plugin)
         """
+        mapping = int(mapping)
+
         self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_CHANNEL_MAPPING, (mapping,), 'B', '')
 
     def get_channel_mapping(self):

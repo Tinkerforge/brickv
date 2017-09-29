@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -14,9 +14,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 ReadFrameLowLevel = namedtuple('ReadFrameLowLevel', ['frame_length', 'frame_chunk_offset', 'frame_chunk_data', 'frame_number'])
 GetFrameErrorCount = namedtuple('FrameErrorCount', ['overrun_error_count', 'framing_error_count'])
@@ -140,6 +140,8 @@ class BrickletDMX(Device):
         """
         Calling this sets frame number to 0
         """
+        dmx_mode = int(dmx_mode)
+
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_DMX_MODE, (dmx_mode,), 'B', '')
 
     def get_dmx_mode(self):
@@ -152,6 +154,10 @@ class BrickletDMX(Device):
         """
 
         """
+        frame_length = int(frame_length)
+        frame_chunk_offset = int(frame_chunk_offset)
+        frame_chunk_data = list(map(int, frame_chunk_data))
+
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_WRITE_FRAME_LOW_LEVEL, (frame_length, frame_chunk_offset, frame_chunk_data), 'H H 60B', '')
 
     def read_frame_low_level(self):
@@ -164,6 +170,8 @@ class BrickletDMX(Device):
         """
 
         """
+        frame_duration = int(frame_duration)
+
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_FRAME_DURATION, (frame_duration,), 'H', '')
 
     def get_frame_duration(self):
@@ -193,6 +201,8 @@ class BrickletDMX(Device):
 
         If the Bricklet is in bootloader mode, the LED is off.
         """
+        config = int(config)
+
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_COMMUNICATION_LED_CONFIG, (config,), 'B', '')
 
     def get_communication_led_config(self):
@@ -213,6 +223,8 @@ class BrickletDMX(Device):
 
         If the Bricklet is in bootloader mode, the LED is off.
         """
+        config = int(config)
+
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', '')
 
     def get_error_led_config(self):
@@ -225,6 +237,11 @@ class BrickletDMX(Device):
         """
         default: true,true,false
         """
+        frame_started_callback_enabled = bool(frame_started_callback_enabled)
+        frame_available_callback_enabled = bool(frame_available_callback_enabled)
+        frame_callback_enabled = bool(frame_callback_enabled)
+        frame_error_count_callback_enabled = bool(frame_error_count_callback_enabled)
+
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_FRAME_CALLBACK_CONFIG, (frame_started_callback_enabled, frame_available_callback_enabled, frame_callback_enabled, frame_error_count_callback_enabled), '! ! ! !', '')
 
     def get_frame_callback_config(self):
@@ -261,6 +278,8 @@ class BrickletDMX(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        mode = int(mode)
+
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
 
     def get_bootloader_mode(self):
@@ -278,6 +297,8 @@ class BrickletDMX(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        pointer = int(pointer)
+
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
 
     def write_firmware(self, data):
@@ -291,6 +312,8 @@ class BrickletDMX(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        data = list(map(int, data))
+
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
 
     def set_status_led_config(self, config):
@@ -303,6 +326,8 @@ class BrickletDMX(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        config = int(config)
+
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
 
     def get_status_led_config(self):
@@ -341,6 +366,8 @@ class BrickletDMX(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        uid = int(uid)
+
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_WRITE_UID, (uid,), 'I', '')
 
     def read_uid(self):
@@ -367,10 +394,11 @@ class BrickletDMX(Device):
         """
 
         """
+        frame = list(map(int, frame))
+
         if len(frame) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Frame can be at most 65535 items long')
 
-        frame = list(frame) # convert potential tuple to list
         frame_length = len(frame)
         frame_chunk_offset = 0
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetCoordinates = namedtuple('Coordinates', ['latitude', 'ns', 'longitude', 'ew'])
 GetStatus = namedtuple('Status', ['has_fix', 'satellites_view'])
@@ -63,6 +63,8 @@ class BrickletGPSV2(Device):
     FUNCTION_GET_MOTION_CALLBACK_PERIOD = 18
     FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD = 19
     FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD = 20
+    FUNCTION_SET_SBAS_CONFIG = 27
+    FUNCTION_GET_SBAS_CONFIG = 28
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -91,6 +93,8 @@ class BrickletGPSV2(Device):
     FIX_LED_CONFIG_SHOW_HEARTBEAT = 2
     FIX_LED_CONFIG_SHOW_FIX = 3
     FIX_LED_CONFIG_SHOW_PPS = 4
+    SBAS_ENABLED = 0
+    SBAS_DISABLED = 1
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -136,6 +140,8 @@ class BrickletGPSV2(Device):
         self.response_expected[BrickletGPSV2.FUNCTION_GET_MOTION_CALLBACK_PERIOD] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPSV2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPSV2.FUNCTION_SET_SBAS_CONFIG] = BrickletGPSV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPSV2.FUNCTION_GET_SBAS_CONFIG] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletGPSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -227,6 +233,8 @@ class BrickletGPSV2(Device):
          "2", "Cold start (don't use time, position, almanacs and ephemeris at restart)"
          "3", "Factory reset (clear all system/user configurations at restart)"
         """
+        restart_type = int(restart_type)
+
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_RESTART, (restart_type,), 'B', '')
 
     def get_satellite_system_status_low_level(self, satellite_system):
@@ -246,6 +254,8 @@ class BrickletGPSV2(Device):
         the numbers of the satellites that are currently utilized. The number 0 is not
         a valid satellite number and can be ignored in the list.
         """
+        satellite_system = int(satellite_system)
+
         return GetSatelliteSystemStatusLowLevel(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_SATELLITE_SYSTEM_STATUS_LOW_LEVEL, (satellite_system,), 'B', 'B 12B B H H H'))
 
     def get_satellite_status(self, satellite_system, satellite_number):
@@ -263,6 +273,9 @@ class BrickletGPSV2(Device):
 
         Galileo is not yet supported.
         """
+        satellite_system = int(satellite_system)
+        satellite_number = int(satellite_number)
+
         return GetSatelliteStatus(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_SATELLITE_STATUS, (satellite_system, satellite_number), 'B B', 'h h h'))
 
     def set_fix_led_config(self, config):
@@ -276,6 +289,8 @@ class BrickletGPSV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is off.
         """
+        config = int(config)
+
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_FIX_LED_CONFIG, (config,), 'B', '')
 
     def get_fix_led_config(self):
@@ -294,6 +309,8 @@ class BrickletGPSV2(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_COORDINATES_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_coordinates_callback_period(self):
@@ -312,6 +329,8 @@ class BrickletGPSV2(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_STATUS_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_status_callback_period(self):
@@ -330,6 +349,8 @@ class BrickletGPSV2(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_altitude_callback_period(self):
@@ -348,6 +369,8 @@ class BrickletGPSV2(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_MOTION_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_motion_callback_period(self):
@@ -366,6 +389,8 @@ class BrickletGPSV2(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_date_time_callback_period(self):
@@ -373,6 +398,28 @@ class BrickletGPSV2(Device):
         Returns the period as set by :func:`Set Date Time Callback Period`.
         """
         return self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD, (), '', 'I')
+
+    def set_sbas_config(self, sbas_config):
+        """
+        If `SBAS <https://en.wikipedia.org/wiki/GNSS_augmentation#Satellite-based_augmentation_system>`__ is enabled,
+        the position accuracy increases (if SBAS satellites are in view),
+        but the update rate is limited to 5Hz. With SBAS disabled the update rate is increased to 10Hz.
+
+        By default SBAS is enabled and the update rate is 5Hz.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        sbas_config = int(sbas_config)
+
+        self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_SBAS_CONFIG, (sbas_config,), 'B', '')
+
+    def get_sbas_config(self):
+        """
+        Returns the SBAS configuration as set by :func:`Set SBAS Config`
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_SBAS_CONFIG, (), '', 'B')
 
     def get_spitfp_error_count(self):
         """
@@ -402,6 +449,8 @@ class BrickletGPSV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        mode = int(mode)
+
         return self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
 
     def get_bootloader_mode(self):
@@ -419,6 +468,8 @@ class BrickletGPSV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        pointer = int(pointer)
+
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
 
     def write_firmware(self, data):
@@ -432,6 +483,8 @@ class BrickletGPSV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        data = list(map(int, data))
+
         return self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
 
     def set_status_led_config(self, config):
@@ -444,6 +497,8 @@ class BrickletGPSV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        config = int(config)
+
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
 
     def get_status_led_config(self):
@@ -482,6 +537,8 @@ class BrickletGPSV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        uid = int(uid)
+
         self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
 
     def read_uid(self):
@@ -521,6 +578,8 @@ class BrickletGPSV2(Device):
         the numbers of the satellites that are currently utilized. The number 0 is not
         a valid satellite number and can be ignored in the list.
         """
+        satellite_system = int(satellite_system)
+
         ret = self.get_satellite_system_status_low_level(satellite_system)
 
         return GetSatelliteSystemStatus(ret.satellite_numbers_data[:ret.satellite_numbers_length], ret.fix, ret.pdop, ret.hdop, ret.vdop)

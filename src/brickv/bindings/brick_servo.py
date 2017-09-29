@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetPulseWidth = namedtuple('PulseWidth', ['min', 'max'])
 GetDegree = namedtuple('Degree', ['min', 'max'])
@@ -154,6 +154,8 @@ class BrickServo(Device):
         Enables a servo (0 to 6). If a servo is enabled, the configured position,
         velocity, acceleration, etc. are applied immediately.
         """
+        servo_num = int(servo_num)
+
         self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE, (servo_num,), 'B', '')
 
     def disable(self, servo_num):
@@ -161,12 +163,16 @@ class BrickServo(Device):
         Disables a servo (0 to 6). Disabled servos are not driven at all, i.e. a
         disabled servo will not hold its position if a load is applied.
         """
+        servo_num = int(servo_num)
+
         self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE, (servo_num,), 'B', '')
 
     def is_enabled(self, servo_num):
         """
         Returns *true* if the specified servo is enabled, *false* otherwise.
         """
+        servo_num = int(servo_num)
+
         return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_ENABLED, (servo_num,), 'B', '!')
 
     def set_position(self, servo_num, position):
@@ -180,12 +186,17 @@ class BrickServo(Device):
         similar with the Servo Brick, you can also define lengths or speeds with
         :func:`Set Degree`.
         """
+        servo_num = int(servo_num)
+        position = int(position)
+
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_POSITION, (servo_num, position), 'B h', '')
 
     def get_position(self, servo_num):
         """
         Returns the position of the specified servo as set by :func:`Set Position`.
         """
+        servo_num = int(servo_num)
+
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_POSITION, (servo_num,), 'B', 'h')
 
     def get_current_position(self, servo_num):
@@ -194,6 +205,8 @@ class BrickServo(Device):
         value of :func:`Set Position` if the servo is currently approaching a
         position goal.
         """
+        servo_num = int(servo_num)
+
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_CURRENT_POSITION, (servo_num,), 'B', 'h')
 
     def set_velocity(self, servo_num, velocity):
@@ -206,12 +219,17 @@ class BrickServo(Device):
 
         The default value is 65535.
         """
+        servo_num = int(servo_num)
+        velocity = int(velocity)
+
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_VELOCITY, (servo_num, velocity), 'B H', '')
 
     def get_velocity(self, servo_num):
         """
         Returns the velocity of the specified servo as set by :func:`Set Velocity`.
         """
+        servo_num = int(servo_num)
+
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_VELOCITY, (servo_num,), 'B', 'H')
 
     def get_current_velocity(self, servo_num):
@@ -220,6 +238,8 @@ class BrickServo(Device):
         value of :func:`Set Velocity` if the servo is currently approaching a
         velocity goal.
         """
+        servo_num = int(servo_num)
+
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_CURRENT_VELOCITY, (servo_num,), 'B', 'H')
 
     def set_acceleration(self, servo_num, acceleration):
@@ -231,6 +251,9 @@ class BrickServo(Device):
 
         The default value is 65535.
         """
+        servo_num = int(servo_num)
+        acceleration = int(acceleration)
+
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_ACCELERATION, (servo_num, acceleration), 'B H', '')
 
     def get_acceleration(self, servo_num):
@@ -238,6 +261,8 @@ class BrickServo(Device):
         Returns the acceleration for the specified servo as set by
         :func:`Set Acceleration`.
         """
+        servo_num = int(servo_num)
+
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_ACCELERATION, (servo_num,), 'B', 'H')
 
     def set_output_voltage(self, voltage):
@@ -253,6 +278,8 @@ class BrickServo(Device):
 
         The default value is 5000.
         """
+        voltage = int(voltage)
+
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_OUTPUT_VOLTAGE, (voltage,), 'H', '')
 
     def get_output_voltage(self):
@@ -281,6 +308,10 @@ class BrickServo(Device):
         The default values are 1000µs (1ms) and 2000µs (2ms) for minimum and
         maximum pulse width.
         """
+        servo_num = int(servo_num)
+        min = int(min)
+        max = int(max)
+
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_PULSE_WIDTH, (servo_num, min, max), 'B H H', '')
 
     def get_pulse_width(self, servo_num):
@@ -288,6 +319,8 @@ class BrickServo(Device):
         Returns the minimum and maximum pulse width for the specified servo as set by
         :func:`Set Pulse Width`.
         """
+        servo_num = int(servo_num)
+
         return GetPulseWidth(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_PULSE_WIDTH, (servo_num,), 'B', 'H H'))
 
     def set_degree(self, servo_num, min, max):
@@ -323,6 +356,10 @@ class BrickServo(Device):
 
         The default values are -9000 and 9000 for the minimum and maximum degree.
         """
+        servo_num = int(servo_num)
+        min = int(min)
+        max = int(max)
+
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_DEGREE, (servo_num, min, max), 'B h h', '')
 
     def get_degree(self, servo_num):
@@ -330,6 +367,8 @@ class BrickServo(Device):
         Returns the minimum and maximum degree for the specified servo as set by
         :func:`Set Degree`.
         """
+        servo_num = int(servo_num)
+
         return GetDegree(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_DEGREE, (servo_num,), 'B', 'h h'))
 
     def set_period(self, servo_num, period):
@@ -350,18 +389,25 @@ class BrickServo(Device):
 
         The default value is 19.5ms (19500µs).
         """
+        servo_num = int(servo_num)
+        period = int(period)
+
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_PERIOD, (servo_num, period), 'B H', '')
 
     def get_period(self, servo_num):
         """
         Returns the period for the specified servo as set by :func:`Set Period`.
         """
+        servo_num = int(servo_num)
+
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_PERIOD, (servo_num,), 'B', 'H')
 
     def get_servo_current(self, servo_num):
         """
         Returns the current consumption of the specified servo in mA.
         """
+        servo_num = int(servo_num)
+
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SERVO_CURRENT, (servo_num,), 'B', 'H')
 
     def get_overall_current(self):
@@ -405,6 +451,8 @@ class BrickServo(Device):
 
         The default value is 5V (5000mV).
         """
+        voltage = int(voltage)
+
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
 
     def get_minimum_voltage(self):
@@ -496,6 +544,9 @@ class BrickServo(Device):
 
         .. versionadded:: 2.3.4$nbsp;(Firmware)
         """
+        enable_dynamic_baudrate = bool(enable_dynamic_baudrate)
+        minimum_dynamic_baudrate = int(minimum_dynamic_baudrate)
+
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', '')
 
     def get_spitfp_baudrate_config(self):
@@ -517,6 +568,8 @@ class BrickServo(Device):
 
         .. versionadded:: 2.3.2$nbsp;(Firmware)
         """
+        communication_method = int(communication_method)
+
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
 
     def set_spitfp_baudrate(self, bricklet_port, baudrate):
@@ -540,6 +593,9 @@ class BrickServo(Device):
 
         .. versionadded:: 2.3.2$nbsp;(Firmware)
         """
+        bricklet_port = create_char(bricklet_port)
+        baudrate = int(baudrate)
+
         self.ipcon.send_request(self, BrickServo.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', '')
 
     def get_spitfp_baudrate(self, bricklet_port):
@@ -548,6 +604,8 @@ class BrickServo(Device):
 
         .. versionadded:: 2.3.2$nbsp;(Firmware)
         """
+        bricklet_port = create_char(bricklet_port)
+
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
 
     def get_spitfp_error_count(self, bricklet_port):
@@ -566,6 +624,8 @@ class BrickServo(Device):
 
         .. versionadded:: 2.3.2$nbsp;(Firmware)
         """
+        bricklet_port = create_char(bricklet_port)
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
 
     def enable_status_led(self):
@@ -610,6 +670,8 @@ class BrickServo(Device):
         This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
         plugins.
         """
+        port = create_char(port)
+
         return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 'B 3B 40s'))
 
     def get_chip_temperature(self):

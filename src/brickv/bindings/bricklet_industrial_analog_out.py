@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetConfiguration = namedtuple('Configuration', ['voltage_range', 'current_range'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -97,6 +97,8 @@ class BrickletIndustrialAnalogOut(Device):
         The output voltage and output current are linked. Changing the output voltage
         also changes the output current.
         """
+        voltage = int(voltage)
+
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_VOLTAGE, (voltage,), 'H', '')
 
     def get_voltage(self):
@@ -112,6 +114,8 @@ class BrickletIndustrialAnalogOut(Device):
         The output current and output voltage are linked. Changing the output current
         also changes the output voltage.
         """
+        current = int(current)
+
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_CURRENT, (current,), 'H', '')
 
     def get_current(self):
@@ -138,6 +142,9 @@ class BrickletIndustrialAnalogOut(Device):
         The resolution will always be 12 bit. This means, that the
         precision is higher with a smaller range.
         """
+        voltage_range = int(voltage_range)
+        current_range = int(current_range)
+
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_CONFIGURATION, (voltage_range, current_range), 'B B', '')
 
     def get_configuration(self):

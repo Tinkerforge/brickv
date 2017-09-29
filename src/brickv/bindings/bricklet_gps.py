@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetCoordinates = namedtuple('Coordinates', ['latitude', 'ns', 'longitude', 'ew', 'pdop', 'hdop', 'vdop', 'epe'])
 GetStatus = namedtuple('Status', ['fix', 'satellites_view', 'satellites_used'])
@@ -188,6 +188,8 @@ class BrickletGPS(Device):
          "2", "Cold start (don't use time, position, almanacs and ephemeris at restart)"
          "3", "Factory reset (clear all system/user configurations at restart)"
         """
+        restart_type = int(restart_type)
+
         self.ipcon.send_request(self, BrickletGPS.FUNCTION_RESTART, (restart_type,), 'B', '')
 
     def set_coordinates_callback_period(self, period):
@@ -200,6 +202,8 @@ class BrickletGPS(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletGPS.FUNCTION_SET_COORDINATES_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_coordinates_callback_period(self):
@@ -218,6 +222,8 @@ class BrickletGPS(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletGPS.FUNCTION_SET_STATUS_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_status_callback_period(self):
@@ -236,6 +242,8 @@ class BrickletGPS(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletGPS.FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_altitude_callback_period(self):
@@ -254,6 +262,8 @@ class BrickletGPS(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletGPS.FUNCTION_SET_MOTION_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_motion_callback_period(self):
@@ -272,6 +282,8 @@ class BrickletGPS(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletGPS.FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_date_time_callback_period(self):

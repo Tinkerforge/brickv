@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -14,9 +14,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetState = namedtuple('State', ['relay1', 'relay2'])
 GetMonoflop = namedtuple('Monoflop', ['state', 'time', 'time_remaining'])
@@ -111,6 +111,9 @@ class BrickletDualRelayV2(Device):
 
         The default value is (*false*, *false*).
         """
+        relay1 = bool(relay1)
+        relay2 = bool(relay2)
+
         self.ipcon.send_request(self, BrickletDualRelayV2.FUNCTION_SET_STATE, (relay1, relay2), '! !', '')
 
     def get_state(self):
@@ -135,6 +138,10 @@ class BrickletDualRelayV2(Device):
         of two seconds. The relay will be on all the time. If now the RS485
         connection is lost, the relay will turn off in at most two seconds.
         """
+        relay = int(relay)
+        state = bool(state)
+        time = int(time)
+
         self.ipcon.send_request(self, BrickletDualRelayV2.FUNCTION_SET_MONOFLOP, (relay, state, time), 'B ! I', '')
 
     def get_monoflop(self, relay):
@@ -145,6 +152,8 @@ class BrickletDualRelayV2(Device):
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
+        relay = int(relay)
+
         return GetMonoflop(*self.ipcon.send_request(self, BrickletDualRelayV2.FUNCTION_GET_MONOFLOP, (relay,), 'B', '! I I'))
 
     def set_selected_state(self, relay, state):
@@ -153,6 +162,9 @@ class BrickletDualRelayV2(Device):
 
         The other relay remains untouched.
         """
+        relay = int(relay)
+        state = bool(state)
+
         self.ipcon.send_request(self, BrickletDualRelayV2.FUNCTION_SET_SELECTED_STATE, (relay, state), 'B !', '')
 
     def get_spitfp_error_count(self):
@@ -183,6 +195,8 @@ class BrickletDualRelayV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        mode = int(mode)
+
         return self.ipcon.send_request(self, BrickletDualRelayV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
 
     def get_bootloader_mode(self):
@@ -200,6 +214,8 @@ class BrickletDualRelayV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        pointer = int(pointer)
+
         self.ipcon.send_request(self, BrickletDualRelayV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
 
     def write_firmware(self, data):
@@ -213,6 +229,8 @@ class BrickletDualRelayV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        data = list(map(int, data))
+
         return self.ipcon.send_request(self, BrickletDualRelayV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
 
     def set_status_led_config(self, config):
@@ -225,6 +243,8 @@ class BrickletDualRelayV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        config = int(config)
+
         self.ipcon.send_request(self, BrickletDualRelayV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
 
     def get_status_led_config(self):
@@ -263,6 +283,8 @@ class BrickletDualRelayV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        uid = int(uid)
+
         self.ipcon.send_request(self, BrickletDualRelayV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
 
     def read_uid(self):

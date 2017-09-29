@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetDisplayConfiguration = namedtuple('DisplayConfiguration', ['contrast', 'invert'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -80,6 +80,8 @@ class BrickletOLED128x64(Device):
         and the next two the second row and so on. To fill the whole display
         you need to call :func:`Write` 16 times.
         """
+        data = list(map(int, data))
+
         self.ipcon.send_request(self, BrickletOLED128x64.FUNCTION_WRITE, (data,), '64B', '')
 
     def new_window(self, column_from, column_to, row_from, row_to):
@@ -89,6 +91,11 @@ class BrickletOLED128x64(Device):
 
         The columns have a range of 0 to 127 and the rows have a range of 0 to 7.
         """
+        column_from = int(column_from)
+        column_to = int(column_to)
+        row_from = int(row_from)
+        row_to = int(row_to)
+
         self.ipcon.send_request(self, BrickletOLED128x64.FUNCTION_NEW_WINDOW, (column_from, column_to, row_from, row_to), 'B B B B', '')
 
     def clear_display(self):
@@ -106,6 +113,9 @@ class BrickletOLED128x64(Device):
 
         The default values are contrast 143 and inverting off.
         """
+        contrast = int(contrast)
+        invert = bool(invert)
+
         self.ipcon.send_request(self, BrickletOLED128x64.FUNCTION_SET_DISPLAY_CONFIGURATION, (contrast, invert), 'B !', '')
 
     def get_display_configuration(self):
@@ -128,6 +138,10 @@ class BrickletOLED128x64(Device):
         The display uses a special 5x7 pixel charset. You can view the characters
         of the charset in Brick Viewer.
         """
+        line = int(line)
+        position = int(position)
+        text = create_string(text)
+
         self.ipcon.send_request(self, BrickletOLED128x64.FUNCTION_WRITE_LINE, (line, position, text), 'B B 26s', '')
 
     def get_identity(self):

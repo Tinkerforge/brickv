@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetAirPressureCallbackThreshold = namedtuple('AirPressureCallbackThreshold', ['option', 'min', 'max'])
 GetAltitudeCallbackThreshold = namedtuple('AltitudeCallbackThreshold', ['option', 'min', 'max'])
@@ -128,6 +128,8 @@ class BrickletBarometer(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_AIR_PRESSURE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_air_pressure_callback_period(self):
@@ -146,6 +148,8 @@ class BrickletBarometer(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_altitude_callback_period(self):
@@ -172,6 +176,10 @@ class BrickletBarometer(Device):
 
         The default value is ('x', 0, 0).
         """
+        option = create_char(option)
+        min = int(min)
+        max = int(max)
+
         self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_AIR_PRESSURE_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
 
     def get_air_pressure_callback_threshold(self):
@@ -198,6 +206,10 @@ class BrickletBarometer(Device):
 
         The default value is ('x', 0, 0).
         """
+        option = create_char(option)
+        min = int(min)
+        max = int(max)
+
         self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_ALTITUDE_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
 
     def get_altitude_callback_threshold(self):
@@ -222,6 +234,8 @@ class BrickletBarometer(Device):
 
         The default value is 100.
         """
+        debounce = int(debounce)
+
         self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
@@ -245,6 +259,8 @@ class BrickletBarometer(Device):
 
         The default value is 1013.25mbar.
         """
+        air_pressure = int(air_pressure)
+
         self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_REFERENCE_AIR_PRESSURE, (air_pressure,), 'i', '')
 
     def get_chip_temperature(self):
@@ -288,6 +304,10 @@ class BrickletBarometer(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        moving_average_pressure = int(moving_average_pressure)
+        average_pressure = int(average_pressure)
+        average_temperature = int(average_temperature)
+
         self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_AVERAGING, (moving_average_pressure, average_pressure, average_temperature), 'B B B', '')
 
     def get_averaging(self):

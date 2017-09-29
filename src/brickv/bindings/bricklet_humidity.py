@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetHumidityCallbackThreshold = namedtuple('HumidityCallbackThreshold', ['option', 'min', 'max'])
 GetAnalogValueCallbackThreshold = namedtuple('AnalogValueCallbackThreshold', ['option', 'min', 'max'])
@@ -125,6 +125,8 @@ class BrickletHumidity(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_HUMIDITY_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_humidity_callback_period(self):
@@ -143,6 +145,8 @@ class BrickletHumidity(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_analog_value_callback_period(self):
@@ -169,6 +173,10 @@ class BrickletHumidity(Device):
 
         The default value is ('x', 0, 0).
         """
+        option = create_char(option)
+        min = int(min)
+        max = int(max)
+
         self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_HUMIDITY_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
 
     def get_humidity_callback_threshold(self):
@@ -195,6 +203,10 @@ class BrickletHumidity(Device):
 
         The default value is ('x', 0, 0).
         """
+        option = create_char(option)
+        min = int(min)
+        max = int(max)
+
         self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
 
     def get_analog_value_callback_threshold(self):
@@ -219,6 +231,8 @@ class BrickletHumidity(Device):
 
         The default value is 100.
         """
+        debounce = int(debounce)
+
         self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):

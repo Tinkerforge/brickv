@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 ReadFrame = namedtuple('ReadFrame', ['success', 'frame_type', 'identifier', 'data', 'length'])
 GetConfiguration = namedtuple('Configuration', ['baud_rate', 'transceiver_mode', 'write_timeout'])
@@ -114,6 +114,11 @@ class BrickletCAN(Device):
         arbitration or because the CAN transceiver is currently disabled due to a high
         write error level (see :func:`Get Error Log`).
         """
+        frame_type = int(frame_type)
+        identifier = int(identifier)
+        data = list(map(int, data))
+        length = int(length)
+
         return self.ipcon.send_request(self, BrickletCAN.FUNCTION_WRITE_FRAME, (frame_type, identifier, data, length), 'B I 8B B', '!')
 
     def read_frame(self):
@@ -189,6 +194,10 @@ class BrickletCAN(Device):
 
         The default is: 125 kbit/s, normal transceiver mode and infinite write timeout.
         """
+        baud_rate = int(baud_rate)
+        transceiver_mode = int(transceiver_mode)
+        write_timeout = int(write_timeout)
+
         self.ipcon.send_request(self, BrickletCAN.FUNCTION_SET_CONFIGURATION, (baud_rate, transceiver_mode, write_timeout), 'B B i', '')
 
     def get_configuration(self):
@@ -254,6 +263,11 @@ class BrickletCAN(Device):
 
         The default mode is accept-all.
         """
+        mode = int(mode)
+        mask = int(mask)
+        filter1 = int(filter1)
+        filter2 = int(filter2)
+
         self.ipcon.send_request(self, BrickletCAN.FUNCTION_SET_READ_FILTER, (mode, mask, filter1, filter2), 'B I I I', '')
 
     def get_read_filter(self):

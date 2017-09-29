@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetEdgeCountConfig = namedtuple('EdgeCountConfig', ['edge_type', 'debounce'])
 EdgeInterrupt = namedtuple('EdgeInterrupt', ['count', 'value'])
@@ -84,6 +84,8 @@ class BrickletHallEffect(Device):
         If you set the reset counter to *true*, the count is set back to 0
         directly after it is read.
         """
+        reset_counter = bool(reset_counter)
+
         return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT, (reset_counter,), '!', 'I')
 
     def set_edge_count_config(self, edge_type, debounce):
@@ -110,6 +112,9 @@ class BrickletHallEffect(Device):
 
         Default values: 0 (edge type) and 100ms (debounce time)
         """
+        edge_type = int(edge_type)
+        debounce = int(debounce)
+
         self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_COUNT_CONFIG, (edge_type, debounce), 'B B', '')
 
     def get_edge_count_config(self):
@@ -128,6 +133,8 @@ class BrickletHallEffect(Device):
 
         Default value is 0.
         """
+        edges = int(edges)
+
         self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_INTERRUPT, (edges,), 'I', '')
 
     def get_edge_interrupt(self):
@@ -146,6 +153,8 @@ class BrickletHallEffect(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_COUNT_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_edge_count_callback_period(self):

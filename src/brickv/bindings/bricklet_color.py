@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetColor = namedtuple('Color', ['r', 'g', 'b', 'c'])
 GetColorCallbackThreshold = namedtuple('ColorCallbackThreshold', ['option', 'min_r', 'max_r', 'min_g', 'max_g', 'min_b', 'max_b', 'min_c', 'max_c'])
@@ -138,6 +138,8 @@ class BrickletColor(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_COLOR_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_color_callback_period(self):
@@ -164,6 +166,16 @@ class BrickletColor(Device):
 
         The default value is ('x', 0, 0, 0, 0, 0, 0, 0, 0).
         """
+        option = create_char(option)
+        min_r = int(min_r)
+        max_r = int(max_r)
+        min_g = int(min_g)
+        max_g = int(max_g)
+        min_b = int(min_b)
+        max_b = int(max_b)
+        min_c = int(min_c)
+        max_c = int(max_c)
+
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_COLOR_CALLBACK_THRESHOLD, (option, min_r, max_r, min_g, max_g, min_b, max_b, min_c, max_c), 'c H H H H H H H H', '')
 
     def get_color_callback_threshold(self):
@@ -186,6 +198,8 @@ class BrickletColor(Device):
 
         The default value is 100.
         """
+        debounce = int(debounce)
+
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
@@ -245,6 +259,9 @@ class BrickletColor(Device):
 
         The default values are 60x gain and 154ms integration time.
         """
+        gain = int(gain)
+        integration_time = int(integration_time)
+
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_CONFIG, (gain, integration_time), 'B B', '')
 
     def get_config(self):
@@ -288,6 +305,8 @@ class BrickletColor(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_illuminance_callback_period(self):
@@ -306,6 +325,8 @@ class BrickletColor(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_COLOR_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_color_temperature_callback_period(self):

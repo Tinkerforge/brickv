@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetSPITFPBaudrateConfig = namedtuple('SPITFPBaudrateConfig', ['enable_dynamic_baudrate', 'minimum_dynamic_baudrate'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
@@ -143,6 +143,8 @@ class BrickDC(Device):
 
         The default velocity is 0.
         """
+        velocity = int(velocity)
+
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_VELOCITY, (velocity,), 'h', '')
 
     def get_velocity(self):
@@ -174,6 +176,8 @@ class BrickDC(Device):
 
         The default acceleration is 10000.
         """
+        acceleration = int(acceleration)
+
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_ACCELERATION, (acceleration,), 'H', '')
 
     def get_acceleration(self):
@@ -195,6 +199,8 @@ class BrickDC(Device):
 
         The default frequency is 15 kHz.
         """
+        frequency = int(frequency)
+
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_PWM_FREQUENCY, (frequency,), 'H', '')
 
     def get_pwm_frequency(self):
@@ -277,6 +283,8 @@ class BrickDC(Device):
 
         The default value is 6V.
         """
+        voltage = int(voltage)
+
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
 
     def get_minimum_voltage(self):
@@ -305,6 +313,8 @@ class BrickDC(Device):
 
         The default value is 0 = Drive/Brake.
         """
+        mode = int(mode)
+
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_DRIVE_MODE, (mode,), 'B', '')
 
     def get_drive_mode(self):
@@ -320,6 +330,8 @@ class BrickDC(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_CURRENT_VELOCITY_PERIOD, (period,), 'H', '')
 
     def get_current_velocity_period(self):
@@ -355,6 +367,9 @@ class BrickDC(Device):
 
         .. versionadded:: 2.3.5$nbsp;(Firmware)
         """
+        enable_dynamic_baudrate = bool(enable_dynamic_baudrate)
+        minimum_dynamic_baudrate = int(minimum_dynamic_baudrate)
+
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', '')
 
     def get_spitfp_baudrate_config(self):
@@ -376,6 +391,8 @@ class BrickDC(Device):
 
         .. versionadded:: 2.3.3$nbsp;(Firmware)
         """
+        communication_method = int(communication_method)
+
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
 
     def set_spitfp_baudrate(self, bricklet_port, baudrate):
@@ -399,6 +416,9 @@ class BrickDC(Device):
 
         .. versionadded:: 2.3.3$nbsp;(Firmware)
         """
+        bricklet_port = create_char(bricklet_port)
+        baudrate = int(baudrate)
+
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', '')
 
     def get_spitfp_baudrate(self, bricklet_port):
@@ -407,6 +427,8 @@ class BrickDC(Device):
 
         .. versionadded:: 2.3.3$nbsp;(Firmware)
         """
+        bricklet_port = create_char(bricklet_port)
+
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
 
     def get_spitfp_error_count(self, bricklet_port):
@@ -425,6 +447,8 @@ class BrickDC(Device):
 
         .. versionadded:: 2.3.3$nbsp;(Firmware)
         """
+        bricklet_port = create_char(bricklet_port)
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
 
     def enable_status_led(self):
@@ -469,6 +493,8 @@ class BrickDC(Device):
         This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
         plugins.
         """
+        port = create_char(port)
+
         return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 'B 3B 40s'))
 
     def get_chip_temperature(self):

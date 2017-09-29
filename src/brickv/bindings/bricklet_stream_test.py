@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -14,9 +14,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 NormalWriteExtraOut2LowLevel = namedtuple('NormalWriteExtraOut2LowLevel', ['extra_1', 'extra_2'])
 FixedWriteExtraOut2LowLevel = namedtuple('FixedWriteExtraOut2LowLevel', ['extra_1', 'extra_2'])
@@ -323,264 +323,461 @@ class BrickletStreamTest(Device):
         """
 
         """
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', '')
 
     def normal_write_extra_in_prefix_1_low_level(self, extra, message_length, message_chunk_offset, message_chunk_data):
         """
 
         """
+        extra = int(extra)
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_length, message_chunk_offset, message_chunk_data), 'B H H 59c', '')
 
     def normal_write_extra_in_prefix_2_low_level(self, extra_1, extra_2, message_length, message_chunk_offset, message_chunk_data):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_length, message_chunk_offset, message_chunk_data), 'B B H H 58c', '')
 
     def normal_write_extra_in_suffix_1_low_level(self, message_length, message_chunk_offset, message_chunk_data, extra):
         """
 
         """
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+        extra = int(extra)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data, extra), 'H H 59c B', '')
 
     def normal_write_extra_in_suffix_2_low_level(self, message_length, message_chunk_offset, message_chunk_data, extra_1, extra_2):
         """
 
         """
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data, extra_1, extra_2), 'H H 58c B B', '')
 
     def normal_write_extra_in_full_low_level(self, extra_1, message_length, extra_2, message_chunk_offset, extra_3, message_chunk_data, extra_4):
         """
 
         """
+        extra_1 = int(extra_1)
+        message_length = int(message_length)
+        extra_2 = int(extra_2)
+        message_chunk_offset = int(message_chunk_offset)
+        extra_3 = int(extra_3)
+        message_chunk_data = create_char_list(message_chunk_data)
+        extra_4 = int(extra_4)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_FULL_LOW_LEVEL, (extra_1, message_length, extra_2, message_chunk_offset, extra_3, message_chunk_data, extra_4), 'B H B H B 56c B', '')
 
     def normal_write_extra_out_1_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
 
         """
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_OUT_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 'B')
 
     def normal_write_extra_out_2_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
 
         """
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         return NormalWriteExtraOut2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_OUT_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 'B B'))
 
     def fixed_write_low_level(self, message_chunk_offset, message_chunk_data):
         """
 
         """
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_LOW_LEVEL, (message_chunk_offset, message_chunk_data), 'H 62c', '')
 
     def fixed_write_extra_in_prefix_1_low_level(self, extra, message_chunk_offset, message_chunk_data):
         """
 
         """
+        extra = int(extra)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_chunk_offset, message_chunk_data), 'B H 61c', '')
 
     def fixed_write_extra_in_prefix_2_low_level(self, extra_1, extra_2, message_chunk_offset, message_chunk_data):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_chunk_offset, message_chunk_data), 'B B H 60c', '')
 
     def fixed_write_extra_in_suffix_1_low_level(self, message_chunk_offset, message_chunk_data, extra):
         """
 
         """
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+        extra = int(extra)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_chunk_offset, message_chunk_data, extra), 'H 61c B', '')
 
     def fixed_write_extra_in_suffix_2_low_level(self, message_chunk_offset, message_chunk_data, extra_1, extra_2):
         """
 
         """
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_chunk_offset, message_chunk_data, extra_1, extra_2), 'H 60c B B', '')
 
     def fixed_write_extra_in_full_low_level(self, extra_1, message_chunk_offset, extra_2, message_chunk_data, extra_3):
         """
 
         """
+        extra_1 = int(extra_1)
+        message_chunk_offset = int(message_chunk_offset)
+        extra_2 = int(extra_2)
+        message_chunk_data = create_char_list(message_chunk_data)
+        extra_3 = int(extra_3)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_FULL_LOW_LEVEL, (extra_1, message_chunk_offset, extra_2, message_chunk_data, extra_3), 'B H B 59c B', '')
 
     def fixed_write_extra_out_1_low_level(self, message_chunk_offset, message_chunk_data):
         """
 
         """
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_OUT_1_LOW_LEVEL, (message_chunk_offset, message_chunk_data), 'H 62c', 'B')
 
     def fixed_write_extra_out_2_low_level(self, message_chunk_offset, message_chunk_data):
         """
 
         """
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         return FixedWriteExtraOut2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_OUT_2_LOW_LEVEL, (message_chunk_offset, message_chunk_data), 'H 62c', 'B B'))
 
     def short_write_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
 
         """
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 'B')
 
     def short_write_extra_in_prefix_1_low_level(self, extra, message_length, message_chunk_offset, message_chunk_data):
         """
 
         """
+        extra = int(extra)
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_length, message_chunk_offset, message_chunk_data), 'B H H 59c', 'B')
 
     def short_write_extra_in_prefix_2_low_level(self, extra_1, extra_2, message_length, message_chunk_offset, message_chunk_data):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_length, message_chunk_offset, message_chunk_data), 'B B H H 58c', 'B')
 
     def short_write_extra_in_suffix_1_low_level(self, message_length, message_chunk_offset, message_chunk_data, extra):
         """
 
         """
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+        extra = int(extra)
+
         return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data, extra), 'H H 59c B', 'B')
 
     def short_write_extra_in_suffix_2_low_level(self, message_length, message_chunk_offset, message_chunk_data, extra_1, extra_2):
         """
 
         """
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
         return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data, extra_1, extra_2), 'H H 58c B B', 'B')
 
     def short_write_extra_out_prefix_1_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
 
         """
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         return ShortWriteExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 'B B'))
 
     def short_write_extra_out_prefix_2_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
 
         """
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         return ShortWriteExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 'B B B'))
 
     def short_write_extra_out_suffix_1_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
 
         """
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         return ShortWriteExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 'B B'))
 
     def short_write_extra_out_suffix_2_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
 
         """
+        message_length = int(message_length)
+        message_chunk_offset = int(message_chunk_offset)
+        message_chunk_data = create_char_list(message_chunk_data)
+
         return ShortWriteExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 'B B B'))
 
     def short_write_extra_full_low_level(self, extra_1, message_length, extra_2, message_chunk_offset, extra_3, message_chunk_data, extra_4):
         """
 
         """
+        extra_1 = int(extra_1)
+        message_length = int(message_length)
+        extra_2 = int(extra_2)
+        message_chunk_offset = int(message_chunk_offset)
+        extra_3 = int(extra_3)
+        message_chunk_data = create_char_list(message_chunk_data)
+        extra_4 = int(extra_4)
+
         return ShortWriteExtraFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_FULL_LOW_LEVEL, (extra_1, message_length, extra_2, message_chunk_offset, extra_3, message_chunk_data, extra_4), 'B H B H B 56c B', 'B B B'))
 
     def single_write_low_level(self, message_length, message_data):
         """
 
         """
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_LOW_LEVEL, (message_length, message_data), 'B 63c', '')
 
     def single_write_extra_in_prefix_1_low_level(self, extra, message_length, message_data):
         """
 
         """
+        extra = int(extra)
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_length, message_data), 'B B 62c', '')
 
     def single_write_extra_in_prefix_2_low_level(self, extra_1, extra_2, message_length, message_data):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_length, message_data), 'B B B 61c', '')
 
     def single_write_extra_in_suffix_1_low_level(self, message_length, message_data, extra):
         """
 
         """
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+        extra = int(extra)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_length, message_data, extra), 'B 62c B', '')
 
     def single_write_extra_in_suffix_2_low_level(self, message_length, message_data, extra_1, extra_2):
         """
 
         """
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_length, message_data, extra_1, extra_2), 'B 61c B B', '')
 
     def single_write_extra_in_full_low_level(self, extra_1, message_length, extra_2, message_data, extra_3):
         """
 
         """
+        extra_1 = int(extra_1)
+        message_length = int(message_length)
+        extra_2 = int(extra_2)
+        message_data = create_char_list(message_data)
+        extra_3 = int(extra_3)
+
         self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_FULL_LOW_LEVEL, (extra_1, message_length, extra_2, message_data, extra_3), 'B B B 60c B', '')
 
     def single_write_extra_out_1_low_level(self, message_length, message_data):
         """
 
         """
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+
         return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_OUT_1_LOW_LEVEL, (message_length, message_data), 'B 63c', 'B')
 
     def single_write_extra_out_2_low_level(self, message_length, message_data):
         """
 
         """
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+
         return SingleWriteExtraOut2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_OUT_2_LOW_LEVEL, (message_length, message_data), 'B 63c', 'B B'))
 
     def short_single_write_low_level(self, message_length, message_data):
         """
 
         """
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+
         return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_LOW_LEVEL, (message_length, message_data), 'B 63c', 'B')
 
     def short_single_write_extra_in_prefix_1_low_level(self, extra, message_length, message_data):
         """
 
         """
+        extra = int(extra)
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+
         return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_length, message_data), 'B B 62c', 'B')
 
     def short_single_write_extra_in_prefix_2_low_level(self, extra_1, extra_2, message_length, message_data):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+
         return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_length, message_data), 'B B B 61c', 'B')
 
     def short_single_write_extra_in_suffix_1_low_level(self, message_length, message_data, extra):
         """
 
         """
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+        extra = int(extra)
+
         return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_length, message_data, extra), 'B 62c B', 'B')
 
     def short_single_write_extra_in_suffix_2_low_level(self, message_length, message_data, extra_1, extra_2):
         """
 
         """
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
         return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_length, message_data, extra_1, extra_2), 'B 61c B B', 'B')
 
     def short_single_write_extra_out_prefix_1_low_level(self, message_length, message_data):
         """
 
         """
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+
         return ShortSingleWriteExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (message_length, message_data), 'B 62c', 'B B'))
 
     def short_single_write_extra_out_prefix_2_low_level(self, message_length, message_data):
         """
 
         """
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+
         return ShortSingleWriteExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (message_length, message_data), 'B 62c', 'B B B'))
 
     def short_single_write_extra_out_suffix_1_low_level(self, message_length, message_data):
         """
 
         """
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+
         return ShortSingleWriteExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (message_length, message_data), 'B 63c', 'B B'))
 
     def short_single_write_extra_out_suffix_2_low_level(self, message_length, message_data):
         """
 
         """
+        message_length = int(message_length)
+        message_data = create_char_list(message_data)
+
         return ShortSingleWriteExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (message_length, message_data), 'B 63c', 'B B B'))
 
     def short_single_write_extra_full_low_level(self, extra_1, message_length, extra_2, message_data, extra_3):
         """
 
         """
+        extra_1 = int(extra_1)
+        message_length = int(message_length)
+        extra_2 = int(extra_2)
+        message_data = create_char_list(message_data)
+        extra_3 = int(extra_3)
+
         return ShortSingleWriteExtraFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_FULL_LOW_LEVEL, (extra_1, message_length, extra_2, message_data, extra_3), 'B B B 60c B', 'B B B'))
 
     def normal_read_low_level(self):
@@ -593,12 +790,17 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra = int(extra)
+
         return NormalReadExtraIn1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_IN_1_LOW_LEVEL, (extra,), 'B', 'H H 60c'))
 
     def normal_read_extra_in_2_low_level(self, extra_1, extra_2):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
         return NormalReadExtraIn2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_IN_2_LOW_LEVEL, (extra_1, extra_2), 'B B', 'H H 60c'))
 
     def normal_read_extra_out_prefix_1_low_level(self):
@@ -641,12 +843,17 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra = int(extra)
+
         return FixedReadExtraIn1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_IN_1_LOW_LEVEL, (extra,), 'B', 'H 62c'))
 
     def fixed_read_extra_in_2_low_level(self, extra_1, extra_2):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
         return FixedReadExtraIn2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_IN_2_LOW_LEVEL, (extra_1, extra_2), 'B B', 'H 62c'))
 
     def fixed_read_extra_out_prefix_1_low_level(self):
@@ -689,12 +896,17 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra = int(extra)
+
         return SingleReadExtraIn1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_IN_1_LOW_LEVEL, (extra,), 'B', 'B 62c'))
 
     def single_read_extra_in_2_low_level(self, extra_1, extra_2):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
         return SingleReadExtraIn2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_IN_2_LOW_LEVEL, (extra_1, extra_2), 'B B', 'B 62c'))
 
     def single_read_extra_out_prefix_1_low_level(self):
@@ -744,10 +956,11 @@ class BrickletStreamTest(Device):
         """
 
         """
+        message = create_char_list(message)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -767,10 +980,12 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra = int(extra)
+        message = create_char_list(message)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -790,10 +1005,13 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        message = create_char_list(message)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -813,10 +1031,12 @@ class BrickletStreamTest(Device):
         """
 
         """
+        message = create_char_list(message)
+        extra = int(extra)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -836,10 +1056,13 @@ class BrickletStreamTest(Device):
         """
 
         """
+        message = create_char_list(message)
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -859,10 +1082,15 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        extra_3 = int(extra_3)
+        message = create_char_list(message)
+        extra_4 = int(extra_4)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -882,10 +1110,11 @@ class BrickletStreamTest(Device):
         """
 
         """
+        message = create_char_list(message)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -905,10 +1134,11 @@ class BrickletStreamTest(Device):
         """
 
         """
+        message = create_char_list(message)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -928,7 +1158,8 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list
+        message = create_char_list(message)
+
         message_length = 1000
         message_chunk_offset = 0
 
@@ -947,7 +1178,9 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list
+        extra = int(extra)
+        message = create_char_list(message)
+
         message_length = 1000
         message_chunk_offset = 0
 
@@ -966,7 +1199,10 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        message = create_char_list(message)
+
         message_length = 1000
         message_chunk_offset = 0
 
@@ -985,7 +1221,9 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list
+        message = create_char_list(message)
+        extra = int(extra)
+
         message_length = 1000
         message_chunk_offset = 0
 
@@ -1004,7 +1242,10 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list
+        message = create_char_list(message)
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
         message_length = 1000
         message_chunk_offset = 0
 
@@ -1023,7 +1264,11 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        message = create_char_list(message)
+        extra_3 = int(extra_3)
+
         message_length = 1000
         message_chunk_offset = 0
 
@@ -1042,7 +1287,8 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list
+        message = create_char_list(message)
+
         message_length = 1000
         message_chunk_offset = 0
 
@@ -1061,7 +1307,8 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list
+        message = create_char_list(message)
+
         message_length = 1000
         message_chunk_offset = 0
 
@@ -1080,10 +1327,11 @@ class BrickletStreamTest(Device):
         """
 
         """
+        message = create_char_list(message)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -1111,10 +1359,12 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra = int(extra)
+        message = create_char_list(message)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -1142,10 +1392,13 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        message = create_char_list(message)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -1173,10 +1426,12 @@ class BrickletStreamTest(Device):
         """
 
         """
+        message = create_char_list(message)
+        extra = int(extra)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -1204,10 +1459,13 @@ class BrickletStreamTest(Device):
         """
 
         """
+        message = create_char_list(message)
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -1235,10 +1493,11 @@ class BrickletStreamTest(Device):
         """
 
         """
+        message = create_char_list(message)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -1266,10 +1525,11 @@ class BrickletStreamTest(Device):
         """
 
         """
+        message = create_char_list(message)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -1297,10 +1557,11 @@ class BrickletStreamTest(Device):
         """
 
         """
+        message = create_char_list(message)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -1328,10 +1589,11 @@ class BrickletStreamTest(Device):
         """
 
         """
+        message = create_char_list(message)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -1359,10 +1621,15 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        extra_3 = int(extra_3)
+        message = create_char_list(message)
+        extra_4 = int(extra_4)
+
         if len(message) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Message can be at most 65535 items long')
 
-        message = list(message) # convert potential tuple to list
         message_length = len(message)
         message_chunk_offset = 0
 
@@ -1390,7 +1657,9 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        message = create_char_list(message)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1406,7 +1675,10 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        extra = int(extra)
+        message = create_char_list(message)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1422,7 +1694,11 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        message = create_char_list(message)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1438,7 +1714,10 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        message = create_char_list(message)
+        extra = int(extra)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1454,7 +1733,11 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        message = create_char_list(message)
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1470,7 +1753,12 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        message = create_char_list(message)
+        extra_3 = int(extra_3)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1486,7 +1774,9 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        message = create_char_list(message)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1502,7 +1792,9 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        message = create_char_list(message)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1518,7 +1810,9 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        message = create_char_list(message)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1534,7 +1828,10 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        extra = int(extra)
+        message = create_char_list(message)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1550,7 +1847,11 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        message = create_char_list(message)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1566,7 +1867,10 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        message = create_char_list(message)
+        extra = int(extra)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1582,7 +1886,11 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        message = create_char_list(message)
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1598,7 +1906,9 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        message = create_char_list(message)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1614,7 +1924,9 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        message = create_char_list(message)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1630,7 +1942,9 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        message = create_char_list(message)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1646,7 +1960,9 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        message = create_char_list(message)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1662,7 +1978,12 @@ class BrickletStreamTest(Device):
         """
 
         """
-        message = list(message) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+        message = create_char_list(message)
+        extra_3 = int(extra_3)
+
+        message = list(message) # make a copy so we can potentially extend it
         message_length = len(message)
         message_data = message
 
@@ -1703,6 +2024,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra = int(extra)
+
         with self.stream_lock:
             ret = self.normal_read_extra_in_1_low_level(extra)
             message_length = ret.message_length
@@ -1728,6 +2051,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
         with self.stream_lock:
             ret = self.normal_read_extra_in_2_low_level(extra_1, extra_2)
             message_length = ret.message_length
@@ -1908,6 +2234,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra = int(extra)
+
         message_length = 1000
 
         with self.stream_lock:
@@ -1938,6 +2266,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
         message_length = 1000
 
         with self.stream_lock:
@@ -2126,6 +2457,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra = int(extra)
+
         ret = self.single_read_extra_in_1_low_level(extra)
 
         return ret.message_data[:ret.message_length]
@@ -2134,6 +2467,9 @@ class BrickletStreamTest(Device):
         """
 
         """
+        extra_1 = int(extra_1)
+        extra_2 = int(extra_2)
+
         ret = self.single_read_extra_in_2_low_level(extra_1, extra_2)
 
         return ret.message_data[:ret.message_length]

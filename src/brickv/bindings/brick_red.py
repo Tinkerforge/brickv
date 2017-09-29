@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 CreateSession = namedtuple('CreateSession', ['error_code', 'session_id'])
 AllocateString = namedtuple('AllocateString', ['error_code', 'string_id'])
@@ -326,24 +326,33 @@ class BrickRED(Device):
         """
 
         """
+        lifetime = int(lifetime)
+
         return CreateSession(*self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_SESSION, (lifetime,), 'I', 'B H'))
 
     def expire_session(self, session_id):
         """
 
         """
+        session_id = int(session_id)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_EXPIRE_SESSION, (session_id,), 'H', 'B')
 
     def expire_session_unchecked(self, session_id):
         """
 
         """
+        session_id = int(session_id)
+
         self.ipcon.send_request(self, BrickRED.FUNCTION_EXPIRE_SESSION_UNCHECKED, (session_id,), 'H', '')
 
     def keep_session_alive(self, session_id, lifetime):
         """
 
         """
+        session_id = int(session_id)
+        lifetime = int(lifetime)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_KEEP_SESSION_ALIVE, (session_id, lifetime), 'H I', 'B')
 
     def release_object(self, object_id, session_id):
@@ -351,12 +360,18 @@ class BrickRED(Device):
         Decreases the reference count of an object by one and returns the resulting
         error code. If the reference count reaches zero the object gets destroyed.
         """
+        object_id = int(object_id)
+        session_id = int(session_id)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_RELEASE_OBJECT, (object_id, session_id), 'H H', 'B')
 
     def release_object_unchecked(self, object_id, session_id):
         """
 
         """
+        object_id = int(object_id)
+        session_id = int(session_id)
+
         self.ipcon.send_request(self, BrickRED.FUNCTION_RELEASE_OBJECT_UNCHECKED, (object_id, session_id), 'H H', '')
 
     def allocate_string(self, length_to_reserve, buffer, session_id):
@@ -367,6 +382,10 @@ class BrickRED(Device):
 
         Returns the object ID of the new string object and the resulting error code.
         """
+        length_to_reserve = int(length_to_reserve)
+        buffer = create_string(buffer)
+        session_id = int(session_id)
+
         return AllocateString(*self.ipcon.send_request(self, BrickRED.FUNCTION_ALLOCATE_STRING, (length_to_reserve, buffer, session_id), 'I 58s H', 'B H'))
 
     def truncate_string(self, string_id, length):
@@ -374,12 +393,17 @@ class BrickRED(Device):
         Truncates a string object to ``length`` bytes and returns the resulting
         error code.
         """
+        string_id = int(string_id)
+        length = int(length)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_TRUNCATE_STRING, (string_id, length), 'H I', 'B')
 
     def get_string_length(self, string_id):
         """
         Returns the length of a string object in bytes and the resulting error code.
         """
+        string_id = int(string_id)
+
         return GetStringLength(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_STRING_LENGTH, (string_id,), 'H', 'B I'))
 
     def set_string_chunk(self, string_id, offset, buffer):
@@ -388,6 +412,10 @@ class BrickRED(Device):
 
         Returns the resulting error code.
         """
+        string_id = int(string_id)
+        offset = int(offset)
+        buffer = create_string(buffer)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_STRING_CHUNK, (string_id, offset, buffer), 'H I 58s', 'B')
 
     def get_string_chunk(self, string_id, offset):
@@ -395,6 +423,9 @@ class BrickRED(Device):
         Returns a chunk up to 63 bytes from a string object beginning at ``offset`` and
         returns the resulting error code.
         """
+        string_id = int(string_id)
+        offset = int(offset)
+
         return GetStringChunk(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_STRING_CHUNK, (string_id, offset), 'H I', 'B 63s'))
 
     def allocate_list(self, length_to_reserve, session_id):
@@ -408,12 +439,17 @@ class BrickRED(Device):
         When a list object gets destroyed then the reference count of each object in
         the list object is decreased by one.
         """
+        length_to_reserve = int(length_to_reserve)
+        session_id = int(session_id)
+
         return AllocateList(*self.ipcon.send_request(self, BrickRED.FUNCTION_ALLOCATE_LIST, (length_to_reserve, session_id), 'H H', 'B H'))
 
     def get_list_length(self, list_id):
         """
         Returns the length of a list object in items and the resulting error code.
         """
+        list_id = int(list_id)
+
         return GetListLength(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LIST_LENGTH, (list_id,), 'H', 'B H'))
 
     def get_list_item(self, list_id, index, session_id):
@@ -430,6 +466,10 @@ class BrickRED(Device):
         * Process = 4
         * Program = 5
         """
+        list_id = int(list_id)
+        index = int(index)
+        session_id = int(session_id)
+
         return GetListItem(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LIST_ITEM, (list_id, index, session_id), 'H H H', 'B H B'))
 
     def append_to_list(self, list_id, item_object_id):
@@ -439,6 +479,9 @@ class BrickRED(Device):
 
         Returns the resulting error code.
         """
+        list_id = int(list_id)
+        item_object_id = int(item_object_id)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_APPEND_TO_LIST, (list_id, item_object_id), 'H H', 'B')
 
     def remove_from_list(self, list_id, index):
@@ -448,6 +491,9 @@ class BrickRED(Device):
 
         Returns the resulting error code.
         """
+        list_id = int(list_id)
+        index = int(index)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_REMOVE_FROM_LIST, (list_id, index), 'H H', 'B')
 
     def open_file(self, name_string_id, flags, permissions, uid, gid, session_id):
@@ -494,6 +540,13 @@ class BrickRED(Device):
 
         Returns the object ID of the new file object and the resulting error code.
         """
+        name_string_id = int(name_string_id)
+        flags = int(flags)
+        permissions = int(permissions)
+        uid = int(uid)
+        gid = int(gid)
+        session_id = int(session_id)
+
         return OpenFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_FILE, (name_string_id, flags, permissions, uid, gid, session_id), 'H I H I I H', 'B H'))
 
     def create_pipe(self, flags, length, session_id):
@@ -511,6 +564,10 @@ class BrickRED(Device):
 
         Returns the object ID of the new file object and the resulting error code.
         """
+        flags = int(flags)
+        length = int(length)
+        session_id = int(session_id)
+
         return CreatePipe(*self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_PIPE, (flags, length, session_id), 'I Q H', 'B H'))
 
     def get_file_info(self, file_id, session_id):
@@ -539,6 +596,9 @@ class BrickRED(Device):
 
         FIXME: everything except flags and length is invalid if file type is *Pipe*
         """
+        file_id = int(file_id)
+        session_id = int(session_id)
+
         return GetFileInfo(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_INFO, (file_id, session_id), 'H H', 'B B H I H I I Q Q Q Q'))
 
     def read_file(self, file_id, length_to_read):
@@ -556,6 +616,9 @@ class BrickRED(Device):
         flag or by :func:`Create Pipe` without the *NonBlockingRead* flag then the
         error code *NotSupported* is returned.
         """
+        file_id = int(file_id)
+        length_to_read = int(length_to_read)
+
         return ReadFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_READ_FILE, (file_id, length_to_read), 'H B', 'B 62B B'))
 
     def read_file_async(self, file_id, length_to_read):
@@ -573,6 +636,9 @@ class BrickRED(Device):
         flag or by :func:`Create Pipe` without the *NonBlockingRead* flag then the error
         code *NotSupported* is reported via the :cb:`Async File Read` callback.
         """
+        file_id = int(file_id)
+        length_to_read = int(length_to_read)
+
         self.ipcon.send_request(self, BrickRED.FUNCTION_READ_FILE_ASYNC, (file_id, length_to_read), 'H Q', '')
 
     def abort_async_file_read(self, file_id):
@@ -583,6 +649,8 @@ class BrickRED(Device):
 
         On success the :cb:`Async File Read` callback will report *OperationAborted*.
         """
+        file_id = int(file_id)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_ABORT_ASYNC_FILE_READ, (file_id,), 'H', 'B')
 
     def write_file(self, file_id, buffer, length_to_write):
@@ -595,6 +663,10 @@ class BrickRED(Device):
         flag or by :func:`Create Pipe` without the *NonBlockingWrite* flag then the
         error code *NotSupported* is returned.
         """
+        file_id = int(file_id)
+        buffer = list(map(int, buffer))
+        length_to_write = int(length_to_write)
+
         return WriteFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE, (file_id, buffer, length_to_write), 'H 61B B', 'B B'))
 
     def write_file_unchecked(self, file_id, buffer, length_to_write):
@@ -608,6 +680,10 @@ class BrickRED(Device):
         flag or by :func:`Create Pipe` without the *NonBlockingWrite* flag then the
         write operation will fail silently.
         """
+        file_id = int(file_id)
+        buffer = list(map(int, buffer))
+        length_to_write = int(length_to_write)
+
         self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE_UNCHECKED, (file_id, buffer, length_to_write), 'H 61B B', '')
 
     def write_file_async(self, file_id, buffer, length_to_write):
@@ -621,6 +697,10 @@ class BrickRED(Device):
         flag or by :func:`Create Pipe` without the *NonBlockingWrite* flag then the
         error code *NotSupported* is reported via the :cb:`Async File Write` callback.
         """
+        file_id = int(file_id)
+        buffer = list(map(int, buffer))
+        length_to_write = int(length_to_write)
+
         self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE_ASYNC, (file_id, buffer, length_to_write), 'H 61B B', '')
 
     def set_file_position(self, file_id, offset, origin):
@@ -638,6 +718,10 @@ class BrickRED(Device):
         If the file object was created by :func:`Create Pipe` then it has no seek
         position and the error code *InvalidSeek* is returned.
         """
+        file_id = int(file_id)
+        offset = int(offset)
+        origin = int(origin)
+
         return SetFilePosition(*self.ipcon.send_request(self, BrickRED.FUNCTION_SET_FILE_POSITION, (file_id, offset, origin), 'H q B', 'B Q'))
 
     def get_file_position(self, file_id):
@@ -648,18 +732,25 @@ class BrickRED(Device):
         If the file object was created by :func:`Create Pipe` then it has no seek
         position and the error code *InvalidSeek* is returned.
         """
+        file_id = int(file_id)
+
         return GetFilePosition(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_POSITION, (file_id,), 'H', 'B Q'))
 
     def set_file_events(self, file_id, events):
         """
 
         """
+        file_id = int(file_id)
+        events = int(events)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_FILE_EVENTS, (file_id, events), 'H H', 'B')
 
     def get_file_events(self, file_id):
         """
 
         """
+        file_id = int(file_id)
+
         return GetFileEvents(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_EVENTS, (file_id,), 'H', 'B H'))
 
     def open_directory(self, name_string_id, session_id):
@@ -675,6 +766,9 @@ class BrickRED(Device):
 
         Returns the object ID of the new directory object and the resulting error code.
         """
+        name_string_id = int(name_string_id)
+        session_id = int(session_id)
+
         return OpenDirectory(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_DIRECTORY, (name_string_id, session_id), 'H H', 'B H'))
 
     def get_directory_name(self, directory_id, session_id):
@@ -682,6 +776,9 @@ class BrickRED(Device):
         Returns the name of a directory object, as passed to :func:`Open Directory`, and
         the resulting error code.
         """
+        directory_id = int(directory_id)
+        session_id = int(session_id)
+
         return GetDirectoryName(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_DIRECTORY_NAME, (directory_id, session_id), 'H H', 'B H'))
 
     def get_next_directory_entry(self, directory_id, session_id):
@@ -702,30 +799,54 @@ class BrickRED(Device):
         * Symlink = 6
         * Socket = 7
         """
+        directory_id = int(directory_id)
+        session_id = int(session_id)
+
         return GetNextDirectoryEntry(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_NEXT_DIRECTORY_ENTRY, (directory_id, session_id), 'H H', 'B H B'))
 
     def rewind_directory(self, directory_id):
         """
         Rewinds a directory object and returns the resulting error code.
         """
+        directory_id = int(directory_id)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_REWIND_DIRECTORY, (directory_id,), 'H', 'B')
 
     def create_directory(self, name_string_id, flags, permissions, uid, gid):
         """
         FIXME: name has to be absolute
         """
+        name_string_id = int(name_string_id)
+        flags = int(flags)
+        permissions = int(permissions)
+        uid = int(uid)
+        gid = int(gid)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_DIRECTORY, (name_string_id, flags, permissions, uid, gid), 'H I H I I', 'B')
 
     def get_processes(self, session_id):
         """
 
         """
+        session_id = int(session_id)
+
         return GetProcesses(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESSES, (session_id,), 'H', 'B H'))
 
     def spawn_process(self, executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id, uid, gid, stdin_file_id, stdout_file_id, stderr_file_id, session_id):
         """
 
         """
+        executable_string_id = int(executable_string_id)
+        arguments_list_id = int(arguments_list_id)
+        environment_list_id = int(environment_list_id)
+        working_directory_string_id = int(working_directory_string_id)
+        uid = int(uid)
+        gid = int(gid)
+        stdin_file_id = int(stdin_file_id)
+        stdout_file_id = int(stdout_file_id)
+        stderr_file_id = int(stderr_file_id)
+        session_id = int(session_id)
+
         return SpawnProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_SPAWN_PROCESS, (executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id, uid, gid, stdin_file_id, stdout_file_id, stderr_file_id, session_id), 'H H H H I I H H H H', 'B H'))
 
     def kill_process(self, process_id, signal):
@@ -744,6 +865,9 @@ class BrickRED(Device):
         * Continue =  18
         * Stop = 19
         """
+        process_id = int(process_id)
+        signal = int(signal)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_KILL_PROCESS, (process_id, signal), 'H B', 'B')
 
     def get_process_command(self, process_id, session_id):
@@ -752,6 +876,9 @@ class BrickRED(Device):
         spawn a process object, as passed to :func:`Spawn Process`, and the resulting
         error code.
         """
+        process_id = int(process_id)
+        session_id = int(session_id)
+
         return GetProcessCommand(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_COMMAND, (process_id, session_id), 'H H', 'B H H H H'))
 
     def get_process_identity(self, process_id):
@@ -762,6 +889,8 @@ class BrickRED(Device):
         The process ID is only valid if the state is *Running* or *Stopped*, see
         :func:`Get Process State`.
         """
+        process_id = int(process_id)
+
         return GetProcessIdentity(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_IDENTITY, (process_id,), 'H', 'B I I I'))
 
     def get_process_stdio(self, process_id, session_id):
@@ -769,6 +898,9 @@ class BrickRED(Device):
         Returns the stdin, stdout and stderr files used to spawn a process object, as
         passed to :func:`Spawn Process`, and the resulting error code.
         """
+        process_id = int(process_id)
+        session_id = int(session_id)
+
         return GetProcessStdio(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STDIO, (process_id, session_id), 'H H', 'B H H H'))
 
     def get_process_state(self, process_id):
@@ -805,120 +937,189 @@ class BrickRED(Device):
         The *CannotExecute* error can be caused by the executable being opened for
         writing.
         """
+        process_id = int(process_id)
+
         return GetProcessState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STATE, (process_id,), 'H', 'B B Q B'))
 
     def get_programs(self, session_id):
         """
 
         """
+        session_id = int(session_id)
+
         return GetPrograms(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAMS, (session_id,), 'H', 'B H'))
 
     def define_program(self, identifier_string_id, session_id):
         """
 
         """
+        identifier_string_id = int(identifier_string_id)
+        session_id = int(session_id)
+
         return DefineProgram(*self.ipcon.send_request(self, BrickRED.FUNCTION_DEFINE_PROGRAM, (identifier_string_id, session_id), 'H H', 'B H'))
 
     def purge_program(self, program_id, cookie):
         """
 
         """
+        program_id = int(program_id)
+        cookie = int(cookie)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_PURGE_PROGRAM, (program_id, cookie), 'H I', 'B')
 
     def get_program_identifier(self, program_id, session_id):
         """
 
         """
+        program_id = int(program_id)
+        session_id = int(session_id)
+
         return GetProgramIdentifier(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_IDENTIFIER, (program_id, session_id), 'H H', 'B H'))
 
     def get_program_root_directory(self, program_id, session_id):
         """
         FIXME: root directory is absolute: <home>/programs/<identifier>
         """
+        program_id = int(program_id)
+        session_id = int(session_id)
+
         return GetProgramRootDirectory(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_ROOT_DIRECTORY, (program_id, session_id), 'H H', 'B H'))
 
     def set_program_command(self, program_id, executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id):
         """
         FIXME: working directory is relative to <home>/programs/<identifier>/bin
         """
+        program_id = int(program_id)
+        executable_string_id = int(executable_string_id)
+        arguments_list_id = int(arguments_list_id)
+        environment_list_id = int(environment_list_id)
+        working_directory_string_id = int(working_directory_string_id)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_COMMAND, (program_id, executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id), 'H H H H H', 'B')
 
     def get_program_command(self, program_id, session_id):
         """
         FIXME: working directory is relative to <home>/programs/<identifier>/bin
         """
+        program_id = int(program_id)
+        session_id = int(session_id)
+
         return GetProgramCommand(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_COMMAND, (program_id, session_id), 'H H', 'B H H H H'))
 
     def set_program_stdio_redirection(self, program_id, stdin_redirection, stdin_file_name_string_id, stdout_redirection, stdout_file_name_string_id, stderr_redirection, stderr_file_name_string_id):
         """
         FIXME: stdio file names are relative to <home>/programs/<identifier>/bin
         """
+        program_id = int(program_id)
+        stdin_redirection = int(stdin_redirection)
+        stdin_file_name_string_id = int(stdin_file_name_string_id)
+        stdout_redirection = int(stdout_redirection)
+        stdout_file_name_string_id = int(stdout_file_name_string_id)
+        stderr_redirection = int(stderr_redirection)
+        stderr_file_name_string_id = int(stderr_file_name_string_id)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_STDIO_REDIRECTION, (program_id, stdin_redirection, stdin_file_name_string_id, stdout_redirection, stdout_file_name_string_id, stderr_redirection, stderr_file_name_string_id), 'H B H B H B H', 'B')
 
     def get_program_stdio_redirection(self, program_id, session_id):
         """
         FIXME: stdio file names are relative to <home>/programs/<identifier>/bin
         """
+        program_id = int(program_id)
+        session_id = int(session_id)
+
         return GetProgramStdioRedirection(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_STDIO_REDIRECTION, (program_id, session_id), 'H H', 'B B H B H B H'))
 
     def set_program_schedule(self, program_id, start_mode, continue_after_error, start_interval, start_fields_string_id):
         """
 
         """
+        program_id = int(program_id)
+        start_mode = int(start_mode)
+        continue_after_error = bool(continue_after_error)
+        start_interval = int(start_interval)
+        start_fields_string_id = int(start_fields_string_id)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_SCHEDULE, (program_id, start_mode, continue_after_error, start_interval, start_fields_string_id), 'H B ! I H', 'B')
 
     def get_program_schedule(self, program_id, session_id):
         """
 
         """
+        program_id = int(program_id)
+        session_id = int(session_id)
+
         return GetProgramSchedule(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_SCHEDULE, (program_id, session_id), 'H H', 'B B ! I H'))
 
     def get_program_scheduler_state(self, program_id, session_id):
         """
         FIXME: message is currently valid in error-occurred state only
         """
+        program_id = int(program_id)
+        session_id = int(session_id)
+
         return GetProgramSchedulerState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_SCHEDULER_STATE, (program_id, session_id), 'H H', 'B B Q H'))
 
     def continue_program_schedule(self, program_id):
         """
 
         """
+        program_id = int(program_id)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_CONTINUE_PROGRAM_SCHEDULE, (program_id,), 'H', 'B')
 
     def start_program(self, program_id):
         """
 
         """
+        program_id = int(program_id)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_START_PROGRAM, (program_id,), 'H', 'B')
 
     def get_last_spawned_program_process(self, program_id, session_id):
         """
 
         """
+        program_id = int(program_id)
+        session_id = int(session_id)
+
         return GetLastSpawnedProgramProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LAST_SPAWNED_PROGRAM_PROCESS, (program_id, session_id), 'H H', 'B H Q'))
 
     def get_custom_program_option_names(self, program_id, session_id):
         """
 
         """
+        program_id = int(program_id)
+        session_id = int(session_id)
+
         return GetCustomProgramOptionNames(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_CUSTOM_PROGRAM_OPTION_NAMES, (program_id, session_id), 'H H', 'B H'))
 
     def set_custom_program_option_value(self, program_id, name_string_id, value_string_id):
         """
 
         """
+        program_id = int(program_id)
+        name_string_id = int(name_string_id)
+        value_string_id = int(value_string_id)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_CUSTOM_PROGRAM_OPTION_VALUE, (program_id, name_string_id, value_string_id), 'H H H', 'B')
 
     def get_custom_program_option_value(self, program_id, name_string_id, session_id):
         """
 
         """
+        program_id = int(program_id)
+        name_string_id = int(name_string_id)
+        session_id = int(session_id)
+
         return GetCustomProgramOptionValue(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_CUSTOM_PROGRAM_OPTION_VALUE, (program_id, name_string_id, session_id), 'H H H', 'B H'))
 
     def remove_custom_program_option(self, program_id, name_string_id):
         """
 
         """
+        program_id = int(program_id)
+        name_string_id = int(name_string_id)
+
         return self.ipcon.send_request(self, BrickRED.FUNCTION_REMOVE_CUSTOM_PROGRAM_OPTION, (program_id, name_string_id), 'H H', 'B')
 
     def get_identity(self):

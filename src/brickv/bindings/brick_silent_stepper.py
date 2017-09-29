@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetSpeedRamping = namedtuple('SpeedRamping', ['acceleration', 'deacceleration'])
 GetStepConfiguration = namedtuple('StepConfiguration', ['step_resolution', 'interpolation'])
@@ -234,6 +234,8 @@ class BrickSilentStepper(Device):
         either :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` or
         :func:`Drive Backward`.
         """
+        velocity = int(velocity)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_MAX_VELOCITY, (velocity,), 'H', '')
 
     def get_max_velocity(self):
@@ -263,6 +265,9 @@ class BrickSilentStepper(Device):
 
         The default value is 1000 for both
         """
+        acceleration = int(acceleration)
+        deacceleration = int(deacceleration)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_SPEED_RAMPING, (acceleration, deacceleration), 'H H', '')
 
     def get_speed_ramping(self):
@@ -291,6 +296,8 @@ class BrickSilentStepper(Device):
         set the current position to 0 when some kind of starting position
         is reached (e.g. when a CNC machine reaches a corner).
         """
+        position = int(position)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_CURRENT_POSITION, (position,), 'i', '')
 
     def get_current_position(self):
@@ -315,6 +322,8 @@ class BrickSilentStepper(Device):
         a call of :func:`Set Steps` with the parameter
         (*x* - :func:`Get Current Position`).
         """
+        position = int(position)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_TARGET_POSITION, (position,), 'i', '')
 
     def get_target_position(self):
@@ -330,6 +339,8 @@ class BrickSilentStepper(Device):
         The velocity, acceleration and deacceleration as set by
         :func:`Set Max Velocity` and :func:`Set Speed Ramping` will be used.
         """
+        steps = int(steps)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_STEPS, (steps,), 'i', '')
 
     def get_steps(self):
@@ -363,6 +374,9 @@ class BrickSilentStepper(Device):
 
         The default is 1/256-step with interpolation on.
         """
+        step_resolution = int(step_resolution)
+        interpolation = bool(interpolation)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_STEP_CONFIGURATION, (step_resolution, interpolation), 'B !', '')
 
     def get_step_configuration(self):
@@ -429,6 +443,8 @@ class BrickSilentStepper(Device):
          Do not set this value above the specifications of your stepper motor.
          Otherwise it may damage your motor.
         """
+        current = int(current)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_MOTOR_CURRENT, (current,), 'H', '')
 
     def get_motor_current(self):
@@ -512,6 +528,15 @@ class BrickSilentStepper(Device):
         * Classic Threshold: 1000
         * High Velocity Shopper Mode: false
         """
+        standstill_current = int(standstill_current)
+        motor_run_current = int(motor_run_current)
+        standstill_delay_time = int(standstill_delay_time)
+        power_down_time = int(power_down_time)
+        stealth_threshold = int(stealth_threshold)
+        coolstep_threshold = int(coolstep_threshold)
+        classic_threshold = int(classic_threshold)
+        high_velocity_chopper_mode = bool(high_velocity_chopper_mode)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_BASIC_CONFIGURATION, (standstill_current, motor_run_current, standstill_delay_time, power_down_time, stealth_threshold, coolstep_threshold, classic_threshold, high_velocity_chopper_mode), 'H H H H H H H !', '')
 
     def get_basic_configuration(self):
@@ -574,6 +599,16 @@ class BrickSilentStepper(Device):
         * Comparator Blank Time: 1
         * Fast Decay Without Comparator: false
         """
+        slow_decay_duration = int(slow_decay_duration)
+        enable_random_slow_decay = bool(enable_random_slow_decay)
+        fast_decay_duration = int(fast_decay_duration)
+        hysteresis_start_value = int(hysteresis_start_value)
+        hysteresis_end_value = int(hysteresis_end_value)
+        sine_wave_offset = int(sine_wave_offset)
+        chopper_mode = int(chopper_mode)
+        comparator_blank_time = int(comparator_blank_time)
+        fast_decay_without_comparator = bool(fast_decay_without_comparator)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_SPREADCYCLE_CONFIGURATION, (slow_decay_duration, enable_random_slow_decay, fast_decay_duration, hysteresis_start_value, hysteresis_end_value, sine_wave_offset, chopper_mode, comparator_blank_time, fast_decay_without_comparator), 'B ! B B b b B B !', '')
 
     def get_spreadcycle_configuration(self):
@@ -617,6 +652,13 @@ class BrickSilentStepper(Device):
         * Force Symmetric: false
         * Freewheel Mode: 0 (Normal)
         """
+        enable_stealth = bool(enable_stealth)
+        amplitude = int(amplitude)
+        gradient = int(gradient)
+        enable_autoscale = bool(enable_autoscale)
+        force_symmetric = bool(force_symmetric)
+        freewheel_mode = int(freewheel_mode)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_STEALTH_CONFIGURATION, (enable_stealth, amplitude, gradient, enable_autoscale, force_symmetric, freewheel_mode), '! B B ! ! B', '')
 
     def get_stealth_configuration(self):
@@ -665,6 +707,14 @@ class BrickSilentStepper(Device):
         * Stallguard Threshold Value: 0
         * Stallguard Mode: 0
         """
+        minimum_stallguard_value = int(minimum_stallguard_value)
+        maximum_stallguard_value = int(maximum_stallguard_value)
+        current_up_step_width = int(current_up_step_width)
+        current_down_step_width = int(current_down_step_width)
+        minimum_current = int(minimum_current)
+        stallguard_threshold_value = int(stallguard_threshold_value)
+        stallguard_mode = int(stallguard_mode)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_COOLSTEP_CONFIGURATION, (minimum_stallguard_value, maximum_stallguard_value, current_up_step_width, current_down_step_width, minimum_current, stallguard_threshold_value, stallguard_mode), 'B B B B B b B', '')
 
     def get_coolstep_configuration(self):
@@ -694,6 +744,9 @@ class BrickSilentStepper(Device):
         * Disable Short To Ground Protection: 0
         * Synchronize Phase Frequency: 0
         """
+        disable_short_to_ground_protection = bool(disable_short_to_ground_protection)
+        synchronize_phase_frequency = int(synchronize_phase_frequency)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_MISC_CONFIGURATION, (disable_short_to_ground_protection, synchronize_phase_frequency), '! B', '')
 
     def get_misc_configuration(self):
@@ -745,6 +798,8 @@ class BrickSilentStepper(Device):
 
         The default value is 8V.
         """
+        voltage = int(voltage)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
 
     def get_minimum_voltage(self):
@@ -764,6 +819,8 @@ class BrickSilentStepper(Device):
 
         The default value is 1.
         """
+        time_base = int(time_base)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_TIME_BASE, (time_base,), 'I', '')
 
     def get_time_base(self):
@@ -795,6 +852,8 @@ class BrickSilentStepper(Device):
         Sets the period in ms with which the :cb:`All Data` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_ALL_DATA_PERIOD, (period,), 'I', '')
 
     def get_all_data_period(self):
@@ -830,6 +889,9 @@ class BrickSilentStepper(Device):
 
         .. versionadded:: 2.0.4$nbsp;(Firmware)
         """
+        enable_dynamic_baudrate = bool(enable_dynamic_baudrate)
+        minimum_dynamic_baudrate = int(minimum_dynamic_baudrate)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', '')
 
     def get_spitfp_baudrate_config(self):
@@ -849,6 +911,8 @@ class BrickSilentStepper(Device):
         This function is mostly used for debugging during development, in normal operation
         the counters should nearly always stay at 0.
         """
+        communication_method = int(communication_method)
+
         return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
 
     def set_spitfp_baudrate(self, bricklet_port, baudrate):
@@ -870,12 +934,17 @@ class BrickSilentStepper(Device):
 
         The default baudrate for all ports is 1400000.
         """
+        bricklet_port = create_char(bricklet_port)
+        baudrate = int(baudrate)
+
         self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', '')
 
     def get_spitfp_baudrate(self, bricklet_port):
         """
         Returns the baudrate for a given Bricklet port, see :func:`Set SPITFP Baudrate`.
         """
+        bricklet_port = create_char(bricklet_port)
+
         return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
 
     def get_spitfp_error_count(self, bricklet_port):
@@ -892,6 +961,8 @@ class BrickSilentStepper(Device):
         The errors counts are for errors that occur on the Brick side. All
         Bricklets have a similar function that returns the errors on the Bricklet side.
         """
+        bricklet_port = create_char(bricklet_port)
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
 
     def enable_status_led(self):
@@ -930,6 +1001,8 @@ class BrickSilentStepper(Device):
         This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
         plugins.
         """
+        port = create_char(port)
+
         return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 'B 3B 40s'))
 
     def get_chip_temperature(self):

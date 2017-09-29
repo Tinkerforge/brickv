@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetWeightCallbackThreshold = namedtuple('WeightCallbackThreshold', ['option', 'min', 'max'])
 GetConfiguration = namedtuple('Configuration', ['rate', 'gain'])
@@ -112,6 +112,8 @@ class BrickletLoadCell(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_WEIGHT_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_weight_callback_period(self):
@@ -138,6 +140,10 @@ class BrickletLoadCell(Device):
 
         The default value is ('x', 0, 0).
         """
+        option = create_char(option)
+        min = int(min)
+        max = int(max)
+
         self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_WEIGHT_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
 
     def get_weight_callback_threshold(self):
@@ -160,6 +166,8 @@ class BrickletLoadCell(Device):
 
         The default value is 100.
         """
+        debounce = int(debounce)
+
         self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
@@ -180,6 +188,8 @@ class BrickletLoadCell(Device):
 
         The default value is 4.
         """
+        average = int(average)
+
         self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
 
     def get_moving_average(self):
@@ -220,6 +230,8 @@ class BrickletLoadCell(Device):
         We recommend to use the Brick Viewer for calibration, you don't need
         to call this function in your source code.
         """
+        weight = int(weight)
+
         self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_CALIBRATE, (weight,), 'I', '')
 
     def tare(self):
@@ -251,6 +263,9 @@ class BrickletLoadCell(Device):
 
         The default rate is 10Hz and the default gain is 128x.
         """
+        rate = int(rate)
+        gain = int(gain)
+
         self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_CONFIGURATION, (rate, gain), 'B B', '')
 
     def get_configuration(self):

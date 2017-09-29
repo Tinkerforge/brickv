@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetEdgeCountConfig = namedtuple('EdgeCountConfig', ['edge_type', 'debounce'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -110,6 +110,8 @@ class BrickletIndustrialDigitalIn4(Device):
         Changing the group configuration resets all edge counter configurations
         and values.
         """
+        group = create_char_list(group)
+
         self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_GROUP, (group,), '4c', '')
 
     def get_group(self):
@@ -136,6 +138,8 @@ class BrickletIndustrialDigitalIn4(Device):
 
         The default value is 100.
         """
+        debounce = int(debounce)
+
         self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
@@ -157,6 +161,8 @@ class BrickletIndustrialDigitalIn4(Device):
 
         The interrupt is delivered with the :cb:`Interrupt` callback.
         """
+        interrupt_mask = int(interrupt_mask)
+
         self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_INTERRUPT, (interrupt_mask,), 'H', '')
 
     def get_interrupt(self):
@@ -175,6 +181,9 @@ class BrickletIndustrialDigitalIn4(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        pin = int(pin)
+        reset_counter = bool(reset_counter)
+
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_EDGE_COUNT, (pin, reset_counter), 'B !', 'I')
 
     def set_edge_count_config(self, selection_mask, edge_type, debounce):
@@ -200,6 +209,10 @@ class BrickletIndustrialDigitalIn4(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        selection_mask = int(selection_mask)
+        edge_type = int(edge_type)
+        debounce = int(debounce)
+
         self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_EDGE_COUNT_CONFIG, (selection_mask, edge_type, debounce), 'H B B', '')
 
     def get_edge_count_config(self, pin):
@@ -209,6 +222,8 @@ class BrickletIndustrialDigitalIn4(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        pin = int(pin)
+
         return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_EDGE_COUNT_CONFIG, (pin,), 'B', 'B B'))
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -14,11 +14,12 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetColor = namedtuple('Color', ['red', 'green', 'blue'])
+GetColorCalibration = namedtuple('ColorCalibration', ['red', 'green', 'blue'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -36,6 +37,8 @@ class BrickletRGBLEDButton(Device):
     FUNCTION_SET_COLOR = 1
     FUNCTION_GET_COLOR = 2
     FUNCTION_GET_BUTTON_STATE = 3
+    FUNCTION_SET_COLOR_CALIBRATION = 5
+    FUNCTION_GET_COLOR_CALIBRATION = 6
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -79,6 +82,8 @@ class BrickletRGBLEDButton(Device):
         self.response_expected[BrickletRGBLEDButton.FUNCTION_SET_COLOR] = BrickletRGBLEDButton.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletRGBLEDButton.FUNCTION_GET_COLOR] = BrickletRGBLEDButton.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDButton.FUNCTION_GET_BUTTON_STATE] = BrickletRGBLEDButton.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRGBLEDButton.FUNCTION_SET_COLOR_CALIBRATION] = BrickletRGBLEDButton.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRGBLEDButton.FUNCTION_GET_COLOR_CALIBRATION] = BrickletRGBLEDButton.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDButton.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletRGBLEDButton.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDButton.FUNCTION_SET_BOOTLOADER_MODE] = BrickletRGBLEDButton.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDButton.FUNCTION_GET_BOOTLOADER_MODE] = BrickletRGBLEDButton.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -99,6 +104,10 @@ class BrickletRGBLEDButton(Device):
         """
 
         """
+        red = int(red)
+        green = int(green)
+        blue = int(blue)
+
         self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_COLOR, (red, green, blue), 'B B B', '')
 
     def get_color(self):
@@ -112,6 +121,27 @@ class BrickletRGBLEDButton(Device):
 
         """
         return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_BUTTON_STATE, (), '', 'B')
+
+    def set_color_calibration(self, red, green, blue):
+        """
+        TOOD:
+        range 0-100%
+
+        Is saved in flash, don't call every time.
+
+        default: 100, 100, 55
+        """
+        red = int(red)
+        green = int(green)
+        blue = int(blue)
+
+        self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_COLOR_CALIBRATION, (red, green, blue), 'B B B', '')
+
+    def get_color_calibration(self):
+        """
+        Returns the *rgb* value calibrationas set by :func:`Set Color Calibration`.
+        """
+        return GetColorCalibration(*self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_COLOR_CALIBRATION, (), '', 'B B B'))
 
     def get_spitfp_error_count(self):
         """
@@ -141,6 +171,8 @@ class BrickletRGBLEDButton(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        mode = int(mode)
+
         return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
 
     def get_bootloader_mode(self):
@@ -158,6 +190,8 @@ class BrickletRGBLEDButton(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        pointer = int(pointer)
+
         self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
 
     def write_firmware(self, data):
@@ -171,6 +205,8 @@ class BrickletRGBLEDButton(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        data = list(map(int, data))
+
         return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
 
     def set_status_led_config(self, config):
@@ -183,6 +219,8 @@ class BrickletRGBLEDButton(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        config = int(config)
+
         self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
 
     def get_status_led_config(self):
@@ -221,6 +259,8 @@ class BrickletRGBLEDButton(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        uid = int(uid)
+
         self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_WRITE_UID, (uid,), 'I', '')
 
     def read_uid(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-08-30.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -14,9 +14,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetWeatherStationIdentifiersLowLevel = namedtuple('WeatherStationIdentifiersLowLevel', ['identifiers_length', 'identifiers_chunk_offset', 'identifiers_chunk_data'])
 GetWeatherStationData = namedtuple('WeatherStationData', ['temperature', 'humidity', 'wind_speed', 'gust_speed', 'rain', 'wind_direction', 'battery_low', 'last_change'])
@@ -123,12 +123,16 @@ class BrickletOutdoorWeather(Device):
         """
 
         """
+        identifier = int(identifier)
+
         return GetWeatherStationData(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_WEATHER_STATION_DATA, (identifier,), 'B', 'h B I I I B ! H'))
 
     def set_weather_station_callback_configuration(self, enable_callback):
         """
 
         """
+        enable_callback = bool(enable_callback)
+
         self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_WEATHER_STATION_CALLBACK_CONFIGURATION, (enable_callback,), '!', '')
 
     def get_weather_station_callback_configuration(self):
@@ -165,6 +169,8 @@ class BrickletOutdoorWeather(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        mode = int(mode)
+
         return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
 
     def get_bootloader_mode(self):
@@ -182,6 +188,8 @@ class BrickletOutdoorWeather(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        pointer = int(pointer)
+
         self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
 
     def write_firmware(self, data):
@@ -195,6 +203,8 @@ class BrickletOutdoorWeather(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        data = list(map(int, data))
+
         return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
 
     def set_status_led_config(self, config):
@@ -207,6 +217,8 @@ class BrickletOutdoorWeather(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        config = int(config)
+
         self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
 
     def get_status_led_config(self):
@@ -245,6 +257,8 @@ class BrickletOutdoorWeather(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        uid = int(uid)
+
         self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_WRITE_UID, (uid,), 'I', '')
 
     def read_uid(self):

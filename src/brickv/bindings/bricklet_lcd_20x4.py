@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetConfig = namedtuple('Config', ['cursor', 'blinking'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -91,6 +91,10 @@ class BrickletLCD20x4(Device):
         for details. The Unicode example above shows how to specify non-ASCII characters
         and how to translate from Unicode to the LCD charset.
         """
+        line = int(line)
+        position = int(position)
+        text = create_string(text)
+
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_WRITE_LINE, (line, position, text), 'B B 20s', '')
 
     def clear_display(self):
@@ -126,6 +130,9 @@ class BrickletLCD20x4(Device):
 
         The default is (*false*, *false*).
         """
+        cursor = bool(cursor)
+        blinking = bool(blinking)
+
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_CONFIG, (cursor, blinking), '! !', '')
 
     def get_config(self):
@@ -142,6 +149,8 @@ class BrickletLCD20x4(Device):
         If you want to react on button presses and releases it is recommended to use
         the :cb:`Button Pressed` and :cb:`Button Released` callbacks.
         """
+        button = int(button)
+
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_IS_BUTTON_PRESSED, (button,), 'B', '!')
 
     def set_custom_character(self, index, character):
@@ -171,6 +180,9 @@ class BrickletLCD20x4(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        index = int(index)
+        character = list(map(int, character))
+
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_CUSTOM_CHARACTER, (index, character), 'B 8B', '')
 
     def get_custom_character(self, index):
@@ -180,6 +192,8 @@ class BrickletLCD20x4(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        index = int(index)
+
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_CUSTOM_CHARACTER, (index,), 'B', '8B')
 
     def set_default_text(self, line, text):
@@ -192,6 +206,9 @@ class BrickletLCD20x4(Device):
 
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
+        line = int(line)
+        text = create_string(text)
+
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_DEFAULT_TEXT, (line, text), 'B 20s', '')
 
     def get_default_text(self, line):
@@ -201,6 +218,8 @@ class BrickletLCD20x4(Device):
 
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
+        line = int(line)
+
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_DEFAULT_TEXT, (line,), 'B', '20s')
 
     def set_default_text_counter(self, counter):
@@ -223,6 +242,8 @@ class BrickletLCD20x4(Device):
 
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
+        counter = int(counter)
+
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_DEFAULT_TEXT_COUNTER, (counter,), 'i', '')
 
     def get_default_text_counter(self):

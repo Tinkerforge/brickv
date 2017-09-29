@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetAcceleration = namedtuple('Acceleration', ['x', 'y', 'z'])
 GetAccelerationCallbackThreshold = namedtuple('AccelerationCallbackThreshold', ['option', 'min_x', 'max_x', 'min_y', 'max_y', 'min_z', 'max_z'])
@@ -122,6 +122,8 @@ class BrickletAccelerometer(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_ACCELERATION_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_acceleration_callback_period(self):
@@ -148,6 +150,14 @@ class BrickletAccelerometer(Device):
 
         The default value is ('x', 0, 0, 0, 0, 0, 0).
         """
+        option = create_char(option)
+        min_x = int(min_x)
+        max_x = int(max_x)
+        min_y = int(min_y)
+        max_y = int(max_y)
+        min_z = int(min_z)
+        max_z = int(max_z)
+
         self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_ACCELERATION_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y, min_z, max_z), 'c h h h h h h', '')
 
     def get_acceleration_callback_threshold(self):
@@ -170,6 +180,8 @@ class BrickletAccelerometer(Device):
 
         The default value is 100.
         """
+        debounce = int(debounce)
+
         self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
@@ -199,6 +211,10 @@ class BrickletAccelerometer(Device):
         The default values are 100Hz data rate, -4G to +4G range and 200Hz
         filter bandwidth.
         """
+        data_rate = int(data_rate)
+        full_scale = int(full_scale)
+        filter_bandwidth = int(filter_bandwidth)
+
         self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_CONFIGURATION, (data_rate, full_scale, filter_bandwidth), 'B B B', '')
 
     def get_configuration(self):

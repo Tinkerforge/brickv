@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetDistanceCallbackThreshold = namedtuple('DistanceCallbackThreshold', ['option', 'min', 'max'])
 GetVelocityCallbackThreshold = namedtuple('VelocityCallbackThreshold', ['option', 'min', 'max'])
@@ -158,6 +158,8 @@ class BrickletLaserRangeFinder(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_DISTANCE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_distance_callback_period(self):
@@ -176,6 +178,8 @@ class BrickletLaserRangeFinder(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_velocity_callback_period(self):
@@ -202,6 +206,10 @@ class BrickletLaserRangeFinder(Device):
 
         The default value is ('x', 0, 0).
         """
+        option = create_char(option)
+        min = int(min)
+        max = int(max)
+
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
 
     def get_distance_callback_threshold(self):
@@ -228,6 +236,10 @@ class BrickletLaserRangeFinder(Device):
 
         The default value is ('x', 0, 0).
         """
+        option = create_char(option)
+        min = int(min)
+        max = int(max)
+
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
 
     def get_velocity_callback_threshold(self):
@@ -252,6 +264,8 @@ class BrickletLaserRangeFinder(Device):
 
         The default value is 100.
         """
+        debounce = int(debounce)
+
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
@@ -272,6 +286,9 @@ class BrickletLaserRangeFinder(Device):
 
         The default value is 10.
         """
+        distance_average_length = int(distance_average_length)
+        velocity_average_length = int(velocity_average_length)
+
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_MOVING_AVERAGE, (distance_average_length, velocity_average_length), 'B B', '')
 
     def get_moving_average(self):
@@ -301,6 +318,8 @@ class BrickletLaserRangeFinder(Device):
 
         The default mode is 0 (distance is measured).
         """
+        mode = int(mode)
+
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_MODE, (mode,), 'B', '')
 
     def get_mode(self):
@@ -375,6 +394,11 @@ class BrickletLaserRangeFinder(Device):
 
         .. versionadded:: 2.0.3$nbsp;(Plugin)
         """
+        acquisition_count = int(acquisition_count)
+        enable_quick_termination = bool(enable_quick_termination)
+        threshold_value = int(threshold_value)
+        measurement_frequency = int(measurement_frequency)
+
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_CONFIGURATION, (acquisition_count, enable_quick_termination, threshold_value, measurement_frequency), 'B ! B H', '')
 
     def get_configuration(self):

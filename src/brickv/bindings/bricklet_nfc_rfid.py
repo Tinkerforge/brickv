@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetTagID = namedtuple('TagID', ['tag_type', 'tid_length', 'tid'])
 GetState = namedtuple('State', ['state', 'idle'])
@@ -113,6 +113,8 @@ class BrickletNFCRFID(Device):
         In case of any *Error* state the selection is lost and you have to
         start again by calling :func:`Request Tag ID`.
         """
+        tag_type = int(tag_type)
+
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_TAG_ID, (tag_type,), 'B', '')
 
     def get_tag_id(self):
@@ -171,6 +173,10 @@ class BrickletNFCRFID(Device):
            :func:`Get State` or :cb:`State Changed` callback)
         6. Call :func:`Request Page` or :func:`Write Page` to read/write page
         """
+        page = int(page)
+        key_number = int(key_number)
+        key = list(map(int, key))
+
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_AUTHENTICATE_MIFARE_CLASSIC_PAGE, (page, key_number, key), 'H B 6B', '')
 
     def write_page(self, page, data):
@@ -196,6 +202,9 @@ class BrickletNFCRFID(Device):
         If you use a Mifare Classic tag you have to authenticate a page before you
         can write to it. See :func:`Authenticate Mifare Classic Page`.
         """
+        page = int(page)
+        data = list(map(int, data))
+
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_WRITE_PAGE, (page, data), 'H 16B', '')
 
     def request_page(self, page):
@@ -224,6 +233,8 @@ class BrickletNFCRFID(Device):
         If you use a Mifare Classic tag you have to authenticate a page before you
         can read it. See :func:`Authenticate Mifare Classic Page`.
         """
+        page = int(page)
+
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_PAGE, (page,), 'H', '')
 
     def get_page(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetConfiguration = namedtuple('Configuration', ['averaging', 'voltage_conversion_time', 'current_conversion_time'])
 GetCalibration = namedtuple('Calibration', ['gain_multiplier', 'gain_divisor'])
@@ -188,6 +188,10 @@ class BrickletVoltageCurrent(Device):
         The default values are 3, 4 and 4 (64, 1.1ms, 1.1ms) for averaging, voltage
         conversion and current conversion.
         """
+        averaging = int(averaging)
+        voltage_conversion_time = int(voltage_conversion_time)
+        current_conversion_time = int(current_conversion_time)
+
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_CONFIGURATION, (averaging, voltage_conversion_time, current_conversion_time), 'B B B', '')
 
     def get_configuration(self):
@@ -206,6 +210,9 @@ class BrickletVoltageCurrent(Device):
         are measuring 1023mA, you can calibrate the Voltage/Current Bricklet
         by setting the multiplier to 1000 and the divisor to 1023.
         """
+        gain_multiplier = int(gain_multiplier)
+        gain_divisor = int(gain_divisor)
+
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_CALIBRATION, (gain_multiplier, gain_divisor), 'H H', '')
 
     def get_calibration(self):
@@ -224,6 +231,8 @@ class BrickletVoltageCurrent(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_CURRENT_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_current_callback_period(self):
@@ -242,6 +251,8 @@ class BrickletVoltageCurrent(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_VOLTAGE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_voltage_callback_period(self):
@@ -260,6 +271,8 @@ class BrickletVoltageCurrent(Device):
 
         The default value is 0.
         """
+        period = int(period)
+
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_POWER_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_power_callback_period(self):
@@ -286,6 +299,10 @@ class BrickletVoltageCurrent(Device):
 
         The default value is ('x', 0, 0).
         """
+        option = create_char(option)
+        min = int(min)
+        max = int(max)
+
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_CURRENT_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
 
     def get_current_callback_threshold(self):
@@ -312,6 +329,10 @@ class BrickletVoltageCurrent(Device):
 
         The default value is ('x', 0, 0).
         """
+        option = create_char(option)
+        min = int(min)
+        max = int(max)
+
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
 
     def get_voltage_callback_threshold(self):
@@ -338,6 +359,10 @@ class BrickletVoltageCurrent(Device):
 
         The default value is ('x', 0, 0).
         """
+        option = create_char(option)
+        min = int(min)
+        max = int(max)
+
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_POWER_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
 
     def get_power_callback_threshold(self):
@@ -364,6 +389,8 @@ class BrickletVoltageCurrent(Device):
 
         The default value is 100.
         """
+        debounce = int(debounce)
+
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):

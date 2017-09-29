@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -12,9 +12,9 @@
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetMonoflop = namedtuple('Monoflop', ['value', 'time', 'time_remaining'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -78,6 +78,8 @@ class BrickletIndustrialDigitalOut4(Device):
         Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
         pins 8-11 and element 4 pins 12-15.
         """
+        value_mask = int(value_mask)
+
         self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_SET_VALUE, (value_mask,), 'H', '')
 
     def get_value(self):
@@ -107,6 +109,10 @@ class BrickletIndustrialDigitalOut4(Device):
         of two seconds and pin 0 high. Pin 0 will be high all the time. If now
         the RS485 connection is lost, then pin 0 will turn low in at most two seconds.
         """
+        selection_mask = int(selection_mask)
+        value_mask = int(value_mask)
+        time = int(time)
+
         self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_SET_MONOFLOP, (selection_mask, value_mask, time), 'H H I', '')
 
     def get_monoflop(self, pin):
@@ -117,6 +123,8 @@ class BrickletIndustrialDigitalOut4(Device):
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
+        pin = int(pin)
+
         return GetMonoflop(*self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_GET_MONOFLOP, (pin,), 'B', 'H I I'))
 
     def set_group(self, group):
@@ -137,6 +145,8 @@ class BrickletIndustrialDigitalOut4(Device):
         pins on the Digital Out 4 on port B are assigned to 4-7. It is now possible
         to call :func:`Set Value` and control two Bricklets at the same time.
         """
+        group = create_char_list(group)
+
         self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_SET_GROUP, (group,), '4c', '')
 
     def get_group(self):
@@ -169,6 +179,9 @@ class BrickletIndustrialDigitalOut4(Device):
         Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
         pins 8-11 and element 4 pins 12-15.
         """
+        selection_mask = int(selection_mask)
+        value_mask = int(value_mask)
+
         self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_SET_SELECTED_VALUES, (selection_mask, value_mask), 'H H', '')
 
     def get_identity(self):
