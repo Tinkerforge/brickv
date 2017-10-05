@@ -47,6 +47,39 @@ ETHERNET_CONNECTION_FILE_PATH = "/etc/NetworkManager/system-connections/_tf_bric
 if len(argv) != 2:
     exit (1)
 
+def get_ap_object(device_object_paths):
+    for device_object_path in device_object_paths:
+        device_type = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
+                                     dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_INTERFACE, "DeviceType")
+
+        device_interface = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
+                                          dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_INTERFACE, "Interface")
+
+        if device_type != NM_DEVICE_TYPE_WIFI:
+            continue
+
+        if device_interface != connection_config["connection"]["interface-name"]:
+            continue
+
+        ap_object_paths = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
+                                         dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_WIRELESS_INTERFACE, "AccessPoints")
+
+        for ap_object_path in ap_object_paths:
+            ap_ssid = str(bytearray(dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, ap_object_path),
+                                    dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_AP_INTERFACE, "Ssid")))
+
+            if connection_config["802-11-wireless"]["ssid"] != ap_ssid:
+                continue
+
+            connection_specific_object = ap_object_path
+
+            break
+
+    if not connection_specific_object:
+        return None
+    else:
+        return connection_specific_object
+
 try:
     ip_org = None
     gw_org = None
@@ -156,35 +189,27 @@ try:
                 dbus.UInt32(connection_config["802-11-wireless-security"]["psk-flags"])
 
         if not connection_config['802-11-wireless']['hidden']:
-            for device_object_path in device_object_paths:
-                device_type = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
-                                             dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_INTERFACE, "DeviceType")
-
-                device_interface = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
-                                                  dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_INTERFACE, "Interface")
-
-                if device_type != NM_DEVICE_TYPE_WIFI:
-                    continue
-
-                if device_interface != connection_config["connection"]["interface-name"]:
-                    continue
-
-                ap_object_paths = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
-                                                 dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_WIRELESS_INTERFACE, "AccessPoints")
-
-                for ap_object_path in ap_object_paths:
-                    ap_ssid = str(bytearray(dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, ap_object_path),
-                                            dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_AP_INTERFACE, "Ssid")))
-
-                    if connection_config["802-11-wireless"]["ssid"] != ap_ssid:
-                        continue
-
-                    connection_specific_object = ap_object_path
-
-                    break
+            connection_specific_object = get_ap_object(device_object_paths)
 
             if not connection_specific_object:
-                exit(1)
+                # Try to request scan with all available WiFi interfaces. Ignore errors.
+                for device_object_path in device_object_paths:
+                    device_type = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
+                                                 dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_INTERFACE, "DeviceType")
+
+                    if device_type != NM_DEVICE_TYPE_WIFI:
+                        continue
+
+                    try:
+                        dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
+                                       dbus_interface = DBUS_NM_DEVICE_WIRELESS_INTERFACE).RequestScan(dbus.Array([], signature = dbus.Signature("a{sv}")))
+                    except:
+                        continue
+
+                connection_specific_object = get_ap_object(device_object_paths)
+
+                if not connection_specific_object:
+                    exit(1)
 
     # Do ethernet connection specific preparations.
     elif connection_config["connection"]["type"] == "802-3-ethernet":
