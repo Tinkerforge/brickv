@@ -48,6 +48,7 @@ from brickv.plugin_system.plugins.load_cell import device_class as load_cell
 from brickv.plugin_system.plugins.master import device_class as master
 from brickv.plugin_system.plugins.moisture import device_class as moisture
 from brickv.plugin_system.plugins.motion_detector import device_class as motion_detector
+from brickv.plugin_system.plugins.motion_detector_v2 import device_class as motion_detector_v2
 from brickv.plugin_system.plugins.motorized_linear_poti import device_class as motorized_linear_poti
 from brickv.plugin_system.plugins.multi_touch import device_class as multi_touch
 from brickv.plugin_system.plugins.nfc_rfid import device_class as nfc_rfid
@@ -136,6 +137,7 @@ device_classes = [
     master,
     moisture,
     motion_detector,
+    motion_detector_v2,
     motorized_linear_poti,
     multi_touch,
     nfc_rfid,
