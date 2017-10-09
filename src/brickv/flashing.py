@@ -299,6 +299,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         if name.endswith('_v2'):
             name = name.replace('_v2', '_2.0')
+        elif name.endswith('_v3'):
+            name = name.replace('_v3', '_3.0')
 
         if name in ['dc', 'imu', 'imu_2.0']:
             name = name.upper()
@@ -323,6 +325,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         if name.endswith('_v2'):
             name = name.replace('_v2', '_2.0')
+        elif name.endswith('_v3'):
+            name = name.replace('_v3', '_3.0')
 
         if name in ['gps', 'gps_2.0', 'ptc', 'rs232', 'rs485', 'co2', 'can', 'rgb_led']:
             name = name.upper()
@@ -375,6 +379,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         if name.endswith('_v2'):
             name = name.replace('_v2', '_2.0')
+        elif name.endswith('_v3'):
+            name = name.replace('_v3', '_3.0')
 
         if name in ['wifi_2.0']:
             name = name.upper()
