@@ -373,10 +373,13 @@
 - Add checkbox for setting the WIFI Extension (2.0) password, old password is
   not shown anymore
 
-2017-07-27: 2.3.10 (<unknown>)
+2017-07-27: 2.3.10 (0060527)
 - Add support for RS485 Bricklet
 - Enable scroll buttons for main device tab bar on Mac OS X
 - Improve usability of Real-Time Clock Bricklets calibration dialog
 - Fix firmware auto-update for Co-MCU Bricklets
 - Fix order of DOP values in GPS Bricklet 2.0 plugin
 - Double plot legend line indicators thickness
+
+2017-10-09: 2.3.11 (<unknown>)
+- Add support for RED Brick Image 1.10
