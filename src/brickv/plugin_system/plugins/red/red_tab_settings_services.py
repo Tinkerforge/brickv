@@ -138,7 +138,7 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
                                       'Settings | Services',
                                       'Saved configuration successfully, will now reboot RED Brick.')
 
-        self.script_manager.execute_script('restart_reboot_shutdown',
+        self.script_manager.execute_script('restart_reboot_shutdown_systemd',
                                            cb_restart_reboot_shutdown, ['1'])
 
     def service_config_changed(self, state):

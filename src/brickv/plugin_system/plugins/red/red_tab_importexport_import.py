@@ -305,7 +305,7 @@ class REDTabImportExportImport(QWidget, Ui_REDTabImportExportImport):
                 self.progress.setLabelText('Step 4 of 4: Rebooting RED Brick')
                 self.progress.setRange(0, 0)
 
-                self.script_manager.execute_script('restart_reboot_shutdown',
+                self.script_manager.execute_script('restart_reboot_shutdown_systemd',
                                                    cb_restart_reboot_shutdown, ['1'])
 
                 def close_progress():
