@@ -159,7 +159,6 @@ elif sys.platform == 'darwin':
                                'serial',
                                'colorsys'],
             'excludes':       ['scipy',
-                               'distutils',
                                'setuptools',
                                'email',
                                'matplotlib',
@@ -189,7 +188,7 @@ elif sys.platform == 'darwin':
             'CFBundleExecutable':         'brickv',
             'CFBundleIdentifier':         'com.tinkerforge.brickv',
             'CFBundleIconFile':           'brickv-icon.icns',
-            'NSHumanReadableCopyright':   'Tinkerforge GmbH 2011-2015'
+            'NSHumanReadableCopyright':   'Tinkerforge GmbH 2011-2017'
         }
     }]
 

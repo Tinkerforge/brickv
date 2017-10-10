@@ -27,10 +27,10 @@ import json
 import urllib2
 import posixpath
 import functools
+from distutils.version import StrictVersion
 
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
-from distutils.version import StrictVersion
 from PyQt4.QtGui import QLabel, QVBoxLayout, QAction
 
 from brickv.plugin_system.plugin_base import PluginBase
