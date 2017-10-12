@@ -26,40 +26,87 @@ if len(sys.argv) < 2:
 command = sys.argv[1]
 
 SUNXI_FBDEV_X11_DRIVER_CONF = '''
-# This is a minimal sample config file, which can be copied to
-# /etc/X11/xorg.conf in order to make the Xorg server pick up
-# and load xf86-video-fbturbo driver installed in the system.
-#
+# This configuration file is copied to the following locations,
+#   /etc/X11/xorg.conf
+#   /usr/share/X11/xorg.conf.d/99-sunxifb.conf
+
 # When troubleshooting, check /var/log/Xorg.0.log for the debugging
 # output and error messages.
 #
-# Run "man fbturbo" to get additional information about the extra
+# Run "man fbdev" to get additional information about the extra
 # configuration options for tuning the driver.
 
+Section "ServerLayout"
+    Identifier      "Default Layout"
+    Screen          "Screen 0" 0 0
+EndSection
+
 Section "Device"
-        Identifier      "Allwinner A10/A13 FBDEV"
-        Driver          "fbdev"
-        Option          "fbdev" "/dev/fb0"
+    Identifier      "Allwinner A10/A13 FBDEV"
+    Driver          "fbdev"
+    Option          "fbdev" "/dev/fb0"
+    Option          "ShadowFB" "false"
+EndSection
+
+Section "Monitor"
+    Identifier      "Default Monitor"
+    Option          "DPMS" "false"
+EndSection
+
+Section "Screen"
+    Identifier      "Screen 0"
+    Device          "Allwinner A10/A13 FBDEV"
+    Monitor         "Default Monitor"
+    DefaultDepth    24
+    Option          "AllowEmptyInitialConfiguration"
+
+    SubSection      "Display"
+        Depth       24
+    EndSubSection
 EndSection
 '''
 
 SUNXI_FBTURBO_X11_DRIVER_CONF = '''
-# This is a minimal sample config file, which can be copied to
-# /etc/X11/xorg.conf in order to make the Xorg server pick up
-# and load xf86-video-fbturbo driver installed in the system.
-#
+# This configuration file is copied to the following locations,
+#   /etc/X11/xorg.conf
+#   /usr/share/X11/xorg.conf.d/99-sunxifb.conf
+
 # When troubleshooting, check /var/log/Xorg.0.log for the debugging
 # output and error messages.
 #
 # Run "man fbturbo" to get additional information about the extra
 # configuration options for tuning the driver.
 
+Section "ServerLayout"
+    Identifier      "Default Layout"
+    Screen          "Screen 0" 0 0
+EndSection
+
 Section "Device"
-        Identifier      "Allwinner A10/A13 FBDEV"
-        Driver          "fbturbo"
-        Option          "fbdev" "/dev/fb0"
-        Option          "SwapbuffersWait" "true"
-        Option          "AccelMethod" "G2D"
+    Identifier      "Allwinner A10/A13 FBDEV"
+    Driver          "fbturbo"
+    Option          "fbdev" "/dev/fb0"
+    Option          "ShadowFB" "false"
+    Option          "DRI2" "false"
+    Option          "SwapbuffersWait" "true"
+    Option          "AccelMethod" "CPU"
+EndSection
+
+Section "Monitor"
+    Identifier      "Default Monitor"
+    Option          "DPMS" "false"
+EndSection
+
+Section "Screen"
+    Identifier      "Screen 0"
+    Device          "Allwinner A10/A13 FBDEV"
+    Monitor         "Default Monitor"
+    DefaultDepth    24
+    Option          "AllowEmptyInitialConfiguration"
+
+    SubSection      "Display"
+        Depth       24
+    EndSubSection
 EndSection
 '''
 
@@ -395,6 +442,9 @@ elif command == 'APPLY':
                 if os.path.isfile('/etc/modprobe.d/mali-blacklist.conf'):
                     os.remove('/etc/modprobe.d/mali-blacklist.conf')
 
+            with open('/etc/X11/xorg.conf', 'w') as fd_fbconf:
+                fd_fbconf.write(SUNXI_FBTURBO_X11_DRIVER_CONF)
+
             with open('/usr/share/X11/xorg.conf.d/99-sunxifb.conf', 'w') as fd_fbconf:
                 fd_fbconf.write(SUNXI_FBTURBO_X11_DRIVER_CONF)
 
@@ -416,6 +466,9 @@ elif command == 'APPLY':
 
                 with open('/etc/modprobe.d/mali-blacklist.conf', 'w') as fd_w_malibl:
                     fd_w_malibl.write('blacklist mali')
+
+            with open('/etc/X11/xorg.conf', 'w') as fd_fbconf:
+                fd_fbconf.write(SUNXI_FBDEV_X11_DRIVER_CONF)
 
             with open('/usr/share/X11/xorg.conf.d/99-sunxifb.conf', 'w') as fd_fbconf:
                 fd_fbconf.write(SUNXI_FBDEV_X11_DRIVER_CONF)
