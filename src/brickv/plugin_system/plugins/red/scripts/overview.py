@@ -48,20 +48,23 @@ for p in psutil.process_iter():
     if p.pid == own_pid:
         continue
 
-    if psutil.version_info >= (5, 0, 1):
-        process_dict = {'cmd': ' '.join(get_cmdline(p)),
-                        'name': get_name(p),
-                        'pid': p.pid,
-                        'user': get_username(p),
-                        'cpu': int(p.cpu_percent(interval=0) * 10),
-                        'mem': int(p.memory_percent() * 10)}
-    else:
-        process_dict = {'cmd': ' '.join(get_cmdline(p)),
-                        'name': get_name(p),
-                        'pid': p.pid,
-                        'user': get_username(p),
-                        'cpu': int(p.get_cpu_percent(interval=0) * 10),
-                        'mem': int(p.get_memory_percent() * 10)}
+    try:
+        if psutil.version_info >= (5, 0, 1):
+            process_dict = {'cmd': ' '.join(get_cmdline(p)),
+                            'name': get_name(p),
+                            'pid': p.pid,
+                            'user': get_username(p),
+                            'cpu': int(p.cpu_percent(interval=0) * 10),
+                            'mem': int(p.memory_percent() * 10)}
+        else:
+            process_dict = {'cmd': ' '.join(get_cmdline(p)),
+                            'name': get_name(p),
+                            'pid': p.pid,
+                            'user': get_username(p),
+                            'cpu': int(p.get_cpu_percent(interval=0) * 10),
+                            'mem': int(p.get_memory_percent() * 10)}
+    except:
+        continue
 
     all_process_info.append(process_dict)
 
