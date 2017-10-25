@@ -107,7 +107,7 @@
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>Left</string>
+          <string>Top Left</string>
          </property>
         </widget>
        </item>
@@ -123,7 +123,7 @@
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>Right</string>
+          <string>Top Right</string>
          </property>
         </widget>
        </item>
