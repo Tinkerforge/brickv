@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtGui import QColor
 
-from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import pyqtSignal, QTimer
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_motion_detector_v2 import BrickletMotionDetectorV2
 from brickv.plugin_system.plugins.motion_detector_v2.ui_motion_detector_v2 import Ui_MotionDetectorV2
@@ -57,6 +57,8 @@ class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
 
         self.all_syncer = SliderSpinSyncer(self.slider_all, self.spin_all, self.all_changed, spin_signal='valueChanged')
 
+        self.sensitivity_syncer = SliderSpinSyncer(self.slider_sensitivity, self.spin_sensitivity, self.sensitivity_changed, spin_signal='valueChanged')
+
         def set_indicator(l, r, b):
             self.changing = True
             self.spin_left.setValue(l)
@@ -71,8 +73,16 @@ class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
         self.button_right.clicked.connect(lambda: set_indicator(0, 255, 0))
         self.button_bottom.clicked.connect(lambda: set_indicator(0, 0, 255))
         
-        self.spinbox_sensitivity.valueChanged.connect(self.sensitivity_changed)
-
+        self.indicator_update = False
+        self.indicator_value = [0, 0, 0]
+        self.sensitivity_update = False
+        self.sensitivity_value = 50
+        
+        self.update_timer = QTimer()
+        self.update_timer.timeout.connect(self.update)
+        self.update_timer.setInterval(50)
+        self.update_timer.start()
+        
     def start(self):
         async_call(self.motion_detector_v2.get_indicator, None, self.get_indicator_async, self.increase_error_count)
         async_call(self.motion_detector_v2.get_motion_detected, None, self.get_motion_detected_async, self.increase_error_count)
@@ -81,11 +91,21 @@ class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
     def stop(self):
         pass
     
+    # Make sure that we update values with at most a 50ms interval
+    def update(self):
+        if self.indicator_update:
+            self.indicator_update = False
+            self.motion_detector_v2.set_indicator(*self.indicator_value)
+        if self.sensitivity_update:
+            self.sensitivity_update = False
+            self.motion_detector_v2.set_sensitivity(self.sensitivity_value)
+    
     def sensitivity_changed(self, value):
-        self.motion_detector_v2.set_sensitivity(value)
+        self.sensitivity_value = value
+        self.sensitivity_update = True
     
     def get_sensitivity_async(self, sensitivity):
-        self.spinbox_sensitivity.setValue(sensitivity)
+        self.spin_sensitivity.setValue(sensitivity)
     
     def get_motion_detected_async(self, motion):
         if motion == self.motion_detector_v2.MOTION_DETECTED:
@@ -109,7 +129,8 @@ class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
         self.spin_all.setValue((left+right+bottom)/3)
         self.changing = False
 
-        self.motion_detector_v2.set_indicator(left, right, bottom)
+        self.indicator_value = [left, right, bottom]
+        self.indicator_update = True
         self.label_color_left.setStyleSheet('QLabel {{ background: #{:02x}{:02x}{:02x} }}'.format(0, 0, left))
         self.label_color_right.setStyleSheet('QLabel {{ background: #{:02x}{:02x}{:02x} }}'.format(0, 0, right))
         self.label_color_bottom.setStyleSheet('QLabel {{ background: #{:02x}{:02x}{:02x} }}'.format(0, 0, bottom))
@@ -126,7 +147,8 @@ class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
         self.spin_bottom.setValue(x)
         self.changing = False
 
-        self.motion_detector_v2.set_indicator(x, x, x)
+        self.indicator_value = [x, x, x]
+        self.indicator_update = True
         self.label_color_left.setStyleSheet('QLabel {{ background: #{:02x}{:02x}{:02x} }}'.format(0, 0, x))
         self.label_color_right.setStyleSheet('QLabel {{ background: #{:02x}{:02x}{:02x} }}'.format(0, 0, x))
         self.label_color_bottom.setStyleSheet('QLabel {{ background: #{:02x}{:02x}{:02x} }}'.format(0, 0, x))
