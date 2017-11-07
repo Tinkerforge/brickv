@@ -410,34 +410,27 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
         sheet_orange = "QLabel { color: orange; }"
         sheet_red    = "QLabel { color: red; }"
 
-        if data.status & 0b1:
-            self.ffc_desired_label.setStyleSheet(sheet_orange)
-            self.ffc_desired_label.setText('Yes')
-        else:
-            self.ffc_desired_label.setStyleSheet(sheet_green)
-            self.ffc_desired_label.setText('No')
-
-        if data.status & 0b110 == 0b000:
+        if data.ffc_status == 0b00:
             self.ffc_state_label.setStyleSheet(sheet_orange)
             self.ffc_state_label.setText('Never Commanded')
-        elif data.status & 0b110 == 0b010:
+        elif data.ffc_status == 0b01:
             self.ffc_state_label.setStyleSheet(sheet_orange)
             self.ffc_state_label.setText('Imminent')
-        elif data.status & 0b110 == 0b100:
+        elif data.ffc_status == 0b10:
             self.ffc_state_label.setStyleSheet(sheet_orange)
             self.ffc_state_label.setText('In Progress')
-        elif data.status & 0b110 == 0b110:
+        elif data.ffc_status == 0b11:
             self.ffc_state_label.setStyleSheet(sheet_green)
             self.ffc_state_label.setText('Complete')
 
-        if data.status & 0b10000:
+        if data.temperature_warning[0]:
             self.shutter_lockout_label.setStyleSheet(sheet_red)
             self.shutter_lockout_label.setText('Yes')
         else:
             self.shutter_lockout_label.setStyleSheet(sheet_green)
             self.shutter_lockout_label.setText('No')
 
-        if data.status & 0b100000:
+        if data.temperature_warning[1]:
             self.overtemp_label.setStyleSheet(sheet_red)
             self.overtemp_label.setText('Yes')
         else:
