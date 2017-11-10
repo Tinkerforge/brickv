@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-09-29.      #
+# This file was automatically generated on 2017-11-10.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -115,20 +115,54 @@ class BrickletHumidityV2(Device):
         self.response_expected[BrickletHumidityV2.FUNCTION_GET_IDENTITY] = BrickletHumidityV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletHumidityV2.CALLBACK_HUMIDITY] = 'H'
-        self.callback_formats[BrickletHumidityV2.CALLBACK_TEMPERATURE] = 'H'
+        self.callback_formats[BrickletHumidityV2.CALLBACK_TEMPERATURE] = 'h'
 
 
     def get_humidity(self):
         """
-        Returns the humidity of the sensor. The value
-        has a range of 0 to 1000 and is given in %RH/10 (Relative Humidity),
-        i.e. a value of 421 means that a humidity of 42.1 %RH is measured.
+        Returns the humidity measured by the sensor. The value
+        has a range of 0 to 10000 and is given in %RH/100 (Relative Humidity),
+        i.e. a value of 4223 means that a humidity of 42.23 %RH is measured.
+
+
+        If you want to get the value periodically, it is recommended to use the
+        :cb:`Humidity` callback. You can set the callback configuration
+        with :func:`Set Humidity Callback Configuration`.
         """
         return self.ipcon.send_request(self, BrickletHumidityV2.FUNCTION_GET_HUMIDITY, (), '', 'H')
 
     def set_humidity_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        TODO
+        The period in ms is the period with which the :cb:`Humidity` callback is triggered
+        periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change
+        within the period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        It is furthermore possible to constrain the callback with thresholds.
+
+        The `option`-parameter together with min/max sets a threshold for the :cb:`Humidity` callback.
+
+        The following options are possible:
+
+        .. csv-table::
+         :header: "Option", "Description"
+         :widths: 10, 100
+
+         "'x'",    "Threshold is turned off"
+         "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+         "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
+         "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
+
+
+        If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
+
+        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -140,19 +174,55 @@ class BrickletHumidityV2(Device):
 
     def get_humidity_callback_configuration(self):
         """
-        TODO
+        Returns the callback configuration as set by :func:`Set Humidity Callback Configuration`.
         """
         return GetHumidityCallbackConfiguration(*self.ipcon.send_request(self, BrickletHumidityV2.FUNCTION_GET_HUMIDITY_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
 
     def get_temperature(self):
         """
-        TODO
+        Returns the temperature measured by the sensor. The value
+        has a range of -4000 to 16500 and is given in °C/100,
+        i.e. a value of 3200 means that a temperature of 32.00 °C is measured.
+
+
+        If you want to get the value periodically, it is recommended to use the
+        :cb:`Temperature` callback. You can set the callback configuration
+        with :func:`Set Temperature Callback Configuration`.
         """
-        return self.ipcon.send_request(self, BrickletHumidityV2.FUNCTION_GET_TEMPERATURE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletHumidityV2.FUNCTION_GET_TEMPERATURE, (), '', 'h')
 
     def set_temperature_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        TODO
+        The period in ms is the period with which the :cb:`Temperature` callback is triggered
+        periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change
+        within the period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        It is furthermore possible to constrain the callback with thresholds.
+
+        The `option`-parameter together with min/max sets a threshold for the :cb:`Temperature` callback.
+
+        The following options are possible:
+
+        .. csv-table::
+         :header: "Option", "Description"
+         :widths: 10, 100
+
+         "'x'",    "Threshold is turned off"
+         "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+         "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
+         "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
+
+
+        If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
+
+        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -164,13 +234,14 @@ class BrickletHumidityV2(Device):
 
     def get_temperature_callback_configuration(self):
         """
-        TODO
+        Returns the callback configuration as set by :func:`Set Temperature Callback Configuration`.
         """
         return GetTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletHumidityV2.FUNCTION_GET_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
 
     def set_heater_configuration(self, heater_config):
         """
-
+        Enables/disables the heater. The heater can be used to dry the sensor in
+        extremely wet conditions.
         """
         heater_config = int(heater_config)
 
@@ -178,13 +249,25 @@ class BrickletHumidityV2(Device):
 
     def get_heater_configuration(self):
         """
-
+        Returns the heater configuration as set by :func:`Set Heater Configuration`.
         """
         return self.ipcon.send_request(self, BrickletHumidityV2.FUNCTION_GET_HEATER_CONFIGURATION, (), '', 'B')
 
     def set_moving_average_configuration(self, moving_average_length_humidity, moving_average_length_temperature):
         """
+        Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
+        for the humidity and temperature.
 
+        Setting the length to 1 will turn the averaging off. With less
+        averaging, there is more noise on the data.
+
+        The range for the averaging is 1-1000.
+
+        New data is gathered every 50ms. With a moving average of length 1000 the resulting
+        averaging window has a length of 50s. If you want to do long term measurments the longest
+        moving average will give the cleanest results.
+
+        The default value is 100.
         """
         moving_average_length_humidity = int(moving_average_length_humidity)
         moving_average_length_temperature = int(moving_average_length_temperature)
@@ -193,7 +276,7 @@ class BrickletHumidityV2(Device):
 
     def get_moving_average_configuration(self):
         """
-
+        Returns the moving average configuration as set by :func:`Set Moving Average Configuration`.
         """
         return GetMovingAverageConfiguration(*self.ipcon.send_request(self, BrickletHumidityV2.FUNCTION_GET_MOVING_AVERAGE_CONFIGURATION, (), '', 'H H'))
 
@@ -237,7 +320,7 @@ class BrickletHumidityV2(Device):
 
     def set_write_firmware_pointer(self, pointer):
         """
-        Sets the firmware pointer for func:`WriteFirmware`. The pointer has
+        Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
 

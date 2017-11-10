@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-09-29.      #
+# This file was automatically generated on 2017-11-10.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -306,7 +306,7 @@ class BrickletRemoteSwitchV2(Device):
 
     def set_write_firmware_pointer(self, pointer):
         """
-        Sets the firmware pointer for func:`WriteFirmware`. The pointer has
+        Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-09-29.      #
+# This file was automatically generated on 2017-11-10.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -63,12 +63,46 @@ class BrickletMoistureV2(Device):
     def get_moisture(self):
         """
         TODO
+
+
+        If you want to get the value periodically, it is recommended to use the
+        :cb:`Moisture` callback. You can set the callback configuration
+        with :func:`Set Moisture Callback Configuration`.
         """
         return self.ipcon.send_request(self, BrickletMoistureV2.FUNCTION_GET_MOISTURE, (), '', 'H')
 
     def set_moisture_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        TODO
+        The period in ms is the period with which the :cb:`Moisture` callback is triggered
+        periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change
+        within the period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        It is furthermore possible to constrain the callback with thresholds.
+
+        The `option`-parameter together with min/max sets a threshold for the :cb:`Moisture` callback.
+
+        The following options are possible:
+
+        .. csv-table::
+         :header: "Option", "Description"
+         :widths: 10, 100
+
+         "'x'",    "Threshold is turned off"
+         "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+         "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
+         "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
+
+
+        If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
+
+        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -80,7 +114,7 @@ class BrickletMoistureV2(Device):
 
     def get_moisture_callback_configuration(self):
         """
-        TODO
+        Returns the callback configuration as set by :func:`Set Moisture Callback Configuration`.
         """
         return GetMoistureCallbackConfiguration(*self.ipcon.send_request(self, BrickletMoistureV2.FUNCTION_GET_MOISTURE_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
 

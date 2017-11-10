@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-07.      #
+# This file was automatically generated on 2017-11-10.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -130,7 +130,8 @@ class BrickletThermalImaging(Device):
 
     def get_high_contrast_image_low_level(self):
         """
-        Returns the current high contrast image. See TODO for the difference between
+        Returns the current high contrast image. See TODO ADD Link
+        for the difference between
         High Contrast and Temperature Image. If you don't know what to use
         the High Contrast Image is probably right for you.
 
@@ -148,9 +149,9 @@ class BrickletThermalImaging(Device):
 
     def get_temperature_image_low_level(self):
         """
-        Returns the current temperature image. See TODO for the difference between
-        High Contrast and Temperature Image. If you don't know what to use
-        the High Contrast Image is probably right for you.
+        Returns the current temperature image. See TODO ADD Link
+        for the difference between High Contrast and Temperature Image.
+        If you don't know what to use the High Contrast Image is probably right for you.
 
         The data is organized as a 16-bit value 80x60 pixel matrix linearized in
         a one-dimensional array. The data is arranged line by line from top left to
@@ -263,14 +264,14 @@ class BrickletThermalImaging(Device):
         lower the value of N the higher the influence of the current video frame whereas
         the higher the value of N the more influence the previous damped transfer function has.
 
-        Clip Limit Index 0: This parameter defines an artificial population that is added to
+        Clip Limit Index 0 (AGC HEQ Clip Limit Low): This parameter defines an artificial population that is added to
         every non-empty histogram bin. In other words, if the Clip Limit Low is set to L, a bin
-        with an actual population of X will have an effective population of L + X. y empty bin
+        with an actual population of X will have an effective population of L + X. Any empty bin
         that is nearby a populated bin will be given an artificial population of L. The effect of
         higher values is to provide a more linear transfer function; lower values provide a more
         non-linear (equalized) transfer function.
 
-        Clip Limit Index 1: This parameter defines the maximum number of pixels allowed
+        Clip Limit Index 1 (AGC HEQ Clip Limit High): This parameter defines the maximum number of pixels allowed
         to accumulate in any given histogram bin. Any additional pixels in a given bin are clipped.
         The effect of this parameter is to limit the influence of highly-populated bins on the
         resulting HEQ transformation function.
@@ -309,8 +310,8 @@ class BrickletThermalImaging(Device):
 
         * Manual High Contrast Image: :func:`Get High Contrast Image`.
         * Manual Temperature Image: :func:`Get Temperature Image`.
-        * Callback High Contrast Image: :cb:`High Contrast Image`.
-        * Callback Temperature Image: :cb:`Temperature Image`.
+        * Callback High Contrast Image: :cb:`High Contrast Image` callback.
+        * Callback Temperature Image: :cb:`Temperature Image` callback.
 
         The default is Manual High Contrast Image (0).
         """
@@ -466,7 +467,8 @@ class BrickletThermalImaging(Device):
 
     def get_high_contrast_image(self):
         """
-        Returns the current high contrast image. See TODO for the difference between
+        Returns the current high contrast image. See TODO ADD Link
+        for the difference between
         High Contrast and Temperature Image. If you don't know what to use
         the High Contrast Image is probably right for you.
 
@@ -508,9 +510,9 @@ class BrickletThermalImaging(Device):
 
     def get_temperature_image(self):
         """
-        Returns the current temperature image. See TODO for the difference between
-        High Contrast and Temperature Image. If you don't know what to use
-        the High Contrast Image is probably right for you.
+        Returns the current temperature image. See TODO ADD Link
+        for the difference between High Contrast and Temperature Image.
+        If you don't know what to use the High Contrast Image is probably right for you.
 
         The data is organized as a 16-bit value 80x60 pixel matrix linearized in
         a one-dimensional array. The data is arranged line by line from top left to

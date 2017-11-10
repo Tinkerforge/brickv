@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-10-05.      #
+# This file was automatically generated on 2017-11-10.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -18,7 +18,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
-GetColor = namedtuple('Color', ['red', 'green', 'blue'])
+GetIndicator = namedtuple('Indicator', ['top_left', 'top_right', 'bottom'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -37,8 +37,8 @@ class BrickletMotionDetectorV2(Device):
     FUNCTION_GET_MOTION_DETECTED = 1
     FUNCTION_SET_SENSITIVITY = 2
     FUNCTION_GET_SENSITIVITY = 3
-    FUNCTION_SET_COLOR = 4
-    FUNCTION_GET_COLOR = 5
+    FUNCTION_SET_INDICATOR = 4
+    FUNCTION_GET_INDICATOR = 5
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -82,8 +82,8 @@ class BrickletMotionDetectorV2(Device):
         self.response_expected[BrickletMotionDetectorV2.FUNCTION_GET_MOTION_DETECTED] = BrickletMotionDetectorV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMotionDetectorV2.FUNCTION_SET_SENSITIVITY] = BrickletMotionDetectorV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletMotionDetectorV2.FUNCTION_GET_SENSITIVITY] = BrickletMotionDetectorV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletMotionDetectorV2.FUNCTION_SET_COLOR] = BrickletMotionDetectorV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletMotionDetectorV2.FUNCTION_GET_COLOR] = BrickletMotionDetectorV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletMotionDetectorV2.FUNCTION_SET_INDICATOR] = BrickletMotionDetectorV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletMotionDetectorV2.FUNCTION_GET_INDICATOR] = BrickletMotionDetectorV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMotionDetectorV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletMotionDetectorV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMotionDetectorV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletMotionDetectorV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMotionDetectorV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletMotionDetectorV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -115,7 +115,7 @@ class BrickletMotionDetectorV2(Device):
 
     def set_sensitivity(self, sensitivity):
         """
-
+        0-100
         """
         sensitivity = int(sensitivity)
 
@@ -127,21 +127,21 @@ class BrickletMotionDetectorV2(Device):
         """
         return self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_GET_SENSITIVITY, (), '', 'B')
 
-    def set_color(self, red, green, blue):
+    def set_indicator(self, top_left, top_right, bottom):
         """
 
         """
-        red = int(red)
-        green = int(green)
-        blue = int(blue)
+        top_left = int(top_left)
+        top_right = int(top_right)
+        bottom = int(bottom)
 
-        self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_SET_COLOR, (red, green, blue), 'B B B', '')
+        self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_SET_INDICATOR, (top_left, top_right, bottom), 'B B B', '')
 
-    def get_color(self):
+    def get_indicator(self):
         """
 
         """
-        return GetColor(*self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_GET_COLOR, (), '', 'B B B'))
+        return GetIndicator(*self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_GET_INDICATOR, (), '', 'B B B'))
 
     def get_spitfp_error_count(self):
         """
@@ -183,7 +183,7 @@ class BrickletMotionDetectorV2(Device):
 
     def set_write_firmware_pointer(self, pointer):
         """
-        Sets the firmware pointer for func:`WriteFirmware`. The pointer has
+        Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
 

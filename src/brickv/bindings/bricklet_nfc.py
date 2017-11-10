@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-09-29.      #
+# This file was automatically generated on 2017-11-10.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -62,6 +62,8 @@ class BrickletNFC(Device):
     FUNCTION_P2P_WRITE_NDEF_LOW_LEVEL = 21
     FUNCTION_P2P_START_TRANSFER = 22
     FUNCTION_P2P_READ_NDEF_LOW_LEVEL = 23
+    FUNCTION_SET_DETECTION_LED_CONFIG = 25
+    FUNCTION_GET_DETECTION_LED_CONFIG = 26
     FUNCTION_GET_IDENTITY = 255
 
     MODE_OFF = 0
@@ -123,6 +125,10 @@ class BrickletNFC(Device):
     P2P_TRANSFER_ABORT = 0
     P2P_TRANSFER_WRITE = 1
     P2P_TRANSFER_READ = 2
+    DETECTION_LED_CONFIG_OFF = 0
+    DETECTION_LED_CONFIG_ON = 1
+    DETECTION_LED_CONFIG_SHOW_HEARTBEAT = 2
+    DETECTION_LED_CONFIG_SHOW_DETECTION = 3
 
     def __init__(self, uid, ipcon):
         """
@@ -154,6 +160,8 @@ class BrickletNFC(Device):
         self.response_expected[BrickletNFC.FUNCTION_P2P_WRITE_NDEF_LOW_LEVEL] = BrickletNFC.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletNFC.FUNCTION_P2P_START_TRANSFER] = BrickletNFC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletNFC.FUNCTION_P2P_READ_NDEF_LOW_LEVEL] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletNFC.FUNCTION_SET_DETECTION_LED_CONFIG] = BrickletNFC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletNFC.FUNCTION_GET_DETECTION_LED_CONFIG] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletNFC.FUNCTION_GET_IDENTITY] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletNFC.CALLBACK_READER_STATE_CHANGED] = 'B !'
@@ -408,6 +416,25 @@ class BrickletNFC(Device):
         TODO
         """
         return P2PReadNdefLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_READ_NDEF_LOW_LEVEL, (), '', 'H H 60B'))
+
+    def set_detection_led_config(self, config):
+        """
+        Sets the detection LED configuration. By default the LED shows
+        if a card/reader is detected.
+
+        You can also turn the LED permanently on/off or show a heartbeat.
+
+        If the Bricklet is in bootloader mode, the LED is off.
+        """
+        config = int(config)
+
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_DETECTION_LED_CONFIG, (config,), 'B', '')
+
+    def get_detection_led_config(self):
+        """
+        Returns the configuration as set by :func:`Set Detection LED Config`
+        """
+        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_DETECTION_LED_CONFIG, (), '', 'B')
 
     def get_identity(self):
         """

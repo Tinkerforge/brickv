@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-09-29.      #
+# This file was automatically generated on 2017-11-10.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -33,12 +33,12 @@ class BrickletDMX(Device):
     DEVICE_IDENTIFIER = 285
     DEVICE_DISPLAY_NAME = 'DMX Bricklet'
 
-    CALLBACK_FRAME_STARTED = 15
-    CALLBACK_FRAME_AVAILABLE = 16
-    CALLBACK_FRAME_LOW_LEVEL = 17
-    CALLBACK_FRAME_ERROR_COUNT = 18
+    CALLBACK_FRAME_STARTED = 14
+    CALLBACK_FRAME_AVAILABLE = 15
+    CALLBACK_FRAME_LOW_LEVEL = 16
+    CALLBACK_FRAME_ERROR_COUNT = 17
 
-    CALLBACK_FRAME = -17
+    CALLBACK_FRAME = -16
 
     FUNCTION_SET_DMX_MODE = 1
     FUNCTION_GET_DMX_MODE = 2
@@ -46,14 +46,13 @@ class BrickletDMX(Device):
     FUNCTION_READ_FRAME_LOW_LEVEL = 4
     FUNCTION_SET_FRAME_DURATION = 5
     FUNCTION_GET_FRAME_DURATION = 6
-    FUNCTION_DRAW_FRAME = 7
-    FUNCTION_GET_FRAME_ERROR_COUNT = 8
-    FUNCTION_SET_COMMUNICATION_LED_CONFIG = 9
-    FUNCTION_GET_COMMUNICATION_LED_CONFIG = 10
-    FUNCTION_SET_ERROR_LED_CONFIG = 11
-    FUNCTION_GET_ERROR_LED_CONFIG = 12
-    FUNCTION_SET_FRAME_CALLBACK_CONFIG = 13
-    FUNCTION_GET_FRAME_CALLBACK_CONFIG = 14
+    FUNCTION_GET_FRAME_ERROR_COUNT = 7
+    FUNCTION_SET_COMMUNICATION_LED_CONFIG = 8
+    FUNCTION_GET_COMMUNICATION_LED_CONFIG = 9
+    FUNCTION_SET_ERROR_LED_CONFIG = 10
+    FUNCTION_GET_ERROR_LED_CONFIG = 11
+    FUNCTION_SET_FRAME_CALLBACK_CONFIG = 12
+    FUNCTION_GET_FRAME_CALLBACK_CONFIG = 13
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -108,7 +107,6 @@ class BrickletDMX(Device):
         self.response_expected[BrickletDMX.FUNCTION_READ_FRAME_LOW_LEVEL] = BrickletDMX.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDMX.FUNCTION_SET_FRAME_DURATION] = BrickletDMX.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDMX.FUNCTION_GET_FRAME_DURATION] = BrickletDMX.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDMX.FUNCTION_DRAW_FRAME] = BrickletDMX.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDMX.FUNCTION_GET_FRAME_ERROR_COUNT] = BrickletDMX.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDMX.FUNCTION_SET_COMMUNICATION_LED_CONFIG] = BrickletDMX.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDMX.FUNCTION_GET_COMMUNICATION_LED_CONFIG] = BrickletDMX.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -138,7 +136,9 @@ class BrickletDMX(Device):
 
     def set_dmx_mode(self, dmx_mode):
         """
-        Calling this sets frame number to 0
+        Sets the DMX mode to either Slave or Master.
+
+        Calling this function sets frame number to 0.
         """
         dmx_mode = int(dmx_mode)
 
@@ -146,13 +146,32 @@ class BrickletDMX(Device):
 
     def get_dmx_mode(self):
         """
-
+        Returns the DMX mode, as set by func:`Get DMX Mode`.
         """
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_DMX_MODE, (), '', 'B')
 
     def write_frame_low_level(self, frame_length, frame_chunk_offset, frame_chunk_data):
         """
+        Writes a DMX frame. The maximum frame size is 512 byte. Each byte represents one channel.
 
+        The next frame can be written after the :cb:`Frame Started` callback was called. The frame
+        is double buffered, so a new frame can be written as soon as the writing of the prior frame
+        starts.
+
+        The data will be transfered when the next frame duration ends, see :func:`Set Frame Duration`.
+
+        Generic approach:
+
+        * Set the frame duration to a value that represents the number of frames per second you want to achieve.
+        * Set channels for one frame.
+        * Wait for the :cb:`Frame Started` callback.
+        * Set channels for next frame.
+        * Wait for the :cb:`Frame Started` callback.
+        * and so on.
+
+        This approach ensures that you can set new DMX data with a fixed frame rate.
+
+        This function can only be called in Master Mode.
         """
         frame_length = int(frame_length)
         frame_chunk_offset = int(frame_chunk_offset)
@@ -162,13 +181,41 @@ class BrickletDMX(Device):
 
     def read_frame_low_level(self):
         """
+        Returns the last frame that was written by the DMX Master. The size of the array
+        is equivalent to the number of channels in the frame. Each byte represents one channel.
 
+        The next frame is available after the :cb:`Frame Available` callback was called.
+
+        Generic approach:
+
+        * Call :func:`Read Frame` to get first frame.
+        * Wait for the :cb:`Frame Available` callback.
+        * Call :func:`Read Frame` to get second frame.
+        * Wait for the :cb:`Frame Available` callback.
+        * and so on.
+
+        Instead of polling this function you can also use the :cb:`Frame` callback.
+        You can enable it with :func:`Set Frame Callback Config`.
+
+        The frame number starts at 0 and it is increased by one with each received frame.
+
+        This function can only be called in Slave Mode.
         """
         return ReadFrameLowLevel(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_READ_FRAME_LOW_LEVEL, (), '', 'H H 56B I'))
 
     def set_frame_duration(self, frame_duration):
         """
+        Sets the duration of a frame in ms.
 
+        Example: If you want to achieve 20 frames per second, you should
+        set the frame duration to 50ms (50ms * 20 = 1 second).
+
+        If you always want to send a frame as fast as possible you can set
+        this value to 0.
+
+        This setting is only used in Master Mode.
+
+        Default value: 100ms (10 frames per second).
         """
         frame_duration = int(frame_duration)
 
@@ -176,15 +223,9 @@ class BrickletDMX(Device):
 
     def get_frame_duration(self):
         """
-
+        Returns the frame duration as set by :func:`Set Frame Duration`.
         """
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_FRAME_DURATION, (), '', 'H')
-
-    def draw_frame(self):
-        """
-
-        """
-        self.ipcon.send_request(self, BrickletDMX.FUNCTION_DRAW_FRAME, (), '', '')
 
     def get_frame_error_count(self):
         """
@@ -235,7 +276,13 @@ class BrickletDMX(Device):
 
     def set_frame_callback_config(self, frame_started_callback_enabled, frame_available_callback_enabled, frame_callback_enabled, frame_error_count_callback_enabled):
         """
-        default: true,true,false
+        Enables/Disables the different callbacks. By default the
+        :cb:`Frame Started` callback and :cb:`Frame Available` callback are enabled while
+        the :cb:`Frame` callback and :cb:`Frame Error Count` callback are disabled.
+
+        If you want to use the :cb:`Frame` callback you can enable it and disable
+        the cb:`Frame Available` callback at the same time. It becomes redundent in
+        this case.
         """
         frame_started_callback_enabled = bool(frame_started_callback_enabled)
         frame_available_callback_enabled = bool(frame_available_callback_enabled)
@@ -246,7 +293,7 @@ class BrickletDMX(Device):
 
     def get_frame_callback_config(self):
         """
-
+        Returns the frame callback config as set by :func:`Set Frame Callback Config`.
         """
         return GetFrameCallbackConfig(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_FRAME_CALLBACK_CONFIG, (), '', '! ! ! !'))
 
@@ -290,7 +337,7 @@ class BrickletDMX(Device):
 
     def set_write_firmware_pointer(self, pointer):
         """
-        Sets the firmware pointer for func:`WriteFirmware`. The pointer has
+        Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
 
@@ -392,7 +439,26 @@ class BrickletDMX(Device):
 
     def write_frame(self, frame):
         """
+        Writes a DMX frame. The maximum frame size is 512 byte. Each byte represents one channel.
 
+        The next frame can be written after the :cb:`Frame Started` callback was called. The frame
+        is double buffered, so a new frame can be written as soon as the writing of the prior frame
+        starts.
+
+        The data will be transfered when the next frame duration ends, see :func:`Set Frame Duration`.
+
+        Generic approach:
+
+        * Set the frame duration to a value that represents the number of frames per second you want to achieve.
+        * Set channels for one frame.
+        * Wait for the :cb:`Frame Started` callback.
+        * Set channels for next frame.
+        * Wait for the :cb:`Frame Started` callback.
+        * and so on.
+
+        This approach ensures that you can set new DMX data with a fixed frame rate.
+
+        This function can only be called in Master Mode.
         """
         frame = list(map(int, frame))
 
@@ -416,7 +482,25 @@ class BrickletDMX(Device):
 
     def read_frame(self):
         """
+        Returns the last frame that was written by the DMX Master. The size of the array
+        is equivalent to the number of channels in the frame. Each byte represents one channel.
 
+        The next frame is available after the :cb:`Frame Available` callback was called.
+
+        Generic approach:
+
+        * Call :func:`Read Frame` to get first frame.
+        * Wait for the :cb:`Frame Available` callback.
+        * Call :func:`Read Frame` to get second frame.
+        * Wait for the :cb:`Frame Available` callback.
+        * and so on.
+
+        Instead of polling this function you can also use the :cb:`Frame` callback.
+        You can enable it with :func:`Set Frame Callback Config`.
+
+        The frame number starts at 0 and it is increased by one with each received frame.
+
+        This function can only be called in Slave Mode.
         """
         with self.stream_lock:
             ret = self.read_frame_low_level()

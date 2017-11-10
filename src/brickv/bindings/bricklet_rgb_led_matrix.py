@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-09-29.      #
+# This file was automatically generated on 2017-11-10.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -108,7 +108,7 @@ class BrickletRGBLEDMatrix(Device):
 
     def set_red(self, red):
         """
-
+        Sets the 64 red led values of the matrix.
         """
         red = list(map(int, red))
 
@@ -116,13 +116,13 @@ class BrickletRGBLEDMatrix(Device):
 
     def get_red(self):
         """
-
+        Returns the red led values as set by :func:`Set Red`.
         """
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_RED, (), '', '64B')
 
     def set_green(self, green):
         """
-
+        Sets the 64 green led values of the matrix.
         """
         green = list(map(int, green))
 
@@ -130,13 +130,13 @@ class BrickletRGBLEDMatrix(Device):
 
     def get_green(self):
         """
-
+        Returns the green led values as set by :func:`Set Green`.
         """
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_GREEN, (), '', '64B')
 
     def set_blue(self, blue):
         """
-
+        Sets the 64 blue led values of the matrix.
         """
         blue = list(map(int, blue))
 
@@ -144,7 +144,7 @@ class BrickletRGBLEDMatrix(Device):
 
     def get_blue(self):
         """
-
+        Returns the lbue led values as set by :func:`Set Blue`.
         """
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_BLUE, (), '', '64B')
 
@@ -156,6 +156,19 @@ class BrickletRGBLEDMatrix(Device):
         set the frame duration to 50ms (50ms * 20 = 1 second).
 
         Set this value to 0 to turn the automatic frame write mechanism off.
+
+
+        Approach:
+
+        * Call :func:`Set Frame Duration` with value > 0.
+        * Set LED values for first frame with :func:`Set Red`, :func:`Set Green`, :func:`Set Blue`.
+        * Wait for :cb:`Frame Started` callback.
+        * Set LED values for second frame with :func:`Set Red`, :func:`Set Green`, :func:`Set Blue`.
+        * Wait for :cb:`Frame Started` callback.
+        * and so on.
+
+
+        For frame duration of 0 see :func:`Draw Frame`.
 
         Default value: 0 = off.
         """
@@ -171,7 +184,19 @@ class BrickletRGBLEDMatrix(Device):
 
     def draw_frame(self):
         """
+        If you set the frame duration to 0 (see :func:`Set Frame Duration`), you can use this
+        function to transfer one frame to the matrix.
 
+        Approach:
+
+        * Call :func:`Set Frame Duration` with 0.
+        * Set LED values for first frame with :func:`Set Red`, :func:`Set Green`, :func:`Set Blue`.
+        * Call :func:`Draw Frame`.
+        * Wait for :cb:`Frame Started` callback.
+        * Set LED values for second frame with :func:`Set Red`, :func:`Set Green`, :func:`Set Blue`.
+        * Call :func:`Draw Frame`.
+        * Wait for :cb:`Frame Started` callback.
+        * and so on.
         """
         self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_DRAW_FRAME, (), '', '')
 
@@ -221,7 +246,7 @@ class BrickletRGBLEDMatrix(Device):
 
     def set_write_firmware_pointer(self, pointer):
         """
-        Sets the firmware pointer for func:`WriteFirmware`. The pointer has
+        Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
 

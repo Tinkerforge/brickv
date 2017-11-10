@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-09-29.      #
+# This file was automatically generated on 2017-11-10.      #
 #                                                           #
 # Python Bindings Version 2.1.14                            #
 #                                                           #
@@ -18,8 +18,10 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
-GetWeatherStationIdentifiersLowLevel = namedtuple('WeatherStationIdentifiersLowLevel', ['identifiers_length', 'identifiers_chunk_offset', 'identifiers_chunk_data'])
-GetWeatherStationData = namedtuple('WeatherStationData', ['temperature', 'humidity', 'wind_speed', 'gust_speed', 'rain', 'wind_direction', 'battery_low', 'last_change'])
+GetStationIdentifiersLowLevel = namedtuple('StationIdentifiersLowLevel', ['identifiers_length', 'identifiers_chunk_offset', 'identifiers_chunk_data'])
+GetSensorIdentifiersLowLevel = namedtuple('SensorIdentifiersLowLevel', ['identifiers_length', 'identifiers_chunk_offset', 'identifiers_chunk_data'])
+GetStationData = namedtuple('StationData', ['temperature', 'humidity', 'wind_speed', 'gust_speed', 'rain', 'wind_direction', 'battery_low', 'last_change'])
+GetSensorData = namedtuple('SensorData', ['temperature', 'humidity', 'last_change'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -31,13 +33,18 @@ class BrickletOutdoorWeather(Device):
     DEVICE_IDENTIFIER = 288
     DEVICE_DISPLAY_NAME = 'Outdoor Weather Bricklet'
 
-    CALLBACK_WEATHER_STATION_DATA = 5
+    CALLBACK_STATION_DATA = 9
+    CALLBACK_SENSOR_DATA = 10
 
 
-    FUNCTION_GET_WEATHER_STATION_IDENTIFIERS_LOW_LEVEL = 1
-    FUNCTION_GET_WEATHER_STATION_DATA = 2
-    FUNCTION_SET_WEATHER_STATION_CALLBACK_CONFIGURATION = 3
-    FUNCTION_GET_WEATHER_STATION_CALLBACK_CONFIGURATION = 4
+    FUNCTION_GET_STATION_IDENTIFIERS_LOW_LEVEL = 1
+    FUNCTION_GET_SENSOR_IDENTIFIERS_LOW_LEVEL = 2
+    FUNCTION_GET_STATION_DATA = 3
+    FUNCTION_GET_SENSOR_DATA = 4
+    FUNCTION_SET_STATION_CALLBACK_CONFIGURATION = 5
+    FUNCTION_GET_STATION_CALLBACK_CONFIGURATION = 6
+    FUNCTION_SET_SENSOR_CALLBACK_CONFIGURATION = 7
+    FUNCTION_GET_SENSOR_CALLBACK_CONFIGURATION = 8
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -93,10 +100,14 @@ class BrickletOutdoorWeather(Device):
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[BrickletOutdoorWeather.FUNCTION_GET_WEATHER_STATION_IDENTIFIERS_LOW_LEVEL] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletOutdoorWeather.FUNCTION_GET_WEATHER_STATION_DATA] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletOutdoorWeather.FUNCTION_SET_WEATHER_STATION_CALLBACK_CONFIGURATION] = BrickletOutdoorWeather.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletOutdoorWeather.FUNCTION_GET_WEATHER_STATION_CALLBACK_CONFIGURATION] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletOutdoorWeather.FUNCTION_GET_STATION_IDENTIFIERS_LOW_LEVEL] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletOutdoorWeather.FUNCTION_GET_SENSOR_IDENTIFIERS_LOW_LEVEL] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletOutdoorWeather.FUNCTION_GET_STATION_DATA] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletOutdoorWeather.FUNCTION_GET_SENSOR_DATA] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletOutdoorWeather.FUNCTION_SET_STATION_CALLBACK_CONFIGURATION] = BrickletOutdoorWeather.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletOutdoorWeather.FUNCTION_GET_STATION_CALLBACK_CONFIGURATION] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletOutdoorWeather.FUNCTION_SET_SENSOR_CALLBACK_CONFIGURATION] = BrickletOutdoorWeather.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletOutdoorWeather.FUNCTION_GET_SENSOR_CALLBACK_CONFIGURATION] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletOutdoorWeather.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletOutdoorWeather.FUNCTION_SET_BOOTLOADER_MODE] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletOutdoorWeather.FUNCTION_GET_BOOTLOADER_MODE] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -110,36 +121,65 @@ class BrickletOutdoorWeather(Device):
         self.response_expected[BrickletOutdoorWeather.FUNCTION_READ_UID] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletOutdoorWeather.FUNCTION_GET_IDENTITY] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletOutdoorWeather.CALLBACK_WEATHER_STATION_DATA] = 'B h B I I I B !'
+        self.callback_formats[BrickletOutdoorWeather.CALLBACK_STATION_DATA] = 'B h B I I I B !'
+        self.callback_formats[BrickletOutdoorWeather.CALLBACK_SENSOR_DATA] = 'B h B'
 
 
-    def get_weather_station_identifiers_low_level(self):
+    def get_station_identifiers_low_level(self):
         """
 
         """
-        return GetWeatherStationIdentifiersLowLevel(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_WEATHER_STATION_IDENTIFIERS_LOW_LEVEL, (), '', 'H H 60B'))
+        return GetStationIdentifiersLowLevel(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_IDENTIFIERS_LOW_LEVEL, (), '', 'H H 60B'))
 
-    def get_weather_station_data(self, identifier):
+    def get_sensor_identifiers_low_level(self):
+        """
+
+        """
+        return GetSensorIdentifiersLowLevel(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_IDENTIFIERS_LOW_LEVEL, (), '', 'H H 60B'))
+
+    def get_station_data(self, identifier):
         """
 
         """
         identifier = int(identifier)
 
-        return GetWeatherStationData(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_WEATHER_STATION_DATA, (identifier,), 'B', 'h B I I I B ! H'))
+        return GetStationData(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_DATA, (identifier,), 'B', 'h B I I I B ! H'))
 
-    def set_weather_station_callback_configuration(self, enable_callback):
+    def get_sensor_data(self, identifier):
+        """
+
+        """
+        identifier = int(identifier)
+
+        return GetSensorData(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_DATA, (identifier,), 'B', 'h B H'))
+
+    def set_station_callback_configuration(self, enable_callback):
         """
 
         """
         enable_callback = bool(enable_callback)
 
-        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_WEATHER_STATION_CALLBACK_CONFIGURATION, (enable_callback,), '!', '')
+        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_STATION_CALLBACK_CONFIGURATION, (enable_callback,), '!', '')
 
-    def get_weather_station_callback_configuration(self):
+    def get_station_callback_configuration(self):
         """
 
         """
-        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_WEATHER_STATION_CALLBACK_CONFIGURATION, (), '', '!')
+        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_CALLBACK_CONFIGURATION, (), '', '!')
+
+    def set_sensor_callback_configuration(self, enable_callback):
+        """
+
+        """
+        enable_callback = bool(enable_callback)
+
+        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_SENSOR_CALLBACK_CONFIGURATION, (enable_callback,), '!', '')
+
+    def get_sensor_callback_configuration(self):
+        """
+
+        """
+        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_CALLBACK_CONFIGURATION, (), '', '!')
 
     def get_spitfp_error_count(self):
         """
@@ -181,7 +221,7 @@ class BrickletOutdoorWeather(Device):
 
     def set_write_firmware_pointer(self, pointer):
         """
-        Sets the firmware pointer for func:`WriteFirmware`. The pointer has
+        Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
 
@@ -281,25 +321,50 @@ class BrickletOutdoorWeather(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def get_weather_station_identifiers(self):
+    def get_station_identifiers(self):
         """
 
         """
         with self.stream_lock:
-            ret = self.get_weather_station_identifiers_low_level()
+            ret = self.get_station_identifiers_low_level()
             identifiers_length = ret.identifiers_length
             identifiers_out_of_sync = ret.identifiers_chunk_offset != 0
             identifiers_data = ret.identifiers_chunk_data
 
             while not identifiers_out_of_sync and len(identifiers_data) < identifiers_length:
-                ret = self.get_weather_station_identifiers_low_level()
+                ret = self.get_station_identifiers_low_level()
                 identifiers_length = ret.identifiers_length
                 identifiers_out_of_sync = ret.identifiers_chunk_offset != len(identifiers_data)
                 identifiers_data += ret.identifiers_chunk_data
 
             if identifiers_out_of_sync: # discard remaining stream to bring it back in-sync
                 while ret.identifiers_chunk_offset + 60 < identifiers_length:
-                    ret = self.get_weather_station_identifiers_low_level()
+                    ret = self.get_station_identifiers_low_level()
+                    identifiers_length = ret.identifiers_length
+
+                raise Error(Error.STREAM_OUT_OF_SYNC, 'Identifiers stream is out-of-sync')
+
+        return identifiers_data[:identifiers_length]
+
+    def get_sensor_identifiers(self):
+        """
+
+        """
+        with self.stream_lock:
+            ret = self.get_sensor_identifiers_low_level()
+            identifiers_length = ret.identifiers_length
+            identifiers_out_of_sync = ret.identifiers_chunk_offset != 0
+            identifiers_data = ret.identifiers_chunk_data
+
+            while not identifiers_out_of_sync and len(identifiers_data) < identifiers_length:
+                ret = self.get_sensor_identifiers_low_level()
+                identifiers_length = ret.identifiers_length
+                identifiers_out_of_sync = ret.identifiers_chunk_offset != len(identifiers_data)
+                identifiers_data += ret.identifiers_chunk_data
+
+            if identifiers_out_of_sync: # discard remaining stream to bring it back in-sync
+                while ret.identifiers_chunk_offset + 60 < identifiers_length:
+                    ret = self.get_sensor_identifiers_low_level()
                     identifiers_length = ret.identifiers_length
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Identifiers stream is out-of-sync')
