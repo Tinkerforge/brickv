@@ -328,7 +328,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         elif name.endswith('_v3'):
             name = name.replace('_v3', '_3.0')
 
-        if name in ['gps', 'gps_2.0', 'ptc', 'rs232', 'rs485', 'co2', 'can', 'rgb_led']:
+        if name in ['gps', 'gps_2.0', 'ptc', 'rs232', 'rs485', 'co2', 'can', 'rgb_led', 'dmx']:
             name = name.upper()
         elif name.startswith('lcd_'):
             name = name.replace('lcd_', 'LCD_')
@@ -350,8 +350,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
             name = name.replace('rgb_led_', 'RGB_LED_')
         elif name.startswith('rgb_'):
             name = name.replace('rgb_', 'RGB_')
-        elif name.startswith('dmx_'):
-            name = name.replace('dmx_', 'DMX_')
         elif name.startswith('midi_'):
             name = name.replace('midi_', 'MIDI_')
 
