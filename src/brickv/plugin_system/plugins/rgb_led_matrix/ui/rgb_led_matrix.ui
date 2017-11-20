@@ -32,7 +32,7 @@
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Frame Duration:</string>
+        <string>Frame Duration [ms]:</string>
        </property>
       </widget>
      </item>
