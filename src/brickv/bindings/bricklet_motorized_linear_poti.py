@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-10.      #
+# This file was automatically generated on 2017-11-20.      #
 #                                                           #
-# Python Bindings Version 2.1.14                            #
+# Python Bindings Version 2.1.15                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -175,7 +173,7 @@ class BrickletMotorizedLinearPoti(Device):
     def set_motor_position(self, position, drive_mode, hold_position):
         """
         Sets the position of the potentiometer. The motorized potentiometer will
-        immediately start to approach the position. Depending on the choosen drive mode,
+        immediately start to approach the position. Depending on the chosen drive mode,
         the position will either be reached as fast as possible or in a slow but smooth
         motion.
 
@@ -229,7 +227,7 @@ class BrickletMotorizedLinearPoti(Device):
 
     def get_position_reached_callback_configuration(self):
         """
-        Returns the position reached callback configuration
+        Returns the :cb:`Position Reached` callback configuration
         as set by :func:`Set Position Reached Callback Configuration`.
         """
         return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_POSITION_REACHED_CALLBACK_CONFIGURATION, (), '', '!')

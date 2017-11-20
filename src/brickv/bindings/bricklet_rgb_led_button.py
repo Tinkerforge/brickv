@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-10.      #
+# This file was automatically generated on 2017-11-20.      #
 #                                                           #
-# Python Bindings Version 2.1.14                            #
+# Python Bindings Version 2.1.15                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -129,12 +127,12 @@ class BrickletRGBLEDButton(Device):
         Sets a color calibration. Some colors appear brighter then others,
         so a calibration may be necessary for nice uniform colors.
 
-        The values range from 0-100%.
+        The values range from 0% to 100%.
 
         The calibration is saved in flash. You don't need to call this
         function on every startup.
 
-        Default values: (100, 100, 55).
+        Default value is (100, 100, 55).
         """
         red = int(red)
         green = int(green)

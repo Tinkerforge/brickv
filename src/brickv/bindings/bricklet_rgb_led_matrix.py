@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-10.      #
+# This file was automatically generated on 2017-11-20.      #
 #                                                           #
-# Python Bindings Version 2.1.14                            #
+# Python Bindings Version 2.1.15                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -108,7 +106,7 @@ class BrickletRGBLEDMatrix(Device):
 
     def set_red(self, red):
         """
-        Sets the 64 red led values of the matrix.
+        Sets the 64 red LED values of the matrix.
         """
         red = list(map(int, red))
 
@@ -116,13 +114,13 @@ class BrickletRGBLEDMatrix(Device):
 
     def get_red(self):
         """
-        Returns the red led values as set by :func:`Set Red`.
+        Returns the red LED values as set by :func:`Set Red`.
         """
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_RED, (), '', '64B')
 
     def set_green(self, green):
         """
-        Sets the 64 green led values of the matrix.
+        Sets the 64 green LED values of the matrix.
         """
         green = list(map(int, green))
 
@@ -130,13 +128,13 @@ class BrickletRGBLEDMatrix(Device):
 
     def get_green(self):
         """
-        Returns the green led values as set by :func:`Set Green`.
+        Returns the green LED values as set by :func:`Set Green`.
         """
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_GREEN, (), '', '64B')
 
     def set_blue(self, blue):
         """
-        Sets the 64 blue led values of the matrix.
+        Sets the 64 blue LED values of the matrix.
         """
         blue = list(map(int, blue))
 
@@ -144,7 +142,7 @@ class BrickletRGBLEDMatrix(Device):
 
     def get_blue(self):
         """
-        Returns the lbue led values as set by :func:`Set Blue`.
+        Returns the blue LED values as set by :func:`Set Blue`.
         """
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_BLUE, (), '', '64B')
 
@@ -157,7 +155,6 @@ class BrickletRGBLEDMatrix(Device):
 
         Set this value to 0 to turn the automatic frame write mechanism off.
 
-
         Approach:
 
         * Call :func:`Set Frame Duration` with value > 0.
@@ -166,7 +163,6 @@ class BrickletRGBLEDMatrix(Device):
         * Set LED values for second frame with :func:`Set Red`, :func:`Set Green`, :func:`Set Blue`.
         * Wait for :cb:`Frame Started` callback.
         * and so on.
-
 
         For frame duration of 0 see :func:`Draw Frame`.
 
@@ -185,7 +181,7 @@ class BrickletRGBLEDMatrix(Device):
     def draw_frame(self):
         """
         If you set the frame duration to 0 (see :func:`Set Frame Duration`), you can use this
-        function to transfer one frame to the matrix.
+        function to transfer the frame to the matrix.
 
         Approach:
 

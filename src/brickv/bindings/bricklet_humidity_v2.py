@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-10.      #
+# This file was automatically generated on 2017-11-20.      #
 #                                                           #
-# Python Bindings Version 2.1.14                            #
+# Python Bindings Version 2.1.15                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -242,6 +240,8 @@ class BrickletHumidityV2(Device):
         """
         Enables/disables the heater. The heater can be used to dry the sensor in
         extremely wet conditions.
+
+        By default the heater is disabled.
         """
         heater_config = int(heater_config)
 
@@ -264,7 +264,7 @@ class BrickletHumidityV2(Device):
         The range for the averaging is 1-1000.
 
         New data is gathered every 50ms. With a moving average of length 1000 the resulting
-        averaging window has a length of 50s. If you want to do long term measurments the longest
+        averaging window has a length of 50s. If you want to do long term measurements the longest
         moving average will give the cleanest results.
 
         The default value is 100.

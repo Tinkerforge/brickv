@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-07-26.      #
+# This file was automatically generated on 2017-11-20.      #
 #                                                           #
-# Python Bindings Version 2.1.14                            #
+# Python Bindings Version 2.1.15                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -125,6 +125,11 @@ except ValueError:
     from bricklet_distance_us import BrickletDistanceUS
 
 try:
+    from .bricklet_dmx import BrickletDMX
+except ValueError:
+    from bricklet_dmx import BrickletDMX
+
+try:
     from .bricklet_dual_button import BrickletDualButton
 except ValueError:
     from bricklet_dual_button import BrickletDualButton
@@ -158,6 +163,11 @@ try:
     from .bricklet_humidity import BrickletHumidity
 except ValueError:
     from bricklet_humidity import BrickletHumidity
+
+try:
+    from .bricklet_humidity_v2 import BrickletHumidityV2
+except ValueError:
+    from bricklet_humidity_v2 import BrickletHumidityV2
 
 try:
     from .bricklet_industrial_analog_out import BrickletIndustrialAnalogOut
@@ -250,6 +260,11 @@ except ValueError:
     from bricklet_motion_detector import BrickletMotionDetector
 
 try:
+    from .bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
+except ValueError:
+    from bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
+
+try:
     from .bricklet_multi_touch import BrickletMultiTouch
 except ValueError:
     from bricklet_multi_touch import BrickletMultiTouch
@@ -300,6 +315,16 @@ except ValueError:
     from bricklet_rgb_led import BrickletRGBLED
 
 try:
+    from .bricklet_rgb_led_button import BrickletRGBLEDButton
+except ValueError:
+    from bricklet_rgb_led_button import BrickletRGBLEDButton
+
+try:
+    from .bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
+except ValueError:
+    from bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
+
+try:
     from .bricklet_rotary_encoder import BrickletRotaryEncoder
 except ValueError:
     from bricklet_rotary_encoder import BrickletRotaryEncoder
@@ -343,6 +368,11 @@ try:
     from .bricklet_temperature_ir import BrickletTemperatureIR
 except ValueError:
     from bricklet_temperature_ir import BrickletTemperatureIR
+
+try:
+    from .bricklet_thermal_imaging import BrickletThermalImaging
+except ValueError:
+    from bricklet_thermal_imaging import BrickletThermalImaging
 
 try:
     from .bricklet_thermocouple import BrickletThermocouple
@@ -394,6 +424,7 @@ BrickletCurrent12.DEVICE_IDENTIFIER: BrickletCurrent12,
 BrickletCurrent25.DEVICE_IDENTIFIER: BrickletCurrent25,
 BrickletDistanceIR.DEVICE_IDENTIFIER: BrickletDistanceIR,
 BrickletDistanceUS.DEVICE_IDENTIFIER: BrickletDistanceUS,
+BrickletDMX.DEVICE_IDENTIFIER: BrickletDMX,
 BrickletDualButton.DEVICE_IDENTIFIER: BrickletDualButton,
 BrickletDualRelay.DEVICE_IDENTIFIER: BrickletDualRelay,
 BrickletDustDetector.DEVICE_IDENTIFIER: BrickletDustDetector,
@@ -401,6 +432,7 @@ BrickletGPS.DEVICE_IDENTIFIER: BrickletGPS,
 BrickletGPSV2.DEVICE_IDENTIFIER: BrickletGPSV2,
 BrickletHallEffect.DEVICE_IDENTIFIER: BrickletHallEffect,
 BrickletHumidity.DEVICE_IDENTIFIER: BrickletHumidity,
+BrickletHumidityV2.DEVICE_IDENTIFIER: BrickletHumidityV2,
 BrickletIndustrialAnalogOut.DEVICE_IDENTIFIER: BrickletIndustrialAnalogOut,
 BrickletIndustrialDigitalIn4.DEVICE_IDENTIFIER: BrickletIndustrialDigitalIn4,
 BrickletIndustrialDigitalOut4.DEVICE_IDENTIFIER: BrickletIndustrialDigitalOut4,
@@ -419,6 +451,7 @@ BrickletLinearPoti.DEVICE_IDENTIFIER: BrickletLinearPoti,
 BrickletLoadCell.DEVICE_IDENTIFIER: BrickletLoadCell,
 BrickletMoisture.DEVICE_IDENTIFIER: BrickletMoisture,
 BrickletMotionDetector.DEVICE_IDENTIFIER: BrickletMotionDetector,
+BrickletMotorizedLinearPoti.DEVICE_IDENTIFIER: BrickletMotorizedLinearPoti,
 BrickletMultiTouch.DEVICE_IDENTIFIER: BrickletMultiTouch,
 BrickletNFCRFID.DEVICE_IDENTIFIER: BrickletNFCRFID,
 BrickletOLED128x64.DEVICE_IDENTIFIER: BrickletOLED128x64,
@@ -429,6 +462,8 @@ BrickletPTC.DEVICE_IDENTIFIER: BrickletPTC,
 BrickletRealTimeClock.DEVICE_IDENTIFIER: BrickletRealTimeClock,
 BrickletRemoteSwitch.DEVICE_IDENTIFIER: BrickletRemoteSwitch,
 BrickletRGBLED.DEVICE_IDENTIFIER: BrickletRGBLED,
+BrickletRGBLEDButton.DEVICE_IDENTIFIER: BrickletRGBLEDButton,
+BrickletRGBLEDMatrix.DEVICE_IDENTIFIER: BrickletRGBLEDMatrix,
 BrickletRotaryEncoder.DEVICE_IDENTIFIER: BrickletRotaryEncoder,
 BrickletRotaryPoti.DEVICE_IDENTIFIER: BrickletRotaryPoti,
 BrickletRS232.DEVICE_IDENTIFIER: BrickletRS232,
@@ -438,6 +473,7 @@ BrickletSolidStateRelay.DEVICE_IDENTIFIER: BrickletSolidStateRelay,
 BrickletSoundIntensity.DEVICE_IDENTIFIER: BrickletSoundIntensity,
 BrickletTemperature.DEVICE_IDENTIFIER: BrickletTemperature,
 BrickletTemperatureIR.DEVICE_IDENTIFIER: BrickletTemperatureIR,
+BrickletThermalImaging.DEVICE_IDENTIFIER: BrickletThermalImaging,
 BrickletThermocouple.DEVICE_IDENTIFIER: BrickletThermocouple,
 BrickletTilt.DEVICE_IDENTIFIER: BrickletTilt,
 BrickletUVLight.DEVICE_IDENTIFIER: BrickletUVLight,

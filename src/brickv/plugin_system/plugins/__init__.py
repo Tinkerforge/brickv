@@ -4,6 +4,7 @@ from brickv.plugin_system.plugins.ambient_light import device_class as ambient_l
 from brickv.plugin_system.plugins.ambient_light_v2 import device_class as ambient_light_v2
 from brickv.plugin_system.plugins.analog_in import device_class as analog_in
 from brickv.plugin_system.plugins.analog_in_v2 import device_class as analog_in_v2
+from brickv.plugin_system.plugins.analog_in_v3 import device_class as analog_in_v3
 from brickv.plugin_system.plugins.analog_out import device_class as analog_out
 from brickv.plugin_system.plugins.analog_out_v2 import device_class as analog_out_v2
 from brickv.plugin_system.plugins.barometer import device_class as barometer
@@ -67,6 +68,7 @@ from brickv.plugin_system.plugins.rgb_led import device_class as rgb_led
 from brickv.plugin_system.plugins.rgb_led_button import device_class as rgb_led_button
 from brickv.plugin_system.plugins.rgb_led_matrix import device_class as rgb_led_matrix
 from brickv.plugin_system.plugins.rotary_encoder import device_class as rotary_encoder
+from brickv.plugin_system.plugins.rotary_encoder_v2 import device_class as rotary_encoder_v2
 from brickv.plugin_system.plugins.rotary_poti import device_class as rotary_poti
 from brickv.plugin_system.plugins.rs232 import device_class as rs232
 from brickv.plugin_system.plugins.rs485 import device_class as rs485
@@ -74,6 +76,7 @@ from brickv.plugin_system.plugins.segment_display_4x7 import device_class as seg
 from brickv.plugin_system.plugins.servo import device_class as servo
 from brickv.plugin_system.plugins.silent_stepper import device_class as silent_stepper
 from brickv.plugin_system.plugins.solid_state_relay import device_class as solid_state_relay
+from brickv.plugin_system.plugins.solid_state_relay_v2 import device_class as solid_state_relay_v2
 from brickv.plugin_system.plugins.sound_intensity import device_class as sound_intensity
 from brickv.plugin_system.plugins.stepper import device_class as stepper
 from brickv.plugin_system.plugins.temperature import device_class as temperature
@@ -93,6 +96,7 @@ device_classes = [
     ambient_light_v2,
     analog_in,
     analog_in_v2,
+    analog_in_v3,
     analog_out,
     analog_out_v2,
     barometer,
@@ -156,6 +160,7 @@ device_classes = [
     rgb_led_button,
     rgb_led_matrix,
     rotary_encoder,
+    rotary_encoder_v2,
     rotary_poti,
     rs232,
     rs485,
@@ -163,6 +168,7 @@ device_classes = [
     servo,
     silent_stepper,
     solid_state_relay,
+    solid_state_relay_v2,
     sound_intensity,
     stepper,
     temperature,
