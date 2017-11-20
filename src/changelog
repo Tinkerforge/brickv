@@ -381,5 +381,9 @@
 - Fix order of DOP values in GPS Bricklet 2.0 plugin
 - Double plot legend line indicators thickness
 
-2017-10-09: 2.3.11 (<unknown>)
+2017-10-09: 2.3.11 (d9d5bd5)
 - Add support for RED Brick Image 1.10
+
+2017-11-20: 2.3.12 (<unknown>)
+- Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button, RGB
+  LED Matrix and Thermal Imaging Bricklet
