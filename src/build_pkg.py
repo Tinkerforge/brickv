@@ -378,7 +378,7 @@ def build_linux_pkg():
     system('dpkg -b dist/linux brickv-{0}_all.deb'.format(BRICKV_VERSION))
 
     print('changing owner back to original user')
-    system('sudo chown -R `logname`:`logname` dist/linux')
+    system('sudo chown -R ${USER}:${USER} dist/linux')
 
     #print('checking Debian package')
     #system('lintian --pedantic brickv-{0}_all.deb'.format(BRICKV_VERSION))
@@ -441,7 +441,7 @@ def build_linux_flash_pkg():
     system('dpkg -b dist/linux brick-flash-{0}_all.deb'.format(BRICK_FLASH_VERSION))
 
     print('changing owner back to original user')
-    system('sudo chown -R `logname`:`logname` dist/linux/usr')
+    system('sudo chown -R ${USER}:${USER} dist/linux/usr')
 
     #print('checking Debian package')
     #system('lintian --pedantic brick-flash-{0}_all.deb'.format(BRICK_FLASH_VERSION))
