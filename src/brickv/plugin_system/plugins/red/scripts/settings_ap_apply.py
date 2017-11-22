@@ -3,9 +3,11 @@
 
 import os
 import json
+import StringIO
 import traceback
 import netifaces
 import subprocess
+import ConfigParser
 from sys import argv
 from distutils.version import StrictVersion
 
@@ -454,6 +456,27 @@ try:
     dhcp_start       = unicode(apply_dict['dhcp_start'])
     dhcp_end         = unicode(apply_dict['dhcp_end'])
     dhcp_mask        = unicode(apply_dict['dhcp_mask'])
+
+    # If there is an existing hostapd configuration with an interface defined
+    # then try to disable the interface.
+    if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NM:
+        if os.path.exists('/etc/hostapd/hostapd.conf'):
+            is_hostapd_interface = False
+
+            with open('/etc/hostapd/hostapd.conf', 'r') as fh:
+                hostapd_config_buf = '[root]\n' + fh.read()
+                hostapd_parser = ConfigParser.ConfigParser()
+                hostapd_parser.readfp(StringIO.StringIO(hostapd_config_buf))
+                hostapd_interface = hostapd_parser.get('root', 'interface', None)
+
+                if hostapd_interface:
+                    is_hostapd_interface = True
+
+            if is_hostapd_interface:
+                try:
+                    os.system('/sbin/ifdown ' + hostapd_interface + ' &> /dev/null')
+                except:
+                    pass
 
     if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_FOR_HOSTAPD_UPDATE_1:
         hostapd_driver = unicode(apply_dict['hostapd_driver'])
