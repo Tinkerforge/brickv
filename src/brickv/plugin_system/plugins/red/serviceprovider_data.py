@@ -10143,7 +10143,7 @@ dict_country = \
  'co': 'Colombia',
  'cr': 'Costa Rica',
  'cy': 'Cyprus',
- 'cz': 'Czechia',
+ 'cz': 'Czech Republic',
  'de': 'Germany',
  'dk': 'Denmark',
  'do': 'Dominican Republic',
