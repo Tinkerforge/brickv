@@ -44,12 +44,16 @@ else:
     err_msg += 'Could not read Brick Viewer installed version\n'
 
 def get_changelog_version(bindings_root_directory):
-    r = re.compile('^(\d{4}-\d{2}-\d{2}:\s)(\d+)\.(\d+)\.(\d+)\s\(')
+    r1 = re.compile('^(\d{4}-\d{2}-\d{2}:\s)(\d+)\.(\d+)\.(\d+)\s\(')
+    r2 = re.compile('^(\d+)\.(\d+)\.(\d+):')
     last = None
 
     with open(os.path.join(bindings_root_directory, 'changelog.txt'), 'rb') as f:
         for line in f.readlines():
-            m = r.match(line)
+            m = r1.match(line)
+
+            if m == None:
+                m = r2.match(line)
 
             if m is not None:
                 last = (m.group(2), m.group(3), m.group(4))
