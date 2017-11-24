@@ -32,10 +32,13 @@ du = psutil.disk_usage("/")
 all_process_info = []
 
 for p in psutil.process_iter(): # update CPU usage info
-    if psutil.version_info >= (5, 0, 1):
-        p.cpu_percent(interval=0)
-    else:
-        p.get_cpu_percent(interval=0)
+    try:
+        if psutil.version_info >= (5, 0, 1):
+            p.cpu_percent(interval=0)
+        else:
+            p.get_cpu_percent(interval=0)
+    except:
+        pass
 
 if len(sys.argv) < 2:
     result['cpu_used'] = psutil.cpu_percent(1)
@@ -45,10 +48,10 @@ else:
 all_process_info = []
 own_pid = os.getpid()
 for p in psutil.process_iter():
-    if p.pid == own_pid:
-        continue
-
     try:
+        if p.pid == own_pid:
+            continue
+
         if psutil.version_info >= (5, 0, 1):
             process_dict = {'cmd': ' '.join(get_cmdline(p)),
                             'name': get_name(p),
