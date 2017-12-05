@@ -119,10 +119,10 @@ else:
     from tinkerforge.bricklet_dual_button import BrickletDualButton
     from tinkerforge.bricklet_dust_detector import BrickletDustDetector
     from tinkerforge.bricklet_gps import BrickletGPS
-    from brickv.bindings.bricklet_gps_v2 import BrickletGPSV2
+    from tinkerforge.bindings.bricklet_gps_v2 import BrickletGPSV2
     from tinkerforge.bricklet_hall_effect import BrickletHallEffect
     from tinkerforge.bricklet_humidity import BrickletHumidity
-    from brickv.bindings.bricklet_humidity_v2 import BrickletHumidityV2
+    from tinkerforge.bindings.bricklet_humidity_v2 import BrickletHumidityV2
     from tinkerforge.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
     from tinkerforge.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
     from tinkerforge.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
@@ -156,7 +156,7 @@ else:
     from tinkerforge.brick_master import BrickMaster
     from tinkerforge.brick_servo import BrickServo
     from tinkerforge.brick_stepper import BrickStepper
-    from brickv.bindings.brick_silent_stepper import BrickSilentStepper
+    from tinkerforge.bindings.brick_silent_stepper import BrickSilentStepper
 
 def value_to_bits(value, length):
     bits = []
