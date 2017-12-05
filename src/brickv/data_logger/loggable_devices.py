@@ -524,7 +524,7 @@ device_specs = {
                 'name': 'Chip Temperature',
                 'getter': lambda device: device.get_chip_temperature(),
                 'subvalues': None,
-                'unit': '°C/100',
+                'unit': '°C',
                 'advanced': False
             }
         ],
@@ -2133,7 +2133,7 @@ device_specs = {
                 'name': 'Chip Temperature',
                 'getter': lambda device: device.get_chip_temperature(),
                 'subvalues': None,
-                'unit': '°C/10',
+                'unit': '°C',
                 'advanced': True
             }
         ],
@@ -2197,7 +2197,7 @@ device_specs = {
                 'name': 'Chip Temperature',
                 'getter': lambda device: device.get_chip_temperature(),
                 'subvalues': None,
-                'unit': '°C/10',
+                'unit': '°C',
                 'advanced': True
             }
         ],
@@ -2274,7 +2274,7 @@ device_specs = {
                 'name': 'Chip Temperature',
                 'getter': lambda device: device.get_chip_temperature(),
                 'subvalues': None,
-                'unit': '°C/10',
+                'unit': '°C',
                 'advanced': True
             }
         ],
@@ -2302,7 +2302,7 @@ device_specs = {
                 'name': 'Chip Temperature',
                 'getter': lambda device: device.get_chip_temperature(),
                 'subvalues': None,
-                'unit': '°C/10',
+                'unit': '°C',
                 'advanced': True
             }
         ],
@@ -2386,7 +2386,7 @@ device_specs = {
                 'name': 'Chip Temperature',
                 'getter': lambda device: device.get_chip_temperature(),
                 'subvalues': None,
-                'unit': '°C/10',
+                'unit': '°C',
                 'advanced': True
             }
         ],
@@ -2421,7 +2421,7 @@ device_specs = {
                 'name': 'Chip Temperature',
                 'getter': lambda device: device.get_chip_temperature(),
                 'subvalues': None,
-                'unit': '°C/10',
+                'unit': '°C',
                 'advanced': True
             }
         ],
