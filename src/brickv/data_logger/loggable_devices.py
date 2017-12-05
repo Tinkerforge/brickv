@@ -525,7 +525,7 @@ device_specs = {
                 'getter': lambda device: device.get_chip_temperature(),
                 'subvalues': None,
                 'unit': '°C/100',
-                'advanced': False
+                'advanced': True
             }
         ],
         'options_setter': lambda device, reference_air_pressure, moving_average_length_air_pressure, \
@@ -846,7 +846,7 @@ device_specs = {
                 'getter': lambda device: device.get_chip_temperature(),
                 'subvalues': None,
                 'unit': '°C',
-                'advanced': False
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -933,7 +933,7 @@ device_specs = {
                 'getter': lambda device: device.get_chip_temperature(),
                 'subvalues': None,
                 'unit': '°C',
-                'advanced': False
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -2397,25 +2397,39 @@ device_specs = {
         'class': BrickStepper,
         'values': [
             {
+                'name': 'Current Velocity',
+                'getter': lambda device: device.get_current_velocity(),
+                'subvalues': None,
+                'unit': 'steps/sec',
+                'advanced': False
+            },
+            {
+                'name': 'Current Position',
+                'getter': lambda device: device.get_current_position(),
+                'subvalues': None,
+                'unit': 'steps',
+                'advanced': True
+            },
+            {
                 'name': 'Stack Input Voltage',
                 'getter': lambda device: device.get_stack_input_voltage(),
                 'subvalues': None,
                 'unit': 'mV',
-                'advanced': False
+                'advanced': True
             },
             {
                 'name': 'External Input Voltage',
                 'getter': lambda device: device.get_external_input_voltage(),
                 'subvalues': None,
                 'unit': 'mV',
-                'advanced': False
+                'advanced': True
             },
             {
                 'name': 'Current Consumption',
                 'getter': lambda device: device.get_current_consumption(),
                 'subvalues': None,
                 'unit': 'mA',
-                'advanced': False
+                'advanced': True
             },
             {
                 'name': 'Chip Temperature',
