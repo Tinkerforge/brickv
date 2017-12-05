@@ -92,6 +92,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.brick_master import BrickMaster
     from brickv.bindings.brick_servo import BrickServo
     from brickv.bindings.brick_stepper import BrickStepper
+    from brickv.bindings.brick_silent_stepper import BrickSilentStepper
 
     from brickv.data_logger.event_logger import EventLogger
     from brickv.data_logger.utils import LoggerTimer, CSVData, \
@@ -155,6 +156,7 @@ else:
     from tinkerforge.brick_master import BrickMaster
     from tinkerforge.brick_servo import BrickServo
     from tinkerforge.brick_stepper import BrickStepper
+    from brickv.bindings.brick_silent_stepper import BrickSilentStepper
 
 def value_to_bits(value, length):
     bits = []
@@ -299,6 +301,10 @@ def special_get_ptc_temperature(device):
         raise Exception('No sensor')
     else:
         return device.get_temperature()
+
+# BrickSilentStepper
+def special_get_silent_stepper_current_consumption(device):
+    return device.get_all_data().current_consumption
 
 device_specs = {
     BrickletAccelerometer.DEVICE_DISPLAY_NAME: {
@@ -2427,6 +2433,55 @@ device_specs = {
             {
                 'name': 'Current Consumption',
                 'getter': lambda device: device.get_current_consumption(),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': True
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C/10',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickSilentStepper.DEVICE_DISPLAY_NAME: {
+        'class': BrickSilentStepper,
+        'values': [
+            {
+                'name': 'Current Velocity',
+                'getter': lambda device: device.get_current_velocity(),
+                'subvalues': None,
+                'unit': 'steps/sec',
+                'advanced': False
+            },
+            {
+                'name': 'Current Position',
+                'getter': lambda device: device.get_current_position(),
+                'subvalues': None,
+                'unit': 'steps',
+                'advanced': True
+            },
+            {
+                'name': 'Stack Input Voltage',
+                'getter': lambda device: device.get_stack_input_voltage(),
+                'subvalues': None,
+                'unit': 'mV',
+                'advanced': True
+            },
+            {
+                'name': 'External Input Voltage',
+                'getter': lambda device: device.get_external_input_voltage(),
+                'subvalues': None,
+                'unit': 'mV',
+                'advanced': True
+            },
+            {
+                'name': 'Current Consumption',
+                'getter': lambda device: special_get_silent_stepper_current_consumption(device),
                 'subvalues': None,
                 'unit': 'mA',
                 'advanced': True
