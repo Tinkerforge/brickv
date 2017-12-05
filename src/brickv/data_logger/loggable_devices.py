@@ -46,6 +46,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_gps import BrickletGPS
     from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
     from brickv.bindings.bricklet_humidity import BrickletHumidity
+    from brickv.bindings.bricklet_humidity_v2 import BrickletHumidityV2
     from brickv.bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
     from brickv.bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
     from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
@@ -118,6 +119,7 @@ else:
     from tinkerforge.bricklet_gps import BrickletGPS
     from tinkerforge.bricklet_hall_effect import BrickletHallEffect
     from tinkerforge.bricklet_humidity import BrickletHumidity
+    from brickv.bindings.bricklet_humidity_v2 import BrickletHumidityV2
     from tinkerforge.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
     from tinkerforge.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
     from tinkerforge.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
@@ -834,6 +836,34 @@ device_specs = {
                 'subvalues': None,
                 'unit': None,
                 'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletHumidityV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletHumidityV2,
+        'values': [
+            {
+                'name': 'Humidity',
+                'getter': lambda device: device.get_humidity(),
+                'subvalues': None,
+                'unit': '%RH/100',
+                'advanced': False
+            },
+            {
+                'name': 'Temperature',
+                'getter': lambda device: device.get_temperature(),
+                'subvalues': None,
+                'unit': '°C/100',
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': False
             }
         ],
         'options_setter': None,
