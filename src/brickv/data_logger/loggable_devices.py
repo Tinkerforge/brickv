@@ -58,6 +58,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
     from brickv.bindings.bricklet_line import BrickletLine
     from brickv.bindings.bricklet_linear_poti import BrickletLinearPoti
+    from brickv.bindings.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
     from brickv.bindings.bricklet_load_cell import BrickletLoadCell
     from brickv.bindings.bricklet_moisture import BrickletMoisture
     from brickv.bindings.bricklet_motion_detector import BrickletMotionDetector
@@ -133,6 +134,7 @@ else:
     from tinkerforge.bricklet_led_strip import BrickletLEDStrip
     from tinkerforge.bricklet_line import BrickletLine
     from tinkerforge.bricklet_linear_poti import BrickletLinearPoti
+    from tinkerforge.bindings.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
     from tinkerforge.bricklet_load_cell import BrickletLoadCell
     from tinkerforge.bricklet_moisture import BrickletMoisture
     from tinkerforge.bricklet_motion_detector import BrickletMotionDetector
@@ -1591,6 +1593,27 @@ device_specs = {
                 'getter': lambda device: device.get_analog_value(),
                 'subvalues': None,
                 'unit': None,
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletMotorizedLinearPoti.DEVICE_DISPLAY_NAME: {
+        'class': BrickletMotorizedLinearPoti,
+        'values': [
+            {
+                'name': 'Position',
+                'getter': lambda device: device.get_position(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
                 'advanced': True
             }
         ],
