@@ -44,6 +44,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_dual_button import BrickletDualButton
     from brickv.bindings.bricklet_dust_detector import BrickletDustDetector
     from brickv.bindings.bricklet_gps import BrickletGPS
+    from brickv.bindings.bricklet_gps_v2 import BrickletGPSV2
     from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
     from brickv.bindings.bricklet_humidity import BrickletHumidity
     from brickv.bindings.bricklet_humidity_v2 import BrickletHumidityV2
@@ -117,6 +118,7 @@ else:
     from tinkerforge.bricklet_dual_button import BrickletDualButton
     from tinkerforge.bricklet_dust_detector import BrickletDustDetector
     from tinkerforge.bricklet_gps import BrickletGPS
+    from brickv.bindings.bricklet_gps_v2 import BrickletGPSV2
     from tinkerforge.bricklet_hall_effect import BrickletHallEffect
     from tinkerforge.bricklet_humidity import BrickletHumidity
     from brickv.bindings.bricklet_humidity_v2 import BrickletHumidityV2
@@ -213,6 +215,25 @@ def special_get_gps_altitude(device):
 
 def special_get_gps_motion(device):
     if device.get_status()[0] == BrickletGPS.FIX_NO_FIX:
+        raise Exception('No fix')
+    else:
+        return device.get_motion()
+
+# BrickletGPSV2
+def special_get_gps_v2_coordinates(device):
+    if device.get_satellite_system_status(BrickletGPSV2.SATELLITE_SYSTEM_GPS).fix == BrickletGPSV2.FIX_NO_FIX:
+        raise Exception('No fix')
+    else:
+        return device.get_coordinates()
+
+def special_get_gps_v2_altitude(device):
+    if device.get_satellite_system_status(BrickletGPSV2.SATELLITE_SYSTEM_GPS).fix != BrickletGPSV2.FIX_3D_FIX:
+        raise Exception('No 3D fix')
+    else:
+        return device.get_altitude()
+
+def special_get_gps_v2_motion(device):
+    if device.get_satellite_system_status(BrickletGPSV2.SATELLITE_SYSTEM_GPS).fix == BrickletGPSV2.FIX_NO_FIX:
         raise Exception('No fix')
     else:
         return device.get_motion()
@@ -776,6 +797,55 @@ device_specs = {
                 'getter': lambda device: device.get_status(),
                 'subvalues': ['Fix', 'Satellites View', 'Satellites Used'],
                 'unit': [None, None, None], # FIXME: fix constants?
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletGPSV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletGPSV2,
+        'values': [
+            {
+                'name': 'Coordinates',
+                'getter': special_get_gps_v2_coordinates,
+                'subvalues': ['Latitude', 'NS', 'Longitude', 'EW'],
+                'unit': ['deg/1000000', None, 'deg/1000000', None],
+                'advanced': False
+            },
+            {
+                'name': 'Altitude',
+                'getter': special_get_gps_v2_altitude,
+                'subvalues': ['Altitude', 'Geoidal Separation'],
+                'unit': ['cm', 'cm'],
+                'advanced': False
+            },
+            {
+                'name': 'Motion',
+                'getter': special_get_gps_v2_motion,
+                'subvalues': ['Course', 'Speed'],
+                'unit': ['deg/100', '10m/h'],
+                'advanced': False
+            },
+            {
+                'name': 'Date Time',
+                'getter': lambda device: device.get_date_time(),
+                'subvalues': ['Date', 'Time'],
+                'unit': ['ddmmyy', 'hhmmss|sss'],
+                'advanced': False
+            },
+            {
+                'name': 'Status',
+                'getter': lambda device: device.get_status(),
+                'subvalues': ['Fix', 'Satellites View'],
+                'unit': [None, None], # FIXME: fix constants?
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
                 'advanced': False
             }
         ],
