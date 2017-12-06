@@ -101,6 +101,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
     from brickv.bindings.bricklet_real_time_clock import BrickletRealTimeClock
     from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder
+    from brickv.bindings.bricklet_dmx import BrickletDMX
 
     from brickv.data_logger.event_logger import EventLogger
     from brickv.data_logger.utils import LoggerTimer, CSVData, \
@@ -173,6 +174,7 @@ else:
     from tinkerforge.bindings.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
     from tinkerforge.bindings.bricklet_real_time_clock import BrickletRealTimeClock
     from tinkerforge.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder
+    from tinkerforge.bindings.bricklet_dmx import BrickletDMX
 
 def value_to_bits(value, length):
     bits = []
@@ -2687,6 +2689,27 @@ device_specs = {
                 'subvalues': None,
                 'unit': '1/100 m/s',
                 'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletDMX.DEVICE_DISPLAY_NAME: {
+        'class': BrickletDMX,
+        'values': [
+            {
+                'name': 'Frame Error Count',
+                'getter': lambda device: device.get_frame_error_count(),
+                'subvalues': ['Overrun Error Count', 'Framing Error Count'],
+                'unit': [None, None],
+                'advanced': True
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
             }
         ],
         'options_setter': None,
