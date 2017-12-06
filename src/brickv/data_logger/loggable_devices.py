@@ -94,6 +94,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.brick_servo import BrickServo
     from brickv.bindings.brick_stepper import BrickStepper
     from brickv.bindings.brick_silent_stepper import BrickSilentStepper
+    from brickv.bindings.bricklet_thermal_imaging import BrickletThermalImaging
 
     from brickv.data_logger.event_logger import EventLogger
     from brickv.data_logger.utils import LoggerTimer, CSVData, \
@@ -159,6 +160,7 @@ else:
     from tinkerforge.brick_servo import BrickServo
     from tinkerforge.brick_stepper import BrickStepper
     from tinkerforge.bindings.brick_silent_stepper import BrickSilentStepper
+    from tinkerforge.bindings.bricklet_thermal_imaging import BrickletThermalImaging
 
 def value_to_bits(value, length):
     bits = []
@@ -2514,6 +2516,20 @@ device_specs = {
                 'getter': lambda device: device.get_chip_temperature(),
                 'subvalues': None,
                 'unit': '°C/10',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletThermalImaging.DEVICE_DISPLAY_NAME: {
+        'class': BrickletThermalImaging,
+        'values': [
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
                 'advanced': True
             }
         ],
