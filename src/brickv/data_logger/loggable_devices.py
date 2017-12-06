@@ -97,6 +97,8 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.brick_stepper import BrickStepper
     from brickv.bindings.brick_silent_stepper import BrickSilentStepper
     from brickv.bindings.bricklet_thermal_imaging import BrickletThermalImaging
+    from brickv.bindings.bricklet_rgb_led_button import BrickletRGBLEDButton
+    from brickv.bindings.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
 
     from brickv.data_logger.event_logger import EventLogger
     from brickv.data_logger.utils import LoggerTimer, CSVData, \
@@ -165,6 +167,8 @@ else:
     from tinkerforge.brick_stepper import BrickStepper
     from tinkerforge.bindings.brick_silent_stepper import BrickSilentStepper
     from tinkerforge.bindings.bricklet_thermal_imaging import BrickletThermalImaging
+    from tinkerforge.bindings.bricklet_rgb_led_button import BrickletRGBLEDButton
+    from tinkerforge.bindings.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
 
 def value_to_bits(value, length):
     bits = []
@@ -2582,6 +2586,48 @@ device_specs = {
     BrickletThermalImaging.DEVICE_DISPLAY_NAME: {
         'class': BrickletThermalImaging,
         'values': [
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletRGBLEDButton.DEVICE_DISPLAY_NAME: {
+        'class': BrickletRGBLEDButton,
+        'values': [
+            {
+                'name': 'Button State',
+                'getter': lambda device: device.get_button_state(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletRGBLEDMatrix.DEVICE_DISPLAY_NAME: {
+        'class': BrickletRGBLEDMatrix,
+        'values': [
+            {
+                'name': 'Supply Voltage',
+                'getter': lambda device: device.get_supply_voltage(),
+                'subvalues': None,
+                'unit': 'mV',
+                'advanced': True
+            },
             {
                 'name': 'Chip Temperature',
                 'getter': lambda device: device.get_chip_temperature(),
