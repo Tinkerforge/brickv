@@ -65,18 +65,6 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_moisture import BrickletMoisture
     from brickv.bindings.bricklet_motion_detector import BrickletMotionDetector
     from brickv.bindings.bricklet_multi_touch import BrickletMultiTouch
-
-    # FIXME: hack to deal with unreleased Pressure Bricklet
-    try:
-        from brickv.bindings.bricklet_pressure import BrickletPressure
-    except:
-        class BrickletPressure:
-            DUMMY = True
-            DEVICE_DISPLAY_NAME = 'Pressure Bricklet'
-            SENSOR_TYPE_MPX5500 = 0
-            SENSOR_TYPE_MPXV5004 = 1
-            SENSOR_TYPE_MPX4115A = 2
-
     from brickv.bindings.bricklet_ptc import BrickletPTC
     from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
     from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
@@ -120,7 +108,7 @@ else:
     from tinkerforge.bricklet_analog_out_v2 import BrickletAnalogOutV2
     from tinkerforge.bricklet_barometer import BrickletBarometer
     # from brickv.bindings.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
-    from tinkerforge.bindings.bricklet_can import BrickletCAN
+    from tinkerforge.bricklet_can import BrickletCAN
     from tinkerforge.bricklet_co2 import BrickletCO2
     from tinkerforge.bricklet_color import BrickletColor
     from tinkerforge.bricklet_current12 import BrickletCurrent12
@@ -130,10 +118,10 @@ else:
     from tinkerforge.bricklet_dual_button import BrickletDualButton
     from tinkerforge.bricklet_dust_detector import BrickletDustDetector
     from tinkerforge.bricklet_gps import BrickletGPS
-    from tinkerforge.bindings.bricklet_gps_v2 import BrickletGPSV2
+    from tinkerforge.bricklet_gps_v2 import BrickletGPSV2
     from tinkerforge.bricklet_hall_effect import BrickletHallEffect
     from tinkerforge.bricklet_humidity import BrickletHumidity
-    from tinkerforge.bindings.bricklet_humidity_v2 import BrickletHumidityV2
+    from tinkerforge.bricklet_humidity_v2 import BrickletHumidityV2
     from tinkerforge.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
     from tinkerforge.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
     from tinkerforge.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
@@ -144,17 +132,16 @@ else:
     from tinkerforge.bricklet_led_strip import BrickletLEDStrip
     from tinkerforge.bricklet_line import BrickletLine
     from tinkerforge.bricklet_linear_poti import BrickletLinearPoti
-    from tinkerforge.bindings.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
+    from tinkerforge.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
     from tinkerforge.bricklet_load_cell import BrickletLoadCell
     from tinkerforge.bricklet_moisture import BrickletMoisture
     from tinkerforge.bricklet_motion_detector import BrickletMotionDetector
     from tinkerforge.bricklet_multi_touch import BrickletMultiTouch
-    from tinkerforge.bricklet_pressure import BrickletPressure
     from tinkerforge.bricklet_ptc import BrickletPTC
     from tinkerforge.bricklet_rotary_encoder import BrickletRotaryEncoder
     from tinkerforge.bricklet_rotary_poti import BrickletRotaryPoti
     #from tinkerforge.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback to get all data
-    from tinkerforge.bindings.bricklet_rs485 import BrickletRS485
+    from tinkerforge.bricklet_rs485 import BrickletRS485
     from tinkerforge.bricklet_sound_intensity import BrickletSoundIntensity
     from tinkerforge.bricklet_temperature import BrickletTemperature
     from tinkerforge.bricklet_temperature_ir import BrickletTemperatureIR
@@ -169,13 +156,13 @@ else:
     from tinkerforge.brick_master import BrickMaster
     from tinkerforge.brick_servo import BrickServo
     from tinkerforge.brick_stepper import BrickStepper
-    from tinkerforge.bindings.brick_silent_stepper import BrickSilentStepper
-    from tinkerforge.bindings.bricklet_thermal_imaging import BrickletThermalImaging
-    from tinkerforge.bindings.bricklet_rgb_led_button import BrickletRGBLEDButton
-    from tinkerforge.bindings.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
-    from tinkerforge.bindings.bricklet_real_time_clock import BrickletRealTimeClock
-    from tinkerforge.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder
-    from tinkerforge.bindings.bricklet_dmx import BrickletDMX
+    from tinkerforge.brick_silent_stepper import BrickSilentStepper
+    from tinkerforge.bricklet_thermal_imaging import BrickletThermalImaging
+    from tinkerforge.bricklet_rgb_led_button import BrickletRGBLEDButton
+    from tinkerforge.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
+    from tinkerforge.bricklet_real_time_clock import BrickletRealTimeClock
+    from tinkerforge.bricklet_laser_range_finder import BrickletLaserRangeFinder
+    from tinkerforge.bricklet_dmx import BrickletDMX
 
 def value_to_bits(value, length):
     bits = []
@@ -1821,44 +1808,6 @@ device_specs = {
             }
         ]
     },
-    BrickletPressure.DEVICE_DISPLAY_NAME: {
-        'class': BrickletPressure,
-        'values': [
-            {
-                'name': 'Pressure',
-                'getter': lambda device: device.get_pressure(),
-                'subvalues': None,
-                'unit': 'Pa',
-                'advanced': False
-            },
-            {
-                'name': 'Analog Value',
-                'getter': lambda device: device.get_analog_value(),
-                'subvalues': None,
-                'unit': None,
-                'advanced': True
-            }
-        ],
-        'options_setter': lambda device, sensor, moving_average_length: [device.set_sensor_type(sensor), device.set_moving_average(moving_average_length)],
-        'options': [
-            {
-                'name': 'Sensor Type',
-                'type': 'choice',
-                'values': [('MPX5500', BrickletPressure.SENSOR_TYPE_MPX5500),
-                           ('MPXV5004', BrickletPressure.SENSOR_TYPE_MPXV5004),
-                           ('MPX4115A', BrickletPressure.SENSOR_TYPE_MPX4115A)],
-                'default': 'MPX5500'
-            },
-            {
-                'name': 'Moving Average Length',
-                'type': 'int',
-                'minimum': 0,
-                'maximum': 50,
-                'suffix': None,
-                'default': 50
-            }
-        ]
-    },
     BrickletPTC.DEVICE_DISPLAY_NAME: {
         'class': BrickletPTC,
         'values': [
@@ -2717,10 +2666,6 @@ device_specs = {
         'options': None
     }
 }
-
-# FIXME: hack to deal with unreleased Pressure Bricklet
-if hasattr(BrickletPressure, 'DUMMY'):
-    del device_specs[BrickletPressure.DEVICE_DISPLAY_NAME]
 
 '''
 /*---------------------------------------------------------------------------
