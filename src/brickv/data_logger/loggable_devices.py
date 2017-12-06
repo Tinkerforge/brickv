@@ -99,6 +99,8 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_thermal_imaging import BrickletThermalImaging
     from brickv.bindings.bricklet_rgb_led_button import BrickletRGBLEDButton
     from brickv.bindings.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
+    from brickv.bindings.bricklet_real_time_clock import BrickletRealTimeClock
+    from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder
 
     from brickv.data_logger.event_logger import EventLogger
     from brickv.data_logger.utils import LoggerTimer, CSVData, \
@@ -169,6 +171,8 @@ else:
     from tinkerforge.bindings.bricklet_thermal_imaging import BrickletThermalImaging
     from tinkerforge.bindings.bricklet_rgb_led_button import BrickletRGBLEDButton
     from tinkerforge.bindings.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
+    from tinkerforge.bindings.bricklet_real_time_clock import BrickletRealTimeClock
+    from tinkerforge.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder
 
 def value_to_bits(value, length):
     bits = []
@@ -2634,6 +2638,55 @@ device_specs = {
                 'subvalues': None,
                 'unit': '°C',
                 'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletRealTimeClock.DEVICE_DISPLAY_NAME: {
+        'class': BrickletRealTimeClock,
+        'values': [
+            {
+                'name': 'Date Time',
+                'getter': lambda device: device.get_date_time(),
+                'subvalues': ['Year',
+                              'Month',
+                              'Day',
+                              'Hour',
+                              'Minute',
+                              'Second',
+                              'Centisecond',
+                              'Weekday'],
+                'unit': [None, None, None, None, None, None, None, None],
+                'advanced': False
+            },
+            {
+                'name': 'Timestamp',
+                'getter': lambda device: device.get_timestamp(),
+                'subvalues': None,
+                'unit': 'ms',
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletLaserRangeFinder.DEVICE_DISPLAY_NAME: {
+        'class': BrickletLaserRangeFinder,
+        'values': [
+            {
+                'name': 'Distance',
+                'getter': lambda device: device.get_distance(),
+                'subvalues': None,
+                'unit': 'cm',
+                'advanced': False
+            },
+            {
+                'name': 'Velocity',
+                'getter': lambda device: device.get_velocity(),
+                'subvalues': None,
+                'unit': '1/100 m/s',
+                'advanced': False
             }
         ],
         'options_setter': None,
