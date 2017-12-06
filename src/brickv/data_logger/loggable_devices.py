@@ -35,6 +35,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_analog_out_v2 import BrickletAnalogOutV2
     from brickv.bindings.bricklet_barometer import BrickletBarometer
     # from brickv.bindings.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
+    from brickv.bindings.bricklet_can import BrickletCAN
     from brickv.bindings.bricklet_co2 import BrickletCO2
     from brickv.bindings.bricklet_color import BrickletColor
     from brickv.bindings.bricklet_current12 import BrickletCurrent12
@@ -113,6 +114,7 @@ else:
     from tinkerforge.bricklet_analog_out_v2 import BrickletAnalogOutV2
     from tinkerforge.bricklet_barometer import BrickletBarometer
     # from brickv.bindings.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
+    from tinkerforge.bindings.bricklet_can import BrickletCAN
     from tinkerforge.bricklet_co2 import BrickletCO2
     from tinkerforge.bricklet_color import BrickletColor
     from tinkerforge.bricklet_current12 import BrickletCurrent12
@@ -580,6 +582,25 @@ device_specs = {
                 'default': 10
             }
         ]
+    },
+    BrickletCAN.DEVICE_DISPLAY_NAME: {
+        'class': BrickletCAN,
+        'values': [
+            {
+                'name': 'Error Log',
+                'getter': lambda device: device.get_error_log(),
+                'subvalues': ['Write Error Level',
+                              'Read Error Level',
+                              'Transceiver Disabled',
+                              'Write Timeout Count',
+                              'Read Register Overflow Count',
+                              'Read Buffer Overflow Count'],
+                'unit': [None, None, None, None, None, None],
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
     },
     BrickletCO2.DEVICE_DISPLAY_NAME: {
         'class': BrickletCO2,
