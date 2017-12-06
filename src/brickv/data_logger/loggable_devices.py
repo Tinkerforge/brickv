@@ -79,6 +79,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
     from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
     # from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
+    from brickv.bindings.bricklet_rs485 import BrickletRS485
     from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
     from brickv.bindings.bricklet_temperature import BrickletTemperature
     from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
@@ -145,6 +146,7 @@ else:
     from tinkerforge.bricklet_rotary_encoder import BrickletRotaryEncoder
     from tinkerforge.bricklet_rotary_poti import BrickletRotaryPoti
     #from tinkerforge.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback to get all data
+    from tinkerforge.bindings.bricklet_rs485 import BrickletRS485
     from tinkerforge.bricklet_sound_intensity import BrickletSoundIntensity
     from tinkerforge.bricklet_temperature import BrickletTemperature
     from tinkerforge.bricklet_temperature_ir import BrickletTemperatureIR
@@ -1891,6 +1893,40 @@ device_specs = {
                 'getter': lambda device: device.get_analog_value(),
                 'subvalues': None,
                 'unit': None,
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletRS485.DEVICE_DISPLAY_NAME: {
+        'class': BrickletRS485,
+        'values': [
+            {
+                'name': 'Error Count',
+                'getter': lambda device: device.get_error_count(),
+                'subvalues': ['Overrun Error Count', 'Parity Error Count'],
+                'unit': [None, None],
+                'advanced': True
+            },
+            {
+                'name': 'Modbus Common Error Count',
+                'getter': lambda device: device.get_modbus_common_error_count(),
+                'subvalues': ['Timeout Error Count',
+                              'Checksum Error Count',
+                              'Frame Too Big Error Count',
+                              'Illegal Function Error Count',
+                              'Illegal Data Address Error Count',
+                              'Illegal Data Value Error Count',
+                              'Slave Device Failure Error Count'],
+                'unit': [None, None, None, None, None, None, None],
+                'advanced': True
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
                 'advanced': True
             }
         ],
