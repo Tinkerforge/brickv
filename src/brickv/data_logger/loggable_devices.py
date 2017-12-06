@@ -3,6 +3,7 @@
 brickv (Brick Viewer)
 Copyright (C) 2012, 2014 Roland Dudko <roland.dudko@gmail.com>
 Copyright (C) 2012, 2014 Marvin Lutz <marvin.lutz.mail@gmail.com>
+Copyright (C) 2017 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 loggable_devices.py: Util classes for the data logger
 
