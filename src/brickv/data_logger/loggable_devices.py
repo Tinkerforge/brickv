@@ -28,6 +28,24 @@ Boston, MA 02111-1307, USA.
 import time
 
 if 'merged_data_logger_modules' not in globals():
+    from brickv.data_logger.event_logger import EventLogger
+    from brickv.data_logger.utils import LoggerTimer, CSVData, \
+                                         timestamp_to_de, timestamp_to_us, \
+                                         timestamp_to_iso, timestamp_to_unix, \
+                                         timestamp_to_de_msec, timestamp_to_us_msec, \
+                                         timestamp_to_iso_msec, timestamp_to_unix_msec, \
+                                         timestamp_to_strftime
+
+    # Bricks
+    from brickv.bindings.brick_dc import BrickDC
+    from brickv.bindings.brick_imu import BrickIMU
+    from brickv.bindings.brick_imu_v2 import BrickIMUV2
+    from brickv.bindings.brick_master import BrickMaster
+    from brickv.bindings.brick_servo import BrickServo
+    from brickv.bindings.brick_silent_stepper import BrickSilentStepper
+    from brickv.bindings.brick_stepper import BrickStepper
+
+    # Bricklets
     from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer
     from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
     from brickv.bindings.bricklet_ambient_light_v2 import BrickletAmbientLightV2
@@ -35,15 +53,16 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2
     from brickv.bindings.bricklet_analog_out_v2 import BrickletAnalogOutV2
     from brickv.bindings.bricklet_barometer import BrickletBarometer
-    # from brickv.bindings.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
-    from brickv.bindings.bricklet_can import BrickletCAN
+    from brickv.bindings.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
     from brickv.bindings.bricklet_co2 import BrickletCO2
     from brickv.bindings.bricklet_color import BrickletColor
     from brickv.bindings.bricklet_current12 import BrickletCurrent12
     from brickv.bindings.bricklet_current25 import BrickletCurrent25
     from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
     from brickv.bindings.bricklet_distance_us import BrickletDistanceUS
+    from brickv.bindings.bricklet_dmx import BrickletDMX
     from brickv.bindings.bricklet_dual_button import BrickletDualButton
+    from brickv.bindings.bricklet_dual_relay import BrickletDualRelay
     from brickv.bindings.bricklet_dust_detector import BrickletDustDetector
     from brickv.bindings.bricklet_gps import BrickletGPS
     from brickv.bindings.bricklet_gps_v2 import BrickletGPSV2
@@ -56,50 +75,46 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_io16 import BrickletIO16
     from brickv.bindings.bricklet_io4 import BrickletIO4
     from brickv.bindings.bricklet_joystick import BrickletJoystick
-    # from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
+    from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
     from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
     from brickv.bindings.bricklet_line import BrickletLine
     from brickv.bindings.bricklet_linear_poti import BrickletLinearPoti
-    from brickv.bindings.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
     from brickv.bindings.bricklet_load_cell import BrickletLoadCell
     from brickv.bindings.bricklet_moisture import BrickletMoisture
     from brickv.bindings.bricklet_motion_detector import BrickletMotionDetector
+    from brickv.bindings.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
     from brickv.bindings.bricklet_multi_touch import BrickletMultiTouch
+    from brickv.bindings.bricklet_nfc_rfid import BrickletNFCRFID
     from brickv.bindings.bricklet_ptc import BrickletPTC
+    from brickv.bindings.bricklet_real_time_clock import BrickletRealTimeClock
+    from brickv.bindings.bricklet_rgb_led_button import BrickletRGBLEDButton
+    from brickv.bindings.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
     from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
     from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
     # from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
     from brickv.bindings.bricklet_rs485 import BrickletRS485
+    from brickv.bindings.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
+    from brickv.bindings.bricklet_solid_state_relay import BrickletSolidStateRelay
     from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
     from brickv.bindings.bricklet_temperature import BrickletTemperature
     from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
+    from brickv.bindings.bricklet_thermal_imaging import BrickletThermalImaging
     from brickv.bindings.bricklet_thermocouple import BrickletThermocouple
     from brickv.bindings.bricklet_tilt import BrickletTilt
     from brickv.bindings.bricklet_uv_light import BrickletUVLight
     from brickv.bindings.bricklet_voltage import BrickletVoltage
     from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent
-    from brickv.bindings.brick_dc import BrickDC
-    from brickv.bindings.brick_imu import BrickIMU
-    from brickv.bindings.brick_imu_v2 import BrickIMUV2
-    from brickv.bindings.brick_master import BrickMaster
-    from brickv.bindings.brick_servo import BrickServo
-    from brickv.bindings.brick_stepper import BrickStepper
-    from brickv.bindings.brick_silent_stepper import BrickSilentStepper
-    from brickv.bindings.bricklet_thermal_imaging import BrickletThermalImaging
-    from brickv.bindings.bricklet_rgb_led_button import BrickletRGBLEDButton
-    from brickv.bindings.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
-    from brickv.bindings.bricklet_real_time_clock import BrickletRealTimeClock
-    from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder
-    from brickv.bindings.bricklet_dmx import BrickletDMX
-
-    from brickv.data_logger.event_logger import EventLogger
-    from brickv.data_logger.utils import LoggerTimer, CSVData, \
-                                         timestamp_to_de, timestamp_to_us, \
-                                         timestamp_to_iso, timestamp_to_unix, \
-                                         timestamp_to_de_msec, timestamp_to_us_msec, \
-                                         timestamp_to_iso_msec, timestamp_to_unix_msec, \
-                                         timestamp_to_strftime
 else:
+    # Bricks
+    from tinkerforge.brick_dc import BrickDC
+    from tinkerforge.brick_imu import BrickIMU
+    from tinkerforge.brick_imu_v2 import BrickIMUV2
+    from tinkerforge.brick_master import BrickMaster
+    from tinkerforge.brick_servo import BrickServo
+    from tinkerforge.brick_silent_stepper import BrickSilentStepper
+    from tinkerforge.brick_stepper import BrickStepper
+
+    # Bricklets
     from tinkerforge.bricklet_accelerometer import BrickletAccelerometer
     from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
     from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
@@ -107,15 +122,16 @@ else:
     from tinkerforge.bricklet_analog_in_v2 import BrickletAnalogInV2
     from tinkerforge.bricklet_analog_out_v2 import BrickletAnalogOutV2
     from tinkerforge.bricklet_barometer import BrickletBarometer
-    # from brickv.bindings.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
-    from tinkerforge.bricklet_can import BrickletCAN
+    from tinkerforge.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
     from tinkerforge.bricklet_co2 import BrickletCO2
     from tinkerforge.bricklet_color import BrickletColor
     from tinkerforge.bricklet_current12 import BrickletCurrent12
     from tinkerforge.bricklet_current25 import BrickletCurrent25
     from tinkerforge.bricklet_distance_ir import BrickletDistanceIR
     from tinkerforge.bricklet_distance_us import BrickletDistanceUS
+    from tinkerforge.bricklet_dmx import BrickletDMX
     from tinkerforge.bricklet_dual_button import BrickletDualButton
+    from tinkerforge.bricklet_dual_relay import BrickletDualRelay
     from tinkerforge.bricklet_dust_detector import BrickletDustDetector
     from tinkerforge.bricklet_gps import BrickletGPS
     from tinkerforge.bricklet_gps_v2 import BrickletGPSV2
@@ -128,41 +144,35 @@ else:
     from tinkerforge.bricklet_io16 import BrickletIO16
     from tinkerforge.bricklet_io4 import BrickletIO4
     from tinkerforge.bricklet_joystick import BrickletJoystick
-    #from tinkerforge.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
+    from tinkerforge.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
     from tinkerforge.bricklet_led_strip import BrickletLEDStrip
     from tinkerforge.bricklet_line import BrickletLine
     from tinkerforge.bricklet_linear_poti import BrickletLinearPoti
-    from tinkerforge.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
     from tinkerforge.bricklet_load_cell import BrickletLoadCell
     from tinkerforge.bricklet_moisture import BrickletMoisture
     from tinkerforge.bricklet_motion_detector import BrickletMotionDetector
+    from tinkerforge.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
     from tinkerforge.bricklet_multi_touch import BrickletMultiTouch
+    from tinkerforge.bricklet_nfc_rfid import BrickletNFCRFID
     from tinkerforge.bricklet_ptc import BrickletPTC
+    from tinkerforge.bricklet_real_time_clock import BrickletRealTimeClock
+    from tinkerforge.bricklet_rgb_led_button import BrickletRGBLEDButton
+    from tinkerforge.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
     from tinkerforge.bricklet_rotary_encoder import BrickletRotaryEncoder
     from tinkerforge.bricklet_rotary_poti import BrickletRotaryPoti
-    #from tinkerforge.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback to get all data
+    # from tinkerforge.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
     from tinkerforge.bricklet_rs485 import BrickletRS485
+    from tinkerforge.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
+    from tinkerforge.bricklet_solid_state_relay import BrickletSolidStateRelay
     from tinkerforge.bricklet_sound_intensity import BrickletSoundIntensity
     from tinkerforge.bricklet_temperature import BrickletTemperature
     from tinkerforge.bricklet_temperature_ir import BrickletTemperatureIR
+    from tinkerforge.bricklet_thermal_imaging import BrickletThermalImaging
     from tinkerforge.bricklet_thermocouple import BrickletThermocouple
     from tinkerforge.bricklet_tilt import BrickletTilt
     from tinkerforge.bricklet_uv_light import BrickletUVLight
     from tinkerforge.bricklet_voltage import BrickletVoltage
     from tinkerforge.bricklet_voltage_current import BrickletVoltageCurrent
-    from tinkerforge.brick_dc import BrickDC
-    from tinkerforge.brick_imu import BrickIMU
-    from tinkerforge.brick_imu_v2 import BrickIMUV2
-    from tinkerforge.brick_master import BrickMaster
-    from tinkerforge.brick_servo import BrickServo
-    from tinkerforge.brick_stepper import BrickStepper
-    from tinkerforge.brick_silent_stepper import BrickSilentStepper
-    from tinkerforge.bricklet_thermal_imaging import BrickletThermalImaging
-    from tinkerforge.bricklet_rgb_led_button import BrickletRGBLEDButton
-    from tinkerforge.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
-    from tinkerforge.bricklet_real_time_clock import BrickletRealTimeClock
-    from tinkerforge.bricklet_laser_range_finder import BrickletLaserRangeFinder
-    from tinkerforge.bricklet_dmx import BrickletDMX
 
 def value_to_bits(value, length):
     bits = []
@@ -763,6 +773,20 @@ device_specs = {
                 'getter': lambda device: device.get_led_state(),
                 'subvalues': ['Left', 'Right'],
                 'unit': [None, None], # FIXME: constants?
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletDualRelay.DEVICE_DISPLAY_NAME: {
+        'class': BrickletDualRelay,
+        'values': [
+            {
+                'name': 'State',
+                'getter': lambda device: device.get_state(),
+                'subvalues': ['Relay1', 'Relay2'],
+                'unit': [None, None],
                 'advanced': False
             }
         ],
@@ -1808,6 +1832,20 @@ device_specs = {
             }
         ]
     },
+    BrickletNFCRFID.DEVICE_DISPLAY_NAME: {
+        'class': BrickletNFCRFID,
+        'values': [
+            {
+                'name': 'State',
+                'getter': lambda device: device.get_state(),
+                'subvalues': ['State', 'Idle'],
+                'unit': [None, None],
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
     BrickletPTC.DEVICE_DISPLAY_NAME: {
         'class': BrickletPTC,
         'values': [
@@ -1914,6 +1952,34 @@ device_specs = {
         'options_setter': None,
         'options': None
     },
+    BrickletSegmentDisplay4x7.DEVICE_DISPLAY_NAME: {
+        'class': BrickletSegmentDisplay4x7,
+        'values': [
+            {
+                'name': 'Counter Value',
+                'getter': lambda device: device.get_counter_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletSolidStateRelay.DEVICE_DISPLAY_NAME: {
+        'class': BrickletSolidStateRelay,
+        'values': [
+            {
+                'name': 'State',
+                'getter': lambda device: device.get_state(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
     BrickletSoundIntensity.DEVICE_DISPLAY_NAME: {
         'class': BrickletSoundIntensity,
         'values': [
@@ -1949,6 +2015,20 @@ device_specs = {
                 'default': '400kHz'
             }
         ]
+    },
+    BrickletThermalImaging.DEVICE_DISPLAY_NAME: {
+        'class': BrickletThermalImaging,
+        'values': [
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
     },
     BrickletThermocouple.DEVICE_DISPLAY_NAME: {
         'class': BrickletThermocouple,
@@ -2533,20 +2613,6 @@ device_specs = {
                 'getter': lambda device: device.get_chip_temperature(),
                 'subvalues': None,
                 'unit': '°C/10',
-                'advanced': True
-            }
-        ],
-        'options_setter': None,
-        'options': None
-    },
-    BrickletThermalImaging.DEVICE_DISPLAY_NAME: {
-        'class': BrickletThermalImaging,
-        'values': [
-            {
-                'name': 'Chip Temperature',
-                'getter': lambda device: device.get_chip_temperature(),
-                'subvalues': None,
-                'unit': '°C',
                 'advanced': True
             }
         ],
