@@ -64,6 +64,7 @@ from brickv.plugin_system.plugins.ptc import device_class as ptc
 from brickv.plugin_system.plugins.real_time_clock import device_class as real_time_clock
 from brickv.plugin_system.plugins.red import device_class as red
 from brickv.plugin_system.plugins.remote_switch import device_class as remote_switch
+from brickv.plugin_system.plugins.remote_switch_v2 import device_class as remote_switch_v2
 from brickv.plugin_system.plugins.rgb_led import device_class as rgb_led
 from brickv.plugin_system.plugins.rgb_led_button import device_class as rgb_led_button
 from brickv.plugin_system.plugins.rgb_led_matrix import device_class as rgb_led_matrix
@@ -157,6 +158,7 @@ device_classes = [
     real_time_clock,
     red,
     remote_switch,
+    remote_switch_v2,
     rgb_led,
     rgb_led_button,
     rgb_led_matrix,
