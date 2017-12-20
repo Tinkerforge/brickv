@@ -643,4 +643,4 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
         TextFile.read_async(self.session, DNSMASQ_CONF_PATH,
                             cb_dnsmasq_conf_content,
-                            lambda kind, error: cb_text_file_error('hostapd.conf', kind, error))
+                            lambda kind, error: cb_text_file_error('dnsmasq.conf', kind, error))
