@@ -30,8 +30,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>444</width>
-        <height>646</height>
+        <width>424</width>
+        <height>664</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -402,7 +402,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Resolution:</string>
+                 <string>Range:</string>
                 </property>
                </widget>
               </item>
@@ -410,12 +410,12 @@
                <widget class="QComboBox" name="resolution_box">
                 <item>
                  <property name="text">
-                  <string>-273 to 6279°C</string>
+                  <string>-10 to 450°C</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>-273 to 381°C</string>
+                  <string>-10 to 140°C</string>
                  </property>
                 </item>
                </widget>
