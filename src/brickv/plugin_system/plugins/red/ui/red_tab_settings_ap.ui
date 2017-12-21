@@ -34,8 +34,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>615</width>
-        <height>570</height>
+        <width>617</width>
+        <height>568</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
@@ -95,7 +95,7 @@
           <number>1</number>
          </property>
          <property name="maximum">
-          <number>14</number>
+          <number>13</number>
          </property>
         </widget>
        </item>
