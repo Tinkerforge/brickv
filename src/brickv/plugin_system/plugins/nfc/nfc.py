@@ -21,8 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtGui import QMessageBox, QTextCursor
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.nfc.ui_nfc import Ui_NFC
@@ -53,6 +53,11 @@ class NFC(COMCUPluginBase, Ui_NFC):
         self.current_state = {'cardemu': None,
                               'p2p': None,
                               'reader': None}
+        self.cardemu_start_discovery_clicked = False
+
+        # This variable determines whether or not to actually ask the the
+        # Bricklet to change operating mode.
+        self.change_mode = False
 
         # NOTE: GUI updates from Tinkerforge binding callbacks must be done
         #       by emitting signals (in main GUI thread).
@@ -107,13 +112,59 @@ class NFC(COMCUPluginBase, Ui_NFC):
         self.button_reader_scan_tag.clicked.connect(self.reader_scan_tag_clicked)
         self.button_p2p_discover.clicked.connect(self.button_p2p_discover_clicked)
         self.combo_reader_tag_type.currentIndexChanged.connect(self.reader_tag_type_changed)
+        self.combo_p2p_operation.currentIndexChanged.connect(self.combo_p2p_operation_changed)
+        self.button_cardemu_start_discovery.clicked.connect(self.button_cardemu_start_discovery_clicked)
+        self.combo_cardemu_record_type.currentIndexChanged.connect(self.combo_cardemu_record_type_changed)
+        self.combo_p2p_write_record_type.currentIndexChanged.connect(self.combo_p2p_write_record_type_changed)
 
         self.gui_elements_mifare_classic_auth = [self.widget_read_spinbox,
                                                  self.label_read_key,
                                                  self.combobox_read_key]
 
         self.reader_tag_type_changed(0)
-        self.combo_box_mode.setCurrentIndex(self.nfc.MODE_READER)
+        self.combo_p2p_operation_changed(0)
+        self.combo_cardemu_record_type_changed(0)
+        self.combo_p2p_write_record_type_changed(0)
+
+    def pack_ndef_record_text(self, text_raw):
+        payload_text = []
+
+        for c in list(text_raw):
+            payload_text.append(ord(c))
+
+        # Only short records are supported.
+        ndef_record_text = [
+                                0xD1,                  # MB/ME/CF/SR=1/IL/TNF
+                                0x01,                  # TYPE LENGTH
+                                len(payload_text) + 3, # Length
+                                ord('T'),              # TYPE
+                                0x02,                  # Status
+                                ord('e'), ord('n')     # Language
+                           ]
+        for d in payload_text:
+            ndef_record_text.append(d)
+
+        return ndef_record_text
+
+    def pack_ndef_record_uri(self, uri_raw, uri_prefix):
+        payload_uri = []
+
+        for c in list(uri_raw):
+            payload_uri.append(ord(c))
+
+        # Only short records are supported.
+        ndef_record_uri = [
+                                0xD1,                 # MB/ME/CF/SR=1/IL/TNF
+                                0x01,                 # TYPE LENGTH
+                                len(payload_uri) + 1, # Length
+                                ord('U'),             # Type
+                                uri_prefix            # Status
+                          ]
+
+        for d in payload_uri:
+            ndef_record_uri.append(d)
+
+        return ndef_record_uri
 
     def update_gui_mode_changed(self, mode):
         if mode == self.nfc.MODE_OFF:
@@ -150,21 +201,137 @@ class NFC(COMCUPluginBase, Ui_NFC):
         self.current_state['cardemu'] = None
 
         if index == self.nfc.MODE_OFF:
-            self.nfc.set_mode(self.nfc.MODE_OFF)
+            if self.change_mode:
+                self.nfc.set_mode(self.nfc.MODE_OFF)
+
             self.current_mode = self.nfc.MODE_OFF
             self.update_gui_mode_changed(self.nfc.MODE_OFF)
         elif index == self.nfc.MODE_CARDEMU:
-            self.nfc.set_mode(self.nfc.MODE_CARDEMU)
+            if self.change_mode:
+                self.nfc.set_mode(self.nfc.MODE_CARDEMU)
+
             self.current_mode = self.nfc.MODE_CARDEMU
             self.update_gui_mode_changed(self.nfc.MODE_CARDEMU)
         elif index == self.nfc.MODE_P2P:
-            self.nfc.set_mode(self.nfc.MODE_P2P)
+            if self.change_mode:
+                self.nfc.set_mode(self.nfc.MODE_P2P)
+
             self.current_mode = self.nfc.MODE_P2P
             self.update_gui_mode_changed(self.nfc.MODE_P2P)
         elif index == self.nfc.MODE_READER:
-            self.nfc.set_mode(self.nfc.MODE_READER)
+            if self.change_mode:
+                self.nfc.set_mode(self.nfc.MODE_READER)
+
             self.current_mode = self.nfc.MODE_READER
             self.update_gui_mode_changed(self.nfc.MODE_READER)
+
+        if not self.change_mode:
+            status_text = '-'
+            mode = self.nfc.get_mode()
+
+            if mode == self.nfc.MODE_OFF:
+                status_text = 'NFC turned off'
+            elif mode == self.nfc.MODE_CARDEMU:
+                status_text = 'Card Emulator: '
+                state = self.nfc.cardemu_get_state()
+
+                if state.state == self.nfc.CARDEMU_STATE_INITIALIZATION:
+                    status_text += 'Initialization'
+                elif state.state == self.nfc.CARDEMU_STATE_IDLE:
+                    status_text += 'Idle'
+                elif state.state == self.nfc.CARDEMU_STATE_ERROR:
+                    status_text += 'Error'
+                elif state.state == self.nfc.CARDEMU_STATE_DISCOVER:
+                    status_text += 'Discover'
+                elif state.state == self.nfc.CARDEMU_STATE_DISCOVER_READY:
+                    status_text += 'Discover ready'
+                elif state.state == self.nfc.CARDEMU_STATE_DISCOVER_ERROR:
+                    status_text += 'Discover error'
+                elif state.state == self.nfc.CARDEMU_STATE_TRANSFER_NDEF:
+                    status_text += 'Transfer NDEF'
+                elif state.state == self.nfc.CARDEMU_STATE_TRANSFER_NDEF_READY:
+                    status_text += 'Transfer NDEF ready'
+                elif state.state == self.nfc.CARDEMU_STATE_TRANSFER_NDEF_ERROR:
+                    status_text += 'Transfer NDEF error'
+                else:
+                    status_text += 'Unknown state'
+            elif mode == self.nfc.MODE_P2P:
+                status_text = 'P2P: '
+
+                state = self.nfc.p2p_get_state()
+
+                if state.state == self.nfc.P2P_STATE_INITIALIZATION:
+                    status_text += 'Initialization'
+                elif state.state == self.nfc.P2P_STATE_IDLE:
+                    status_text += 'Idle'
+                elif state.state == self.nfc.P2P_STATE_ERROR:
+                    status_text += 'Error'
+                elif state.state == self.nfc.P2P_STATE_DISCOVER:
+                    status_text += 'Discover'
+                elif state.state == self.nfc.P2P_STATE_DISCOVER_READY:
+                    status_text += 'Discover ready'
+                elif state.state == self.nfc.P2P_STATE_DISCOVER_ERROR:
+                    status_text += 'Discover error'
+                elif state.state == self.nfc.P2P_STATE_TRANSFER_NDEF:
+                    status_text += 'Transfer NDEF'
+                elif state.state == self.nfc.P2P_STATE_TRANSFER_NDEF_READY:
+                    status_text += 'Transfer NDEF ready'
+                elif state.state == self.nfc.P2P_STATE_TRANSFER_NDEF_ERROR:
+                    status_text += 'Transfer NDEF error'
+                else:
+                    status_text += 'Unknown state'
+            elif mode == self.nfc.MODE_READER:
+                status_text = 'Reader: '
+                state = self.nfc.reader_get_state()
+
+                if state.state == self.nfc.READER_STATE_INITIALIZATION:
+                    status_text += 'Initialization'
+                elif state.state == self.nfc.READER_STATE_IDLE:
+                    status_text += 'Idle'
+                elif state.state == self.nfc.READER_STATE_ERROR:
+                    status_text += 'Error'
+                elif state.state == self.nfc.READER_STATE_REQUEST_TAG_ID:
+                    status_text += 'Request tag ID'
+                elif state.state == self.nfc.READER_STATE_REQUEST_TAG_ID_READY:
+                    status_text += 'Request tag ID ready'
+                elif state.state == self.nfc.READER_STATE_REQUEST_TAG_ID_ERROR:
+                    status_text += 'Request tag ID error'
+                elif state.state == self.nfc.READER_STATE_AUTHENTICATE_MIFARE_CLASSIC_PAGE:
+                    status_text += 'Authenticate MIFARE classic page'
+                elif state.state == self.nfc.READER_STATE_AUTHENTICATE_MIFARE_CLASSIC_PAGE_READY:
+                    status_text += 'Authenticate MIFARE classic page ready'
+                elif state.state == self.nfc.READER_STATE_AUTHENTICATE_MIFARE_CLASSIC_PAGE_ERROR:
+                    status_text += 'Authenticate MIFARE classic page error'
+                elif state.state == self.nfc.READER_STATE_WRITE_PAGE:
+                    status_text += 'Write page'
+                elif state.state == self.nfc.READER_STATE_WRITE_PAGE_READY:
+                    status_text += 'Write page ready'
+                elif state.state == self.nfc.READER_STATE_WRITE_PAGE_ERROR:
+                    status_text += 'Write page error'
+                elif state.state == self.nfc.READER_STATE_REQUEST_PAGE:
+                    status_text += 'Request page'
+                elif state.state == self.nfc.READER_STATE_REQUEST_PAGE_READY:
+                    status_text += 'Request page ready'
+                elif state.state == self.nfc.READER_STATE_REQUEST_PAGE_ERROR:
+                    status_text += 'Request page error'
+                elif state.state == self.nfc.READER_STATE_WRITE_NDEF:
+                    status_text += 'Write NDEF'
+                elif state.state == self.nfc.READER_STATE_WRITE_NDEF_READY:
+                    status_text += 'Write NDEF ready'
+                elif state.state == self.nfc.READER_STATE_WRITE_NDEF_ERROR:
+                    status_text += 'Write NDEF error'
+                elif state.state == self.nfc.READER_STATE_REQUEST_NDEF:
+                    status_text += 'Request NDEF'
+                elif state.state == self.nfc.READER_STATE_REQUEST_NDEF_READY:
+                    status_text += 'Request NDEF ready'
+                elif state.state == self.nfc.READER_STATE_REQUEST_NDEF_ERROR:
+                    status_text += 'Request NDEF error'
+                else:
+                    status_text += 'Unknown state'
+
+            self.label_status.setText(status_text)
+
+        self.change_mode = True
 
     def get_current_page_range(self):
         tt = self.combo_reader_tag_type.currentIndex()
@@ -187,7 +354,8 @@ class NFC(COMCUPluginBase, Ui_NFC):
         self.current_tag_id['tag_id'] = None
         self.current_tag_id['tag_id_type'] = None
 
-        self.nfc.set_mode(self.nfc.MODE_READER)
+        if self.change_mode:
+            self.nfc.set_mode(self.nfc.MODE_READER)
 
         self.frame_read.show()
         self.frame_write.show()
@@ -277,7 +445,87 @@ class NFC(COMCUPluginBase, Ui_NFC):
             self.frame_write_type4.show()
             self.frame_reader_type4_read_length.show()
 
+    def combo_p2p_operation_changed(self, index):
+        if index == 0:
+            self.frame_p2p_read.show()
+            self.frame_p2p_write.hide()
+        elif index == 1:
+            self.frame_p2p_read.hide()
+            self.frame_p2p_write.show()
+
+    def button_cardemu_start_discovery_clicked(self):
+        self.cardemu_start_discovery_clicked = True
+
+        if self.combo_cardemu_record_type.currentIndex() == 0:
+            text_raw = self.lineedit_cardemu_record_text_data.text()
+
+            if text_raw == '':
+                self.cardemu_record_text_start_discovery_clicked = False
+                QMessageBox.critical(get_main_window(),
+                                     self.base_name + ' | Error',
+                                     'Input is empty. Please provide text input.')
+
+                return
+
+            self.nfc.cardemu_write_ndef(self.pack_ndef_record_text(text_raw))
+            self.nfc.cardemu_start_discovery()
+        elif self.combo_cardemu_record_type.currentIndex() == 1:
+            uri_raw = self.lineedit_cardemu_record_uri_data.text()
+
+            if uri_raw == '':
+                self.cardemu_record_uri_start_discovery_clicked = False
+                QMessageBox.critical(get_main_window(),
+                                     self.base_name + ' | Error',
+                                     'Input is empty. Please provide URI.')
+
+                return
+
+            self.nfc.cardemu_write_ndef(self.pack_ndef_record_uri(uri_raw,
+                                                                  self.combo_cardemu_record_uri_prefix.currentIndex()))
+            self.nfc.cardemu_start_discovery()
+
+    def combo_cardemu_record_type_changed(self, index):
+        if index == 0:
+            self.frame_cardemu_record_uri.hide()
+            self.frame_cardemu_record_text.show()
+        elif index == 1:
+            self.frame_cardemu_record_uri.show()
+            self.frame_cardemu_record_text.hide()
+
+    def combo_p2p_write_record_type_changed(self, index):
+        if index == 0:
+            self.frame_p2p_write_data_uri.hide()
+            self.frame_p2p_write_data_text.show()
+        elif index == 1:
+            self.frame_p2p_write_data_uri.show()
+            self.frame_p2p_write_data_text.hide()
+
     def button_p2p_discover_clicked(self):
+        if self.combo_p2p_operation.currentIndex() == 1:
+            if self.combo_p2p_write_record_type.currentIndex() == 0:
+                text_raw = self.lineedit_p2p_write_data_text.text()
+
+                if text_raw == '':
+                    QMessageBox.critical(get_main_window(),
+                                         self.base_name + ' | Error',
+                                         'Input is empty. Please provide text input.')
+
+                    return
+
+                self.nfc.p2p_write_ndef(self.pack_ndef_record_text(text_raw))
+            elif self.combo_p2p_write_record_type.currentIndex() == 1:
+                uri_raw = self.lineedit_p2p_write_data_uri.text()
+
+                if uri_raw == '':
+                    QMessageBox.critical(get_main_window(),
+                                         self.base_name + ' | Error',
+                                         'Input is empty. Please provide URI.')
+
+                    return
+
+                self.nfc.p2p_write_ndef(self.pack_ndef_record_uri(uri_raw,
+                                                                  self.combo_p2p_write_uri_prefix.currentIndex()))
+
         self.nfc.p2p_start_discovery()
 
     def cb_state_changed_cardemu(self, state, idle):
@@ -290,24 +538,42 @@ class NFC(COMCUPluginBase, Ui_NFC):
         self.button_initialize.setEnabled(True)
 
         if state == self.nfc.CARDEMU_STATE_INITIALIZATION:
+            self.frame_mode_cardemu.setEnabled(False)
             self.label_status.setText('Card Emulator: Initialization')
         elif state == self.nfc.CARDEMU_STATE_IDLE:
+            if self.cardemu_start_discovery_clicked:
+                self.button_cardemu_start_discovery_clicked()
+            else:
+                self.frame_mode_cardemu.setEnabled(True)
+
             self.label_status.setText('Card Emulator: Idle')
         elif state == self.nfc.CARDEMU_STATE_ERROR:
+            self.frame_mode_cardemu.setEnabled(True)
             self.label_status.setText('Card Emulator: Error')
         elif state == self.nfc.CARDEMU_STATE_DISCOVER:
+            self.frame_mode_cardemu.setEnabled(False)
             self.label_status.setText('Card Emulator: Discover')
         elif state == self.nfc.CARDEMU_STATE_DISCOVER_READY:
+            self.nfc.cardemu_start_transfer(True)
+            self.frame_mode_cardemu.setEnabled(False)
             self.label_status.setText('Card Emulator: Discover ready')
         elif state == self.nfc.CARDEMU_STATE_DISCOVER_ERROR:
+            self.frame_mode_cardemu.setEnabled(True)
             self.label_status.setText('Card Emulator: Discover error')
         elif state == self.nfc.CARDEMU_STATE_TRANSFER_NDEF:
+            self.frame_mode_cardemu.setEnabled(False)
             self.label_status.setText('Card Emulator: Transfer NDEF')
         elif state == self.nfc.CARDEMU_STATE_TRANSFER_NDEF_READY:
+            self.frame_mode_cardemu.setEnabled(False)
             self.label_status.setText('Card Emulator: Transfer NDEF ready')
+
+            if self.combo_box_mode.currentIndex() == self.nfc.MODE_CARDEMU:
+                self.nfc.set_mode(self.nfc.MODE_CARDEMU)
         elif state == self.nfc.CARDEMU_STATE_TRANSFER_NDEF_ERROR:
+            self.frame_mode_cardemu.setEnabled(True)
             self.label_status.setText('Card Emulator: Transfer NDEF error')
         else:
+            self.frame_mode_cardemu.setEnabled(True)
             self.label_status.setText('Card Emulator: Unknown state')
 
     def cb_state_changed_p2p(self, state, idle):
@@ -316,27 +582,89 @@ class NFC(COMCUPluginBase, Ui_NFC):
         if self.current_mode != self.nfc.MODE_P2P:
             return
 
+        self.frame_mode_p2p.setEnabled(True)
+        self.textedit_p2p_read.setEnabled(True)
         self.button_initialize.setEnabled(True)
+        self.combo_p2p_operation.setEnabled(True)
+        self.button_p2p_discover.setEnabled(True)
 
         if state == self.nfc.P2P_STATE_INITIALIZATION:
+            self.frame_mode_p2p.setEnabled(False)
             self.label_status.setText('P2P: Initialization')
         elif state == self.nfc.P2P_STATE_IDLE:
+            self.frame_mode_p2p.setEnabled(True)
             self.label_status.setText('P2P: Idle')
         elif state == self.nfc.P2P_STATE_ERROR:
+            self.frame_mode_p2p.setEnabled(True)
             self.label_status.setText('P2P: Error')
         elif state == self.nfc.P2P_STATE_DISCOVER:
+            if self.combo_p2p_operation.currentIndex() == 0:
+                self.frame_mode_p2p.setEnabled(True)
+                self.textedit_p2p_read.setEnabled(True)
+                self.combo_p2p_operation.setEnabled(False)
+                self.button_p2p_discover.setEnabled(False)
+            else:
+                self.frame_mode_p2p.setEnabled(False)
+
             self.label_status.setText('P2P: Discover')
         elif state == self.nfc.P2P_STATE_DISCOVER_READY:
+            if self.combo_p2p_operation.currentIndex() == 0:
+                self.frame_mode_p2p.setEnabled(True)
+                self.textedit_p2p_read.setEnabled(True)
+                self.combo_p2p_operation.setEnabled(False)
+                self.button_p2p_discover.setEnabled(False)
+            else:
+                self.frame_mode_p2p.setEnabled(False)
+
             self.label_status.setText('P2P: Discover ready')
+
+            if self.combo_p2p_operation.currentIndex() == 0:
+                self.nfc.p2p_start_transfer(self.nfc.P2P_TRANSFER_READ)
+            elif self.combo_p2p_operation.currentIndex() == 1:
+                self.nfc.p2p_start_transfer(self.nfc.P2P_TRANSFER_WRITE)
         elif state == self.nfc.P2P_STATE_DISCOVER_ERROR:
+            self.frame_mode_p2p.setEnabled(True)
             self.label_status.setText('P2P: Discover error')
         elif state == self.nfc.P2P_STATE_TRANSFER_NDEF:
+            if self.combo_p2p_operation.currentIndex() == 0:
+                self.frame_mode_p2p.setEnabled(True)
+                self.textedit_p2p_read.setEnabled(True)
+                self.combo_p2p_operation.setEnabled(False)
+                self.button_p2p_discover.setEnabled(False)
+            else:
+                self.frame_mode_p2p.setEnabled(False)
+
             self.label_status.setText('P2P: Transfer NDEF')
         elif state == self.nfc.P2P_STATE_TRANSFER_NDEF_READY:
+            self.frame_mode_p2p.setEnabled(True)
             self.label_status.setText('P2P: Transfer NDEF ready')
+
+            if self.combo_box_mode.currentIndex() == self.nfc.MODE_P2P and \
+               self.combo_p2p_operation.currentIndex() == 0:
+                    t = self.textedit_p2p_read.toPlainText()
+
+                    if t == '':
+                        t = repr(map(chr, self.nfc.p2p_read_ndef()))
+                    else:
+                        t += '\n\n' + repr(map(chr, self.nfc.p2p_read_ndef()))
+
+                    self.textedit_p2p_read.setText(t)
+                    self.textedit_p2p_read.moveCursor(QTextCursor.End)
+
+            self.nfc.p2p_start_discovery()
         elif state == self.nfc.P2P_STATE_TRANSFER_NDEF_ERROR:
-            self.label_status.setText('P2P: Transfer NDEF error')
+            if self.combo_p2p_operation.currentIndex() == 0:
+                self.frame_mode_p2p.setEnabled(True)
+                self.textedit_p2p_read.setEnabled(True)
+                self.combo_p2p_operation.setEnabled(False)
+                self.button_p2p_discover.setEnabled(False)
+            else:
+                self.frame_mode_p2p.setEnabled(False)
+
+            self.label_status.setText('P2P: Transfer NDEF error. Try again')
+            self.nfc.p2p_start_discovery()
         else:
+            self.frame_mode_p2p.setEnabled(True)
             self.label_state.setText('P2P: Unknown state')
 
     def cb_state_changed_reader(self, state, idle):
@@ -617,12 +945,16 @@ class NFC(COMCUPluginBase, Ui_NFC):
 
     def button_initialize_clicked(self):
         if self.combo_box_mode.currentIndex() == self.nfc.MODE_CARDEMU:
+            self.change_mode = True
             self.button_initialize.setEnabled(False)
             self.mode_changed(self.nfc.MODE_CARDEMU)
+            self.cardemu_start_discovery_clicked = False
         elif self.combo_box_mode.currentIndex() == self.nfc.MODE_P2P:
+            self.change_mode = True
             self.mode_changed(self.nfc.MODE_P2P)
             self.button_initialize.setEnabled(False)
         elif self.combo_box_mode.currentIndex() == self.nfc.MODE_READER:
+            self.change_mode = True
             self.mode_changed(self.nfc.MODE_READER)
             self.button_initialize.setEnabled(False)
 
@@ -720,7 +1052,19 @@ class NFC(COMCUPluginBase, Ui_NFC):
                                            self.write_page_clicked_data)
 
     def start(self):
-        pass
+        self.combo_box_mode.setCurrentIndex(-1)
+        if self.nfc.get_mode() == self.nfc.MODE_OFF:
+            self.change_mode = True
+            self.combo_box_mode.setCurrentIndex(self.nfc.MODE_READER)
+        elif self.nfc.get_mode() == self.nfc.MODE_CARDEMU:
+            self.change_mode = False
+            self.combo_box_mode.setCurrentIndex(self.nfc.MODE_CARDEMU)
+        elif self.nfc.get_mode() == self.nfc.MODE_P2P:
+            self.change_mode = False
+            self.combo_box_mode.setCurrentIndex(self.nfc.MODE_P2P)
+        elif self.nfc.get_mode() == self.nfc.MODE_READER:
+            self.change_mode = False
+            self.combo_box_mode.setCurrentIndex(self.nfc.MODE_READER)
 
     def stop(self):
         pass

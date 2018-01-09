@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>698</width>
-    <height>918</height>
+    <height>1275</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -97,14 +97,299 @@
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_6">
-      <item>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>CARD EMULATION MODE</string>
+         <string>Record Type:</string>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="combo_cardemu_record_type">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <item>
+         <property name="text">
+          <string>Text Record</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>URI Record</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QFrame" name="frame_cardemu_record_uri">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>URI:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>URI Prefix:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="lineedit_cardemu_record_uri_data">
+           <property name="maxLength">
+            <number>248</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="combo_cardemu_record_uri_prefix">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <item>
+            <property name="text">
+             <string>None</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>httpwww</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>httpswww</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>http</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>https</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>tel</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>mailto</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>ftpanonymousanonymous</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>ftp_ftp</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>ftps</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>sftp</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>smb</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>nfs</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>ftp</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>dav</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>news</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>telnet</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>imap</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>rtsp</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>urn</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>pop</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>sip</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>sips</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>tftp</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>btspp</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>btl2cap</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>btgoep</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>tcpobex</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>irdaobex</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>file</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>urnepcid</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>urnepctag</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>urnepcpat</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>urnepcraw</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>urnepc</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>urnnfc</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QFrame" name="frame_cardemu_record_text">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Text Data:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="lineedit_cardemu_record_text_data">
+           <property name="maxLength">
+            <number>246</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QPushButton" name="button_cardemu_start_discovery">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Start Discovery</string>
         </property>
        </widget>
       </item>
@@ -125,22 +410,362 @@
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="0" column="1">
+       <widget class="QComboBox" name="combo_p2p_operation">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <item>
+         <property name="text">
+          <string>Read</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Write</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="0" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>P2P MODE</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+         <string>Operation:</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="3" column="0" colspan="2">
        <widget class="QPushButton" name="button_p2p_discover">
         <property name="text">
-         <string>Discover</string>
+         <string>Start Discovery</string>
         </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QFrame" name="frame_p2p_read">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_7">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Received Data:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QTextEdit" name="textedit_p2p_read">
+           <property name="acceptRichText">
+            <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QFrame" name="frame_p2p_write">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_8">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>Record Type:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="QFrame" name="frame_p2p_write_data_text">
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_9">
+            <property name="margin">
+             <number>0</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Text Data:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="lineedit_p2p_write_data_text">
+              <property name="maxLength">
+               <number>246</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="QFrame" name="frame_p2p_write_data_uri">
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_10">
+            <property name="margin">
+             <number>0</number>
+            </property>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_12">
+              <property name="text">
+               <string>URI:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>URI Prefix:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="combo_p2p_write_uri_prefix">
+              <item>
+               <property name="text">
+                <string>none</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>httpwww</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>httpswww</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>http</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>https</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>tel</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>mailto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>ftpanonymousanonymous</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>ftp_ftp</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>ftps</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>sftp</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>smb</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>nfs</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>ftp</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>dav</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>news</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>telnet</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>imap</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>rtsp</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>urn</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>pop</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>sip</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>sips</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>tftp</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>btspp</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>btl2cap</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>btgoep</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>tcpobex</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>irdaobex</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>file</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>urnepcid</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>urnepctag</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>urnepcpat</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>urnepcraw</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>urnepc</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>urnnfc</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="lineedit_p2p_write_data_uri">
+              <property name="maxLength">
+               <number>248</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="combo_p2p_write_record_type">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <item>
+            <property name="text">
+             <string>Text Record</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>URI Record</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
