@@ -1051,20 +1051,23 @@ class NFC(COMCUPluginBase, Ui_NFC):
                 self.nfc.reader_write_page(self.nfc.READER_REQUEST_TYPE4_NDEF,
                                            self.write_page_clicked_data)
 
-    def start(self):
-        self.combo_box_mode.setCurrentIndex(-1)
-        if self.nfc.get_mode() == self.nfc.MODE_OFF:
+    def get_mode_async(self, mode):
+        if mode == self.nfc.MODE_OFF:
             self.change_mode = True
             self.combo_box_mode.setCurrentIndex(self.nfc.MODE_READER)
-        elif self.nfc.get_mode() == self.nfc.MODE_CARDEMU:
+        elif mode == self.nfc.MODE_CARDEMU:
             self.change_mode = False
             self.combo_box_mode.setCurrentIndex(self.nfc.MODE_CARDEMU)
-        elif self.nfc.get_mode() == self.nfc.MODE_P2P:
+        elif mode == self.nfc.MODE_P2P:
             self.change_mode = False
             self.combo_box_mode.setCurrentIndex(self.nfc.MODE_P2P)
-        elif self.nfc.get_mode() == self.nfc.MODE_READER:
+        elif mode == self.nfc.MODE_READER:
             self.change_mode = False
             self.combo_box_mode.setCurrentIndex(self.nfc.MODE_READER)
+
+    def start(self):
+        self.combo_box_mode.setCurrentIndex(-1)
+        async_call(self.nfc.get_mode, None, self.get_mode_async, self.increase_error_count)
 
     def stop(self):
         pass
