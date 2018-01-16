@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-01-16.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -140,7 +140,7 @@ class BrickletRemoteSwitchV2(Device):
 
     def set_repeats(self, repeats):
         """
-        Sets the number of times the code is send when of the Switch Socket
+        Sets the number of times the code is send when one of the Switch Socket
         functions is called. The repeats basically correspond to the amount of time
         that a button of the remote is pressed.
 
@@ -229,40 +229,67 @@ class BrickletRemoteSwitchV2(Device):
 
     def set_remote_configuration(self, remote_type, minimum_repeats, callback_enabled):
         """
+        Sets the configuration for **receiving** data from a remote of type A, B or C.
 
+        * Remote Type: Set to A, B or C depending on the type of remote you want to receive.
+        * Minimum Repeats: The minimum number of repeated data packets until the callback is called (if enabled).
+        * Callback Enabled: Enable or disable callback (see :cb:`Remote Status A` callback, :cb:`Remote Status B` callback and :cb:`Remote Status C` callback).
+
+        Default is 'A', 2, false.
         """
         remote_type = int(remote_type)
         minimum_repeats = int(minimum_repeats)
         callback_enabled = bool(callback_enabled)
 
-        self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_SET_REMOTE_CONFIGURATION, (remote_type, minimum_repeats, callback_enabled), 'B B !', '')
+        self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_SET_REMOTE_CONFIGURATION, (remote_type, minimum_repeats, callback_enabled), 'B H !', '')
 
     def get_remote_configuration(self):
         """
-
+        Returns the remote configuration as set by :func:`Set Remote Configuration`
         """
-        return GetRemoteConfiguration(*self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_REMOTE_CONFIGURATION, (), '', 'B B !'))
+        return GetRemoteConfiguration(*self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_REMOTE_CONFIGURATION, (), '', 'B H !'))
 
     def get_remote_status_a(self):
         """
+        Returns the house code, receiver code, switch state (on/off) and number of repeats for
+        remote type A.
 
+        If repeats=0 there was no button press. If repeats >= 1 there
+        was a button press with the specified house/receiver code. The repeates are the number of received
+        identical data packets. The longer the button is pressed, the higher the repeat number.
+
+        Use the callback to get this data automatically when a button is pressed,
+        see :func:`Set Remote Configuration` and :cb:`Remote Status A` callback.
         """
         return GetRemoteStatusA(*self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_REMOTE_STATUS_A, (), '', 'B B B H'))
 
     def get_remote_status_b(self):
         """
-        address = unique per remote with 26 bits
-        unit =  button num
-        switch all => unit = 255
-        some b remotes cycle through different protocols and only send data once every ~second, in this case repeats = 1?
+        Returns the address (unique per remote), unit (button number), switch state (on/off) and number of repeats for
+        remote type B.
 
-        dim value > 1 if dimming, otherwise 0
+        If the remote supporst dimming the dim value is used instead of the switch state.
+
+        If repeats=0 there was no button press. If repeats >= 1 there
+        was a button press with the specified address/unit. The repeates are the number of received
+        identical data packets. The longer the button is pressed, the higher the repeat number.
+
+        Use the callback to get this data automatically when a button is pressed,
+        see :func:`Set Remote Configuration` and :cb:`Remote Status B` callback.
         """
         return GetRemoteStatusB(*self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_REMOTE_STATUS_B, (), '', 'I B B B H'))
 
     def get_remote_status_c(self):
         """
+        Returns the system code, device code, switch state (on/off) and number of repeats for
+        remote type C.
 
+        If repeats=0 there was no button press. If repeats >= 1 there
+        was a button press with the specified system/device code. The repeates are the number of received
+        identical data packets. The longer the button is pressed, the higher the repeat number.
+
+        Use the callback to get this data automatically when a button is pressed,
+        see :func:`Set Remote Configuration` and :cb:`Remote Status C` callback.
         """
         return GetRemoteStatusC(*self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_REMOTE_STATUS_C, (), '', 'c B B H'))
 
