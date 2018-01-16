@@ -21,20 +21,16 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import pyqtSignal, QTimer
 from PyQt4.QtGui import QTextCursor
 
+from brickv.async_call import async_call
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.remote_switch_v2.ui_remote_switch_v2 import Ui_RemoteSwitchV2
 from brickv.bindings.bricklet_remote_switch_v2 import BrickletRemoteSwitchV2
 
-REMOTE_TYPE_A = 1
-REMOTE_TYPE_B = 2
-REMOTE_TYPE_C = 3
-
 class RemoteSwitchV2(COMCUPluginBase, Ui_RemoteSwitchV2):
     qtcb_switching_done = pyqtSignal()
-    qtcb_update_remote_input = pyqtSignal(str)
 
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletRemoteSwitchV2, *args)
@@ -46,8 +42,6 @@ class RemoteSwitchV2(COMCUPluginBase, Ui_RemoteSwitchV2):
         self.qtcb_switching_done.connect(self.cb_switching_done)
         self.rs2.register_callback(self.rs2.CALLBACK_SWITCHING_DONE,
                                    self.qtcb_switching_done.emit)
-
-        self.qtcb_update_remote_input.connect(self.cb_update_remote_input)
 
         self.h_check = (self.h_check_a,
                         self.h_check_b,
@@ -80,8 +74,34 @@ class RemoteSwitchV2(COMCUPluginBase, Ui_RemoteSwitchV2):
         self.button_dim.clicked.connect(self.dim_clicked)
 
         self.combo_remote_type.currentIndexChanged.connect(self.remote_type_changed)
-        self.spinbox_remote_minimum_repeats.valueChanged.connect(lambda value: self.remote_type_changed(self.combo_remote_type.currentIndex()))
         self.button_remote_input_clear.clicked.connect(self.plaintextedit_remote_input.clear)
+
+        self.current_remote_type = None
+        self.timer_get_remote_input = QTimer()
+        self.timer_get_remote_input.timeout.connect(self.timeout_get_remote_input)
+        self.timer_get_remote_input.setInterval(50)
+
+        self.last_remote_input = {
+                                  'a': {
+                                    'house_code': None,
+                                    'receiver_code': None,
+                                    'switch_to': None,
+                                    'repeats': None
+                                  },
+                                  'b': {
+                                    'address': None,
+                                    'unit': None,
+                                    'switch_to': None,
+                                    'dim_value': None,
+                                    'repeats': None
+                                  },
+                                  'c': {
+                                    'system_code': None,
+                                    'device_code': None,
+                                    'switch_to': None,
+                                    'repeats': None
+                                  },
+                                 }
 
         self.type_a_widgets = [self.label_house_code,
                                self.h_check_a,
@@ -131,7 +151,6 @@ class RemoteSwitchV2(COMCUPluginBase, Ui_RemoteSwitchV2):
                              self.type_c_widgets)
 
         self.type_index_changed(0)
-        self.remote_type_changed(0)
 
     def spinbox_dim_value_changed(self, value):
         self.slider_dim_value.setValue(value)
@@ -186,11 +205,28 @@ class RemoteSwitchV2(COMCUPluginBase, Ui_RemoteSwitchV2):
 
         self.spinbox_receiver.setValue(receiver_code)
 
+    def get_remote_configuration_async(self, remote_config):
+        self.current_remote_type = remote_config.remote_type
+
+        self.spinbox_remote_minimum_repeats.setValue(remote_config.minimum_repeats)
+
+        if remote_config.remote_type == self.rs2.REMOTE_TYPE_A:
+            self.combo_remote_type.setCurrentIndex(self.rs2.REMOTE_TYPE_A)
+        elif remote_config.remote_type == self.rs2.REMOTE_TYPE_B:
+            self.combo_remote_type.setCurrentIndex(self.rs2.REMOTE_TYPE_B)
+        elif remote_config.remote_type == self.rs2.REMOTE_TYPE_C:
+            self.combo_remote_type.setCurrentIndex(self.rs2.REMOTE_TYPE_C)
+
     def start(self):
-        pass
+        self.timer_get_remote_input.start()
+        async_call(self.rs2.get_remote_configuration,
+                   None,
+                   self.get_remote_configuration_async,
+                   self.increase_error_count)
 
     def stop(self):
         pass
+        self.timer_get_remote_input.stop()
 
     def destroy(self):
         pass
@@ -213,74 +249,158 @@ class RemoteSwitchV2(COMCUPluginBase, Ui_RemoteSwitchV2):
 
             self.rs2.dim_socket_b(address, unit, dim_value)
 
-    def cb_remote_status_a(self, house_code, receiver_code, switch_to, repeats):
-        remote_input = "[Remote Type - A]\n" + \
-                       "House Code = " + \
-                       str(house_code) + \
-                       ", Receiver Code = " + \
-                       str(receiver_code) + \
-                       ", Switch To = " + \
-                       str(switch_to) + \
-                       ", Repeats = " + \
-                       str(repeats) + \
-                       "\n"
-
-        self.qtcb_update_remote_input.emit(remote_input)
-
-    def cb_remote_status_b(self, address, unit, switch_to, dim_value, repeats):
-        remote_input = "[Remote Type - B]\n" + \
-                       "Address = " + \
-                       str(address) + \
-                       ", Unit = " + \
-                       str(unit) + \
-                       ", Switch To = " + \
-                       str(switch_to) + \
-                       ", Dim Value = " + \
-                       str(dim_value) + \
-                       ", Repeats = " + \
-                       str(repeats) + \
-                       "\n"
-
-        self.qtcb_update_remote_input.emit(remote_input)
-
-    def cb_remote_status_c(self, system_code, device_code, switch_to, repeats):
-        remote_input = "[Remote Type - C]\n" + \
-                       "System Code = " + \
-                       str(system_code) + \
-                       ", Device Code = " + \
-                       str(device_code) + \
-                       ", Switch To = " + \
-                       str(switch_to) + \
-                       ", Repeats = " + \
-                       str(repeats) + \
-                       "\n"
-
-        self.qtcb_update_remote_input.emit(remote_input)
-
     def remote_type_changed(self, index):
-        if index + 1 == REMOTE_TYPE_A:
-            self.rs2.set_remote_configuration(self.rs2.REMOTE_TYPE_A,
-                                              self.spinbox_remote_minimum_repeats.value(),
-                                              True)
+        self.current_remote_type = index
+        remote_config = self.rs2.get_remote_configuration()
 
-            self.rs2.register_callback(self.rs2.CALLBACK_REMOTE_STATUS_A,
-                                       self.cb_remote_status_a)
+        self.rs2.set_remote_configuration(index,
+                                          remote_config.minimum_repeats,
+                                          remote_config.callback_enabled)
 
-        elif index + 1 == REMOTE_TYPE_B:
-            self.rs2.set_remote_configuration(self.rs2.REMOTE_TYPE_B,
-                                              self.spinbox_remote_minimum_repeats.value(),
-                                              True)
+        remote_config = self.rs2.get_remote_configuration()
 
-            self.rs2.register_callback(self.rs2.CALLBACK_REMOTE_STATUS_B,
-                                       self.cb_remote_status_b)
+    def get_remote_status_a_async(self, remote_config):
+        if remote_config.repeats <= self.spinbox_remote_minimum_repeats.value():
+            return
 
-        elif index + 1 == REMOTE_TYPE_C:
-            self.rs2.set_remote_configuration(self.rs2.REMOTE_TYPE_C,
-                                              self.spinbox_remote_minimum_repeats.value(),
-                                              True)
+        if self.last_remote_input['a']['house_code'] == remote_config.house_code and \
+           self.last_remote_input['a']['receiver_code'] == remote_config.receiver_code and \
+           self.last_remote_input['a']['switch_to'] == remote_config.switch_to and \
+           self.last_remote_input['a']['repeats'] == remote_config.repeats:
+                return
 
-            self.rs2.register_callback(self.rs2.CALLBACK_REMOTE_STATUS_C,
-                                       self.cb_remote_status_c)
+        if self.last_remote_input['a']['house_code'] == None and \
+           self.last_remote_input['a']['receiver_code'] == None and \
+           self.last_remote_input['a']['switch_to'] == None and \
+           self.last_remote_input['a']['repeats'] == None:
+                self.last_remote_input['a']['house_code'] = remote_config.house_code
+                self.last_remote_input['a']['receiver_code'] = remote_config.receiver_code
+                self.last_remote_input['a']['switch_to'] = remote_config.switch_to
+                self.last_remote_input['a']['repeats'] = remote_config.repeats
+
+                return
+
+        self.last_remote_input['a']['house_code'] = remote_config.house_code
+        self.last_remote_input['a']['receiver_code'] = remote_config.receiver_code
+        self.last_remote_input['a']['switch_to'] = remote_config.switch_to
+        self.last_remote_input['a']['repeats'] = remote_config.repeats
+
+        remote_input = '''Remote Type - A:
+House code = {house_code}
+Receiver code = {receiver_code}
+Switch to = {switch_to}
+Reapeats = {repeats}
+
+'''.format(house_code=remote_config.house_code,
+           receiver_code=remote_config.receiver_code,
+           switch_to=remote_config.switch_to,
+           repeats=remote_config.repeats)
+
+        self.plaintextedit_remote_input.appendPlainText(remote_input)
+        self.plaintextedit_remote_input.moveCursor(QTextCursor.End)
+
+    def get_remote_status_b_async(self, remote_config):
+        if remote_config.repeats <= self.spinbox_remote_minimum_repeats.value():
+            return
+
+        if self.last_remote_input['b']['address'] == remote_config.address and \
+           self.last_remote_input['b']['unit'] == remote_config.unit and \
+           self.last_remote_input['b']['switch_to'] == remote_config.switch_to and \
+           self.last_remote_input['b']['dim_value'] == remote_config.dim_value and \
+           self.last_remote_input['b']['repeats'] == remote_config.repeats:
+                return
+
+        if self.last_remote_input['b']['address'] == None and \
+           self.last_remote_input['b']['unit'] == None and \
+           self.last_remote_input['b']['switch_to'] == None and \
+           self.last_remote_input['b']['dim_value'] == None and \
+           self.last_remote_input['b']['repeats'] == None:
+                self.last_remote_input['b']['address'] = remote_config.address
+                self.last_remote_input['b']['unit'] = remote_config.unit
+                self.last_remote_input['b']['switch_to'] = remote_config.switch_to
+                self.last_remote_input['b']['dim_value'] = remote_config.dim_value
+                self.last_remote_input['b']['repeats'] = remote_config.repeats
+
+                return
+
+        self.last_remote_input['b']['address'] = remote_config.address
+        self.last_remote_input['b']['unit'] = remote_config.unit
+        self.last_remote_input['b']['switch_to'] = remote_config.switch_to
+        self.last_remote_input['b']['dim_value'] = remote_config.dim_value
+        self.last_remote_input['b']['repeats'] = remote_config.repeats
+
+        remote_input = '''Remote Type - B:
+Address = {address}
+Unit = {unit}_async
+Switch to = {switch_to}
+Dim value = {dim_value}
+Repeats = {repeats}
+
+'''.format(address=remote_config.address,
+           unit=remote_config.unit,
+           switch_to=remote_config.switch_to,
+           dim_value=remote_config.dim_value,
+           repeats=remote_config.repeats)
+
+        self.plaintextedit_remote_input.appendPlainText(remote_input)
+        self.plaintextedit_remote_input.moveCursor(QTextCursor.End)
+
+    def get_remote_status_c_async(self, remote_config):
+        if remote_config.repeats <= self.spinbox_remote_minimum_repeats.value():
+            return
+
+        if self.last_remote_input['c']['system_code'] == remote_config.system_code and \
+           self.last_remote_input['c']['device_code'] == remote_config.device_code and \
+           self.last_remote_input['c']['switch_to'] == remote_config.switch_to and \
+           self.last_remote_input['c']['repeats'] == remote_config.repeats:
+                return
+
+        if self.last_remote_input['c']['system_code'] == None and \
+           self.last_remote_input['c']['device_code'] == None and \
+           self.last_remote_input['c']['switch_to'] == None and \
+           self.last_remote_input['c']['repeats'] == None:
+                self.last_remote_input['c']['system_code'] = remote_config.system_code
+                self.last_remote_input['c']['device_code'] = remote_config.device_code
+                self.last_remote_input['c']['switch_to'] = remote_config.switch_to
+                self.last_remote_input['c']['repeats'] = remote_config.repeats
+
+                return
+
+        self.last_remote_input['c']['system_code'] = remote_config.system_code
+        self.last_remote_input['c']['device_code'] = remote_config.device_code
+        self.last_remote_input['c']['switch_to'] = remote_config.switch_to
+        self.last_remote_input['c']['repeats'] = remote_config.repeats
+
+        remote_input = '''Remote Type - C:
+System code = {system_code}
+Device code = {device_code}
+Switch to = {switch_to}
+Reapeats = {repeats}
+
+'''.format(system_code=remote_config.system_code,
+           device_code=remote_config.device_code,
+           switch_to=remote_config.switch_to,
+           repeats=remote_config.repeats)
+
+        self.plaintextedit_remote_input.appendPlainText(remote_input)
+        self.plaintextedit_remote_input.moveCursor(QTextCursor.End)
+
+    def timeout_get_remote_input(self):
+        if self.current_remote_type == self.rs2.REMOTE_TYPE_A:
+            async_call(self.rs2.get_remote_status_a,
+                       None,
+                       self.get_remote_status_a_async,
+                       self.increase_error_count)
+        elif self.current_remote_type == self.rs2.REMOTE_TYPE_B:
+            async_call(self.rs2.get_remote_status_b,
+                       None,
+                       self.get_remote_status_b_async,
+                       self.increase_error_count)
+        elif self.current_remote_type == self.rs2.REMOTE_TYPE_C:
+            async_call(self.rs2.get_remote_status_c,
+                       None,
+                       self.get_remote_status_c_async,
+                       self.increase_error_count)
 
     def button_clicked(self, switch_to):
         self.button_switch_on.setEnabled(False)
@@ -316,10 +436,6 @@ class RemoteSwitchV2(COMCUPluginBase, Ui_RemoteSwitchV2):
         self.button_switch_off.setText("Switch Off")
         self.button_dim.setEnabled(True)
         self.button_dim.setText("Dim")
-
-    def cb_update_remote_input(self, remote_input):
-        self.plaintextedit_remote_input.appendPlainText(remote_input)
-        self.plaintextedit_remote_input.moveCursor(QTextCursor.End)
 
     def get_url_part(self):
         return 'remote_switch_v2'
