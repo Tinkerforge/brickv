@@ -28,8 +28,9 @@ Boston, MA 02111-1307, USA.
 #                               Event Logger
 #---------------------------------------------------------------------------
 
-from PyQt4 import QtCore
-from PyQt4.QtCore import SIGNAL
+if 'merged_data_logger_modules' not in globals():
+    from PyQt4 import QtCore
+    from PyQt4.QtCore import SIGNAL
 
 import logging
 from datetime import datetime
@@ -158,53 +159,54 @@ class FileLogger(logging.Logger):
 
         self.info("###### NEW LOGGING SESSION STARTED ######")
 
-class GUILogger(logging.Logger, QtCore.QObject):
-    """
-    This class outputs the logged data to the brickv gui
-    """
+if 'merged_data_logger_modules' not in globals():
+    class GUILogger(logging.Logger, QtCore.QObject):
+        """
+        This class outputs the logged data to the brickv gui
+        """
 
-    _output_format = "{asctime} - <b>{levelname:8}</b> - {message}"
-    _output_format_warning = "<font color=\"orange\">{asctime} - <b>{levelname:8}</b> - {message}</font>"
-    _output_format_critical = "<font color=\"red\">{asctime} - <b>{levelname:8}</b> - {message}</font>"
+        _output_format = "{asctime} - <b>{levelname:8}</b> - {message}"
+        _output_format_warning = "<font color=\"orange\">{asctime} - <b>{levelname:8}</b> - {message}</font>"
+        _output_format_critical = "<font color=\"red\">{asctime} - <b>{levelname:8}</b> - {message}</font>"
 
-    SIGNAL_NEW_MESSAGE = "newEventMessage"
-    SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT = "newEventTabHighlight"
+        SIGNAL_NEW_MESSAGE = "newEventMessage"
+        SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT = "newEventTabHighlight"
 
-    def __init__(self, name, log_level):
-        logging.Logger.__init__(self, name, log_level)
-        QtCore.QObject.__init__(self)
+        def __init__(self, name, log_level):
+            logging.Logger.__init__(self, name, log_level)
+            QtCore.QObject.__init__(self)
 
-    def debug(self, msg):
-        self.log(logging.DEBUG, msg)
+        def debug(self, msg):
+            self.log(logging.DEBUG, msg)
 
-    def info(self, msg):
-        self.log(logging.INFO, msg)
+        def info(self, msg):
+            self.log(logging.INFO, msg)
 
-    def warn(self, msg):
-        self.log(logging.WARN, msg)
+        def warn(self, msg):
+            self.log(logging.WARN, msg)
 
-    def warning(self, msg):
-        self.log(logging.WARNING, msg)
+        def warning(self, msg):
+            self.log(logging.WARNING, msg)
 
-    def critical(self, msg):
-        self.log(logging.CRITICAL, msg)
+        def critical(self, msg):
+            self.log(logging.CRITICAL, msg)
 
-    def error(self, msg):
-        self.log(logging.ERROR, msg)
+        def error(self, msg):
+            self.log(logging.ERROR, msg)
 
-    def log(self, level, msg):
-        if level >= self.level:
-            asctime = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.now())
-            levelname = logging._levelNames.get(level)
+        def log(self, level, msg):
+            if level >= self.level:
+                asctime = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.now())
+                levelname = logging._levelNames.get(level)
 
-            if level == logging.WARN or level == logging.WARNING:
-                self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE),
-                          GUILogger._output_format_warning.format(asctime=asctime, levelname=levelname, message=msg))
-                self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT))
-            elif level == logging.CRITICAL or level == logging.ERROR:
-                self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE),
-                          GUILogger._output_format_critical.format(asctime=asctime, levelname=levelname, message=msg))
-                self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT))
-            else:
-                self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE),
-                          GUILogger._output_format.format(asctime=asctime, levelname=levelname, message=msg))
+                if level == logging.WARN or level == logging.WARNING:
+                    self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE),
+                              GUILogger._output_format_warning.format(asctime=asctime, levelname=levelname, message=msg))
+                    self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT))
+                elif level == logging.CRITICAL or level == logging.ERROR:
+                    self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE),
+                              GUILogger._output_format_critical.format(asctime=asctime, levelname=levelname, message=msg))
+                    self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT))
+                else:
+                    self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE),
+                              GUILogger._output_format.format(asctime=asctime, levelname=levelname, message=msg))

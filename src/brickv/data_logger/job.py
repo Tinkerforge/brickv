@@ -28,12 +28,12 @@ Boston, MA 02111-1307, USA.
 #                               Jobs
 #---------------------------------------------------------------------------
 
-from PyQt4 import QtCore
 import Queue
 import threading
 import time
 
 if 'merged_data_logger_modules' not in globals():
+    from PyQt4 import QtCore
     from brickv.data_logger.event_logger import EventLogger
     from brickv.data_logger.utils import CSVWriter
 
@@ -119,47 +119,48 @@ class CSVWriterJob(AbstractJob):
             self.stop()
 
 
-class GuiDataJob(AbstractJob, QtCore.QObject):
-    """
-    This class enables the data logger to upload logged data to the Xively platform
-    """
+if 'merged_data_logger_modules' not in globals():
+    class GuiDataJob(AbstractJob, QtCore.QObject):
+        """
+        This class enables the data logger to upload logged data to the Xively platform
+        """
 
-    SIGNAL_NEW_DATA = "signalNewData"
+        SIGNAL_NEW_DATA = "signalNewData"
 
-    def __init__(self, datalogger=None, group=None, name="GuiDataJob", args=(), kwargs=None, verbose=None):
-        target = self._job
-        AbstractJob.__init__(self, datalogger=datalogger, group=group, target=target, name=name, args=args,
-                             kwargs=kwargs, verbose=verbose)
-        QtCore.QObject.__init__(self)
+        def __init__(self, datalogger=None, group=None, name="GuiDataJob", args=(), kwargs=None, verbose=None):
+            target = self._job
+            AbstractJob.__init__(self, datalogger=datalogger, group=group, target=target, name=name, args=args,
+                                 kwargs=kwargs, verbose=verbose)
+            QtCore.QObject.__init__(self)
 
-    def set_datalogger(self, datalogger):
-        self._datalogger = datalogger
-        self._datalogger.data_queue[self.name] = Queue.Queue()
+        def set_datalogger(self, datalogger):
+            self._datalogger = datalogger
+            self._datalogger.data_queue[self.name] = Queue.Queue()
 
-    def _job(self):
-        try:
-            # check for datalogger object
-            if AbstractJob._job(self):
-                return
+        def _job(self):
+            try:
+                # check for datalogger object
+                if AbstractJob._job(self):
+                    return
 
-            EventLogger.debug(self._job_name + " Started")
+                EventLogger.debug(self._job_name + " Started")
 
-            while True:
-                if not self._datalogger.data_queue[self.name].empty():
-                    csv_data = self._get_data_from_queue()
-                    #EventLogger.debug(self._job_name + " -> " + str(csv_data))
-                    self.emit(QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), csv_data)
+                while True:
+                    if not self._datalogger.data_queue[self.name].empty():
+                        csv_data = self._get_data_from_queue()
+                        #EventLogger.debug(self._job_name + " -> " + str(csv_data))
+                        self.emit(QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), csv_data)
 
-                if not self._exit_flag and self._datalogger.data_queue[self.name].empty():
-                    time.sleep(self._datalogger.job_sleep)
+                    if not self._exit_flag and self._datalogger.data_queue[self.name].empty():
+                        time.sleep(self._datalogger.job_sleep)
 
-                if self._exit_flag and self._datalogger.data_queue[self.name].empty():
-                    self._remove_from_data_queue()
-                    break
+                    if self._exit_flag and self._datalogger.data_queue[self.name].empty():
+                        self._remove_from_data_queue()
+                        break
 
-        except Exception as e:
-            EventLogger.critical(self._job_name + " -.- " + str(e))
-            self.stop()
+            except Exception as e:
+                EventLogger.critical(self._job_name + " -.- " + str(e))
+                self.stop()
 
 
 class XivelyJob(AbstractJob):
