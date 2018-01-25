@@ -82,15 +82,15 @@ class Color(PluginBase):
                  ('G', Qt.darkGreen, lambda: self.current_color[1], lambda value: self.format_color(1, value)),
                  ('B', Qt.blue, lambda: self.current_color[2], lambda value: self.format_color(2, value)),
                  ('C', Qt.black, lambda: self.current_color[3], str)]
-        self.plot_widget = PlotWidget('Color', plots, self.clear_graphs_button, extra_key_widgets=[self.color_frame])
+        self.plot_widget = PlotWidget('Color', plots, clear_button=self.clear_graphs_button, extra_key_widgets=[self.color_frame])
         self.plot_widget.setMinimumSize(250, 200)
 
         plots_illuminance = [('Illuminance', Qt.red, lambda: self.current_illuminance, '{} lx (Lux)'.format)]
-        self.plot_widget_illuminance = PlotWidget('Illuminance [lx]', plots_illuminance, self.clear_graphs_button, extra_key_widgets=[self.illuminance_frame])
+        self.plot_widget_illuminance = PlotWidget('Illuminance [lx]', plots_illuminance, clear_button=self.clear_graphs_button, extra_key_widgets=[self.illuminance_frame])
         self.plot_widget_illuminance.setMinimumSize(250, 200)
 
         plots_color_temperature = [('Color Temperature', Qt.red, lambda: self.current_color_temperature, '{} K'.format)]
-        self.plot_widget_color_temperature = PlotWidget('Color Temperature [K]', plots_color_temperature, self.clear_graphs_button, extra_key_widgets=[self.color_temperature_frame])
+        self.plot_widget_color_temperature = PlotWidget('Color Temperature [K]', plots_color_temperature, clear_button=self.clear_graphs_button, extra_key_widgets=[self.color_temperature_frame])
         self.plot_widget_color_temperature.setMinimumSize(250, 200)
 
         self.gain_label = QLabel('Gain:')

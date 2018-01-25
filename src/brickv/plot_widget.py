@@ -2,7 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014, 2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014, 2016, 2018 Matthias Bolte <matthias@tinkerforge.com>
 
 plot_widget.py: Graph for simple value over time representation
 
@@ -26,7 +26,6 @@ import sys
 import math
 import functools
 import bisect
-
 from collections import namedtuple
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
@@ -35,7 +34,8 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
                         QSpinBox
 from PyQt4.QtCore import QTimer, Qt, QSize, QRectF, QLineF
 
-MovingAverageConfig = namedtuple('MovingAverageConfig', ['min_length', 'max_length', 'callback'])
+CurveConfig = namedtuple('CurveConfig', 'title color value_getter value_formatter')
+MovingAverageConfig = namedtuple('MovingAverageConfig', 'min_length max_length callback')
 
 EPSILON = 0.000001
 DEBUG = False
@@ -73,6 +73,7 @@ class Scale(object):
         self.tick_text_font_metrics = QFontMetrics(self.tick_text_font)
         self.tick_text_height = self.tick_text_font_metrics.boundingRect('0123456789').height()
         self.tick_text_height_half = int(math.ceil(self.tick_text_height / 2.0))
+        self.tick_text_half_digit_width = int(math.ceil(self.tick_text_font_metrics.width('0123456789') / 20.0))
 
         self.tick_value_to_str = istr
 
@@ -80,8 +81,13 @@ class Scale(object):
         self.title_text_font_metrics = QFontMetrics(self.title_text_font)
 
 class XScale(Scale):
-    def __init__(self, tick_text_font, title_text_font, title_text):
+    def __init__(self, tick_text_font, title_text_font, title_text, tick_skip_last):
         Scale.__init__(self, tick_text_font, title_text_font)
+
+        self.tick_skip_last = tick_skip_last
+
+        self.step_size = None # set by update_tick_config
+        self.step_subdivision_count = None # set by update_tick_config
 
         self.tick_mark_to_tick_text = 0 # px, fixed
 
@@ -99,31 +105,48 @@ class XScale(Scale):
                             self.title_text_height + \
                             self.title_text_to_border # px, fixed
 
-    def draw(self, painter, factor, tick_value_min, tick_count):
+        self.update_tick_config(5.0, 5)
+
+    def update_tick_config(self, step_size, step_subdivision_count):
+        self.step_size = float(step_size)
+        self.step_subdivision_count = int(step_subdivision_count)
+
+        if fuzzy_geq(self.step_size, 1.0):
+            self.tick_value_to_str = istr
+        else:
+            self.tick_value_to_str = fstr
+
+    def draw(self, painter, width, factor, value_min, value_max):
         factor_int = int(math.floor(factor))
-        text_flags = Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignBottom
 
         # axis line
-        axis_line_length = int(math.floor(factor * tick_count))
-
-        painter.drawLine(0, 0, axis_line_length - 1, 0)
+        painter.drawLine(0, 0, width - 1, 0)
 
         # ticks
+        painter.setFont(self.tick_text_font)
+
         tick_text_y = self.axis_line_thickness + \
                       self.tick_mark_size_large + \
                       self.tick_mark_to_tick_text
         tick_text_width = factor_int + self.tick_mark_thickness + factor_int
         tick_text_height = self.tick_text_height
+        value = value_min - (value_min % self.step_size)
 
-        painter.setFont(self.tick_text_font)
+        while fuzzy_leq(value, value_max):
+            x = int(round((value - value_min) * factor))
 
-        for i in range(tick_count):
-            x = round(factor * i)
-            tick_value = int(tick_value_min + i)
+            if width - x <= 2: # accept 2px jitter
+                if self.tick_skip_last:
+                    break
 
-            if (tick_value % 5) == 0:
-                tick_mark_size = self.tick_mark_size_large
+                tick_text_x = x - tick_text_width + self.tick_text_half_digit_width
+                tick_text_alignment = Qt.AlignRight
+            else:
                 tick_text_x = x - factor_int
+                tick_text_alignment = Qt.AlignHCenter
+
+            if x >= -2: # accept 2px jitter
+                painter.drawLine(x, 0, x, self.tick_mark_size_large)
 
                 if DEBUG:
                     painter.fillRect(tick_text_x, tick_text_y,
@@ -132,12 +155,29 @@ class XScale(Scale):
 
                 painter.drawText(tick_text_x, tick_text_y,
                                  tick_text_width, tick_text_height,
-                                 text_flags,
-                                 self.tick_value_to_str(tick_value))
-            else:
-                tick_mark_size = self.tick_mark_size_small
+                                 Qt.TextDontClip | Qt.AlignBottom | tick_text_alignment,
+                                 self.tick_value_to_str(value))
 
-            painter.drawLine(x, 0, x, tick_mark_size)
+            for i in range(1, self.step_subdivision_count):
+                subvalue = value + (self.step_size * i / self.step_subdivision_count)
+
+                if not fuzzy_leq(subvalue, value_max):
+                    break
+
+                subx = int(round((subvalue - value_min) * factor))
+
+                if subx >= -2: # accept 2px jitter
+                    if width - subx <= 2 and self.tick_skip_last: # accept 2px jitter
+                        break
+
+                    if i % 2 == 0 and self.step_subdivision_count % 2 == 0:
+                        tick_mark_size = self.tick_mark_size_medium
+                    else:
+                        tick_mark_size = self.tick_mark_size_small
+
+                    painter.drawLine(subx, 0, subx, tick_mark_size)
+
+            value += self.step_size
 
         # title
         title_text_x = 0
@@ -146,7 +186,7 @@ class XScale(Scale):
                        self.tick_mark_to_tick_text + \
                        self.tick_text_height + \
                        self.tick_text_to_title_text
-        title_text_width = axis_line_length
+        title_text_width = width
         title_text_height = self.title_text_height
 
         if DEBUG:
@@ -157,7 +197,8 @@ class XScale(Scale):
         painter.setFont(self.title_text_font)
         painter.drawText(title_text_x, title_text_y,
                          title_text_width, title_text_height,
-                         text_flags, self.title_text)
+                         Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignBottom,
+                         self.title_text)
 
 class YScale(Scale):
     def __init__(self, tick_text_font, title_text_font, title_text):
@@ -337,7 +378,7 @@ class CurveArea(QWidget):
         y_min_scale = self.plot.y_scale.value_min
         y_max_scale = self.plot.y_scale.value_max
 
-        factor_x = float(width) / self.plot.history_length_x
+        factor_x = float(width) / self.plot.x_diff
         factor_y = float(height - 1) / max(y_max_scale - y_min_scale, EPSILON) # -1 to accommodate the 1px width of the curve
 
         if self.plot.x_min != None and self.plot.x_max != None:
@@ -347,7 +388,7 @@ class CurveArea(QWidget):
             if self.plot.curve_start == 'left':
                 curve_x_offset = 0
             else:
-                curve_x_offset = round((self.plot.history_length_x - (x_max - x_min)) * factor_x)
+                curve_x_offset = round((self.plot.x_diff - (x_max - x_min)) * factor_x)
 
             transform = QTransform()
 
@@ -382,22 +423,21 @@ class CurveArea(QWidget):
                 for i in xrange(start + 1, len(curve_x)):
                     lineTo(curve_x[i], curve_y[i])
 
-                painter.setPen(self.plot.configs[c][1])
+                painter.setPen(self.plot.curve_configs[c].color)
                 painter.drawPath(path)
 
             painter.restore()
 
 class Plot(QWidget):
-    def __init__(self, parent, y_scale_title_text, configs, scales_visible=True,
-                 curve_outer_border_visible=True, curve_motion_granularity=10,
-                 canvas_color=QColor(245, 245, 245), curve_start='left'):
+    def __init__(self, parent, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
+                 curve_configs, scales_visible, curve_outer_border_visible, curve_motion_granularity,
+                 canvas_color, curve_start, x_diff):
         QWidget.__init__(self, parent)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
-        self.configs = configs
+        self.curve_configs = curve_configs
         self.scales_visible = scales_visible
-        self.history_length_x = 20 # seconds
 
         if curve_outer_border_visible:
             self.curve_outer_border = 5 # px, fixed
@@ -415,6 +455,7 @@ class Plot(QWidget):
         self.curve_to_scale = 8 # px, fixed
         self.canvas_color = canvas_color
         self.curve_start = curve_start
+        self.x_diff = x_diff
         self.partial_update_width = 50 # px, initial value, calculated in update
         self.partial_update_enabled = False
 
@@ -424,7 +465,7 @@ class Plot(QWidget):
         self.title_text_font.setPointSize(round(self.title_text_font.pointSize() * 1.2))
         self.title_text_font.setBold(True)
 
-        self.x_scale = XScale(self.tick_text_font, self.title_text_font, 'Time [s]')
+        self.x_scale = XScale(self.tick_text_font, self.title_text_font, x_scale_title_text, x_scale_skip_last_tick)
 
         self.y_scale = YScale(self.tick_text_font, self.title_text_font, y_scale_title_text)
         self.y_scale_fixed = False
@@ -498,10 +539,10 @@ class Plot(QWidget):
             y_min_scale = self.y_scale.value_min
             y_max_scale = self.y_scale.value_max
 
-            factor_x = float(curve_width) / self.history_length_x
+            factor_x = float(curve_width) / self.x_diff
             factor_y = float(curve_height - 1) / max(y_max_scale - y_min_scale, EPSILON) # -1 to accommodate the 1px width of the curve
 
-            self.draw_x_scale(painter, factor_x)
+            self.draw_x_scale(painter, curve_width, factor_x)
             self.draw_y_scale(painter, curve_height, factor_y)
 
     def resize_curve_area(self):
@@ -524,6 +565,9 @@ class Plot(QWidget):
 
         self.curve_area.setGeometry(curve_x, curve_y, curve_width, curve_height)
 
+    def set_x_scale(self, step_size, step_subdivision_count):
+        self.x_scale.update_tick_config(step_size, step_subdivision_count)
+
     def set_fixed_y_scale(self, value_min, value_max, step_size, step_subdivision_count):
         self.y_scale_fixed = True
         self.y_scale.update_tick_config(value_min, value_max, step_size, step_subdivision_count)
@@ -531,20 +575,18 @@ class Plot(QWidget):
     def get_legend_offset_y(self): # px, from top
         return max(self.y_scale.tick_text_height_half - self.curve_outer_border, 0)
 
-    def draw_x_scale(self, painter, factor):
+    def draw_x_scale(self, painter, width, factor):
         offset_x = self.y_scale.total_width + self.curve_to_scale
         offset_y = self.height() - self.x_scale.total_height
 
         if self.x_min != None:
             x_min = self.x_min
         else:
-            x_min = 0
+            x_min = 0.0
 
         painter.save()
         painter.translate(offset_x, offset_y)
-
-        self.x_scale.draw(painter, factor, x_min, self.history_length_x)
-
+        self.x_scale.draw(painter, width, factor, x_min, x_min + self.x_diff)
         painter.restore()
 
     def draw_y_scale(self, painter, height, factor):
@@ -553,12 +595,10 @@ class Plot(QWidget):
 
         painter.save()
         painter.translate(offset_x, offset_y)
-
         self.y_scale.draw(painter, height, factor)
-
         painter.restore()
 
-    # NOTE: assumes that x is a timestamp in seconds that constantly grows
+    # NOTE: assumes that x constantly grows
     def add_data(self, c, x, y):
         if self.y_type == None:
             self.y_type = type(y)
@@ -606,7 +646,7 @@ class Plot(QWidget):
             self.curves_y_max[c] = max(self.curves_y_max[c], y)
 
         if len(self.curves_x[c]) > 0:
-            if (self.curves_x[c][-1] - self.curves_x[c][0]) >= self.history_length_x:
+            if (self.curves_x[c][-1] - self.curves_x[c][0]) >= self.x_diff:
                 self.curves_x[c] = self.curves_x[c][self.curve_motion_granularity:]
                 self.curves_y[c] = self.curves_y[c][self.curve_motion_granularity:]
 
@@ -637,6 +677,56 @@ class Plot(QWidget):
             self.curve_area.update(self.curve_area.width() - self.partial_update_width, 0, self.partial_update_width, self.curve_area.height())
         else:
             self.curve_area.update()
+
+    # NOTE: assumes that x and y are non-empty lists and that x is sorted ascendingly
+    def set_data(self, c, x, y):
+        if self.y_type == None:
+            self.y_type = type(y[0])
+
+        x = map(float, x) # also makes a copy of x
+        y = map(float, y) # also makes a copy of y
+
+        x_min = x[0]
+        x_max = x[-1]
+
+        y_min = min(y)
+        y_max = max(y)
+
+        last_y_min = self.y_min
+        last_y_max = self.y_max
+
+        if self.x_min == None:
+            self.x_min = x_min
+
+        if self.x_max == None:
+            self.x_max = x_max
+
+        if self.curves_visible[c]:
+            if self.y_min == None:
+                self.y_min = y_min
+            else:
+                self.y_min = min(self.y_min, y_min)
+
+            if self.y_max == None:
+                self.y_max = y_max
+            else:
+                self.y_max = max(self.y_max, y_max)
+
+        self.curves_x[c] = x
+        self.curves_y[c] = y
+
+        self.curves_x_min[c] = x_min
+        self.curves_x_max[c] = x_max
+
+        self.curves_y_min[c] = y_min
+        self.curves_y_max[c] = y_max
+
+        self.x_max = min(self.curves_x_max)
+
+        if self.curves_visible[c] and (last_y_min != self.y_min or last_y_max != self.y_max):
+            self.update_y_min_max_scale()
+
+        self.curve_area.update()
 
     def update_x_min_max_y_min_max(self):
         last_x_min, last_x_max, last_y_min, last_y_max = self.x_min, self.x_max, self.y_min, self.y_max
@@ -747,7 +837,7 @@ class Plot(QWidget):
         self.curve_area.update()
 
     def clear_graph(self):
-        count = len(self.configs)
+        count = len(self.curve_configs)
 
         if not hasattr(self, 'curves_visible'):
             self.curves_visible = [True]*count # per curve visibility
@@ -800,19 +890,22 @@ class FixedSizeLabel(QLabel):
         return hint
 
 class PlotWidget(QWidget):
-    def __init__(self, y_scale_title_text, configs, clear_button=None, parent=None,
+    def __init__(self, y_scale_title_text, curve_configs, clear_button='default', parent=None,
                  scales_visible=True, curve_outer_border_visible=True,
                  curve_motion_granularity=10, canvas_color=QColor(245, 245, 245),
                  external_timer=None, key='top-value', extra_key_widgets=None,
-                 update_interval=0.1, curve_start='left', moving_average_config=None):
+                 update_interval=0.1, curve_start='left', moving_average_config=None,
+                 x_scale_title_text='Time [s]', x_diff=20, x_scale_skip_last_tick=True):
         QWidget.__init__(self, parent)
 
         self.setMinimumSize(300, 250)
 
         self.stop = True
-        self.plot = Plot(self, y_scale_title_text, configs, scales_visible,
-                         curve_outer_border_visible, curve_motion_granularity,
-                         canvas_color, curve_start)
+        self.curve_configs = [CurveConfig(*curve_config) for curve_config in curve_configs]
+        self.plot = Plot(self, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
+                         self.curve_configs, scales_visible, curve_outer_border_visible,
+                         curve_motion_granularity, canvas_color, curve_start, x_diff)
+        self.set_x_scale = self.plot.set_x_scale
         self.set_fixed_y_scale = self.plot.set_fixed_y_scale
         self.key = key
         self.key_items = []
@@ -820,37 +913,39 @@ class PlotWidget(QWidget):
         self.first_show = True
         self.timestamp = 0 # seconds
         self.update_interval = update_interval # seconds
-        self.configs = configs
 
         h1layout = QHBoxLayout()
         h1layout.setContentsMargins(0, 0, 0, 0)
+        h1layout_empty = True
 
-        if clear_button == None:
+        if clear_button == 'default':
             self.clear_button = QToolButton()
             self.clear_button.setText('Clear Graph')
+
             h1layout.addWidget(self.clear_button)
+            h1layout.addStretch(1)
+            h1layout_empty = False
         else:
             self.clear_button = clear_button
 
-        self.clear_button.clicked.connect(self.clear_clicked)
-
-        h1layout.addStretch(1)
+        if self.clear_button != None:
+            self.clear_button.clicked.connect(self.clear_clicked)
 
         v1layout = None
 
         if self.key != None:
-            if len(self.configs) == 1:
+            if len(self.curve_configs) == 1:
                 label = FixedSizeLabel(self)
-                label.setText(self.configs[0][0])
+                label.setText(self.curve_configs[0].title)
 
                 self.key_items.append(label)
             else:
-                for i, config in enumerate(self.configs):
+                for i, curve_config in enumerate(self.curve_configs):
                     pixmap = QPixmap(10, 2)
-                    QPainter(pixmap).fillRect(0, 0, 10, 2, config[1])
+                    QPainter(pixmap).fillRect(0, 0, 10, 2, curve_config.color)
 
                     button = FixedSizeToolButton(self)
-                    button.setText(config[0])
+                    button.setText(curve_config.title)
                     button.setIcon(QIcon(pixmap))
                     button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
                     button.setCheckable(True)
@@ -862,6 +957,7 @@ class PlotWidget(QWidget):
             if self.key.startswith('top'):
                 for key_item in self.key_items:
                     h1layout.addWidget(key_item)
+                    h1layout_empty = False
             elif self.key.startswith('right'):
                 v1layout = QVBoxLayout()
                 v1layout.setContentsMargins(0, 0, 0, 0)
@@ -872,12 +968,14 @@ class PlotWidget(QWidget):
 
                 v1layout.addStretch(1)
 
-        h1layout.addStretch(1)
+        if not h1layout_empty:
+            h1layout.addStretch(1)
 
         if extra_key_widgets != None:
-            if self.key.startswith('top'):
+            if self.key == None or self.key.startswith('top'):
                 for widget in extra_key_widgets:
                     h1layout.addWidget(widget)
+                    h1layout_empty = False
             elif self.key.startswith('right'):
                 if v1layout == None:
                     v1layout = QVBoxLayout()
@@ -891,7 +989,7 @@ class PlotWidget(QWidget):
         v2layout = QVBoxLayout(self)
         v2layout.setContentsMargins(0, 0, 0, 0)
 
-        if h1layout.count() > 2:
+        if not h1layout_empty:
             v2layout.addLayout(h1layout)
 
         if v1layout != None:
@@ -906,6 +1004,7 @@ class PlotWidget(QWidget):
             v2layout.addWidget(self.plot)
 
         self.moving_average_config = moving_average_config
+
         if moving_average_config != None:
             self.moving_average_label = QLabel('Moving Average Length:')
             self.moving_average_spinbox = QSpinBox()
@@ -969,21 +1068,25 @@ class PlotWidget(QWidget):
     def get_key_item(self, i):
         return self.key_items[i]
 
+    def set_data(self, i, x, y):
+        # FIXME: how to set potential key items from this?
+        self.plot.set_data(i, x, y)
+
     # internal
     def add_new_data(self):
         if self.stop:
             return
 
-        for i, config in enumerate(self.configs):
-            value = config[2]()
+        for i, curve_config in enumerate(self.curve_configs):
+            value = curve_config.value_getter()
 
             if value != None:
                 if len(self.key_items) > 0 and self.key_has_values:
-                    self.key_items[i].setText(config[0] + ': ' + config[3](value))
+                    self.key_items[i].setText(curve_config.title + ': ' + curve_config.value_formatter(value))
 
                 self.plot.add_data(i, self.timestamp, value)
             elif len(self.key_items) > 0 and self.key_has_values:
-                self.key_items[i].setText(config[0])
+                self.key_items[i].setText(curve_config.title)
 
         self.timestamp += self.update_interval
 

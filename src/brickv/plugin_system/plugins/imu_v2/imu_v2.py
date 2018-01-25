@@ -226,7 +226,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
         for i in range(23):
             self.data_plot_widget.append(PlotWidget("",
                                                     [("", self.data_color[i][0], get_lambda_data_getter(i), str)],
-                                                    self.clear_graphs,
+                                                    clear_button=self.clear_graphs,
                                                     scales_visible=False,
                                                     curve_outer_border_visible=False,
                                                     curve_motion_granularity=1,
