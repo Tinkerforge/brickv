@@ -186,10 +186,10 @@ class YScale(Scale):
         self.update_tick_config(-1.0, 1.0, 1.0, 5)
 
     def update_tick_config(self, value_min, value_max, step_size, step_subdivision_count):
-        self.value_min = value_min
-        self.value_max = value_max
-        self.step_size = step_size
-        self.step_subdivision_count = step_subdivision_count
+        self.value_min = float(value_min)
+        self.value_max = float(value_max)
+        self.step_size = float(step_size)
+        self.step_subdivision_count = int(step_subdivision_count)
 
         if fuzzy_geq(self.step_size, 1.0):
             self.tick_value_to_str = istr
@@ -524,9 +524,9 @@ class Plot(QWidget):
 
         self.curve_area.setGeometry(curve_x, curve_y, curve_width, curve_height)
 
-    def set_fixed_y_scale(self, value_min, value_max, step_size, step_division_count):
+    def set_fixed_y_scale(self, value_min, value_max, step_size, step_subdivision_count):
         self.y_scale_fixed = True
-        self.y_scale.update_tick_config(value_min, value_max, step_size, step_division_count)
+        self.y_scale.update_tick_config(value_min, value_max, step_size, step_subdivision_count)
 
     def get_legend_offset_y(self): # px, from top
         return max(self.y_scale.tick_text_height_half - self.curve_outer_border, 0)
