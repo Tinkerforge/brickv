@@ -73,12 +73,10 @@ class HumidityV2(COMCUPluginBase):
         
     def new_moving_average_humidity(self, value):
         self.hum.set_moving_average_configuration(value, self.plot_widget_temperature.get_moving_average_value())
-        print("new_moving_average_humidity", value, self.plot_widget_temperature.get_moving_average_value())
-        
+
     def new_moving_average_temperature(self, value):
         self.hum.set_moving_average_configuration(self.plot_widget_humidity.get_moving_average_value(), value)
-        print("new_moving_average_temperature", self.plot_widget_humidity.get_moving_average_value(), value)
-        
+
     def enable_heater_changed(self, state):
         if state == Qt.Checked:
             self.hum.set_heater_configuration(self.hum.HEATER_CONFIG_ENABLED)
