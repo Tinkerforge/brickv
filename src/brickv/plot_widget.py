@@ -27,12 +27,13 @@ import math
 import functools
 import bisect
 from collections import namedtuple
+import time
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
                         QPainter, QSizePolicy, QFontMetrics, QPixmap, \
                         QIcon, QColor, QPainterPath, QLabel, QTransform, \
-                        QSpinBox
-from PyQt4.QtCore import QTimer, Qt, QSize, QRectF, QLineF
+                        QSpinBox, QPen
+from PyQt4.QtCore import QTimer, Qt, QSize, QRectF, QLineF, QPoint
 
 CurveConfig = namedtuple('CurveConfig', 'title color value_getter value_formatter')
 MovingAverageConfig = namedtuple('MovingAverageConfig', 'min_length max_length callback')
@@ -359,6 +360,8 @@ class CurveArea(QWidget):
         QWidget.__init__(self, plot)
 
         self.plot = plot
+        
+        self.max_points = None
 
         # FIXME: need to enable opaque painting to avoid that updates of other
         #        widgets trigger a full update of the curve
@@ -404,27 +407,54 @@ class CurveArea(QWidget):
             painter.save()
             painter.setTransform(transform)
 
-            for c in range(len(self.plot.curves_x)):
-                if not self.plot.curves_visible[c]:
-                    continue
-
-                curve_x = self.plot.curves_x[c]
-                curve_y = self.plot.curves_y[c]
-                path = QPainterPath()
-                lineTo = path.lineTo
-
-                if self.plot.curve_motion_granularity > 1:
-                    start = max(min(bisect.bisect_left(curve_x, inverted_event_rect.left()), len(curve_x) - 1) - 1, 0)
+            if False and self.plot.curves_visible[0]:
+                # Currently unused support for bar graphs.
+                # If we need this later on we should add an option to the
+                # PlotWidget for it.
+                # I tested this for the Sound Pressure Level Bricklet and it works,
+                # but it didnt't look good.
+                curve_x = self.plot.curves_x[0]
+                curve_y = self.plot.curves_y[0]
+                
+                t = time.time()
+                if self.max_points == None:
+                    self.max_points = []
+                    for y in curve_y:
+                        self.max_points.append((t, y))
                 else:
-                    start = 0
+                    for i in range(len(curve_y)):
+                        if (curve_y[i] > self.max_points[i][1]) or ((t - self.max_points[i][0]) > 5):
+                            self.max_points[i] = (t, curve_y[i])
 
-                path.moveTo(curve_x[start], curve_y[start])
-
-                for i in xrange(start + 1, len(curve_x)):
-                    lineTo(curve_x[i], curve_y[i])
-
-                painter.setPen(self.plot.curve_configs[c].color)
-                painter.drawPath(path)
+                for i in range(len(self.plot.curves_x[0])):
+                    painter.setPen(self.plot.curve_configs[0].color)
+                    painter.drawLine(QPoint(curve_x[i], 0), QPoint(curve_x[i], curve_y[i]))
+                    painter.setPen(Qt.white)
+                    painter.drawLine(QPoint(curve_x[i], curve_y[i]), QPoint(curve_x[i], y_max_scale))
+                    painter.setPen(Qt.darkGreen)
+                    painter.drawPoint(QPoint(curve_x[i], self.max_points[i][1]))
+            else:
+                for c in range(len(self.plot.curves_x)):
+                    if not self.plot.curves_visible[c]:
+                        continue
+    
+                    curve_x = self.plot.curves_x[c]
+                    curve_y = self.plot.curves_y[c]
+                    path = QPainterPath()
+                    lineTo = path.lineTo
+    
+                    if self.plot.curve_motion_granularity > 1:
+                        start = max(min(bisect.bisect_left(curve_x, inverted_event_rect.left()), len(curve_x) - 1) - 1, 0)
+                    else:
+                        start = 0
+    
+                    path.moveTo(curve_x[start], curve_y[start])
+    
+                    for i in xrange(start + 1, len(curve_x)):
+                        lineTo(curve_x[i], curve_y[i])
+    
+                    painter.setPen(self.plot.curve_configs[c].color)
+                    painter.drawPath(path)
 
             painter.restore()
 
