@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-01-30.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -24,7 +24,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletMotionDetectorV2(Device):
     """
-    Passive infrared (PIR) motion sensor, 7m range
+    Passive infrared (PIR) motion sensor, 12m range
     """
 
     DEVICE_IDENTIFIER = 292
@@ -115,7 +115,16 @@ class BrickletMotionDetectorV2(Device):
 
     def set_sensitivity(self, sensitivity):
         """
-        0-100
+        Sets the sensitivity of the PIR sensor. The range is 0-100. At full
+        sensitivity (100), the Bricklet can detect motion in a range of approximately 12m.
+
+        The range depends on many things in the enivronment (e.g. reflections) and the
+        size of the object to be detected. While a big person might be detected in a range
+        of 10m a cat may only be detected at 2m distance with the same setting.
+
+        So you will have to find a good sensitivty for your application by trial and error.
+
+        The default sensitivity value is 50.
         """
         sensitivity = int(sensitivity)
 
@@ -123,13 +132,18 @@ class BrickletMotionDetectorV2(Device):
 
     def get_sensitivity(self):
         """
-
+        Returns the sensitivity as set by :func:`Set Sensitivity`.
         """
         return self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_GET_SENSITIVITY, (), '', 'B')
 
     def set_indicator(self, top_left, top_right, bottom):
         """
+        Sets the blue backlight of the fresnel lens. The backlight consists of
+        three LEDs. The brightness of each LED can be controlled with a 8-bit value
+        (0-255). A value of 0 turns the LED off and a value of 255 turns the LED
+        to full brightness.
 
+        The default value is 0, 0, 0.
         """
         top_left = int(top_left)
         top_right = int(top_right)
@@ -139,7 +153,7 @@ class BrickletMotionDetectorV2(Device):
 
     def get_indicator(self):
         """
-
+        Returns the indicator configuration as set by :func:`Set Indicator`.
         """
         return GetIndicator(*self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_GET_INDICATOR, (), '', 'B B B'))
 

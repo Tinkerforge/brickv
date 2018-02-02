@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-01-30.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -27,7 +27,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletOutdoorWeather(Device):
     """
-    TODO
+    433MHz receiver for outdoor weather station
     """
 
     DEVICE_IDENTIFIER = 288
@@ -127,19 +127,37 @@ class BrickletOutdoorWeather(Device):
 
     def get_station_identifiers_low_level(self):
         """
+        Returns the identifiers (number betwen 0 and 255) of all `stations <TBD>`__ that have been seen
+        since the startup of the Bricklet.
 
+        Each station gives itself a random identifier on first startup.
         """
         return GetStationIdentifiersLowLevel(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_IDENTIFIERS_LOW_LEVEL, (), '', 'H H 60B'))
 
     def get_sensor_identifiers_low_level(self):
         """
+        Returns the Identifiers (number between 0 and 255) of all `sensors <TBD>`__ that have been seen
+        since the startup of the Bricklet.
 
+        Each sensor gives itself a random identifier on first startup.
         """
         return GetSensorIdentifiersLowLevel(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_IDENTIFIERS_LOW_LEVEL, (), '', 'H H 60B'))
 
     def get_station_data(self, identifier):
         """
+        Returns the last measured data for a station with the given identifier.
+        Call :func:`Get Station Identifiers` for a list of all available identifiers.
 
+        The return values are
+
+        * Temperature in °C/10,
+        * Humidity in %RH,
+        * Wind Speed in m/10s,
+        * Gust Speed in m/10s,
+        * Rain Fall in mm/10,
+        * Wind Direction (N, NNE, NE, ENE, E, ESE, SE, SSE, S, SSW, SW, WSW, W, WNW, NW, NNW),
+        * Battery Low (true or false) and
+        * Last Change (time in seconds since the last reception of data).
         """
         identifier = int(identifier)
 
@@ -147,7 +165,14 @@ class BrickletOutdoorWeather(Device):
 
     def get_sensor_data(self, identifier):
         """
+        Returns the last measured data for a sensor with the given identifier.
+        Call :func:`Get Sensor Identifiers` for a list of all available identifiers.
 
+        The return values are
+
+        * Temperature in °C/10,
+        * Humidity in %RH and
+        * Last Change (time in seconds since the last reception of data).
         """
         identifier = int(identifier)
 
@@ -155,7 +180,7 @@ class BrickletOutdoorWeather(Device):
 
     def set_station_callback_configuration(self, enable_callback):
         """
-
+        Turns callback for station data on or off. Default is off.
         """
         enable_callback = bool(enable_callback)
 
@@ -163,13 +188,13 @@ class BrickletOutdoorWeather(Device):
 
     def get_station_callback_configuration(self):
         """
-
+        Returns the configuration as set by :func:`Set Station Callback Configuration`.
         """
         return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_CALLBACK_CONFIGURATION, (), '', '!')
 
     def set_sensor_callback_configuration(self, enable_callback):
         """
-
+        Turns callback for sensor data on or off. Default is off.
         """
         enable_callback = bool(enable_callback)
 
@@ -177,7 +202,7 @@ class BrickletOutdoorWeather(Device):
 
     def get_sensor_callback_configuration(self):
         """
-
+        Returns the configuration as set by :func:`Set Sensor Callback Configuration`.
         """
         return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_CALLBACK_CONFIGURATION, (), '', '!')
 
@@ -323,7 +348,10 @@ class BrickletOutdoorWeather(Device):
 
     def get_station_identifiers(self):
         """
+        Returns the identifiers (number betwen 0 and 255) of all `stations <TBD>`__ that have been seen
+        since the startup of the Bricklet.
 
+        Each station gives itself a random identifier on first startup.
         """
         with self.stream_lock:
             ret = self.get_station_identifiers_low_level()
@@ -348,7 +376,10 @@ class BrickletOutdoorWeather(Device):
 
     def get_sensor_identifiers(self):
         """
+        Returns the Identifiers (number between 0 and 255) of all `sensors <TBD>`__ that have been seen
+        since the startup of the Bricklet.
 
+        Each sensor gives itself a random identifier on first startup.
         """
         with self.stream_lock:
             ret = self.get_sensor_identifiers_low_level()

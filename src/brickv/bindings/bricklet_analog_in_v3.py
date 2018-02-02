@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-01-30.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -25,7 +25,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletAnalogInV3(Device):
     """
-
+    Measures DC voltage between 0V and 42V
     """
 
     DEVICE_IDENTIFIER = 295
@@ -120,11 +120,8 @@ class BrickletAnalogInV3(Device):
     def get_voltage(self):
         """
         Returns the measured voltage. The value is in mV and
-        between 0V and 42V. The resolution is approximately 10mV to 1mV.
-
-
-        TODO: oversampling...
-
+        between 0V and 42V. The resolution is approximately 10mV to 1mV
+        depending on the oversampling configuration (:func:`Set Oversampling`).
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -182,13 +179,20 @@ class BrickletAnalogInV3(Device):
 
     def set_oversampling(self, oversampling):
         """
-        One 12bit sample taken every 17.5us:
+        Sets the oversampling between 32 and 16384. The Bricklet
+        takes one 12bit sample every 17.5us. Thus an oversampling
+        of 32 is equivalent to an integration time of 0.56ms and
+        a oversampling of 16384 is equivalent to an integration
+        time of 286mh.
 
-        *32x    -> 0.56ms
-        *16384x -> 286ms
+        The oversampling uses the moving average principle. A
+        new value is always calculated once per ms.
 
-        uses moving average principle (new value every 1ms)
-        TODO
+        With increased oversampling the noise decreases. With decreased
+        oversampling the reaction time increases (changes in voltage will be
+        measured faster).
+
+        The default oversampling value is 4096x.
         """
         oversampling = int(oversampling)
 
@@ -196,16 +200,20 @@ class BrickletAnalogInV3(Device):
 
     def get_oversampling(self):
         """
-
+        Returns the oversampling value as set by :func:`Set Oversampling`.
         """
         return self.ipcon.send_request(self, BrickletAnalogInV3.FUNCTION_GET_OVERSAMPLING, (), '', 'B')
 
     def set_calibration(self, offset, multiplier, divisor):
         """
-        Calibrated Value = (Value + Offset)*Muliplier/Divisor
+        Sets a calibration for the measured voltage value.
+        The formula for the calibration is as follows:
 
-        Hint: Use Brick Viewer
-        TODO
+        * Calibrated Value = (Value + Offset)*Muliplier/Divisor
+
+        We recommend that you use the Brick Viewer to calibrate
+        the Bricklet. The calibration will be saved and only
+        has to be done once.
         """
         offset = int(offset)
         multiplier = int(multiplier)
@@ -215,7 +223,7 @@ class BrickletAnalogInV3(Device):
 
     def get_calibration(self):
         """
-        TODO
+        Returns the calibration as set by :func:`Set Calibration`.
         """
         return GetCalibration(*self.ipcon.send_request(self, BrickletAnalogInV3.FUNCTION_GET_CALIBRATION, (), '', 'h H H'))
 

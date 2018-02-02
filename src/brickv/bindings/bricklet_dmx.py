@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-01-30.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -25,7 +25,7 @@ ReadFrame = namedtuple('ReadFrame', ['frame', 'frame_number'])
 
 class BrickletDMX(Device):
     """
-    DMX Master and Slave
+    DMX master and slave
     """
 
     DEVICE_IDENTIFIER = 285
