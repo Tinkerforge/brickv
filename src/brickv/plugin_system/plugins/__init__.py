@@ -80,6 +80,7 @@ from brickv.plugin_system.plugins.silent_stepper import device_class as silent_s
 from brickv.plugin_system.plugins.solid_state_relay import device_class as solid_state_relay
 from brickv.plugin_system.plugins.solid_state_relay_v2 import device_class as solid_state_relay_v2
 from brickv.plugin_system.plugins.sound_intensity import device_class as sound_intensity
+from brickv.plugin_system.plugins.sound_pressure_level import device_class as sound_pressure_level
 from brickv.plugin_system.plugins.stepper import device_class as stepper
 from brickv.plugin_system.plugins.temperature import device_class as temperature
 from brickv.plugin_system.plugins.temperature_ir import device_class as temperature_ir
@@ -175,6 +176,7 @@ device_classes = [
     solid_state_relay,
     solid_state_relay_v2,
     sound_intensity,
+    sound_pressure_level,
     stepper,
     temperature,
     temperature_ir,

@@ -360,6 +360,11 @@ except ValueError:
     from bricklet_sound_intensity import BrickletSoundIntensity
 
 try:
+    from .bricklet_sound_pressure_level import BrickletSoundPressureLevel
+except ValueError:
+    from bricklet_sound_pressure_level import BrickletSoundPressureLevel
+
+try:
     from .bricklet_temperature import BrickletTemperature
 except ValueError:
     from bricklet_temperature import BrickletTemperature
@@ -471,6 +476,7 @@ BrickletRS485.DEVICE_IDENTIFIER: BrickletRS485,
 BrickletSegmentDisplay4x7.DEVICE_IDENTIFIER: BrickletSegmentDisplay4x7,
 BrickletSolidStateRelay.DEVICE_IDENTIFIER: BrickletSolidStateRelay,
 BrickletSoundIntensity.DEVICE_IDENTIFIER: BrickletSoundIntensity,
+BrickletSoundPressureLevel.DEVICE_IDENTIFIER: BrickletSoundPressureLevel,
 BrickletTemperature.DEVICE_IDENTIFIER: BrickletTemperature,
 BrickletTemperatureIR.DEVICE_IDENTIFIER: BrickletTemperatureIR,
 BrickletThermalImaging.DEVICE_IDENTIFIER: BrickletThermalImaging,
