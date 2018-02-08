@@ -36,6 +36,7 @@ from brickv.plugin_system.plugins.industrial_digital_out_4 import device_class a
 from brickv.plugin_system.plugins.industrial_dual_0_20ma import device_class as industrial_dual_0_20ma
 from brickv.plugin_system.plugins.industrial_dual_analog_in import device_class as industrial_dual_analog_in
 from brickv.plugin_system.plugins.industrial_quad_relay import device_class as industrial_quad_relay
+from brickv.plugin_system.plugins.industrial_quad_relay_v2 import device_class as industrial_quad_relay_v2
 from brickv.plugin_system.plugins.io16 import device_class as io16
 from brickv.plugin_system.plugins.io4 import device_class as io4
 from brickv.plugin_system.plugins.joystick import device_class as joystick
@@ -133,6 +134,7 @@ device_classes = [
     industrial_dual_0_20ma,
     industrial_dual_analog_in,
     industrial_quad_relay,
+    industrial_quad_relay_v2,
     io16,
     io4,
     joystick,
