@@ -106,7 +106,7 @@ class PTCV2(COMCUPluginBase):
         pass
 
     def get_url_part(self):
-        return 'ptc'
+        return 'ptc_v2'
 
     @staticmethod
     def has_device_identifier(device_identifier):
