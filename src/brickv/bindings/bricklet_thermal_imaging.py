@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-01-30.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -204,6 +204,9 @@ class BrickletThermalImaging(Device):
 
         * from 0 to 6553 Kelvin (-273.15°C to +6279.85°C) with 0.1°C resolution or
         * from 0 to 655 Kelvin (-273.15°C to +381.85°C) with 0.01°C resolution.
+
+        The accuracy is specified for -10°C to 450°C in the
+        first range and -10°C and 140°C in the second range.
 
         The default value is 0 to 655 Kelvin.
         """

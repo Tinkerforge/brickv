@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-01-30.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -23,7 +23,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletRGBLEDButton(Device):
     """
-    RGB LED Button
+    Push button with built-in RGB LED
     """
 
     DEVICE_IDENTIFIER = 282
