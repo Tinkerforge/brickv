@@ -62,6 +62,7 @@ from brickv.plugin_system.plugins.piezo_buzzer import device_class as piezo_buzz
 from brickv.plugin_system.plugins.piezo_speaker import device_class as piezo_speaker
 from brickv.plugin_system.plugins.pressure import device_class as pressure
 from brickv.plugin_system.plugins.ptc import device_class as ptc
+from brickv.plugin_system.plugins.ptc_v2 import device_class as ptc_v2
 from brickv.plugin_system.plugins.real_time_clock import device_class as real_time_clock
 from brickv.plugin_system.plugins.red import device_class as red
 from brickv.plugin_system.plugins.remote_switch import device_class as remote_switch
@@ -158,6 +159,7 @@ device_classes = [
     piezo_speaker,
     pressure,
     ptc,
+    ptc_v2,
     real_time_clock,
     red,
     remote_switch,
