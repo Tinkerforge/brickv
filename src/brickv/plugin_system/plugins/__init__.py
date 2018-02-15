@@ -44,6 +44,7 @@ from brickv.plugin_system.plugins.laser_range_finder import device_class as lase
 from brickv.plugin_system.plugins.lcd_16x2 import device_class as lcd_16x2
 from brickv.plugin_system.plugins.lcd_20x4 import device_class as lcd_20x4
 from brickv.plugin_system.plugins.led_strip import device_class as led_strip
+from brickv.plugin_system.plugins.led_strip_v2 import device_class as led_strip_v2
 from brickv.plugin_system.plugins.line import device_class as line
 from brickv.plugin_system.plugins.linear_poti import device_class as linear_poti
 from brickv.plugin_system.plugins.load_cell import device_class as load_cell
@@ -142,6 +143,7 @@ device_classes = [
     lcd_16x2,
     lcd_20x4,
     led_strip,
+    led_strip_v2,
     line,
     linear_poti,
     load_cell,
