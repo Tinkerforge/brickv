@@ -48,6 +48,7 @@ from brickv.plugin_system.plugins.led_strip_v2 import device_class as led_strip_
 from brickv.plugin_system.plugins.line import device_class as line
 from brickv.plugin_system.plugins.linear_poti import device_class as linear_poti
 from brickv.plugin_system.plugins.load_cell import device_class as load_cell
+from brickv.plugin_system.plugins.load_cell_v2 import device_class as load_cell_v2
 from brickv.plugin_system.plugins.master import device_class as master
 from brickv.plugin_system.plugins.moisture import device_class as moisture
 from brickv.plugin_system.plugins.motion_detector import device_class as motion_detector
@@ -147,6 +148,7 @@ device_classes = [
     line,
     linear_poti,
     load_cell,
+    load_cell_v2,
     master,
     moisture,
     motion_detector,
