@@ -17,4 +17,4 @@
   Finder, Motorized Linear Poti, NFC/RFID, Real-Time Clock, RGB LED Button,
   RGB LED Matrix, RS485, Segment Display 4x7, Solid State Relay and Thermal
   Imaging Bricklet and Silent Stepper Brick
-- Remove unnecessary PyQt4 dependency from standalone mode
+- Remove unnecessary PyQt4 dependency
