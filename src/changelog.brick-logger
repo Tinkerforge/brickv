@@ -11,3 +11,10 @@
 2016-01-06: 2.0.3 (8e7c45b)
 - Add authentication support
 - Add support for CO2, OLED 64x48 and 128x64, Thermocouple and UV Light Bricklet
+
+2018-02-20: 2.0.4 (<unknown>)
+- Add support for CAN, DMX, Dual Relay, GPS 2.0, Humidity 2.0, Laser Range
+  Finder, Motorized Linear Poti, NFC/RFID, Real-Time Clock, RGB LED Button,
+  RGB LED Matrix, RS485, Segment Display 4x7, Solid State Relay and Thermal
+  Imaging Bricklet and Silent Stepper Brick
+- Remove unnecessary PyQt4 dependency from standalone mode
