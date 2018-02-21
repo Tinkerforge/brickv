@@ -230,9 +230,6 @@ class RS232(PluginBase, Ui_RS232):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'rs232'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletRS232.DEVICE_IDENTIFIER

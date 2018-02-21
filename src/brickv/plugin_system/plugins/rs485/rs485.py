@@ -1243,9 +1243,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'rs485'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletRS485.DEVICE_IDENTIFIER

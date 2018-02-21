@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -29,6 +29,7 @@ class BrickletOzone(Device):
 
     DEVICE_IDENTIFIER = 261
     DEVICE_DISPLAY_NAME = 'Ozone Bricklet'
+    DEVICE_URL_PART = 'ozone' # internal
 
     CALLBACK_OZONE_CONCENTRATION = 15
     CALLBACK_ANALOG_VALUE = 16

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -29,6 +29,7 @@ class BrickletJoystick(Device):
 
     DEVICE_IDENTIFIER = 210
     DEVICE_DISPLAY_NAME = 'Joystick Bricklet'
+    DEVICE_URL_PART = 'joystick' # internal
 
     CALLBACK_POSITION = 15
     CALLBACK_ANALOG_VALUE = 16

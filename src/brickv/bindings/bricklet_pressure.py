@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -29,6 +29,7 @@ class BrickletPressure(Device):
 
     DEVICE_IDENTIFIER = 269
     DEVICE_DISPLAY_NAME = 'Pressure Bricklet'
+    DEVICE_URL_PART = 'pressure' # internal
 
     CALLBACK_PRESSURE = 17
     CALLBACK_ANALOG_VALUE = 18

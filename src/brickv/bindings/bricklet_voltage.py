@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -27,6 +27,7 @@ class BrickletVoltage(Device):
 
     DEVICE_IDENTIFIER = 218
     DEVICE_DISPLAY_NAME = 'Voltage Bricklet'
+    DEVICE_URL_PART = 'voltage' # internal
 
     CALLBACK_VOLTAGE = 13
     CALLBACK_ANALOG_VALUE = 14

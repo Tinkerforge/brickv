@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-01-30.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -30,6 +30,7 @@ class BrickletDMX(Device):
 
     DEVICE_IDENTIFIER = 285
     DEVICE_DISPLAY_NAME = 'DMX Bricklet'
+    DEVICE_URL_PART = 'dmx' # internal
 
     CALLBACK_FRAME_STARTED = 14
     CALLBACK_FRAME_AVAILABLE = 15

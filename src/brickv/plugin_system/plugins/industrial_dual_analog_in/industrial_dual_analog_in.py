@@ -199,9 +199,6 @@ class IndustrialDualAnalogIn(PluginBase):
         if self.calibration != None:
             self.calibration.close()
 
-    def get_url_part(self):
-        return 'industrial_dual_analog_in'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialDualAnalogIn.DEVICE_IDENTIFIER

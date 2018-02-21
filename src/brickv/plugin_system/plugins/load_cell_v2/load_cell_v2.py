@@ -151,9 +151,6 @@ class LoadCellV2(COMCUPluginBase):
         if self.calibration:
             self.calibration.close()
 
-    def get_url_part(self):
-        return 'load_cell_v2'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletLoadCellV2.DEVICE_IDENTIFIER

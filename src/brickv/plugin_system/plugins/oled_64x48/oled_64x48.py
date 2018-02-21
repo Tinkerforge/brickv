@@ -177,9 +177,6 @@ class OLED64x48(PluginBase, Ui_OLED64x48):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'oled_64x48'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletOLED64x48.DEVICE_IDENTIFIER

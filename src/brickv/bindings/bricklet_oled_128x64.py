@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletOLED128x64(Device):
 
     DEVICE_IDENTIFIER = 263
     DEVICE_DISPLAY_NAME = 'OLED 128x64 Bricklet'
+    DEVICE_URL_PART = 'oled_128x64' # internal
 
 
 

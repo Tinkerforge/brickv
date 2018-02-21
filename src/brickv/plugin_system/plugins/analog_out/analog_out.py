@@ -77,9 +77,6 @@ class AnalogOut(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'analog_out'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletAnalogOut.DEVICE_IDENTIFIER

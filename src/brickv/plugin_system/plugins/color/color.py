@@ -176,9 +176,6 @@ class Color(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'color'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletColor.DEVICE_IDENTIFIER

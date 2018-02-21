@@ -324,9 +324,6 @@ class RealTimeClock(PluginBase, Ui_RealTimeClock):
         if self.calibration != None:
             self.calibration.close()
 
-    def get_url_part(self):
-        return 'real_time_clock'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletRealTimeClock.DEVICE_IDENTIFIER

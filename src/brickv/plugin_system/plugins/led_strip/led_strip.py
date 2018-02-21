@@ -542,9 +542,6 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'led_strip'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletLEDStrip.DEVICE_IDENTIFIER

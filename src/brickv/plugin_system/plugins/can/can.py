@@ -117,9 +117,6 @@ class CAN(PluginBase, Ui_CAN):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'can'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletCAN.DEVICE_IDENTIFIER

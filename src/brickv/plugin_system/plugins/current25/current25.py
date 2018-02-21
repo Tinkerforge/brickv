@@ -81,9 +81,6 @@ class Current25(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'current25'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletCurrent25.DEVICE_IDENTIFIER

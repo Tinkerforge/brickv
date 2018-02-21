@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletIndustrialAnalogOut(Device):
 
     DEVICE_IDENTIFIER = 258
     DEVICE_DISPLAY_NAME = 'Industrial Analog Out Bricklet'
+    DEVICE_URL_PART = 'industrial_analog_out' # internal
 
 
 

@@ -107,9 +107,6 @@ class SoundIntensity(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'sound_intensity'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletSoundIntensity.DEVICE_IDENTIFIER

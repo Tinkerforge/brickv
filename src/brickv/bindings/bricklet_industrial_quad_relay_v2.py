@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-08.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -29,6 +29,7 @@ class BrickletIndustrialQuadRelayV2(Device):
 
     DEVICE_IDENTIFIER = 2102
     DEVICE_DISPLAY_NAME = 'Industrial Quad Relay Bricklet 2.0'
+    DEVICE_URL_PART = 'industrial_quad_relay_v2' # internal
 
     CALLBACK_MONOFLOP_DONE = 5
 

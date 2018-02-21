@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -30,6 +30,7 @@ class BrickletDualRelayV2(Device):
 
     DEVICE_IDENTIFIER = 284
     DEVICE_DISPLAY_NAME = 'Dual Relay Bricklet 2.0'
+    DEVICE_URL_PART = 'dual_relay_v2' # internal
 
     CALLBACK_MONOFLOP_DONE = 5
 

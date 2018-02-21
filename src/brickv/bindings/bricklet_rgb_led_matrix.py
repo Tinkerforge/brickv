@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletRGBLEDMatrix(Device):
 
     DEVICE_IDENTIFIER = 272
     DEVICE_DISPLAY_NAME = 'RGB LED Matrix Bricklet'
+    DEVICE_URL_PART = 'rgb_led_matrix' # internal
 
     CALLBACK_FRAME_STARTED = 11
 

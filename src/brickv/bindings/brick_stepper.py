@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -30,6 +30,7 @@ class BrickStepper(Device):
 
     DEVICE_IDENTIFIER = 15
     DEVICE_DISPLAY_NAME = 'Stepper Brick'
+    DEVICE_URL_PART = 'stepper' # internal
 
     CALLBACK_UNDER_VOLTAGE = 31
     CALLBACK_POSITION_REACHED = 32

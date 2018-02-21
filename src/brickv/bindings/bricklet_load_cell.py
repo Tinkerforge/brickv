@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -27,6 +27,7 @@ class BrickletLoadCell(Device):
 
     DEVICE_IDENTIFIER = 253
     DEVICE_DISPLAY_NAME = 'Load Cell Bricklet'
+    DEVICE_URL_PART = 'load_cell' # internal
 
     CALLBACK_WEIGHT = 17
     CALLBACK_WEIGHT_REACHED = 18

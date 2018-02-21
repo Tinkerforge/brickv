@@ -116,9 +116,6 @@ class PiezoSpeaker(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'piezo_speaker'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletPiezoSpeaker.DEVICE_IDENTIFIER

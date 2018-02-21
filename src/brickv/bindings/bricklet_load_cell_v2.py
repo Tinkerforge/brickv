@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-16.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -30,6 +30,7 @@ class BrickletLoadCellV2(Device):
 
     DEVICE_IDENTIFIER = 2104
     DEVICE_DISPLAY_NAME = 'Load Cell Bricklet 2.0'
+    DEVICE_URL_PART = 'load_cell_v2' # internal
 
     CALLBACK_WEIGHT = 4
 

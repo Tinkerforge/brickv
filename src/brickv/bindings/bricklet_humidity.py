@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -27,6 +27,7 @@ class BrickletHumidity(Device):
 
     DEVICE_IDENTIFIER = 27
     DEVICE_DISPLAY_NAME = 'Humidity Bricklet'
+    DEVICE_URL_PART = 'humidity' # internal
 
     CALLBACK_HUMIDITY = 13
     CALLBACK_ANALOG_VALUE = 14

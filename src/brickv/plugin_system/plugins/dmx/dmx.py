@@ -271,9 +271,6 @@ class DMX(COMCUPluginBase, Ui_DMX):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'dmx'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletDMX.DEVICE_IDENTIFIER

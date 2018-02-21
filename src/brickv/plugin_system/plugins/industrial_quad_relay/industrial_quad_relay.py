@@ -97,9 +97,6 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'industrial_quad_relay'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialQuadRelay.DEVICE_IDENTIFIER

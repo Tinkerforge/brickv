@@ -296,9 +296,6 @@ class IMUV2(PluginBase, Ui_IMUV2):
         if self.imu_gl_wrapper:
             self.imu_gl_wrapper.close()
 
-    def get_url_part(self):
-        return 'imu_v2'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickIMUV2.DEVICE_IDENTIFIER

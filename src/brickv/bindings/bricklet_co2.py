@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletCO2(Device):
 
     DEVICE_IDENTIFIER = 262
     DEVICE_DISPLAY_NAME = 'CO2 Bricklet'
+    DEVICE_URL_PART = 'co2' # internal
 
     CALLBACK_CO2_CONCENTRATION = 8
     CALLBACK_CO2_CONCENTRATION_REACHED = 9

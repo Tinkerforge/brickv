@@ -120,9 +120,6 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletVoltageCurrent.DEVICE_IDENTIFIER
 
-    def get_url_part(self):
-        return 'voltage_current'
-
     def cb_current(self, current):
         self.current_current = current / 1000.0
 

@@ -125,9 +125,6 @@ class GPS(PluginBase, Ui_GPS):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'gps'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletGPS.DEVICE_IDENTIFIER

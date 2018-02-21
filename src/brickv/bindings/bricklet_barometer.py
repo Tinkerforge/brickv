@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -28,6 +28,7 @@ class BrickletBarometer(Device):
 
     DEVICE_IDENTIFIER = 221
     DEVICE_DISPLAY_NAME = 'Barometer Bricklet'
+    DEVICE_URL_PART = 'barometer' # internal
 
     CALLBACK_AIR_PRESSURE = 15
     CALLBACK_ALTITUDE = 16

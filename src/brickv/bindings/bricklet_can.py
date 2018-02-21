@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -29,6 +29,7 @@ class BrickletCAN(Device):
 
     DEVICE_IDENTIFIER = 270
     DEVICE_DISPLAY_NAME = 'CAN Bricklet'
+    DEVICE_URL_PART = 'can' # internal
 
     CALLBACK_FRAME_READ = 11
 

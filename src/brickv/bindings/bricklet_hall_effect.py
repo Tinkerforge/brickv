@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -27,6 +27,7 @@ class BrickletHallEffect(Device):
 
     DEVICE_IDENTIFIER = 240
     DEVICE_DISPLAY_NAME = 'Hall Effect Bricklet'
+    DEVICE_URL_PART = 'hall_effect' # internal
 
     CALLBACK_EDGE_COUNT = 10
 

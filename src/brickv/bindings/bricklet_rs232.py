@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -27,6 +27,7 @@ class BrickletRS232(Device):
 
     DEVICE_IDENTIFIER = 254
     DEVICE_DISPLAY_NAME = 'RS232 Bricklet'
+    DEVICE_URL_PART = 'rs232' # internal
 
     CALLBACK_READ = 8
     CALLBACK_ERROR = 9

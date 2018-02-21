@@ -437,9 +437,6 @@ Reapeats = {repeats}
         self.button_dim.setEnabled(True)
         self.button_dim.setText("Dim")
 
-    def get_url_part(self):
-        return 'remote_switch_v2'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletRemoteSwitchV2.DEVICE_IDENTIFIER

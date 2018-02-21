@@ -467,9 +467,6 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'thermal_imaging'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletThermalImaging.DEVICE_IDENTIFIER

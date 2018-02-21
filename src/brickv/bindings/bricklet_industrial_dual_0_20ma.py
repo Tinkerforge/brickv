@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletIndustrialDual020mA(Device):
 
     DEVICE_IDENTIFIER = 228
     DEVICE_DISPLAY_NAME = 'Industrial Dual 0-20mA Bricklet'
+    DEVICE_URL_PART = 'industrial_dual_0_20ma' # internal
 
     CALLBACK_CURRENT = 10
     CALLBACK_CURRENT_REACHED = 11

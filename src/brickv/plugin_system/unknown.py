@@ -68,9 +68,6 @@ Please update Brick Viewer!""".format(info.device_identifier,
     def stop(self):
         pass
 
-    def get_url_part(self):
-        return 'unknown'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return False

@@ -112,9 +112,6 @@ class IndustrialDual020mA(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'industrial_dual_0_20ma'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialDual020mA.DEVICE_IDENTIFIER

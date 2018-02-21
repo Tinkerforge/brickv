@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletLCD20x4(Device):
 
     DEVICE_IDENTIFIER = 212
     DEVICE_DISPLAY_NAME = 'LCD 20x4 Bricklet'
+    DEVICE_URL_PART = 'lcd_20x4' # internal
 
     CALLBACK_BUTTON_PRESSED = 9
     CALLBACK_BUTTON_RELEASED = 10

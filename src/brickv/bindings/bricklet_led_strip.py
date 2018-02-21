@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -27,6 +27,7 @@ class BrickletLEDStrip(Device):
 
     DEVICE_IDENTIFIER = 231
     DEVICE_DISPLAY_NAME = 'LED Strip Bricklet'
+    DEVICE_URL_PART = 'led_strip' # internal
 
     CALLBACK_FRAME_RENDERED = 6
 

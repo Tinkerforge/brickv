@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-01-30.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -28,6 +28,7 @@ class BrickletRGBLEDButton(Device):
 
     DEVICE_IDENTIFIER = 282
     DEVICE_DISPLAY_NAME = 'RGB LED Button Bricklet'
+    DEVICE_URL_PART = 'rgb_led_button' # internal
 
     CALLBACK_BUTTON_STATE_CHANGED = 4
 

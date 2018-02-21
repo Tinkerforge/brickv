@@ -197,9 +197,6 @@ in the image above, then press "Save Orientation".""")
         if self.calibrate:
             self.calibrate.close()
 
-    def get_url_part(self):
-        return 'imu'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickIMU.DEVICE_IDENTIFIER

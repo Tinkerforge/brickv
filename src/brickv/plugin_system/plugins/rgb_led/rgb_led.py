@@ -118,9 +118,6 @@ class RGBLED(PluginBase, Ui_RGBLED):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'rgb_led'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletRGBLED.DEVICE_IDENTIFIER

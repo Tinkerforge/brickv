@@ -225,6 +225,8 @@ class LCD20x4(PluginBase):
         pass
 
     def get_url_part(self):
+        # override normal get_url_part() function, because the URL part here
+        # depends on the hardware version
         return 'lcd_20x4_v{0}{1}'.format(self.hardware_version[0], self.hardware_version[1])
 
     def is_hardware_version_relevant(self):

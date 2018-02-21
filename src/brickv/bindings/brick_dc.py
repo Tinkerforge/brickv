@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -28,6 +28,7 @@ class BrickDC(Device):
 
     DEVICE_IDENTIFIER = 11
     DEVICE_DISPLAY_NAME = 'DC Brick'
+    DEVICE_URL_PART = 'dc' # internal
 
     CALLBACK_UNDER_VOLTAGE = 21
     CALLBACK_EMERGENCY_SHUTDOWN = 22

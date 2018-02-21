@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletTemperature(Device):
 
     DEVICE_IDENTIFIER = 216
     DEVICE_DISPLAY_NAME = 'Temperature Bricklet'
+    DEVICE_URL_PART = 'temperature' # internal
 
     CALLBACK_TEMPERATURE = 8
     CALLBACK_TEMPERATURE_REACHED = 9

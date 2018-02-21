@@ -123,9 +123,6 @@ class MultiTouch(PluginBase, Ui_MultiTouch):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'multi_touch'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletMultiTouch.DEVICE_IDENTIFIER

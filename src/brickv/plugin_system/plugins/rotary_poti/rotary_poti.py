@@ -72,9 +72,6 @@ class RotaryPoti(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'rotary_poti'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletRotaryPoti.DEVICE_IDENTIFIER

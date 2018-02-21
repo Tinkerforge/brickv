@@ -144,9 +144,6 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'sound_pressure_level'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletSoundPressureLevel.DEVICE_IDENTIFIER

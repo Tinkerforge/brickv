@@ -130,9 +130,6 @@ class RGBLEDButton(COMCUPluginBase, Ui_RGBLEDButton):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'rgb_led_button'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletRGBLEDButton.DEVICE_IDENTIFIER

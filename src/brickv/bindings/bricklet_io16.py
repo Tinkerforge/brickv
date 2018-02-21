@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -28,6 +28,7 @@ class BrickletIO16(Device):
 
     DEVICE_IDENTIFIER = 28
     DEVICE_DISPLAY_NAME = 'IO-16 Bricklet'
+    DEVICE_URL_PART = 'io16' # internal
 
     CALLBACK_INTERRUPT = 9
     CALLBACK_MONOFLOP_DONE = 12

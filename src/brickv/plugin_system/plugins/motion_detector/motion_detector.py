@@ -79,9 +79,6 @@ class MotionDetector(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'motion_detector'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletMotionDetector.DEVICE_IDENTIFIER

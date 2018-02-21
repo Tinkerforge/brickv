@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -27,6 +27,7 @@ class BrickletIndustrialDualAnalogIn(Device):
 
     DEVICE_IDENTIFIER = 249
     DEVICE_DISPLAY_NAME = 'Industrial Dual Analog In Bricklet'
+    DEVICE_URL_PART = 'industrial_dual_analog_in' # internal
 
     CALLBACK_VOLTAGE = 13
     CALLBACK_VOLTAGE_REACHED = 14

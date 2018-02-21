@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-01-30.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -27,6 +27,7 @@ class BrickletNFCRFID(Device):
 
     DEVICE_IDENTIFIER = 246
     DEVICE_DISPLAY_NAME = 'NFC/RFID Bricklet'
+    DEVICE_URL_PART = 'nfc_rfid' # internal
 
     CALLBACK_STATE_CHANGED = 8
 

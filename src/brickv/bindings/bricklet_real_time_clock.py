@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -27,6 +27,7 @@ class BrickletRealTimeClock(Device):
 
     DEVICE_IDENTIFIER = 268
     DEVICE_DISPLAY_NAME = 'Real-Time Clock Bricklet'
+    DEVICE_URL_PART = 'real_time_clock' # internal
 
     CALLBACK_DATE_TIME = 10
     CALLBACK_ALARM = 11

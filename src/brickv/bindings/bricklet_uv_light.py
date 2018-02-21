@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletUVLight(Device):
 
     DEVICE_IDENTIFIER = 265
     DEVICE_DISPLAY_NAME = 'UV Light Bricklet'
+    DEVICE_URL_PART = 'uv_light' # internal
 
     CALLBACK_UV_LIGHT = 8
     CALLBACK_UV_LIGHT_REACHED = 9

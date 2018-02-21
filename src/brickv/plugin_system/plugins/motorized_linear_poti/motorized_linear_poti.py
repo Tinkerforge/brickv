@@ -103,9 +103,6 @@ class MotorizedLinearPoti(COMCUPluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'motorized_linear_poti'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletMotorizedLinearPoti.DEVICE_IDENTIFIER

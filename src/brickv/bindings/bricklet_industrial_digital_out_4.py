@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletIndustrialDigitalOut4(Device):
 
     DEVICE_IDENTIFIER = 224
     DEVICE_DISPLAY_NAME = 'Industrial Digital Out 4 Bricklet'
+    DEVICE_URL_PART = 'industrial_digital_out_4' # internal
 
     CALLBACK_MONOFLOP_DONE = 8
 

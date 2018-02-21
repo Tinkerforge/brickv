@@ -208,9 +208,6 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'segment_display_4x7'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletSegmentDisplay4x7.DEVICE_IDENTIFIER

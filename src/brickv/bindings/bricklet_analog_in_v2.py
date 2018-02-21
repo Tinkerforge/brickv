@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -27,6 +27,7 @@ class BrickletAnalogInV2(Device):
 
     DEVICE_IDENTIFIER = 251
     DEVICE_DISPLAY_NAME = 'Analog In Bricklet 2.0'
+    DEVICE_URL_PART = 'analog_in_v2' # internal
 
     CALLBACK_VOLTAGE = 15
     CALLBACK_ANALOG_VALUE = 16

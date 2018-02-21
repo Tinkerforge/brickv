@@ -164,9 +164,6 @@ class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'motion_detector_v2'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletMotionDetectorV2.DEVICE_IDENTIFIER

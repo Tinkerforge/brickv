@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletSegmentDisplay4x7(Device):
 
     DEVICE_IDENTIFIER = 237
     DEVICE_DISPLAY_NAME = 'Segment Display 4x7 Bricklet'
+    DEVICE_URL_PART = 'segment_display_4x7' # internal
 
     CALLBACK_COUNTER_FINISHED = 5
 

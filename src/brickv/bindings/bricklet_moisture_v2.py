@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -28,6 +28,7 @@ class BrickletMoistureV2(Device):
 
     DEVICE_IDENTIFIER = 287
     DEVICE_DISPLAY_NAME = 'Moisture Bricklet 2.0'
+    DEVICE_URL_PART = 'moisture_v2' # internal
 
     CALLBACK_MOISTURE = 4
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -60,6 +60,7 @@ class BrickRED(Device):
 
     DEVICE_IDENTIFIER = 17
     DEVICE_DISPLAY_NAME = 'RED Brick'
+    DEVICE_URL_PART = 'red' # internal
 
     CALLBACK_ASYNC_FILE_READ = 30
     CALLBACK_ASYNC_FILE_WRITE = 31

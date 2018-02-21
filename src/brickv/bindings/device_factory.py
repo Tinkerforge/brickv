@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -235,11 +235,6 @@ except ValueError:
     from bricklet_led_strip import BrickletLEDStrip
 
 try:
-    from .bricklet_led_strip_v2 import BrickletLEDStripV2
-except ValueError:
-    from bricklet_led_strip_v2 import BrickletLEDStripV2
-
-try:
     from .bricklet_line import BrickletLine
 except ValueError:
     from bricklet_line import BrickletLine
@@ -365,11 +360,6 @@ except ValueError:
     from bricklet_sound_intensity import BrickletSoundIntensity
 
 try:
-    from .bricklet_sound_pressure_level import BrickletSoundPressureLevel
-except ValueError:
-    from bricklet_sound_pressure_level import BrickletSoundPressureLevel
-
-try:
     from .bricklet_temperature import BrickletTemperature
 except ValueError:
     from bricklet_temperature import BrickletTemperature
@@ -456,7 +446,6 @@ BrickletLaserRangeFinder.DEVICE_IDENTIFIER: BrickletLaserRangeFinder,
 BrickletLCD16x2.DEVICE_IDENTIFIER: BrickletLCD16x2,
 BrickletLCD20x4.DEVICE_IDENTIFIER: BrickletLCD20x4,
 BrickletLEDStrip.DEVICE_IDENTIFIER: BrickletLEDStrip,
-BrickletLEDStripV2.DEVICE_IDENTIFIER: BrickletLEDStripV2,
 BrickletLine.DEVICE_IDENTIFIER: BrickletLine,
 BrickletLinearPoti.DEVICE_IDENTIFIER: BrickletLinearPoti,
 BrickletLoadCell.DEVICE_IDENTIFIER: BrickletLoadCell,
@@ -482,7 +471,6 @@ BrickletRS485.DEVICE_IDENTIFIER: BrickletRS485,
 BrickletSegmentDisplay4x7.DEVICE_IDENTIFIER: BrickletSegmentDisplay4x7,
 BrickletSolidStateRelay.DEVICE_IDENTIFIER: BrickletSolidStateRelay,
 BrickletSoundIntensity.DEVICE_IDENTIFIER: BrickletSoundIntensity,
-BrickletSoundPressureLevel.DEVICE_IDENTIFIER: BrickletSoundPressureLevel,
 BrickletTemperature.DEVICE_IDENTIFIER: BrickletTemperature,
 BrickletTemperatureIR.DEVICE_IDENTIFIER: BrickletTemperatureIR,
 BrickletThermalImaging.DEVICE_IDENTIFIER: BrickletThermalImaging,

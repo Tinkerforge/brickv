@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -28,6 +28,7 @@ class BrickletThermocouple(Device):
 
     DEVICE_IDENTIFIER = 266
     DEVICE_DISPLAY_NAME = 'Thermocouple Bricklet'
+    DEVICE_URL_PART = 'thermocouple' # internal
 
     CALLBACK_TEMPERATURE = 8
     CALLBACK_TEMPERATURE_REACHED = 9

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-15.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -8,6 +8,8 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
+
+#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -22,11 +24,12 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletLEDStripV2(Device):
     """
-    Controls up to 2048 RGB LEDs
+    Controls up to 2048 RGB(W) LEDs
     """
 
     DEVICE_IDENTIFIER = 2103
     DEVICE_DISPLAY_NAME = 'LED Strip Bricklet 2.0'
+    DEVICE_URL_PART = 'led_strip_v2' # internal
 
     CALLBACK_FRAME_STARTED = 6
 

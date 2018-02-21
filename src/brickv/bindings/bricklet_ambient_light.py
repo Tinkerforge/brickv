@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -27,6 +27,7 @@ class BrickletAmbientLight(Device):
 
     DEVICE_IDENTIFIER = 21
     DEVICE_DISPLAY_NAME = 'Ambient Light Bricklet'
+    DEVICE_URL_PART = 'ambient_light' # internal
 
     CALLBACK_ILLUMINANCE = 13
     CALLBACK_ANALOG_VALUE = 14

@@ -93,9 +93,6 @@ class SolidStateRelayV2(COMCUPluginBase, Ui_SolidStateRelayV2):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'solid_state_relay'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletSolidStateRelayV2.DEVICE_IDENTIFIER

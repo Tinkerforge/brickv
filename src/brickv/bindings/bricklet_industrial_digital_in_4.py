@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletIndustrialDigitalIn4(Device):
 
     DEVICE_IDENTIFIER = 223
     DEVICE_DISPLAY_NAME = 'Industrial Digital In 4 Bricklet'
+    DEVICE_URL_PART = 'industrial_digital_in_4' # internal
 
     CALLBACK_INTERRUPT = 9
 

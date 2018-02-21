@@ -152,9 +152,6 @@ class LoadCell(PluginBase):
         if self.calibration:
             self.calibration.close()
 
-    def get_url_part(self):
-        return 'load_cell'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletLoadCell.DEVICE_IDENTIFIER

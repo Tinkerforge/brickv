@@ -124,9 +124,6 @@ class DualRelayV2(COMCUPluginBase, Ui_DualRelayV2):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'dual_relay_v2'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletDualRelayV2.DEVICE_IDENTIFIER

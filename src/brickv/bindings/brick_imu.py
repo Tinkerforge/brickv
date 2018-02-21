@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -34,6 +34,7 @@ class BrickIMU(Device):
 
     DEVICE_IDENTIFIER = 16
     DEVICE_DISPLAY_NAME = 'IMU Brick'
+    DEVICE_URL_PART = 'imu' # internal
 
     CALLBACK_ACCELERATION = 31
     CALLBACK_MAGNETIC_FIELD = 32

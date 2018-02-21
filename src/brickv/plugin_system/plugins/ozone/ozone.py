@@ -85,9 +85,6 @@ class Ozone(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'ozone'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletOzone.DEVICE_IDENTIFIER

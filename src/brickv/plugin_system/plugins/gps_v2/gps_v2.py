@@ -276,9 +276,6 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'gps_v2'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletGPSV2.DEVICE_IDENTIFIER

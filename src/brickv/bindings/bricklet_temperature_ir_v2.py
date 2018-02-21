@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -30,6 +30,7 @@ class BrickletTemperatureIRV2(Device):
 
     DEVICE_IDENTIFIER = 291
     DEVICE_DISPLAY_NAME = 'Temperature IR Bricklet 2.0'
+    DEVICE_URL_PART = 'temperature_ir_v2' # internal
 
     CALLBACK_AMBIENT_TEMPERATURE = 4
     CALLBACK_OBJECT_TEMPERATURE = 8

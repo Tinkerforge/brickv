@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-02.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -8,6 +8,8 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
+
+#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -29,6 +31,7 @@ class BrickletSoundPressureLevel(Device):
 
     DEVICE_IDENTIFIER = 290
     DEVICE_DISPLAY_NAME = 'Sound Pressure Level Bricklet'
+    DEVICE_URL_PART = 'sound_pressure_level' # internal
 
     CALLBACK_DECIBEL = 4
     CALLBACK_SPECTRUM_LOW_LEVEL = 8

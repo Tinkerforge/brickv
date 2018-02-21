@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-01-30.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -30,6 +30,7 @@ class BrickletThermalImaging(Device):
 
     DEVICE_IDENTIFIER = 278
     DEVICE_DISPLAY_NAME = 'Thermal Imaging Bricklet'
+    DEVICE_URL_PART = 'thermal_imaging' # internal
 
     CALLBACK_HIGH_CONTRAST_IMAGE_LOW_LEVEL = 12
     CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL = 13

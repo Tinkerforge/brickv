@@ -72,9 +72,6 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'industrial_analog_out'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialAnalogOut.DEVICE_IDENTIFIER

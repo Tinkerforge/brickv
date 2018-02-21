@@ -134,9 +134,6 @@ class DualRelay(PluginBase, Ui_DualRelay):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'dual_relay'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletDualRelay.DEVICE_IDENTIFIER

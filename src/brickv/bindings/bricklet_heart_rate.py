@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -28,6 +28,7 @@ class BrickletHeartRate(Device):
 
     DEVICE_IDENTIFIER = 245
     DEVICE_DISPLAY_NAME = 'Heart Rate Bricklet'
+    DEVICE_URL_PART = 'heart_rate' # internal
 
     CALLBACK_HEART_RATE = 8
     CALLBACK_HEART_RATE_REACHED = 9

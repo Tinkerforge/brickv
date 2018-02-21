@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -92,6 +92,7 @@ class BrickletStreamTest(Device):
 
     DEVICE_IDENTIFIER = 21111
     DEVICE_DISPLAY_NAME = 'Stream Test Bricklet'
+    DEVICE_URL_PART = 'stream_test' # internal
 
     CALLBACK_NORMAL_READ_LOW_LEVEL = 69
     CALLBACK_NORMAL_READ_EXTRA_PREFIX_1_LOW_LEVEL = 70

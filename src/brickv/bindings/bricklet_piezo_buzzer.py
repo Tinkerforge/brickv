@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -25,6 +25,7 @@ class BrickletPiezoBuzzer(Device):
 
     DEVICE_IDENTIFIER = 214
     DEVICE_DISPLAY_NAME = 'Piezo Buzzer Bricklet'
+    DEVICE_URL_PART = 'piezo_buzzer' # internal
 
     CALLBACK_BEEP_FINISHED = 3
     CALLBACK_MORSE_CODE_FINISHED = 4

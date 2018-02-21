@@ -66,9 +66,6 @@ class Moisture(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'moisture'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletMoisture.DEVICE_IDENTIFIER

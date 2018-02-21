@@ -165,9 +165,6 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'silent_stepper'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickSilentStepper.DEVICE_IDENTIFIER

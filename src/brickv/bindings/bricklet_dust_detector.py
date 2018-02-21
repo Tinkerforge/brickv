@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletDustDetector(Device):
 
     DEVICE_IDENTIFIER = 260
     DEVICE_DISPLAY_NAME = 'Dust Detector Bricklet'
+    DEVICE_URL_PART = 'dust_detector' # internal
 
     CALLBACK_DUST_DENSITY = 8
     CALLBACK_DUST_DENSITY_REACHED = 9

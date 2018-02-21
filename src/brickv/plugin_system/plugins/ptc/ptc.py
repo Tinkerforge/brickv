@@ -119,9 +119,6 @@ class PTC(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'ptc'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletPTC.DEVICE_IDENTIFIER

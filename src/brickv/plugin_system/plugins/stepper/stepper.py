@@ -133,9 +133,6 @@ class Stepper(PluginBase, Ui_Stepper):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'stepper'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickStepper.DEVICE_IDENTIFIER

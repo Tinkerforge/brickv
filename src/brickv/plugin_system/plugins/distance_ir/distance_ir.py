@@ -199,9 +199,6 @@ class DistanceIR(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'distance_ir'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletDistanceIR.DEVICE_IDENTIFIER

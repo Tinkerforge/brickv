@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletSoundIntensity(Device):
 
     DEVICE_IDENTIFIER = 238
     DEVICE_DISPLAY_NAME = 'Sound Intensity Bricklet'
+    DEVICE_URL_PART = 'sound_intensity' # internal
 
     CALLBACK_INTENSITY = 8
     CALLBACK_INTENSITY_REACHED = 9

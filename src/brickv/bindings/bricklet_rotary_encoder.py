@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletRotaryEncoder(Device):
 
     DEVICE_IDENTIFIER = 236
     DEVICE_DISPLAY_NAME = 'Rotary Encoder Bricklet'
+    DEVICE_URL_PART = 'rotary_encoder' # internal
 
     CALLBACK_COUNT = 8
     CALLBACK_COUNT_REACHED = 9

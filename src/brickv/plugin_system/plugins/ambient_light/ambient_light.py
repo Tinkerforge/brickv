@@ -85,9 +85,6 @@ class AmbientLight(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'ambient_light'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletAmbientLight.DEVICE_IDENTIFIER

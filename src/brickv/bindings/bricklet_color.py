@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -28,6 +28,7 @@ class BrickletColor(Device):
 
     DEVICE_IDENTIFIER = 243
     DEVICE_DISPLAY_NAME = 'Color Bricklet'
+    DEVICE_URL_PART = 'color' # internal
 
     CALLBACK_COLOR = 8
     CALLBACK_COLOR_REACHED = 9

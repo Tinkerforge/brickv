@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -34,6 +34,7 @@ class BrickletGPSV2(Device):
 
     DEVICE_IDENTIFIER = 276
     DEVICE_DISPLAY_NAME = 'GPS Bricklet 2.0'
+    DEVICE_URL_PART = 'gps_v2' # internal
 
     CALLBACK_PULSE_PER_SECOND = 21
     CALLBACK_COORDINATES = 22

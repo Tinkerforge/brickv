@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -25,6 +25,7 @@ class BrickletMotionDetector(Device):
 
     DEVICE_IDENTIFIER = 233
     DEVICE_DISPLAY_NAME = 'Motion Detector Bricklet'
+    DEVICE_URL_PART = 'motion_detector' # internal
 
     CALLBACK_MOTION_DETECTED = 2
     CALLBACK_DETECTION_CYCLE_ENDED = 3

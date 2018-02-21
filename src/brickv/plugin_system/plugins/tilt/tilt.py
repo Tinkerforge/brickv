@@ -84,9 +84,6 @@ class Tilt(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'tilt'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletTilt.DEVICE_IDENTIFIER

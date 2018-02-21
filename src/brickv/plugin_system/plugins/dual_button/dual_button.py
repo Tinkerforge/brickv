@@ -167,9 +167,6 @@ class DualButton(PluginBase, Ui_DualButton):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'dual_button'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletDualButton.DEVICE_IDENTIFIER

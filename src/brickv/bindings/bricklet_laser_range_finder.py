@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -29,6 +29,7 @@ class BrickletLaserRangeFinder(Device):
 
     DEVICE_IDENTIFIER = 255
     DEVICE_DISPLAY_NAME = 'Laser Range Finder Bricklet'
+    DEVICE_URL_PART = 'laser_range_finder' # internal
 
     CALLBACK_DISTANCE = 20
     CALLBACK_VELOCITY = 21

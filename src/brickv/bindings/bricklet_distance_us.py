@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -26,6 +26,7 @@ class BrickletDistanceUS(Device):
 
     DEVICE_IDENTIFIER = 229
     DEVICE_DISPLAY_NAME = 'Distance US Bricklet'
+    DEVICE_URL_PART = 'distance_us' # internal
 
     CALLBACK_DISTANCE = 8
     CALLBACK_DISTANCE_REACHED = 9

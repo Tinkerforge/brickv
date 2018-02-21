@@ -188,9 +188,6 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
         self.button_dim.setEnabled(True)
         self.button_dim.setText("Dim")
 
-    def get_url_part(self):
-        return 'remote_switch'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletRemoteSwitch.DEVICE_IDENTIFIER

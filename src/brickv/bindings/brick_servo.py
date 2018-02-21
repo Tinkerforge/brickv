@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -30,6 +30,7 @@ class BrickServo(Device):
 
     DEVICE_IDENTIFIER = 14
     DEVICE_DISPLAY_NAME = 'Servo Brick'
+    DEVICE_URL_PART = 'servo' # internal
 
     CALLBACK_UNDER_VOLTAGE = 26
     CALLBACK_POSITION_REACHED = 27

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -37,6 +37,7 @@ class BrickSilentStepper(Device):
 
     DEVICE_IDENTIFIER = 19
     DEVICE_DISPLAY_NAME = 'Silent Stepper Brick'
+    DEVICE_URL_PART = 'silent_stepper' # internal
 
     CALLBACK_UNDER_VOLTAGE = 40
     CALLBACK_POSITION_REACHED = 41

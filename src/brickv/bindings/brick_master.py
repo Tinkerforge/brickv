@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -50,6 +50,7 @@ class BrickMaster(Device):
 
     DEVICE_IDENTIFIER = 13
     DEVICE_DISPLAY_NAME = 'Master Brick'
+    DEVICE_URL_PART = 'master' # internal
 
     CALLBACK_STACK_CURRENT = 59
     CALLBACK_STACK_VOLTAGE = 60

@@ -168,9 +168,6 @@ class IO16(PluginBase, Ui_IO16):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'io16'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIO16.DEVICE_IDENTIFIER

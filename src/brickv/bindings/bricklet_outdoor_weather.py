@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-01-30.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -32,6 +32,7 @@ class BrickletOutdoorWeather(Device):
 
     DEVICE_IDENTIFIER = 288
     DEVICE_DISPLAY_NAME = 'Outdoor Weather Bricklet'
+    DEVICE_URL_PART = 'outdoor_weather' # internal
 
     CALLBACK_STATION_DATA = 9
     CALLBACK_SENSOR_DATA = 10
@@ -136,7 +137,7 @@ class BrickletOutdoorWeather(Device):
 
     def get_sensor_identifiers_low_level(self):
         """
-        Returns the Identifiers (number between 0 and 255) of all `sensors <TBD>`__ that have been seen
+        Returns the identifiers (number between 0 and 255) of all `sensors <TBD>`__ that have been seen
         since the startup of the Bricklet.
 
         Each sensor gives itself a random identifier on first startup.
@@ -376,7 +377,7 @@ class BrickletOutdoorWeather(Device):
 
     def get_sensor_identifiers(self):
         """
-        Returns the Identifiers (number between 0 and 255) of all `sensors <TBD>`__ that have been seen
+        Returns the identifiers (number between 0 and 255) of all `sensors <TBD>`__ that have been seen
         since the startup of the Bricklet.
 
         Each sensor gives itself a random identifier on first startup.

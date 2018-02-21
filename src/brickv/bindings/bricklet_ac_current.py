@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -29,6 +29,7 @@ class BrickletACCurrent(Device):
 
     DEVICE_IDENTIFIER = 257
     DEVICE_DISPLAY_NAME = 'AC Current Bricklet'
+    DEVICE_URL_PART = 'ac_current' # internal
 
     CALLBACK_CURRENT = 17
     CALLBACK_ANALOG_VALUE = 18

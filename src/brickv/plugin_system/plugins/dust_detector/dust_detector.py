@@ -66,9 +66,6 @@ class DustDetector(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'dust_detector'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletDustDetector.DEVICE_IDENTIFIER

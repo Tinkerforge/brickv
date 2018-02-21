@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -27,6 +27,7 @@ class BrickletDistanceIR(Device):
 
     DEVICE_IDENTIFIER = 25
     DEVICE_DISPLAY_NAME = 'Distance IR Bricklet'
+    DEVICE_URL_PART = 'distance_ir' # internal
 
     CALLBACK_DISTANCE = 15
     CALLBACK_ANALOG_VALUE = 16

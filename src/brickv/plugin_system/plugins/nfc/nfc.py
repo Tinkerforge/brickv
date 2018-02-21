@@ -1078,6 +1078,3 @@ class NFC(COMCUPluginBase, Ui_NFC):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletNFC.DEVICE_IDENTIFIER
-
-    def get_url_part(self):
-        return 'nfc'

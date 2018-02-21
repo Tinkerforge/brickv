@@ -63,9 +63,6 @@ class Temperature(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'temperature'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletTemperature.DEVICE_IDENTIFIER

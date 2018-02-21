@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -33,6 +33,7 @@ class BrickletRS485(Device):
 
     DEVICE_IDENTIFIER = 277
     DEVICE_DISPLAY_NAME = 'RS485 Bricklet'
+    DEVICE_URL_PART = 'rs485' # internal
 
     CALLBACK_READ_LOW_LEVEL = 41
     CALLBACK_ERROR_COUNT = 42

@@ -1132,9 +1132,6 @@ class RED(PluginBase, Ui_RED):
 
         return True
 
-    def get_url_part(self):
-        return 'red'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickRED.DEVICE_IDENTIFIER

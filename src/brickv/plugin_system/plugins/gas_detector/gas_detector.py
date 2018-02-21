@@ -109,9 +109,6 @@ class GasDetector(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'gas_detector'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletGasDetector.DEVICE_IDENTIFIER

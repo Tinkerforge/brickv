@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -28,6 +28,7 @@ class BrickletMotorizedLinearPoti(Device):
 
     DEVICE_IDENTIFIER = 267
     DEVICE_DISPLAY_NAME = 'Motorized Linear Poti Bricklet'
+    DEVICE_URL_PART = 'motorized_linear_poti' # internal
 
     CALLBACK_POSITION = 4
     CALLBACK_POSITION_REACHED = 10

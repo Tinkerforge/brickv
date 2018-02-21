@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -27,6 +27,7 @@ class BrickletDualButton(Device):
 
     DEVICE_IDENTIFIER = 230
     DEVICE_DISPLAY_NAME = 'Dual Button Bricklet'
+    DEVICE_URL_PART = 'dual_button' # internal
 
     CALLBACK_STATE_CHANGED = 4
 

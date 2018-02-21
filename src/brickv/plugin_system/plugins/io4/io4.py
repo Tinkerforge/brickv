@@ -135,9 +135,6 @@ class IO4(PluginBase, Ui_IO4):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'io4'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIO4.DEVICE_IDENTIFIER

@@ -310,9 +310,6 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'rgb_led_matrix'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletRGBLEDMatrix.DEVICE_IDENTIFIER

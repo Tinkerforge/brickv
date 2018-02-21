@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -30,6 +30,7 @@ class BrickletVoltageCurrent(Device):
 
     DEVICE_IDENTIFIER = 227
     DEVICE_DISPLAY_NAME = 'Voltage/Current Bricklet'
+    DEVICE_URL_PART = 'voltage_current' # internal
 
     CALLBACK_CURRENT = 22
     CALLBACK_VOLTAGE = 23

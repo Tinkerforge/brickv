@@ -86,9 +86,6 @@ class AnalogInV2(PluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'analog_in_v2'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletAnalogInV2.DEVICE_IDENTIFIER

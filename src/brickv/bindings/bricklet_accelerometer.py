@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2017-11-20.      #
+# This file was automatically generated on 2018-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -28,6 +28,7 @@ class BrickletAccelerometer(Device):
 
     DEVICE_IDENTIFIER = 250
     DEVICE_DISPLAY_NAME = 'Accelerometer Bricklet'
+    DEVICE_URL_PART = 'accelerometer' # internal
 
     CALLBACK_ACCELERATION = 14
     CALLBACK_ACCELERATION_REACHED = 15

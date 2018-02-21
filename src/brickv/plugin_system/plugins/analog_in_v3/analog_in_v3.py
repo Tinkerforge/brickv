@@ -168,9 +168,6 @@ class AnalogInV3(COMCUPluginBase):
         if self.calibration != None:
             self.calibration.close()
 
-    def get_url_part(self):
-        return 'analog_in_v3'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletAnalogInV3.DEVICE_IDENTIFIER

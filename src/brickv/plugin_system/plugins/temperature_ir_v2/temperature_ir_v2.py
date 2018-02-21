@@ -88,9 +88,6 @@ class TemperatureIRV2(COMCUPluginBase):
     def destroy(self):
         pass
 
-    def get_url_part(self):
-        return 'temperature_ir_v2'
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletTemperatureIRV2.DEVICE_IDENTIFIER
