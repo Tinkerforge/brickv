@@ -113,7 +113,7 @@ class RotaryEncoderV2(COMCUPluginBase):
         pass
 
     def get_url_part(self):
-        return 'rotary_encoder'
+        return 'rotary_encoder_v2'
 
     @staticmethod
     def has_device_identifier(device_identifier):
