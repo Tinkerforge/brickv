@@ -82,8 +82,12 @@ case "$1" in
   "python")
     /usr/bin/unzip -q -d $2/bindings/python $3 &> /dev/null && \
     cd $2/bindings/python/source &> /dev/null && \
+    /usr/bin/pip uninstall tinkerforge -y &> /dev/null; \
+    /usr/bin/pip3 uninstall tinkerforge -y &> /dev/null; \
     /usr/bin/python2 setup.py install &> /dev/null; \
-    /usr/bin/python3 setup.py install &> /dev/null
+    /usr/bin/python3 setup.py install &> /dev/null; \
+    /usr/bin/pip install tinkerforge &> /dev/null; \
+    /usr/bin/pip3 install tinkerforge &> /dev/null;
 
     ;;
 
