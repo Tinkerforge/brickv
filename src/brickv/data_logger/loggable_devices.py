@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 #### skip here for brick-logger ####
 
 import time
+from collections import namedtuple
 
 if 'merged_data_logger_modules' not in globals():
     from brickv.data_logger.event_logger import EventLogger
@@ -51,6 +52,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_ambient_light_v2 import BrickletAmbientLightV2
     from brickv.bindings.bricklet_analog_in import BrickletAnalogIn
     from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2
+    from brickv.bindings.bricklet_analog_in_v3 import BrickletAnalogInV3
     from brickv.bindings.bricklet_analog_out_v2 import BrickletAnalogOutV2
     from brickv.bindings.bricklet_barometer import BrickletBarometer
     from brickv.bindings.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
@@ -82,22 +84,30 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_load_cell import BrickletLoadCell
     from brickv.bindings.bricklet_moisture import BrickletMoisture
     from brickv.bindings.bricklet_motion_detector import BrickletMotionDetector
+    from brickv.bindings.bricklet_motion_detector_v2 import BrickletMotionDetectorV2
     from brickv.bindings.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
     from brickv.bindings.bricklet_multi_touch import BrickletMultiTouch
+    from brickv.bindings.bricklet_nfc import BrickletNFC
     from brickv.bindings.bricklet_nfc_rfid import BrickletNFCRFID
+    from brickv.bindings.bricklet_outdoor_weather import BrickletOutdoorWeather
     from brickv.bindings.bricklet_ptc import BrickletPTC
     from brickv.bindings.bricklet_real_time_clock import BrickletRealTimeClock
+    from brickv.bindings.bricklet_remote_switch import BrickletRemoteSwitch
+    from brickv.bindings.bricklet_remote_switch_v2 import BrickletRemoteSwitchV2
     from brickv.bindings.bricklet_rgb_led_button import BrickletRGBLEDButton
     from brickv.bindings.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
     from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
+    from brickv.bindings.bricklet_rotary_encoder_v2 import BrickletRotaryEncoderV2
     from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
     # from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
     from brickv.bindings.bricklet_rs485 import BrickletRS485
     from brickv.bindings.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
     from brickv.bindings.bricklet_solid_state_relay import BrickletSolidStateRelay
+    from brickv.bindings.bricklet_solid_state_relay_v2 import BrickletSolidStateRelayV2
     from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
     from brickv.bindings.bricklet_temperature import BrickletTemperature
     from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
+    from brickv.bindings.bricklet_temperature_ir_v2 import BrickletTemperatureIRV2
     from brickv.bindings.bricklet_thermal_imaging import BrickletThermalImaging
     from brickv.bindings.bricklet_thermocouple import BrickletThermocouple
     from brickv.bindings.bricklet_tilt import BrickletTilt
@@ -120,6 +130,7 @@ else:
     from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
     from tinkerforge.bricklet_analog_in import BrickletAnalogIn
     from tinkerforge.bricklet_analog_in_v2 import BrickletAnalogInV2
+    from tinkerforge.bindings.bricklet_analog_in_v3 import BrickletAnalogInV3
     from tinkerforge.bricklet_analog_out_v2 import BrickletAnalogOutV2
     from tinkerforge.bricklet_barometer import BrickletBarometer
     from tinkerforge.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
@@ -151,22 +162,30 @@ else:
     from tinkerforge.bricklet_load_cell import BrickletLoadCell
     from tinkerforge.bricklet_moisture import BrickletMoisture
     from tinkerforge.bricklet_motion_detector import BrickletMotionDetector
+    from tinkerforge.bindings.bricklet_motion_detector_v2 import BrickletMotionDetectorV2
     from tinkerforge.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
     from tinkerforge.bricklet_multi_touch import BrickletMultiTouch
+    from tinkerforge.bindings.bricklet_nfc import BrickletNFC
     from tinkerforge.bricklet_nfc_rfid import BrickletNFCRFID
+    from tinkerforge.bindings.bricklet_outdoor_weather import BrickletOutdoorWeather
     from tinkerforge.bricklet_ptc import BrickletPTC
     from tinkerforge.bricklet_real_time_clock import BrickletRealTimeClock
+    from tinkerforge.bindings.bricklet_remote_switch import BrickletRemoteSwtich
+    from tinkerforge.bindings.bricklet_remote_switch_v2 import BrickletRemoteSwtichV2
     from tinkerforge.bricklet_rgb_led_button import BrickletRGBLEDButton
     from tinkerforge.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
     from tinkerforge.bricklet_rotary_encoder import BrickletRotaryEncoder
+    from tinkerforge.bindings.bricklet_rotary_encoder_v2 import BrickletRotaryEncoderV2
     from tinkerforge.bricklet_rotary_poti import BrickletRotaryPoti
     # from tinkerforge.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
     from tinkerforge.bricklet_rs485 import BrickletRS485
     from tinkerforge.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
     from tinkerforge.bricklet_solid_state_relay import BrickletSolidStateRelay
+    from tinkerforge.bindings.bricklet_solid_state_relay_v2 import BrickletSolidStateRelayV2
     from tinkerforge.bricklet_sound_intensity import BrickletSoundIntensity
     from tinkerforge.bricklet_temperature import BrickletTemperature
     from tinkerforge.bricklet_temperature_ir import BrickletTemperatureIR
+    from tinkerforge.bindings.bricklet_temperature_ir_v2 import BrickletTemperatureIRV2
     from tinkerforge.bricklet_thermal_imaging import BrickletThermalImaging
     from tinkerforge.bricklet_thermocouple import BrickletThermocouple
     from tinkerforge.bricklet_tilt import BrickletTilt
@@ -304,6 +323,80 @@ def special_set_multi_touch_options(device, electrode0, electrode1, electrode2, 
 
     device.set_electrode_config(electrode_config)
     device.set_electrode_sensitivity(electrode_sensitivity)
+
+# BrickletOutdoorWeather
+def special_get_station_data(device):
+    station_ids = device.get_station_identifiers()
+
+    if len(station_ids) < 1:
+        raise Exception('No stations found')
+
+    wd = ''
+    # Use the first station ID
+    station_data = device.get_station_data(station_ids[0])
+
+    if station_data.wind_direction == device.WIND_DIRECTION_N:
+        wd = 'N'
+    elif station_data.wind_direction == device.WIND_DIRECTION_NNE:
+        wd = 'NNE'
+    elif station_data.wind_direction == device.WIND_DIRECTION_NE:
+        wd = 'NE'
+    elif station_data.wind_direction == device.WIND_DIRECTION_ENE:
+        wd = 'ENE'
+    elif station_data.wind_direction == device.WIND_DIRECTION_E:
+        wd = 'E'
+    elif station_data.wind_direction == device.WIND_DIRECTION_ESE:
+        wd = 'ESE'
+    elif station_data.wind_direction == device.WIND_DIRECTION_SE:
+        wd = 'SE'
+    elif station_data.wind_direction == device.WIND_DIRECTION_SSE:
+        wd = 'SSE'
+    elif station_data.wind_direction == device.WIND_DIRECTION_S:
+        wd = 'S'
+    elif station_data.wind_direction == device.WIND_DIRECTION_SSW:
+        wd = 'SSW'
+    elif station_data.wind_direction == device.WIND_DIRECTION_SW:
+        wd = 'SW'
+    elif station_data.wind_direction == device.WIND_DIRECTION_WSW:
+        wd = 'WSW'
+    elif station_data.wind_direction == device.WIND_DIRECTION_W:
+        wd = 'W'
+    elif station_data.wind_direction == device.WIND_DIRECTION_WNW:
+        wd = 'WNW'
+    elif station_data.wind_direction == device.WIND_DIRECTION_NW:
+        wd = 'NW'
+    elif station_data.wind_direction == device.WIND_DIRECTION_NNW:
+        wd = 'NNW'
+    elif station_data.wind_direction == device.WIND_DIRECTION_ERROR:
+        wd = 'Wind Direction Error'
+
+    GetStationData = namedtuple('StationData',
+                                ['temperature',
+                                 'humidity',
+                                 'wind_speed',
+                                 'gust_speed',
+                                 'rain',
+                                 'wind_direction',
+                                 'battery_low',
+                                 'last_change'])
+
+    return GetStationData(temperature = station_data.temperature,
+                          humidity = station_data.humidity,
+                          wind_speed = station_data.wind_speed,
+                          gust_speed = station_data.gust_speed,
+                          rain = station_data.rain,
+                          wind_direction = wd,
+                          battery_low = station_data.battery_low,
+                          last_change = station_data.last_change)
+
+def special_get_sensor_data(device):
+    sensor_ids = device.get_sensor_identifiers()
+
+    if len(sensor_ids) < 1:
+        raise Exception('No sensors found')
+
+    # Use the first sensor ID
+    return device.get_sensor_data(sensor_ids[0])
 
 # BrickletPTC
 def special_get_ptc_resistance(device):
@@ -510,6 +603,27 @@ device_specs = {
                 'default': 50
             }
         ]
+    },
+    BrickletAnalogInV3.DEVICE_DISPLAY_NAME: {
+        'class': BrickletAnalogInV3,
+        'values': [
+            {
+                'name': 'Voltage',
+                'getter': lambda device: device.get_voltage(),
+                'subvalues': None,
+                'unit': 'mV',
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C/100',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
     },
     BrickletAnalogOutV2.DEVICE_DISPLAY_NAME: {
         'class': BrickletAnalogOutV2,
@@ -1743,6 +1857,27 @@ device_specs = {
         'options_setter': None,
         'options': None
     },
+    BrickletMotionDetectorV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletMotionDetectorV2,
+        'values': [
+            {
+                'name': 'Motion Detected',
+                'getter': lambda device: device.get_motion_detected(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
     BrickletMultiTouch.DEVICE_DISPLAY_NAME: {
         'class': BrickletMultiTouch,
         'values': [
@@ -1832,6 +1967,48 @@ device_specs = {
             }
         ]
     },
+    BrickletNFC.DEVICE_DISPLAY_NAME: {
+        'class': BrickletNFC,
+        'values': [
+            {
+                'name': 'Mode',
+                'getter': lambda device: device.get_mode(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            },
+            {
+                'name': 'Reader State',
+                'getter': lambda device: device.reader_get_state(),
+                'subvalues': ['State', 'Idle'],
+                'unit': [None, None],
+                'advanced': False
+            },
+            {
+                'name': 'Cardemu State',
+                'getter': lambda device: device.cardemu_get_state(),
+                'subvalues': ['State', 'Idle'],
+                'unit': [None, None],
+                'advanced': False
+            },
+            {
+                'name': 'P2P State',
+                'getter': lambda device: device.p2p_get_state(),
+                'subvalues': ['State', 'Idle'],
+                'unit': [None, None],
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
     BrickletNFCRFID.DEVICE_DISPLAY_NAME: {
         'class': BrickletNFCRFID,
         'values': [
@@ -1846,6 +2023,35 @@ device_specs = {
         'options_setter': None,
         'options': None
     },
+    BrickletOutdoorWeather.DEVICE_DISPLAY_NAME: {
+        'class': BrickletOutdoorWeather,
+        'values': [
+            {
+                'name': 'Station Data',
+                'getter': special_get_station_data,
+                'subvalues': ['Temperature', 'Humidity', 'Wind Speed', 'Gust Speed', 'Rain', 'Wind Direction', 'Battery Low', 'Last Change'],
+                'unit': ['°C/10', '%RH', 'm/10s', 'm/10s', 'mm/10', None , None, 's'],
+                'advanced': False
+            },
+            {
+                'name': 'Sensor Data',
+                'getter': special_get_sensor_data,
+                'subvalues': ['Temperature', 'Humidity', 'Last Change'],
+                'unit': ['°C/10', '%RH', 's'],
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+
     BrickletPTC.DEVICE_DISPLAY_NAME: {
         'class': BrickletPTC,
         'values': [
@@ -1892,6 +2098,34 @@ device_specs = {
                 'subvalues': None,
                 'unit': None,
                 'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletRotaryEncoderV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletRotaryEncoderV2,
+        'values': [
+            {
+                'name': 'Count',
+                'getter': lambda device: device.get_count(False),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            },
+            {
+                'name': 'Pressed',
+                'getter': lambda device: device.is_pressed(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -1975,6 +2209,27 @@ device_specs = {
                 'subvalues': None,
                 'unit': None,
                 'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletSolidStateRelayV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletSolidStateRelayV2,
+        'values': [
+            {
+                'name': 'State',
+                'getter': lambda device: device.get_state(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -2101,6 +2356,43 @@ device_specs = {
                 'subvalues': None,
                 'unit': '°C/10',
                 'advanced': False
+            }
+        ],
+        'options_setter': lambda device, emissivity: device.set_emissivity(emissivity),
+        'options': [
+            {
+                'name': 'Emissivity',
+                'type': 'int',
+                'minimum': 6553,
+                'maximum': 65535,
+                'suffix': None,
+                'default': 65535
+            }
+        ]
+    },
+    BrickletTemperatureIRV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletTemperatureIRV2,
+        'values': [
+            {
+                'name': 'Ambient Temperature',
+                'getter': lambda device: device.get_ambient_temperature(),
+                'subvalues': None,
+                'unit': '°C/10',
+                'advanced': False
+            },
+            {
+                'name': 'Object Temperature',
+                'getter': lambda device: device.get_object_temperature(),
+                'subvalues': None,
+                'unit': '°C/10',
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C/10',
+                'advanced': True
             }
         ],
         'options_setter': lambda device, emissivity: device.set_emissivity(emissivity),
@@ -2684,6 +2976,62 @@ device_specs = {
                 'subvalues': None,
                 'unit': 'ms',
                 'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletRemoteSwitch.DEVICE_DISPLAY_NAME: {
+        'class': BrickletRemoteSwitch,
+        'values': [
+            {
+                'name': 'Switching State',
+                'getter': lambda device: device.get_switching_state(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletRemoteSwitchV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletRemoteSwitchV2,
+        'values': [
+            {
+                'name': 'Switching State',
+                'getter': lambda device: device.get_switching_state(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            },
+            {
+                'name': 'Remote Status A',
+                'getter': lambda device: device.get_remote_status_a(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            },
+            {
+                'name': 'Remote Status B',
+                'getter': lambda device: device.get_remote_status_b(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            },
+            {
+                'name': 'Remote Status C',
+                'getter': lambda device: device.get_remote_status_c(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
             }
         ],
         'options_setter': None,
