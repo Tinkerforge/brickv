@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-21.      #
+# This file was automatically generated on 2018-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -232,11 +232,13 @@ class BrickletRemoteSwitchV2(Device):
         """
         Sets the configuration for **receiving** data from a remote of type A, B or C.
 
-        * Remote Type: Set to A, B or C depending on the type of remote you want to receive.
-        * Minimum Repeats: The minimum number of repeated data packets until the callback is called (if enabled).
-        * Callback Enabled: Enable or disable callback (see :cb:`Remote Status A` callback, :cb:`Remote Status B` callback and :cb:`Remote Status C` callback).
+        * Remote Type: A, B or C depending on the type of remote you want to receive.
+        * Minimum Repeats: The minimum number of repeated data packets until the callback
+          is triggered (if enabled).
+        * Callback Enabled: Enable or disable callback (see :cb:`Remote Status A` callback,
+          :cb:`Remote Status B` callback and :cb:`Remote Status C` callback).
 
-        Default is 'A', 2, false.
+        Default is ('A', 2, false).
         """
         remote_type = int(remote_type)
         minimum_repeats = int(minimum_repeats)
@@ -252,12 +254,13 @@ class BrickletRemoteSwitchV2(Device):
 
     def get_remote_status_a(self):
         """
-        Returns the house code, receiver code, switch state (on/off) and number of repeats for
-        remote type A.
+        Returns the house code, receiver code, switch state (on/off) and number of
+        repeats for remote type A.
 
-        If repeats=0 there was no button press. If repeats >= 1 there
-        was a button press with the specified house/receiver code. The repeates are the number of received
-        identical data packets. The longer the button is pressed, the higher the repeat number.
+        Repeats == 0 means there was no button press. Repeats >= 1 means there
+        was a button press with the specified house/receiver code. The repeats are the
+        number of received identical data packets. The longer the button is pressed,
+        the higher the repeat number.
 
         Use the callback to get this data automatically when a button is pressed,
         see :func:`Set Remote Configuration` and :cb:`Remote Status A` callback.
@@ -266,13 +269,13 @@ class BrickletRemoteSwitchV2(Device):
 
     def get_remote_status_b(self):
         """
-        Returns the address (unique per remote), unit (button number), switch state (on/off) and number of repeats for
-        remote type B.
+        Returns the address (unique per remote), unit (button number), switch state
+        (on/off) and number of repeats for remote type B.
 
-        If the remote supporst dimming the dim value is used instead of the switch state.
+        If the remote supports dimming the dim value is used instead of the switch state.
 
         If repeats=0 there was no button press. If repeats >= 1 there
-        was a button press with the specified address/unit. The repeates are the number of received
+        was a button press with the specified address/unit. The repeats are the number of received
         identical data packets. The longer the button is pressed, the higher the repeat number.
 
         Use the callback to get this data automatically when a button is pressed,
@@ -286,7 +289,7 @@ class BrickletRemoteSwitchV2(Device):
         remote type C.
 
         If repeats=0 there was no button press. If repeats >= 1 there
-        was a button press with the specified system/device code. The repeates are the number of received
+        was a button press with the specified system/device code. The repeats are the number of received
         identical data packets. The longer the button is pressed, the higher the repeat number.
 
         Use the callback to get this data automatically when a button is pressed,

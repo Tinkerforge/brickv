@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-21.      #
+# This file was automatically generated on 2018-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -180,20 +180,20 @@ class BrickletAnalogInV3(Device):
 
     def set_oversampling(self, oversampling):
         """
-        Sets the oversampling between 32 and 16384. The Bricklet
-        takes one 12bit sample every 17.5us. Thus an oversampling
-        of 32 is equivalent to an integration time of 0.56ms and
-        a oversampling of 16384 is equivalent to an integration
-        time of 286mh.
+        Sets the oversampling between 32x and 16384x. The Bricklet
+        takes one 12bit sample every 17.5µs. Thus an oversampling
+        of 32x is equivalent to an integration time of 0.56ms and
+        a oversampling of 16384x is equivalent to an integration
+        time of 286ms.
 
         The oversampling uses the moving average principle. A
-        new value is always calculated once per ms.
+        new value is always calculated once per millisecond.
 
         With increased oversampling the noise decreases. With decreased
         oversampling the reaction time increases (changes in voltage will be
         measured faster).
 
-        The default oversampling value is 4096x.
+        The default value is 4096x.
         """
         oversampling = int(oversampling)
 
@@ -208,12 +208,12 @@ class BrickletAnalogInV3(Device):
     def set_calibration(self, offset, multiplier, divisor):
         """
         Sets a calibration for the measured voltage value.
-        The formula for the calibration is as follows:
+        The formula for the calibration is as follows::
 
-        * Calibrated Value = (Value + Offset)*Muliplier/Divisor
+         Calibrated Value = (Value + Offset) * Multiplier / Divisor
 
         We recommend that you use the Brick Viewer to calibrate
-        the Bricklet. The calibration will be saved and only
+        the Bricklet. The calibration will be saved internally and only
         has to be done once.
         """
         offset = int(offset)

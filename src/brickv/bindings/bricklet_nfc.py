@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-21.      #
+# This file was automatically generated on 2018-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -20,11 +20,11 @@ except ValueError:
 
 ReaderGetTagIDLowLevel = namedtuple('ReaderGetTagIDLowLevel', ['tag_type', 'tag_id_length', 'tag_id_data'])
 ReaderGetState = namedtuple('ReaderGetState', ['state', 'idle'])
-ReaderReadNdefLowLevel = namedtuple('ReaderReadNdefLowLevel', ['ndef_length', 'ndef_chunk_offset', 'ndef_chunk_data'])
+ReaderReadNDEFLowLevel = namedtuple('ReaderReadNDEFLowLevel', ['ndef_length', 'ndef_chunk_offset', 'ndef_chunk_data'])
 ReaderReadPageLowLevel = namedtuple('ReaderReadPageLowLevel', ['data_length', 'data_chunk_offset', 'data_chunk_data'])
 CardemuGetState = namedtuple('CardemuGetState', ['state', 'idle'])
 P2PGetState = namedtuple('P2PGetState', ['state', 'idle'])
-P2PReadNdefLowLevel = namedtuple('P2PReadNdefLowLevel', ['ndef_length', 'ndef_chunk_offset', 'ndef_chunk_data'])
+P2PReadNDEFLowLevel = namedtuple('P2PReadNDEFLowLevel', ['ndef_length', 'ndef_chunk_offset', 'ndef_chunk_data'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 ReaderGetTagID = namedtuple('ReaderGetTagID', ['tag_type', 'tag_id'])
@@ -213,12 +213,13 @@ class BrickletNFC(Device):
         Sets the mode. The NFC Bricklet supports four modes:
 
         * Off
-        * Card Emulation (In this mode the Bricklet appears to be a tag for another reader)
-        * Peer to Peer (In this mode it is possible to exchange data with other readers)
-        * Reader (In this mode you can read from tags and write to tags)
+        * Card Emulation (Cardemu): Emulates a tag for other readers
+        * Peer to Peer (P2P): Exchange data with other readers
+        * Reader: Reads and writes tags
 
-        If you change a mode, the Bricklet will completely reinitialize with this mode. So
-        you can for example only use the "cardemu"-functions in Card Emulation mode.
+        If you change a mode, the Bricklet will reconfigure the hardware for this mode.
+        Therefore, you can only use functions corresponding to the current mode. For
+        example, in Reader mode you can only use Reader functions.
 
         The default mode is "off".
         """
@@ -237,7 +238,7 @@ class BrickletNFC(Device):
         To read or write a tag that is in proximity of the NFC Bricklet you
         first have to call this function with the expected tag type as parameter.
         It is no problem if you don't know the tag type. You can cycle through
-        the available tag types until the tag gives an answer to the request.
+        the available tag types until the tag answers the request.
 
         Currently the following tag types are supported:
 
@@ -253,26 +254,25 @@ class BrickletNFC(Device):
         :func:`Reader Get State` to find out about the state change.
 
         If the state changes to *ReaderRequestTagIDError* it means that either there was
-        no tag present or that the tag is of an incompatible type. If the state
+        no tag present or that the tag has an incompatible type. If the state
         changes to *ReaderRequestTagIDReady* it means that a compatible tag was found
-        and that the tag ID could be read out. You can now get the tag ID by
+        and that the tag ID has been saved. You can now read out the tag ID by
         calling :func:`Reader Get Tag ID`.
 
         If two tags are in the proximity of the NFC Bricklet, this
         function will cycle through the tags. To select a specific tag you have
-        to call :func:`Reader Request Tag ID` until the correct tag id is found.
+        to call :func:`Reader Request Tag ID` until the correct tag ID is found.
 
-        In case of any *Error* state the selection is lost and you have to
+        In case of any *ReaderError* state the selection is lost and you have to
         start again by calling :func:`Reader Request Tag ID`.
         """
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_REQUEST_TAG_ID, (), '', '')
 
     def reader_get_tag_id_low_level(self):
         """
-        Returns the tag type and the tag ID.
-        This function can only be called if the
-        NFC Bricklet is currently in one of the *ReaderReady* states. The returned ID
-        is the ID that was saved through the last call of :func:`Reader Request Tag ID`.
+        Returns the tag type and the tag ID. This function can only be called if the
+        NFC Bricklet is currently in one of the *ReaderReady* states. The returned tag ID
+        is the tag ID that was saved through the last call of :func:`Reader Request Tag ID`.
 
         To get the tag ID of a tag the approach is as follows:
 
@@ -285,7 +285,7 @@ class BrickletNFC(Device):
 
     def reader_get_state(self):
         """
-        Returns the current state of the NFC Bricklet if in reader mode.
+        Returns the current reader state of the NFC Bricklet.
 
         On startup the Bricklet will be in the *ReaderInitialization* state. The
         initialization will only take about 20ms. After that it changes to *ReaderIdle*.
@@ -313,13 +313,13 @@ class BrickletNFC(Device):
         The general approach for writing a NDEF message is as follows:
 
         1. Call :func:`Reader Request Tag ID`
-        2. Wait for state to change to *ReaderRequestTagIDReady* (see :func:`Reader Get State` or
-           :cb:`Reader State Changed` callback)
-        3. If looking for a specific tag then call :func:`Reader Get Tag ID` and check if the
-           expected tag was found, if it was not found got back to step 1
-        4. Call :func:`Reader Write Ndef` with the NDEF message that you want to write
-        5. Wait for state to change to *ReaderWriteNdefReady* (see :func:`Reader Get State` or
-           :cb:`Reader State Changed` callback)
+        2. Wait for state to change to *ReaderRequestTagIDReady* (see
+           :func:`Reader Get State` or :cb:`Reader State Changed` callback)
+        3. If looking for a specific tag then call :func:`Reader Get Tag ID` and check
+           if the expected tag was found, if it was not found got back to step 1
+        4. Call :func:`Reader Write NDEF` with the NDEF message that you want to write
+        5. Wait for state to change to *ReaderWriteNDEFReady* (see :func:`Reader Get State`
+           or :cb:`Reader State Changed` callback)
         """
         ndef_length = int(ndef_length)
         ndef_chunk_offset = int(ndef_chunk_offset)
@@ -340,21 +340,21 @@ class BrickletNFC(Device):
            or :cb:`Reader State Changed` callback)
         3. If looking for a specific tag then call :func:`Reader Get Tag ID` and check if the
            expected tag was found, if it was not found got back to step 1
-        4. Call :func:`Reader Request Ndef`
-        5. Wait for state to change to *ReaderRequestNdefReady* (see :func:`Reader Get State`
+        4. Call :func:`Reader Request NDEF`
+        5. Wait for state to change to *ReaderRequestNDEFReady* (see :func:`Reader Get State`
            or :cb:`Reader State Changed` callback)
-        6. Call :func:`Reader Read Ndef` to retrieve the NDEF message from the buffer
+        6. Call :func:`Reader Read NDEF` to retrieve the NDEF message from the buffer
         """
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_REQUEST_NDEF, (), '', '')
 
     def reader_read_ndef_low_level(self):
         """
         Returns the NDEF data from an internal buffer. To fill the buffer
-        with a NDEF message you have to call :func:`Reader Request Ndef` beforehand.
+        with a NDEF message you have to call :func:`Reader Request NDEF` beforehand.
 
         The buffer can have a size of up to 8192 bytes.
         """
-        return ReaderReadNdefLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_READ_NDEF_LOW_LEVEL, (), '', 'H H 60B'))
+        return ReaderReadNDEFLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_READ_NDEF_LOW_LEVEL, (), '', 'H H 60B'))
 
     def reader_authenticate_mifare_classic_page(self, page, key_number, key):
         """
@@ -471,7 +471,7 @@ class BrickletNFC(Device):
 
     def cardemu_get_state(self):
         """
-        Returns the current state of the NFC Bricklet if in card emulation mode.
+        Returns the current cardemu state of the NFC Bricklet.
 
         On startup the Bricklet will be in the *CardemuInitialization* state. The
         initialization will only take about 20ms. After that it changes to *CardemuIdle*.
@@ -492,23 +492,22 @@ class BrickletNFC(Device):
 
     def cardemu_start_discovery(self):
         """
-        Starts the discovery process. If you call this function and then bring a
-        smart phone with enabled NFC functionality near to the NFC Bricklet the
-        state will change from *CardemuDiscovery* to *CardemuDiscoveryReady*.
+        Starts the discovery process. If you call this function while a NFC
+        reader device is near to the NFC Bricklet the state will change from
+        *CardemuDiscovery* to *CardemuDiscoveryReady*.
 
-        If no NFC master can be found or if there is an error during discovery
-        the state will change to *CardemuDiscoveryError*. In this case you
-        have to restart the discovery.
+        If no NFC reader device can be found or if there is an error during
+        discovery the cardemu state will change to *CardemuDiscoveryError*. In this case you
+        have to restart the discovery process.
 
-        If the state changes to *CardemuDiscoveryReady* you can start the transfer
-        of the NDEF message that was written by :func:`Cardemu Write Ndef` by calling
-        :func:`Cardemu Start Transfer`.
+        If the cardemu state changes to *CardemuDiscoveryReady* you can start the NDEF message
+        transfer with :func:`Cardemu Write NDEF` and :func:`Cardemu Start Transfer`.
         """
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_CARDEMU_START_DISCOVERY, (), '', '')
 
     def cardemu_write_ndef_low_level(self, ndef_length, ndef_chunk_offset, ndef_chunk_data):
         """
-        Writes the Ndef messages that is to be transferred to the NFC master.
+        Writes the NDEF messages that is to be transferred to the NFC peer.
 
         The maximum supported NDEF message size in Cardemu mode is 255 byte.
 
@@ -524,16 +523,14 @@ class BrickletNFC(Device):
 
     def cardemu_start_transfer(self, transfer):
         """
-        You can start the transfer of a NDEF message if the state is *CardemuDiscoveryReady*.
+        You can start the transfer of a NDEF message if the cardemu state is *CardemuDiscoveryReady*.
 
-        Use parameter 1 to start the transfer. With parameter 0 you can abort the discovery.
+        Before you call this function to start a write transfer, the NDEF message that
+        is to be transferred has to be written via :func:`Cardemu Write NDEF` first.
 
-        Before you call this function with parameter 1. The NDEF message that is to be
-        transferred is set via :func:`Cardemu Write Ndef`.
-
-        After you call this function the state will change to *CardemuTransferNdef*. It will
-        change to *CardemuTransferNdefReady* if the transfer was successfull or
-        *CardemuTransferNdefError* if it wasn't.
+        After you call this function the state will change to *CardemuTransferNDEF*. It will
+        change to *CardemuTransferNDEFReady* if the transfer was successful or
+        *CardemuTransferNDEFError* if it wasn't.
         """
         transfer = int(transfer)
 
@@ -541,7 +538,7 @@ class BrickletNFC(Device):
 
     def p2p_get_state(self):
         """
-        Returns the current state of the NFC Bricklet if in p2p mode.
+        Returns the current P2P state of the NFC Bricklet.
 
         On startup the Bricklet will be in the *P2PInitialization* state. The
         initialization will only take about 20ms. After that it changes to *P2PIdle*.
@@ -562,28 +559,28 @@ class BrickletNFC(Device):
 
     def p2p_start_discovery(self):
         """
-        Starts the discovery process. If you call this function and then bring a
-        smart phone with enabled NFC P2P app near to the NFC Bricklet the
-        state will change from *P2PDiscovery* to *P2PDiscoveryReady*.
+        Starts the discovery process. If you call this function while another NFC
+        P2P enabled device is near to the NFC Bricklet the state will change from
+        *P2PDiscovery* to *P2PDiscoveryReady*.
 
-        If no NFC master in P2P mode can be found or if there is an error during discovery
-        the state will change to *P2PDiscoveryError*. In this case you
-        have to restart the discovery.
+        If no NFC P2P enabled device can be found or if there is an error during
+        discovery the P2P state will change to *P2PDiscoveryError*. In this case you
+        have to restart the discovery process.
 
-        If the state changes to *P2PDiscoveryReady* you can start the NDEF message
-        transfer or reception with :func:`P2P Start Transfer`.
+        If the P2P state changes to *P2PDiscoveryReady* you can start the NDEF message
+        transfer with :func:`P2P Start Transfer`.
         """
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_START_DISCOVERY, (), '', '')
 
     def p2p_write_ndef_low_level(self, ndef_length, ndef_chunk_offset, ndef_chunk_data):
         """
-        Writes the NDEF messages that is to be transferred to the NFC master.
+        Writes the NDEF messages that is to be transferred to the NFC peer.
 
         The maximum supported NDEF message size for P2P transfer is 255 byte.
 
         You can call this function at any time in P2P mode. The internal buffer
         will not be overwritten until you call this function again, change the
-        mode or use P2P to read data.
+        mode or use P2P to read an NDEF messages.
         """
         ndef_length = int(ndef_length)
         ndef_chunk_offset = int(ndef_chunk_offset)
@@ -593,19 +590,17 @@ class BrickletNFC(Device):
 
     def p2p_start_transfer(self, transfer):
         """
-        You can start the transfer/reception of a NDEF message if the state is *P2PDiscoveryReady*.
+        You can start the transfer of a NDEF message if the P2P state is *P2PDiscoveryReady*.
 
-        Use parameter 2 to read, parameter 1 to write or parameter 0 to abort the discovery.
+        Before you call this function to start a write transfer, the NDEF message that
+        is to be transferred has to be written via :func:`P2P Write NDEF` first.
 
-        Before you call this function with parameter 1. The NDEF message that is to be
-        transferred is set via :func:`P2P Write Ndef`.
-
-        After you call this function the state will change to *P2PTransferNdef*. It will
-        change to *P2PTransferNdefReady* if the transfer was successfull or
-        *P2PTransferNdefError* if it wasn't.
+        After you call this function the P2P state will change to *P2PTransferNDEF*. It will
+        change to *P2PTransferNDEFReady* if the transfer was successfull or
+        *P2PTransferNDEFError* if it wasn't.
 
         If you started a write transfer you are now done. If you started a read transfer
-        you can now use :func:`P2P Read Ndef` to read the NDEF message that was written
+        you can now use :func:`P2P Read NDEF` to read the NDEF message that was written
         by the NFC peer.
         """
         transfer = int(transfer)
@@ -614,13 +609,13 @@ class BrickletNFC(Device):
 
     def p2p_read_ndef_low_level(self):
         """
-        Call this function to read the NDEF message that was written by a NFC peer in
-        NFC P2P mode. The maximum NDEF length is 8192 byte.
+        Returns the NDEF message that was written by a NFC peer in NFC P2P mode.
+        The maximum NDEF length is 8192 byte.
 
         The NDEF message is ready if you called :func:`P2P Start Transfer` with a
-        read transfer and the state changed to *P2PTransferNdefReady*.
+        read transfer and the P2P state changed to *P2PTransferNDEFReady*.
         """
-        return P2PReadNdefLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_READ_NDEF_LOW_LEVEL, (), '', 'H H 60B'))
+        return P2PReadNDEFLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_READ_NDEF_LOW_LEVEL, (), '', 'H H 60B'))
 
     def set_detection_led_config(self, config):
         """
@@ -783,10 +778,9 @@ class BrickletNFC(Device):
 
     def reader_get_tag_id(self):
         """
-        Returns the tag type and the tag ID.
-        This function can only be called if the
-        NFC Bricklet is currently in one of the *ReaderReady* states. The returned ID
-        is the ID that was saved through the last call of :func:`Reader Request Tag ID`.
+        Returns the tag type and the tag ID. This function can only be called if the
+        NFC Bricklet is currently in one of the *ReaderReady* states. The returned tag ID
+        is the tag ID that was saved through the last call of :func:`Reader Request Tag ID`.
 
         To get the tag ID of a tag the approach is as follows:
 
@@ -808,18 +802,18 @@ class BrickletNFC(Device):
         The general approach for writing a NDEF message is as follows:
 
         1. Call :func:`Reader Request Tag ID`
-        2. Wait for state to change to *ReaderRequestTagIDReady* (see :func:`Reader Get State` or
-           :cb:`Reader State Changed` callback)
-        3. If looking for a specific tag then call :func:`Reader Get Tag ID` and check if the
-           expected tag was found, if it was not found got back to step 1
-        4. Call :func:`Reader Write Ndef` with the NDEF message that you want to write
-        5. Wait for state to change to *ReaderWriteNdefReady* (see :func:`Reader Get State` or
-           :cb:`Reader State Changed` callback)
+        2. Wait for state to change to *ReaderRequestTagIDReady* (see
+           :func:`Reader Get State` or :cb:`Reader State Changed` callback)
+        3. If looking for a specific tag then call :func:`Reader Get Tag ID` and check
+           if the expected tag was found, if it was not found got back to step 1
+        4. Call :func:`Reader Write NDEF` with the NDEF message that you want to write
+        5. Wait for state to change to *ReaderWriteNDEFReady* (see :func:`Reader Get State`
+           or :cb:`Reader State Changed` callback)
         """
         ndef = list(map(int, ndef))
 
         if len(ndef) > 65535:
-            raise Error(Error.INVALID_PARAMETER, 'Ndef can be at most 65535 items long')
+            raise Error(Error.INVALID_PARAMETER, 'NDEF can be at most 65535 items long')
 
         ndef_length = len(ndef)
         ndef_chunk_offset = 0
@@ -839,7 +833,7 @@ class BrickletNFC(Device):
     def reader_read_ndef(self):
         """
         Returns the NDEF data from an internal buffer. To fill the buffer
-        with a NDEF message you have to call :func:`Reader Request Ndef` beforehand.
+        with a NDEF message you have to call :func:`Reader Request NDEF` beforehand.
 
         The buffer can have a size of up to 8192 bytes.
         """
@@ -860,7 +854,7 @@ class BrickletNFC(Device):
                     ret = self.reader_read_ndef_low_level()
                     ndef_length = ret.ndef_length
 
-                raise Error(Error.STREAM_OUT_OF_SYNC, 'Ndef stream is out-of-sync')
+                raise Error(Error.STREAM_OUT_OF_SYNC, 'NDEF stream is out-of-sync')
 
         return ndef_data[:ndef_length]
 
@@ -945,7 +939,7 @@ class BrickletNFC(Device):
 
     def cardemu_write_ndef(self, ndef):
         """
-        Writes the Ndef messages that is to be transferred to the NFC master.
+        Writes the NDEF messages that is to be transferred to the NFC peer.
 
         The maximum supported NDEF message size in Cardemu mode is 255 byte.
 
@@ -956,7 +950,7 @@ class BrickletNFC(Device):
         ndef = list(map(int, ndef))
 
         if len(ndef) > 65535:
-            raise Error(Error.INVALID_PARAMETER, 'Ndef can be at most 65535 items long')
+            raise Error(Error.INVALID_PARAMETER, 'NDEF can be at most 65535 items long')
 
         ndef_length = len(ndef)
         ndef_chunk_offset = 0
@@ -975,18 +969,18 @@ class BrickletNFC(Device):
 
     def p2p_write_ndef(self, ndef):
         """
-        Writes the NDEF messages that is to be transferred to the NFC master.
+        Writes the NDEF messages that is to be transferred to the NFC peer.
 
         The maximum supported NDEF message size for P2P transfer is 255 byte.
 
         You can call this function at any time in P2P mode. The internal buffer
         will not be overwritten until you call this function again, change the
-        mode or use P2P to read data.
+        mode or use P2P to read an NDEF messages.
         """
         ndef = list(map(int, ndef))
 
         if len(ndef) > 65535:
-            raise Error(Error.INVALID_PARAMETER, 'Ndef can be at most 65535 items long')
+            raise Error(Error.INVALID_PARAMETER, 'NDEF can be at most 65535 items long')
 
         ndef_length = len(ndef)
         ndef_chunk_offset = 0
@@ -1005,11 +999,11 @@ class BrickletNFC(Device):
 
     def p2p_read_ndef(self):
         """
-        Call this function to read the NDEF message that was written by a NFC peer in
-        NFC P2P mode. The maximum NDEF length is 8192 byte.
+        Returns the NDEF message that was written by a NFC peer in NFC P2P mode.
+        The maximum NDEF length is 8192 byte.
 
         The NDEF message is ready if you called :func:`P2P Start Transfer` with a
-        read transfer and the state changed to *P2PTransferNdefReady*.
+        read transfer and the P2P state changed to *P2PTransferNDEFReady*.
         """
         with self.stream_lock:
             ret = self.p2p_read_ndef_low_level()
@@ -1028,7 +1022,7 @@ class BrickletNFC(Device):
                     ret = self.p2p_read_ndef_low_level()
                     ndef_length = ret.ndef_length
 
-                raise Error(Error.STREAM_OUT_OF_SYNC, 'Ndef stream is out-of-sync')
+                raise Error(Error.STREAM_OUT_OF_SYNC, 'NDEF stream is out-of-sync')
 
         return ndef_data[:ndef_length]
 

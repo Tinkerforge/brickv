@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-21.      #
+# This file was automatically generated on 2018-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.15                            #
 #                                                           #
@@ -111,7 +111,7 @@ class BrickletRotaryEncoderV2(Device):
         to true, the count is set back to 0 directly after the
         current count is read.
 
-        The encoder has 24 steps per rotation
+        The encoder has 24 steps per rotation.
 
         Turning the encoder to the left decrements the counter,
         so a negative count is possible.
