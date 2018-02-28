@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-21.      #
+# This file was automatically generated on 2018-02-28.      #
 #                                                           #
-# Python Bindings Version 2.1.15                            #
+# Python Bindings Version 2.1.16                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -73,6 +73,11 @@ try:
     from .bricklet_analog_in_v2 import BrickletAnalogInV2
 except ValueError:
     from bricklet_analog_in_v2 import BrickletAnalogInV2
+
+try:
+    from .bricklet_analog_in_v3 import BrickletAnalogInV3
+except ValueError:
+    from bricklet_analog_in_v3 import BrickletAnalogInV3
 
 try:
     from .bricklet_analog_out import BrickletAnalogOut
@@ -260,6 +265,11 @@ except ValueError:
     from bricklet_motion_detector import BrickletMotionDetector
 
 try:
+    from .bricklet_motion_detector_v2 import BrickletMotionDetectorV2
+except ValueError:
+    from bricklet_motion_detector_v2 import BrickletMotionDetectorV2
+
+try:
     from .bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
 except ValueError:
     from bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
@@ -268,6 +278,11 @@ try:
     from .bricklet_multi_touch import BrickletMultiTouch
 except ValueError:
     from bricklet_multi_touch import BrickletMultiTouch
+
+try:
+    from .bricklet_nfc import BrickletNFC
+except ValueError:
+    from bricklet_nfc import BrickletNFC
 
 try:
     from .bricklet_nfc_rfid import BrickletNFCRFID
@@ -283,6 +298,11 @@ try:
     from .bricklet_oled_64x48 import BrickletOLED64x48
 except ValueError:
     from bricklet_oled_64x48 import BrickletOLED64x48
+
+try:
+    from .bricklet_outdoor_weather import BrickletOutdoorWeather
+except ValueError:
+    from bricklet_outdoor_weather import BrickletOutdoorWeather
 
 try:
     from .bricklet_piezo_buzzer import BrickletPiezoBuzzer
@@ -310,6 +330,11 @@ except ValueError:
     from bricklet_remote_switch import BrickletRemoteSwitch
 
 try:
+    from .bricklet_remote_switch_v2 import BrickletRemoteSwitchV2
+except ValueError:
+    from bricklet_remote_switch_v2 import BrickletRemoteSwitchV2
+
+try:
     from .bricklet_rgb_led import BrickletRGBLED
 except ValueError:
     from bricklet_rgb_led import BrickletRGBLED
@@ -328,6 +353,11 @@ try:
     from .bricklet_rotary_encoder import BrickletRotaryEncoder
 except ValueError:
     from bricklet_rotary_encoder import BrickletRotaryEncoder
+
+try:
+    from .bricklet_rotary_encoder_v2 import BrickletRotaryEncoderV2
+except ValueError:
+    from bricklet_rotary_encoder_v2 import BrickletRotaryEncoderV2
 
 try:
     from .bricklet_rotary_poti import BrickletRotaryPoti
@@ -355,6 +385,11 @@ except ValueError:
     from bricklet_solid_state_relay import BrickletSolidStateRelay
 
 try:
+    from .bricklet_solid_state_relay_v2 import BrickletSolidStateRelayV2
+except ValueError:
+    from bricklet_solid_state_relay_v2 import BrickletSolidStateRelayV2
+
+try:
     from .bricklet_sound_intensity import BrickletSoundIntensity
 except ValueError:
     from bricklet_sound_intensity import BrickletSoundIntensity
@@ -368,6 +403,11 @@ try:
     from .bricklet_temperature_ir import BrickletTemperatureIR
 except ValueError:
     from bricklet_temperature_ir import BrickletTemperatureIR
+
+try:
+    from .bricklet_temperature_ir_v2 import BrickletTemperatureIRV2
+except ValueError:
+    from bricklet_temperature_ir_v2 import BrickletTemperatureIRV2
 
 try:
     from .bricklet_thermal_imaging import BrickletThermalImaging
@@ -414,6 +454,7 @@ BrickletAmbientLight.DEVICE_IDENTIFIER: BrickletAmbientLight,
 BrickletAmbientLightV2.DEVICE_IDENTIFIER: BrickletAmbientLightV2,
 BrickletAnalogIn.DEVICE_IDENTIFIER: BrickletAnalogIn,
 BrickletAnalogInV2.DEVICE_IDENTIFIER: BrickletAnalogInV2,
+BrickletAnalogInV3.DEVICE_IDENTIFIER: BrickletAnalogInV3,
 BrickletAnalogOut.DEVICE_IDENTIFIER: BrickletAnalogOut,
 BrickletAnalogOutV2.DEVICE_IDENTIFIER: BrickletAnalogOutV2,
 BrickletBarometer.DEVICE_IDENTIFIER: BrickletBarometer,
@@ -451,28 +492,35 @@ BrickletLinearPoti.DEVICE_IDENTIFIER: BrickletLinearPoti,
 BrickletLoadCell.DEVICE_IDENTIFIER: BrickletLoadCell,
 BrickletMoisture.DEVICE_IDENTIFIER: BrickletMoisture,
 BrickletMotionDetector.DEVICE_IDENTIFIER: BrickletMotionDetector,
+BrickletMotionDetectorV2.DEVICE_IDENTIFIER: BrickletMotionDetectorV2,
 BrickletMotorizedLinearPoti.DEVICE_IDENTIFIER: BrickletMotorizedLinearPoti,
 BrickletMultiTouch.DEVICE_IDENTIFIER: BrickletMultiTouch,
+BrickletNFC.DEVICE_IDENTIFIER: BrickletNFC,
 BrickletNFCRFID.DEVICE_IDENTIFIER: BrickletNFCRFID,
 BrickletOLED128x64.DEVICE_IDENTIFIER: BrickletOLED128x64,
 BrickletOLED64x48.DEVICE_IDENTIFIER: BrickletOLED64x48,
+BrickletOutdoorWeather.DEVICE_IDENTIFIER: BrickletOutdoorWeather,
 BrickletPiezoBuzzer.DEVICE_IDENTIFIER: BrickletPiezoBuzzer,
 BrickletPiezoSpeaker.DEVICE_IDENTIFIER: BrickletPiezoSpeaker,
 BrickletPTC.DEVICE_IDENTIFIER: BrickletPTC,
 BrickletRealTimeClock.DEVICE_IDENTIFIER: BrickletRealTimeClock,
 BrickletRemoteSwitch.DEVICE_IDENTIFIER: BrickletRemoteSwitch,
+BrickletRemoteSwitchV2.DEVICE_IDENTIFIER: BrickletRemoteSwitchV2,
 BrickletRGBLED.DEVICE_IDENTIFIER: BrickletRGBLED,
 BrickletRGBLEDButton.DEVICE_IDENTIFIER: BrickletRGBLEDButton,
 BrickletRGBLEDMatrix.DEVICE_IDENTIFIER: BrickletRGBLEDMatrix,
 BrickletRotaryEncoder.DEVICE_IDENTIFIER: BrickletRotaryEncoder,
+BrickletRotaryEncoderV2.DEVICE_IDENTIFIER: BrickletRotaryEncoderV2,
 BrickletRotaryPoti.DEVICE_IDENTIFIER: BrickletRotaryPoti,
 BrickletRS232.DEVICE_IDENTIFIER: BrickletRS232,
 BrickletRS485.DEVICE_IDENTIFIER: BrickletRS485,
 BrickletSegmentDisplay4x7.DEVICE_IDENTIFIER: BrickletSegmentDisplay4x7,
 BrickletSolidStateRelay.DEVICE_IDENTIFIER: BrickletSolidStateRelay,
+BrickletSolidStateRelayV2.DEVICE_IDENTIFIER: BrickletSolidStateRelayV2,
 BrickletSoundIntensity.DEVICE_IDENTIFIER: BrickletSoundIntensity,
 BrickletTemperature.DEVICE_IDENTIFIER: BrickletTemperature,
 BrickletTemperatureIR.DEVICE_IDENTIFIER: BrickletTemperatureIR,
+BrickletTemperatureIRV2.DEVICE_IDENTIFIER: BrickletTemperatureIRV2,
 BrickletThermalImaging.DEVICE_IDENTIFIER: BrickletThermalImaging,
 BrickletThermocouple.DEVICE_IDENTIFIER: BrickletThermocouple,
 BrickletTilt.DEVICE_IDENTIFIER: BrickletTilt,
