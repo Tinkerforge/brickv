@@ -102,7 +102,9 @@ elif sys.platform == 'win32':
 
     options = {
         'py2exe' : {
-            'dll_excludes': ['MSVCP90.dll'],
+            'dll_excludes': ['MSVCP90.dll',
+                             'CRYPT32.dll',
+                             'MSWSOCK.dll'],
             'includes':     ['sip',
                              'PyQt4.QtCore',
                              'PyQt4.QtGui',

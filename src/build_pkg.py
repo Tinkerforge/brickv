@@ -307,7 +307,7 @@ def build_windows_pkg():
                          '<<BRICKV_UNDERSCORE_VERSION>>': BRICKV_VERSION.replace('.', '_')})
 
     print('building NSIS installer')
-    system('"C:\\Program Files\\NSIS\\makensis.exe" dist\\nsis\\brickv_installer.nsi')
+    system('"C:\\Program Files (x86)\\NSIS\\makensis.exe" dist\\nsis\\brickv_installer.nsi')
     installer = 'brickv_windows_{0}.exe'.format(BRICKV_VERSION.replace('.', '_'))
 
     if os.path.exists(installer):
@@ -315,8 +315,11 @@ def build_windows_pkg():
 
     shutil.move(os.path.join(dist_path, 'nsis', installer), root_path)
 
-    if os.path.exists('X:\\sign.bat'):
-        system('X:\\sign.bat ' + installer)
+    print('signing NSIS installer')
+    system('signtool.exe sign /v /tr http://rfc3161timestamp.globalsign.com/advanced /td sha256 /n "Tinkerforge GmbH" ' + installer)
+
+    print('verifying signature')
+    system('signtool.exe verify /v /pa ' + installer)
 
 
 def build_linux_pkg():
