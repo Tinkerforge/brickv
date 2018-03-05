@@ -1029,9 +1029,12 @@ class RED(PluginBase, Ui_RED):
         self.label_version  = None
         self.script_manager = ScriptManager(self.session)
         self.tabs           = []
+        self.ignore_image_version = False
 
         self.setupUi(self)
 
+        self.button_anyway.hide()
+        self.button_anyway.clicked.connect(self.anyway_clicked)
         self.tab_widget.hide()
 
         for i in range(self.tab_widget.count()):
@@ -1088,7 +1091,8 @@ class RED(PluginBase, Ui_RED):
                         self.label_discovering.setText('Error: Could not parse Image Version: {0}'.format(image_version))
                     else:
                         if self.image_version.number > MAX_IMAGE_VERSION:
-                            self.label_discovering.setText('Image Version {0} is not yet supported. Please update Brick Viewer!'.format(image_version))
+                            self.label_discovering.setText('Image Version {0} is not officially supported yet. Please update Brick Viewer!'.format(image_version))
+                            self.button_anyway.show()
                         else:
                             self.label_discovering.hide()
                             self.tab_widget.show()
@@ -1143,8 +1147,17 @@ class RED(PluginBase, Ui_RED):
             else:
                 tab.tab_off_focus()
 
+    def anyway_clicked(self):
+        self.ignore_image_version = True
+        self.label_discovering.hide()
+        self.button_anyway.hide()
+        self.tab_widget.show()
+        self.tab_widget_current_changed(self.tab_widget.currentIndex())
+
     def perform_action(self, param):
-        if self.session == None or self.image_version.string == None or self.image_version.number > MAX_IMAGE_VERSION:
+        if self.session == None or \
+           self.image_version.string == None or \
+           (self.image_version.number > MAX_IMAGE_VERSION and not self.ignore_image_version):
             return
 
         # Restart Brick Daemon
