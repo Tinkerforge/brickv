@@ -1094,14 +1094,14 @@ class RED(PluginBase, Ui_RED):
                             self.label_discovering.setText('Image Version {0} is not officially supported yet. Please update Brick Viewer!'.format(image_version))
                             self.button_anyway.show()
                         else:
-                            self.label_discovering.hide()
+                            self.widget_discovering.hide()
                             self.tab_widget.show()
                             self.tab_widget_current_changed(self.tab_widget.currentIndex())
                 else:
                     self.label_discovering.setText('Error: Could not parse Image Version: {0}'.format(image_version))
 
             self.label_discovering.setText('Discovering Image Version...')
-            self.label_discovering.show()
+            self.widget_discovering.show()
             async_call(read_image_version_async, REDFile(self.session), cb_success, None)
         else:
             self.tab_widget_current_changed(self.tab_widget.currentIndex())
@@ -1149,7 +1149,7 @@ class RED(PluginBase, Ui_RED):
 
     def anyway_clicked(self):
         self.ignore_image_version = True
-        self.label_discovering.hide()
+        self.widget_discovering.hide()
         self.button_anyway.hide()
         self.tab_widget.show()
         self.tab_widget_current_changed(self.tab_widget.currentIndex())
