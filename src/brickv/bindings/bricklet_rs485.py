@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-28.      #
+# This file was automatically generated on 2018-03-07.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -420,8 +420,8 @@ class BrickletRS485(Device):
 
         The current buffer content is lost if this function is called.
 
-        The send buffer holds data that is given by :func:`Write` and
-        can not be written yet. The receive buffer holds data that is
+        The send buffer holds data that was given by :func:`Write` and
+        could not be written yet. The receive buffer holds data that is
         received through RS485 but could not yet be send to the
         user, either by :func:`Read` or through :cb:`Read` callback.
 

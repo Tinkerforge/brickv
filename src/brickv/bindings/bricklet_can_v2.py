@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-02.      #
+# This file was automatically generated on 2018-03-07.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -214,7 +214,7 @@ class BrickletCANV2(Device):
 
         The CAN transceiver has three different modes:
 
-        * Normal: Reads from and writes and to the CAN bus and performs active bus
+        * Normal: Reads from and writes to the CAN bus and performs active bus
           error detection and acknowledgement.
         * Loopback: All reads and writes are performed internally. The transceiver
           is disconnected from the actual CAN bus.
