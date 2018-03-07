@@ -388,7 +388,7 @@
 - Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button, RGB
   LED Matrix and Thermal Imaging Bricklet
 
-2018-02-28: 2.3.13 (<unknown>)
+2018-02-28: 2.3.13 (e5a8656)
 - Add support for Analog In 3.0, Remote Switch 2.0, Motion Detector 2.0, NFC,
   Outdoor Weather, Rotary Encoder 2.0, Solid State 2.0 and Temperature IR 2.0
   Bricklet
@@ -399,3 +399,6 @@
   Solid State Relay, Solid State 2.0, Temperature IR 2.0 and Thermal Imaging
   Bricklet and Silent Stepper Brick
 - Fix RED Brick API bindings version checks for image 1.10
+
+2018-03-07: 2.3.14 (<unknown>)
+- Add support for RED Brick Image 1.11
