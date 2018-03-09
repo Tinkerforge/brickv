@@ -9,7 +9,6 @@ from brickv.plugin_system.plugins.analog_out import device_class as analog_out
 from brickv.plugin_system.plugins.analog_out_v2 import device_class as analog_out_v2
 from brickv.plugin_system.plugins.barometer import device_class as barometer
 from brickv.plugin_system.plugins.can import device_class as can
-from brickv.plugin_system.plugins.can_v2 import device_class as can_v2
 from brickv.plugin_system.plugins.co2 import device_class as co2
 from brickv.plugin_system.plugins.color import device_class as color
 from brickv.plugin_system.plugins.current12 import device_class as current12
@@ -112,7 +111,6 @@ device_classes = [
     analog_out_v2,
     barometer,
     can,
-    can_v2,
     co2,
     color,
     current12,
