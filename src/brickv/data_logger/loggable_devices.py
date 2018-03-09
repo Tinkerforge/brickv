@@ -170,8 +170,8 @@ else:
     from tinkerforge.bricklet_outdoor_weather import BrickletOutdoorWeather
     from tinkerforge.bricklet_ptc import BrickletPTC
     from tinkerforge.bricklet_real_time_clock import BrickletRealTimeClock
-    from tinkerforge.bricklet_remote_switch import BrickletRemoteSwtich
-    from tinkerforge.bricklet_remote_switch_v2 import BrickletRemoteSwtichV2
+    from tinkerforge.bricklet_remote_switch import BrickletRemoteSwitch
+    from tinkerforge.bricklet_remote_switch_v2 import BrickletRemoteSwitchV2
     from tinkerforge.bricklet_rgb_led_button import BrickletRGBLEDButton
     from tinkerforge.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
     from tinkerforge.bricklet_rotary_encoder import BrickletRotaryEncoder
