@@ -449,11 +449,6 @@ try:
 except ValueError:
     from bricklet_voltage_current_v2 import BrickletVoltageCurrentV2
 
-try:
-    from .bricklet_xmc_emv_test import BrickletXMCEMVTest
-except ValueError:
-    from bricklet_xmc_emv_test import BrickletXMCEMVTest
-
 
 DEVICE_CLASSES = {
 BrickDC.DEVICE_IDENTIFIER: BrickDC,
@@ -544,7 +539,6 @@ BrickletUVLight.DEVICE_IDENTIFIER: BrickletUVLight,
 BrickletVoltage.DEVICE_IDENTIFIER: BrickletVoltage,
 BrickletVoltageCurrent.DEVICE_IDENTIFIER: BrickletVoltageCurrent,
 BrickletVoltageCurrentV2.DEVICE_IDENTIFIER: BrickletVoltageCurrentV2,
-BrickletXMCEMVTest.DEVICE_IDENTIFIER: BrickletXMCEMVTest,
 }
 
 def get_device_class(device_identifier):
