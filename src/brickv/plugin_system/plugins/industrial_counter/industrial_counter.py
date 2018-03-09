@@ -1,0 +1,204 @@
+# -*- coding: utf-8 -*-
+"""
+Industrial Counter Plugin
+Copyright (C) 2018 Olaf Lüke <olaf@tinkerforge.com>
+
+industrial_counter.py: Industrial Counter Plugin Implementation
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with this program; if not, write to the
+Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA 02111-1307, USA.
+"""
+
+from PyQt4.QtCore import Qt, pyqtSignal, QTimer
+
+from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
+from brickv.plugin_system.plugins.industrial_counter.ui_industrial_counter import Ui_IndustrialCounter
+from brickv.bindings.bricklet_industrial_counter import BrickletIndustrialCounter
+from brickv.callback_emulator import CallbackEmulator
+from brickv.async_call import async_call
+
+class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
+
+    def __init__(self, *args):
+        COMCUPluginBase.__init__(self, BrickletIndustrialCounter, *args)
+
+        self.setupUi(self)
+
+        self.counter = self.device
+        
+        self.cbe_signal = CallbackEmulator(self.counter.get_all_signal_data,
+                                           self.cb_signal,
+                                           self.increase_error_count)
+        
+        self.cbe_counter = CallbackEmulator(self.counter.get_all_counter,
+                                            self.cb_counter,
+                                            self.increase_error_count)
+        
+        def get_combo_lambda(channel):
+            return lambda: self.combo_index_changed(channel)
+        
+        def get_checkstate_lambda(channel):
+            return lambda x: self.checkstate_changed(channel, x)
+        
+        g = self.main_grid
+        pos = 1
+        self.checkboxess_active = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+        for channel, checkbox in enumerate(self.checkboxess_active):
+            checkbox.stateChanged.connect(get_checkstate_lambda(channel))
+        
+        pos += 1
+        self.combos_count_edge = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+        for channel, combo in enumerate(self.combos_count_edge):
+            combo.addItem('Rising')
+            combo.addItem('Falling')
+            combo.addItem('Both')
+            combo.currentIndexChanged.connect(get_combo_lambda(channel))
+        
+        pos += 1
+        self.combos_count_direction = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+        for channel, combo in enumerate(self.combos_count_direction):
+            combo.addItem('Up')
+            combo.addItem('Down')
+            combo.currentIndexChanged.connect(get_combo_lambda(channel))
+            
+        self.combos_count_direction[0].addItem('Ext Up (Ch 2)')
+        self.combos_count_direction[0].addItem('Ext Down (Ch 2)')
+        self.combos_count_direction[3].addItem('Ext Up (Ch 1)')
+        self.combos_count_direction[3].addItem('Ext Down (Ch 1)')
+        
+        pos += 1
+        self.combos_duty_cycle_prescaler = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+        for channel, combo in enumerate(self.combos_duty_cycle_prescaler):
+            combo.addItem('1')
+            combo.addItem('2') 
+            combo.addItem('4') 
+            combo.addItem('8') 
+            combo.addItem('16') 
+            combo.addItem('32') 
+            combo.addItem('64') 
+            combo.addItem('128') 
+            combo.addItem('256') 
+            combo.addItem('512') 
+            combo.addItem('1024') 
+            combo.addItem('2048') 
+            combo.addItem('4096') 
+            combo.addItem('8192') 
+            combo.addItem('16384') 
+            combo.addItem('32768') 
+            combo.addItem('Auto')
+            combo.currentIndexChanged.connect(get_combo_lambda(channel))
+            
+        pos += 1
+        self.combos_frequency_integration = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+        for channel, combo in enumerate(self.combos_frequency_integration):
+            combo.addItem('128ms')
+            combo.addItem('256ms')
+            combo.addItem('512ms')
+            combo.addItem('1024ms')
+            combo.addItem('2048ms')
+            combo.addItem('4096ms')
+            combo.addItem('8192ms')
+            combo.addItem('16384ms')
+            combo.addItem('32768ms')
+            combo.addItem('Auto')
+            combo.currentIndexChanged.connect(get_combo_lambda(channel))
+            
+        pos += 2
+        self.labels_counter    = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+        pos += 1
+        self.labels_duty_cycle = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+        pos += 1
+        self.labels_period     = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+        pos += 1
+        self.labels_frequency  = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+        pos += 1
+        self.labels_pin_value  = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+
+    def cb_signal(self, data):
+        for i in range(4):
+            self.labels_duty_cycle[i].setText(str(data.duty_cycle[i]))
+            self.labels_period[i].setText(str(data.period[i]))
+            self.labels_frequency[i].setText(str(data.frequency[i]))
+            self.labels_pin_value[i].setText('High' if data.pin_value[i] else 'Low')
+        
+    def cb_counter(self, data):
+        for i in range(4):
+            self.labels_counter[i].setText(str(data[i]))
+            
+    def combo_signals_block(self, channel):
+        self.combos_count_edge[channel].blockSignals(True)
+        self.combos_count_direction[channel].blockSignals(True)
+        self.combos_duty_cycle_prescaler[channel].blockSignals(True)
+        self.combos_frequency_integration[channel].blockSignals(True)
+
+    def combo_signals_release(self, channel):
+        self.combos_count_edge[channel].blockSignals(False)
+        self.combos_count_direction[channel].blockSignals(False)
+        self.combos_duty_cycle_prescaler[channel].blockSignals(False)
+        self.combos_frequency_integration[channel].blockSignals(False)
+        
+    def checkstate_changed(self, channel, value):
+        self.counter.set_counter_active(channel, True if value == Qt.Checked else False)
+        print(channel, value, True if value == Qt.Checked else False)
+        
+    def combo_index_changed(self, channel):
+        count_edge = self.combos_count_edge[channel].currentIndex()
+        count_direction = self.combos_count_direction[channel].currentIndex()
+        duty_cycle_prescaler = self.combos_duty_cycle_prescaler[channel].currentIndex()
+        frequency_integration = self.combos_frequency_integration[channel].currentIndex()
+        
+        if duty_cycle_prescaler == 16:
+            duty_cycle_prescaler = 255
+        if frequency_integration == 9:
+            frequency_integration = 255
+            
+        self.counter.set_counter_configuration(channel, count_edge, count_direction, duty_cycle_prescaler, frequency_integration)
+        
+    def get_all_counter_active_cb(self, active):
+        for i in range(4):
+            self.checkboxess_active[i].blockSignals(True)
+            if active[i]:
+                self.checkboxess_active[i].setCheckState(Qt.Checked)
+            else:
+                self.checkboxess_active[i].setCheckState(Qt.Unchecked)
+            self.checkboxess_active[i].blockSignals(False)
+        
+    def get_counter_configuration_cb(self, channel, configuration):
+        self.combo_signals_block(channel)
+        self.combos_count_edge[channel].setCurrentIndex(configuration.count_edge)
+        self.combos_count_direction[channel].setCurrentIndex(configuration.count_direction)
+        self.combos_duty_cycle_prescaler[channel].setCurrentIndex(configuration.duty_cycle_prescaler if configuration.duty_cycle_prescaler != 255 else 16)
+        self.combos_frequency_integration[channel].setCurrentIndex(configuration.frequency_integration_time if configuration.frequency_integration_time != 255 else 9)
+        self.combo_signals_release(channel)
+        
+    def start(self):
+        async_call(self.counter.get_counter_configuration, 0, lambda x: self.get_counter_configuration_cb(0, x), self.increase_error_count)
+        async_call(self.counter.get_counter_configuration, 1, lambda x: self.get_counter_configuration_cb(1, x), self.increase_error_count)
+        async_call(self.counter.get_counter_configuration, 2, lambda x: self.get_counter_configuration_cb(2, x), self.increase_error_count)
+        async_call(self.counter.get_counter_configuration, 3, lambda x: self.get_counter_configuration_cb(3, x), self.increase_error_count)
+        async_call(self.counter.get_all_counter_active, None, self.get_all_counter_active_cb, self.increase_error_count)
+        self.cbe_signal.set_period(50)
+        self.cbe_counter.set_period(50)
+
+    def stop(self):
+        self.cbe_signal.set_period(0)
+        self.cbe_counter.set_period(0)
+
+    def destroy(self):
+        pass
+
+    @staticmethod
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletIndustrialCounter.DEVICE_IDENTIFIER
