@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-07.      #
+# This file was automatically generated on 2018-03-09.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -18,12 +18,13 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
-ReadFrame = namedtuple('ReadFrame', ['success', 'frame_type', 'identifier', 'data', 'length'])
+ReadFrameLowLevel = namedtuple('ReadFrameLowLevel', ['success', 'frame_type', 'identifier', 'data_length', 'data_data'])
 GetConfiguration = namedtuple('Configuration', ['baud_rate', 'transceiver_mode', 'write_timeout'])
 GetReadFilter = namedtuple('ReadFilter', ['mode', 'mask', 'filter1', 'filter2'])
 GetErrorLog = namedtuple('ErrorLog', ['write_error_level', 'read_error_level', 'transceiver_disabled', 'write_timeout_count', 'read_register_overflow_count', 'read_buffer_overflow_count'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
+ReadFrame = namedtuple('ReadFrame', ['success', 'frame_type', 'identifier', 'data'])
 
 class BrickletCANV2(Device):
     """
@@ -37,8 +38,8 @@ class BrickletCANV2(Device):
     CALLBACK_FRAME_READ = 11
 
 
-    FUNCTION_WRITE_FRAME = 1
-    FUNCTION_READ_FRAME = 2
+    FUNCTION_WRITE_FRAME_LOW_LEVEL = 1
+    FUNCTION_READ_FRAME_LOW_LEVEL = 2
     FUNCTION_ENABLE_FRAME_READ_CALLBACK = 3
     FUNCTION_DISABLE_FRAME_READ_CALLBACK = 4
     FUNCTION_IS_FRAME_READ_CALLBACK_ENABLED = 5
@@ -105,8 +106,8 @@ class BrickletCANV2(Device):
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[BrickletCANV2.FUNCTION_WRITE_FRAME] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletCANV2.FUNCTION_READ_FRAME] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_WRITE_FRAME_LOW_LEVEL] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_READ_FRAME_LOW_LEVEL] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCANV2.FUNCTION_ENABLE_FRAME_READ_CALLBACK] = BrickletCANV2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletCANV2.FUNCTION_DISABLE_FRAME_READ_CALLBACK] = BrickletCANV2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletCANV2.FUNCTION_IS_FRAME_READ_CALLBACK_ENABLED] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -131,7 +132,7 @@ class BrickletCANV2(Device):
         self.callback_formats[BrickletCANV2.CALLBACK_FRAME_READ] = 'B I 8B B'
 
 
-    def write_frame(self, frame_type, identifier, data, length):
+    def write_frame_low_level(self, frame_type, identifier, data_length, data_data):
         """
         Writes a data or remote frame to the write buffer to be transmitted over the
         CAN transceiver.
@@ -157,12 +158,12 @@ class BrickletCANV2(Device):
         """
         frame_type = int(frame_type)
         identifier = int(identifier)
-        data = list(map(int, data))
-        length = int(length)
+        data_length = int(data_length)
+        data_data = list(map(int, data_data))
 
-        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_WRITE_FRAME, (frame_type, identifier, data, length), 'B I 8B B', '!')
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_WRITE_FRAME_LOW_LEVEL, (frame_type, identifier, data_length, data_data), 'B I B 15B', '!')
 
-    def read_frame(self):
+    def read_frame_low_level(self):
         """
         Tries to read the next data or remote frame from the read buffer and return it.
         If a frame was successfully read, then the ``success`` return value is set to
@@ -182,7 +183,7 @@ class BrickletCANV2(Device):
         Instead of polling with this function, you can also use callbacks. See the
         :func:`Enable Frame Read Callback` function and the :cb:`Frame Read` callback.
         """
-        return ReadFrame(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_READ_FRAME, (), '', '! B I 8B B'))
+        return ReadFrameLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_READ_FRAME_LOW_LEVEL, (), '', '! B I B 15B'))
 
     def enable_frame_read_callback(self):
         """
@@ -494,6 +495,69 @@ class BrickletCANV2(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def write_frame(self, frame_type, identifier, data):
+        """
+        Writes a data or remote frame to the write buffer to be transmitted over the
+        CAN transceiver.
+
+        The Bricklet supports the standard 11-bit (CAN 2.0A) and the additional extended
+        18-bit (CAN 2.0B) identifiers. For standard frames the Bricklet uses bit 0 to 10
+        from the ``identifier`` parameter as standard 11-bit identifier. For extended
+        frames the Bricklet additionally uses bit 11 to 28 from the ``identifier``
+        parameter as extended 18-bit identifier.
+
+        For remote frames the ``data`` parameter is ignored.
+
+        Returns *true* if the frame was successfully added to the write buffer. Returns
+        *false* if the frame could not be added because write buffer is already full.
+
+        The write buffer can overflow if frames are written to it at a higher rate
+        than the Bricklet can transmitted them over the CAN transceiver. This may
+        happen if the CAN transceiver is configured as read-only or is using a low baud
+        rate (see :func:`Set Configuration`). It can also happen if the CAN bus is
+        congested and the frame cannot be transmitted because it constantly loses
+        arbitration or because the CAN transceiver is currently disabled due to a high
+        write error level (see :func:`Get Error Log`).
+        """
+        frame_type = int(frame_type)
+        identifier = int(identifier)
+        data = list(map(int, data))
+
+        data_length = len(data)
+        data_data = list(data) # make a copy so we can potentially extend it
+
+        if data_length > 15:
+            raise Error(Error.INVALID_PARAMETER, 'Data can be at most 15 items long')
+
+        if data_length < 15:
+            data_data += [0] * (15 - data_length)
+
+        return self.write_frame_low_level(frame_type, identifier, data_length, data_data)
+
+    def read_frame(self):
+        """
+        Tries to read the next data or remote frame from the read buffer and return it.
+        If a frame was successfully read, then the ``success`` return value is set to
+        *true* and the other return values contain the frame. If the read buffer is
+        empty and no frame could be read, then the ``success`` return value is set to
+        *false* and the other return values contain invalid data.
+
+        The ``identifier`` return value follows the identifier format described for
+        :func:`Write Frame`.
+
+        For remote frames the ``data`` return value always contains invalid data.
+
+        A configurable read filter can be used to define which frames should be
+        received by the CAN transceiver and put into the read buffer (see
+        :func:`Set Read Filter`).
+
+        Instead of polling with this function, you can also use callbacks. See the
+        :func:`Enable Frame Read Callback` function and the :cb:`Frame Read` callback.
+        """
+        ret = self.read_frame_low_level()
+
+        return ReadFrame(ret.success, ret.frame_type, ret.identifier, ret.data_data[:ret.data_length])
 
     def register_callback(self, callback_id, function):
         """
