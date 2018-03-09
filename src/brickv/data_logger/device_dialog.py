@@ -33,7 +33,6 @@ from brickv.data_logger.utils import Utilities
 from brickv.data_logger.ui_device_dialog import Ui_DeviceDialog
 from brickv.data_logger.gui_config_handler import GuiConfigHandler
 from brickv.bindings.ip_connection import IPConnection
-from brickv.bindings import device_factory
 from brickv.utils import get_modeless_dialog_flags
 
 # noinspection PyTypeChecker
@@ -48,6 +47,11 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
         QDialog.__init__(self, parent, get_modeless_dialog_flags())
 
         self._logger_window = parent
+
+        self.device_name_by_device_identifier = {}
+
+        for display_name, device_spec in device_specs.items():
+            self.device_name_by_device_identifier[device_spec['class'].DEVICE_IDENTIFIER] = display_name
 
         self.qtcb_enumerate.connect(self.cb_enumerate)
         self.qtcb_connected.connect(self.cb_connected)
@@ -122,12 +126,9 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
         if enumeration_type in [IPConnection.ENUMERATION_TYPE_AVAILABLE,
                                 IPConnection.ENUMERATION_TYPE_CONNECTED]:
             if uid not in self.connected_uids:
-                try:
-                    display_name = device_factory.get_device_display_name(device_identifier)
-                except KeyError:
-                    return # unknown device identifier
+                display_name = self.device_name_by_device_identifier.get(device_identifier)
 
-                if display_name in device_specs:
+                if display_name != None:
                     self.connected_uids.append(uid)
                     self.available_item.addChild(QTreeWidgetItem(['{0} [{1}]'.format(display_name, uid)]))
                     self.available_item.setText(0, 'Devices available at {0}:{1}'.format(self.host, self.port))
