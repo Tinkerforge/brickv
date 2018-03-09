@@ -130,7 +130,7 @@ else:
     from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
     from tinkerforge.bricklet_analog_in import BrickletAnalogIn
     from tinkerforge.bricklet_analog_in_v2 import BrickletAnalogInV2
-    from tinkerforge.bindings.bricklet_analog_in_v3 import BrickletAnalogInV3
+    from tinkerforge.bricklet_analog_in_v3 import BrickletAnalogInV3
     from tinkerforge.bricklet_analog_out_v2 import BrickletAnalogOutV2
     from tinkerforge.bricklet_barometer import BrickletBarometer
     from tinkerforge.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
@@ -162,30 +162,30 @@ else:
     from tinkerforge.bricklet_load_cell import BrickletLoadCell
     from tinkerforge.bricklet_moisture import BrickletMoisture
     from tinkerforge.bricklet_motion_detector import BrickletMotionDetector
-    from tinkerforge.bindings.bricklet_motion_detector_v2 import BrickletMotionDetectorV2
+    from tinkerforge.bricklet_motion_detector_v2 import BrickletMotionDetectorV2
     from tinkerforge.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
     from tinkerforge.bricklet_multi_touch import BrickletMultiTouch
-    from tinkerforge.bindings.bricklet_nfc import BrickletNFC
+    from tinkerforge.bricklet_nfc import BrickletNFC
     from tinkerforge.bricklet_nfc_rfid import BrickletNFCRFID
-    from tinkerforge.bindings.bricklet_outdoor_weather import BrickletOutdoorWeather
+    from tinkerforge.bricklet_outdoor_weather import BrickletOutdoorWeather
     from tinkerforge.bricklet_ptc import BrickletPTC
     from tinkerforge.bricklet_real_time_clock import BrickletRealTimeClock
-    from tinkerforge.bindings.bricklet_remote_switch import BrickletRemoteSwtich
-    from tinkerforge.bindings.bricklet_remote_switch_v2 import BrickletRemoteSwtichV2
+    from tinkerforge.bricklet_remote_switch import BrickletRemoteSwtich
+    from tinkerforge.bricklet_remote_switch_v2 import BrickletRemoteSwtichV2
     from tinkerforge.bricklet_rgb_led_button import BrickletRGBLEDButton
     from tinkerforge.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
     from tinkerforge.bricklet_rotary_encoder import BrickletRotaryEncoder
-    from tinkerforge.bindings.bricklet_rotary_encoder_v2 import BrickletRotaryEncoderV2
+    from tinkerforge.bricklet_rotary_encoder_v2 import BrickletRotaryEncoderV2
     from tinkerforge.bricklet_rotary_poti import BrickletRotaryPoti
     # from tinkerforge.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
     from tinkerforge.bricklet_rs485 import BrickletRS485
     from tinkerforge.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
     from tinkerforge.bricklet_solid_state_relay import BrickletSolidStateRelay
-    from tinkerforge.bindings.bricklet_solid_state_relay_v2 import BrickletSolidStateRelayV2
+    from tinkerforge.bricklet_solid_state_relay_v2 import BrickletSolidStateRelayV2
     from tinkerforge.bricklet_sound_intensity import BrickletSoundIntensity
     from tinkerforge.bricklet_temperature import BrickletTemperature
     from tinkerforge.bricklet_temperature_ir import BrickletTemperatureIR
-    from tinkerforge.bindings.bricklet_temperature_ir_v2 import BrickletTemperatureIRV2
+    from tinkerforge.bricklet_temperature_ir_v2 import BrickletTemperatureIRV2
     from tinkerforge.bricklet_thermal_imaging import BrickletThermalImaging
     from tinkerforge.bricklet_thermocouple import BrickletThermocouple
     from tinkerforge.bricklet_tilt import BrickletTilt
