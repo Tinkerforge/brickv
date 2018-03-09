@@ -20,7 +20,6 @@ from brickv.plugin_system.plugins.distance_us import device_class as distance_us
 from brickv.plugin_system.plugins.dmx import device_class as dmx
 from brickv.plugin_system.plugins.dual_button import device_class as dual_button
 from brickv.plugin_system.plugins.dual_relay import device_class as dual_relay
-from brickv.plugin_system.plugins.dual_relay_v2 import device_class as dual_relay_v2
 from brickv.plugin_system.plugins.dust_detector import device_class as dust_detector
 from brickv.plugin_system.plugins.gas_detector import device_class as gas_detector
 from brickv.plugin_system.plugins.gps import device_class as gps
@@ -32,10 +31,12 @@ from brickv.plugin_system.plugins.humidity_v2 import device_class as humidity_v2
 from brickv.plugin_system.plugins.imu import device_class as imu
 from brickv.plugin_system.plugins.imu_v2 import device_class as imu_v2
 from brickv.plugin_system.plugins.industrial_analog_out import device_class as industrial_analog_out
+from brickv.plugin_system.plugins.industrial_counter import device_class as industrial_counter
 from brickv.plugin_system.plugins.industrial_digital_in_4 import device_class as industrial_digital_in_4
 from brickv.plugin_system.plugins.industrial_digital_out_4 import device_class as industrial_digital_out_4
 from brickv.plugin_system.plugins.industrial_dual_0_20ma import device_class as industrial_dual_0_20ma
 from brickv.plugin_system.plugins.industrial_dual_analog_in import device_class as industrial_dual_analog_in
+from brickv.plugin_system.plugins.industrial_dual_relay import device_class as industrial_dual_relay
 from brickv.plugin_system.plugins.industrial_quad_relay import device_class as industrial_quad_relay
 from brickv.plugin_system.plugins.industrial_quad_relay_v2 import device_class as industrial_quad_relay_v2
 from brickv.plugin_system.plugins.io16 import device_class as io16
@@ -97,6 +98,7 @@ from brickv.plugin_system.plugins.tilt import device_class as tilt
 from brickv.plugin_system.plugins.uv_light import device_class as uv_light
 from brickv.plugin_system.plugins.voltage import device_class as voltage
 from brickv.plugin_system.plugins.voltage_current import device_class as voltage_current
+from brickv.plugin_system.plugins.voltage_current_v2 import device_class as voltage_current_v2
 
 device_classes = [
     ac_current,
@@ -121,7 +123,6 @@ device_classes = [
     dmx,
     dual_button,
     dual_relay,
-    dual_relay_v2,
     dust_detector,
     gas_detector,
     gps,
@@ -133,10 +134,12 @@ device_classes = [
     imu,
     imu_v2,
     industrial_analog_out,
+    industrial_counter,
     industrial_digital_in_4,
     industrial_digital_out_4,
     industrial_dual_0_20ma,
     industrial_dual_analog_in,
+    industrial_dual_relay,
     industrial_quad_relay,
     industrial_quad_relay_v2,
     io16,
@@ -198,4 +201,5 @@ device_classes = [
     uv_light,
     voltage,
     voltage_current,
+    voltage_current_v2,
 ]

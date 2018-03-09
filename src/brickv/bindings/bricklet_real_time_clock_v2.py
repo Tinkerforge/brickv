@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-01.      #
+# This file was automatically generated on 2018-03-09.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -221,7 +221,7 @@ class BrickletRealTimeClockV2(Device):
 
     def get_date_time_callback_configuration(self):
         """
-        Returns the period as set by :func:`Set Date Time Callback Period`.
+        Returns the period as set by :func:`Set Date Time Callback Configuration`.
         """
         return self.ipcon.send_request(self, BrickletRealTimeClockV2.FUNCTION_GET_DATE_TIME_CALLBACK_CONFIGURATION, (), '', 'I')
 
