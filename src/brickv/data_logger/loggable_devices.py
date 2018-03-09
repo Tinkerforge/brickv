@@ -325,69 +325,57 @@ def special_set_multi_touch_options(device, electrode0, electrode1, electrode2, 
     device.set_electrode_sensitivity(electrode_sensitivity)
 
 # BrickletOutdoorWeather
+wind_direction_names = {
+    BrickletOutdoorWeather.WIND_DIRECTION_N: 'N',
+    BrickletOutdoorWeather.WIND_DIRECTION_NNE: 'NNE',
+    BrickletOutdoorWeather.WIND_DIRECTION_NE: 'NE',
+    BrickletOutdoorWeather.WIND_DIRECTION_ENE: 'ENE',
+    BrickletOutdoorWeather.WIND_DIRECTION_E: 'E',
+    BrickletOutdoorWeather.WIND_DIRECTION_ESE: 'ESE',
+    BrickletOutdoorWeather.WIND_DIRECTION_SE: 'SW',
+    BrickletOutdoorWeather.WIND_DIRECTION_SSE: 'SSW',
+    BrickletOutdoorWeather.WIND_DIRECTION_S: 'S',
+    BrickletOutdoorWeather.WIND_DIRECTION_SSW: 'SSW',
+    BrickletOutdoorWeather.WIND_DIRECTION_SW: 'SW',
+    BrickletOutdoorWeather.WIND_DIRECTION_WSW: 'WSW',
+    BrickletOutdoorWeather.WIND_DIRECTION_W: 'W',
+    BrickletOutdoorWeather.WIND_DIRECTION_WNW: 'WNW',
+    BrickletOutdoorWeather.WIND_DIRECTION_NW: 'NW',
+    BrickletOutdoorWeather.WIND_DIRECTION_NNW: 'NNW',
+    BrickletOutdoorWeather.WIND_DIRECTION_ERROR: 'Wind Direction Error',
+}
+
+GetStationData = namedtuple('StationData',
+                            ['temperature',
+                             'humidity',
+                             'wind_speed',
+                             'gust_speed',
+                             'rain',
+                             'wind_direction',
+                             'battery_low',
+                             'last_change'])
+
 def special_get_station_data(device):
     station_ids = device.get_station_identifiers()
 
     if len(station_ids) < 1:
         raise Exception('No stations found')
 
-    wd = ''
-    # Use the first station ID
-    station_data = device.get_station_data(station_ids[0])
+    keyed_station_data = {}
 
-    if station_data.wind_direction == device.WIND_DIRECTION_N:
-        wd = 'N'
-    elif station_data.wind_direction == device.WIND_DIRECTION_NNE:
-        wd = 'NNE'
-    elif station_data.wind_direction == device.WIND_DIRECTION_NE:
-        wd = 'NE'
-    elif station_data.wind_direction == device.WIND_DIRECTION_ENE:
-        wd = 'ENE'
-    elif station_data.wind_direction == device.WIND_DIRECTION_E:
-        wd = 'E'
-    elif station_data.wind_direction == device.WIND_DIRECTION_ESE:
-        wd = 'ESE'
-    elif station_data.wind_direction == device.WIND_DIRECTION_SE:
-        wd = 'SE'
-    elif station_data.wind_direction == device.WIND_DIRECTION_SSE:
-        wd = 'SSE'
-    elif station_data.wind_direction == device.WIND_DIRECTION_S:
-        wd = 'S'
-    elif station_data.wind_direction == device.WIND_DIRECTION_SSW:
-        wd = 'SSW'
-    elif station_data.wind_direction == device.WIND_DIRECTION_SW:
-        wd = 'SW'
-    elif station_data.wind_direction == device.WIND_DIRECTION_WSW:
-        wd = 'WSW'
-    elif station_data.wind_direction == device.WIND_DIRECTION_W:
-        wd = 'W'
-    elif station_data.wind_direction == device.WIND_DIRECTION_WNW:
-        wd = 'WNW'
-    elif station_data.wind_direction == device.WIND_DIRECTION_NW:
-        wd = 'NW'
-    elif station_data.wind_direction == device.WIND_DIRECTION_NNW:
-        wd = 'NNW'
-    elif station_data.wind_direction == device.WIND_DIRECTION_ERROR:
-        wd = 'Wind Direction Error'
+    for station_id in station_ids:
+        station_data = device.get_station_data(station_id)
 
-    GetStationData = namedtuple('StationData',
-                                ['temperature',
-                                 'humidity',
-                                 'wind_speed',
-                                 'gust_speed',
-                                 'rain',
-                                 'wind_direction',
-                                 'battery_low',
-                                 'last_change'])
+        keyed_station_data[str(station_id)] = GetStationData(temperature = station_data.temperature,
+                                                             humidity = station_data.humidity,
+                                                             wind_speed = station_data.wind_speed,
+                                                             gust_speed = station_data.gust_speed,
+                                                             rain = station_data.rain,
+                                                             wind_direction = wind_direction_names[station_data.wind_direction],
+                                                             battery_low = station_data.battery_low,
+                                                             last_change = station_data.last_change)
 
-    return GetStationData(temperature = station_data.temperature,
-                          humidity = station_data.humidity,
-                          wind_speed = station_data.wind_speed,
-                          gust_speed = station_data.gust_speed,
-                          rain = station_data.rain,
-                          wind_direction = wd,
-                          battery_low = station_data.battery_low,
-                          last_change = station_data.last_change)
+    return keyed_station_data
 
 def special_get_sensor_data(device):
     sensor_ids = device.get_sensor_identifiers()
@@ -395,8 +383,12 @@ def special_get_sensor_data(device):
     if len(sensor_ids) < 1:
         raise Exception('No sensors found')
 
-    # Use the first sensor ID
-    return device.get_sensor_data(sensor_ids[0])
+    keyed_sensor_data = {}
+
+    for sensor_id in sensor_ids:
+        keyed_sensor_data[str(sensor_id)] = device.get_sensor_data(sensor_id)
+
+    return keyed_sensor_data
 
 # BrickletPTC
 def special_get_ptc_resistance(device):
@@ -3215,7 +3207,7 @@ class DeviceImpl(AbstractDevice):
         try:
             value = getter(self.device)
         except Exception as e:
-            value = self._exception_msg(str(self.device_name) + "-" + str(var_name), e)
+            value = self._exception_msg(self.device_name + "-" + var_name, e)
             self.datalogger.add_to_queue(CSVData(timestamp,
                                                  self.device_name,
                                                  self.device_uid,
@@ -3225,6 +3217,9 @@ class DeviceImpl(AbstractDevice):
             # log_exception(timestamp, value_name, e)
             return
 
+        if not isinstance(value, dict):
+            value = {None: value}
+
         try:
             if subvalue_names is None:
                 if unit == None:
@@ -3232,66 +3227,81 @@ class DeviceImpl(AbstractDevice):
                 else:
                     unit_str = unit
 
-                # log_value(value_name, value)
-                self.datalogger.add_to_queue(CSVData(timestamp,
-                                                     self.device_name,
-                                                     self.device_uid,
-                                                     var_name,
-                                                     value,
-                                                     unit_str))
+                for key, keyed_value in value.items():
+                    if key != None:
+                        keyed_var_name = var_name + ':' + key
+                    else:
+                        keyed_var_name = var_name
+
+                    self.datalogger.add_to_queue(CSVData(timestamp,
+                                                         self.device_name,
+                                                         self.device_uid,
+                                                         keyed_var_name,
+                                                         keyed_value,
+                                                         unit_str))
             else:
                 subvalue_bool = self.data['values'][var_name]['subvalues']
-                for i in range(len(subvalue_names)):
-                    if not isinstance(subvalue_names[i], list):
-                        try:
-                            if subvalue_bool[subvalue_names[i]]:
-                                if unit[i] == None:
-                                    unit_str = ''
-                                else:
-                                    unit_str = unit[i]
-                                self.datalogger.add_to_queue(CSVData(timestamp,
-                                                                     self.device_name,
-                                                                     self.device_uid,
-                                                                     str(var_name) + "-" + str(subvalue_names[i]),
-                                                                     value[i],
-                                                                     unit_str))
-                        except Exception as e:
-                            value = self._exception_msg(str(self.device_name) + "-" + str(var_name), e)
-                            self.datalogger.add_to_queue(CSVData(timestamp,
-                                                                 self.device_name,
-                                                                 self.device_uid,
-                                                                 str(var_name) + "-" + str(subvalue_names[i]),
-                                                                 value[i],
-                                                                 ''))
-                            return
+
+                for key, keyed_value in value.items():
+                    if key != None:
+                        keyed_var_name = var_name + ':' + key
                     else:
-                        for k in range(len(subvalue_names[i])):
+                        keyed_var_name = var_name
+
+                    for i in range(len(subvalue_names)):
+                        if not isinstance(subvalue_names[i], list):
                             try:
-                                if subvalue_bool[subvalue_names[i][k]]:
-                                    if unit[i][k] == None:
+                                if subvalue_bool[subvalue_names[i]]:
+                                    if unit[i] == None:
                                         unit_str = ''
                                     else:
-                                        unit_str = unit[i][k]
+                                        unit_str = unit[i]
+
                                     self.datalogger.add_to_queue(CSVData(timestamp,
                                                                          self.device_name,
                                                                          self.device_uid,
-                                                                         str(var_name) + "-" + str(subvalue_names[i][k]),
-                                                                         value[i][k],
+                                                                         keyed_var_name + "-" + subvalue_names[i],
+                                                                         keyed_value[i],
                                                                          unit_str))
                             except Exception as e:
-                                value = self._exception_msg(str(self.device_name) + "-" + str(var_name), e)
+                                err_value = self._exception_msg(self.device_name + "-" + keyed_var_name, e)
                                 self.datalogger.add_to_queue(CSVData(timestamp,
                                                                      self.device_name,
                                                                      self.device_uid,
-                                                                     str(var_name) + "-" + str(subvalue_names[i][k]),
-                                                                     value[i][k],
+                                                                     keyed_var_name + "-" + subvalue_names[i],
+                                                                     err_value,
                                                                      ''))
                                 return
+                        else:
+                            for k in range(len(subvalue_names[i])):
+                                try:
+                                    if subvalue_bool[subvalue_names[i][k]]:
+                                        if unit[i][k] == None:
+                                            unit_str = ''
+                                        else:
+                                            unit_str = unit[i][k]
+
+                                        self.datalogger.add_to_queue(CSVData(timestamp,
+                                                                             self.device_name,
+                                                                             self.device_uid,
+                                                                             keyed_var_name + "-" + subvalue_names[i][k],
+                                                                             keyed_value[i][k],
+                                                                             unit_str))
+                                except Exception as e:
+                                    err_value = self._exception_msg(str(self.device_name) + "-" + keyed_var_name, e)
+                                    self.datalogger.add_to_queue(CSVData(timestamp,
+                                                                         self.device_name,
+                                                                         self.device_uid,
+                                                                         keyed_var_name + "-" + subvalue_names[i][k],
+                                                                         err_value,
+                                                                         ''))
+                                    return
+
         except Exception as e:
-            value = self._exception_msg(str(self.device_name) + "-" + str(var_name), e)
+            err_value = self._exception_msg(self.device_name + "-" + var_name, e)
             self.datalogger.add_to_queue(CSVData(timestamp,
                                                  self.device_name,
                                                  self.device_uid,
                                                  var_name,
-                                                 value,
+                                                 err_value,
                                                  ''))
