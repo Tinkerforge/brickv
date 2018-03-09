@@ -30,11 +30,6 @@ except ValueError:
     from brick_master import BrickMaster
 
 try:
-    from .brick_master_flash_adapter_xmc import BrickMasterFlashAdapterXMC
-except ValueError:
-    from brick_master_flash_adapter_xmc import BrickMasterFlashAdapterXMC
-
-try:
     from .brick_red import BrickRED
 except ValueError:
     from brick_red import BrickRED
@@ -470,7 +465,6 @@ BrickDC.DEVICE_IDENTIFIER: BrickDC,
 BrickIMU.DEVICE_IDENTIFIER: BrickIMU,
 BrickIMUV2.DEVICE_IDENTIFIER: BrickIMUV2,
 BrickMaster.DEVICE_IDENTIFIER: BrickMaster,
-BrickMasterFlashAdapterXMC.DEVICE_IDENTIFIER: BrickMasterFlashAdapterXMC,
 BrickRED.DEVICE_IDENTIFIER: BrickRED,
 BrickServo.DEVICE_IDENTIFIER: BrickServo,
 BrickSilentStepper.DEVICE_IDENTIFIER: BrickSilentStepper,
