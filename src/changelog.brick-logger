@@ -19,7 +19,12 @@
   Imaging Bricklet and Silent Stepper Brick
 - Remove unnecessary PyQt4 dependency
 
-2018-02-28: 2.0.5 (<unknown>)
+2018-02-28: 2.0.5 (f110ac2)
 - Add support for Analog In 3.0, Remote Switch 2.0, Motion Detector 2.0, NFC,
   Outdoor Weather, Rotary Encoder 2.0, Solid State 2.0 and Temperature IR 2.0
   Bricklet
+
+2018-03-09: 2.0.5 (<unknown>)
+- Fix API bindings imports for Bricklets added in version 2.0.5
+- Add support for logging all stations and sensors with the Outdoor Weather
+  Bricklet, before only the first station and sensor could be logged

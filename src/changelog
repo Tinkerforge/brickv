@@ -400,5 +400,9 @@
   Bricklet and Silent Stepper Brick
 - Fix RED Brick API bindings version checks for image 1.10
 
-2018-03-07: 2.3.14 (<unknown>)
+2018-03-07: 2.3.14 (0622fad)
 - Add support for RED Brick Image 1.11
+
+<unknown>: 2.3.15 (<unknown>)
+- Add Data Logger support for logging all stations and sensors with the Outdoor
+  Weather Bricklet, before only the first stations and sensors could be logged
