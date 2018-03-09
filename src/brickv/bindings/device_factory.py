@@ -200,11 +200,6 @@ except ValueError:
     from bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
 
 try:
-    from .bricklet_industrial_encoder import BrickletIndustrialEncoder
-except ValueError:
-    from bricklet_industrial_encoder import BrickletIndustrialEncoder
-
-try:
     from .bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
 except ValueError:
     from bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
@@ -499,7 +494,6 @@ BrickletIndustrialDigitalIn4.DEVICE_IDENTIFIER: BrickletIndustrialDigitalIn4,
 BrickletIndustrialDigitalOut4.DEVICE_IDENTIFIER: BrickletIndustrialDigitalOut4,
 BrickletIndustrialDual020mA.DEVICE_IDENTIFIER: BrickletIndustrialDual020mA,
 BrickletIndustrialDualAnalogIn.DEVICE_IDENTIFIER: BrickletIndustrialDualAnalogIn,
-BrickletIndustrialEncoder.DEVICE_IDENTIFIER: BrickletIndustrialEncoder,
 BrickletIndustrialQuadRelay.DEVICE_IDENTIFIER: BrickletIndustrialQuadRelay,
 BrickletIO16.DEVICE_IDENTIFIER: BrickletIO16,
 BrickletIO4.DEVICE_IDENTIFIER: BrickletIO4,
