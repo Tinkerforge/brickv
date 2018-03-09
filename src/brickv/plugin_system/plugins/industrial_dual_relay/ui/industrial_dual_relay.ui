@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DualRelayV2</class>
- <widget class="QWidget" name="DualRelayV2">
+ <class>IndustrialDualRelay</class>
+ <widget class="QWidget" name="IndustrialDualRelay">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -29,7 +29,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Relay 1</string>
+            <string>Relay 0</string>
            </property>
           </widget>
          </item>
@@ -189,7 +189,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Relay 2</string>
+            <string>Relay 1</string>
            </property>
           </widget>
          </item>

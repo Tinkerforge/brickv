@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Dual Relay Plugin
-Copyright (C) 2017 Olaf Lüke <olaf@tinkerforge.com>
+Industrial Dual Relay Plugin
+Copyright (C) 2017-2018 Olaf Lüke <olaf@tinkerforge.com>
 
 __init__.py: package initialization
 
@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugins.dual_relay_v2.dual_relay_v2 import DualRelayV2
+from brickv.plugin_system.plugins.industrial_dual_relay.industrial_dual_relay import IndustrialDualRelay
 
-device_class = DualRelayV2
+device_class = IndustrialDualRelay

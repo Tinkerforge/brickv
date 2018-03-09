@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Dual Relay Plugin
-Copyright (C) 2017 Olaf Lüke <olaf@tinkerforge.com>
+Industrial Dual Relay Plugin
+Copyright (C) 2017-2018 Olaf Lüke <olaf@tinkerforge.com>
 
-dual_relay_v2.py: Dual Relay Plugin Implementation
+industrial_dual_relay.py: Industrial Dual Relay Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -24,17 +24,17 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtCore import pyqtSignal, QTimer
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
-from brickv.plugin_system.plugins.dual_relay_v2.ui_dual_relay_v2 import Ui_DualRelayV2
+from brickv.plugin_system.plugins.industrial_dual_relay.ui_industrial_dual_relay import Ui_IndustrialDualRelay
 from brickv.bindings import ip_connection
-from brickv.bindings.bricklet_dual_relay_v2 import BrickletDualRelayV2
+from brickv.bindings.bricklet_industrial_dual_relay import BrickletIndustrialDualRelay
 from brickv.async_call import async_call
 from brickv.load_pixmap import load_masked_pixmap
 
-class DualRelayV2(COMCUPluginBase, Ui_DualRelayV2):
+class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
     qtcb_monoflop = pyqtSignal(int, bool)
 
     def __init__(self, *args):
-        COMCUPluginBase.__init__(self, BrickletDualRelayV2, *args)
+        COMCUPluginBase.__init__(self, BrickletIndustrialDualRelay, *args)
 
         self.setupUi(self)
 
@@ -56,10 +56,10 @@ class DualRelayV2(COMCUPluginBase, Ui_DualRelayV2):
         self.r1_timebefore = 500
         self.r2_timebefore = 500
 
-        self.a1_pixmap = load_masked_pixmap('plugin_system/plugins/dual_relay_v2/relay_a1.bmp')
-        self.a2_pixmap = load_masked_pixmap('plugin_system/plugins/dual_relay_v2/relay_a2.bmp')
-        self.b1_pixmap = load_masked_pixmap('plugin_system/plugins/dual_relay_v2/relay_b1.bmp')
-        self.b2_pixmap = load_masked_pixmap('plugin_system/plugins/dual_relay_v2/relay_b2.bmp')
+        self.a1_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_relay/relay_a1.bmp')
+        self.a2_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_relay/relay_a2.bmp')
+        self.b1_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_relay/relay_b1.bmp')
+        self.b2_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_relay/relay_b2.bmp')
 
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update)
@@ -126,7 +126,7 @@ class DualRelayV2(COMCUPluginBase, Ui_DualRelayV2):
 
     @staticmethod
     def has_device_identifier(device_identifier):
-        return device_identifier == BrickletDualRelayV2.DEVICE_IDENTIFIER
+        return device_identifier == BrickletIndustrialDualRelay.DEVICE_IDENTIFIER
 
     def get_state_dr1_clicked(self, state):
         dr1, dr2 = state
