@@ -3,7 +3,7 @@
 Rotary Encoder V2 Plugin
 Copyright (C) 2017 Olaf Lüke <olaf@tinkerforge.com>
 
-rotary_encoder.py: Rotary Encoder Plugin Implementation
+rotary_encoder_v2.py: Rotary Encoder V2 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
