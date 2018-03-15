@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-09.      #
+# This file was automatically generated on 2018-03-15.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -19,12 +19,15 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 ReadFrameLowLevel = namedtuple('ReadFrameLowLevel', ['success', 'frame_type', 'identifier', 'data_length', 'data_data'])
-GetConfiguration = namedtuple('Configuration', ['baud_rate', 'transceiver_mode', 'write_timeout'])
-GetReadFilter = namedtuple('ReadFilter', ['mode', 'mask', 'filter1', 'filter2'])
-GetErrorLog = namedtuple('ErrorLog', ['write_error_level', 'read_error_level', 'transceiver_disabled', 'write_timeout_count', 'read_register_overflow_count', 'read_buffer_overflow_count'])
+GetTransceiverConfiguration = namedtuple('TransceiverConfiguration', ['baud_rate', 'transceiver_mode'])
+GetQueueConfigurationLowLevel = namedtuple('QueueConfigurationLowLevel', ['write_buffer_size', 'write_buffer_timeout', 'write_backlog_size', 'read_buffer_sizes_length', 'read_buffer_sizes_data', 'read_backlog_size'])
+GetReadFilterConfiguration = namedtuple('ReadFilterConfiguration', ['filter_mode', 'filter_mask', 'filter_identifier'])
+GetErrorLogLowLevel = namedtuple('ErrorLogLowLevel', ['transceiver_state', 'transceiver_write_error_level', 'transceiver_read_error_level', 'transceiver_stuff_error_count', 'transceiver_form_error_count', 'transceiver_ack_error_count', 'transceiver_bit1_error_count', 'transceiver_bit0_error_count', 'transceiver_crc_error_count', 'write_buffer_timeout_error_count', 'read_buffer_overflow_error_count', 'read_buffer_overflow_error_occurred_length', 'read_buffer_overflow_error_occurred_data', 'read_backlog_overflow_error_count'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 ReadFrame = namedtuple('ReadFrame', ['success', 'frame_type', 'identifier', 'data'])
+GetQueueConfiguration = namedtuple('QueueConfiguration', ['write_buffer_size', 'write_buffer_timeout', 'write_backlog_size', 'read_buffer_sizes', 'read_backlog_size'])
+GetErrorLog = namedtuple('ErrorLog', ['transceiver_state', 'transceiver_write_error_level', 'transceiver_read_error_level', 'transceiver_stuff_error_count', 'transceiver_form_error_count', 'transceiver_ack_error_count', 'transceiver_bit1_error_count', 'transceiver_bit0_error_count', 'transceiver_crc_error_count', 'write_buffer_timeout_error_count', 'read_buffer_overflow_error_count', 'read_buffer_overflow_error_occurred', 'read_backlog_overflow_error_count'])
 
 class BrickletCANV2(Device):
     """
@@ -35,19 +38,25 @@ class BrickletCANV2(Device):
     DEVICE_DISPLAY_NAME = 'CAN Bricklet 2.0'
     DEVICE_URL_PART = 'can_v2' # internal
 
-    CALLBACK_FRAME_READ = 11
+    CALLBACK_FRAME_READ_LOW_LEVEL = 16
 
+    CALLBACK_FRAME_READ = -16
 
     FUNCTION_WRITE_FRAME_LOW_LEVEL = 1
     FUNCTION_READ_FRAME_LOW_LEVEL = 2
-    FUNCTION_ENABLE_FRAME_READ_CALLBACK = 3
-    FUNCTION_DISABLE_FRAME_READ_CALLBACK = 4
-    FUNCTION_IS_FRAME_READ_CALLBACK_ENABLED = 5
-    FUNCTION_SET_CONFIGURATION = 6
-    FUNCTION_GET_CONFIGURATION = 7
-    FUNCTION_SET_READ_FILTER = 8
-    FUNCTION_GET_READ_FILTER = 9
-    FUNCTION_GET_ERROR_LOG = 10
+    FUNCTION_SET_FRAME_READ_CALLBACK_CONFIGURATION = 3
+    FUNCTION_GET_FRAME_READ_CALLBACK_CONFIGURATION = 4
+    FUNCTION_SET_TRANSCEIVER_CONFIGURATION = 5
+    FUNCTION_GET_TRANSCEIVER_CONFIGURATION = 6
+    FUNCTION_SET_QUEUE_CONFIGURATION_LOW_LEVEL = 7
+    FUNCTION_GET_QUEUE_CONFIGURATION_LOW_LEVEL = 8
+    FUNCTION_SET_READ_FILTER_CONFIGURATION = 9
+    FUNCTION_GET_READ_FILTER_CONFIGURATION = 10
+    FUNCTION_GET_ERROR_LOG_LOW_LEVEL = 11
+    FUNCTION_SET_COMMUNICATION_LED_CONFIG = 12
+    FUNCTION_GET_COMMUNICATION_LED_CONFIG = 13
+    FUNCTION_SET_ERROR_LED_CONFIG = 14
+    FUNCTION_GET_ERROR_LED_CONFIG = 15
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -65,22 +74,25 @@ class BrickletCANV2(Device):
     FRAME_TYPE_STANDARD_REMOTE = 1
     FRAME_TYPE_EXTENDED_DATA = 2
     FRAME_TYPE_EXTENDED_REMOTE = 3
-    BAUD_RATE_10KBPS = 0
-    BAUD_RATE_20KBPS = 1
-    BAUD_RATE_50KBPS = 2
-    BAUD_RATE_125KBPS = 3
-    BAUD_RATE_250KBPS = 4
-    BAUD_RATE_500KBPS = 5
-    BAUD_RATE_800KBPS = 6
-    BAUD_RATE_1000KBPS = 7
     TRANSCEIVER_MODE_NORMAL = 0
     TRANSCEIVER_MODE_LOOPBACK = 1
     TRANSCEIVER_MODE_READ_ONLY = 2
-    FILTER_MODE_DISABLED = 0
-    FILTER_MODE_ACCEPT_ALL = 1
-    FILTER_MODE_MATCH_STANDARD = 2
-    FILTER_MODE_MATCH_STANDARD_AND_DATA = 3
-    FILTER_MODE_MATCH_EXTENDED = 4
+    FILTER_MODE_ACCEPT_ALL = 0
+    FILTER_MODE_MATCH_STANDARD_ONLY = 1
+    FILTER_MODE_MATCH_EXTENDED_ONLY = 2
+    FILTER_MODE_MATCH_STANDARD_AND_EXTENDED = 3
+    TRANSCEIVER_STATE_ERROR_ACTIVE = 0
+    TRANSCEIVER_STATE_ERROR_PASSIVE = 1
+    TRANSCEIVER_STATE_BUS_OFF = 2
+    COMMUNICATION_LED_CONFIG_OFF = 0
+    COMMUNICATION_LED_CONFIG_ON = 1
+    COMMUNICATION_LED_CONFIG_SHOW_HEARTBEAT = 2
+    COMMUNICATION_LED_CONFIG_SHOW_COMMUNICATION = 3
+    ERROR_LED_CONFIG_OFF = 0
+    ERROR_LED_CONFIG_ON = 1
+    ERROR_LED_CONFIG_SHOW_HEARTBEAT = 2
+    ERROR_LED_CONFIG_SHOW_TRANSCEIVER_STATE = 3
+    ERROR_LED_CONFIG_SHOW_ERROR = 4
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -108,14 +120,19 @@ class BrickletCANV2(Device):
 
         self.response_expected[BrickletCANV2.FUNCTION_WRITE_FRAME_LOW_LEVEL] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCANV2.FUNCTION_READ_FRAME_LOW_LEVEL] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletCANV2.FUNCTION_ENABLE_FRAME_READ_CALLBACK] = BrickletCANV2.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletCANV2.FUNCTION_DISABLE_FRAME_READ_CALLBACK] = BrickletCANV2.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletCANV2.FUNCTION_IS_FRAME_READ_CALLBACK_ENABLED] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletCANV2.FUNCTION_SET_CONFIGURATION] = BrickletCANV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletCANV2.FUNCTION_GET_CONFIGURATION] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletCANV2.FUNCTION_SET_READ_FILTER] = BrickletCANV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletCANV2.FUNCTION_GET_READ_FILTER] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletCANV2.FUNCTION_GET_ERROR_LOG] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_SET_FRAME_READ_CALLBACK_CONFIGURATION] = BrickletCANV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_GET_FRAME_READ_CALLBACK_CONFIGURATION] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_SET_TRANSCEIVER_CONFIGURATION] = BrickletCANV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletCANV2.FUNCTION_GET_TRANSCEIVER_CONFIGURATION] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_SET_QUEUE_CONFIGURATION_LOW_LEVEL] = BrickletCANV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_GET_QUEUE_CONFIGURATION_LOW_LEVEL] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_SET_READ_FILTER_CONFIGURATION] = BrickletCANV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletCANV2.FUNCTION_GET_READ_FILTER_CONFIGURATION] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_GET_ERROR_LOG_LOW_LEVEL] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_SET_COMMUNICATION_LED_CONFIG] = BrickletCANV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletCANV2.FUNCTION_GET_COMMUNICATION_LED_CONFIG] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_SET_ERROR_LED_CONFIG] = BrickletCANV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletCANV2.FUNCTION_GET_ERROR_LED_CONFIG] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCANV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCANV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCANV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -129,30 +146,38 @@ class BrickletCANV2(Device):
         self.response_expected[BrickletCANV2.FUNCTION_READ_UID] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCANV2.FUNCTION_GET_IDENTITY] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletCANV2.CALLBACK_FRAME_READ] = 'B I 8B B'
+        self.callback_formats[BrickletCANV2.CALLBACK_FRAME_READ_LOW_LEVEL] = 'B I B 15B'
 
+        self.high_level_callbacks[BrickletCANV2.CALLBACK_FRAME_READ] = [(None, None, 'stream_length', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': True}, None]
 
     def write_frame_low_level(self, frame_type, identifier, data_length, data_data):
         """
-        Writes a data or remote frame to the write buffer to be transmitted over the
+        Writes a data or remote frame to the write queue to be transmitted over the
         CAN transceiver.
 
         The Bricklet supports the standard 11-bit (CAN 2.0A) and the additional extended
-        18-bit (CAN 2.0B) identifiers. For standard frames the Bricklet uses bit 0 to 10
+        29-bit (CAN 2.0B) identifiers. For standard frames the Bricklet uses bit 0 to 10
         from the ``identifier`` parameter as standard 11-bit identifier. For extended
-        frames the Bricklet additionally uses bit 11 to 28 from the ``identifier``
-        parameter as extended 18-bit identifier.
+        frames the Bricklet uses bit 0 to 28 from the ``identifier`` parameter as
+        extended 29-bit identifier.
 
-        For remote frames the ``data`` parameter is ignored.
+        The ``data`` parameter can be up to 15 bytes long. For data frames up to 8 bytes
+        will be used as the actual data. The length (DLC) field in the data or remote
+        frame will be set to the actual length of the ``data`` parameter. This allows
+        to transmit data and remote frames with excess length. For remote frames only
+        the length of the ``data`` parameter is used. The actual ``data`` bytes are
+        ignored.
 
-        Returns *true* if the frame was successfully added to the write buffer. Returns
-        *false* if the frame could not be added because write buffer is already full.
+        Returns *true* if the frame was successfully added to the write queue. Returns
+        *false* if the frame could not be added because write queue is already full or
+        because the write buffer or the write backlog are configured with a size of
+        zero (see :func:`Set Queue Configuration`).
 
-        The write buffer can overflow if frames are written to it at a higher rate
+        The write queue can overflow if frames are written to it at a higher rate
         than the Bricklet can transmitted them over the CAN transceiver. This may
         happen if the CAN transceiver is configured as read-only or is using a low baud
-        rate (see :func:`Set Configuration`). It can also happen if the CAN bus is
-        congested and the frame cannot be transmitted because it constantly loses
+        rate (see :func:`Set Transceiver Configuration`). It can also happen if the CAN
+        bus is congested and the frame cannot be transmitted because it constantly loses
         arbitration or because the CAN transceiver is currently disabled due to a high
         write error level (see :func:`Get Error Log`).
         """
@@ -165,53 +190,52 @@ class BrickletCANV2(Device):
 
     def read_frame_low_level(self):
         """
-        Tries to read the next data or remote frame from the read buffer and return it.
+        Tries to read the next data or remote frame from the read queue and returns it.
         If a frame was successfully read, then the ``success`` return value is set to
-        *true* and the other return values contain the frame. If the read buffer is
+        *true* and the other return values contain the frame. If the read queue is
         empty and no frame could be read, then the ``success`` return value is set to
         *false* and the other return values contain invalid data.
 
         The ``identifier`` return value follows the identifier format described for
         :func:`Write Frame`.
 
-        For remote frames the ``data`` return value always contains invalid data.
+        The ``data`` return value can be up to 15 bytes long. For data frames up to the
+        first 8 bytes are the actual received data. All bytes after the 8th byte are
+        always zero and only there to indicate the length of a data or remote frame
+        with excess length. For remote frames the length of the ``data`` return value
+        represents the requested length. The actual ``data`` bytes are always zero.
 
         A configurable read filter can be used to define which frames should be
-        received by the CAN transceiver and put into the read buffer (see
-        :func:`Set Read Filter`).
+        received by the CAN transceiver and put into the read queue (see
+        :func:`Set Read Filter Configuration`).
 
         Instead of polling with this function, you can also use callbacks. See the
-        :func:`Enable Frame Read Callback` function and the :cb:`Frame Read` callback.
+        :func:`Set Frame Read Callback Configuration` function and the :cb:`Frame Read`
+        callback.
         """
         return ReadFrameLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_READ_FRAME_LOW_LEVEL, (), '', '! B I B 15B'))
 
-    def enable_frame_read_callback(self):
+    def set_frame_read_callback_configuration(self, enabled):
         """
-        Enables the :cb:`Frame Read` callback.
+        Enables and disables the :cb:`Frame Read` callback.
 
         By default the callback is disabled.
         """
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_ENABLE_FRAME_READ_CALLBACK, (), '', '')
+        enabled = bool(enabled)
 
-    def disable_frame_read_callback(self):
-        """
-        Disables the :cb:`Frame Read` callback.
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_FRAME_READ_CALLBACK_CONFIGURATION, (enabled,), '!', '')
 
-        By default the callback is disabled.
-        """
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_DISABLE_FRAME_READ_CALLBACK, (), '', '')
-
-    def is_frame_read_callback_enabled(self):
+    def get_frame_read_callback_configuration(self):
         """
         Returns *true* if the :cb:`Frame Read` callback is enabled, *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_IS_FRAME_READ_CALLBACK_ENABLED, (), '', '!')
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_FRAME_READ_CALLBACK_CONFIGURATION, (), '', '!')
 
-    def set_configuration(self, baud_rate, transceiver_mode, write_timeout):
+    def set_transceiver_configuration(self, baud_rate, transceiver_mode):
         """
-        Sets the configuration for the CAN bus communication.
+        Sets the transceiver configuration for the CAN bus communication.
 
-        The baud rate can be configured in steps between 10 and 1000 kbit/s.
+        The baud rate can be configured in bit/s between 10 and 1000 kbit/s.
 
         The CAN transceiver has three different modes:
 
@@ -223,10 +247,60 @@ class BrickletCANV2(Device):
           detection nor acknowledgement. Only the receiving part of the transceiver
           is connected to the CAN bus.
 
-        The write timeout has three different modes that define how a failed frame
-        transmission should be handled:
+        The default is: 125 kbit/s and normal transceiver mode.
+        """
+        baud_rate = int(baud_rate)
+        transceiver_mode = int(transceiver_mode)
 
-        * One-Shot (< 0): Only one transmission attempt will be made. If the
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_TRANSCEIVER_CONFIGURATION, (baud_rate, transceiver_mode), 'I B', '')
+
+    def get_transceiver_configuration(self):
+        """
+        Returns the configuration as set by :func:`Set Transceiver Configuration`.
+        """
+        return GetTransceiverConfiguration(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_TRANSCEIVER_CONFIGURATION, (), '', 'I B'))
+
+    def set_queue_configuration_low_level(self, write_buffer_size, write_buffer_timeout, write_backlog_size, read_buffer_sizes_length, read_buffer_sizes_data, read_backlog_size):
+        """
+        Sets the write and read queue configuration.
+
+        The CAN transceiver has 32 buffers in total in hardware for transmitting and
+        receiving frames. Additionally, the Bricklet has a backlog for 768 frames in
+        total in software. The buffers and the backlog can be freely assigned to the
+        write and read queues.
+
+        :func:`Write Frame` writes a frame into the write backlog. The Bricklet moves
+        the frame from the backlog into a free write buffer. The CAN transceiver then
+        transmits the frame from the write buffer to the CAN bus. If there are no
+        write buffers (``write_buffer_size`` is zero) or there is no write backlog
+        (``write_backlog_size`` is zero) then no frames can be transmitted and
+        :func:`Write Frame` returns always *false*.
+
+        The CAN transceiver receives a frame from the CAN bus and stores it into a
+        free read buffer. The Bricklet moves the frame from the read buffer into the
+        read backlog. :func:`Read Frame` reads the frame from the read backlog and
+        returns it. If there are no read buffers (``read_buffer_sizes`` is empty) or
+        there is no read backlog (``read_backlog_size`` is zero) then no frames can be
+        received and :func:`Read Frame` returns always *false*.
+
+        There can be multiple read buffers, because the CAN transceiver cannot receive
+        data and remote frames into the same read buffer. A positive read buffer size
+        represents a data frame read buffer and a negative read buffer size represents
+        a remote frame read buffer. A read buffer size of zero is not allowed. By
+        default the first read buffer is configured for data frames and the second read
+        buffer is configured for remote frame. There can be up to 32 different read
+        buffers, assuming that no write buffer is used. Each read buffer has its own
+        filter configuration (see :func:`Set Read Filter Configuration`).
+
+        A valid queue configuration fulfills these conditions::
+
+         write_buffer_size + read_buffer_size_0 + read_buffer_size_1 + ... + read_buffer_size_31 <= 32
+         write_backlog_size + read_backlog_size <= 768
+
+        The write buffer timeout has three different modes that define how a failed
+        frame transmission should be handled:
+
+        * Single-Shot (< 0): Only one transmission attempt will be made. If the
           transmission fails then the frame is discarded.
         * Infinite (= 0): Infinite transmission attempts will be made. The frame will
           never be discarded.
@@ -234,59 +308,72 @@ class BrickletCANV2(Device):
           If the frame could not be transmitted successfully after the configured
           number of milliseconds then the frame is discarded.
 
-        The default is: 125 kbit/s, normal transceiver mode and infinite write timeout.
+        The current content of the queues is lost when this function is called.
+
+        The default is:
+
+        * 8 write buffers,
+        * infinite write timeout,
+        * 383 write backlog frames,
+        * 16 read buffers for data frames,
+        * 8 read buffers for remote frames and
+        * 383 read backlog frames.
         """
-        baud_rate = int(baud_rate)
-        transceiver_mode = int(transceiver_mode)
-        write_timeout = int(write_timeout)
+        write_buffer_size = int(write_buffer_size)
+        write_buffer_timeout = int(write_buffer_timeout)
+        write_backlog_size = int(write_backlog_size)
+        read_buffer_sizes_length = int(read_buffer_sizes_length)
+        read_buffer_sizes_data = list(map(int, read_buffer_sizes_data))
+        read_backlog_size = int(read_backlog_size)
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_CONFIGURATION, (baud_rate, transceiver_mode, write_timeout), 'B B i', '')
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_QUEUE_CONFIGURATION_LOW_LEVEL, (write_buffer_size, write_buffer_timeout, write_backlog_size, read_buffer_sizes_length, read_buffer_sizes_data, read_backlog_size), 'B i H B 32b H', '')
 
-    def get_configuration(self):
+    def get_queue_configuration_low_level(self):
         """
-        Returns the configuration as set by :func:`Set Configuration`.
+        Returns the queue configuration as set by :func:`Set Queue Configuration`.
         """
-        return GetConfiguration(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_CONFIGURATION, (), '', 'B B i'))
+        return GetQueueConfigurationLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_QUEUE_CONFIGURATION_LOW_LEVEL, (), '', 'B i H B 32b H'))
 
-    def set_read_filter(self, mode, mask, filter1, filter2):
+    def set_read_filter_configuration(self, buffer_index, filter_mode, filter_mask, filter_identifier):
         """
-        Set the read filter configuration. This can be used to define which frames
-        should be received by the CAN transceiver and put into the read buffer.
+        Set the read filter configuration for the given read buffer index. This can be
+        used to define which frames should be received by the CAN transceiver and put
+        into the read buffer.
 
-        The read filter has five different modes that define if and how the mask and
-        the two filters are applied:
+        The read filter has four different modes that define if and how the filter mask
+        and the filter identifier are applied:
 
-        * Disabled: No filtering is applied at all. All frames are received even
-          incomplete and defective frames. This mode should be used for debugging only.
-        * Accept-All: All complete and error-free frames are received.
-        * Match-Standard: Only standard frames with a matching identifier are received.
-        * Match-Standard-and-Data: Only standard frames with matching identifier and
-          data bytes are received.
-        * Match-Extended: Only extended frames with a matching identifier are received.
+        * Accept-All: All frames are received.
+        * Match-Standard-Only: Only standard frames with a matching identifier are
+          received.
+        * Match-Extended-Only: Only extended frames with a matching identifier are
+          received.
+        * Match-Standard-And-Extended: Standard and extended frames with a matching
+          identifier are received.
 
-        The mask and filters are used as bit masks. Their usage depends on the mode:
+        The filter mask and filter identifier are used as bit masks. Their usage
+        depends on the mode:
 
-        * Disabled: Mask and filters are ignored.
-        * Accept-All: Mask and filters are ignored.
-        * Match-Standard: Bit 0 to 10 (11 bits) of mask and filters are used to match
-          the 11-bit identifier of standard frames.
-        * Match-Standard-and-Data: Bit 0 to 10 (11 bits) of mask and filters are used
-          to match the 11-bit identifier of standard frames. Bit 11 to 18 (8 bits) and
-          bit 19 to 26 (8 bits) of mask and filters are used to match the first and
-          second data byte (if present) of standard frames.
-        * Match-Extended: Bit 0 to 10 (11 bits) of mask and filters are used
-          to match the standard 11-bit identifier part of extended frames. Bit 11 to 28
-          (18 bits) of mask and filters are used to match the extended 18-bit identifier
-          part of extended frames.
+        * Accept-All: Mask and identifier are ignored.
+        * Match-Standard-Only: Bit 0 to 10 (11 bits) of filter mask and filter
+          identifier are used to match the 11-bit identifier of standard frames.
+        * Match-Extended-Only: Bit 0 to 28 (29 bits) of filter mask and filter
+          identifier are used to match the 29-bit identifier of extended frames.
+        * Match-Standard-And-Extended: Bit 18 to 28 (11 bits) of filter mask and filter
+          identifier are used to match the 11-bit identifier of standard frames, bit 0
+          to 17 (18 bits) are ignored in this case. Bit 0 to 28 (29 bits) of filter
+          mask and filter identifier are used to match the 29-bit identifier of extended
+          frames.
 
-        The mask and filters are applied in this way: The mask is used to select the
-        identifier and data bits that should be compared to the corresponding filter
-        bits. All unselected bits are automatically accepted. All selected bits have
-        to match one of the filters to be accepted. If all bits for the selected mode
-        are accepted then the frame is accepted and is added to the read buffer.
+        The filter mask and filter identifier are applied in this way: The filter mask
+        is used to select the frame identifier bits that should be compared to the
+        corresponding filter identifier bits. All unselected bits are automatically
+        accepted. All selected bits have to match the filter identifier to be accepted.
+        If all bits for the selected mode are accepted then the frame is accepted and
+        is added to the read buffer.
 
         .. csv-table::
-         :header: "Mask Bit", "Filter Bit", "Identifier/Data Bit", "Result"
+         :header: "Filter Mask Bit", "Filter Identifier Bit", "Frame Identifier Bit", "Result"
          :widths: 10, 10, 10, 10
 
          0, X, X, Accept
@@ -295,66 +382,118 @@ class BrickletCANV2(Device):
          1, 1, 0, Reject
          1, 1, 1, Accept
 
-        For example, to receive standard frames with identifier 0x123 only the mode can
-        be set to Match-Standard with 0x7FF as mask and 0x123 as filter 1 and filter 2.
+        For example, to receive standard frames with identifier 0x123 only, the mode
+        can be set to Match-Standard-Only with 0x7FF as mask and 0x123 as identifier.
         The mask of 0x7FF selects all 11 identifier bits for matching so that the
         identifier has to be exactly 0x123 to be accepted.
 
         To accept identifier 0x123 and identifier 0x456 at the same time, just set
         filter 2 to 0x456 and keep mask and filter 1 unchanged.
 
-        The default mode is accept-all.
-        """
-        mode = int(mode)
-        mask = int(mask)
-        filter1 = int(filter1)
-        filter2 = int(filter2)
+        There can be up to 32 different read filters configured at the same time,
+        because there can be up to 32 read buffer (see :func:`Set Queue Configuration`).
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_READ_FILTER, (mode, mask, filter1, filter2), 'B I I I', '')
-
-    def get_read_filter(self):
+        The default mode is accept-all for all read buffers.
         """
-        Returns the read filter as set by :func:`Set Read Filter`.
-        """
-        return GetReadFilter(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_READ_FILTER, (), '', 'B I I I'))
+        buffer_index = int(buffer_index)
+        filter_mode = int(filter_mode)
+        filter_mask = int(filter_mask)
+        filter_identifier = int(filter_identifier)
 
-    def get_error_log(self):
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_READ_FILTER_CONFIGURATION, (buffer_index, filter_mode, filter_mask, filter_identifier), 'B B I I', '')
+
+    def get_read_filter_configuration(self, buffer_index):
+        """
+        Returns the read filter configuration as set by :func:`Set Read Filter Configuration`.
+        """
+        buffer_index = int(buffer_index)
+
+        return GetReadFilterConfiguration(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_READ_FILTER_CONFIGURATION, (buffer_index,), 'B', 'B I I'))
+
+    def get_error_log_low_level(self):
         """
         Returns information about different kinds of errors.
 
-        The write and read error levels indicate the current level of checksum,
-        acknowledgement, form, bit and stuffing errors during CAN bus write and read
-        operations.
+        The write and read error levels indicate the current level of stuffing, form,
+        acknowledgement, bit and checksum errors during CAN bus write and read
+        operations. For each of this error kinds there is also an individual counter.
 
         When the write error level extends 255 then the CAN transceiver gets disabled
-        and no frames can be transmitted or received anymore. The CAN transceiver will
-        automatically be activated again after the CAN bus is idle for a while.
+        (bus-off) and no frames can be transmitted or received anymore. The CAN
+        transceiver will automatically be activated again after the CAN bus is idle for
+        a while.
 
-        The write and read error levels are not available in read-only transceiver mode
-        (see :func:`Set Configuration`) and are reset to 0 as a side effect of changing
-        the configuration or the read filter.
-
-        The write timeout, read register and buffer overflow counts represents the
+        The write buffer timeout, read buffer and backlog overflow counts represents the
         number of these errors:
 
-        * A write timeout occurs if a frame could not be transmitted before the
-          configured write timeout expired (see :func:`Set Configuration`).
-        * A read register overflow occurs if the read register of the CAN transceiver
+        * A write buffer timeout occurs if a frame could not be transmitted before the
+          configured write buffer timeout expired (see :func:`Set Queue Configuration`).
+        * A read buffer overflow occurs if a read buffer of the CAN transceiver
           still contains the last received frame when the next frame arrives. In this
-          case the newly arrived frame is lost. This happens if the CAN transceiver
+          case the last received frame is lost. This happens if the CAN transceiver
           receives more frames than the Bricklet can handle. Using the read filter
-          (see :func:`Set Read Filter`) can help to reduce the amount of received frames.
-          This count is not exact, but a lower bound, because the Bricklet might not
-          able detect all overflows if they occur in rapid succession.
-        * A read buffer overflow occurs if the read buffer of the Bricklet is already
-          full when the next frame should be read from the read register of the CAN
-          transceiver. In this case the frame in the read register is lost. This
+          (see :func:`Set Read Filter Configuration`) can help to reduce the amount of
+          received frames. This count is not exact, but a lower bound, because the
+          Bricklet might not able detect all overflows if they occur in rapid succession.
+        * A read backlog overflow occurs if the read backlog of the Bricklet is already
+          full when the next frame should be read from a read buffer of the CAN
+          transceiver. In this case the frame in the read buffer is lost. This
           happens if the CAN transceiver receives more frames to be added to the read
-          buffer than are removed from the read buffer using the :func:`Read Frame`
-          function. Using the :cb:`Frame Read` callback ensures that the read buffer
+          backlog than are removed from the read backlog using the :func:`Read Frame`
+          function. Using the :cb:`Frame Read` callback ensures that the read backlog
           can not overflow.
+
+        The read buffer overflow counter counts the overflows of all configured read
+        buffers. Which read buffer exactly suffered from an overflow can be figured
+        out from the read buffer overflow occurrence list
+        (``read_buffer_overflow_error_occurred``).
         """
-        return GetErrorLog(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_LOG, (), '', 'B B ! I I I'))
+        return GetErrorLogLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_LOG_LOW_LEVEL, (), '', 'B B B I I I I I I I I B 32! I'))
+
+    def set_communication_led_config(self, config):
+        """
+        Sets the communication LED configuration. By default the LED shows
+        CAN-Bus traffic, it flickers once for every 40 transmitted or received frames.
+
+        You can also turn the LED permanently on/off or show a heartbeat.
+
+        If the Bricklet is in bootloader mode, the LED is off.
+        """
+        config = int(config)
+
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_COMMUNICATION_LED_CONFIG, (config,), 'B', '')
+
+    def get_communication_led_config(self):
+        """
+        Returns the configuration as set by :func:`Set Communication LED Config`
+        """
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_COMMUNICATION_LED_CONFIG, (), '', 'B')
+
+    def set_error_led_config(self, config):
+        """
+        Sets the error LED configuration.
+
+        By default (show-transceiver-state) the error LED turns on if the CAN
+        transceiver is error-passive or bus-off state (see :func:`Get Error Log`). If
+        the CAN transceiver is in error-active state the LED turns off.
+
+        If the LED is configured as show-error then the error LED turns on if any error
+        occurs. If you call this function with the show-error option again, the LED will
+        turn off until the next error occurs.
+
+        You can also turn the LED permanently on/off or show a heartbeat.
+
+        If the Bricklet is in bootloader mode, the LED is off.
+        """
+        config = int(config)
+
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', '')
+
+    def get_error_led_config(self):
+        """
+        Returns the configuration as set by :func:`Set Error LED Config`.
+        """
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 'B')
 
     def get_spitfp_error_count(self):
         """
@@ -498,25 +637,32 @@ class BrickletCANV2(Device):
 
     def write_frame(self, frame_type, identifier, data):
         """
-        Writes a data or remote frame to the write buffer to be transmitted over the
+        Writes a data or remote frame to the write queue to be transmitted over the
         CAN transceiver.
 
         The Bricklet supports the standard 11-bit (CAN 2.0A) and the additional extended
-        18-bit (CAN 2.0B) identifiers. For standard frames the Bricklet uses bit 0 to 10
+        29-bit (CAN 2.0B) identifiers. For standard frames the Bricklet uses bit 0 to 10
         from the ``identifier`` parameter as standard 11-bit identifier. For extended
-        frames the Bricklet additionally uses bit 11 to 28 from the ``identifier``
-        parameter as extended 18-bit identifier.
+        frames the Bricklet uses bit 0 to 28 from the ``identifier`` parameter as
+        extended 29-bit identifier.
 
-        For remote frames the ``data`` parameter is ignored.
+        The ``data`` parameter can be up to 15 bytes long. For data frames up to 8 bytes
+        will be used as the actual data. The length (DLC) field in the data or remote
+        frame will be set to the actual length of the ``data`` parameter. This allows
+        to transmit data and remote frames with excess length. For remote frames only
+        the length of the ``data`` parameter is used. The actual ``data`` bytes are
+        ignored.
 
-        Returns *true* if the frame was successfully added to the write buffer. Returns
-        *false* if the frame could not be added because write buffer is already full.
+        Returns *true* if the frame was successfully added to the write queue. Returns
+        *false* if the frame could not be added because write queue is already full or
+        because the write buffer or the write backlog are configured with a size of
+        zero (see :func:`Set Queue Configuration`).
 
-        The write buffer can overflow if frames are written to it at a higher rate
+        The write queue can overflow if frames are written to it at a higher rate
         than the Bricklet can transmitted them over the CAN transceiver. This may
         happen if the CAN transceiver is configured as read-only or is using a low baud
-        rate (see :func:`Set Configuration`). It can also happen if the CAN bus is
-        congested and the frame cannot be transmitted because it constantly loses
+        rate (see :func:`Set Transceiver Configuration`). It can also happen if the CAN
+        bus is congested and the frame cannot be transmitted because it constantly loses
         arbitration or because the CAN transceiver is currently disabled due to a high
         write error level (see :func:`Get Error Log`).
         """
@@ -537,27 +683,158 @@ class BrickletCANV2(Device):
 
     def read_frame(self):
         """
-        Tries to read the next data or remote frame from the read buffer and return it.
+        Tries to read the next data or remote frame from the read queue and returns it.
         If a frame was successfully read, then the ``success`` return value is set to
-        *true* and the other return values contain the frame. If the read buffer is
+        *true* and the other return values contain the frame. If the read queue is
         empty and no frame could be read, then the ``success`` return value is set to
         *false* and the other return values contain invalid data.
 
         The ``identifier`` return value follows the identifier format described for
         :func:`Write Frame`.
 
-        For remote frames the ``data`` return value always contains invalid data.
+        The ``data`` return value can be up to 15 bytes long. For data frames up to the
+        first 8 bytes are the actual received data. All bytes after the 8th byte are
+        always zero and only there to indicate the length of a data or remote frame
+        with excess length. For remote frames the length of the ``data`` return value
+        represents the requested length. The actual ``data`` bytes are always zero.
 
         A configurable read filter can be used to define which frames should be
-        received by the CAN transceiver and put into the read buffer (see
-        :func:`Set Read Filter`).
+        received by the CAN transceiver and put into the read queue (see
+        :func:`Set Read Filter Configuration`).
 
         Instead of polling with this function, you can also use callbacks. See the
-        :func:`Enable Frame Read Callback` function and the :cb:`Frame Read` callback.
+        :func:`Set Frame Read Callback Configuration` function and the :cb:`Frame Read`
+        callback.
         """
         ret = self.read_frame_low_level()
 
         return ReadFrame(ret.success, ret.frame_type, ret.identifier, ret.data_data[:ret.data_length])
+
+    def set_queue_configuration(self, write_buffer_size, write_buffer_timeout, write_backlog_size, read_buffer_sizes, read_backlog_size):
+        """
+        Sets the write and read queue configuration.
+
+        The CAN transceiver has 32 buffers in total in hardware for transmitting and
+        receiving frames. Additionally, the Bricklet has a backlog for 768 frames in
+        total in software. The buffers and the backlog can be freely assigned to the
+        write and read queues.
+
+        :func:`Write Frame` writes a frame into the write backlog. The Bricklet moves
+        the frame from the backlog into a free write buffer. The CAN transceiver then
+        transmits the frame from the write buffer to the CAN bus. If there are no
+        write buffers (``write_buffer_size`` is zero) or there is no write backlog
+        (``write_backlog_size`` is zero) then no frames can be transmitted and
+        :func:`Write Frame` returns always *false*.
+
+        The CAN transceiver receives a frame from the CAN bus and stores it into a
+        free read buffer. The Bricklet moves the frame from the read buffer into the
+        read backlog. :func:`Read Frame` reads the frame from the read backlog and
+        returns it. If there are no read buffers (``read_buffer_sizes`` is empty) or
+        there is no read backlog (``read_backlog_size`` is zero) then no frames can be
+        received and :func:`Read Frame` returns always *false*.
+
+        There can be multiple read buffers, because the CAN transceiver cannot receive
+        data and remote frames into the same read buffer. A positive read buffer size
+        represents a data frame read buffer and a negative read buffer size represents
+        a remote frame read buffer. A read buffer size of zero is not allowed. By
+        default the first read buffer is configured for data frames and the second read
+        buffer is configured for remote frame. There can be up to 32 different read
+        buffers, assuming that no write buffer is used. Each read buffer has its own
+        filter configuration (see :func:`Set Read Filter Configuration`).
+
+        A valid queue configuration fulfills these conditions::
+
+         write_buffer_size + read_buffer_size_0 + read_buffer_size_1 + ... + read_buffer_size_31 <= 32
+         write_backlog_size + read_backlog_size <= 768
+
+        The write buffer timeout has three different modes that define how a failed
+        frame transmission should be handled:
+
+        * Single-Shot (< 0): Only one transmission attempt will be made. If the
+          transmission fails then the frame is discarded.
+        * Infinite (= 0): Infinite transmission attempts will be made. The frame will
+          never be discarded.
+        * Milliseconds (> 0): A limited number of transmission attempts will be made.
+          If the frame could not be transmitted successfully after the configured
+          number of milliseconds then the frame is discarded.
+
+        The current content of the queues is lost when this function is called.
+
+        The default is:
+
+        * 8 write buffers,
+        * infinite write timeout,
+        * 383 write backlog frames,
+        * 16 read buffers for data frames,
+        * 8 read buffers for remote frames and
+        * 383 read backlog frames.
+        """
+        write_buffer_size = int(write_buffer_size)
+        write_buffer_timeout = int(write_buffer_timeout)
+        write_backlog_size = int(write_backlog_size)
+        read_buffer_sizes = list(map(int, read_buffer_sizes))
+        read_backlog_size = int(read_backlog_size)
+
+        read_buffer_sizes_length = len(read_buffer_sizes)
+        read_buffer_sizes_data = list(read_buffer_sizes) # make a copy so we can potentially extend it
+
+        if read_buffer_sizes_length > 32:
+            raise Error(Error.INVALID_PARAMETER, 'Read Buffer Sizes can be at most 32 items long')
+
+        if read_buffer_sizes_length < 32:
+            read_buffer_sizes_data += [0] * (32 - read_buffer_sizes_length)
+
+        return self.set_queue_configuration_low_level(write_buffer_size, write_buffer_timeout, write_backlog_size, read_buffer_sizes_length, read_buffer_sizes_data, read_backlog_size)
+
+    def get_queue_configuration(self):
+        """
+        Returns the queue configuration as set by :func:`Set Queue Configuration`.
+        """
+        ret = self.get_queue_configuration_low_level()
+
+        return GetQueueConfiguration(ret.write_buffer_size, ret.write_buffer_timeout, ret.write_backlog_size, ret.read_buffer_sizes_data[:ret.read_buffer_sizes_length], ret.read_backlog_size)
+
+    def get_error_log(self):
+        """
+        Returns information about different kinds of errors.
+
+        The write and read error levels indicate the current level of stuffing, form,
+        acknowledgement, bit and checksum errors during CAN bus write and read
+        operations. For each of this error kinds there is also an individual counter.
+
+        When the write error level extends 255 then the CAN transceiver gets disabled
+        (bus-off) and no frames can be transmitted or received anymore. The CAN
+        transceiver will automatically be activated again after the CAN bus is idle for
+        a while.
+
+        The write buffer timeout, read buffer and backlog overflow counts represents the
+        number of these errors:
+
+        * A write buffer timeout occurs if a frame could not be transmitted before the
+          configured write buffer timeout expired (see :func:`Set Queue Configuration`).
+        * A read buffer overflow occurs if a read buffer of the CAN transceiver
+          still contains the last received frame when the next frame arrives. In this
+          case the last received frame is lost. This happens if the CAN transceiver
+          receives more frames than the Bricklet can handle. Using the read filter
+          (see :func:`Set Read Filter Configuration`) can help to reduce the amount of
+          received frames. This count is not exact, but a lower bound, because the
+          Bricklet might not able detect all overflows if they occur in rapid succession.
+        * A read backlog overflow occurs if the read backlog of the Bricklet is already
+          full when the next frame should be read from a read buffer of the CAN
+          transceiver. In this case the frame in the read buffer is lost. This
+          happens if the CAN transceiver receives more frames to be added to the read
+          backlog than are removed from the read backlog using the :func:`Read Frame`
+          function. Using the :cb:`Frame Read` callback ensures that the read backlog
+          can not overflow.
+
+        The read buffer overflow counter counts the overflows of all configured read
+        buffers. Which read buffer exactly suffered from an overflow can be figured
+        out from the read buffer overflow occurrence list
+        (``read_buffer_overflow_error_occurred``).
+        """
+        ret = self.get_error_log_low_level()
+
+        return GetErrorLog(ret.transceiver_state, ret.transceiver_write_error_level, ret.transceiver_read_error_level, ret.transceiver_stuff_error_count, ret.transceiver_form_error_count, ret.transceiver_ack_error_count, ret.transceiver_bit1_error_count, ret.transceiver_bit0_error_count, ret.transceiver_crc_error_count, ret.write_buffer_timeout_error_count, ret.read_buffer_overflow_error_count, ret.read_buffer_overflow_error_occurred_data[:ret.read_buffer_overflow_error_occurred_length], ret.read_backlog_overflow_error_count)
 
     def register_callback(self, callback_id, function):
         """

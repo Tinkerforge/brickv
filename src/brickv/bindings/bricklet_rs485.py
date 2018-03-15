@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-07.      #
+# This file was automatically generated on 2018-03-15.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -373,8 +373,8 @@ class BrickletRS485(Device):
 
     def set_communication_led_config(self, config):
         """
-        Sets the communication LED configuration. By default the LED shows
-        communication traffic, it flickers once for every 10 received data packets.
+        Sets the communication LED configuration. By default the LED shows RS485
+        communication traffic by flickering.
 
         You can also turn the LED permanently on/off or show a heartbeat.
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-28.      #
+# This file was automatically generated on 2018-03-15.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -64,6 +64,8 @@ class BrickletNFC(Device):
     FUNCTION_P2P_READ_NDEF_LOW_LEVEL = 23
     FUNCTION_SET_DETECTION_LED_CONFIG = 25
     FUNCTION_GET_DETECTION_LED_CONFIG = 26
+    FUNCTION_SET_MAXIMUM_TIMEOUT = 27
+    FUNCTION_GET_MAXIMUM_TIMEOUT = 28
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -163,7 +165,7 @@ class BrickletNFC(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletNFC.FUNCTION_SET_MODE] = BrickletNFC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletNFC.FUNCTION_GET_MODE] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -188,6 +190,8 @@ class BrickletNFC(Device):
         self.response_expected[BrickletNFC.FUNCTION_P2P_READ_NDEF_LOW_LEVEL] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletNFC.FUNCTION_SET_DETECTION_LED_CONFIG] = BrickletNFC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletNFC.FUNCTION_GET_DETECTION_LED_CONFIG] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletNFC.FUNCTION_SET_MAXIMUM_TIMEOUT] = BrickletNFC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletNFC.FUNCTION_GET_MAXIMUM_TIMEOUT] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletNFC.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletNFC.FUNCTION_SET_BOOTLOADER_MODE] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletNFC.FUNCTION_GET_BOOTLOADER_MODE] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -633,6 +637,42 @@ class BrickletNFC(Device):
         Returns the configuration as set by :func:`Set Detection LED Config`
         """
         return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_DETECTION_LED_CONFIG, (), '', 'B')
+
+    def set_maximum_timeout(self, timeout):
+        """
+        Sets the maximum timeout in ms.
+
+        This is a global maximum used for all internal state timeouts. The timeouts depend heavily
+        on the used tags etc. For example: If you use a Type 2 tag and you want to detect if
+        it is present, you have to use :func:`Reader Request Tag ID` and wait for the state
+        to change to either the error state or the ready state.
+
+        With the default configuration this takes 2-3 seconds. By setting the maximum timeout to
+        100ms you can reduce this time to ~150-200ms. For Type 2 this would also still work
+        with a 20ms timeout (a Type 2 tag answers usually within 10ms). A type 4 tag can take
+        up to 500ms in our tests.
+
+        If you need a fast response time to discover if a tag is present or not you can find
+        a good timeout value by trial and error for your specific tag.
+
+        By default we use a very conservative timeout, to be sure that any Tag can always
+        answer in time.
+
+        Default timeout: 2000ms.
+
+        .. versionadded:: 2.0.1$nbsp;(Plugin)
+        """
+        timeout = int(timeout)
+
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_MAXIMUM_TIMEOUT, (timeout,), 'H', '')
+
+    def get_maximum_timeout(self):
+        """
+        Returns the timeout as set by :func:`Set Maximum Timeout`
+
+        .. versionadded:: 2.0.1$nbsp;(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_MAXIMUM_TIMEOUT, (), '', 'H')
 
     def get_spitfp_error_count(self):
         """
