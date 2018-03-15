@@ -32,6 +32,10 @@ from brickv.hex_validator import HexValidator
 
 from brickv.plugin_system.plugins.rs232.qhexedit import QHexeditWidget
 
+FLOWCONTROL_OFF = 0
+FLOWCONTROL_SW = 1
+FLOWCONTROL_HW = 2
+
 class RS232(PluginBase, Ui_RS232):
     qtcb_read = pyqtSignal(object, int)
     qtcb_error = pyqtSignal(int)
@@ -73,8 +77,7 @@ class RS232(PluginBase, Ui_RS232):
         self.parity_combobox.currentIndexChanged.connect(self.configuration_changed)
         self.stopbits_spinbox.valueChanged.connect(self.configuration_changed)
         self.wordlength_spinbox.valueChanged.connect(self.configuration_changed)
-        self.hardware_flowcontrol_combobox.currentIndexChanged.connect(self.configuration_changed)
-        self.software_flowcontrol_combobox.currentIndexChanged.connect(self.configuration_changed)
+        self.flowcontrol_combobox.currentIndexChanged.connect(self.configuration_changed)
         self.text_type_combobox.currentIndexChanged.connect(self.text_type_changed)
 
         self.hextext = QHexeditWidget(self.text.font())
@@ -184,8 +187,14 @@ class RS232(PluginBase, Ui_RS232):
         self.parity_combobox.setCurrentIndex(conf.parity)
         self.stopbits_spinbox.setValue(conf.stopbits)
         self.wordlength_spinbox.setValue(conf.wordlength)
-        self.hardware_flowcontrol_combobox.setCurrentIndex(conf.hardware_flowcontrol)
-        self.software_flowcontrol_combobox.setCurrentIndex(conf.software_flowcontrol)
+
+        if not conf.software_flowcontrol and not conf.hardware_flowcontrol:
+            self.flowcontrol_combobox.setCurrentIndex(FLOWCONTROL_OFF)
+        elif not conf.software_flowcontrol and conf.hardware_flowcontrol:
+            self.flowcontrol_combobox.setCurrentIndex(FLOWCONTROL_HW)
+        elif conf.software_flowcontrol and not conf.hardware_flowcontrol:
+            self.flowcontrol_combobox.setCurrentIndex(FLOWCONTROL_SW)
+
         self.save_button.setEnabled(False)
 
     def text_type_changed(self):
@@ -204,8 +213,19 @@ class RS232(PluginBase, Ui_RS232):
         parity = self.parity_combobox.currentIndex()
         stopbits = self.stopbits_spinbox.value()
         wordlength = self.wordlength_spinbox.value()
-        hardware_flowcontrol = self.hardware_flowcontrol_combobox.currentIndex()
-        software_flowcontrol = self.software_flowcontrol_combobox.currentIndex()
+        flowcontrol = self.flowcontrol_combobox.currentIndex()
+        software_flowcontrol = 0
+        hardware_flowcontrol = 0
+
+        if flowcontrol == FLOWCONTROL_OFF:
+            software_flowcontrol = 0
+            hardware_flowcontrol = 0
+        elif flowcontrol == FLOWCONTROL_SW:
+            software_flowcontrol = 1
+            hardware_flowcontrol = 0
+        elif flowcontrol == FLOWCONTROL_HW:
+            software_flowcontrol = 0
+            hardware_flowcontrol = 1
 
         self.rs232.set_configuration(baudrate, parity, stopbits, wordlength, hardware_flowcontrol, software_flowcontrol)
         self.save_button.setEnabled(False)

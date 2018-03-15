@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>718</width>
-    <height>468</height>
+    <height>494</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -182,93 +182,6 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Baudrate:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0" colspan="2">
-      <widget class="QPushButton" name="save_button">
-       <property name="text">
-        <string>Save Configuration</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>Hardware Flow Control:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Word Length:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QSpinBox" name="stopbits_spinbox">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>2</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Parity:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QSpinBox" name="wordlength_spinbox">
-       <property name="minimum">
-        <number>5</number>
-       </property>
-       <property name="maximum">
-        <number>8</number>
-       </property>
-       <property name="value">
-        <number>8</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="parity_combobox">
-       <item>
-        <property name="text">
-         <string>None</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Odd</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Even</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Forced Parity 1</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Forced Parity 0</string>
-        </property>
-       </item>
-      </widget>
-     </item>
      <item row="0" column="1">
       <widget class="QComboBox" name="baudrate_combobox">
        <property name="sizePolicy">
@@ -351,29 +264,88 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
-      <widget class="QComboBox" name="hardware_flowcontrol_combobox">
-       <item>
-        <property name="text">
-         <string>Off</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>On</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_7">
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Software Flow Control:</string>
+        <string>Flow Control:</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
-      <widget class="QComboBox" name="software_flowcontrol_combobox">
+     <item row="3" column="1">
+      <widget class="QSpinBox" name="wordlength_spinbox">
+       <property name="minimum">
+        <number>5</number>
+       </property>
+       <property name="maximum">
+        <number>8</number>
+       </property>
+       <property name="value">
+        <number>8</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QSpinBox" name="stopbits_spinbox">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>2</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Parity:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="2">
+      <widget class="QPushButton" name="save_button">
+       <property name="text">
+        <string>Save Configuration</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="parity_combobox">
+       <item>
+        <property name="text">
+         <string>None</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Odd</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Even</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Forced Parity 1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Forced Parity 0</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Word Length:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QComboBox" name="flowcontrol_combobox">
        <item>
         <property name="text">
          <string>Off</string>
@@ -381,9 +353,21 @@
        </item>
        <item>
         <property name="text">
-         <string>On</string>
+         <string>Software (XON/XOFF)</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Hardware (RTS/CTS)</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Baudrate:</string>
+       </property>
       </widget>
      </item>
     </layout>
@@ -496,8 +480,7 @@
   <tabstop>parity_combobox</tabstop>
   <tabstop>stopbits_spinbox</tabstop>
   <tabstop>wordlength_spinbox</tabstop>
-  <tabstop>hardware_flowcontrol_combobox</tabstop>
-  <tabstop>software_flowcontrol_combobox</tabstop>
+  <tabstop>flowcontrol_combobox</tabstop>
   <tabstop>save_button</tabstop>
  </tabstops>
  <resources/>
