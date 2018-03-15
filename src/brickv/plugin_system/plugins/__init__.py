@@ -9,6 +9,7 @@ from brickv.plugin_system.plugins.analog_out import device_class as analog_out
 from brickv.plugin_system.plugins.analog_out_v2 import device_class as analog_out_v2
 from brickv.plugin_system.plugins.barometer import device_class as barometer
 from brickv.plugin_system.plugins.can import device_class as can
+from brickv.plugin_system.plugins.can_v2 import device_class as can_v2
 from brickv.plugin_system.plugins.co2 import device_class as co2
 from brickv.plugin_system.plugins.color import device_class as color
 from brickv.plugin_system.plugins.current12 import device_class as current12
@@ -93,6 +94,7 @@ from brickv.plugin_system.plugins.temperature_ir import device_class as temperat
 from brickv.plugin_system.plugins.temperature_ir_v2 import device_class as temperature_ir_v2
 from brickv.plugin_system.plugins.thermal_imaging import device_class as thermal_imaging
 from brickv.plugin_system.plugins.thermocouple import device_class as thermocouple
+from brickv.plugin_system.plugins.thermocouple_v2 import device_class as thermocouple_v2
 from brickv.plugin_system.plugins.tilt import device_class as tilt
 from brickv.plugin_system.plugins.uv_light import device_class as uv_light
 from brickv.plugin_system.plugins.voltage import device_class as voltage
@@ -111,6 +113,7 @@ device_classes = [
     analog_out_v2,
     barometer,
     can,
+    can_v2,
     co2,
     color,
     current12,
@@ -195,6 +198,7 @@ device_classes = [
     temperature_ir_v2,
     thermal_imaging,
     thermocouple,
+    thermocouple_v2,
     tilt,
     uv_light,
     voltage,

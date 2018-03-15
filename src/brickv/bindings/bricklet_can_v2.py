@@ -22,12 +22,12 @@ ReadFrameLowLevel = namedtuple('ReadFrameLowLevel', ['success', 'frame_type', 'i
 GetTransceiverConfiguration = namedtuple('TransceiverConfiguration', ['baud_rate', 'transceiver_mode'])
 GetQueueConfigurationLowLevel = namedtuple('QueueConfigurationLowLevel', ['write_buffer_size', 'write_buffer_timeout', 'write_backlog_size', 'read_buffer_sizes_length', 'read_buffer_sizes_data', 'read_backlog_size'])
 GetReadFilterConfiguration = namedtuple('ReadFilterConfiguration', ['filter_mode', 'filter_mask', 'filter_identifier'])
-GetErrorLogLowLevel = namedtuple('ErrorLogLowLevel', ['transceiver_state', 'transceiver_write_error_level', 'transceiver_read_error_level', 'transceiver_stuff_error_count', 'transceiver_form_error_count', 'transceiver_ack_error_count', 'transceiver_bit1_error_count', 'transceiver_bit0_error_count', 'transceiver_crc_error_count', 'write_buffer_timeout_error_count', 'read_buffer_overflow_error_count', 'read_buffer_overflow_error_occurred_length', 'read_buffer_overflow_error_occurred_data', 'read_backlog_overflow_error_count'])
+GetErrorLogLowLevel = namedtuple('ErrorLogLowLevel', ['transceiver_state', 'transceiver_write_error_level', 'transceiver_read_error_level', 'transceiver_stuffing_error_count', 'transceiver_format_error_count', 'transceiver_ack_error_count', 'transceiver_bit1_error_count', 'transceiver_bit0_error_count', 'transceiver_crc_error_count', 'write_buffer_timeout_error_count', 'read_buffer_overflow_error_count', 'read_buffer_overflow_error_occurred_length', 'read_buffer_overflow_error_occurred_data', 'read_backlog_overflow_error_count'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 ReadFrame = namedtuple('ReadFrame', ['success', 'frame_type', 'identifier', 'data'])
 GetQueueConfiguration = namedtuple('QueueConfiguration', ['write_buffer_size', 'write_buffer_timeout', 'write_backlog_size', 'read_buffer_sizes', 'read_backlog_size'])
-GetErrorLog = namedtuple('ErrorLog', ['transceiver_state', 'transceiver_write_error_level', 'transceiver_read_error_level', 'transceiver_stuff_error_count', 'transceiver_form_error_count', 'transceiver_ack_error_count', 'transceiver_bit1_error_count', 'transceiver_bit0_error_count', 'transceiver_crc_error_count', 'write_buffer_timeout_error_count', 'read_buffer_overflow_error_count', 'read_buffer_overflow_error_occurred', 'read_backlog_overflow_error_count'])
+GetErrorLog = namedtuple('ErrorLog', ['transceiver_state', 'transceiver_write_error_level', 'transceiver_read_error_level', 'transceiver_stuffing_error_count', 'transceiver_format_error_count', 'transceiver_ack_error_count', 'transceiver_bit1_error_count', 'transceiver_bit0_error_count', 'transceiver_crc_error_count', 'write_buffer_timeout_error_count', 'read_buffer_overflow_error_count', 'read_buffer_overflow_error_occurred', 'read_backlog_overflow_error_count'])
 
 class BrickletCANV2(Device):
     """
@@ -81,9 +81,9 @@ class BrickletCANV2(Device):
     FILTER_MODE_MATCH_STANDARD_ONLY = 1
     FILTER_MODE_MATCH_EXTENDED_ONLY = 2
     FILTER_MODE_MATCH_STANDARD_AND_EXTENDED = 3
-    TRANSCEIVER_STATE_ERROR_ACTIVE = 0
-    TRANSCEIVER_STATE_ERROR_PASSIVE = 1
-    TRANSCEIVER_STATE_BUS_OFF = 2
+    TRANSCEIVER_STATE_ACTIVE = 0
+    TRANSCEIVER_STATE_PASSIVE = 1
+    TRANSCEIVER_STATE_DISABLED = 2
     COMMUNICATION_LED_CONFIG_OFF = 0
     COMMUNICATION_LED_CONFIG_ON = 1
     COMMUNICATION_LED_CONFIG_SHOW_HEARTBEAT = 2
@@ -419,9 +419,8 @@ class BrickletCANV2(Device):
         operations. For each of this error kinds there is also an individual counter.
 
         When the write error level extends 255 then the CAN transceiver gets disabled
-        (bus-off) and no frames can be transmitted or received anymore. The CAN
-        transceiver will automatically be activated again after the CAN bus is idle for
-        a while.
+        and no frames can be transmitted or received anymore. The CAN transceiver will
+        automatically be activated again after the CAN bus is idle for a while.
 
         The write buffer timeout, read buffer and backlog overflow counts represents the
         number of these errors:
@@ -474,8 +473,8 @@ class BrickletCANV2(Device):
         Sets the error LED configuration.
 
         By default (show-transceiver-state) the error LED turns on if the CAN
-        transceiver is error-passive or bus-off state (see :func:`Get Error Log`). If
-        the CAN transceiver is in error-active state the LED turns off.
+        transceiver is passive or disabled state (see :func:`Get Error Log`). If
+        the CAN transceiver is in active state the LED turns off.
 
         If the LED is configured as show-error then the error LED turns on if any error
         occurs. If you call this function with the show-error option again, the LED will
@@ -803,9 +802,8 @@ class BrickletCANV2(Device):
         operations. For each of this error kinds there is also an individual counter.
 
         When the write error level extends 255 then the CAN transceiver gets disabled
-        (bus-off) and no frames can be transmitted or received anymore. The CAN
-        transceiver will automatically be activated again after the CAN bus is idle for
-        a while.
+        and no frames can be transmitted or received anymore. The CAN transceiver will
+        automatically be activated again after the CAN bus is idle for a while.
 
         The write buffer timeout, read buffer and backlog overflow counts represents the
         number of these errors:
@@ -834,7 +832,7 @@ class BrickletCANV2(Device):
         """
         ret = self.get_error_log_low_level()
 
-        return GetErrorLog(ret.transceiver_state, ret.transceiver_write_error_level, ret.transceiver_read_error_level, ret.transceiver_stuff_error_count, ret.transceiver_form_error_count, ret.transceiver_ack_error_count, ret.transceiver_bit1_error_count, ret.transceiver_bit0_error_count, ret.transceiver_crc_error_count, ret.write_buffer_timeout_error_count, ret.read_buffer_overflow_error_count, ret.read_buffer_overflow_error_occurred_data[:ret.read_buffer_overflow_error_occurred_length], ret.read_backlog_overflow_error_count)
+        return GetErrorLog(ret.transceiver_state, ret.transceiver_write_error_level, ret.transceiver_read_error_level, ret.transceiver_stuffing_error_count, ret.transceiver_format_error_count, ret.transceiver_ack_error_count, ret.transceiver_bit1_error_count, ret.transceiver_bit0_error_count, ret.transceiver_crc_error_count, ret.write_buffer_timeout_error_count, ret.read_buffer_overflow_error_count, ret.read_buffer_overflow_error_occurred_data[:ret.read_buffer_overflow_error_occurred_length], ret.read_backlog_overflow_error_count)
 
     def register_callback(self, callback_id, function):
         """
