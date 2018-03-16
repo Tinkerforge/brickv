@@ -1485,6 +1485,15 @@ class REDProcess(REDProcessBase):
         self.update_identity()
         self.update_state()
 
+        # there is a race-condition between the spawn-process call, the attach
+        # call and the process-state-changed callback. the process-state-changed
+        # callback can be triggered while the spawn-process call is still
+        # running. this means that the callback is triggered before the attach
+        # call that sets up the handling for the process-state-changed callback
+        # resulting in missing the callback. fake a process-state-changed callback
+        # here to ensure that code that relies on the callback doesn't get stuck
+        self._cb_state_changed(self._state, self._timestamp, self._exit_code)
+
         return self
 
     def kill(self, signal):
@@ -1879,6 +1888,10 @@ class REDProgram(REDProgramBase):
         if process_spawned_callback != None:
             process_spawned_callback(self)
 
+        # if the process was attached in a non-running state then the critical
+        # process-state-change away from running was missed. fake it here to
+        # ensure that ensure that code that wants to monitor spawned processes
+        # is notified correctly
         if self._last_spawned_process.state != REDProcess.STATE_RUNNING:
             self._last_spawned_process._fake_state_change_callback()
 

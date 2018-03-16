@@ -254,6 +254,8 @@ class ScriptManager(object):
             #       but it may not be necessary.
             if si.abort:
                 self._report_result_and_cleanup(si, ScriptResult('Script "{0}" aborted'.format(si.name), None, None, None))
+            elif si.process.state == REDProcess.STATE_RUNNING:
+                pass # still running ignore it
             elif si.process.state != REDProcess.STATE_EXITED:
                 self._report_result_and_cleanup(si, ScriptResult('Script "{0}" in wrong state: {1} (exit-code {2})'
                                                                  .format(si.name, si.process.state, si.process.exit_code), None, None, None))
