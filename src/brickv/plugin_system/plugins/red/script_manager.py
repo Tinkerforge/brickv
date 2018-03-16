@@ -93,13 +93,15 @@ class ScriptInstance(QObject):
             self.stderr = None
 
     def report_result(self, result):
-        # if result is None then the and error during script upload
+        # if result is None then an error during script upload
         # occurred and the upload has to be done again
         if result == None:
             self.script.uploaded = False
 
         self.qtcb_result.emit(result)
-        self.qtcb_result.disconnect(self.result_callback)
+
+        if self.result_callback != None:
+            self.qtcb_result.disconnect(self.result_callback)
 
 # stdout and stderr are either strings or None (UTF-8 decode error)
 ScriptResult = namedtuple('ScriptResult', 'error stdout stderr exit_code')
