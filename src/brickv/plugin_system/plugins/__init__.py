@@ -63,6 +63,7 @@ from brickv.plugin_system.plugins.oled_128x64 import device_class as oled_128x64
 from brickv.plugin_system.plugins.oled_64x48 import device_class as oled_64x48
 from brickv.plugin_system.plugins.outdoor_weather import device_class as outdoor_weather
 from brickv.plugin_system.plugins.ozone import device_class as ozone
+from brickv.plugin_system.plugins.particulate_matter import device_class as particulate_matter
 from brickv.plugin_system.plugins.piezo_buzzer import device_class as piezo_buzzer
 from brickv.plugin_system.plugins.piezo_speaker import device_class as piezo_speaker
 from brickv.plugin_system.plugins.pressure import device_class as pressure
@@ -167,6 +168,7 @@ device_classes = [
     oled_64x48,
     outdoor_weather,
     ozone,
+    particulate_matter,
     piezo_buzzer,
     piezo_speaker,
     pressure,
