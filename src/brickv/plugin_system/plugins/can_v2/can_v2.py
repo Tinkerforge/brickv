@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 import os
 
 from PyQt4.QtCore import pyqtSignal, QTimer
-from PyQt4.QtGui import QMessageBox, QTreeWidgetItem
+from PyQt4.QtGui import QMessageBox, QTreeWidgetItem, QAction
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_can_v2 import BrickletCANV2, GetReadFilterConfiguration
@@ -95,7 +95,41 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
         self.read_filter_mode_changed()
         self.read_filter_configuration_changed()
 
+        self.com_led_off_action = QAction('Off', self)
+        self.com_led_off_action.triggered.connect(lambda: self.can.set_communication_led_config(BrickletCANV2.COMMUNICATION_LED_CONFIG_OFF))
+        self.com_led_on_action = QAction('On', self)
+        self.com_led_on_action.triggered.connect(lambda: self.can.set_communication_led_config(BrickletCANV2.COMMUNICATION_LED_CONFIG_ON))
+        self.com_led_show_heartbeat_action = QAction('Show Heartbeat', self)
+        self.com_led_show_heartbeat_action.triggered.connect(lambda: self.can.set_communication_led_config(BrickletCANV2.COMMUNICATION_LED_CONFIG_SHOW_HEARTBEAT))
+        self.com_led_show_communication_action = QAction('Show Com', self)
+        self.com_led_show_communication_action.triggered.connect(lambda: self.can.set_communication_led_config(BrickletCANV2.COMMUNICATION_LED_CONFIG_SHOW_COMMUNICATION))
+
+        self.extra_configs += [(1, 'Com LED:', [self.com_led_off_action,
+                                                self.com_led_on_action,
+                                                self.com_led_show_heartbeat_action,
+                                                self.com_led_show_communication_action])]
+
+        self.error_led_off_action = QAction('Off', self)
+        self.error_led_off_action.triggered.connect(lambda: self.can.set_error_led_config(BrickletCANV2.ERROR_LED_CONFIG_OFF))
+        self.error_led_on_action = QAction('On', self)
+        self.error_led_on_action.triggered.connect(lambda: self.can.set_error_led_config(BrickletCANV2.ERROR_LED_CONFIG_ON))
+        self.error_led_show_heartbeat_action = QAction('Show Heartbeat', self)
+        self.error_led_show_heartbeat_action.triggered.connect(lambda: self.can.set_error_led_config(BrickletCANV2.ERROR_LED_CONFIG_SHOW_HEARTBEAT))
+        self.error_led_show_transceiver_state_action = QAction('Show Transceiver State', self)
+        self.error_led_show_transceiver_state_action.triggered.connect(lambda: self.can.set_error_led_config(BrickletCANV2.ERROR_LED_CONFIG_SHOW_TRANSCEIVER_STATE))
+        self.error_led_show_error_action = QAction('Show Error', self)
+        self.error_led_show_error_action.triggered.connect(lambda: self.can.set_error_led_config(BrickletCANV2.ERROR_LED_CONFIG_SHOW_ERROR))
+
+        self.extra_configs += [(1, 'Error LED:', [self.error_led_off_action,
+                                                  self.error_led_on_action,
+                                                  self.error_led_show_heartbeat_action,
+                                                  self.error_led_show_transceiver_state_action,
+                                                  self.error_led_show_error_action])]
+
     def start(self):
+        async_call(self.can.get_communication_led_config, None, self.get_communication_led_config_async, self.increase_error_count)
+        async_call(self.can.get_error_led_config, None, self.get_error_led_config_async, self.increase_error_count)
+
         self.frame_read_callback_was_enabled = False
 
         async_call(self.can.get_frame_read_callback_configuration, None, self.get_frame_read_callback_configuration_async, self.increase_error_count)
@@ -126,6 +160,28 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletCANV2.DEVICE_IDENTIFIER
+
+    def get_communication_led_config_async(self, config):
+        if config == BrickletCANV2.COMMUNICATION_LED_CONFIG_OFF:
+            self.com_led_off_action.trigger()
+        elif config == BrickletCANV2.COMMUNICATION_LED_CONFIG_ON:
+            self.com_led_on_action.trigger()
+        elif config == BrickletCANV2.COMMUNICATION_LED_CONFIG_SHOW_HEARTBEAT:
+            self.com_led_show_heartbeat_action.trigger()
+        elif config == BrickletCANV2.COMMUNICATION_LED_CONFIG_SHOW_COMMUNICATION:
+            self.com_led_show_communication_action.trigger()
+
+    def get_error_led_config_async(self, config):
+        if config == BrickletCANV2.ERROR_LED_CONFIG_OFF:
+            self.error_led_off_action.trigger()
+        elif config == BrickletCANV2.ERROR_LED_CONFIG_ON:
+            self.error_led_on_action.trigger()
+        elif config == BrickletCANV2.ERROR_LED_CONFIG_SHOW_HEARTBEAT:
+            self.error_led_show_heartbeat_action.trigger()
+        elif config == BrickletCANV2.ERROR_LED_CONFIG_SHOW_TRANSCEIVER_STATE:
+            self.error_led_show_transceiver_state_action.trigger()
+        elif config == BrickletCANV2.ERROR_LED_CONFIG_SHOW_ERROR:
+            self.error_led_show_error_action.trigger()
 
     def cb_frame_read(self, frame_type, identifier, data):
         length = len(data)
@@ -396,7 +452,7 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
         mode = self.combo_filter_mode.currentIndex()
         mask = self.spin_filter_mask.value()
         identifier = self.spin_filter_identifier.value()
-        
+
         self.combo_filter_buffer.setItemData(buffer_index, GetReadFilterConfiguration(mode, mask, identifier))
 
         # FIXME: add validation
