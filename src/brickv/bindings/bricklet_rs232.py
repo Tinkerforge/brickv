@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-28.      #
+# This file was automatically generated on 2018-03-15.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -159,7 +159,7 @@ class BrickletRS232(Device):
         * Parity of none, odd, even or forced parity.
         * Stopbits can be 1 or 2.
         * Word length of 5 to 8.
-        * Hard-/Software flow control can each be on or off.
+        * Hard-/Software flow control can either be on or off but not both simultaneously on.
 
         The default is: 115200 baud, parity none, 1 stop bit, word length 8, hard-/software flow control off.
         """

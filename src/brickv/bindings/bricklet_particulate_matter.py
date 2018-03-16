@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-15.      #
+# This file was automatically generated on 2018-03-16.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -18,6 +18,11 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
+GetPMConcentration = namedtuple('PMConcentration', ['pm10', 'pm25', 'pm100'])
+GetPMCount = namedtuple('PMCount', ['greater03um', 'greater05um', 'greater10um', 'greater25um', 'greater50um', 'greater100um'])
+GetSensorInfo = namedtuple('SensorInfo', ['sensor_version', 'last_error_code', 'framing_error_count', 'checksum_error_count'])
+GetPMConcentrationCallbackConfiguration = namedtuple('PMConcentrationCallbackConfiguration', ['period', 'value_has_to_change'])
+GetPMCountCallbackConfiguration = namedtuple('PMCountCallbackConfiguration', ['period', 'value_has_to_change'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -30,8 +35,19 @@ class BrickletParticulateMatter(Device):
     DEVICE_DISPLAY_NAME = 'Particulate Matter Bricklet'
     DEVICE_URL_PART = 'particulate_matter' # internal
 
+    CALLBACK_PM_CONCENTRATION = 10
+    CALLBACK_PM_COUNT = 11
 
 
+    FUNCTION_GET_PM_CONCENTRATION = 1
+    FUNCTION_GET_PM_COUNT = 2
+    FUNCTION_SET_ENABLE = 3
+    FUNCTION_GET_ENABLE = 4
+    FUNCTION_GET_SENSOR_INFO = 5
+    FUNCTION_SET_PM_CONCENTRATION_CALLBACK_CONFIGURATION = 6
+    FUNCTION_GET_PM_CONCENTRATION_CALLBACK_CONFIGURATION = 7
+    FUNCTION_SET_PM_COUNT_CALLBACK_CONFIGURATION = 8
+    FUNCTION_GET_PM_COUNT_CALLBACK_CONFIGURATION = 9
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -70,6 +86,15 @@ class BrickletParticulateMatter(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletParticulateMatter.FUNCTION_GET_PM_CONCENTRATION] = BrickletParticulateMatter.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletParticulateMatter.FUNCTION_GET_PM_COUNT] = BrickletParticulateMatter.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletParticulateMatter.FUNCTION_SET_ENABLE] = BrickletParticulateMatter.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletParticulateMatter.FUNCTION_GET_ENABLE] = BrickletParticulateMatter.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletParticulateMatter.FUNCTION_GET_SENSOR_INFO] = BrickletParticulateMatter.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletParticulateMatter.FUNCTION_SET_PM_CONCENTRATION_CALLBACK_CONFIGURATION] = BrickletParticulateMatter.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletParticulateMatter.FUNCTION_GET_PM_CONCENTRATION_CALLBACK_CONFIGURATION] = BrickletParticulateMatter.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletParticulateMatter.FUNCTION_SET_PM_COUNT_CALLBACK_CONFIGURATION] = BrickletParticulateMatter.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletParticulateMatter.FUNCTION_GET_PM_COUNT_CALLBACK_CONFIGURATION] = BrickletParticulateMatter.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletParticulateMatter.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletParticulateMatter.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletParticulateMatter.FUNCTION_SET_BOOTLOADER_MODE] = BrickletParticulateMatter.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletParticulateMatter.FUNCTION_GET_BOOTLOADER_MODE] = BrickletParticulateMatter.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -83,7 +108,120 @@ class BrickletParticulateMatter(Device):
         self.response_expected[BrickletParticulateMatter.FUNCTION_READ_UID] = BrickletParticulateMatter.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletParticulateMatter.FUNCTION_GET_IDENTITY] = BrickletParticulateMatter.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletParticulateMatter.CALLBACK_PM_CONCENTRATION] = 'H H H'
+        self.callback_formats[BrickletParticulateMatter.CALLBACK_PM_COUNT] = 'H H H H H H'
 
+
+    def get_pm_concentration(self):
+        """
+        Returns the particulate matter concentration in µg/m³, broken down as:
+
+        * PM\ :sub:`1.0`\ ,
+        * PM\ :sub:`2.5`\  and
+        * PM\ :sub:`10.0`\ .
+
+        If the sensor is disabled (see :func:`Set Enable`) then the last known good
+        values from the sensor are return.
+        """
+        return GetPMConcentration(*self.ipcon.send_request(self, BrickletParticulateMatter.FUNCTION_GET_PM_CONCENTRATION, (), '', 'H H H'))
+
+    def get_pm_count(self):
+        """
+        Returns the number of particulates in 100 ml of air, broken down by their
+        diameter:
+
+        * greater 0.3µm,
+        * greater 0.5µm,
+        * greater 1.0µm,
+        * greater 2.5µm,
+        * greater 5.0µm and
+        * greater 10.0µm.
+
+        If the sensor is disabled (see :func:`Set Enable`) then the last known good
+        value from the sensor is return.
+        """
+        return GetPMCount(*self.ipcon.send_request(self, BrickletParticulateMatter.FUNCTION_GET_PM_COUNT, (), '', 'H H H H H H'))
+
+    def set_enable(self, enable):
+        """
+        Enables/Disables the fan and the laser diode of the sensors. The sensor is
+        enabled by default.
+
+        The sensor takes about 30 after it is enabled to settle and produce stable
+        values.
+        """
+        enable = bool(enable)
+
+        self.ipcon.send_request(self, BrickletParticulateMatter.FUNCTION_SET_ENABLE, (enable,), '!', '')
+
+    def get_enable(self):
+        """
+        Returns the state of the sensor as set by :func:`Set Enable`.
+        """
+        return self.ipcon.send_request(self, BrickletParticulateMatter.FUNCTION_GET_ENABLE, (), '', '!')
+
+    def get_sensor_info(self):
+        """
+        Returns information about the sensor:
+
+        * the sensor version number,
+        * the last error code reported by the sensor (0 means no error) and
+        * the number of framing and checksum errors that occurred in the communication
+          with the sensor.
+        """
+        return GetSensorInfo(*self.ipcon.send_request(self, BrickletParticulateMatter.FUNCTION_GET_SENSOR_INFO, (), '', 'B B B B'))
+
+    def set_pm_concentration_callback_configuration(self, period, value_has_to_change):
+        """
+        The period in ms is the period with which the :cb:`PM Concentration`
+        callback is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
+        """
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+
+        self.ipcon.send_request(self, BrickletParticulateMatter.FUNCTION_SET_PM_CONCENTRATION_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+
+    def get_pm_concentration_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set PM Concentration Callback Configuration`.
+        """
+        return GetPMConcentrationCallbackConfiguration(*self.ipcon.send_request(self, BrickletParticulateMatter.FUNCTION_GET_PM_CONCENTRATION_CALLBACK_CONFIGURATION, (), '', 'I !'))
+
+    def set_pm_count_callback_configuration(self, period, value_has_to_change):
+        """
+        The period in ms is the period with which the :cb:`PM Count` callback
+        is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
+        """
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+
+        self.ipcon.send_request(self, BrickletParticulateMatter.FUNCTION_SET_PM_COUNT_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+
+    def get_pm_count_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set PM Count Callback Configuration`.
+        """
+        return GetPMCountCallbackConfiguration(*self.ipcon.send_request(self, BrickletParticulateMatter.FUNCTION_GET_PM_COUNT_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
     def get_spitfp_error_count(self):
         """
@@ -224,5 +362,14 @@ class BrickletParticulateMatter(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletParticulateMatter.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def register_callback(self, callback_id, function):
+        """
+        Registers the given *function* with the given *callback_id*.
+        """
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
+        else:
+            self.registered_callbacks[callback_id] = function
 
 ParticulateMatter = BrickletParticulateMatter # for backward compatibility
