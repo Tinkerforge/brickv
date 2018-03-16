@@ -2,6 +2,7 @@
 ui_*.py
 *.py_minified
 *.py_prepared
+*.sh_prepared
 .project
 .pydevproject
 src/build

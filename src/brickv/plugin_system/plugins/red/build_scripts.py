@@ -34,13 +34,18 @@ try:
     use_minified = True
     script_data = []
     build_script_path = os.path.dirname(os.path.realpath(__file__))
-    scripts = glob.glob(os.path.join(build_script_path, 'scripts', '*.py'))
+    scripts = []
 
-    for script in scripts:
+    for script in glob.glob(os.path.join(build_script_path, 'scripts', '*.py')):
+        scripts.append(script)
         lines = []
 
         with open(script) as f:
             for line in f.readlines():
+                # force \n line endings, this is important for shebang lines,
+                # where the \r will be interpreted as part of the command
+                line = line.rstrip('\r\n') + '\n'
+
                 if line.startswith('### SCRIPT-INCLUDE: '):
                     include = line.replace('### SCRIPT-INCLUDE:', '').strip()
                     include = os.path.join(build_script_path, 'scripts', include)
@@ -59,7 +64,18 @@ try:
                 print('----> I will use the non-minified versions for now.')
                 use_minified = False
 
-    scripts.extend(glob.glob(os.path.join(build_script_path, 'scripts', '*.sh')))
+    for script in glob.glob(os.path.join(build_script_path, 'scripts', '*.sh')):
+        scripts.append(script)
+        lines = []
+
+        with open(script) as f:
+            for line in f.readlines():
+                # force \n line endings, this is important for shebang lines,
+                # where the \r will be interpreted as part of the command
+                lines.append(line.rstrip('\r\n') + '\n')
+
+        with open(script + '_prepared', 'w') as f:
+            f.writelines(lines)
 
     for i, script in enumerate(scripts):
         if script.endswith('.py'):
@@ -68,7 +84,7 @@ try:
             else:
                 path = script + '_prepared'
         else:
-            path = script
+            path = script + '_prepared'
 
         with open(path) as f:
             name, extension = os.path.splitext(os.path.split(script)[-1])
