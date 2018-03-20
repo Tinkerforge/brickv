@@ -32,15 +32,8 @@ from brickv.hex_validator import HexValidator
 
 from brickv.plugin_system.plugins.rs232.qhexedit import QHexeditWidget
 
-CBOX_IDX_FC_OFF = 0
-CBOX_IDX_FC_SW = 1
 CBOX_IDX_FC_HW = 2
-
-CBOX_IDX_PARITY_NONE = 0
-CBOX_IDX_PARITY_ODD = 1
-CBOX_IDX_PARITY_EVEN = 2
-CBOX_IDX_PARITY_FORCED_1 = 3
-CBOX_IDX_PARITY_FORCED_0 = 4
+BAUDRATE_MAX_RS232  = 250000
 
 class RS232V2(COMCUPluginBase, Ui_RS232_V2):
     qtcb_read = pyqtSignal(object)
@@ -67,6 +60,7 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
                                      self.qtcb_error_count.emit)
 
         self.input_combobox.addItem("")
+        self.input_combobox.lineEdit().setMaxLength(65533)
         self.input_combobox.lineEdit().returnPressed.connect(self.input_changed)
 
         self.line_ending_lineedit.setValidator(HexValidator())
@@ -92,6 +86,16 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
         self.error_stream_oos = 0
 
         self.last_char = ''
+
+        if self.baudrate_spinbox.value() > BAUDRATE_MAX_RS232:
+            self.label_note_baud.show()
+        else:
+            self.label_note_baud.hide()
+
+        if self.flowcontrol_combobox.currentIndex() == CBOX_IDX_FC_HW:
+            self.label_note_fc_hw.show()
+        else:
+            self.label_note_fc_hw.hide()
 
     def cb_error_count(self, error_count_overrun, error_count_parity):
         self.label_error_overrun.setText(str(error_count_overrun))
@@ -170,23 +174,6 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
         return line_ending
 
     def input_changed(self):
-        '''
-        text = self.input_combobox.currentText().encode('utf-8') + self.get_line_ending()
-        c = ['\0']*60
-        for i, t in enumerate(text):
-            c[i] = t
-
-        length = len(text)
-        written = 0
-        while length != 0:
-            written = self.rs232.write(c, length)
-            c = c[written:]
-            c = c + ['\0']*written
-            length = length - written
-
-        self.input_combobox.setCurrentIndex(0)
-        '''
-
         pos = 0
         written = 0
         text = self.input_combobox.currentText().encode('utf-8') + self.get_line_ending()
@@ -204,25 +191,8 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
         self.stopbits_spinbox.setValue(conf.stopbits)
         self.baudrate_spinbox.setValue(conf.baudrate)
         self.wordlength_spinbox.setValue(conf.wordlength)
-
-        if conf.parity == BrickletRS232V2.PARITY_NONE:
-            self.parity_combobox.setCurrentIndex(CBOX_IDX_PARITY_NONE)
-        elif conf.parity == BrickletRS232V2.PARITY_ODD:
-            self.parity_combobox.setCurrentIndex(CBOX_IDX_PARITY_ODD)
-        elif conf.parity == BrickletRS232V2.PARITY_EVEN:
-            self.parity_combobox.setCurrentIndex(CBOX_IDX_PARITY_EVEN)
-        elif conf.parity == BrickletRS232V2.PARITY_FORCED_PARITY_1:
-            self.parity_combobox.setCurrentIndex(CBOX_IDX_PARITY_FORCED_1)
-        elif conf.parity == BrickletRS232V2.PARITY_FORCED_PARITY_0:
-            self.parity_combobox.setCurrentIndex(CBOX_IDX_PARITY_FORCED_0)
-
-        if conf.flowcontrol == BrickletRS232V2.FLOWCONTROL_OFF:
-            self.flowcontrol_combobox.setCurrentIndex(CBOX_IDX_FC_OFF)
-        elif conf.flowcontrol == BrickletRS232V2.FLOWCONTROL_SOFTWARE:
-            self.flowcontrol_combobox.setCurrentIndex(CBOX_IDX_FC_SW)
-        elif conf.flowcontrol == BrickletRS232V2.FLOWCONTROL_HARDWARE:
-            self.flowcontrol_combobox.setCurrentIndex(CBOX_IDX_FC_HW)
-
+        self.parity_combobox.setCurrentIndex(conf.parity)
+        self.flowcontrol_combobox.setCurrentIndex(conf.flowcontrol)
         self.save_button.setEnabled(False)
 
     def text_type_changed(self):
@@ -234,33 +204,24 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
             self.hextext.show()
 
     def configuration_changed(self):
+        if self.baudrate_spinbox.value() > BAUDRATE_MAX_RS232:
+            self.label_note_baud.show()
+        else:
+            self.label_note_baud.hide()
+
         self.save_button.setEnabled(True)
+
+        if self.flowcontrol_combobox.currentIndex() == CBOX_IDX_FC_HW:
+            self.label_note_fc_hw.show()
+        else:
+            self.label_note_fc_hw.hide()
 
     def save_clicked(self):
         baudrate = self.baudrate_spinbox.value()
         stopbits = self.stopbits_spinbox.value()
         wordlength = self.wordlength_spinbox.value()
-
-        parity_c_idx = self.parity_combobox.currentIndex()
-        flowcontrol_c_idx = self.flowcontrol_combobox.currentIndex()
-
-        if parity_c_idx == CBOX_IDX_PARITY_NONE:
-            parity = BrickletRS232V2.PARITY_NONE
-        elif parity_c_idx == CBOX_IDX_PARITY_ODD:
-            parity = BrickletRS232V2.PARITY_ODD
-        elif parity_c_idx == CBOX_IDX_PARITY_EVEN:
-            parity = BrickletRS232V2.PARITY_EVEN
-        elif parity_c_idx == CBOX_IDX_PARITY_FORCED_1:
-            parity = BrickletRS232V2.PARITY_FORCED_PARITY_1
-        elif parity_c_idx == CBOX_IDX_PARITY_FORCED_0:
-            parity = BrickletRS232V2.PARITY_FORCED_PARITY_0
-
-        if flowcontrol_c_idx == CBOX_IDX_FC_OFF:
-            flowcontrol = BrickletRS232V2.FLOWCONTROL_OFF
-        elif flowcontrol_c_idx == CBOX_IDX_FC_SW:
-            flowcontrol = BrickletRS232V2.FLOWCONTROL_SOFTWARE
-        elif flowcontrol_c_idx == CBOX_IDX_FC_HW:
-            flowcontrol = BrickletRS232V2.FLOWCONTROL_HARDWARE
+        parity = self.parity_combobox.currentIndex()
+        flowcontrol = self.flowcontrol_combobox.currentIndex()
 
         self.rs232.set_configuration(baudrate, parity, stopbits, wordlength, flowcontrol)
         self.save_button.setEnabled(False)
