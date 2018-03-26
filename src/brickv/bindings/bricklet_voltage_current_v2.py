@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-08.      #
+# This file was automatically generated on 2018-03-26.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -20,7 +20,7 @@ GetCurrentCallbackConfiguration = namedtuple('CurrentCallbackConfiguration', ['p
 GetVoltageCallbackConfiguration = namedtuple('VoltageCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
 GetPowerCallbackConfiguration = namedtuple('PowerCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
 GetConfiguration = namedtuple('Configuration', ['averaging', 'voltage_conversion_time', 'current_conversion_time'])
-GetCalibration = namedtuple('Calibration', ['gain_multiplier', 'gain_divisor'])
+GetCalibration = namedtuple('Calibration', ['voltage_multiplier', 'voltage_divisor', 'current_multiplier', 'current_divisor'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -361,26 +361,29 @@ class BrickletVoltageCurrentV2(Device):
         """
         return GetConfiguration(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_CONFIGURATION, (), '', 'B B B'))
 
-    def set_calibration(self, gain_multiplier, gain_divisor):
+    def set_calibration(self, voltage_multiplier, voltage_divisor, current_multiplier, current_divisor):
         """
-        Since the shunt resistor that is used to measure the current is not
-        perfectly precise, it needs to be calibrated by a multiplier and
-        divisor if a very precise reading is needed.
+        Since the ADC and the shunt resistor used for the measurements
+        are not perfect they need to be calibrated by a multiplier and
+        a divisor if a very precise reading is needed.
 
-        For example, if you are expecting a measurement of 1000mA and you
+        For example, if you are expecting a current of 1000mA and you
         are measuring 1023mA, you can calibrate the Voltage/Current Bricklet
-        by setting the multiplier to 1000 and the divisor to 1023.
+        by setting the current multiplier to 1000 and the divisor to 1023.
+        The same applies for the voltage.
         """
-        gain_multiplier = int(gain_multiplier)
-        gain_divisor = int(gain_divisor)
+        voltage_multiplier = int(voltage_multiplier)
+        voltage_divisor = int(voltage_divisor)
+        current_multiplier = int(current_multiplier)
+        current_divisor = int(current_divisor)
 
-        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_CALIBRATION, (gain_multiplier, gain_divisor), 'H H', '')
+        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_CALIBRATION, (voltage_multiplier, voltage_divisor, current_multiplier, current_divisor), 'H H H H', '')
 
     def get_calibration(self):
         """
         Returns the calibration as set by :func:`Set Calibration`.
         """
-        return GetCalibration(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_CALIBRATION, (), '', 'H H'))
+        return GetCalibration(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_CALIBRATION, (), '', 'H H H H'))
 
     def get_spitfp_error_count(self):
         """

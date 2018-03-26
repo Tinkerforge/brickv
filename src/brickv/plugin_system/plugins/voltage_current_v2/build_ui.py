@@ -7,3 +7,4 @@ def system(command):
         exit(1)
 
 system("pyuic4 -o ui_voltage_current_v2.py ui/voltage_current_v2.ui")
+system("pyuic4 -o ui_calibration.py ui/calibration.ui")
