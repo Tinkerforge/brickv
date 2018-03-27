@@ -2,6 +2,7 @@
 """
 Load Cell 2.0 Plugin
 Copyright (C) 2018 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2018 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 load_cell_v2.py: Load Cell 2.0 Plugin Implementation
 
@@ -97,8 +98,15 @@ class LoadCellV2(COMCUPluginBase):
         self.button_tare = QPushButton("Tare")
         self.button_tare.clicked.connect(self.button_tare_clicked)
 
-        self.enable_led = QCheckBox("Enable LED")
-        self.enable_led.stateChanged.connect(self.enable_led_changed)
+        self.cbox_info_led_config = QComboBox()
+        self.cbox_info_led_config.addItem("Off")
+        self.cbox_info_led_config.addItem("On")
+        self.cbox_info_led_config.addItem("Heartbeat")
+        self.cbox_info_led_config.currentIndexChanged.connect(self.cbox_info_led_config_changed)
+        self.label_info_led_config = QLabel('Info LED:')
+
+        #self.enable_led = QCheckBox("Enable LED")
+        #self.enable_led.stateChanged.connect(self.enable_led_changed)
 
         self.spin_average = QSpinBox()
         self.spin_average.setMinimum(0)
@@ -122,7 +130,8 @@ class LoadCellV2(COMCUPluginBase):
         hlayout.addStretch()
         hlayout.addWidget(self.button_calibration)
         hlayout.addWidget(self.button_tare)
-        hlayout.addWidget(self.enable_led)
+        hlayout.addWidget(self.label_info_led_config)
+        hlayout.addWidget(self.cbox_info_led_config)
 
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
@@ -134,7 +143,7 @@ class LoadCellV2(COMCUPluginBase):
         layout.addLayout(hlayout)
 
     def start(self):
-        async_call(self.lc.get_led_configuration, None, self.get_led_configuration_async, self.increase_error_count)
+        async_call(self.lc.get_info_led_configuration, None, self.get_info_led_configuration_async, self.increase_error_count)
         async_call(self.lc.get_configuration, None, self.get_configuration_async, self.increase_error_count)
         async_call(self.lc.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
         async_call(self.lc.get_weight, None, self.cb_weight, self.increase_error_count)
@@ -162,11 +171,8 @@ class LoadCellV2(COMCUPluginBase):
         self.gain = conf.gain
         self.rate_combo.setCurrentIndex(conf.rate)
 
-    def get_led_configuration_async(self, value):
-        if value:
-            self.enable_led.setChecked(True)
-        else:
-            self.enable_led.setChecked(False)
+    def get_info_led_configuration_async(self, value):
+        self.cbox_info_led_config.setCurrentIndex(value)
 
     def button_calibration_clicked(self):
         if self.calibration is None:
@@ -178,11 +184,20 @@ class LoadCellV2(COMCUPluginBase):
     def button_tare_clicked(self):
         self.lc.tare()
 
+    '''
     def enable_led_changed(self, state):
         if state == Qt.Checked:
             self.lc.set_led_configuration(True)
         else:
             self.lc.set_led_configuration(False)
+    '''
+
+    def cbox_info_led_config_changed(self, index):
+        self.lc.set_info_led_configuration(index)
+
+        async_call(self.lc.get_info_led_configuration,
+                   None, self.get_info_led_configuration_async,
+                   self.increase_error_count)
 
     def new_config(self, value):
         rate = self.rate_combo.currentIndex()
