@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-28.      #
+# This file was automatically generated on 2018-03-27.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -115,51 +115,51 @@ class BrickletIndustrialQuadRelayV2(Device):
         """
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_OUTPUT_VALUE, (), '', '4!')
 
-    def set_monoflop(self, pin, value, time):
+    def set_monoflop(self, channel, value, time):
         """
-        Configures a monoflop of the specified pin.
+        Configures a monoflop of the specified channel.
 
         The second parameter is the desired value of the specified
-        pin. A *true* means relay closed and a *false* means relay open.
+        channel. A *true* means relay closed and a *false* means relay open.
 
-        The third parameter indicates the time (in ms) that the pins should hold
+        The third parameter indicates the time (in ms) that the channels should hold
         the value.
 
-        If this function is called with the parameters (0, 1, 1500) pin 0 will
-        close and in 1.5s pin 0 will open again
+        If this function is called with the parameters (0, 1, 1500) channel 0 will
+        close and in 1.5s channel 0 will open again
 
         A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
         have a RS485 bus and a Quad Relay Bricklet connected to one of the slave
         stacks. You can now call this function every second, with a time parameter
-        of two seconds and pin 0 closed. Pin 0 will be closed all the time. If now
-        the RS485 connection is lost, then pin 0 will be opened in at most two seconds.
+        of two seconds and channel 0 closed. Channel 0 will be closed all the time. If now
+        the RS485 connection is lost, then channel 0 will be opened in at most two seconds.
         """
-        pin = int(pin)
+        channel = int(channel)
         value = bool(value)
         time = int(time)
 
-        self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_MONOFLOP, (pin, value, time), 'B ! I', '')
+        self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_MONOFLOP, (channel, value, time), 'B ! I', '')
 
-    def get_monoflop(self, pin):
+    def get_monoflop(self, channel):
         """
-        Returns (for the given pin) the current value and the time as set by
+        Returns (for the given channel) the current value and the time as set by
         :func:`Set Monoflop` as well as the remaining time until the value flips.
 
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
-        pin = int(pin)
+        channel = int(channel)
 
-        return GetMonoflop(*self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_MONOFLOP, (pin,), 'B', '! I I'))
+        return GetMonoflop(*self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_MONOFLOP, (channel,), 'B', '! I I'))
 
-    def set_selected_output_value(self, pin, value):
+    def set_selected_output_value(self, channel, value):
         """
-        Sets the output value of the specified pin without affecting the other pins.
+        Sets the output value of the specified channel without affecting the other channels.
         """
-        pin = int(pin)
+        channel = int(channel)
         value = bool(value)
 
-        self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_SELECTED_OUTPUT_VALUE, (pin, value), 'B !', '')
+        self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_SELECTED_OUTPUT_VALUE, (channel, value), 'B !', '')
 
     def get_spitfp_error_count(self):
         """
