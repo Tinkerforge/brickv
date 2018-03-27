@@ -43,6 +43,7 @@ from brickv.plugin_system.plugins.io16 import device_class as io16
 from brickv.plugin_system.plugins.io4 import device_class as io4
 from brickv.plugin_system.plugins.joystick import device_class as joystick
 from brickv.plugin_system.plugins.laser_range_finder import device_class as laser_range_finder
+from brickv.plugin_system.plugins.lcd_128x64 import device_class as lcd_128x64
 from brickv.plugin_system.plugins.lcd_16x2 import device_class as lcd_16x2
 from brickv.plugin_system.plugins.lcd_20x4 import device_class as lcd_20x4
 from brickv.plugin_system.plugins.led_strip import device_class as led_strip
@@ -99,6 +100,7 @@ from brickv.plugin_system.plugins.thermocouple import device_class as thermocoup
 from brickv.plugin_system.plugins.thermocouple_v2 import device_class as thermocouple_v2
 from brickv.plugin_system.plugins.tilt import device_class as tilt
 from brickv.plugin_system.plugins.uv_light import device_class as uv_light
+from brickv.plugin_system.plugins.voc import device_class as voc
 from brickv.plugin_system.plugins.voltage import device_class as voltage
 from brickv.plugin_system.plugins.voltage_current import device_class as voltage_current
 from brickv.plugin_system.plugins.voltage_current_v2 import device_class as voltage_current_v2
@@ -149,6 +151,7 @@ device_classes = [
     io4,
     joystick,
     laser_range_finder,
+    lcd_128x64,
     lcd_16x2,
     lcd_20x4,
     led_strip,
@@ -205,6 +208,7 @@ device_classes = [
     thermocouple_v2,
     tilt,
     uv_light,
+    voc,
     voltage,
     voltage_current,
     voltage_current_v2,
