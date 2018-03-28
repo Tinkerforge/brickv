@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-27.      #
+# This file was automatically generated on 2018-03-28.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -118,27 +118,41 @@ class BrickletLCD128x64(Device):
         self.response_expected[BrickletLCD128x64.FUNCTION_READ_UID] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLCD128x64.FUNCTION_GET_IDENTITY] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletLCD128x64.CALLBACK_TOUCH_POSITION] = 'H H H'
-        self.callback_formats[BrickletLCD128x64.CALLBACK_TOUCH_GESTURE] = 'B I H H H H'
+        self.callback_formats[BrickletLCD128x64.CALLBACK_TOUCH_POSITION] = 'H H H I'
+        self.callback_formats[BrickletLCD128x64.CALLBACK_TOUCH_GESTURE] = 'B I H H H H I'
 
 
-    def write_pixels_low_level(self, column_start, row_start, column_end, row_end, pixels_length, pixels_chunk_offset, pixels_chunk_data):
+    def write_pixels_low_level(self, x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data):
         """
+        Writes pixels to the specified window.
 
+        The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are written
+        into the window line by line from left to right.
+
+        If automatic draw is enabled (default) the pixels are directly written to
+        the screen and only changes are updated. If you only need to update a few
+        pixels, only these pixels are updated on the screen, the rest stays the same.
+
+        If automatic draw is disabled the pixels are written to a buffer and the
+        buffer is transferred to the display only after :func:`Draw Buffered Frame`
+        is called.
+
+        Automatic draw can be configured with the :func:`Set Display Configuration`
+        function.
         """
-        column_start = int(column_start)
-        row_start = int(row_start)
-        column_end = int(column_end)
-        row_end = int(row_end)
+        x_start = int(x_start)
+        y_start = int(y_start)
+        x_end = int(x_end)
+        y_end = int(y_end)
         pixels_length = int(pixels_length)
         pixels_chunk_offset = int(pixels_chunk_offset)
         pixels_chunk_data = list(map(bool, pixels_chunk_data))
 
-        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_WRITE_PIXELS_LOW_LEVEL, (column_start, row_start, column_end, row_end, pixels_length, pixels_chunk_offset, pixels_chunk_data), 'B B B B H H 448!', '')
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_WRITE_PIXELS_LOW_LEVEL, (x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data), 'B B B B H H 448!', '')
 
     def clear_display(self):
         """
-
+        Clears the complete content of the display.
         """
         self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_CLEAR_DISPLAY, (), '', '')
 
@@ -148,6 +162,11 @@ class BrickletLCD128x64(Device):
 
         You can set a contrast value from 0 to 63, a backlight intensity value
         from 0 to 100 and you can invert the color (black/white) of the display.
+
+        If automatic draw is set to *true*, the display is automatically updated with every
+        call of :func:`Write Pixels` or :func:`Write Line`. If it is set to false, the
+        changes are written into a temporary buffer and only shown on the display after
+        a call of :func:`Draw Buffered Frame`.
 
         The default values are contrast 21, backlight intensity 100, inverting off
         and automatic draw on.
@@ -167,11 +186,8 @@ class BrickletLCD128x64(Device):
 
     def write_line(self, line, position, text):
         """
-        TODO: 22 chars because of space between char? or 26 chars and no space?
-
-
         Writes text to a specific line (0 to 7) with a specific position
-        (0 to 25). The text can have a maximum of 26 characters.
+        (0 to 21). The text can have a maximum of 22 characters.
 
         For example: (1, 10, "Hello") will write *Hello* in the middle of the
         second line of the display.
@@ -187,7 +203,14 @@ class BrickletLCD128x64(Device):
 
     def draw_buffered_frame(self, force_complete_redraw):
         """
+        Draws the currently buffered frame. Normally each call of :func:`Write Pixels` or
+        :func:`Write Line` draws directly onto the disply. If you turn automatic draw off
+        (:func:`Set Display Configuration`), the data is written in a temporary buffer and
+        only transferred to the display by calling this function.
 
+        Set the *force complete redraw* parameter to *true* to redraw the whole display
+        instead of only the changed parts. Normally it should not be necessary to set this to
+        *true*. It may only become necessary in case of stuck pixels because of errors.
         """
         force_complete_redraw = bool(force_complete_redraw)
 
@@ -195,8 +218,12 @@ class BrickletLCD128x64(Device):
 
     def get_touch_position(self):
         """
-        pressure = 0 => no touch
-        TBD
+        Returns the last valid touch position.
+
+        * *X*: Touch position on x-axis (0-127)
+        * *Y*: Touch position on y-axis (0-63)
+        * *Pressure*: Amount of pressure applied by the user (0-300).
+        * *Age*: Age of touch press in ms (how long ago it was).
         """
         return GetTouchPosition(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_TOUCH_POSITION, (), '', 'H H H I'))
 
@@ -228,7 +255,15 @@ class BrickletLCD128x64(Device):
 
     def get_touch_gesture(self):
         """
-        TBD
+        Returns one of four touch gestures that can be automatically detected by the Bricklet.
+
+        The gestures are swipes from left to right, right to left, top to bottom and bottom to top.
+
+        Additionally to the gestures a vector with a start and end position of the gesture is is
+        provided. You can use this vecotr do determine a more exact location of the gesture (e.g.
+        the swipe from top to bottom was on the left or right part of the screen).
+
+        The *age*-parameter corresponds to the age of gesture in ms (how long ago it was).
         """
         return GetTouchGesture(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_TOUCH_GESTURE, (), '', 'B I H H H H I'))
 
@@ -398,14 +433,28 @@ class BrickletLCD128x64(Device):
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-    def write_pixels(self, column_start, row_start, column_end, row_end, pixels):
+    def write_pixels(self, x_start, y_start, x_end, y_end, pixels):
         """
+        Writes pixels to the specified window.
 
+        The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are written
+        into the window line by line from left to right.
+
+        If automatic draw is enabled (default) the pixels are directly written to
+        the screen and only changes are updated. If you only need to update a few
+        pixels, only these pixels are updated on the screen, the rest stays the same.
+
+        If automatic draw is disabled the pixels are written to a buffer and the
+        buffer is transferred to the display only after :func:`Draw Buffered Frame`
+        is called.
+
+        Automatic draw can be configured with the :func:`Set Display Configuration`
+        function.
         """
-        column_start = int(column_start)
-        row_start = int(row_start)
-        column_end = int(column_end)
-        row_end = int(row_end)
+        x_start = int(x_start)
+        y_start = int(y_start)
+        x_end = int(x_end)
+        y_end = int(y_end)
         pixels = list(map(bool, pixels))
 
         if len(pixels) > 65535:
@@ -416,12 +465,12 @@ class BrickletLCD128x64(Device):
 
         if pixels_length == 0:
             pixels_chunk_data = [False] * 448
-            ret = self.write_pixels_low_level(column_start, row_start, column_end, row_end, pixels_length, pixels_chunk_offset, pixels_chunk_data)
+            ret = self.write_pixels_low_level(x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data)
         else:
             with self.stream_lock:
                 while pixels_chunk_offset < pixels_length:
                     pixels_chunk_data = create_chunk_data(pixels, pixels_chunk_offset, 448, False)
-                    ret = self.write_pixels_low_level(column_start, row_start, column_end, row_end, pixels_length, pixels_chunk_offset, pixels_chunk_data)
+                    ret = self.write_pixels_low_level(x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data)
                     pixels_chunk_offset += 448
 
         return ret

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-26.      #
+# This file was automatically generated on 2018-03-28.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -40,8 +40,8 @@ class BrickletLoadCellV2(Device):
     FUNCTION_GET_WEIGHT_CALLBACK_CONFIGURATION = 3
     FUNCTION_SET_MOVING_AVERAGE = 5
     FUNCTION_GET_MOVING_AVERAGE = 6
-    FUNCTION_SET_INFO_LED_CONFIGURATION = 7
-    FUNCTION_GET_INFO_LED_CONFIGURATION = 8
+    FUNCTION_SET_INFO_LED_CONFIG = 7
+    FUNCTION_GET_INFO_LED_CONFIG = 8
     FUNCTION_CALIBRATE = 9
     FUNCTION_TARE = 10
     FUNCTION_SET_CONFIGURATION = 11
@@ -64,9 +64,9 @@ class BrickletLoadCellV2(Device):
     THRESHOLD_OPTION_INSIDE = 'i'
     THRESHOLD_OPTION_SMALLER = '<'
     THRESHOLD_OPTION_GREATER = '>'
-    INFO_LED_CONFIGURATION_OFF = 0
-    INFO_LED_CONFIGURATION_ON = 1
-    INFO_LED_CONFIGURATION_HEARTBEAT = 2
+    INFO_LED_CONFIG_OFF = 0
+    INFO_LED_CONFIG_ON = 1
+    INFO_LED_CONFIG_SHOW_HEARTBEAT = 2
     RATE_10HZ = 0
     RATE_80HZ = 1
     GAIN_128X = 0
@@ -102,8 +102,8 @@ class BrickletLoadCellV2(Device):
         self.response_expected[BrickletLoadCellV2.FUNCTION_GET_WEIGHT_CALLBACK_CONFIGURATION] = BrickletLoadCellV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLoadCellV2.FUNCTION_SET_MOVING_AVERAGE] = BrickletLoadCellV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLoadCellV2.FUNCTION_GET_MOVING_AVERAGE] = BrickletLoadCellV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletLoadCellV2.FUNCTION_SET_INFO_LED_CONFIGURATION] = BrickletLoadCellV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletLoadCellV2.FUNCTION_GET_INFO_LED_CONFIGURATION] = BrickletLoadCellV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLoadCellV2.FUNCTION_SET_INFO_LED_CONFIG] = BrickletLoadCellV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLoadCellV2.FUNCTION_GET_INFO_LED_CONFIG] = BrickletLoadCellV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLoadCellV2.FUNCTION_CALIBRATE] = BrickletLoadCellV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLoadCellV2.FUNCTION_TARE] = BrickletLoadCellV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLoadCellV2.FUNCTION_SET_CONFIGURATION] = BrickletLoadCellV2.RESPONSE_EXPECTED_FALSE
@@ -204,20 +204,20 @@ class BrickletLoadCellV2(Device):
         """
         return self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_GET_MOVING_AVERAGE, (), '', 'H')
 
-    def set_info_led_configuration(self, configuration):
+    def set_info_led_config(self, config):
         """
         Configures the info LED to be either turned off, turned on, or blink in
         heartbeat mode.
         """
-        configuration = int(configuration)
+        config = int(config)
 
-        self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_SET_INFO_LED_CONFIGURATION, (configuration,), 'B', '')
+        self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_SET_INFO_LED_CONFIG, (config,), 'B', '')
 
-    def get_info_led_configuration(self):
+    def get_info_led_config(self):
         """
-        Returns the LED configuration as set by :func:`Set LED Configuration`
+        Returns the LED configuration as set by :func:`Set Info LED Config`
         """
-        return self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_GET_INFO_LED_CONFIGURATION, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_GET_INFO_LED_CONFIG, (), '', 'B')
 
     def calibrate(self, weight):
         """

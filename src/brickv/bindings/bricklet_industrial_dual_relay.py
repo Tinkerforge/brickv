@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-08.      #
+# This file was automatically generated on 2018-03-28.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -40,6 +40,7 @@ class BrickletIndustrialDualRelay(Device):
     FUNCTION_SET_MONOFLOP = 3
     FUNCTION_GET_MONOFLOP = 4
     FUNCTION_SET_SELECTED_STATE = 6
+    FUNCTION_GET_SELECTED_STATE = 7
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -83,6 +84,7 @@ class BrickletIndustrialDualRelay(Device):
         self.response_expected[BrickletIndustrialDualRelay.FUNCTION_SET_MONOFLOP] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDualRelay.FUNCTION_GET_MONOFLOP] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualRelay.FUNCTION_SET_SELECTED_STATE] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialDualRelay.FUNCTION_GET_SELECTED_STATE] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualRelay.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualRelay.FUNCTION_SET_BOOTLOADER_MODE] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualRelay.FUNCTION_GET_BOOTLOADER_MODE] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -167,6 +169,14 @@ class BrickletIndustrialDualRelay(Device):
         state = bool(state)
 
         self.ipcon.send_request(self, BrickletIndustrialDualRelay.FUNCTION_SET_SELECTED_STATE, (relay, state), 'B !', '')
+
+    def get_selected_state(self, relay):
+        """
+        TBD
+        """
+        relay = int(relay)
+
+        return self.ipcon.send_request(self, BrickletIndustrialDualRelay.FUNCTION_GET_SELECTED_STATE, (relay,), 'B', '!')
 
     def get_spitfp_error_count(self):
         """

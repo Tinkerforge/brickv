@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-08.      #
+# This file was automatically generated on 2018-03-28.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -111,21 +111,24 @@ class BrickletIndustrialDigitalIn4V2(Device):
         """
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_INPUT_VALUE, (), '', '4!')
 
-    def set_input_value_callback_configuration(self, enable, period, value_has_to_change):
+    def set_input_value_callback_configuration(self, pin, enable, period, value_has_to_change):
         """
 
         """
-        enable = list(map(bool, enable))
-        period = list(map(int, period))
-        value_has_to_change = list(map(bool, value_has_to_change))
+        pin = int(pin)
+        enable = int(enable)
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
 
-        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_INPUT_VALUE_CALLBACK_CONFIGURATION, (enable, period, value_has_to_change), '4! 4I 4!', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_INPUT_VALUE_CALLBACK_CONFIGURATION, (pin, enable, period, value_has_to_change), 'B B I !', '')
 
-    def get_input_value_callback_configuration(self):
+    def get_input_value_callback_configuration(self, pin):
         """
 
         """
-        return GetInputValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_INPUT_VALUE_CALLBACK_CONFIGURATION, (), '', '4! 4I 4!'))
+        pin = int(pin)
+
+        return GetInputValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_INPUT_VALUE_CALLBACK_CONFIGURATION, (pin,), 'B', '! I !'))
 
     def get_edge_count(self, pin, reset_counter):
         """
