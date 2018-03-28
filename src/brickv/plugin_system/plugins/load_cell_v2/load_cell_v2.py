@@ -143,7 +143,7 @@ class LoadCellV2(COMCUPluginBase):
         layout.addLayout(hlayout)
 
     def start(self):
-        async_call(self.lc.get_info_led_configuration, None, self.get_info_led_configuration_async, self.increase_error_count)
+        async_call(self.lc.get_info_led_config, None, self.get_info_led_config_async, self.increase_error_count)
         async_call(self.lc.get_configuration, None, self.get_configuration_async, self.increase_error_count)
         async_call(self.lc.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
         async_call(self.lc.get_weight, None, self.cb_weight, self.increase_error_count)
@@ -171,7 +171,7 @@ class LoadCellV2(COMCUPluginBase):
         self.gain = conf.gain
         self.rate_combo.setCurrentIndex(conf.rate)
 
-    def get_info_led_configuration_async(self, value):
+    def get_info_led_config_async(self, value):
         self.cbox_info_led_config.setCurrentIndex(value)
 
     def button_calibration_clicked(self):
@@ -193,10 +193,10 @@ class LoadCellV2(COMCUPluginBase):
     '''
 
     def cbox_info_led_config_changed(self, index):
-        self.lc.set_info_led_configuration(index)
+        self.lc.set_info_led_config(index)
 
-        async_call(self.lc.get_info_led_configuration,
-                   None, self.get_info_led_configuration_async,
+        async_call(self.lc.get_info_led_config,
+                   None, self.get_info_led_config_async,
                    self.increase_error_count)
 
     def new_config(self, value):
