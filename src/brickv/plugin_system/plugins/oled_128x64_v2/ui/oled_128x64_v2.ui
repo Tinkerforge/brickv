@@ -347,7 +347,7 @@
      <item>
       <widget class="QSlider" name="contrast_slider">
        <property name="maximum">
-        <number>63</number>
+        <number>255</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -357,7 +357,7 @@
      <item>
       <widget class="QSpinBox" name="contrast_spin">
        <property name="maximum">
-        <number>63</number>
+        <number>255</number>
        </property>
       </widget>
      </item>
