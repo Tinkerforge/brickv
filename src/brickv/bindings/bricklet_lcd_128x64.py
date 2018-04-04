@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-28.      #
+# This file was automatically generated on 2018-04-04.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -18,6 +18,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
+ReadPixelsLowLevel = namedtuple('ReadPixelsLowLevel', ['pixels_length', 'pixels_chunk_offset', 'pixels_chunk_data'])
 GetDisplayConfiguration = namedtuple('DisplayConfiguration', ['contrast', 'backlight', 'invert', 'automatic_draw'])
 GetTouchPosition = namedtuple('TouchPosition', ['pressure', 'x', 'y', 'age'])
 GetTouchPositionCallbackConfiguration = namedtuple('TouchPositionCallbackConfiguration', ['period', 'value_has_to_change'])
@@ -35,22 +36,23 @@ class BrickletLCD128x64(Device):
     DEVICE_DISPLAY_NAME = 'LCD 128x64 Bricklet'
     DEVICE_URL_PART = 'lcd_128x64' # internal
 
-    CALLBACK_TOUCH_POSITION = 10
-    CALLBACK_TOUCH_GESTURE = 14
+    CALLBACK_TOUCH_POSITION = 11
+    CALLBACK_TOUCH_GESTURE = 15
 
 
     FUNCTION_WRITE_PIXELS_LOW_LEVEL = 1
-    FUNCTION_CLEAR_DISPLAY = 2
-    FUNCTION_SET_DISPLAY_CONFIGURATION = 3
-    FUNCTION_GET_DISPLAY_CONFIGURATION = 4
-    FUNCTION_WRITE_LINE = 5
-    FUNCTION_DRAW_BUFFERED_FRAME = 6
-    FUNCTION_GET_TOUCH_POSITION = 7
-    FUNCTION_SET_TOUCH_POSITION_CALLBACK_CONFIGURATION = 8
-    FUNCTION_GET_TOUCH_POSITION_CALLBACK_CONFIGURATION = 9
-    FUNCTION_GET_TOUCH_GESTURE = 11
-    FUNCTION_SET_TOUCH_GESTURE_CALLBACK_CONFIGURATION = 12
-    FUNCTION_GET_TOUCH_GESTURE_CALLBACK_CONFIGURATION = 13
+    FUNCTION_READ_PIXELS_LOW_LEVEL = 2
+    FUNCTION_CLEAR_DISPLAY = 3
+    FUNCTION_SET_DISPLAY_CONFIGURATION = 4
+    FUNCTION_GET_DISPLAY_CONFIGURATION = 5
+    FUNCTION_WRITE_LINE = 6
+    FUNCTION_DRAW_BUFFERED_FRAME = 7
+    FUNCTION_GET_TOUCH_POSITION = 8
+    FUNCTION_SET_TOUCH_POSITION_CALLBACK_CONFIGURATION = 9
+    FUNCTION_GET_TOUCH_POSITION_CALLBACK_CONFIGURATION = 10
+    FUNCTION_GET_TOUCH_GESTURE = 12
+    FUNCTION_SET_TOUCH_GESTURE_CALLBACK_CONFIGURATION = 13
+    FUNCTION_GET_TOUCH_GESTURE_CALLBACK_CONFIGURATION = 14
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -94,6 +96,7 @@ class BrickletLCD128x64(Device):
         self.api_version = (2, 0, 0)
 
         self.response_expected[BrickletLCD128x64.FUNCTION_WRITE_PIXELS_LOW_LEVEL] = BrickletLCD128x64.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_READ_PIXELS_LOW_LEVEL] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLCD128x64.FUNCTION_CLEAR_DISPLAY] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLCD128x64.FUNCTION_SET_DISPLAY_CONFIGURATION] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLCD128x64.FUNCTION_GET_DISPLAY_CONFIGURATION] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -149,6 +152,17 @@ class BrickletLCD128x64(Device):
         pixels_chunk_data = list(map(bool, pixels_chunk_data))
 
         self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_WRITE_PIXELS_LOW_LEVEL, (x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data), 'B B B B H H 448!', '')
+
+    def read_pixels_low_level(self, x_start, y_start, x_end, y_end):
+        """
+
+        """
+        x_start = int(x_start)
+        y_start = int(y_start)
+        x_end = int(x_end)
+        y_end = int(y_end)
+
+        return ReadPixelsLowLevel(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_READ_PIXELS_LOW_LEVEL, (x_start, y_start, x_end, y_end), 'B B B B', 'H H 480!'))
 
     def clear_display(self):
         """
@@ -474,6 +488,36 @@ class BrickletLCD128x64(Device):
                     pixels_chunk_offset += 448
 
         return ret
+
+    def read_pixels(self, x_start, y_start, x_end, y_end):
+        """
+
+        """
+        x_start = int(x_start)
+        y_start = int(y_start)
+        x_end = int(x_end)
+        y_end = int(y_end)
+
+        with self.stream_lock:
+            ret = self.read_pixels_low_level(x_start, y_start, x_end, y_end)
+            pixels_length = ret.pixels_length
+            pixels_out_of_sync = ret.pixels_chunk_offset != 0
+            pixels_data = ret.pixels_chunk_data
+
+            while not pixels_out_of_sync and len(pixels_data) < pixels_length:
+                ret = self.read_pixels_low_level(x_start, y_start, x_end, y_end)
+                pixels_length = ret.pixels_length
+                pixels_out_of_sync = ret.pixels_chunk_offset != len(pixels_data)
+                pixels_data += ret.pixels_chunk_data
+
+            if pixels_out_of_sync: # discard remaining stream to bring it back in-sync
+                while ret.pixels_chunk_offset + 480 < pixels_length:
+                    ret = self.read_pixels_low_level(x_start, y_start, x_end, y_end)
+                    pixels_length = ret.pixels_length
+
+                raise Error(Error.STREAM_OUT_OF_SYNC, 'Pixels stream is out-of-sync')
+
+        return pixels_data[:pixels_length]
 
     def register_callback(self, callback_id, function):
         """

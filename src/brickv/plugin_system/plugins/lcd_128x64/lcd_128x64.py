@@ -217,8 +217,19 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
         self.backlight_slider.setValue(conf.backlight)
         self.invert_checkbox.setChecked(conf.invert)
 
+    def cb_read_pixels(self, pixels):
+        for i in range(64):
+            for j in range(128):
+                if pixels[i*128 + j]:
+                    self.scribble_area.image.setPixel(j, i, 0xFFFFFF)
+                else:
+                    self.scribble_area.image.setPixel(j, i, 0)
+
+        self.scribble_area.update()
+
     def start(self):
         async_call(self.lcd.get_display_configuration, None, self.cb_display_configuration, self.increase_error_count)
+        async_call(self.oled.read_pixels, (0, 0, 127, 63), self.cb_read_pixels, self.increase_error_count)
         self.cbe_touch_position.set_period(25)
         self.cbe_touch_gesture.set_period(25)
 
