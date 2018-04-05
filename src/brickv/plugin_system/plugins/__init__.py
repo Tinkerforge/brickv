@@ -96,6 +96,7 @@ from brickv.plugin_system.plugins.stepper import device_class as stepper
 from brickv.plugin_system.plugins.temperature import device_class as temperature
 from brickv.plugin_system.plugins.temperature_ir import device_class as temperature_ir
 from brickv.plugin_system.plugins.temperature_ir_v2 import device_class as temperature_ir_v2
+from brickv.plugin_system.plugins.temperature_v2 import device_class as temperature_v2
 from brickv.plugin_system.plugins.thermal_imaging import device_class as thermal_imaging
 from brickv.plugin_system.plugins.thermocouple import device_class as thermocouple
 from brickv.plugin_system.plugins.thermocouple_v2 import device_class as thermocouple_v2
@@ -205,6 +206,7 @@ device_classes = [
     temperature,
     temperature_ir,
     temperature_ir_v2,
+    temperature_v2,
     thermal_imaging,
     thermocouple,
     thermocouple_v2,
