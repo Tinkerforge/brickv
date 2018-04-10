@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-04-05.      #
+# This file was automatically generated on 2018-04-10.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -24,7 +24,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletTemperatureV2(Device):
     """
-    Measures ambient temperature with 0.1°C accuracy
+    Measures ambient temperature with 0.2°C accuracy
     """
 
     DEVICE_IDENTIFIER = 2113

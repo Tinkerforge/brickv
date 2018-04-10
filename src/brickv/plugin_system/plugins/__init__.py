@@ -7,6 +7,7 @@ from brickv.plugin_system.plugins.analog_in_v2 import device_class as analog_in_
 from brickv.plugin_system.plugins.analog_in_v3 import device_class as analog_in_v3
 from brickv.plugin_system.plugins.analog_out import device_class as analog_out
 from brickv.plugin_system.plugins.analog_out_v2 import device_class as analog_out_v2
+from brickv.plugin_system.plugins.analog_out_v3 import device_class as analog_out_v3
 from brickv.plugin_system.plugins.barometer import device_class as barometer
 from brickv.plugin_system.plugins.can import device_class as can
 from brickv.plugin_system.plugins.can_v2 import device_class as can_v2
@@ -118,6 +119,7 @@ device_classes = [
     analog_in_v3,
     analog_out,
     analog_out_v2,
+    analog_out_v3,
     barometer,
     can,
     can_v2,

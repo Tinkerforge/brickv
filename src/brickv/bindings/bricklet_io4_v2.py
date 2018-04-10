@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-04-05.      #
+# This file was automatically generated on 2018-04-10.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -96,7 +96,7 @@ class BrickletIO4V2(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 1)
+        self.api_version = (2, 0, 0)
 
         self.response_expected[BrickletIO4V2.FUNCTION_SET_VALUE] = BrickletIO4V2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIO4V2.FUNCTION_GET_VALUE] = BrickletIO4V2.RESPONSE_EXPECTED_ALWAYS_TRUE

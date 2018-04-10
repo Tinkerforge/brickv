@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-04-04.      #
+# This file was automatically generated on 2018-04-10.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -131,7 +131,19 @@ class BrickletOLED128x64V2(Device):
 
     def read_pixels_low_level(self, x_start, y_start, x_end, y_end):
         """
+        Reads pixels from the specified window.
 
+        The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are read
+        from the window line by line from left to right.
+
+        If automatic draw is enabled the pixels that are read are always the same that are
+        shown on the display.
+
+        If automatic draw is disabled the pixels are read from the internal buffer
+        (see :func:`Draw Buffered Frame`).
+
+        Automatic draw can be configured with the :func:`Set Display Configuration`
+        function.
         """
         x_start = int(x_start)
         y_start = int(y_start)
@@ -150,15 +162,15 @@ class BrickletOLED128x64V2(Device):
         """
         Sets the configuration of the display.
 
-        You can set a contrast value from 0 to 63, a backlight intensity value
-        from 0 to 100 and you can invert the color (black/white) of the display.
+        You can set a contrast value from 0 to 255
+        and you can invert the color (black/white) of the display.
 
         If automatic draw is set to *true*, the display is automatically updated with every
         call of :func:`Write Pixels` or :func:`Write Line`. If it is set to false, the
         changes are written into a temporary buffer and only shown on the display after
         a call of :func:`Draw Buffered Frame`.
 
-        The default values are contrast 21, inverting off
+        The default values are contrast 143, inverting off
         and automatic draw on.
         """
         contrast = int(contrast)
@@ -389,7 +401,19 @@ class BrickletOLED128x64V2(Device):
 
     def read_pixels(self, x_start, y_start, x_end, y_end):
         """
+        Reads pixels from the specified window.
 
+        The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are read
+        from the window line by line from left to right.
+
+        If automatic draw is enabled the pixels that are read are always the same that are
+        shown on the display.
+
+        If automatic draw is disabled the pixels are read from the internal buffer
+        (see :func:`Draw Buffered Frame`).
+
+        Automatic draw can be configured with the :func:`Set Display Configuration`
+        function.
         """
         x_start = int(x_start)
         y_start = int(y_start)
