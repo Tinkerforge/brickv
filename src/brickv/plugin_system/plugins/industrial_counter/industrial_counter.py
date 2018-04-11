@@ -126,6 +126,11 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
         pos += 1
         self.labels_pin_value  = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
 
+        self.btn_ilc_apply.clicked.connect(self.btn_ilc_apply_clicked)
+
+    def btn_ilc_apply_clicked(self):
+        self.counter.set_info_led_config(self.cbox_ilc_l.currentIndex(), self.cbox_ilc_c.currentIndex())
+
     def cb_signal(self, data):
         for i in range(4):
             self.labels_duty_cycle[i].setText(str(data.duty_cycle[i]))

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>688</width>
-    <height>369</height>
+    <height>404</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,75 +16,25 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="main_grid">
-     <item row="11" column="4">
-      <widget class="QLabel" name="label_34">
+     <item row="1" column="3">
+      <widget class="QCheckBox" name="checkBox_3">
        <property name="text">
-        <string>TBD</string>
+        <string>Enable</string>
        </property>
       </widget>
      </item>
-     <item row="10" column="4">
-      <widget class="QLabel" name="label_33">
+     <item row="1" column="4">
+      <widget class="QCheckBox" name="checkBox_4">
        <property name="text">
-        <string>TBD</string>
+        <string>Enable</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Channel 0</string>
-       </property>
-      </widget>
+     <item row="3" column="1">
+      <widget class="QComboBox" name="comboBox_5"/>
      </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Channel 1</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Channel 2</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="4">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Channel 3</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Duty Cycle Prescaler</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>Count Direction</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>Count Edge</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_9">
-       <property name="text">
-        <string>Frequency Integration Time</string>
-       </property>
-      </widget>
+     <item row="4" column="2">
+      <widget class="QComboBox" name="comboBox_9"/>
      </item>
      <item row="7" column="0">
       <widget class="QLabel" name="label_10">
@@ -93,17 +43,87 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="0">
-      <widget class="QLabel" name="label_11">
+     <item row="5" column="2">
+      <widget class="QComboBox" name="comboBox_10"/>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Duty Cycle</string>
+        <string>Channel 1</string>
        </property>
       </widget>
+     </item>
+     <item row="9" column="1">
+      <widget class="QLabel" name="label_17">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QComboBox" name="comboBox"/>
+     </item>
+     <item row="2" column="3">
+      <widget class="QComboBox" name="comboBox_3"/>
+     </item>
+     <item row="10" column="3">
+      <widget class="QLabel" name="label_28">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="3">
+      <widget class="QComboBox" name="comboBox_11"/>
      </item>
      <item row="9" column="0">
       <widget class="QLabel" name="label_12">
        <property name="text">
         <string>Period</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QComboBox" name="comboBox_8"/>
+     </item>
+     <item row="4" column="3">
+      <widget class="QComboBox" name="comboBox_12"/>
+     </item>
+     <item row="9" column="4">
+      <widget class="QLabel" name="label_32">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_35">
+       <property name="text">
+        <string>Enable Counter</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="checkBox">
+       <property name="text">
+        <string>Enable</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QCheckBox" name="checkBox_2">
+       <property name="text">
+        <string>Enable</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QComboBox" name="comboBox_6"/>
+     </item>
+     <item row="11" column="4">
+      <widget class="QLabel" name="label_34">
+       <property name="text">
+        <string>TBD</string>
        </property>
       </widget>
      </item>
@@ -114,77 +134,26 @@
        </property>
       </widget>
      </item>
-     <item row="10" column="0">
-      <widget class="QLabel" name="label_13">
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>Frequency</string>
+        <string>Count Direction</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QComboBox" name="comboBox"/>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Channel 0</string>
+       </property>
+      </widget>
      </item>
-     <item row="2" column="3">
-      <widget class="QComboBox" name="comboBox_3"/>
-     </item>
-     <item row="2" column="4">
-      <widget class="QComboBox" name="comboBox_4"/>
-     </item>
-     <item row="3" column="1">
-      <widget class="QComboBox" name="comboBox_5"/>
-     </item>
-     <item row="4" column="1">
-      <widget class="QComboBox" name="comboBox_6"/>
-     </item>
-     <item row="5" column="1">
-      <widget class="QComboBox" name="comboBox_7"/>
-     </item>
-     <item row="3" column="2">
-      <widget class="QComboBox" name="comboBox_8"/>
-     </item>
-     <item row="4" column="2">
-      <widget class="QComboBox" name="comboBox_9"/>
-     </item>
-     <item row="5" column="2">
-      <widget class="QComboBox" name="comboBox_10"/>
-     </item>
-     <item row="3" column="3">
-      <widget class="QComboBox" name="comboBox_11"/>
-     </item>
-     <item row="5" column="3">
-      <widget class="QComboBox" name="comboBox_13"/>
-     </item>
-     <item row="4" column="3">
-      <widget class="QComboBox" name="comboBox_12"/>
-     </item>
-     <item row="2" column="2">
-      <widget class="QComboBox" name="comboBox_2"/>
-     </item>
-     <item row="3" column="4">
-      <widget class="QComboBox" name="comboBox_14"/>
-     </item>
-     <item row="7" column="1">
-      <widget class="QLabel" name="label_15">
+     <item row="10" column="4">
+      <widget class="QLabel" name="label_33">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
-     </item>
-     <item row="4" column="4">
-      <widget class="QComboBox" name="comboBox_15"/>
-     </item>
-     <item row="6" column="0" colspan="5">
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
      <item row="5" column="4">
       <widget class="QComboBox" name="comboBox_16"/>
@@ -196,19 +165,77 @@
        </property>
       </widget>
      </item>
-     <item row="9" column="1">
-      <widget class="QLabel" name="label_17">
+     <item row="10" column="0">
+      <widget class="QLabel" name="label_13">
+       <property name="text">
+        <string>Frequency</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QComboBox" name="comboBox_2"/>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>Frequency Integration Time</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="3">
+      <widget class="QLabel" name="label_26">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
-     <item row="10" column="1">
-      <widget class="QLabel" name="label_18">
+     <item row="9" column="3">
+      <widget class="QLabel" name="label_27">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
+     </item>
+     <item row="11" column="3">
+      <widget class="QLabel" name="label_29">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="4">
+      <widget class="QLabel" name="label_30">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="4">
+      <widget class="QLabel" name="label_31">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Count Edge</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="4">
+      <widget class="QComboBox" name="comboBox_14"/>
+     </item>
+     <item row="7" column="1">
+      <widget class="QLabel" name="label_15">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="3">
+      <widget class="QComboBox" name="comboBox_13"/>
      </item>
      <item row="11" column="1">
       <widget class="QLabel" name="label_19">
@@ -219,6 +246,20 @@
      </item>
      <item row="7" column="2">
       <widget class="QLabel" name="label_20">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Channel 2</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="1">
+      <widget class="QLabel" name="label_18">
        <property name="text">
         <string>TBD</string>
        </property>
@@ -259,91 +300,132 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="3">
-      <widget class="QLabel" name="label_26">
+     <item row="13" column="0">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>TBD</string>
+        <string>Info LED Configuration:</string>
        </property>
       </widget>
      </item>
-     <item row="9" column="3">
-      <widget class="QLabel" name="label_27">
+     <item row="5" column="1">
+      <widget class="QComboBox" name="comboBox_7"/>
+     </item>
+     <item row="4" column="4">
+      <widget class="QComboBox" name="comboBox_15"/>
+     </item>
+     <item row="6" column="0" colspan="5">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_8">
        <property name="text">
-        <string>TBD</string>
+        <string>Duty Cycle Prescaler</string>
        </property>
       </widget>
      </item>
-     <item row="10" column="3">
-      <widget class="QLabel" name="label_28">
+     <item row="0" column="4">
+      <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>TBD</string>
+        <string>Channel 3</string>
        </property>
       </widget>
      </item>
-     <item row="11" column="3">
-      <widget class="QLabel" name="label_29">
+     <item row="8" column="0">
+      <widget class="QLabel" name="label_11">
        <property name="text">
-        <string>TBD</string>
+        <string>Duty Cycle</string>
        </property>
       </widget>
      </item>
-     <item row="7" column="4">
-      <widget class="QLabel" name="label_30">
-       <property name="text">
-        <string>TBD</string>
+     <item row="2" column="4">
+      <widget class="QComboBox" name="comboBox_4"/>
+     </item>
+     <item row="12" column="0" colspan="5">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="8" column="4">
-      <widget class="QLabel" name="label_31">
-       <property name="text">
-        <string>TBD</string>
-       </property>
+     <item row="13" column="1">
+      <widget class="QComboBox" name="cbox_ilc_l">
+       <item>
+        <property name="text">
+         <string>Info LED 0</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Info LED 1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Info LED 2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Info LED 3</string>
+        </property>
+       </item>
       </widget>
      </item>
-     <item row="9" column="4">
-      <widget class="QLabel" name="label_32">
-       <property name="text">
-        <string>TBD</string>
-       </property>
+     <item row="13" column="2">
+      <widget class="QComboBox" name="cbox_ilc_c">
+       <item>
+        <property name="text">
+         <string>Off</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>On</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Heartbeat</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Channel State</string>
+        </property>
+       </item>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_35">
+     <item row="13" column="3" colspan="2">
+      <widget class="QPushButton" name="btn_ilc_apply">
        <property name="text">
-        <string>Enable Counter</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QCheckBox" name="checkBox">
-       <property name="text">
-        <string>Enable</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QCheckBox" name="checkBox_2">
-       <property name="text">
-        <string>Enable</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QCheckBox" name="checkBox_3">
-       <property name="text">
-        <string>Enable</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="4">
-      <widget class="QCheckBox" name="checkBox_4">
-       <property name="text">
-        <string>Enable</string>
+        <string>Apply</string>
        </property>
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-08.      #
+# This file was automatically generated on 2018-04-11.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -35,8 +35,8 @@ class BrickletIndustrialCounter(Device):
     DEVICE_DISPLAY_NAME = 'Industrial Counter Bricklet'
     DEVICE_URL_PART = 'industrial_counter' # internal
 
-    CALLBACK_ALL_COUNTER = 17
-    CALLBACK_ALL_SIGNAL_DATA = 18
+    CALLBACK_ALL_COUNTER = 19
+    CALLBACK_ALL_SIGNAL_DATA = 20
 
 
     FUNCTION_GET_COUNTER = 1
@@ -55,6 +55,8 @@ class BrickletIndustrialCounter(Device):
     FUNCTION_GET_ALL_COUNTER_CALLBACK_CONFIGURATION = 14
     FUNCTION_SET_ALL_SIGNAL_DATA_CALLBACK_CONFIGURATION = 15
     FUNCTION_GET_ALL_SIGNAL_DATA_CALLBACK_CONFIGURATION = 16
+    FUNCTION_SET_INFO_LED_CONFIG = 17
+    FUNCTION_GET_INFO_LED_CONFIG = 18
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -106,6 +108,10 @@ class BrickletIndustrialCounter(Device):
     FREQUENCY_INTEGRATION_TIME_16384_MS = 7
     FREQUENCY_INTEGRATION_TIME_32768_MS = 8
     FREQUENCY_INTEGRATION_TIME_AUTO = 255
+    INFO_LED_CONFIG_OFF = 0
+    INFO_LED_CONFIG_ON = 1
+    INFO_LED_CONFIG_SHOW_HEARTBEAT = 2
+    INFO_LED_CONFIG_SHOW_CHANNEL_STATUS = 3
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -147,6 +153,8 @@ class BrickletIndustrialCounter(Device):
         self.response_expected[BrickletIndustrialCounter.FUNCTION_GET_ALL_COUNTER_CALLBACK_CONFIGURATION] = BrickletIndustrialCounter.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialCounter.FUNCTION_SET_ALL_SIGNAL_DATA_CALLBACK_CONFIGURATION] = BrickletIndustrialCounter.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletIndustrialCounter.FUNCTION_GET_ALL_SIGNAL_DATA_CALLBACK_CONFIGURATION] = BrickletIndustrialCounter.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialCounter.FUNCTION_SET_INFO_LED_CONFIG] = BrickletIndustrialCounter.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialCounter.FUNCTION_GET_INFO_LED_CONFIG] = BrickletIndustrialCounter.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialCounter.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletIndustrialCounter.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialCounter.FUNCTION_SET_BOOTLOADER_MODE] = BrickletIndustrialCounter.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialCounter.FUNCTION_GET_BOOTLOADER_MODE] = BrickletIndustrialCounter.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -289,6 +297,23 @@ class BrickletIndustrialCounter(Device):
         TODO
         """
         return GetAllSignalDataCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_SIGNAL_DATA_CALLBACK_CONFIGURATION, (), '', 'I !'))
+
+    def set_info_led_config(self, led, config):
+        """
+
+        """
+        led = int(led)
+        config = int(config)
+
+        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_INFO_LED_CONFIG, (led, config), 'B B', '')
+
+    def get_info_led_config(self, led):
+        """
+        Returns the Info LED configuration as set by :func:`Set Info LED Config`
+        """
+        led = int(led)
+
+        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_INFO_LED_CONFIG, (led,), 'B', 'B')
 
     def get_spitfp_error_count(self):
         """
