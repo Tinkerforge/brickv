@@ -7,26 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>681</width>
-    <height>185</height>
+    <height>230</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
@@ -278,6 +265,82 @@
       <widget class="QPushButton" name="monoflop_go">
        <property name="text">
         <string>Go</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Info LED Configuration:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cbox_ilc_l">
+       <item>
+        <property name="text">
+         <string>Info LED 0</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Info LED 1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Info LED 2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Info LED 3</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cbox_ilc_c">
+       <item>
+        <property name="text">
+         <string>Off</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>On</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Heartbeat</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Channel Status</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_ilc_apply">
+       <property name="text">
+        <string>Apply</string>
        </property>
       </widget>
      </item>
