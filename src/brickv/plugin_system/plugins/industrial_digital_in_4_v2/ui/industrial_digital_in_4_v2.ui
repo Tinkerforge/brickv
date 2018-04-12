@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>IndustrialQuadRelayV2</class>
- <widget class="QWidget" name="IndustrialQuadRelayV2">
+ <class>IndustrialDigitalIn4V2</class>
+ <widget class="QWidget" name="IndustrialDigitalIn4V2">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>681</width>
-    <height>230</height>
+    <width>650</width>
+    <height>169</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,9 +19,9 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_13">
        <item>
-        <widget class="QLabel" name="b0_label">
+        <widget class="QLabel" name="lbl_stat_ch0">
          <property name="text">
-          <string>0</string>
+          <string>Channel-0</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -29,7 +29,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="b0_icon">
+        <widget class="QLabel" name="lbl_stat_i_ch0">
          <property name="text">
           <string/>
          </property>
@@ -39,9 +39,12 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="b0">
+        <widget class="QLabel" name="lbl_stat_v_ch0">
          <property name="text">
-          <string>Switch On</string>
+          <string>-</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -57,9 +60,9 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_10">
        <item>
-        <widget class="QLabel" name="b1_label">
+        <widget class="QLabel" name="lbl_stat_ch1">
          <property name="text">
-          <string>1</string>
+          <string>Channel-1</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -67,7 +70,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="b1_icon">
+        <widget class="QLabel" name="lbl_stat_i_ch1">
          <property name="text">
           <string/>
          </property>
@@ -77,9 +80,12 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="b1">
+        <widget class="QLabel" name="lbl_stat_v_ch1">
          <property name="text">
-          <string>Switch On</string>
+          <string>-</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -95,9 +101,9 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_11">
        <item>
-        <widget class="QLabel" name="b2_label">
+        <widget class="QLabel" name="lbl_stat_ch2">
          <property name="text">
-          <string>2</string>
+          <string>Channel-2</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -105,7 +111,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="b2_icon">
+        <widget class="QLabel" name="lbl_stat_i_ch2">
          <property name="text">
           <string/>
          </property>
@@ -115,9 +121,12 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="b2">
+        <widget class="QLabel" name="lbl_stat_v_ch2">
          <property name="text">
-          <string>Switch On</string>
+          <string>-</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -133,9 +142,9 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_12">
        <item>
-        <widget class="QLabel" name="b3_label">
+        <widget class="QLabel" name="lbl_stat_ch3">
          <property name="text">
-          <string>3</string>
+          <string>Channel-3</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -143,7 +152,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="b3_icon">
+        <widget class="QLabel" name="lbl_stat_i_ch3">
          <property name="text">
           <string/>
          </property>
@@ -153,9 +162,12 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="b3">
+        <widget class="QLabel" name="lbl_stat_v_ch3">
          <property name="text">
-          <string>Switch On</string>
+          <string>-</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -171,150 +183,9 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,0,1,0">
-     <item>
-      <widget class="QLabel" name="monoflop_label1">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Monoflop:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="monoflop_pin">
-       <property name="sizeAdjustPolicy">
-        <enum>QComboBox::AdjustToContents</enum>
-       </property>
-       <item>
-        <property name="text">
-         <string>Pin 0</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Pin 1</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Pin 2</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Pin 3</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_23">
-       <item>
-        <widget class="QLabel" name="monoflop_label2">
-         <property name="text">
-          <string>Time [ms]:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>State:</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_22">
-       <item>
-        <widget class="QSpinBox" name="monoflop_time">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>2147483647</number>
-         </property>
-         <property name="value">
-          <number>1000</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="monoflop_state">
-         <item>
-          <property name="text">
-           <string>On</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Off</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QPushButton" name="monoflop_go">
-       <property name="text">
-        <string>Go</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Info LED Configuration:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="cbox_ilc_l">
-       <item>
-        <property name="text">
-         <string>Info LED 0</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Info LED 1</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Info LED 2</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Info LED 3</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="cbox_ilc_c">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="2">
+      <widget class="QComboBox" name="cbox_lc_c">
        <item>
         <property name="text">
          <string>Off</string>
@@ -337,24 +208,88 @@
        </item>
       </widget>
      </item>
-     <item>
-      <widget class="QPushButton" name="btn_ilc_apply">
+     <item row="0" column="0">
+      <widget class="QLabel" name="lbl_iv_period">
+       <property name="text">
+        <string>Input Value Changed Period:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="cbox_lc_l">
+       <item>
+        <property name="text">
+         <string>Info LED 0</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Info LED 1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Info LED 2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Info LED 3</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QPushButton" name="btn_lc_apply">
        <property name="text">
         <string>Apply</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QPushButton" name="btn_iv_period_apply">
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" colspan="2">
+      <widget class="QSpinBox" name="sbox_iv_period">
+       <property name="suffix">
+        <string> ms</string>
+       </property>
+       <property name="prefix">
+        <string> </string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>2147483647</number>
+       </property>
+       <property name="value">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="lbl_lc">
+       <property name="text">
+        <string>Info LED Configuration:</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer_2">
+    <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>0</width>
-       <height>0</height>
+       <width>20</width>
+       <height>40</height>
       </size>
      </property>
     </spacer>

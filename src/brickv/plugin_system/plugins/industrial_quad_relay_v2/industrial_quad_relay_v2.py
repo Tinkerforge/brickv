@@ -62,6 +62,7 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
 
         self.monoflop_pin.currentIndexChanged.connect(self.monoflop_pin_changed)
         self.monoflop_go.clicked.connect(self.monoflop_go_clicked)
+        self.btn_ilc_apply.clicked.connect(self.btn_ilc_apply_clicked)
         self.monoflop_time_before = [1000] * 4
         self.monoflop_pending = [False] * 4
 
@@ -179,6 +180,9 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
             self.relay_button_icons[pin].setPixmap(self.open_pixmap)
 
         self.update_timer.start()
+
+    def btn_ilc_apply_clicked(self):
+        self.iqr.set_info_led_config(self.cbox_ilc_l.currentIndex(), self.cbox_ilc_c.currentIndex())
 
     def update_async(self, pin, value, time, time_remaining):
         if self.monoflop_pending[pin]:
