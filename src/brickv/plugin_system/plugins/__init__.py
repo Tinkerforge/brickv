@@ -32,6 +32,7 @@ from brickv.plugin_system.plugins.humidity_v2 import device_class as humidity_v2
 from brickv.plugin_system.plugins.imu import device_class as imu
 from brickv.plugin_system.plugins.imu_v2 import device_class as imu_v2
 from brickv.plugin_system.plugins.industrial_analog_out import device_class as industrial_analog_out
+from brickv.plugin_system.plugins.industrial_analog_out_v2 import device_class as industrial_analog_out_v2
 from brickv.plugin_system.plugins.industrial_counter import device_class as industrial_counter
 from brickv.plugin_system.plugins.industrial_digital_in_4 import device_class as industrial_digital_in_4
 from brickv.plugin_system.plugins.industrial_digital_out_4 import device_class as industrial_digital_out_4
@@ -144,6 +145,7 @@ device_classes = [
     imu,
     imu_v2,
     industrial_analog_out,
+    industrial_analog_out_v2,
     industrial_counter,
     industrial_digital_in_4,
     industrial_digital_out_4,
