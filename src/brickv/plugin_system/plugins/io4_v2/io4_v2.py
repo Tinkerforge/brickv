@@ -37,6 +37,8 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
 
         self.io = self.device
 
+        self.on_focus = False
+
         self.ch_current_config = {
                                     0: None,
                                     1: None,
@@ -118,11 +120,13 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
         self.cbox_cfg_ch_dir.currentIndexChanged.connect(self.cbox_cfg_ch_dir_changed)
 
     def start(self):
+        self.on_focus = True
         self.cbox_cfg_ch_changed(self.cbox_cfg_ch.currentIndex())
         self.ch_status_update_timeout()
         self.iv_cb_timeout()
 
     def stop(self):
+        self.on_focus = False
         self.ch_status_update_timer.stop()
         self.iv_cb_timer.stop()
 
@@ -206,6 +210,10 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
 
     def ch_status_update_timeout(self):
         self.ch_status_update_timer.stop()
+
+        if not self.on_focus:
+            return
+
         self.gen_ch_status_update_timeout = self.generator_ch_status_update_timeout()
         self.gen_ch_status_update_timeout.next()
 
@@ -242,6 +250,10 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
 
     def iv_cb_timeout(self):
         self.iv_cb_timer.stop()
+
+        if not self.on_focus:
+            return
+
         self.gen_iv_cb_timeout = self.generator_iv_cb_timeout()
         self.gen_iv_cb_timeout.next()
 
