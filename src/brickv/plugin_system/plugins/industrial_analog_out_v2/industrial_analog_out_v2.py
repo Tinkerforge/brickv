@@ -163,5 +163,5 @@ class IndustrialAnalogOutV2(COMCUPluginBase, Ui_IndustrialAnalogOutV2):
         self.box_current_range.setCurrentIndex(conf.current_range)
         self.new_configuration()
 
-    def cb_is_enabled(self, enabled):
+    def cb_get_enabled(self, enabled):
         self.checkbox_enable.setChecked(enabled)
