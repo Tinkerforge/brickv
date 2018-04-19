@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-28.      #
+# This file was automatically generated on 2018-04-19.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -33,6 +33,7 @@ class BrickletPTC(Device):
     CALLBACK_TEMPERATURE_REACHED = 14
     CALLBACK_RESISTANCE = 15
     CALLBACK_RESISTANCE_REACHED = 16
+    CALLBACK_SENSOR_CONNECTED = 24
 
 
     FUNCTION_GET_TEMPERATURE = 1
@@ -52,6 +53,8 @@ class BrickletPTC(Device):
     FUNCTION_IS_SENSOR_CONNECTED = 19
     FUNCTION_SET_WIRE_MODE = 20
     FUNCTION_GET_WIRE_MODE = 21
+    FUNCTION_SET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION = 22
+    FUNCTION_GET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION = 23
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -91,12 +94,15 @@ class BrickletPTC(Device):
         self.response_expected[BrickletPTC.FUNCTION_IS_SENSOR_CONNECTED] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPTC.FUNCTION_SET_WIRE_MODE] = BrickletPTC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletPTC.FUNCTION_GET_WIRE_MODE] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPTC.FUNCTION_SET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION] = BrickletPTC.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletPTC.FUNCTION_GET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPTC.FUNCTION_GET_IDENTITY] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletPTC.CALLBACK_TEMPERATURE] = 'i'
         self.callback_formats[BrickletPTC.CALLBACK_TEMPERATURE_REACHED] = 'i'
         self.callback_formats[BrickletPTC.CALLBACK_RESISTANCE] = 'i'
         self.callback_formats[BrickletPTC.CALLBACK_RESISTANCE_REACHED] = 'i'
+        self.callback_formats[BrickletPTC.CALLBACK_SENSOR_CONNECTED] = '!'
 
 
     def get_temperature(self):
@@ -299,6 +305,27 @@ class BrickletPTC(Device):
         Returns the wire mode as set by :func:`Set Wire Mode`
         """
         return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_WIRE_MODE, (), '', 'B')
+
+    def set_sensor_connected_callback_configuration(self, enabled):
+        """
+        If you enable this callback, the :cb:`Sensor Connected` callback is triggered
+        every time a Pt sensor is connected/disconnected.
+
+        By default this callback is disabled.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        enabled = bool(enabled)
+
+        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION, (enabled,), '!', '')
+
+    def get_sensor_connected_callback_configuration(self):
+        """
+        Returns the configuration as set by :func:`Set Sensor Connected Callback Configuration`.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION, (), '', '!')
 
     def get_identity(self):
         """

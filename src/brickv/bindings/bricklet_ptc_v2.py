@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-28.      #
+# This file was automatically generated on 2018-04-17.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletPTCV2(Device):
 
     CALLBACK_TEMPERATURE = 4
     CALLBACK_RESISTANCE = 8
+    CALLBACK_SENSOR_CONNECTED = 18
 
 
     FUNCTION_GET_TEMPERATURE = 1
@@ -50,6 +51,8 @@ class BrickletPTCV2(Device):
     FUNCTION_GET_WIRE_MODE = 13
     FUNCTION_SET_MOVING_AVERAGE_CONFIGURATION = 14
     FUNCTION_GET_MOVING_AVERAGE_CONFIGURATION = 15
+    FUNCTION_SET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION = 16
+    FUNCTION_GET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION = 17
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -111,6 +114,8 @@ class BrickletPTCV2(Device):
         self.response_expected[BrickletPTCV2.FUNCTION_GET_WIRE_MODE] = BrickletPTCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPTCV2.FUNCTION_SET_MOVING_AVERAGE_CONFIGURATION] = BrickletPTCV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletPTCV2.FUNCTION_GET_MOVING_AVERAGE_CONFIGURATION] = BrickletPTCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPTCV2.FUNCTION_SET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION] = BrickletPTCV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletPTCV2.FUNCTION_GET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION] = BrickletPTCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPTCV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletPTCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPTCV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletPTCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPTCV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletPTCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -126,6 +131,7 @@ class BrickletPTCV2(Device):
 
         self.callback_formats[BrickletPTCV2.CALLBACK_TEMPERATURE] = 'i'
         self.callback_formats[BrickletPTCV2.CALLBACK_RESISTANCE] = 'i'
+        self.callback_formats[BrickletPTCV2.CALLBACK_SENSOR_CONNECTED] = '!'
 
 
     def get_temperature(self):
@@ -278,6 +284,10 @@ class BrickletPTCV2(Device):
         If this function
         returns *false*, there is either no Pt100 or Pt1000 sensor connected,
         the sensor is connected incorrectly or the sensor itself is faulty.
+
+        If you want to get the status automatically, it is recommended to use the
+        :cb:`Sensor Connected` callback. You can set the callback configuration
+        with :func:`Set Sensor Connected Callback Configuration`.
         """
         return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_IS_SENSOR_CONNECTED, (), '', '!')
 
@@ -326,6 +336,23 @@ class BrickletPTCV2(Device):
         Returns the moving average configuration as set by :func:`Set Moving Average Configuration`.
         """
         return GetMovingAverageConfiguration(*self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_MOVING_AVERAGE_CONFIGURATION, (), '', 'H H'))
+
+    def set_sensor_connected_callback_configuration(self, enabled):
+        """
+        If you enable this callback, the :cb:`Sensor Connected` callback is triggered
+        every time a Pt sensor is connected/disconnected.
+
+        By default this callback is disabled.
+        """
+        enabled = bool(enabled)
+
+        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION, (enabled,), '!', '')
+
+    def get_sensor_connected_callback_configuration(self):
+        """
+        Returns the configuration as set by :func:`Set Sensor Connected Callback Configuration`.
+        """
+        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION, (), '', '!')
 
     def get_spitfp_error_count(self):
         """

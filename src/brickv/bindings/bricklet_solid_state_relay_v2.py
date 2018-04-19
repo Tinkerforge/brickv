@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-28.      #
+# This file was automatically generated on 2018-04-19.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -22,7 +22,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletSolidStateRelayV2(Device):
     """
-
+    Controls AC and DC Solid State Relays
     """
 
     DEVICE_IDENTIFIER = 296
