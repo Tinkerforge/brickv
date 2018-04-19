@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-VOC Plugin
+Air Quality Plugin
 Copyright (C) 2018 Olaf Lüke <olaf@tinkerforge.com>
 
 __init__.py: package initialization
@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugins.voc.voc import VOC
+from brickv.plugin_system.plugins.air_quality.air_quality import AirQuality
 
-device_class = VOC
+device_class = AirQuality

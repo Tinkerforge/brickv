@@ -1,5 +1,6 @@
 from brickv.plugin_system.plugins.ac_current import device_class as ac_current
 from brickv.plugin_system.plugins.accelerometer import device_class as accelerometer
+from brickv.plugin_system.plugins.air_quality import device_class as air_quality
 from brickv.plugin_system.plugins.ambient_light import device_class as ambient_light
 from brickv.plugin_system.plugins.ambient_light_v2 import device_class as ambient_light_v2
 from brickv.plugin_system.plugins.analog_in import device_class as analog_in
@@ -107,7 +108,6 @@ from brickv.plugin_system.plugins.thermocouple import device_class as thermocoup
 from brickv.plugin_system.plugins.thermocouple_v2 import device_class as thermocouple_v2
 from brickv.plugin_system.plugins.tilt import device_class as tilt
 from brickv.plugin_system.plugins.uv_light import device_class as uv_light
-from brickv.plugin_system.plugins.voc import device_class as voc
 from brickv.plugin_system.plugins.voltage import device_class as voltage
 from brickv.plugin_system.plugins.voltage_current import device_class as voltage_current
 from brickv.plugin_system.plugins.voltage_current_v2 import device_class as voltage_current_v2
@@ -115,6 +115,7 @@ from brickv.plugin_system.plugins.voltage_current_v2 import device_class as volt
 device_classes = [
     ac_current,
     accelerometer,
+    air_quality,
     ambient_light,
     ambient_light_v2,
     analog_in,
@@ -222,7 +223,6 @@ device_classes = [
     thermocouple_v2,
     tilt,
     uv_light,
-    voc,
     voltage,
     voltage_current,
     voltage_current_v2,

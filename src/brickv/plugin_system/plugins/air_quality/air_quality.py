@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-VOC Plugin
+Air Quality Plugin
 Copyright (C) 2018 Olaf Lüke <olaf@tinkerforge.com>
 
-voc.py: VOC Plugin Implementation
+air_quality.py: Air Quality Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -25,20 +25,20 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QCheckBox, QLabel
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
-from brickv.bindings.bricklet_voc import BrickletVOC
+from brickv.bindings.bricklet_air_quality import BrickletAirQuality
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class VOC(COMCUPluginBase):
+class AirQuality(COMCUPluginBase):
     def __init__(self, *args):
-        COMCUPluginBase.__init__(self, BrickletVOC, *args)
+        COMCUPluginBase.__init__(self, BrickletAirQuality, *args)
 
-        self.voc = self.device
+        self.air_quality = self.device
 
-        self.cbe_voc = CallbackEmulator(self.voc.get_all_values,
-                                        self.cb_get_all_values,
-                                        self.increase_error_count)
+        self.cbe_air_quality = CallbackEmulator(self.air_quality.get_all_values,
+                                                self.cb_get_all_values,
+                                                self.increase_error_count)
         
         self.current_iaq_index = None # float
         self.current_temperature = None # float, °C
@@ -89,9 +89,9 @@ class VOC(COMCUPluginBase):
             self.iaq_accuracy_label.setText('(Accuracy: High)')
 
     def start(self):
-        async_call(self.voc.get_all_values, None, self.cb_get_all_values, self.increase_error_count)
+        async_call(self.air_quality.get_all_values, None, self.cb_get_all_values, self.increase_error_count)
 
-        self.cbe_voc.set_period(500)
+        self.cbe_air_quality.set_period(500)
 
         self.plot_widget_iaq_index.stop = False
         self.plot_widget_temperature.stop = False
@@ -99,7 +99,7 @@ class VOC(COMCUPluginBase):
         self.plot_widget_air_pressure.stop = False
 
     def stop(self):
-        self.cbe_voc.set_period(0)
+        self.cbe_air_quality.set_period(0)
 
         self.plot_widget_iaq_index.stop = True
         self.plot_widget_temperature.stop = True
@@ -111,4 +111,4 @@ class VOC(COMCUPluginBase):
 
     @staticmethod
     def has_device_identifier(device_identifier):
-        return device_identifier == BrickletVOC.DEVICE_IDENTIFIER
+        return device_identifier == BrickletAirQuality.DEVICE_IDENTIFIER
