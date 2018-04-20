@@ -109,6 +109,7 @@ from brickv.plugin_system.plugins.thermocouple import device_class as thermocoup
 from brickv.plugin_system.plugins.thermocouple_v2 import device_class as thermocouple_v2
 from brickv.plugin_system.plugins.tilt import device_class as tilt
 from brickv.plugin_system.plugins.uv_light import device_class as uv_light
+from brickv.plugin_system.plugins.uv_light_v2 import device_class as uv_light_v2
 from brickv.plugin_system.plugins.voltage import device_class as voltage
 from brickv.plugin_system.plugins.voltage_current import device_class as voltage_current
 from brickv.plugin_system.plugins.voltage_current_v2 import device_class as voltage_current_v2
@@ -225,6 +226,7 @@ device_classes = [
     thermocouple_v2,
     tilt,
     uv_light,
+    uv_light_v2,
     voltage,
     voltage_current,
     voltage_current_v2,
