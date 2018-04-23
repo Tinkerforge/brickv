@@ -92,7 +92,7 @@ class UVLightV2(COMCUPluginBase):
         return device_identifier == BrickletUVLightV2.DEVICE_IDENTIFIER
 
     def timer_uv_index_timeout(self):
-        index = (((self.current_uv_type_a / 9) * 0.01) + ((self.current_uv_type_b / 8) * 0.01)) / 2
+        index = ((((self.current_uv_type_a * 2) / 9) + ((self.current_uv_type_b * 4) / 8)) * 0.01) / 2
 
         self.index_label.setText(unicode(index))
 
