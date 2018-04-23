@@ -40,26 +40,26 @@ class UVLightV2(COMCUPluginBase):
 
         self.uv_light = self.device
 
-        self.cbe_get_uv_type_a = CallbackEmulator(self.uv_light.get_uv_type_a,
-                                                  self.cb_get_uv_type_a,
+        self.cbe_get_uva_light = CallbackEmulator(self.uv_light.get_uva_light,
+                                                  self.cb_get_uva_light,
                                                   self.increase_error_count)
 
-        self.cbe_get_uv_type_b = CallbackEmulator(self.uv_light.get_uv_type_b,
-                                                  self.cb_get_uv_type_b,
+        self.cbe_get_uvb_light = CallbackEmulator(self.uv_light.get_uvb_light,
+                                                  self.cb_get_uvb_light,
                                                   self.increase_error_count)
 
         self.index_label = IndexLabel('UV Index:')
         self.index_label.setText('0.0')
 
-        self.current_uv_type_a = 0
-        self.current_uv_type_b = 0
+        self.current_uva_light = 0
+        self.current_uvb_light = 0
 
         self.timer_uv_index = QTimer()
         self.timer_uv_index.timeout.connect(self.timer_uv_index_timeout)
         self.timer_uv_index.setInterval(200)
 
-        plots = [('UV Light Type A', Qt.red, lambda: self.current_uv_type_a, u'{} µW/cm²'.format),
-                 ('UV Light Type B', Qt.green, lambda: self.current_uv_type_b, u'{} µW/cm²'.format)]
+        plots = [('UVA Light', Qt.red, lambda: self.current_uva_light, u'{} µW/cm²'.format),
+                 ('UVB Light', Qt.green, lambda: self.current_uvb_light, u'{} µW/cm²'.format)]
 
         self.plot_widget = PlotWidget(u'UV Light [µW/cm²]', plots, extra_key_widgets=[self.index_label])
 
@@ -67,18 +67,18 @@ class UVLightV2(COMCUPluginBase):
         layout.addWidget(self.plot_widget)
 
     def start(self):
-        async_call(self.uv_light.get_uv_type_a, None, self.cb_get_uv_type_a, self.increase_error_count)
-        self.cbe_get_uv_type_a.set_period(100)
-        async_call(self.uv_light.get_uv_type_b, None, self.cb_get_uv_type_b, self.increase_error_count)
-        self.cbe_get_uv_type_b.set_period(100)
+        async_call(self.uv_light.get_uva_light, None, self.cb_get_uva_light, self.increase_error_count)
+        self.cbe_get_uva_light.set_period(100)
+        async_call(self.uv_light.get_uvb_light, None, self.cb_get_uvb_light, self.increase_error_count)
+        self.cbe_get_uvb_light.set_period(100)
 
         self.timer_uv_index.start()
 
         self.plot_widget.stop = False
 
     def stop(self):
-        self.cbe_get_uv_type_a.set_period(0)
-        self.cbe_get_uv_type_b.set_period(0)
+        self.cbe_get_uva_light.set_period(0)
+        self.cbe_get_uvb_light.set_period(0)
 
         self.timer_uv_index.stop()
 
@@ -92,7 +92,7 @@ class UVLightV2(COMCUPluginBase):
         return device_identifier == BrickletUVLightV2.DEVICE_IDENTIFIER
 
     def timer_uv_index_timeout(self):
-        index = ((((self.current_uv_type_a * 2) / 9) + ((self.current_uv_type_b * 4) / 8)) * 0.01) / 2
+        index = ((((self.current_uva_light * 2) / 9) + ((self.current_uvb_light * 4) / 8)) * 0.01) / 2
 
         self.index_label.setText(unicode(index))
 
@@ -109,8 +109,8 @@ class UVLightV2(COMCUPluginBase):
 
         self.index_label.setStyleSheet('QLabel {{ color : {0} }}'.format(color))
 
-    def cb_get_uv_type_a(self, uv_type_a):
-        self.current_uv_type_a = uv_type_a
+    def cb_get_uva_light(self, uva_light):
+        self.current_uva_light = uva_light
 
-    def cb_get_uv_type_b(self, uv_type_b):
-        self.current_uv_type_b = uv_type_b
+    def cb_get_uvb_light(self, uvb_light):
+        self.current_uvb_light = uvb_light
