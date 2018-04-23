@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-04-20.      #
+# This file was automatically generated on 2018-04-23.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -113,6 +113,9 @@ class BrickletUVLightV2(Device):
         Returns the UV light type A intensity of the sensor, the intensity is given
         in µW/cm².
 
+        UVA index (UVAI) can be calculated as:
+        UVAI = ((UVA * 2) / 9) * 0.01
+
         If you want to get the intensity periodically, it is recommended to use the
         :cb:`UV Type A` callback and set the period with
         :func:`Set UV Type A Callback Configuration`.
@@ -175,6 +178,9 @@ class BrickletUVLightV2(Device):
         """
         Returns the UV light type B intensity of the sensor, the intensity is given
         in µW/cm².
+
+        UVB index (UVBI) can be calculated as:
+        UVBI = ((UVB * 4) / 8) * 0.01
 
         If you want to get the intensity periodically, it is recommended to use the
         :cb:`UV Type B` callback and set the period with
