@@ -104,8 +104,22 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
         self.layout_decibel.insertWidget(3, self.thermo)
         
         self.last_spectrum_length = 512
+
+        self.last_y_data = [0]*512
+
+    def get_spectrum_decrement(self):
+        index = self.combo_fft_size.currentIndex()
+        if index == 0:
+            return 0.5
+        elif index == 1:
+            return 1
+        elif index == 2:
+            return 2
+        elif index == 3:
+            return 4
         
     def config_changed(self, _):
+        self.last_y_data = [0]*512
         self.sound_pressure_level.set_configuration(self.combo_fft_size.currentIndex(), self.combo_weighting.currentIndex())
 
     def cb_get_decibel(self, db):
@@ -118,8 +132,18 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
         
         x_data = list(range(0, num*length, num))
         y_data = list(map(lambda x: 20*math.log10(max(1, x/math.sqrt(2))), spectrum))
-        
-        self.plot_widget_spectrum.set_data(0, x_data, y_data)
+        if self.checkbox_decay.isChecked():
+            for i in range(len(y_data)):
+                if y_data[i] > self.last_y_data[i]:
+                    self.last_y_data[i] = y_data[i]
+                else:
+                    self.last_y_data[i] -= self.get_spectrum_decrement()
+                    if y_data[i] > self.last_y_data[i]:
+                        self.last_y_data[i] = y_data[i]
+
+            self.plot_widget_spectrum.set_data(0, x_data, self.last_y_data)
+        else:
+            self.plot_widget_spectrum.set_data(0, x_data, y_data)
 
     def get_configuration_async(self, config):
         self.combo_fft_size.blockSignals(True)
