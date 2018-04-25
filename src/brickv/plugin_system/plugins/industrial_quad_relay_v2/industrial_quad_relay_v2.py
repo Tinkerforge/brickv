@@ -150,7 +150,7 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
         for pin in range(4):
             self.monoflop_pending[pin] = False
 
-        pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+        pin = self.monoflop_pin.currentIndex()
         self.monoflop_time.setValue(self.monoflop_time_before[pin])
         self.monoflop_time.setEnabled(True)
 
@@ -167,7 +167,7 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
         if sum(self.monoflop_pending) == 0:
             self.update_timer.stop()
 
-        current_pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+        current_pin = self.monoflop_pin.currentIndex()
         if current_pin == pin:
             self.monoflop_time.setValue(self.monoflop_time_before[current_pin])
             self.monoflop_time.setEnabled(True)
@@ -178,7 +178,7 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
 
     def monoflop_pin_changed(self):
         try:
-            pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+            pin = self.monoflop_pin.currentIndex()
         except ValueError:
             return
 
@@ -190,7 +190,7 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
             self.monoflop_time.setEnabled(True)
 
     def monoflop_go_clicked(self):
-        pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+        pin = self.monoflop_pin.currentIndex()
         if self.monoflop_pending[pin]:
             time = self.monoflop_time_before[pin]
         else:
@@ -218,7 +218,7 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
 
     def update(self):
         try:
-            pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+            pin = self.monoflop_pin.currentIndex()
         except ValueError:
             return
 
