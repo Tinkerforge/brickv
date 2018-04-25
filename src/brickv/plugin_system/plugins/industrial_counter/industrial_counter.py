@@ -30,7 +30,6 @@ from brickv.callback_emulator import CallbackEmulator
 from brickv.async_call import async_call
 
 class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
-
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletIndustrialCounter, *args)
 
@@ -45,19 +44,19 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
         self.cbe_counter = CallbackEmulator(self.counter.get_all_counter,
                                             self.cb_counter,
                                             self.increase_error_count)
-        
+
         def get_combo_lambda(channel):
             return lambda: self.combo_index_changed(channel)
         
         def get_checkstate_lambda(channel):
             return lambda x: self.checkstate_changed(channel, x)
-        
+
         g = self.main_grid
-        pos = 1
+        pos = 2
         self.checkboxess_active = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
         for channel, checkbox in enumerate(self.checkboxess_active):
             checkbox.stateChanged.connect(get_checkstate_lambda(channel))
-        
+
         pos += 1
         self.combos_count_edge = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
         for channel, combo in enumerate(self.combos_count_edge):
@@ -65,19 +64,19 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
             combo.addItem('Falling')
             combo.addItem('Both')
             combo.currentIndexChanged.connect(get_combo_lambda(channel))
-        
+
         pos += 1
         self.combos_count_direction = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
         for channel, combo in enumerate(self.combos_count_direction):
             combo.addItem('Up')
             combo.addItem('Down')
             combo.currentIndexChanged.connect(get_combo_lambda(channel))
-            
+
         self.combos_count_direction[0].addItem('Ext Up (Ch 2)')
         self.combos_count_direction[0].addItem('Ext Down (Ch 2)')
         self.combos_count_direction[3].addItem('Ext Up (Ch 1)')
         self.combos_count_direction[3].addItem('Ext Down (Ch 1)')
-        
+
         pos += 1
         self.combos_duty_cycle_prescaler = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
         for channel, combo in enumerate(self.combos_duty_cycle_prescaler):
@@ -99,7 +98,7 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
             combo.addItem('32768') 
             combo.addItem('Auto')
             combo.currentIndexChanged.connect(get_combo_lambda(channel))
-            
+
         pos += 1
         self.combos_frequency_integration = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
         for channel, combo in enumerate(self.combos_frequency_integration):
@@ -114,8 +113,8 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
             combo.addItem('32768ms')
             combo.addItem('Auto')
             combo.currentIndexChanged.connect(get_combo_lambda(channel))
-            
-        pos += 2
+
+        pos += 3
         self.labels_counter    = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
         pos += 1
         self.labels_duty_cycle = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
@@ -126,10 +125,32 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
         pos += 1
         self.labels_pin_value  = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
 
-        self.btn_ilc_apply.clicked.connect(self.btn_ilc_apply_clicked)
+        self.cbox_cs0_cfg.currentIndexChanged.connect(self.cbox_cs0_cfg_changed)
+        self.cbox_cs1_cfg.currentIndexChanged.connect(self.cbox_cs1_cfg_changed)
+        self.cbox_cs2_cfg.currentIndexChanged.connect(self.cbox_cs2_cfg_changed)
+        self.cbox_cs3_cfg.currentIndexChanged.connect(self.cbox_cs3_cfg_changed)
 
-    def btn_ilc_apply_clicked(self):
-        self.counter.set_info_led_config(self.cbox_ilc_l.currentIndex(), self.cbox_ilc_c.currentIndex())
+    def cbox_cs0_cfg_changed(self, idx):
+        self.counter.set_info_led_config(0, idx)
+
+    def cbox_cs1_cfg_changed(self, idx):
+        self.counter.set_info_led_config(1, idx)
+
+    def cbox_cs2_cfg_changed(self, idx):
+        self.counter.set_info_led_config(2, idx)
+
+    def cbox_cs3_cfg_changed(self, idx):
+        self.counter.set_info_led_config(3, idx)
+
+    def async_get_info_led_config(self, idx, cfg):
+        if idx == 0:
+            self.cbox_cs0_cfg.setCurrentIndex(cfg)
+        elif idx == 1:
+            self.cbox_cs1_cfg.setCurrentIndex(cfg)
+        elif idx == 2:
+            self.cbox_cs2_cfg.setCurrentIndex(cfg)
+        elif idx == 3:
+            self.cbox_cs3_cfg.setCurrentIndex(cfg)
 
     def cb_signal(self, data):
         for i in range(4):
@@ -137,11 +158,11 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
             self.labels_period[i].setText(str(data.period[i]))
             self.labels_frequency[i].setText(str(data.frequency[i]))
             self.labels_pin_value[i].setText('High' if data.pin_value[i] else 'Low')
-        
+
     def cb_counter(self, data):
         for i in range(4):
             self.labels_counter[i].setText(str(data[i]))
-            
+
     def combo_signals_block(self, channel):
         self.combos_count_edge[channel].blockSignals(True)
         self.combos_count_direction[channel].blockSignals(True)
@@ -156,8 +177,7 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
         
     def checkstate_changed(self, channel, value):
         self.counter.set_counter_active(channel, True if value == Qt.Checked else False)
-        print(channel, value, True if value == Qt.Checked else False)
-        
+
     def combo_index_changed(self, channel):
         count_edge = self.combos_count_edge[channel].currentIndex()
         count_direction = self.combos_count_direction[channel].currentIndex()
@@ -196,6 +216,11 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
         async_call(self.counter.get_all_counter_active, None, self.get_all_counter_active_cb, self.increase_error_count)
         self.cbe_signal.set_period(50)
         self.cbe_counter.set_period(50)
+
+        async_call(self.counter.get_info_led_config, 0, lambda x: self.async_get_info_led_config(0, x), self.increase_error_count)
+        async_call(self.counter.get_info_led_config, 1, lambda x: self.async_get_info_led_config(1, x), self.increase_error_count)
+        async_call(self.counter.get_info_led_config, 2, lambda x: self.async_get_info_led_config(2, x), self.increase_error_count)
+        async_call(self.counter.get_info_led_config, 3, lambda x: self.async_get_info_led_config(3, x), self.increase_error_count)
 
     def stop(self):
         self.cbe_signal.set_period(0)
