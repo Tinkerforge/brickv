@@ -62,14 +62,18 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
 
         self.monoflop_pin.currentIndexChanged.connect(self.monoflop_pin_changed)
         self.monoflop_go.clicked.connect(self.monoflop_go_clicked)
-        self.btn_ilc_apply.clicked.connect(self.btn_ilc_apply_clicked)
         self.monoflop_time_before = [1000] * 4
         self.monoflop_pending = [False] * 4
 
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update)
         self.update_timer.setInterval(50)
-        
+
+        self.cbox_cs0_cfg.currentIndexChanged.connect(self.cbox_cs0_cfg_changed)
+        self.cbox_cs1_cfg.currentIndexChanged.connect(self.cbox_cs1_cfg_changed)
+        self.cbox_cs2_cfg.currentIndexChanged.connect(self.cbox_cs2_cfg_changed)
+        self.cbox_cs3_cfg.currentIndexChanged.connect(self.cbox_cs3_cfg_changed)
+
     def get_output_value_async(self, value):
         for button in range(4):
             if value[button]:
@@ -78,9 +82,36 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
             else:
                 self.relay_buttons[button].setText('Switch On')
                 self.relay_button_icons[button].setPixmap(self.open_pixmap)
-        
+
+    def async_get_info_led_config(self, idx, cfg):
+        if idx == 0:
+            self.cbox_cs0_cfg.setCurrentIndex(cfg)
+        elif idx == 1:
+            self.cbox_cs1_cfg.setCurrentIndex(cfg)
+        elif idx == 2:
+            self.cbox_cs2_cfg.setCurrentIndex(cfg)
+        elif idx == 3:
+            self.cbox_cs3_cfg.setCurrentIndex(cfg)
+
+    def cbox_cs0_cfg_changed(self, idx):
+        self.iqr.set_info_led_config(0, idx)
+
+    def cbox_cs1_cfg_changed(self, idx):
+        self.iqr.set_info_led_config(1, idx)
+
+    def cbox_cs2_cfg_changed(self, idx):
+        self.iqr.set_info_led_config(2, idx)
+
+    def cbox_cs3_cfg_changed(self, idx):
+        self.iqr.set_info_led_config(3, idx)
+
     def start(self):
         async_call(self.iqr.get_output_value, None, self.get_output_value_async, self.increase_error_count)
+
+        async_call(self.iqr.get_info_led_config, 0, lambda x: self.async_get_info_led_config(0, x), self.increase_error_count)
+        async_call(self.iqr.get_info_led_config, 1, lambda x: self.async_get_info_led_config(1, x), self.increase_error_count)
+        async_call(self.iqr.get_info_led_config, 2, lambda x: self.async_get_info_led_config(2, x), self.increase_error_count)
+        async_call(self.iqr.get_info_led_config, 3, lambda x: self.async_get_info_led_config(3, x), self.increase_error_count)
 
     def stop(self):
         self.update_timer.stop()
@@ -180,9 +211,6 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
             self.relay_button_icons[pin].setPixmap(self.open_pixmap)
 
         self.update_timer.start()
-
-    def btn_ilc_apply_clicked(self):
-        self.iqr.set_info_led_config(self.cbox_ilc_l.currentIndex(), self.cbox_ilc_c.currentIndex())
 
     def update_async(self, pin, value, time, time_remaining):
         if self.monoflop_pending[pin]:
