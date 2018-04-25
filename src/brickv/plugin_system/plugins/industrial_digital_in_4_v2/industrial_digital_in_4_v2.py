@@ -48,13 +48,18 @@ class IndustrialDigitalIn4V2(COMCUPluginBase, Ui_IndustrialDigitalIn4V2):
                                               self.cb_get_value,
                                               self.increase_error_count)
 
-        self.sbox_iv_period.setValue(100)
-
-        self.btn_lc_apply.clicked.connect(self.btn_lc_apply_clicked)
-        self.btn_iv_period_apply.clicked.connect(self.btn_iv_period_apply_clicked)
+        self.cbox_cs0_cfg.currentIndexChanged.connect(self.cbox_cs0_cfg_changed)
+        self.cbox_cs1_cfg.currentIndexChanged.connect(self.cbox_cs1_cfg_changed)
+        self.cbox_cs2_cfg.currentIndexChanged.connect(self.cbox_cs2_cfg_changed)
+        self.cbox_cs3_cfg.currentIndexChanged.connect(self.cbox_cs3_cfg_changed)
 
     def start(self):
-        self.cbe_get_value.set_period(self.sbox_iv_period.value())
+        self.cbe_get_value.set_period(100)
+
+        async_call(self.idi4.get_info_led_config, 0, lambda x: self.async_get_info_led_config(0, x), self.increase_error_count)
+        async_call(self.idi4.get_info_led_config, 1, lambda x: self.async_get_info_led_config(1, x), self.increase_error_count)
+        async_call(self.idi4.get_info_led_config, 2, lambda x: self.async_get_info_led_config(2, x), self.increase_error_count)
+        async_call(self.idi4.get_info_led_config, 3, lambda x: self.async_get_info_led_config(3, x), self.increase_error_count)
 
     def stop(self):
         self.cbe_get_value.set_period(0)
@@ -75,8 +80,24 @@ class IndustrialDigitalIn4V2(COMCUPluginBase, Ui_IndustrialDigitalIn4V2):
                 self.lbl_stat_i_ch[i].setPixmap(self.gnd_pixmap)
                 self.lbl_stat_v_ch[i].setText('Low')
 
-    def btn_lc_apply_clicked(self):
-        self.idi4.set_info_led_config(self.cbox_lc_l.currentIndex(), self.cbox_lc_c.currentIndex())
+    def async_get_info_led_config(self, idx, cfg):
+        if idx == 0:
+            self.cbox_cs0_cfg.setCurrentIndex(cfg)
+        elif idx == 1:
+            self.cbox_cs1_cfg.setCurrentIndex(cfg)
+        elif idx == 2:
+            self.cbox_cs2_cfg.setCurrentIndex(cfg)
+        elif idx == 3:
+            self.cbox_cs3_cfg.setCurrentIndex(cfg)
 
-    def btn_iv_period_apply_clicked(self):
-        self.cbe_get_value.set_period(self.sbox_iv_period.value())
+    def cbox_cs0_cfg_changed(self, idx):
+        self.idi4.set_info_led_config(0, idx)
+
+    def cbox_cs1_cfg_changed(self, idx):
+        self.idi4.set_info_led_config(1, idx)
+
+    def cbox_cs2_cfg_changed(self, idx):
+        self.idi4.set_info_led_config(2, idx)
+
+    def cbox_cs3_cfg_changed(self, idx):
+        self.idi4.set_info_led_config(3, idx)
