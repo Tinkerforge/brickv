@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Industrial Quad Relay Plugin
+Industrial Quad Relay 2.0 Plugin
 Copyright (C) 2018 Olaf Lüke <olaf@tinkerforge.com>
 
 industrial_quad_relay_v2.py: Industrial Quad Relay 2.0 Plugin Implementation
@@ -83,7 +83,7 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
                 self.relay_buttons[button].setText('Switch On')
                 self.relay_button_icons[button].setPixmap(self.open_pixmap)
 
-    def async_get_info_led_config(self, idx, cfg):
+    def async_get_channel_led_config(self, idx, cfg):
         if idx == 0:
             self.cbox_cs0_cfg.setCurrentIndex(cfg)
         elif idx == 1:
@@ -94,24 +94,24 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
             self.cbox_cs3_cfg.setCurrentIndex(cfg)
 
     def cbox_cs0_cfg_changed(self, idx):
-        self.iqr.set_info_led_config(0, idx)
+        self.iqr.set_channel_led_config(0, idx)
 
     def cbox_cs1_cfg_changed(self, idx):
-        self.iqr.set_info_led_config(1, idx)
+        self.iqr.set_channel_led_config(1, idx)
 
     def cbox_cs2_cfg_changed(self, idx):
-        self.iqr.set_info_led_config(2, idx)
+        self.iqr.set_channel_led_config(2, idx)
 
     def cbox_cs3_cfg_changed(self, idx):
-        self.iqr.set_info_led_config(3, idx)
+        self.iqr.set_channel_led_config(3, idx)
 
     def start(self):
         async_call(self.iqr.get_output_value, None, self.get_output_value_async, self.increase_error_count)
 
-        async_call(self.iqr.get_info_led_config, 0, lambda x: self.async_get_info_led_config(0, x), self.increase_error_count)
-        async_call(self.iqr.get_info_led_config, 1, lambda x: self.async_get_info_led_config(1, x), self.increase_error_count)
-        async_call(self.iqr.get_info_led_config, 2, lambda x: self.async_get_info_led_config(2, x), self.increase_error_count)
-        async_call(self.iqr.get_info_led_config, 3, lambda x: self.async_get_info_led_config(3, x), self.increase_error_count)
+        async_call(self.iqr.get_channel_led_config, 0, lambda x: self.async_get_channel_led_config(0, x), self.increase_error_count)
+        async_call(self.iqr.get_channel_led_config, 1, lambda x: self.async_get_channel_led_config(1, x), self.increase_error_count)
+        async_call(self.iqr.get_channel_led_config, 2, lambda x: self.async_get_channel_led_config(2, x), self.increase_error_count)
+        async_call(self.iqr.get_channel_led_config, 3, lambda x: self.async_get_channel_led_config(3, x), self.increase_error_count)
 
     def stop(self):
         self.update_timer.stop()

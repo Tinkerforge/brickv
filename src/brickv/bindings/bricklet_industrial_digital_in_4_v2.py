@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-04-11.      #
+# This file was automatically generated on 2018-05-02.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -46,8 +46,8 @@ class BrickletIndustrialDigitalIn4V2(Device):
     FUNCTION_GET_EDGE_COUNT = 7
     FUNCTION_SET_EDGE_COUNT_CONFIGURATION = 8
     FUNCTION_GET_EDGE_COUNT_CONFIGURATION = 9
-    FUNCTION_SET_INFO_LED_CONFIG = 10
-    FUNCTION_GET_INFO_LED_CONFIG = 11
+    FUNCTION_SET_CHANNEL_LED_CONFIG = 10
+    FUNCTION_GET_CHANNEL_LED_CONFIG = 11
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -64,10 +64,10 @@ class BrickletIndustrialDigitalIn4V2(Device):
     EDGE_TYPE_RISING = 0
     EDGE_TYPE_FALLING = 1
     EDGE_TYPE_BOTH = 2
-    INFO_LED_CONFIG_OFF = 0
-    INFO_LED_CONFIG_ON = 1
-    INFO_LED_CONFIG_SHOW_HEARTBEAT = 2
-    INFO_LED_CONFIG_SHOW_CHANNEL_STATUS = 3
+    CHANNEL_LED_CONFIG_OFF = 0
+    CHANNEL_LED_CONFIG_ON = 1
+    CHANNEL_LED_CONFIG_SHOW_HEARTBEAT = 2
+    CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS = 3
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -102,8 +102,8 @@ class BrickletIndustrialDigitalIn4V2(Device):
         self.response_expected[BrickletIndustrialDigitalIn4V2.FUNCTION_GET_EDGE_COUNT] = BrickletIndustrialDigitalIn4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDigitalIn4V2.FUNCTION_SET_EDGE_COUNT_CONFIGURATION] = BrickletIndustrialDigitalIn4V2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDigitalIn4V2.FUNCTION_GET_EDGE_COUNT_CONFIGURATION] = BrickletIndustrialDigitalIn4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletIndustrialDigitalIn4V2.FUNCTION_SET_INFO_LED_CONFIG] = BrickletIndustrialDigitalIn4V2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletIndustrialDigitalIn4V2.FUNCTION_GET_INFO_LED_CONFIG] = BrickletIndustrialDigitalIn4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialDigitalIn4V2.FUNCTION_SET_CHANNEL_LED_CONFIG] = BrickletIndustrialDigitalIn4V2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialDigitalIn4V2.FUNCTION_GET_CHANNEL_LED_CONFIG] = BrickletIndustrialDigitalIn4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDigitalIn4V2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletIndustrialDigitalIn4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDigitalIn4V2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletIndustrialDigitalIn4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDigitalIn4V2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletIndustrialDigitalIn4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -219,22 +219,22 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
         return GetEdgeCountConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_EDGE_COUNT_CONFIGURATION, (channel,), 'B', 'B B'))
 
-    def set_info_led_config(self, led, config):
+    def set_channel_led_config(self, led, config):
         """
 
         """
         led = int(led)
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_INFO_LED_CONFIG, (led, config), 'B B', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_CHANNEL_LED_CONFIG, (led, config), 'B B', '')
 
-    def get_info_led_config(self, led):
+    def get_channel_led_config(self, led):
         """
-        Returns the Info LED configuration as set by :func:`Set Info LED Config`
+        Returns the Channel LED configuration as set by :func:`Set Channel LED Config`
         """
         led = int(led)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_INFO_LED_CONFIG, (led,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_CHANNEL_LED_CONFIG, (led,), 'B', 'B')
 
     def get_spitfp_error_count(self):
         """

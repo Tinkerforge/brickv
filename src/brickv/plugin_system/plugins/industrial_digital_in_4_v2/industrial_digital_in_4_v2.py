@@ -56,10 +56,10 @@ class IndustrialDigitalIn4V2(COMCUPluginBase, Ui_IndustrialDigitalIn4V2):
     def start(self):
         self.cbe_get_value.set_period(100)
 
-        async_call(self.idi4.get_info_led_config, 0, lambda x: self.async_get_info_led_config(0, x), self.increase_error_count)
-        async_call(self.idi4.get_info_led_config, 1, lambda x: self.async_get_info_led_config(1, x), self.increase_error_count)
-        async_call(self.idi4.get_info_led_config, 2, lambda x: self.async_get_info_led_config(2, x), self.increase_error_count)
-        async_call(self.idi4.get_info_led_config, 3, lambda x: self.async_get_info_led_config(3, x), self.increase_error_count)
+        async_call(self.idi4.get_channel_led_config, 0, lambda x: self.async_get_channel_led_config(0, x), self.increase_error_count)
+        async_call(self.idi4.get_channel_led_config, 1, lambda x: self.async_get_channel_led_config(1, x), self.increase_error_count)
+        async_call(self.idi4.get_channel_led_config, 2, lambda x: self.async_get_channel_led_config(2, x), self.increase_error_count)
+        async_call(self.idi4.get_channel_led_config, 3, lambda x: self.async_get_channel_led_config(3, x), self.increase_error_count)
 
     def stop(self):
         self.cbe_get_value.set_period(0)
@@ -80,7 +80,7 @@ class IndustrialDigitalIn4V2(COMCUPluginBase, Ui_IndustrialDigitalIn4V2):
                 self.lbl_stat_i_ch[i].setPixmap(self.gnd_pixmap)
                 self.lbl_stat_v_ch[i].setText('Low')
 
-    def async_get_info_led_config(self, idx, cfg):
+    def async_get_channel_led_config(self, idx, cfg):
         if idx == 0:
             self.cbox_cs0_cfg.setCurrentIndex(cfg)
         elif idx == 1:
@@ -91,13 +91,13 @@ class IndustrialDigitalIn4V2(COMCUPluginBase, Ui_IndustrialDigitalIn4V2):
             self.cbox_cs3_cfg.setCurrentIndex(cfg)
 
     def cbox_cs0_cfg_changed(self, idx):
-        self.idi4.set_info_led_config(0, idx)
+        self.idi4.set_channel_led_config(0, idx)
 
     def cbox_cs1_cfg_changed(self, idx):
-        self.idi4.set_info_led_config(1, idx)
+        self.idi4.set_channel_led_config(1, idx)
 
     def cbox_cs2_cfg_changed(self, idx):
-        self.idi4.set_info_led_config(2, idx)
+        self.idi4.set_channel_led_config(2, idx)
 
     def cbox_cs3_cfg_changed(self, idx):
-        self.idi4.set_info_led_config(3, idx)
+        self.idi4.set_channel_led_config(3, idx)
