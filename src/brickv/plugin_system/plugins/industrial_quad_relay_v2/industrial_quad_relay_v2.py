@@ -123,23 +123,13 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialQuadRelayV2.DEVICE_IDENTIFIER
 
-    def get_current_value(self):
-        value = 0
-        i = 0
-        for b in self.relay_buttons:
-            if 'Off' in b.text():
-                value |= (1 << i)
-            i += 1
-        return value
-
     def relay_button_clicked(self, button):
-        value = self.get_current_value()
         if 'On' in self.relay_buttons[button].text():
-            value |= (1 << button)
+            value = True
             self.relay_buttons[button].setText('Switch Off')
             self.relay_button_icons[button].setPixmap(self.close_pixmap)
         else:
-            value &= ~(1 << button)
+            value = False
             self.relay_buttons[button].setText('Switch On')
             self.relay_button_icons[button].setPixmap(self.open_pixmap)
 
