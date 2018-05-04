@@ -171,7 +171,6 @@ class SAMBA(object):
     def __init__(self, port_name, progress=None, application_name='Brick Viewer'):
         self.r_command_bug = False
         self.sam_series = None
-        self.ignore_flerr_on_sgpb = False
         self.current_mode = None
         self.progress = progress
 
@@ -233,7 +232,6 @@ class SAMBA(object):
         elif chipid_cidr in [CHIPID_CIDR_ATSAM4E8C_A, CHIPID_CIDR_ATSAM4E8C_B] and \
              chipid_exid in [CHIPID_EXID_ATSAM4E8C_A, CHIPID_EXID_ATSAM4E8C_B]:
             self.sam_series = 4
-            self.ignore_flerr_on_sgpb = True # some SAM4E report FLERR even after a successfull SGPB command
             self.flash_base = 0x400000
             self.flash_page_count = 1024
             self.flash_page_size = 512
@@ -387,12 +385,24 @@ class SAMBA(object):
             page_num_offset = (ic_relative_address - ic_prefix_length) // self.flash_page_size
             self.verify_pages(imu_calibration_pages, page_num_offset, 'IMU calibration', True)
 
-        # Set Boot-from-Flash flag
+        # Set Boot-from-Flash flag. Retry this up to 5 times, becasue on SAM4
+        # series chips this might fail with a flash-memory-error on the first try
         self.reset_progress('Setting Boot-from-Flash flag', 0)
 
-        self.wait_for_flash_ready('before setting Boot-from-Flash flag')
-        self.write_flash_command(EEFC_FCR_FCMD_SGPB, 1)
-        self.wait_for_flash_ready('after setting Boot-from-Flash flag', sgpb=True)
+        success = False
+
+        for i in range(5):
+            self.write_flash_command(EEFC_FCR_FCMD_SGPB, 1)
+
+            success = self.wait_for_flash_ready('after setting Boot-from-Flash flag', return_on_flerr=True)
+
+            if success:
+                break
+
+            time.sleep(0.25)
+
+        if not success:
+            raise SAMBAException('Flash memory error after setting Boot-from-Flash flag')
 
         # Reboot
         if reboot:
@@ -585,7 +595,7 @@ class SAMBA(object):
         except:
             raise SAMBAException('Write error while executing code at address 0x%08X' % address)
 
-    def wait_for_flash_ready(self, message, timeout=2000, ready=True, update_progress=False, sgpb=False):
+    def wait_for_flash_ready(self, message, timeout=2000, ready=True, update_progress=False, return_on_flerr=False):
         for i in range(timeout):
             fsr = self.read_uint32(EEFC_FSR)
 
@@ -595,8 +605,10 @@ class SAMBA(object):
             if (fsr & EEFC_FSR_FCMDE) != 0:
                 raise SAMBAException('Flash command error ' + message)
 
-            if not (sgpb and self.ignore_flerr_on_sgpb):
-                if self.sam_series == 4 and (fsr & EEFC_FSR_FLERR) != 0:
+            if self.sam_series == 4 and (fsr & EEFC_FSR_FLERR) != 0:
+                if return_on_flerr:
+                    return False
+                else:
                     raise SAMBAException('Flash memory error ' + message)
 
             if ready:
@@ -612,6 +624,8 @@ class SAMBA(object):
                 self.update_progress(0)
         else:
             raise SAMBAException('Flash timeout ' + message)
+
+        return True
 
     def write_flash_command(self, command, argument):
         self.write_uint32(EEFC_FCR, (EEFC_FCR_FKEY << 24) | (argument << 8) | command)
