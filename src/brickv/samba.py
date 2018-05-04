@@ -385,6 +385,18 @@ class SAMBA(object):
             page_num_offset = (ic_relative_address - ic_prefix_length) // self.flash_page_size
             self.verify_pages(imu_calibration_pages, page_num_offset, 'IMU calibration', True)
 
+        # Set Security flag. Without this a Brick will not correctly boot from
+        # flash after reset if it entered bootloader-mode by holding the erase
+        # button during a power-cycle. But this has the downside that entering
+        # bootloader-mode by holding the erase button during a power-cycle now
+        # results in the Brick being in an zombie state between bootloader and
+        # firmware for 15 seconds before it properly enters bootloader-mode.
+        self.reset_progress('Setting Security flag', 0)
+
+        self.wait_for_flash_ready('before setting Security flag')
+        self.write_flash_command(EEFC_FCR_FCMD_SGPB, 0)
+        self.wait_for_flash_ready('after setting Security flag')
+
         # Set Boot-from-Flash flag. Retry this up to 5 times, becasue on SAM4
         # series chips this might fail with a flash-memory-error on the first try
         self.reset_progress('Setting Boot-from-Flash flag', 0)
