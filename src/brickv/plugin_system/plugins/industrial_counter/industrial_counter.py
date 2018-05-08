@@ -154,9 +154,26 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
 
     def cb_signal(self, data):
         for i in range(4):
-            self.labels_duty_cycle[i].setText(str(data.duty_cycle[i]))
-            self.labels_period[i].setText(str(data.period[i]))
-            self.labels_frequency[i].setText(str(data.frequency[i]))
+            duty_cycle_str = "{:2.2f} %".format(data.duty_cycle[i]/100.0)
+            self.labels_duty_cycle[i].setText(duty_cycle_str)
+
+            if data.period[i] > 900*1000*1000:
+                period_str = "{:.3f} s".format(data.period[i]/(1000*1000*1000.0))
+            elif data.period[i] > 900*1000:
+                period_str = "{:.3f} ms".format(data.period[i]/(1000*1000.0))
+            elif data.period[i] > 900:
+                period_str = "{:.3f} us".format(data.period[i]/1000.0)
+            else:
+                period_str = "{} ns".format(data.period[i])
+            self.labels_period[i].setText(period_str)
+
+            if data.frequency[i] > 900*1000*1000:
+                frequency_str = "{:.3f} MHz".format(data.frequency[i]/(1000*1000*1000.0))
+            elif data.frequency[i] > 900*1000:
+                frequency_str = "{:.3f} kHz".format(data.frequency[i]/(1000*1000.0))
+            else:
+                frequency_str = "{:.3f} Hz".format(data.frequency[i]/1000.0)
+            self.labels_frequency[i].setText(frequency_str)
             self.labels_pin_value[i].setText('High' if data.pin_value[i] else 'Low')
 
     def cb_counter(self, data):
