@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>675</width>
+    <width>728</width>
     <height>378</height>
    </rect>
   </property>
@@ -781,7 +781,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Channel Status:</string>
+        <string>Channel Status LED:</string>
        </property>
       </widget>
      </item>
