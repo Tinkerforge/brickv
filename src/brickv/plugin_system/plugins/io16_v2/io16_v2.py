@@ -193,14 +193,12 @@ class IO16V2(COMCUPluginBase, Ui_IO16V2):
         self.ch_status_update_timer = QTimer()
         self.ch_status_update_timer.timeout.connect(self.ch_status_update_timeout)
 
-        self.sbox_cfg_iv_cb_period.setValue(100)
         self.iv_cb_timer = QTimer()
         self.iv_cb_timer.timeout.connect(self.iv_cb_timeout)
 
         self.btn_monoflop_go.clicked.connect(self.btn_monoflop_go_clicked)
         self.btn_cfg_ch_apply.clicked.connect(self.btn_cfg_ch_apply_clicked)
         self.cbox_cfg_ch.currentIndexChanged.connect(self.cbox_cfg_ch_changed)
-        self.btn_cfg_iv_cb_period.clicked.connect(self.btn_cfg_iv_cb_period_clicked)
         self.cbox_cfg_ch_dir.currentIndexChanged.connect(self.cbox_cfg_ch_dir_changed)
 
     def start(self):
@@ -330,7 +328,7 @@ class IO16V2(COMCUPluginBase, Ui_IO16V2):
             else:
                 self.lbl_st_ch_v[i].setText('Low')
 
-        self.iv_cb_timer.start(self.sbox_cfg_iv_cb_period.value())
+        self.iv_cb_timer.start(100)
 
     def iv_cb_timeout(self):
         self.iv_cb_timer.stop()
@@ -371,12 +369,6 @@ class IO16V2(COMCUPluginBase, Ui_IO16V2):
 
             for e in self.gui_grp_monoflop:
                 e.setEnabled(True)
-
-    def btn_cfg_iv_cb_period_clicked(self):
-        self.btn_cfg_iv_cb_period.setEnabled(False)
-        self.iv_cb_timer.stop()
-        self.iv_cb_timer.start(self.sbox_cfg_iv_cb_period.value())
-        self.btn_cfg_iv_cb_period.setEnabled(True)
 
     def btn_cfg_ch_apply_clicked(self):
         self.btn_cfg_ch_apply.setEnabled(False)
@@ -430,7 +422,8 @@ class IO16V2(COMCUPluginBase, Ui_IO16V2):
 
     def update_ch_config_gui(self, index):
         if self.ch_current_config[index]['direction'] == self.io.DIRECTION_IN:
-            if self.ch_current_config[index]['value']:
+            if self.async_data_store['update_current_channel_info']['config'].value:
+            #if self.ch_current_config[index]['value']:
                 self.cbox_cfg_ch_in_v.setCurrentIndex(1)
             else:
                 self.cbox_cfg_ch_in_v.setCurrentIndex(0)
