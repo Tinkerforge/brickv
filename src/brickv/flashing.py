@@ -61,6 +61,8 @@ NO_BRICK = 'No Brick found'
 NO_EXTENSION = 'No Extension found'
 NO_BOOTLOADER = 'No Brick in Bootloader found'
 
+PORT_NAMES = ('a', 'b', 'c', 'd', 'i-a', 'i-b', 'i-c', 'i-d')
+
 def error_to_name(e):
     if e.value == Error.TIMEOUT:
         return 'Timeout'
@@ -813,7 +815,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.combo_port.clear()
 
         if index < 0 or len(self.brick_infos) == 0:
-            self.combo_port.addItems(['A', 'B', 'C', 'D'])
+            self.combo_port.addItems(['A', 'B', 'C', 'D', 'I-A', 'I-B', 'I-C', 'I-D'])
             return
 
         brick_info = self.brick_infos[index]
@@ -863,7 +865,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if b < 0 or p < 0:
             return
 
-        self.edit_uid.setText(self.brick_infos[b].bricklets[('a', 'b', 'c', 'd')[p]].uid)
+        self.edit_uid.setText(self.brick_infos[b].bricklets[PORT_NAMES[p]].uid)
 
     def plugin_changed(self, index):
         self.update_ui_state()
@@ -1245,10 +1247,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.popup_ok('Bricklet', 'Successfully flashed {0} Bricklet plugin {1}.{2}.{3}.\nNew plugin will be used after reset of the connected Brick.'.format(name, *version))
 
     def current_brick_and_port(self):
-        port_names = ['a', 'b', 'c', 'd']
-
         return (self.current_brick(),
-                port_names[self.combo_port.currentIndex()])
+                PORT_NAMES[self.combo_port.currentIndex()])
 
     def current_brick(self):
         try:
@@ -1257,9 +1257,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
             return None
 
     def current_bricklet_plugin(self):
-        port_names = ['a', 'b', 'c', 'd']
         try:
-            return self.brick_infos[self.combo_brick.currentIndex()].bricklets[port_names[self.combo_port.currentIndex()]].plugin
+            return self.brick_infos[self.combo_brick.currentIndex()].bricklets[PORT_NAMES[self.combo_port.currentIndex()]].plugin
         except:
             return None
 
