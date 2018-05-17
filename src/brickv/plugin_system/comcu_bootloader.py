@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout, QWidget, QPushButton
+from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QApplication
 
 from brickv.utils import get_main_window
 
@@ -50,13 +50,16 @@ class COMCUBootloader(QWidget):
     def button_pressed(self):
         main_window = get_main_window()
         main_window.flashing_clicked()
+        QApplication.processEvents()
         main_window.flashing_window.tab_widget.setCurrentPage(2)
+        QApplication.processEvents()
         combo_brick = main_window.flashing_window.combo_brick
         combo_port  = main_window.flashing_window.combo_port
 
         for i in range(combo_brick.count()):
             if '[' + self.info.connected_uid + ']' in combo_brick.itemText(i):
                 combo_brick.setCurrentIndex(i)
+                QApplication.processEvents()
                 break
 
         try:
@@ -65,3 +68,4 @@ class COMCUBootloader(QWidget):
             port_index = 0
 
         combo_port.setCurrentIndex(port_index)
+        QApplication.processEvents()
