@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-16.      #
+# This file was automatically generated on 2018-05-17.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -22,6 +22,7 @@ GetAirPressureCallbackConfiguration = namedtuple('AirPressureCallbackConfigurati
 GetAltitudeCallbackConfiguration = namedtuple('AltitudeCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
 GetTemperatureCallbackConfiguration = namedtuple('TemperatureCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
 GetMovingAverageConfiguration = namedtuple('MovingAverageConfiguration', ['moving_average_length_air_pressure', 'moving_average_length_altitude', 'moving_average_length_temperature'])
+GetCalibration = namedtuple('Calibration', ['measured_air_pressure', 'reference_air_pressure'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -132,10 +133,9 @@ class BrickletBarometerV2(Device):
 
     def get_air_pressure(self):
         """
-        Returns the air pressure of the air pressure sensor. The value
-        has a range of 1064960 to 5160960 and is given in mbar/4096, i.e.
-        a value of 4100473 means that an air pressure of 1001.092 mbar is
-        measured.
+        Returns the measured air pressure. The value has a range of
+        260000 to 1260000 and is given in mbar/1000, i.e. a value of
+        1001092 means that an air pressure of 1001.092 mbar is measured.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -193,9 +193,10 @@ class BrickletBarometerV2(Device):
 
     def get_altitude(self):
         """
-        Returns the relative altitude of the air pressure sensor. The value is given in
-        mm and is calculated based on the difference between the current air pressure
-        and the reference air pressure that can be set with :func:`Set Reference Air Pressure`.
+        Returns the relative altitude of the air pressure sensor. The value
+        is given in mm and is calculated based on the difference between the
+        current air pressure and the reference air pressure that can be set
+        with :func:`Set Reference Air Pressure`.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -257,9 +258,10 @@ class BrickletBarometerV2(Device):
         has a range of -4000 to 8500 and is given in °C/100, i.e. a value
         of 2007 means that a temperature of 20.07 °C is measured.
 
-        This temperature is used internally for temperature compensation of the air
-        pressure measurement. It is not as accurate as the temperature measured by the
-        :ref:`temperature_bricklet` or the :ref:`temperature_ir_bricklet`.
+        This temperature is used internally for temperature compensation
+        of the air pressure measurement. It is not as accurate as the
+        temperature measured by the :ref:`temperature_bricklet` or the
+        :ref:`temperature_ir_bricklet`.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -338,17 +340,17 @@ class BrickletBarometerV2(Device):
 
     def get_moving_average_configuration(self):
         """
-        Returns the moving average configuration as set by :func:`Set Moving Average Configuration`.
+        Returns the moving average configuration as set by
+        :func:`Set Moving Average Configuration`.
         """
         return GetMovingAverageConfiguration(*self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_GET_MOVING_AVERAGE_CONFIGURATION, (), '', 'H H H'))
 
     def set_reference_air_pressure(self, air_pressure):
         """
-        Sets the reference air pressure in mbar*4096 for the altitude calculation.
-        Valid values are between 1064960 and 5160960.
-        Setting the reference to the current air pressure results in a calculated
-        altitude of 0 mm. Passing 0 is a shortcut for passing the current air pressure as
-        reference.
+        Sets the reference air pressure in mbar/1000 for the altitude calculation.
+        Valid values are between 260000 and 1260000. Setting the reference to the
+        current air pressure results in a calculated altitude of 0mm. Passing 0 is
+        a shortcut for passing the current air pressure as reference.
 
         Well known reference values are the Q codes
         `QNH <https://en.wikipedia.org/wiki/QNH>`__ and
@@ -359,36 +361,34 @@ class BrickletBarometerV2(Device):
         """
         air_pressure = int(air_pressure)
 
-        self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_SET_REFERENCE_AIR_PRESSURE, (air_pressure,), 'I', '')
+        self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_SET_REFERENCE_AIR_PRESSURE, (air_pressure,), 'i', '')
 
     def get_reference_air_pressure(self):
         """
         Returns the reference air pressure as set by :func:`Set Reference Air Pressure`.
         """
-        return self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_GET_REFERENCE_AIR_PRESSURE, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_GET_REFERENCE_AIR_PRESSURE, (), '', 'i')
 
-    def set_calibration(self, calibration):
+    def set_calibration(self, measured_air_pressure, reference_air_pressure):
         """
-        Sets one point offset calibration value. The value is calculated using the
-        following equation:
+        Sets one point air pressure offset calibration value. The offset
+        is the difference between currently measured air pressure by the
+        sensor and the air pressure measured by an accurate reference
+        barometer in mbar/1000. The values has a range of 260000 to 1260000.
 
-        ((pressure_measured - pressure_reference) / 0.1) * 1.6
-
-        Where pressure_measured is the air pressure measured without the calibration and
-        pressure_reference is the air pressure measured by an accurate reference barometer
-        both in mbar.
-
-        After calibration the pressure measurements will achieve accuracy of about 0.1 mbar.
+        After calibration the air pressure measurements will achieve accuracy
+        of about 0.1 mbar.
         """
-        calibration = int(calibration)
+        measured_air_pressure = int(measured_air_pressure)
+        reference_air_pressure = int(reference_air_pressure)
 
-        self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_SET_CALIBRATION, (calibration,), 'h', '')
+        self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_SET_CALIBRATION, (measured_air_pressure, reference_air_pressure), 'i i', '')
 
     def get_calibration(self):
         """
-        Returns the reference air pressure as set by :func:`Set Calibration`.
+        Returns the air pressure offset values as set by :func:`Set Calibration`.
         """
-        return self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_GET_CALIBRATION, (), '', 'h')
+        return GetCalibration(*self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_GET_CALIBRATION, (), '', 'i i'))
 
     def get_spitfp_error_count(self):
         """

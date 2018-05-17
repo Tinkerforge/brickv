@@ -69,21 +69,35 @@ class Calibration(QDialog, Ui_Calibration):
         self.cbe_t.set_period(100)
 
         self.sbox_cal_ref_air_pressure.setValue(1013.250)
+        async_call(self.parent.barometer.get_calibration,
+                   None,
+                   self.get_calibration_async,
+                   self.parent.increase_error_count)
 
     def btn_cal_remove_clicked(self):
-        self.parent.barometer.set_calibration(0)
+        self.parent.barometer.set_calibration(0, 0)
+
+        async_call(self.parent.barometer.get_calibration,
+                   None,
+                   self.get_calibration_async,
+                   self.parent.increase_error_count)
 
     def btn_cal_calibrate_clicked(self):
-        pressure_measured = self.p
-        pressure_reference = self.sbox_cal_ref_air_pressure.value()
+        self.parent.barometer.set_calibration(int(self.p * 1000), int(self.sbox_cal_ref_air_pressure.value()*1000))
 
-        # v = 16 (16*256 = 4096) implies pressure difference of 1 mbar (4096 counts = 1 mbar)
-        v = int(round(((pressure_measured - pressure_reference) / 0.1) * 1.6))
+        async_call(self.parent.barometer.get_calibration,
+                   None,
+                   self.get_calibration_async,
+                   self.parent.increase_error_count)
 
-        self.parent.barometer.set_calibration(v)
+    def get_calibration_async(self, cal):
+        if cal.measured_air_pressure == 0 and cal.reference_air_pressure == 0:
+            self.sbox_cal_ref_air_pressure.setValue(1013.250)
+        else:
+            self.sbox_cal_ref_air_pressure.setValue(cal.reference_air_pressure/1000.0)
 
     def cb_get_p(self, air_pressure):
-        self.p = air_pressure / 4096.0
+        self.p = air_pressure / 1000.0
         self.lbl_p.setText('{:.3f} mbar (QFE)'.format(self.p))
 
     def cb_get_a(self, altitude):
@@ -268,10 +282,10 @@ class BarometerV2(COMCUPluginBase):
         self.lbl_temperature_value.setText(u'{:.3f} °C'.format(self.current_temperature))
 
     def cb_get_air_pressure(self, air_pressure):
-        self.current_air_pressure = air_pressure / 4096.0
+        self.current_air_pressure = air_pressure / 1000.0
 
     def get_reference_air_pressure_async(self, air_pressure):
-        self.sbox_reference_air_pressure.setValue(air_pressure / 4096.0)
+        self.sbox_reference_air_pressure.setValue(air_pressure / 1000.0)
 
     def btn_use_current_clicked(self):
         self.barometer.set_reference_air_pressure(0)
