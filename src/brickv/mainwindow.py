@@ -634,12 +634,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     device_info = infos.BrickMasterInfo()
                 elif device_identifier == BrickRED.DEVICE_IDENTIFIER:
                     device_info = infos.BrickREDInfo()
-                elif position in ('a', 'b', 'c', 'd', 'A', 'B', 'C', 'D'):
-                    position = position.lower()
+                elif position in ('a', 'b', 'c', 'd', 'i', 'A', 'B', 'C', 'D', 'I'):
                     device_info = infos.BrickletInfo()
                 else:
                     device_info = infos.BrickInfo()
                     something_changed_ref[0] = True
+
+            position = position.lower()
 
             def set_device_info_value(name, value):
                 if getattr(device_info, name) != value:
@@ -654,15 +655,61 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             set_device_info_value('device_identifier', device_identifier)
             set_device_info_value('enumeration_type', enumeration_type)
 
+
             if device_info.type == 'bricklet':
+                connected_uid = device_info.connected_uid
+                # In case of isolator we make the connection between the isolated Bricklet and
+                # the Brick directly
+                if position == 'i':
+                    for bricklet_info in infos.get_bricklet_infos():
+                        if bricklet_info.uid == connected_uid:
+                            connected_uid = bricklet_info.connected_uid
+                            position = 'i-' + bricklet_info.position
+                            set_device_info_value('position', position)
+                            break
+                
                 for brick_info in infos.get_brick_infos():
-                    if brick_info.uid == device_info.connected_uid:
+                    if brick_info.uid == connected_uid:
                         if position in brick_info.bricklets and brick_info.bricklets[position] != device_info:
                             brick_info.bricklets[position] = device_info
                             something_changed_ref[0] = True
+
+                # Find out if new device is connected to isolator and update infos if necessary
+                for bricklet_info in infos.get_bricklet_infos():
+                    if bricklet_info.position.startswith('i'):
+                        if bricklet_info.connected_uid == device_info.uid:
+                            connected_uid = device_info.connected_uid
+                            position = 'i-' + device_info.position
+                            if getattr(bricklet_info, 'position') != position:
+                                setattr(bricklet_info, 'position', position)
+                                something_changed_ref[0] = True
+
+                            for brick_info in infos.get_brick_infos():
+                                if brick_info.uid == connected_uid:
+                                    if position in brick_info.bricklets and brick_info.bricklets[position] != bricklet_info:
+                                        brick_info.bricklets[position] = bricklet_info
+                                        something_changed_ref[0] = True
+                                        break
+
+                            break
+
             elif device_info.type == 'brick':
                 for bricklet_info in infos.get_bricklet_infos():
-                    if bricklet_info.connected_uid == device_info.uid:
+                    connected_uid = bricklet_info.connected_uid 
+
+                    # Find out if Bricklet is connected to an isolator, in this case
+                    # We make a direct connection to the Brick.
+                    if bricklet_info.position.startswith('i'):
+                        for bricklet_info2 in infos.get_bricklet_infos():
+                            if bricklet_info2.uid == connected_uid:
+                                connected_uid = bricklet_info2.connected_uid
+                                position = 'i-' + bricklet_info2.position
+                                if getattr(bricklet_info, 'position') != position:
+                                    setattr(bricklet_info, 'position', position)
+                                    something_changed_ref[0] = True
+                                break
+
+                    if connected_uid == device_info.uid:
                         if position in device_info.bricklets and device_info.bricklets[bricklet_info.position] != bricklet_info:
                             device_info.bricklets[bricklet_info.position] = bricklet_info
                             something_changed_ref[0] = True
