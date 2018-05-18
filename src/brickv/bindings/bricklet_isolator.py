@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-14.      #
+# This file was automatically generated on 2018-05-18.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -18,12 +18,15 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
+GetStatistics = namedtuple('Statistics', ['messages_from_brick', 'messages_from_bricklet', 'connected_bricklet_device_identifier', 'connected_bricklet_uid'])
+GetSPITFPBaudrateConfig = namedtuple('SPITFPBaudrateConfig', ['enable_dynamic_baudrate', 'minimum_dynamic_baudrate'])
+GetIsolatorSPITFPErrorCount = namedtuple('IsolatorSPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletIsolator(Device):
     """
-    TBD
+    Galvanically isolates any Bricklet from any Brick
     """
 
     DEVICE_IDENTIFIER = 2122
@@ -32,6 +35,12 @@ class BrickletIsolator(Device):
 
 
 
+    FUNCTION_GET_STATISTICS = 1
+    FUNCTION_SET_SPITFP_BAUDRATE_CONFIG = 231
+    FUNCTION_GET_SPITFP_BAUDRATE_CONFIG = 232
+    FUNCTION_SET_SPITFP_BAUDRATE = 234
+    FUNCTION_GET_SPITFP_BAUDRATE = 235
+    FUNCTION_GET_ISOLATOR_SPITFP_ERROR_COUNT = 237
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -70,6 +79,12 @@ class BrickletIsolator(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletIsolator.FUNCTION_GET_STATISTICS] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIsolator.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG] = BrickletIsolator.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIsolator.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIsolator.FUNCTION_SET_SPITFP_BAUDRATE] = BrickletIsolator.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIsolator.FUNCTION_GET_SPITFP_BAUDRATE] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIsolator.FUNCTION_GET_ISOLATOR_SPITFP_ERROR_COUNT] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIsolator.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIsolator.FUNCTION_SET_BOOTLOADER_MODE] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIsolator.FUNCTION_GET_BOOTLOADER_MODE] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -84,6 +99,99 @@ class BrickletIsolator(Device):
         self.response_expected[BrickletIsolator.FUNCTION_GET_IDENTITY] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+
+    def get_statistics(self):
+        """
+        Returns statistics for the Isolator Bricklet.
+        """
+        return GetStatistics(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_STATISTICS, (), '', 'I I H 8s'))
+
+    def set_spitfp_baudrate_config(self, enable_dynamic_baudrate, minimum_dynamic_baudrate):
+        """
+        The SPITF protocol can be used with a dynamic baudrate. If the dynamic baudrate is
+        enabled, the Isolator Bricklet will try to adapt the baudrate for the communication
+        between Bricks and Bricklets according to the amount of data that is transferred.
+
+        The baudrate for communication config between
+        Brick and Isolator Bricklet can be set thorugh the API of the Brick.
+
+
+        The baudrate will be increased exponetially if lots of data is send/receieved and
+        decreased linearly if little data is send/received.
+
+        This lowers the baudrate in applications where little data is transferred (e.g.
+        a weather station) and increases the robustness. If there is lots of data to transfer
+        (e.g. Thermal Imaging Bricklet) it automatically increases the baudrate as needed.
+
+        In cases where some data has to transferred as fast as possible every few seconds
+        (e.g. RS485 Bricklet with a high baudrate but small payload) you may want to turn
+        the dynamic baudrate off to get the highest possible performance.
+
+        The maximum value of the baudrate can be set per port with the function
+        :func:`Set SPITFP Baudrate`. If the dynamic baudrate is disabled, the baudrate
+        as set by :func:`Set SPITFP Baudrate` will be used statically.
+
+        The minimum dynamic baudrate has a value range of 400000 to 2000000 baud.
+
+        By default dynamic baudrate is enabled and the minimum dynamic baudrate is 400000.
+        """
+        enable_dynamic_baudrate = bool(enable_dynamic_baudrate)
+        minimum_dynamic_baudrate = int(minimum_dynamic_baudrate)
+
+        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', '')
+
+    def get_spitfp_baudrate_config(self):
+        """
+        Returns the baudrate config, see :func:`Set SPITFP Baudrate Config`.
+        """
+        return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', '! I'))
+
+    def set_spitfp_baudrate(self, baudrate):
+        """
+        Sets the baudrate for a the communication between Isolator Bricklet
+        and the connected Bricklet. The baudrate for communication between
+        Brick and Isolator Bricklet can be set thorugh the API of the Brick.
+
+        The baudrate can be in the range 400000 to 2000000.
+
+        If you want to increase the throughput of Bricklets you can increase
+        the baudrate. If you get a high error count because of high
+        interference (see :func:`Get SPITFP Error Count`) you can decrease the
+        baudrate.
+
+        If the dynamic baudrate feature is enabled, the baudrate set by this
+        function corresponds to the maximum baudrate (see :func:`Set SPITFP Baudrate Config`).
+
+        Regulatory testing is done with the default baudrate. If CE compatability
+        or similar is necessary in you applications we recommend to not change
+        the baudrate.
+
+        The default baudrate for all ports is 1400000.
+        """
+        baudrate = int(baudrate)
+
+        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_SPITFP_BAUDRATE, (baudrate,), 'I', '')
+
+    def get_spitfp_baudrate(self):
+        """
+        Returns the baudrate, see :func:`Set SPITFP Baudrate`.
+        """
+        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_SPITFP_BAUDRATE, (), '', 'I')
+
+    def get_isolator_spitfp_error_count(self):
+        """
+        Returns the error count for the communication between Isolator Bricklet and
+        the connected Bricklet. Call :func:`Get SPITFP Error Count` to get the
+        error count between Isolator Bricklet and Brick.
+
+        The errors are divided into
+
+        * ACK checksum errors,
+        * message checksum errors,
+        * frameing errors and
+        * overflow errors.
+        """
+        return GetIsolatorSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_ISOLATOR_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def get_spitfp_error_count(self):
         """

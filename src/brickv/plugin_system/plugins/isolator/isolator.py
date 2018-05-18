@@ -25,27 +25,57 @@ from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QCheckBox, QLabel
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
+from brickv.plugin_system.plugins.isolator.ui_isolator import Ui_Isolator 
 from brickv.bindings.bricklet_isolator import BrickletIsolator
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class Isolator(COMCUPluginBase):
+from brickv import infos
+from brickv.utils import get_main_window
+
+class Isolator(COMCUPluginBase, Ui_Isolator):
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletIsolator, *args)
+        self.setupUi(self)
 
         self.isolator = self.device
 
-        self.label = QLabel(u'Isolator Bricklet')
+        self.cbe_statistics = CallbackEmulator(self.isolator.get_statistics,
+                                               self.cb_get_statistics,
+                                               self.increase_error_count)
 
-        layout_main = QVBoxLayout(self)
-        layout_main.addWidget(self.label)
+        self.last_connected = None
 
+    def cb_get_statistics(self, statistics):
+        self.label_messages_from_brick.setText(str(statistics.messages_from_brick))
+        self.label_messages_from_bricklet.setText(str(statistics.messages_from_bricklet))
+
+        try:
+            name = infos.get_info(statistics.connected_bricklet_uid).plugin.device_class.DEVICE_DISPLAY_NAME
+        except:
+            name = None
+        if statistics.connected_bricklet_uid != '' and name != None:
+            self.label_isolated_bricklet.setText('<b>{0}</b> with UID "{1}"'.format(name, statistics.connected_bricklet_uid))
+            self.button_bricklet.setText('Open {0}'.format(name))
+            if self.last_connected != statistics.connected_bricklet_uid:
+                self.last_connected = statistics.connected_bricklet_uid
+                try:
+                    self.button_bricklet.clicked.disconnect()
+                except:
+                    pass
+                self.button_bricklet.clicked.connect(lambda: get_main_window().show_plugin(statistics.connected_bricklet_uid))
+            self.button_bricklet.setEnabled(True)
+        else:
+            self.label_isolated_bricklet.setText('Unknown Bricklet (Did you connect a Bricklet?)')
+            self.button_bricklet.setText('Open Bricklet')
+            self.button_bricklet.setEnabled(False)
+                                
     def start(self):
-        pass
+        self.cbe_statistics.set_period(200)
 
     def stop(self):
-        pass
+        self.cbe_statistics.set_period(0)
 
     def destroy(self):
         pass
