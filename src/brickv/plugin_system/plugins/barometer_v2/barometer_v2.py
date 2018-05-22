@@ -296,7 +296,7 @@ class BarometerV2(COMCUPluginBase):
                    self.increase_error_count)
 
     def sbox_reference_air_pressure_value_changed(self, value):
-        self.barometer.set_reference_air_pressure(value * 4096.0)
+        self.barometer.set_reference_air_pressure(value * 1000.0)
 
     def get_moving_average_configuration_async(self, avg):
         m_avg_air_pressure, m_avg_altitude, m_avg_temperature = avg
