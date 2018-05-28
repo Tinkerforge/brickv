@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-16.      #
+# This file was automatically generated on 2018-05-24.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -28,7 +28,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletParticulateMatter(Device):
     """
-    TBD
+    Measures Particulate Matter concentration (PM1.0, PM2.5 and PM10)
     """
 
     DEVICE_IDENTIFIER = 2110
@@ -121,7 +121,7 @@ class BrickletParticulateMatter(Device):
         * PM\ :sub:`10.0`\ .
 
         If the sensor is disabled (see :func:`Set Enable`) then the last known good
-        values from the sensor are return.
+        values from the sensor are returned.
         """
         return GetPMConcentration(*self.ipcon.send_request(self, BrickletParticulateMatter.FUNCTION_GET_PM_CONCENTRATION, (), '', 'H H H'))
 
@@ -138,7 +138,7 @@ class BrickletParticulateMatter(Device):
         * greater 10.0µm.
 
         If the sensor is disabled (see :func:`Set Enable`) then the last known good
-        value from the sensor is return.
+        value from the sensor is returned.
         """
         return GetPMCount(*self.ipcon.send_request(self, BrickletParticulateMatter.FUNCTION_GET_PM_COUNT, (), '', 'H H H H H H'))
 

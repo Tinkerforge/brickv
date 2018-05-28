@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-02.      #
+# This file was automatically generated on 2018-05-24.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -171,7 +171,11 @@ class BrickletIndustrialQuadRelayV2(Device):
 
     def set_channel_led_config(self, led, config):
         """
+        Each channel has a corresponding LED. You can turn the LED Off, On or show a
+        heartbeat. You can also ste the LED to "Channel Status". In this mode the
+        LED is on if the channel is high and off otherwise.
 
+        By default all channel LEDs are configured as "Channel Status".
         """
         led = int(led)
         config = int(config)

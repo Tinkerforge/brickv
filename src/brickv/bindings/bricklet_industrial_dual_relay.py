@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-03-28.      #
+# This file was automatically generated on 2018-05-24.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -172,7 +172,7 @@ class BrickletIndustrialDualRelay(Device):
 
     def get_selected_state(self, relay):
         """
-        TBD
+        Returns the state of the selected relay (1 or 2). The state can be set by :func:`Set Selected State`.
         """
         relay = int(relay)
 

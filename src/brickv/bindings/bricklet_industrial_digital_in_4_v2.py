@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-02.      #
+# This file was automatically generated on 2018-05-24.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -61,6 +61,10 @@ class BrickletIndustrialDigitalIn4V2(Device):
     FUNCTION_READ_UID = 249
     FUNCTION_GET_IDENTITY = 255
 
+    CHANNEL_0 = 0
+    CHANNEL_1 = 1
+    CHANNEL_2 = 2
+    CHANNEL_3 = 3
     EDGE_TYPE_RISING = 0
     EDGE_TYPE_FALLING = 1
     EDGE_TYPE_BOTH = 2
@@ -138,7 +142,19 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
     def set_input_value_callback_configuration(self, channel, period, value_has_to_change):
         """
+        This callback can be configured per channel.
 
+        The period in ms is the period with which the :cb:`Input Value`
+        callback is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
         """
         channel = int(channel)
         period = int(period)
@@ -148,7 +164,8 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
     def get_input_value_callback_configuration(self, channel):
         """
-
+        Returns the callback configuration for the given channel as set by
+        :func:`Set Input Value Callback Configuration`.
         """
         channel = int(channel)
 
@@ -156,7 +173,17 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
     def set_all_input_value_callback_configuration(self, period, value_has_to_change):
         """
+        The period in ms is the period with which the :cb:`All Input Value`
+        callback is triggered periodically. A value of 0 turns the callback off.
 
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -165,7 +192,8 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
     def get_all_input_value_callback_configuration(self):
         """
-
+        Returns the callback configuration as set by
+        :func:`Set All Input Value Callback Configuration`.
         """
         return GetAllInputValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_ALL_INPUT_VALUE_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
@@ -219,22 +247,26 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
         return GetEdgeCountConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_EDGE_COUNT_CONFIGURATION, (channel,), 'B', 'B B'))
 
-    def set_channel_led_config(self, led, config):
+    def set_channel_led_config(self, channel, config):
         """
+        Each channel has a corresponding LED. You can turn the LED Off, On or show a
+        heartbeat. You can also ste the LED to "Channel Status". In this mode the
+        LED is on if the channel is high and off otherwise.
 
+        By default all channel LEDs are configured as "Channel Status".
         """
-        led = int(led)
+        channel = int(channel)
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_CHANNEL_LED_CONFIG, (led, config), 'B B', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_CHANNEL_LED_CONFIG, (channel, config), 'B B', '')
 
-    def get_channel_led_config(self, led):
+    def get_channel_led_config(self, channel):
         """
         Returns the Channel LED configuration as set by :func:`Set Channel LED Config`
         """
-        led = int(led)
+        channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_CHANNEL_LED_CONFIG, (led,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 'B')
 
     def get_spitfp_error_count(self):
         """

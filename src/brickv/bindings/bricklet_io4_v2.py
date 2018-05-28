@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-04-10.      #
+# This file was automatically generated on 2018-05-24.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -216,7 +216,19 @@ class BrickletIO4V2(Device):
 
     def set_input_value_callback_configuration(self, channel, period, value_has_to_change):
         """
+        This callback can be configured per channel.
 
+        The period in ms is the period with which the :cb:`Input Value`
+        callback is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
         """
         channel = int(channel)
         period = int(period)
@@ -226,7 +238,8 @@ class BrickletIO4V2(Device):
 
     def get_input_value_callback_configuration(self, channel):
         """
-
+        Returns the callback configuration for the given channel as set by
+        :func:`Set Input Value Callback Configuration`.
         """
         channel = int(channel)
 
@@ -234,7 +247,17 @@ class BrickletIO4V2(Device):
 
     def set_all_input_value_callback_configuration(self, period, value_has_to_change):
         """
+        The period in ms is the period with which the :cb:`All Input Value`
+        callback is triggered periodically. A value of 0 turns the callback off.
 
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -243,13 +266,25 @@ class BrickletIO4V2(Device):
 
     def get_all_input_value_callback_configuration(self):
         """
-
+        Returns the callback configuration as set by
+        :func:`Set All Input Value Callback Configuration`.
         """
         return GetAllInputValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIO4V2.FUNCTION_GET_ALL_INPUT_VALUE_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
     def set_monoflop(self, channel, value, time):
         """
+        The first parameter  is the desired state of the channel (*true* means output *high*
+        and *false* means output *low*). The second parameter indicates the time (in ms) that
+        the channel should hold the state.
 
+        If this function is called with the parameters (true, 1500):
+        The channel will turn on and in 1.5s it will turn off again.
+
+        A monoflop can be used as a failsafe mechanism. For example: Lets assume you
+        have a RS485 bus and a IO4 Bricklet is connected to one of the slave
+        stacks. You can now call this function every second, with a time parameter
+        of two seconds. The channel will be *high* all the time. If now the RS485
+        connection is lost, the channel will turn *low* in at most two seconds.
         """
         channel = int(channel)
         value = bool(value)
