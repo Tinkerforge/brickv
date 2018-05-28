@@ -40,6 +40,7 @@ from brickv.plugin_system.plugins.industrial_counter import device_class as indu
 from brickv.plugin_system.plugins.industrial_digital_in_4 import device_class as industrial_digital_in_4
 from brickv.plugin_system.plugins.industrial_digital_in_4_v2 import device_class as industrial_digital_in_4_v2
 from brickv.plugin_system.plugins.industrial_digital_out_4 import device_class as industrial_digital_out_4
+from brickv.plugin_system.plugins.industrial_digital_out_4_v2 import device_class as industrial_digital_out_4_v2
 from brickv.plugin_system.plugins.industrial_dual_0_20ma import device_class as industrial_dual_0_20ma
 from brickv.plugin_system.plugins.industrial_dual_0_20ma_v2 import device_class as industrial_dual_0_20ma_v2
 from brickv.plugin_system.plugins.industrial_dual_analog_in import device_class as industrial_dual_analog_in
@@ -162,6 +163,7 @@ device_classes = [
     industrial_digital_in_4,
     industrial_digital_in_4_v2,
     industrial_digital_out_4,
+    industrial_digital_out_4_v2,
     industrial_dual_0_20ma,
     industrial_dual_0_20ma_v2,
     industrial_dual_analog_in,
