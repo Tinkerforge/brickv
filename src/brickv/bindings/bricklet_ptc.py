@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-04-19.      #
+# This file was automatically generated on 2018-05-28.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -75,7 +75,7 @@ class BrickletPTC(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletPTC.FUNCTION_GET_TEMPERATURE] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPTC.FUNCTION_GET_RESISTANCE] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_TRUE

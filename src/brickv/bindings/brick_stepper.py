@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-28.      #
+# This file was automatically generated on 2018-05-28.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -115,7 +115,7 @@ class BrickStepper(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 4)
 
         self.response_expected[BrickStepper.FUNCTION_SET_MAX_VELOCITY] = BrickStepper.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickStepper.FUNCTION_GET_MAX_VELOCITY] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE

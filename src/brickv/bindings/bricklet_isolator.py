@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-18.      #
+# This file was automatically generated on 2018-05-28.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -36,11 +36,11 @@ class BrickletIsolator(Device):
 
 
     FUNCTION_GET_STATISTICS = 1
-    FUNCTION_SET_SPITFP_BAUDRATE_CONFIG = 231
-    FUNCTION_GET_SPITFP_BAUDRATE_CONFIG = 232
-    FUNCTION_SET_SPITFP_BAUDRATE = 234
-    FUNCTION_GET_SPITFP_BAUDRATE = 235
-    FUNCTION_GET_ISOLATOR_SPITFP_ERROR_COUNT = 237
+    FUNCTION_SET_SPITFP_BAUDRATE_CONFIG = 2
+    FUNCTION_GET_SPITFP_BAUDRATE_CONFIG = 3
+    FUNCTION_SET_SPITFP_BAUDRATE = 4
+    FUNCTION_GET_SPITFP_BAUDRATE = 5
+    FUNCTION_GET_ISOLATOR_SPITFP_ERROR_COUNT = 6
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236

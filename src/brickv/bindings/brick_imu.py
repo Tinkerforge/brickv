@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-28.      #
+# This file was automatically generated on 2018-05-28.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -113,7 +113,7 @@ class BrickIMU(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 1)
+        self.api_version = (2, 0, 4)
 
         self.response_expected[BrickIMU.FUNCTION_GET_ACCELERATION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_MAGNETIC_FIELD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE

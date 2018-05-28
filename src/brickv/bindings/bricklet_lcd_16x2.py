@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-28.      #
+# This file was automatically generated on 2018-05-28.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -52,7 +52,7 @@ class BrickletLCD16x2(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletLCD16x2.FUNCTION_WRITE_LINE] = BrickletLCD16x2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLCD16x2.FUNCTION_CLEAR_DISPLAY] = BrickletLCD16x2.RESPONSE_EXPECTED_FALSE

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-04-13.      #
+# This file was automatically generated on 2018-05-28.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -312,8 +312,6 @@ class BrickletIO16V2(Device):
         """
         Returns the edge type and debounce time for the selected channel as set by
         :func:`Set Edge Count Configuration`.
-
-        .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         channel = int(channel)
 

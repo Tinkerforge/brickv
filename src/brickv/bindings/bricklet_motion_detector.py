@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-28.      #
+# This file was automatically generated on 2018-05-28.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -49,7 +49,7 @@ class BrickletMotionDetector(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletMotionDetector.FUNCTION_GET_MOTION_DETECTED] = BrickletMotionDetector.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMotionDetector.FUNCTION_SET_STATUS_LED_CONFIG] = BrickletMotionDetector.RESPONSE_EXPECTED_FALSE
