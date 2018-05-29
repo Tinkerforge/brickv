@@ -115,15 +115,15 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
             combo.currentIndexChanged.connect(get_combo_lambda(channel))
 
         pos += 3
-        self.labels_counter       = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+        self.labels_counter    = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
         pos += 1
-        self.labels_duty_cycle    = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+        self.labels_duty_cycle = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
         pos += 1
-        self.labels_period        = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+        self.labels_period     = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
         pos += 1
-        self.labels_frequency     = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+        self.labels_frequency  = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
         pos += 1
-        self.labels_channel_value = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
+        self.labels_value      = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
 
         self.cbox_cs0_cfg.currentIndexChanged.connect(self.cbox_cs0_cfg_changed)
         self.cbox_cs1_cfg.currentIndexChanged.connect(self.cbox_cs1_cfg_changed)
@@ -174,7 +174,7 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
             else:
                 frequency_str = "{:.3f} Hz".format(data.frequency[i]/1000.0)
             self.labels_frequency[i].setText(frequency_str)
-            self.labels_channel_value[i].setText('High' if data.channel_value[i] else 'Low')
+            self.labels_value[i].setText('High' if data.value[i] else 'Low')
 
     def cb_counter(self, data):
         for i in range(4):

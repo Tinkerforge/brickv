@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-28.      #
+# This file was automatically generated on 2018-05-29.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -18,8 +18,8 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
-GetSignalData = namedtuple('SignalData', ['duty_cycle', 'period', 'frequency', 'channel_value'])
-GetAllSignalData = namedtuple('AllSignalData', ['duty_cycle', 'period', 'frequency', 'channel_value'])
+GetSignalData = namedtuple('SignalData', ['duty_cycle', 'period', 'frequency', 'value'])
+GetAllSignalData = namedtuple('AllSignalData', ['duty_cycle', 'period', 'frequency', 'value'])
 GetCounterConfiguration = namedtuple('CounterConfiguration', ['count_edge', 'count_direction', 'duty_cycle_prescaler', 'frequency_integration_time'])
 GetAllCounterCallbackConfiguration = namedtuple('AllCounterCallbackConfiguration', ['period', 'value_has_to_change'])
 GetAllSignalDataCallbackConfiguration = namedtuple('AllSignalDataCallbackConfiguration', ['period', 'value_has_to_change'])
@@ -182,7 +182,7 @@ class BrickletIndustrialCounter(Device):
 
     def get_all_counter(self):
         """
-        Returns the current counter values for all four channels
+        Returns the current counter values for all four channels.
         """
         return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_COUNTER, (), '', '4q')
 
@@ -216,7 +216,7 @@ class BrickletIndustrialCounter(Device):
         * Duty Cycle: 1/100 %
         * Period: ns
         * Frequency: mHz (1/1000 Hz)
-        * Channel Value: true = high, false = low
+        * Value: true = high, false = low
         """
         channel = int(channel)
 
@@ -231,7 +231,7 @@ class BrickletIndustrialCounter(Device):
         * Duty Cycle: 1/100 %
         * Period: ns
         * Frequency: mHz (1/1000 Hz)
-        * Channel Value: true = high, false = low
+        * Value: true = high, false = low
         """
         return GetAllSignalData(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_SIGNAL_DATA, (), '', '4H 4Q 4I 4!'))
 
@@ -285,14 +285,14 @@ class BrickletIndustrialCounter(Device):
         * Count Edge: Counter can count on rising, falling or both edges.
         * Count Direction: Counter can count up or down. You can also use
           another channel as direction input, see
-          `here <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
+          `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
           for details.
         * Duty Cycle Prescaler: Sets a divider for the internal clock. See
-          `here <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
+          `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
           for details.
         * Frequency Integration Time: Sets the integration time for the
           frequency measurement. See
-          `here <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
+          `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
           for details.
         """
         channel = int(channel)

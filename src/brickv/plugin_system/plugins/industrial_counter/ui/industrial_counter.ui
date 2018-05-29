@@ -810,7 +810,7 @@
        </item>
        <item>
         <property name="text">
-         <string>Channel State</string>
+         <string>Channel Status</string>
         </property>
        </item>
       </widget>
