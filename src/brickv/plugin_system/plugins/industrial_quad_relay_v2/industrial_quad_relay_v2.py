@@ -45,10 +45,10 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
         self.relay_buttons = [self.b0, self.b1, self.b2, self.b3]
         self.relay_button_icons = [self.b0_icon, self.b1_icon, self.b2_icon, self.b3_icon]
         self.relay_button_labels = [self.b0_label, self.b1_label, self.b2_label, self.b3_label]
+
         for icon in self.relay_button_icons:
             icon.setPixmap(self.open_pixmap)
             icon.show()
-
 
         def get_button_lambda(button):
             return lambda: self.relay_button_clicked(button)
@@ -74,7 +74,7 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
         self.cbox_cs2_cfg.currentIndexChanged.connect(self.cbox_cs2_cfg_changed)
         self.cbox_cs3_cfg.currentIndexChanged.connect(self.cbox_cs3_cfg_changed)
 
-    def get_output_value_async(self, value):
+    def get_value_async(self, value):
         for button in range(4):
             if value[button]:
                 self.relay_buttons[button].setText('Switch Off')
@@ -106,7 +106,7 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
         self.iqr.set_channel_led_config(3, idx)
 
     def start(self):
-        async_call(self.iqr.get_output_value, None, self.get_output_value_async, self.increase_error_count)
+        async_call(self.iqr.get_value, None, self.get_value_async, self.increase_error_count)
 
         async_call(self.iqr.get_channel_led_config, 0, lambda x: self.async_get_channel_led_config(0, x), self.increase_error_count)
         async_call(self.iqr.get_channel_led_config, 1, lambda x: self.async_get_channel_led_config(1, x), self.increase_error_count)
@@ -133,7 +133,7 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
             self.relay_buttons[button].setText('Switch On')
             self.relay_button_icons[button].setPixmap(self.open_pixmap)
 
-        self.iqr.set_selected_output_value(button, value)
+        self.iqr.set_selected_value(button, value)
 
         self.update_timer.stop()
 

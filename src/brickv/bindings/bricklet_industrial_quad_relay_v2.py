@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-28.      #
+# This file was automatically generated on 2018-05-29.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -34,11 +34,11 @@ class BrickletIndustrialQuadRelayV2(Device):
     CALLBACK_MONOFLOP_DONE = 8
 
 
-    FUNCTION_SET_OUTPUT_VALUE = 1
-    FUNCTION_GET_OUTPUT_VALUE = 2
+    FUNCTION_SET_VALUE = 1
+    FUNCTION_GET_VALUE = 2
     FUNCTION_SET_MONOFLOP = 3
     FUNCTION_GET_MONOFLOP = 4
-    FUNCTION_SET_SELECTED_OUTPUT_VALUE = 5
+    FUNCTION_SET_SELECTED_VALUE = 5
     FUNCTION_SET_CHANNEL_LED_CONFIG = 6
     FUNCTION_GET_CHANNEL_LED_CONFIG = 7
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
@@ -83,11 +83,11 @@ class BrickletIndustrialQuadRelayV2(Device):
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[BrickletIndustrialQuadRelayV2.FUNCTION_SET_OUTPUT_VALUE] = BrickletIndustrialQuadRelayV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletIndustrialQuadRelayV2.FUNCTION_GET_OUTPUT_VALUE] = BrickletIndustrialQuadRelayV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialQuadRelayV2.FUNCTION_SET_VALUE] = BrickletIndustrialQuadRelayV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialQuadRelayV2.FUNCTION_GET_VALUE] = BrickletIndustrialQuadRelayV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialQuadRelayV2.FUNCTION_SET_MONOFLOP] = BrickletIndustrialQuadRelayV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialQuadRelayV2.FUNCTION_GET_MONOFLOP] = BrickletIndustrialQuadRelayV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletIndustrialQuadRelayV2.FUNCTION_SET_SELECTED_OUTPUT_VALUE] = BrickletIndustrialQuadRelayV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialQuadRelayV2.FUNCTION_SET_SELECTED_VALUE] = BrickletIndustrialQuadRelayV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialQuadRelayV2.FUNCTION_SET_CHANNEL_LED_CONFIG] = BrickletIndustrialQuadRelayV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialQuadRelayV2.FUNCTION_GET_CHANNEL_LED_CONFIG] = BrickletIndustrialQuadRelayV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialQuadRelayV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletIndustrialQuadRelayV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -106,22 +106,22 @@ class BrickletIndustrialQuadRelayV2(Device):
         self.callback_formats[BrickletIndustrialQuadRelayV2.CALLBACK_MONOFLOP_DONE] = 'B !'
 
 
-    def set_output_value(self, value):
+    def set_value(self, value):
         """
         Sets the output value of all four relays. A value of *true* closes the
         relay and a value of *false* opens the relay.
 
-        Use :func:`Set Selected Output Value` to only change one relay.
+        Use :func:`Set Selected Value` to only change one relay.
         """
         value = list(map(bool, value))
 
-        self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_OUTPUT_VALUE, (value,), '4!', '')
+        self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_VALUE, (value,), '4!', '')
 
-    def get_output_value(self):
+    def get_value(self):
         """
-        Returns the values as set by :func:`Set Output Value`.
+        Returns the values as set by :func:`Set Value`.
         """
-        return self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_OUTPUT_VALUE, (), '', '4!')
+        return self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_VALUE, (), '', '4!')
 
     def set_monoflop(self, channel, value, time):
         """
@@ -160,14 +160,14 @@ class BrickletIndustrialQuadRelayV2(Device):
 
         return GetMonoflop(*self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_MONOFLOP, (channel,), 'B', '! I I'))
 
-    def set_selected_output_value(self, channel, value):
+    def set_selected_value(self, channel, value):
         """
         Sets the output value of the specified channel without affecting the other channels.
         """
         channel = int(channel)
         value = bool(value)
 
-        self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_SELECTED_OUTPUT_VALUE, (channel, value), 'B !', '')
+        self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_SELECTED_VALUE, (channel, value), 'B !', '')
 
     def set_channel_led_config(self, led, config):
         """
