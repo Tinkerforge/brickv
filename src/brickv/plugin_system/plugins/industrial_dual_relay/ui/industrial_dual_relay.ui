@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>408</width>
-    <height>291</height>
+    <width>414</width>
+    <height>299</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,12 +29,12 @@
             </font>
            </property>
            <property name="text">
-            <string>Relay 0</string>
+            <string>Channel 0</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="dr1_button">
+          <widget class="QPushButton" name="ch0_button">
            <property name="text">
             <string>Switch Off</string>
            </property>
@@ -56,7 +56,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="dr1_image">
+        <widget class="QLabel" name="ch0_image">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -116,7 +116,7 @@
           <enum>QLayout::SetDefaultConstraint</enum>
          </property>
          <item>
-          <widget class="QSpinBox" name="time1_spinbox">
+          <widget class="QSpinBox" name="time0_spinbox">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
              <horstretch>1</horstretch>
@@ -135,7 +135,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="state1_combobox">
+          <widget class="QComboBox" name="value0_combobox">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -157,7 +157,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="go1_button">
+        <widget class="QPushButton" name="go0_button">
          <property name="text">
           <string>Go</string>
          </property>
@@ -189,12 +189,12 @@
             </font>
            </property>
            <property name="text">
-            <string>Relay 1</string>
+            <string>Channel 1</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="dr2_button">
+          <widget class="QPushButton" name="ch1_button">
            <property name="text">
             <string>Switch Off</string>
            </property>
@@ -216,7 +216,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="dr2_image">
+        <widget class="QLabel" name="ch1_image">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -285,7 +285,7 @@
           <enum>QLayout::SetDefaultConstraint</enum>
          </property>
          <item>
-          <widget class="QSpinBox" name="time2_spinbox">
+          <widget class="QSpinBox" name="time1_spinbox">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -304,7 +304,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="state2_combobox">
+          <widget class="QComboBox" name="value1_combobox">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -326,7 +326,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="go2_button">
+        <widget class="QPushButton" name="go1_button">
          <property name="text">
           <string>Go</string>
          </property>
