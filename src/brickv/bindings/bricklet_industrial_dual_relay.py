@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-28.      #
+# This file was automatically generated on 2018-05-29.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -18,8 +18,8 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
-GetState = namedtuple('State', ['relay1', 'relay2'])
-GetMonoflop = namedtuple('Monoflop', ['state', 'time', 'time_remaining'])
+GetValue = namedtuple('Value', ['channel0', 'channel1'])
+GetMonoflop = namedtuple('Monoflop', ['value', 'time', 'time_remaining'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -35,12 +35,11 @@ class BrickletIndustrialDualRelay(Device):
     CALLBACK_MONOFLOP_DONE = 5
 
 
-    FUNCTION_SET_STATE = 1
-    FUNCTION_GET_STATE = 2
+    FUNCTION_SET_VALUE = 1
+    FUNCTION_GET_VALUE = 2
     FUNCTION_SET_MONOFLOP = 3
     FUNCTION_GET_MONOFLOP = 4
-    FUNCTION_SET_SELECTED_STATE = 6
-    FUNCTION_GET_SELECTED_STATE = 7
+    FUNCTION_SET_SELECTED_VALUE = 6
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -79,12 +78,11 @@ class BrickletIndustrialDualRelay(Device):
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[BrickletIndustrialDualRelay.FUNCTION_SET_STATE] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletIndustrialDualRelay.FUNCTION_GET_STATE] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialDualRelay.FUNCTION_SET_VALUE] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialDualRelay.FUNCTION_GET_VALUE] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualRelay.FUNCTION_SET_MONOFLOP] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDualRelay.FUNCTION_GET_MONOFLOP] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletIndustrialDualRelay.FUNCTION_SET_SELECTED_STATE] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletIndustrialDualRelay.FUNCTION_GET_SELECTED_STATE] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialDualRelay.FUNCTION_SET_SELECTED_VALUE] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDualRelay.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualRelay.FUNCTION_SET_BOOTLOADER_MODE] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualRelay.FUNCTION_GET_BOOTLOADER_MODE] = BrickletIndustrialDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -101,31 +99,31 @@ class BrickletIndustrialDualRelay(Device):
         self.callback_formats[BrickletIndustrialDualRelay.CALLBACK_MONOFLOP_DONE] = 'B !'
 
 
-    def set_state(self, relay1, relay2):
+    def set_value(self, channel0, channel1):
         """
         Sets the state of the relays, *true* means on and *false* means off.
         For example: (true, false) turns relay 1 on and relay 2 off.
 
         If you just want to set one of the relays and don't know the current state
-        of the other relay, you can get the state with :func:`Get State` or you
-        can use :func:`Set Selected State`.
+        of the other relay, you can get the state with :func:`Get Value` or you
+        can use :func:`Set Selected Value`.
 
         Running monoflop timers will be overwritten if this function is called.
 
         The default value is (*false*, *false*).
         """
-        relay1 = bool(relay1)
-        relay2 = bool(relay2)
+        channel0 = bool(channel0)
+        channel1 = bool(channel1)
 
-        self.ipcon.send_request(self, BrickletIndustrialDualRelay.FUNCTION_SET_STATE, (relay1, relay2), '! !', '')
+        self.ipcon.send_request(self, BrickletIndustrialDualRelay.FUNCTION_SET_VALUE, (channel0, channel1), '! !', '')
 
-    def get_state(self):
+    def get_value(self):
         """
         Returns the state of the relays, *true* means on and *false* means off.
         """
-        return GetState(*self.ipcon.send_request(self, BrickletIndustrialDualRelay.FUNCTION_GET_STATE, (), '', '! !'))
+        return GetValue(*self.ipcon.send_request(self, BrickletIndustrialDualRelay.FUNCTION_GET_VALUE, (), '', '! !'))
 
-    def set_monoflop(self, relay, state, time):
+    def set_monoflop(self, channel, value, time):
         """
         The first parameter can be 1 or 2 (relay 1 or relay 2). The second parameter
         is the desired state of the relay (*true* means on and *false* means off).
@@ -141,13 +139,13 @@ class BrickletIndustrialDualRelay(Device):
         of two seconds. The relay will be on all the time. If now the RS485
         connection is lost, the relay will turn off in at most two seconds.
         """
-        relay = int(relay)
-        state = bool(state)
+        channel = int(channel)
+        value = bool(value)
         time = int(time)
 
-        self.ipcon.send_request(self, BrickletIndustrialDualRelay.FUNCTION_SET_MONOFLOP, (relay, state, time), 'B ! I', '')
+        self.ipcon.send_request(self, BrickletIndustrialDualRelay.FUNCTION_SET_MONOFLOP, (channel, value, time), 'B ! I', '')
 
-    def get_monoflop(self, relay):
+    def get_monoflop(self, channel):
         """
         Returns (for the given relay) the current state and the time as set by
         :func:`Set Monoflop` as well as the remaining time until the state flips.
@@ -155,28 +153,20 @@ class BrickletIndustrialDualRelay(Device):
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
-        relay = int(relay)
+        channel = int(channel)
 
-        return GetMonoflop(*self.ipcon.send_request(self, BrickletIndustrialDualRelay.FUNCTION_GET_MONOFLOP, (relay,), 'B', '! I I'))
+        return GetMonoflop(*self.ipcon.send_request(self, BrickletIndustrialDualRelay.FUNCTION_GET_MONOFLOP, (channel,), 'B', '! I I'))
 
-    def set_selected_state(self, relay, state):
+    def set_selected_value(self, channel, value):
         """
         Sets the state of the selected relay (1 or 2), *true* means on and *false* means off.
 
         The other relay remains untouched.
         """
-        relay = int(relay)
-        state = bool(state)
+        channel = int(channel)
+        value = bool(value)
 
-        self.ipcon.send_request(self, BrickletIndustrialDualRelay.FUNCTION_SET_SELECTED_STATE, (relay, state), 'B !', '')
-
-    def get_selected_state(self, relay):
-        """
-        Returns the state of the selected relay (1 or 2). The state can be set by :func:`Set Selected State`.
-        """
-        relay = int(relay)
-
-        return self.ipcon.send_request(self, BrickletIndustrialDualRelay.FUNCTION_GET_SELECTED_STATE, (relay,), 'B', '!')
+        self.ipcon.send_request(self, BrickletIndustrialDualRelay.FUNCTION_SET_SELECTED_VALUE, (channel, value), 'B !', '')
 
     def get_spitfp_error_count(self):
         """

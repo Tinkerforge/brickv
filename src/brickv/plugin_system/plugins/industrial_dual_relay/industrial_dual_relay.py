@@ -38,84 +38,94 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
 
         self.setupUi(self)
 
-        self.dr = self.device
+        self.idr = self.device
 
         self.qtcb_monoflop.connect(self.cb_monoflop)
-        self.dr.register_callback(self.dr.CALLBACK_MONOFLOP_DONE,
-                                  self.qtcb_monoflop.emit)
+        self.idr.register_callback(self.idr.CALLBACK_MONOFLOP_DONE,
+                                   self.qtcb_monoflop.emit)
 
-        self.dr1_button.clicked.connect(self.dr1_clicked)
-        self.dr2_button.clicked.connect(self.dr2_clicked)
+        self.ch0_button.clicked.connect(self.ch0_clicked)
+        self.ch1_button.clicked.connect(self.ch1_clicked)
 
+        self.go0_button.clicked.connect(self.go0_clicked)
         self.go1_button.clicked.connect(self.go1_clicked)
-        self.go2_button.clicked.connect(self.go2_clicked)
 
-        self.r1_monoflop = False
-        self.r2_monoflop = False
+        self.ch0_monoflop = False
+        self.ch1_monoflop = False
 
-        self.r1_timebefore = 500
-        self.r2_timebefore = 500
+        self.ch0_timebefore = 500
+        self.ch1_timebefore = 500
 
-        self.a1_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_relay/relay_a1.bmp')
-        self.a2_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_relay/relay_a2.bmp')
-        self.b1_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_relay/relay_b1.bmp')
-        self.b2_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_relay/relay_b2.bmp')
+        self.a0_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_relay/channel0_a.bmp')
+        self.a1_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_relay/channel1_a.bmp')
+        self.b0_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_relay/channel0_b.bmp')
+        self.b1_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_relay/channel1_b.bmp')
 
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update)
         self.update_timer.setInterval(50)
 
-    def get_state_async(self, state):
-        width = self.dr1_button.width()
-        if self.dr1_button.minimumWidth() < width:
-            self.dr1_button.setMinimumWidth(width)
+    def get_value_async(self, value):
+        width = self.ch0_button.width()
 
-        width = self.dr2_button.width()
-        if self.dr2_button.minimumWidth() < width:
-            self.dr2_button.setMinimumWidth(width)
+        if self.ch0_button.minimumWidth() < width:
+            self.ch0_button.setMinimumWidth(width)
 
-        dr1, dr2 = state
-        if dr1:
-            self.dr1_button.setText('Switch Off')
-            self.dr1_image.setPixmap(self.a1_pixmap)
+        width = self.ch1_button.width()
+
+        if self.ch1_button.minimumWidth() < width:
+            self.ch1_button.setMinimumWidth(width)
+
+        ch0, ch1 = value
+
+        if ch0:
+            self.ch0_button.setText('Switch Off')
+            self.ch0_image.setPixmap(self.a1_pixmap)
         else:
-            self.dr1_button.setText('Switch On')
-            self.dr1_image.setPixmap(self.b1_pixmap)
-        if dr2:
-            self.dr2_button.setText('Switch Off')
-            self.dr2_image.setPixmap(self.a2_pixmap)
-        else:
-            self.dr2_button.setText('Switch On')
-            self.dr2_image.setPixmap(self.b2_pixmap)
+            self.ch0_button.setText('Switch On')
+            self.ch0_image.setPixmap(self.b1_pixmap)
 
-    def get_monoflop_async(self, monoflop, index):
-        state, time, time_remaining = monoflop
-        if index == 1:
+        if ch1:
+            self.ch1_button.setText('Switch Off')
+            self.ch1_image.setPixmap(self.a2_pixmap)
+        else:
+            self.ch1_button.setText('Switch On')
+            self.ch1_image.setPixmap(self.b2_pixmap)
+
+    def get_monoflop_async(self, monoflop, channel):
+        value, time, time_remaining = monoflop
+
+        if channel == 0:
             if time > 0:
-                self.r1_timebefore = time
-                self.time1_spinbox.setValue(self.r1_timebefore)
+                self.ch0_timebefore = time
+                self.time0_spinbox.setValue(self.ch0_timebefore)
+
             if time_remaining > 0:
-                if not state:
-                    self.state1_combobox.setCurrentIndex(0)
-                self.r1_monoflop = True
+                if not value:
+                    self.value0_combobox.setCurrentIndex(0)
+
+                self.ch0_monoflop = True
+                self.time0_spinbox.setEnabled(False)
+                self.value0_combobox.setEnabled(False)
+        elif channel == 1:
+            value, time, time_remaining = self.idr.get_monoflop(1) # FIXME: why if this getter necessary?
+
+            if time > 0:
+                self.ch1_timebefore = time
+                self.time1_spinbox.setValue(self.ch1_timebefore)
+
+            if time_remaining > 0:
+                if not value:
+                    self.value1_combobox.setCurrentIndex(1)
+
+                self.ch1_monoflop = True
                 self.time1_spinbox.setEnabled(False)
-                self.state1_combobox.setEnabled(False)
-        elif index == 2:
-            state, time, time_remaining = self.dr.get_monoflop(2)
-            if time > 0:
-                self.r2_timebefore = time
-                self.time2_spinbox.setValue(self.r2_timebefore)
-            if time_remaining > 0:
-                if not state:
-                    self.state2_combobox.setCurrentIndex(1)
-                self.r2_monoflop = True
-                self.time2_spinbox.setEnabled(False)
-                self.state2_combobox.setEnabled(False)
+                self.value1_combobox.setEnabled(False)
 
     def start(self):
-        async_call(self.dr.get_state, None, self.get_state_async, self.increase_error_count)
-        async_call(self.dr.get_monoflop, 1, lambda x: self.get_monoflop_async(x, 1), self.increase_error_count)
-        async_call(self.dr.get_monoflop, 2, lambda x: self.get_monoflop_async(x, 2), self.increase_error_count)
+        async_call(self.idr.get_value, None, self.get_value_async, self.increase_error_count)
+        async_call(self.idr.get_monoflop, 0, lambda x: self.get_monoflop_async(x, 0), self.increase_error_count)
+        async_call(self.idr.get_monoflop, 1, lambda x: self.get_monoflop_async(x, 1), self.increase_error_count)
         self.update_timer.start()
 
     def stop(self):
@@ -128,150 +138,155 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialDualRelay.DEVICE_IDENTIFIER
 
-    def get_state_dr1_clicked(self, state):
-        dr1, dr2 = state
+    def get_value_ch0_clicked(self, value):
+        ch0, ch1 = value
 
         try:
-            self.dr.set_state(not dr1, dr2)
+            self.idr.set_value(not ch0, ch1)
         except ip_connection.Error:
             return
 
-        self.r1_monoflop = False
-        self.time1_spinbox.setValue(self.r1_timebefore)
+        self.ch0_monoflop = False
+        self.time0_spinbox.setValue(self.ch0_timebefore)
+        self.time0_spinbox.setEnabled(True)
+        self.value0_combobox.setEnabled(True)
+
+    def ch0_clicked(self):
+        width = self.ch0_button.width()
+
+        if self.ch0_button.minimumWidth() < width:
+            self.ch0_button.setMinimumWidth(width)
+
+        if 'On' in self.ch0_button.text():
+            self.ch0_button.setText('Switch Off')
+            self.ch0_image.setPixmap(self.a0_pixmap)
+        else:
+            self.ch0_button.setText('Switch On')
+            self.ch0_image.setPixmap(self.b0_pixmap)
+
+        async_call(self.idr.get_value, None, self.get_value_ch0_clicked, self.increase_error_count)
+
+    def get_value_ch1_clicked(self, value):
+        ch0, ch1 = value
+
+        try:
+            self.idr.set_value(ch0, not ch1)
+        except ip_connection.Error:
+            return
+
+        self.ch1_monoflop = False
+        self.time1_spinbox.setValue(self.ch1_timebefore)
         self.time1_spinbox.setEnabled(True)
-        self.state1_combobox.setEnabled(True)
+        self.value1_combobox.setEnabled(True)
 
-    def dr1_clicked(self):
-        width = self.dr1_button.width()
-        if self.dr1_button.minimumWidth() < width:
-            self.dr1_button.setMinimumWidth(width)
+    def ch1_clicked(self):
+        width = self.ch1_button.width()
 
-        if 'On' in self.dr1_button.text():
-            self.dr1_button.setText('Switch Off')
-            self.dr1_image.setPixmap(self.a1_pixmap)
+        if self.ch1_button.minimumWidth() < width:
+            self.ch1_button.setMinimumWidth(width)
+
+        if 'On' in self.ch1_button.text():
+            self.ch1_button.setText('Switch Off')
+            self.ch1_image.setPixmap(self.a1_pixmap)
         else:
-            self.dr1_button.setText('Switch On')
-            self.dr1_image.setPixmap(self.b1_pixmap)
+            self.ch1_button.setText('Switch On')
+            self.ch1_image.setPixmap(self.b1_pixmap)
 
-        async_call(self.dr.get_state, None, self.get_state_dr1_clicked, self.increase_error_count)
+        async_call(self.idr.get_value, None, self.get_value_ch1_clicked, self.increase_error_count)
 
-    def get_state_dr2_clicked(self, state):
-        dr1, dr2 = state
+    def go0_clicked(self):
+        time = self.time0_spinbox.value()
+        value = self.value0_combobox.currentIndex() == 0
 
         try:
-            self.dr.set_state(dr1, not dr2)
+            if self.ch0_monoflop:
+                time = self.ch0_timebefore
+            else:
+                self.ch0_timebefore = self.time0_spinbox.value()
+
+            self.idr.set_monoflop(0, value, time)
+
+            self.ch0_monoflop = True
+            self.time0_spinbox.setEnabled(False)
+            self.value0_combobox.setEnabled(False)
+
+            if value:
+                self.ch0_button.setText('Switch Off')
+                self.ch0_image.setPixmap(self.a0_pixmap)
+            else:
+                self.ch0_button.setText('Switch On')
+                self.ch0_image.setPixmap(self.b0_pixmap)
         except ip_connection.Error:
             return
-
-        self.r2_monoflop = False
-        self.time2_spinbox.setValue(self.r2_timebefore)
-        self.time2_spinbox.setEnabled(True)
-        self.state2_combobox.setEnabled(True)
-
-    def dr2_clicked(self):
-        width = self.dr2_button.width()
-        if self.dr2_button.minimumWidth() < width:
-            self.dr2_button.setMinimumWidth(width)
-
-        if 'On' in self.dr2_button.text():
-            self.dr2_button.setText('Switch Off')
-            self.dr2_image.setPixmap(self.a2_pixmap)
-        else:
-            self.dr2_button.setText('Switch On')
-            self.dr2_image.setPixmap(self.b2_pixmap)
-
-        async_call(self.dr.get_state, None, self.get_state_dr2_clicked, self.increase_error_count)
 
     def go1_clicked(self):
         time = self.time1_spinbox.value()
-        state = self.state1_combobox.currentIndex() == 0
+        value = self.value1_combobox.currentIndex() == 0
+
         try:
-            if self.r1_monoflop:
-                time = self.r1_timebefore
+            if self.ch1_monoflop:
+                time = self.ch1_timebefore
             else:
-                self.r1_timebefore = self.time1_spinbox.value()
+                self.ch1_timebefore = self.time1_spinbox.value()
 
-            self.dr.set_monoflop(1, state, time)
+            self.idr.set_monoflop(1, value, time)
 
-            self.r1_monoflop = True
+            self.ch1_monoflop = True
             self.time1_spinbox.setEnabled(False)
-            self.state1_combobox.setEnabled(False)
+            self.value1_combobox.setEnabled(False)
 
-            if state:
-                self.dr1_button.setText('Switch Off')
-                self.dr1_image.setPixmap(self.a1_pixmap)
+            if value:
+                self.ch1_button.setText('Switch Off')
+                self.ch1_image.setPixmap(self.a1_pixmap)
             else:
-                self.dr1_button.setText('Switch On')
-                self.dr1_image.setPixmap(self.b1_pixmap)
+                self.ch1_button.setText('Switch On')
+                self.ch1_image.setPixmap(self.b1_pixmap)
         except ip_connection.Error:
             return
 
-    def go2_clicked(self):
-        time = self.time2_spinbox.value()
-        state = self.state2_combobox.currentIndex() == 0
-        try:
-            if self.r2_monoflop:
-                time = self.r2_timebefore
+    def cb_monoflop(self, channel, value):
+        if channel == 0:
+            self.ch0_monoflop = False
+            self.time0_spinbox.setValue(self.ch0_timebefore)
+            self.time0_spinbox.setEnabled(True)
+            self.value0_combobox.setEnabled(True)
+
+            if value:
+                self.ch0_button.setText('Switch Off')
+                self.ch0_image.setPixmap(self.a0_pixmap)
             else:
-                self.r2_timebefore = self.time2_spinbox.value()
-
-            self.dr.set_monoflop(2, state, time)
-
-            self.r2_monoflop = True
-            self.time2_spinbox.setEnabled(False)
-            self.state2_combobox.setEnabled(False)
-
-            if state:
-                self.dr2_button.setText('Switch Off')
-                self.dr2_image.setPixmap(self.a2_pixmap)
-            else:
-                self.dr2_button.setText('Switch On')
-                self.dr2_image.setPixmap(self.b2_pixmap)
-        except ip_connection.Error:
-            return
-
-    def cb_monoflop(self, relay, state):
-        print("cb_monoflop", relay, state)
-        if relay == 1:
-            self.r1_monoflop = False
-            self.time1_spinbox.setValue(self.r1_timebefore)
+                self.ch0_button.setText('Switch On')
+                self.ch0_image.setPixmap(self.b0_pixmap)
+        elif channel == 1:
+            self.ch1_monoflop = False
+            self.time1_spinbox.setValue(self.ch1_timebefore)
             self.time1_spinbox.setEnabled(True)
-            self.state1_combobox.setEnabled(True)
-            if state:
-                self.dr1_button.setText('Switch Off')
-                self.dr1_image.setPixmap(self.a1_pixmap)
-            else:
-                self.dr1_button.setText('Switch On')
-                self.dr1_image.setPixmap(self.b1_pixmap)
-        else:
-            self.r2_monoflop = False
-            self.time2_spinbox.setValue(self.r2_timebefore)
-            self.time2_spinbox.setEnabled(True)
-            self.state2_combobox.setEnabled(True)
-            if state:
-                self.dr2_button.setText('Switch Off')
-                self.dr2_image.setPixmap(self.a2_pixmap)
-            else:
-                self.dr2_button.setText('Switch On')
-                self.dr2_image.setPixmap(self.b2_pixmap)
+            self.value1_combobox.setEnabled(True)
 
-    def update_time_remaining(self, relay, time_remaining):
-        print("update_time_remaining", relay, time_remaining)
-        if relay == 1:
-            if self.r1_monoflop:
+            if value:
+                self.ch1_button.setText('Switch Off')
+                self.ch1_image.setPixmap(self.a1_pixmap)
+            else:
+                self.ch1_button.setText('Switch On')
+                self.ch1_image.setPixmap(self.b1_pixmap)
+
+    def update_time_remaining(self, channel, time_remaining):
+        if channel == 0:
+            if self.ch0_monoflop:
+                self.time0_spinbox.setValue(time_remaining)
+        elif channel == 1:
+            if self.ch1_monoflop:
                 self.time1_spinbox.setValue(time_remaining)
-        elif relay == 2:
-            if self.r2_monoflop:
-                self.time2_spinbox.setValue(time_remaining)
 
     def update(self):
-        if self.r1_monoflop:
+        if self.ch0_monoflop:
             try:
-                async_call(self.dr.get_monoflop, 1, lambda a: self.update_time_remaining(1, a[2]), self.increase_error_count)
+                async_call(self.idr.get_monoflop, 0, lambda a: self.update_time_remaining(0, a[2]), self.increase_error_count)
             except ip_connection.Error:
                 pass
-        if self.r2_monoflop:
+
+        if self.ch1_monoflop:
             try:
-                async_call(self.dr.get_monoflop, 2, lambda a: self.update_time_remaining(2, a[2]), self.increase_error_count)
+                async_call(self.idr.get_monoflop, 1, lambda a: self.update_time_remaining(1, a[2]), self.increase_error_count)
             except ip_connection.Error:
                 pass
