@@ -372,7 +372,7 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
             self.async_data_store['update_current_channel_info']['config'] = config
             self.gen_update_current_channel_info.next()
 
-        def async_get_selected_value(value):
+        def async_get_value(value):
             self.async_data_store['update_current_channel_info']['value'] = value
             self.gen_update_current_channel_info.next()
 
@@ -380,7 +380,7 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
 
         yield
 
-        async_call(self.io.get_selected_value, ch_index, async_get_selected_value, self.increase_error_count)
+        async_call(self.io.get_value, None, lambda value: async_get_value(value[ch_index]), self.increase_error_count)
 
         yield
 
