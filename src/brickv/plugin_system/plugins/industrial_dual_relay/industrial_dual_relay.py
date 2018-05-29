@@ -80,17 +80,17 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
 
         if ch0:
             self.ch0_button.setText('Switch Off')
-            self.ch0_image.setPixmap(self.a1_pixmap)
+            self.ch0_image.setPixmap(self.a0_pixmap)
         else:
             self.ch0_button.setText('Switch On')
-            self.ch0_image.setPixmap(self.b1_pixmap)
+            self.ch0_image.setPixmap(self.b0_pixmap)
 
         if ch1:
             self.ch1_button.setText('Switch Off')
-            self.ch1_image.setPixmap(self.a2_pixmap)
+            self.ch1_image.setPixmap(self.a1_pixmap)
         else:
             self.ch1_button.setText('Switch On')
-            self.ch1_image.setPixmap(self.b2_pixmap)
+            self.ch1_image.setPixmap(self.b1_pixmap)
 
     def get_monoflop_async(self, monoflop, channel):
         value, time, time_remaining = monoflop
