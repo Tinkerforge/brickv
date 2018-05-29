@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-28.      #
+# This file was automatically generated on 2018-05-29.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -35,26 +35,25 @@ class BrickletIO4V2(Device):
     DEVICE_DISPLAY_NAME = 'IO-4 Bricklet 2.0'
     DEVICE_URL_PART = 'io4_v2' # internal
 
-    CALLBACK_INPUT_VALUE = 16
-    CALLBACK_ALL_INPUT_VALUE = 17
-    CALLBACK_MONOFLOP_DONE = 18
+    CALLBACK_INPUT_VALUE = 15
+    CALLBACK_ALL_INPUT_VALUE = 16
+    CALLBACK_MONOFLOP_DONE = 17
 
 
     FUNCTION_SET_VALUE = 1
     FUNCTION_GET_VALUE = 2
     FUNCTION_SET_SELECTED_VALUE = 3
-    FUNCTION_GET_SELECTED_VALUE = 4
-    FUNCTION_SET_CONFIGURATION = 5
-    FUNCTION_GET_CONFIGURATION = 6
-    FUNCTION_SET_INPUT_VALUE_CALLBACK_CONFIGURATION = 7
-    FUNCTION_GET_INPUT_VALUE_CALLBACK_CONFIGURATION = 8
-    FUNCTION_SET_ALL_INPUT_VALUE_CALLBACK_CONFIGURATION = 9
-    FUNCTION_GET_ALL_INPUT_VALUE_CALLBACK_CONFIGURATION = 10
-    FUNCTION_SET_MONOFLOP = 11
-    FUNCTION_GET_MONOFLOP = 12
-    FUNCTION_GET_EDGE_COUNT = 13
-    FUNCTION_SET_EDGE_COUNT_CONFIGURATION = 14
-    FUNCTION_GET_EDGE_COUNT_CONFIGURATION = 15
+    FUNCTION_SET_CONFIGURATION = 4
+    FUNCTION_GET_CONFIGURATION = 5
+    FUNCTION_SET_INPUT_VALUE_CALLBACK_CONFIGURATION = 6
+    FUNCTION_GET_INPUT_VALUE_CALLBACK_CONFIGURATION = 7
+    FUNCTION_SET_ALL_INPUT_VALUE_CALLBACK_CONFIGURATION = 8
+    FUNCTION_GET_ALL_INPUT_VALUE_CALLBACK_CONFIGURATION = 9
+    FUNCTION_SET_MONOFLOP = 10
+    FUNCTION_GET_MONOFLOP = 11
+    FUNCTION_GET_EDGE_COUNT = 12
+    FUNCTION_SET_EDGE_COUNT_CONFIGURATION = 13
+    FUNCTION_GET_EDGE_COUNT_CONFIGURATION = 14
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -101,7 +100,6 @@ class BrickletIO4V2(Device):
         self.response_expected[BrickletIO4V2.FUNCTION_SET_VALUE] = BrickletIO4V2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIO4V2.FUNCTION_GET_VALUE] = BrickletIO4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO4V2.FUNCTION_SET_SELECTED_VALUE] = BrickletIO4V2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletIO4V2.FUNCTION_GET_SELECTED_VALUE] = BrickletIO4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO4V2.FUNCTION_SET_CONFIGURATION] = BrickletIO4V2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIO4V2.FUNCTION_GET_CONFIGURATION] = BrickletIO4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO4V2.FUNCTION_SET_INPUT_VALUE_CALLBACK_CONFIGURATION] = BrickletIO4V2.RESPONSE_EXPECTED_TRUE
@@ -169,16 +167,6 @@ class BrickletIO4V2(Device):
         value = bool(value)
 
         self.ipcon.send_request(self, BrickletIO4V2.FUNCTION_SET_SELECTED_VALUE, (channel, value), 'B !', '')
-
-    def get_selected_value(self, channel):
-        """
-        Returns the logic levels that are currently measured on a specific channel. This
-        function works if the channel is configured as input as well as if it is configured
-        as output.
-        """
-        channel = int(channel)
-
-        return self.ipcon.send_request(self, BrickletIO4V2.FUNCTION_GET_SELECTED_VALUE, (channel,), 'B', '!')
 
     def set_configuration(self, channel, direction, value):
         """

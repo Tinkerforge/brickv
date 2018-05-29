@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-24.      #
+# This file was automatically generated on 2018-05-29.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -31,17 +31,16 @@ class BrickletIndustrialDigitalOut4V2(Device):
     DEVICE_DISPLAY_NAME = 'Industrial Digital Out 4 Bricklet 2.0'
     DEVICE_URL_PART = 'industrial_digital_out_4_v2' # internal
 
-    CALLBACK_MONOFLOP_DONE = 7
+    CALLBACK_MONOFLOP_DONE = 6
 
 
     FUNCTION_SET_VALUE = 1
     FUNCTION_GET_VALUE = 2
     FUNCTION_SET_SELECTED_VALUE = 3
-    FUNCTION_GET_SELECTED_VALUE = 4
-    FUNCTION_SET_MONOFLOP = 5
-    FUNCTION_GET_MONOFLOP = 6
-    FUNCTION_SET_CHANNEL_LED_CONFIG = 8
-    FUNCTION_GET_CHANNEL_LED_CONFIG = 9
+    FUNCTION_SET_MONOFLOP = 4
+    FUNCTION_GET_MONOFLOP = 5
+    FUNCTION_SET_CHANNEL_LED_CONFIG = 7
+    FUNCTION_GET_CHANNEL_LED_CONFIG = 8
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -87,7 +86,6 @@ class BrickletIndustrialDigitalOut4V2(Device):
         self.response_expected[BrickletIndustrialDigitalOut4V2.FUNCTION_SET_VALUE] = BrickletIndustrialDigitalOut4V2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDigitalOut4V2.FUNCTION_GET_VALUE] = BrickletIndustrialDigitalOut4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDigitalOut4V2.FUNCTION_SET_SELECTED_VALUE] = BrickletIndustrialDigitalOut4V2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletIndustrialDigitalOut4V2.FUNCTION_GET_SELECTED_VALUE] = BrickletIndustrialDigitalOut4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDigitalOut4V2.FUNCTION_SET_MONOFLOP] = BrickletIndustrialDigitalOut4V2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDigitalOut4V2.FUNCTION_GET_MONOFLOP] = BrickletIndustrialDigitalOut4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDigitalOut4V2.FUNCTION_SET_CHANNEL_LED_CONFIG] = BrickletIndustrialDigitalOut4V2.RESPONSE_EXPECTED_FALSE
@@ -136,14 +134,6 @@ class BrickletIndustrialDigitalOut4V2(Device):
         value = bool(value)
 
         self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_SET_SELECTED_VALUE, (channel, value), 'B !', '')
-
-    def get_selected_value(self, channel):
-        """
-        Returns the logic levels that are currently measured on a specific channel.
-        """
-        channel = int(channel)
-
-        return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_GET_SELECTED_VALUE, (channel,), 'B', '!')
 
     def set_monoflop(self, channel, value, time):
         """

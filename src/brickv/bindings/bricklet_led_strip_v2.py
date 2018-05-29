@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-28.      #
+# This file was automatically generated on 2018-05-29.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -118,7 +118,7 @@ class BrickletLEDStripV2(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 3)
+        self.api_version = (2, 0, 0)
 
         self.response_expected[BrickletLEDStripV2.FUNCTION_SET_LED_VALUES_LOW_LEVEL] = BrickletLEDStripV2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletLEDStripV2.FUNCTION_GET_LED_VALUES_LOW_LEVEL] = BrickletLEDStripV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -181,9 +181,9 @@ class BrickletLEDStripV2(Device):
         index = int(index)
         value_length = int(value_length)
         value_chunk_offset = int(value_chunk_offset)
-        value_chunk_data = create_char_list(value_chunk_data)
+        value_chunk_data = list(map(int, value_chunk_data))
 
-        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_LED_VALUES_LOW_LEVEL, (index, value_length, value_chunk_offset, value_chunk_data), 'H H H 58c', '')
+        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_LED_VALUES_LOW_LEVEL, (index, value_length, value_chunk_offset, value_chunk_data), 'H H H 58B', '')
 
     def get_led_values_low_level(self, index, length):
         """
@@ -192,7 +192,7 @@ class BrickletLEDStripV2(Device):
         index = int(index)
         length = int(length)
 
-        return GetLEDValuesLowLevel(*self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_LED_VALUES_LOW_LEVEL, (index, length), 'H H', 'H H 60c'))
+        return GetLEDValuesLowLevel(*self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_LED_VALUES_LOW_LEVEL, (index, length), 'H H', 'H H 60B'))
 
     def set_frame_duration(self, duration):
         """
@@ -241,8 +241,6 @@ class BrickletLEDStripV2(Device):
 
         .. note::
          The frequency in firmware version 2.0.0 is fixed at 2MHz.
-
-        .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         frequency = int(frequency)
 
@@ -251,8 +249,6 @@ class BrickletLEDStripV2(Device):
     def get_clock_frequency(self):
         """
         Returns the currently used clock frequency as set by :func:`Set Clock Frequency`.
-
-        .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CLOCK_FREQUENCY, (), '', 'I')
 
@@ -268,8 +264,6 @@ class BrickletLEDStripV2(Device):
         * APA102 / DotStar.
 
         The default value is WS2801 (2801).
-
-        .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
         chip = int(chip)
 
@@ -278,8 +272,6 @@ class BrickletLEDStripV2(Device):
     def get_chip_type(self):
         """
         Returns the currently used chip type as set by :func:`Set Chip Type`.
-
-        .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CHIP_TYPE, (), '', 'H')
 
@@ -302,8 +294,6 @@ class BrickletLEDStripV2(Device):
         the W channel controls the brightness.
 
         The default value is BGR (36).
-
-        .. versionadded:: 2.0.6$nbsp;(Plugin)
         """
         mapping = int(mapping)
 
@@ -312,8 +302,6 @@ class BrickletLEDStripV2(Device):
     def get_channel_mapping(self):
         """
         Returns the currently used channel mapping as set by :func:`Set Channel Mapping`.
-
-        .. versionadded:: 2.0.6$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CHANNEL_MAPPING, (), '', 'B')
 
@@ -503,7 +491,7 @@ class BrickletLEDStripV2(Device):
         a fixed frame rate.
         """
         index = int(index)
-        value = create_char_list(value)
+        value = list(map(int, value))
 
         if len(value) > 65535:
             raise Error(Error.INVALID_PARAMETER, 'Value can be at most 65535 items long')
@@ -512,12 +500,12 @@ class BrickletLEDStripV2(Device):
         value_chunk_offset = 0
 
         if value_length == 0:
-            value_chunk_data = ['\0'] * 58
+            value_chunk_data = [0] * 58
             ret = self.set_led_values_low_level(index, value_length, value_chunk_offset, value_chunk_data)
         else:
             with self.stream_lock:
                 while value_chunk_offset < value_length:
-                    value_chunk_data = create_chunk_data(value, value_chunk_offset, 58, '\0')
+                    value_chunk_data = create_chunk_data(value, value_chunk_offset, 58, 0)
                     ret = self.set_led_values_low_level(index, value_length, value_chunk_offset, value_chunk_data)
                     value_chunk_offset += 58
 
