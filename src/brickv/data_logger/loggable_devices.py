@@ -56,6 +56,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_analog_out_v2 import BrickletAnalogOutV2
     from brickv.bindings.bricklet_barometer import BrickletBarometer
     from brickv.bindings.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
+    from brickv.bindings.bricklet_can_v2 import BrickletCANV2 #NYI FIXME: has to use frame_read callback to get all data
     from brickv.bindings.bricklet_co2 import BrickletCO2
     from brickv.bindings.bricklet_color import BrickletColor
     from brickv.bindings.bricklet_current12 import BrickletCurrent12
@@ -71,17 +72,25 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
     from brickv.bindings.bricklet_humidity import BrickletHumidity
     from brickv.bindings.bricklet_humidity_v2 import BrickletHumidityV2
+    from brickv.bindings.bricklet_industrial_counter import BrickletIndustrialCounter
     from brickv.bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
+    from brickv.bindings.bricklet_industrial_digital_in_4_v2 import BrickletIndustrialDigitalIn4V2
     from brickv.bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
     from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
+    from brickv.bindings.bricklet_industrial_dual_relay import BrickletIndustrialDualRelay
+    from brickv.bindings.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
+    from brickv.bindings.bricklet_industrial_quad_relay_v2 import BrickletIndustrialQuadRelayV2
     from brickv.bindings.bricklet_io16 import BrickletIO16
     from brickv.bindings.bricklet_io4 import BrickletIO4
+    from brickv.bindings.bricklet_io4_v2 import BrickletIO4V2
     from brickv.bindings.bricklet_joystick import BrickletJoystick
     from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
     from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
+    from brickv.bindings.bricklet_led_strip_v2 import BrickletLEDStripV2
     from brickv.bindings.bricklet_line import BrickletLine
     from brickv.bindings.bricklet_linear_poti import BrickletLinearPoti
     from brickv.bindings.bricklet_load_cell import BrickletLoadCell
+    from brickv.bindings.bricklet_load_cell_v2 import BrickletLoadCellV2
     from brickv.bindings.bricklet_moisture import BrickletMoisture
     from brickv.bindings.bricklet_motion_detector import BrickletMotionDetector
     from brickv.bindings.bricklet_motion_detector_v2 import BrickletMotionDetectorV2
@@ -90,8 +99,11 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_nfc import BrickletNFC
     from brickv.bindings.bricklet_nfc_rfid import BrickletNFCRFID
     from brickv.bindings.bricklet_outdoor_weather import BrickletOutdoorWeather
+    from brickv.bindings.bricklet_particulate_matter import BrickletParticulateMatter
     from brickv.bindings.bricklet_ptc import BrickletPTC
+    from brickv.bindings.bricklet_ptc_v2 import BrickletPTCV2
     from brickv.bindings.bricklet_real_time_clock import BrickletRealTimeClock
+    from brickv.bindings.bricklet_real_time_clock_v2 import BrickletRealTimeClockV2
     from brickv.bindings.bricklet_remote_switch import BrickletRemoteSwitch
     from brickv.bindings.bricklet_remote_switch_v2 import BrickletRemoteSwitchV2
     from brickv.bindings.bricklet_rgb_led_button import BrickletRGBLEDButton
@@ -99,21 +111,25 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
     from brickv.bindings.bricklet_rotary_encoder_v2 import BrickletRotaryEncoderV2
     from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
-    # from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
+    #from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
+    #from brickv.bindings.bricklet_rs232_v2 import BrickletRS232V2 #NYI FIXME: has to use read_callback callback to get all data
     from brickv.bindings.bricklet_rs485 import BrickletRS485
     from brickv.bindings.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
     from brickv.bindings.bricklet_solid_state_relay import BrickletSolidStateRelay
     from brickv.bindings.bricklet_solid_state_relay_v2 import BrickletSolidStateRelayV2
     from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
+    from brickv.bindings.bricklet_sound_pressure_level import BrickletSoundPressureLevel
     from brickv.bindings.bricklet_temperature import BrickletTemperature
     from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
     from brickv.bindings.bricklet_temperature_ir_v2 import BrickletTemperatureIRV2
     from brickv.bindings.bricklet_thermal_imaging import BrickletThermalImaging
     from brickv.bindings.bricklet_thermocouple import BrickletThermocouple
+    from brickv.bindings.bricklet_thermocouple_v2 import BrickletThermocoupleV2
     from brickv.bindings.bricklet_tilt import BrickletTilt
     from brickv.bindings.bricklet_uv_light import BrickletUVLight
     from brickv.bindings.bricklet_voltage import BrickletVoltage
     from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent
+    from brickv.bindings.bricklet_voltage_current_v2 import BrickletVoltageCurrentV2
 else:
     # Bricks
     from tinkerforge.brick_dc import BrickDC
@@ -134,6 +150,7 @@ else:
     from tinkerforge.bricklet_analog_out_v2 import BrickletAnalogOutV2
     from tinkerforge.bricklet_barometer import BrickletBarometer
     from tinkerforge.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
+    from tinkerforge.bricklet_can_v2 import BrickletCANV2 #NYI FIXME: has to use frame_read callback to get all data
     from tinkerforge.bricklet_co2 import BrickletCO2
     from tinkerforge.bricklet_color import BrickletColor
     from tinkerforge.bricklet_current12 import BrickletCurrent12
@@ -149,17 +166,25 @@ else:
     from tinkerforge.bricklet_hall_effect import BrickletHallEffect
     from tinkerforge.bricklet_humidity import BrickletHumidity
     from tinkerforge.bricklet_humidity_v2 import BrickletHumidityV2
+    from tinkerforge.bricklet_industrial_counter import BrickletIndustrialCounter
     from tinkerforge.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
+    from tinkerforge.bricklet_industrial_digital_in_4_v2 import BrickletIndustrialDigitalIn4V2
     from tinkerforge.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
     from tinkerforge.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
+    from tinkerforge.bricklet_industrial_dual_relay import BrickletIndustrialDualRelay
+    from tinkerforge.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
+    from tinkerforge.bricklet_industrial_quad_relay_v2 import BrickletIndustrialQuadRelayV2
     from tinkerforge.bricklet_io16 import BrickletIO16
     from tinkerforge.bricklet_io4 import BrickletIO4
+    from tinkerforge.bricklet_io4_v2 import BrickletIO4V2
     from tinkerforge.bricklet_joystick import BrickletJoystick
     from tinkerforge.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
     from tinkerforge.bricklet_led_strip import BrickletLEDStrip
+    from tinkerforge.bricklet_led_strip import BrickletLEDStripV2
     from tinkerforge.bricklet_line import BrickletLine
     from tinkerforge.bricklet_linear_poti import BrickletLinearPoti
     from tinkerforge.bricklet_load_cell import BrickletLoadCell
+    from tinkerforge.bricklet_load_cell_v2 import BrickletLoadCellV2
     from tinkerforge.bricklet_moisture import BrickletMoisture
     from tinkerforge.bricklet_motion_detector import BrickletMotionDetector
     from tinkerforge.bricklet_motion_detector_v2 import BrickletMotionDetectorV2
@@ -168,8 +193,11 @@ else:
     from tinkerforge.bricklet_nfc import BrickletNFC
     from tinkerforge.bricklet_nfc_rfid import BrickletNFCRFID
     from tinkerforge.bricklet_outdoor_weather import BrickletOutdoorWeather
+    from tinkerforge.bricklet_particulate_matter import BrickletParticulateMatter
     from tinkerforge.bricklet_ptc import BrickletPTC
+    from tinkerforge.bricklet_ptc_v2 import BrickletPTCV2
     from tinkerforge.bricklet_real_time_clock import BrickletRealTimeClock
+    from tinkerforge.bricklet_real_time_clock_v2 import BrickletRealTimeClockV2
     from tinkerforge.bricklet_remote_switch import BrickletRemoteSwitch
     from tinkerforge.bricklet_remote_switch_v2 import BrickletRemoteSwitchV2
     from tinkerforge.bricklet_rgb_led_button import BrickletRGBLEDButton
@@ -178,20 +206,24 @@ else:
     from tinkerforge.bricklet_rotary_encoder_v2 import BrickletRotaryEncoderV2
     from tinkerforge.bricklet_rotary_poti import BrickletRotaryPoti
     # from tinkerforge.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
+    # from tinkerforge.bricklet_rs232_v2 import BrickletRS232V2 #NYI FIXME: has to use read_callback callback to get all data
     from tinkerforge.bricklet_rs485 import BrickletRS485
     from tinkerforge.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
     from tinkerforge.bricklet_solid_state_relay import BrickletSolidStateRelay
     from tinkerforge.bricklet_solid_state_relay_v2 import BrickletSolidStateRelayV2
     from tinkerforge.bricklet_sound_intensity import BrickletSoundIntensity
+    from tinkerforge.bricklet_sound_pressure_level import BrickletSoundPressureLevel
     from tinkerforge.bricklet_temperature import BrickletTemperature
     from tinkerforge.bricklet_temperature_ir import BrickletTemperatureIR
     from tinkerforge.bricklet_temperature_ir_v2 import BrickletTemperatureIRV2
     from tinkerforge.bricklet_thermal_imaging import BrickletThermalImaging
     from tinkerforge.bricklet_thermocouple import BrickletThermocouple
+    from tinkerforge.bricklet_thermocouple_v2 import BrickletThermocoupleV2
     from tinkerforge.bricklet_tilt import BrickletTilt
     from tinkerforge.bricklet_uv_light import BrickletUVLight
     from tinkerforge.bricklet_voltage import BrickletVoltage
     from tinkerforge.bricklet_voltage_current import BrickletVoltageCurrent
+    from tinkerforge.bricklet_voltage_current_v2 import BrickletVoltageCurrentV2
 
 def value_to_bits(value, length):
     bits = []
@@ -716,6 +748,40 @@ device_specs = {
         'options_setter': None,
         'options': None
     },
+    BrickletCANV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletCANV2,
+        'values': [
+            {
+                'name': 'Error Log',
+                'getter': lambda device: device.get_error_log(),
+                'subvalues': ['Transceiver State',
+                              'Transceiver Write Error Level',
+                              'Transceiver Read Error Level',
+                              'Transceiver Stuffing Error Count',
+                              'Transceiver Format Error Count',
+                              'Transceiver ACK Error Count',
+                              'Transceiver Bit1 Error Count',
+                              'Transceiver Bit0 Error Count',
+                              'Transceiver CRC Error Count',
+                              'Write Buffer Timeout Error Count',
+                              'Read Buffer Overflow Error Count',
+                              #'Read Buffer Overflow Error Occurred Length',
+                              'Read Buffer Overflow Error Occurred',
+                              'Read Backlog Overflow Error Count'],
+                'unit': [None, None, None, None, None, None, None, None, None, None, None, None, None],
+                'advanced': True
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
     BrickletCO2.DEVICE_DISPLAY_NAME: {
         'class': BrickletCO2,
         'values': [
@@ -1100,6 +1166,55 @@ device_specs = {
         'options_setter': None,
         'options': None
     },
+    BrickletIndustrialCounter.DEVICE_DISPLAY_NAME: {
+        'class': BrickletIndustrialCounter,
+        'values': [
+            {
+                'name': 'Count',
+                'getter': lambda device: device.get_all_counter(),
+                'subvalues': ['Channel0', 'Channel1', 'Channel2', 'Channel3'],
+                'unit': [None, None, None, None],
+                'advanced': False
+            },
+            {
+                'name': 'Signal Data (Channel0)',
+                'getter': lambda device: device.get_signal_data(0),
+                'subvalues': ['Duty Cycle', 'Period', 'Frequency', 'Value'],
+                'unit': ['1/100%', 'ns', 'mHz', None],
+                'advanced': False
+            },
+            {
+                'name': 'Signal Data (Channel1)',
+                'getter': lambda device: device.get_signal_data(1),
+                'subvalues': ['Duty Cycle', 'Period', 'Frequency', 'Value'],
+                'unit': ['1/100%', 'ns', 'mHz', None],
+                'advanced': False
+            },
+            {
+                'name': 'Signal Data (Channel2)',
+                'getter': lambda device: device.get_signal_data(2),
+                'subvalues': ['Duty Cycle', 'Period', 'Frequency', 'Value'],
+                'unit': ['1/100%', 'ns', 'mHz', None],
+                'advanced': False
+            },
+            {
+                'name': 'Signal Data (Channel3)',
+                'getter': lambda device: device.get_signal_data(3),
+                'subvalues': ['Duty Cycle', 'Period', 'Frequency', 'Value'],
+                'unit': ['1/100%', 'ns', 'mHz', None],
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
     BrickletIndustrialDigitalIn4.DEVICE_DISPLAY_NAME: {
         'class': BrickletIndustrialDigitalIn4,
         'values': [
@@ -1214,6 +1329,127 @@ device_specs = {
             }
         ]
     },
+    BrickletIndustrialDigitalIn4V2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletIndustrialDigitalIn4V2,
+        'values': [
+            {
+                'name': 'Value',
+                'getter': lambda device: device.get_value(),
+                'subvalues': ['Channel0', 'Channel1', 'Channel2', 'Channel3'],
+                'unit': [None, None, None, None],
+                'advanced': False
+            },
+            {
+                'name': 'Edge Count (Channel0)',
+                'getter': lambda device: device.get_edge_count(0, False),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
+            },
+            {
+                'name': 'Edge Count (Channel1)',
+                'getter': lambda device: device.get_edge_count(1, False),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
+            },
+            {
+                'name': 'Edge Count (Channel2)',
+                'getter': lambda device: device.get_edge_count(2, False),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
+            },
+            {
+                'name': 'Edge Count (Channel3)',
+                'getter': lambda device: device.get_edge_count(3, False),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': lambda device, edge_count_type_channel0, edge_count_debounce_channel0, \
+                                         edge_count_type_channel1, edge_count_debounce_channel1, \
+                                         edge_count_type_channel2, edge_count_debounce_channel2, \
+                                         edge_count_type_channel3, edge_count_debounce_channel3: \
+                          [device.set_edge_count_configuration(0, edge_count_type_channel0, edge_count_debounce_channel0),
+                           device.set_edge_count_configuration(1, edge_count_type_channel1, edge_count_debounce_channel1),
+                           device.set_edge_count_configuration(2, edge_count_type_channel2, edge_count_debounce_channel2),
+                           device.set_edge_count_configuration(3, edge_count_type_channel3, edge_count_debounce_channel3)],
+        'options': [
+            {
+                'name': 'Edge Count Type (Channel0)',
+                'type': 'choice',
+                'values': [('Rising', BrickletIndustrialDigitalIn4V2.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIndustrialDigitalIn4V2.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIndustrialDigitalIn4V2.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce (Channel0)',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            },
+            {
+                'name': 'Edge Count Type (Channel1)',
+                'type': 'choice',
+                'values': [('Rising', BrickletIndustrialDigitalIn4V2.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIndustrialDigitalIn4V2.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIndustrialDigitalIn4V2.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce (Channel1)',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            },
+            {
+                'name': 'Edge Count Type (Channel2)',
+                'type': 'choice',
+                'values': [('Rising', BrickletIndustrialDigitalIn4V2.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIndustrialDigitalIn4V2.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIndustrialDigitalIn4V2.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce (Channel2)',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            },
+            {
+                'name': 'Edge Count Type (Channel3)',
+                'type': 'choice',
+                'values': [('Rising', BrickletIndustrialDigitalIn4V2.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIndustrialDigitalIn4V2.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIndustrialDigitalIn4V2.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce (Channel3)',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            }
+        ]
+    },
     BrickletIndustrialDual020mA.DEVICE_DISPLAY_NAME: {
         'class': BrickletIndustrialDual020mA,
         'values': [
@@ -1249,14 +1485,14 @@ device_specs = {
         'class': BrickletIndustrialDualAnalogIn,
         'values': [
             {
-                'name': 'Voltage (Channel 0)',
+                'name': 'Voltage (Channel0)',
                 'getter': lambda device: device.get_voltage(0),
                 'subvalues': None,
                 'unit': 'mV',
                 'advanced': False
             },
             {
-                'name': 'Voltage (Channel 1)',
+                'name': 'Voltage (Channel1)',
                 'getter': lambda device: device.get_voltage(1),
                 'subvalues': None,
                 'unit': 'mV',
@@ -1265,7 +1501,7 @@ device_specs = {
             {
                 'name': 'ADC Values',
                 'getter': lambda device: device.get_adc_values(),
-                'subvalues': ['Channel 0', 'Channel 1'],
+                'subvalues': ['Channel0', 'Channel1'],
                 'unit': [None, None],
                 'advanced': True
             }
@@ -1286,6 +1522,62 @@ device_specs = {
                 'default': '2 SPS'
             }
         ]
+    },
+    BrickletIndustrialDualRelay.DEVICE_DISPLAY_NAME: {
+        'class': BrickletIndustrialDualRelay,
+        'values': [
+            {
+                'name': 'State',
+                'getter': lambda device: device.get_value(),
+                'subvalues': ['Channel0', 'Channel1'],
+                'unit': [None, None],
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletIndustrialQuadRelay.DEVICE_DISPLAY_NAME: {
+        'class': BrickletIndustrialQuadRelay,
+        'values': [
+            {
+                'name': 'State',
+                'getter': lambda device: value_to_bits(device.get_value(), 4),
+                'subvalues': ['Relay1', 'Relay2', 'Relay3', 'Relay4'],
+                'unit': [None, None, None, None],
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletIndustrialQuadRelayV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletIndustrialQuadRelayV2,
+        'values': [
+            {
+                'name': 'Value',
+                'getter': lambda device: device.get_value(),
+                'subvalues': ['Channel0', 'Channel1', 'Channel2', 'Channel3'],
+                'unit': [None, None, None, None],
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
     },
     BrickletIO16.DEVICE_DISPLAY_NAME: {
         'class': BrickletIO16,
@@ -1612,9 +1904,9 @@ device_specs = {
             {
                 'name': 'Edge Count Type (Pin 0)',
                 'type': 'choice',
-                'values': [('Rising', BrickletIndustrialDigitalIn4.EDGE_TYPE_RISING),
-                           ('Falling', BrickletIndustrialDigitalIn4.EDGE_TYPE_FALLING),
-                           ('Both', BrickletIndustrialDigitalIn4.EDGE_TYPE_BOTH)],
+                'values': [('Rising', BrickletIO4.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIO4.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIO4.EDGE_TYPE_BOTH)],
                 'default': 'Rising'
             },
             {
@@ -1675,6 +1967,176 @@ device_specs = {
             }
         ]
     },
+    BrickletIO4V2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletIO4V2,
+        'values': [
+            {
+                'name': 'Value',
+                'getter': lambda device: device.get_value(),
+                'subvalues': ['Channel0', 'Channel1', 'Channel2', 'Channel3'],
+                'unit': [None, None, None, None],
+                'advanced': False
+            },
+            {
+                'name': 'Edge Count (Channel0)',
+                'getter': lambda device: device.get_edge_count(0, False),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
+            },
+            {
+                'name': 'Edge Count (Channel1)',
+                'getter': lambda device: device.get_edge_count(1, False),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
+            },
+            {
+                'name': 'Edge Count (Channel2)',
+                'getter': lambda device: device.get_edge_count(2, False),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
+            },
+            {
+                'name': 'Edge Count (Channel3)',
+                'getter': lambda device: device.get_edge_count(3, False),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': lambda device,
+                                 channel0,
+                                 channel1,
+                                 channel2,
+                                 channel3,
+                                 edge_count_type_channel0,
+                                 edge_count_debounce_channel0,
+                                 edge_count_type_channel1,
+                                 edge_count_debounce_channel1,
+                                 edge_count_type_channel2,
+                                 edge_count_debounce_channel2,
+                                 edge_count_type_channel3,
+                                 edge_count_debounce_channel3:
+                          [device.set_configuration(0, *channel0),
+                           device.set_configuration(1, *channel1),
+                           device.set_configuration(2, *channel2),
+                           device.set_configuration(3, *channel3),
+                           device.set_edge_count_configuration(0, edge_count_type_channel0, edge_count_debounce_channel0),
+                           device.set_edge_count_configuration(1, edge_count_type_channel1, edge_count_debounce_channel1),
+                           device.set_edge_count_configuration(2, edge_count_type_channel2, edge_count_debounce_channel2),
+                           device.set_edge_count_configuration(3, edge_count_type_channel3, edge_count_debounce_channel3)],
+        'options': [
+            {
+                'name': 'Channel0',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('i', True)),
+                           ('Input', ('i', False)),
+                           ('Output High', ('o', True)),
+                           ('Output Low', ('o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Channel1',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('i', True)),
+                           ('Input', ('i', False)),
+                           ('Output High', ('o', True)),
+                           ('Output Low', ('o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Channel2',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('i', True)),
+                           ('Input', ('i', False)),
+                           ('Output High', ('o', True)),
+                           ('Output Low', ('o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Channel3',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('i', True)),
+                           ('Input', ('i', False)),
+                           ('Output High', ('o', True)),
+                           ('Output Low', ('o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Edge Count Type Channel0',
+                'type': 'choice',
+                'values': [('Rising', BrickletIO4V2.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIO4V2.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIO4V2.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce Channel0',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            },
+            {
+                'name': 'Edge Count Type Channel1',
+                'type': 'choice',
+                'values': [('Rising', BrickletIO4V2.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIO4V2.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIO4V2.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce Channel1',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            },
+            {
+                'name': 'Edge Count Type Channel2',
+                'type': 'choice',
+                'values': [('Rising', BrickletIO4V2.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIO4V2.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIO4V2.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce Channel2',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            },
+            {
+                'name': 'Edge Count Type Channel3',
+                'type': 'choice',
+                'values': [('Rising', BrickletIO4V2.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIO4V2.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIO4V2.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce Channel3',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            }
+        ]
+    },
     BrickletJoystick.DEVICE_DISPLAY_NAME: {
         'class': BrickletJoystick,
         'values': [
@@ -1712,6 +2174,27 @@ device_specs = {
                 'subvalues': None,
                 'unit': 'mV',
                 'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletLEDStripV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletLEDStripV2,
+        'values': [
+            {
+                'name': 'Supply Voltage',
+                'getter': lambda device: device.get_supply_voltage(),
+                'subvalues': None,
+                'unit': 'mV',
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -1808,6 +2291,53 @@ device_specs = {
                 'values': [('128x', BrickletLoadCell.GAIN_128X),
                            ('64x', BrickletLoadCell.GAIN_64X),
                            ('32x', BrickletLoadCell.GAIN_32X)],
+                'default': '128x'
+            }
+        ]
+    },
+    BrickletLoadCellV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletLoadCellV2,
+        'values': [
+            {
+                'name': 'Weight',
+                'getter': lambda device: device.get_weight(),
+                'subvalues': None,
+                'unit': 'gram',
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': lambda device, moving_average_length, rate, gain: \
+                          [device.set_moving_average(moving_average_length),
+                           device.set_configuration(rate, gain)],
+        'options': [
+            {
+                'name': 'Moving Average Length',
+                'type': 'int',
+                'minimum': 1,
+                'maximum': 100,
+                'suffix': None,
+                'default': 4
+            },
+            {
+                'name': 'Rate',
+                'type': 'choice',
+                'values': [('10Hz', BrickletLoadCellV2.RATE_10HZ),
+                           ('80Hz', BrickletLoadCellV2.RATE_80HZ)],
+                'default': '10Hz'
+            },
+            {
+                'name': 'Gain',
+                'type': 'choice',
+                'values': [('128x', BrickletLoadCellV2.GAIN_128X),
+                           ('64x', BrickletLoadCellV2.GAIN_64X),
+                           ('32x', BrickletLoadCellV2.GAIN_32X)],
                 'default': '128x'
             }
         ]
@@ -2043,7 +2573,34 @@ device_specs = {
         'options_setter': None,
         'options': None
     },
-
+    BrickletParticulateMatter.DEVICE_DISPLAY_NAME: {
+        'class': BrickletParticulateMatter,
+        'values': [
+            {
+                'name': 'Get PM Concentration',
+                'getter': lambda device: device.get_pm_concentration(),
+                'subvalues': ['PM10', 'PM25', 'PM100'],
+                'unit': ['µg/m³', 'µg/m³', 'µg/m³'],
+                'advanced': False
+            },
+            {
+                'name': 'Get PM Count',
+                'getter': lambda device: device.get_pm_count(),
+                'subvalues': ['Greater03um', 'Greater05um', 'Greater10um', 'Greater25um', 'Greater50um', 'Greater100um'],
+                'unit': [None, None, None, None, None, None],
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
     BrickletPTC.DEVICE_DISPLAY_NAME: {
         'class': BrickletPTC,
         'values': [
@@ -2070,6 +2627,43 @@ device_specs = {
                 'values': [('2-Wire', BrickletPTC.WIRE_MODE_2),
                            ('3-Wire', BrickletPTC.WIRE_MODE_3),
                            ('4-Wire', BrickletPTC.WIRE_MODE_4)],
+                'default': '2-Wire'
+            }
+        ]
+    },
+    BrickletPTCV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletPTCV2,
+        'values': [
+            {
+                'name': 'Temperature',
+                'getter': special_get_ptc_temperature,
+                'subvalues': None,
+                'unit': '°C/100',
+                'advanced': False
+            },
+            {
+                'name': 'Resistance',
+                'getter': special_get_ptc_resistance,
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': lambda device, wire_mode: device.set_wire_mode(wire_mode),
+        'options': [
+            {
+                'name': 'Wire Mode',
+                'type': 'choice',
+                'values': [('2-Wire', BrickletPTCV2.WIRE_MODE_2),
+                           ('3-Wire', BrickletPTCV2.WIRE_MODE_3),
+                           ('4-Wire', BrickletPTCV2.WIRE_MODE_4)],
                 'default': '2-Wire'
             }
         ]
@@ -2241,6 +2835,48 @@ device_specs = {
         'options_setter': None,
         'options': None
     },
+    BrickletSoundPressureLevel.DEVICE_DISPLAY_NAME: {
+        'class': BrickletSoundPressureLevel,
+        'values': [
+            {
+                'name': 'Decibel',
+                'getter': lambda device: device.get_decibel(),
+                'subvalues': None,
+                'unit': 'dB/10',
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': lambda device, fft_size, weighting: device.set_configuration(fft_size, weighting),
+        'options': [
+            {
+                'name': 'FFT Range',
+                'type': 'choice',
+                'values': [('128', BrickletSoundPressureLevel.FFT_SIZE_128),
+                           ('256', BrickletSoundPressureLevel.FFT_SIZE_256),
+                           ('512', BrickletSoundPressureLevel.FFT_SIZE_512),
+                           ('1024', BrickletSoundPressureLevel.FFT_SIZE_1024)],
+                'default': '1024'
+            },
+            {
+                'name': 'Weighting',
+                'type': 'choice',
+                'values': [('A', BrickletSoundPressureLevel.WEIGHTING_A),
+                           ('B', BrickletSoundPressureLevel.WEIGHTING_B),
+                           ('C', BrickletSoundPressureLevel.WEIGHTING_C),
+                           ('D', BrickletSoundPressureLevel.WEIGHTING_D),
+                           ('Z', BrickletSoundPressureLevel.WEIGHTING_Z),
+                           ('ITU R 468', BrickletSoundPressureLevel.WEIGHTING_ITU_R_468)],
+                'default': 'A'
+            }
+        ]
+    },
     BrickletTemperature.DEVICE_DISPLAY_NAME: {
         'class': BrickletTemperature,
         'values': [
@@ -2294,6 +2930,69 @@ device_specs = {
                 'unit': [None, None],
                 'advanced': True
             }
+        ],
+        'options_setter': lambda device, averaging, thermocouple_type, filter: \
+                          device.set_configuration(averaging, thermocouple_type, filter),
+        'options': [
+            {
+                'name': 'Averaging',
+                'type': 'choice',
+                'values': [('1', BrickletThermocouple.AVERAGING_1),
+                           ('2', BrickletThermocouple.AVERAGING_2),
+                           ('4', BrickletThermocouple.AVERAGING_4),
+                           ('8', BrickletThermocouple.AVERAGING_8),
+                           ('16', BrickletThermocouple.AVERAGING_16)],
+                'default': '16'
+            },
+            {
+                'name': 'Thermocouple Type',
+                'type': 'choice',
+                'values': [('B', BrickletThermocouple.TYPE_B),
+                           ('E', BrickletThermocouple.TYPE_E),
+                           ('J', BrickletThermocouple.TYPE_J),
+                           ('K', BrickletThermocouple.TYPE_K),
+                           ('N', BrickletThermocouple.TYPE_N),
+                           ('R', BrickletThermocouple.TYPE_R),
+                           ('S', BrickletThermocouple.TYPE_S),
+                           ('T', BrickletThermocouple.TYPE_T),
+                           ('G8', BrickletThermocouple.TYPE_G8),
+                           ('G32', BrickletThermocouple.TYPE_G32)],
+                'default': 'K'
+            },
+            {
+                'name': 'Filter',
+                'type': 'choice',
+                'values': [('50Hz', BrickletThermocouple.FILTER_OPTION_50HZ),
+                           ('60Hz', BrickletThermocouple.FILTER_OPTION_60HZ)],
+                'default': '50Hz'
+            }
+        ]
+    },
+    BrickletThermocoupleV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletThermocoupleV2,
+        'values': [
+            {
+                'name': 'Temperature',
+                'getter': lambda device: device.get_temperature(),
+                'subvalues': None,
+                'unit': '°C/100',
+                'advanced': False
+            },
+            {
+                'name': 'Error State',
+                'getter': lambda device: device.get_error_state(),
+                'subvalues': ['Over/Under Voltage', 'Open Circuit'],
+                'unit': [None, None],
+                'advanced': True
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+
         ],
         'options_setter': lambda device, averaging, thermocouple_type, filter: \
                           device.set_configuration(averaging, thermocouple_type, filter),
@@ -2471,6 +3170,82 @@ device_specs = {
                 'subvalues': None,
                 'unit': 'mW',
                 'advanced': False
+            }
+        ],
+        'options_setter': lambda device, average_length, voltage_conversion_time, current_conversion_time: \
+                          device.set_configuration(average_length, voltage_conversion_time, current_conversion_time),
+        'options': [
+            {
+                'name': 'Average Length',
+                'type': 'choice',
+                'values': [('1', BrickletVoltageCurrent.AVERAGING_1),
+                           ('4', BrickletVoltageCurrent.AVERAGING_4),
+                           ('16', BrickletVoltageCurrent.AVERAGING_16),
+                           ('64', BrickletVoltageCurrent.AVERAGING_64),
+                           ('128', BrickletVoltageCurrent.AVERAGING_128),
+                           ('256', BrickletVoltageCurrent.AVERAGING_256),
+                           ('512', BrickletVoltageCurrent.AVERAGING_512),
+                           ('1024', BrickletVoltageCurrent.AVERAGING_1024)],
+                'default': '64'
+            },
+            {
+                'name': 'Voltage Conversion Time',
+                'type': 'choice',
+                'values': [('140µs', 0),
+                           ('204µs', 1),
+                           ('332µs', 2),
+                           ('588µs', 3),
+                           ('1.1ms', 4),
+                           ('2.116ms', 5),
+                           ('4.156ms', 6),
+                           ('8.244ms', 7)],
+                'default': '1.1ms'
+            },
+            {
+                'name': 'Current Conversion Time',
+                'type': 'choice',
+                'values': [('140µs', 0),
+                           ('204µs', 1),
+                           ('332µs', 2),
+                           ('588µs', 3),
+                           ('1.1ms', 4),
+                           ('2.116ms', 5),
+                           ('4.156ms', 6),
+                           ('8.244ms', 7)],
+                'default': '1.1ms'
+            }
+        ]
+    },
+    BrickletVoltageCurrentV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletVoltageCurrentV2,
+        'values': [
+            {
+                'name': 'Voltage',
+                'getter': lambda device: device.get_voltage(),
+                'subvalues': None,
+                'unit': 'mV',
+                'advanced': False
+            },
+            {
+                'name': 'Current',
+                'getter': lambda device: device.get_current(),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Power',
+                'getter': lambda device: device.get_power(),
+                'subvalues': None,
+                'unit': 'mW',
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
             }
         ],
         'options_setter': lambda device, average_length, voltage_conversion_time, current_conversion_time: \
@@ -2968,6 +3743,41 @@ device_specs = {
                 'subvalues': None,
                 'unit': 'ms',
                 'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletRealTimeClockV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletRealTimeClockV2,
+        'values': [
+            {
+                'name': 'Date Time',
+                'getter': lambda device: device.get_date_time(),
+                'subvalues': ['Year',
+                              'Month',
+                              'Day',
+                              'Hour',
+                              'Minute',
+                              'Second',
+                              'Centisecond',
+                              'Weekday'],
+                'unit': [None, None, None, None, None, None, None, None],
+                'advanced': False
+            },
+            {
+                'name': 'Timestamp',
+                'getter': lambda device: device.get_timestamp(),
+                'subvalues': None,
+                'unit': 'ms',
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
             }
         ],
         'options_setter': None,
