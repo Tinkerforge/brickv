@@ -127,7 +127,6 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
         self.label_w.setVisible(chip_type != BrickletLEDStripV2.CHIP_TYPE_APA102 and num_channels == 4)
 
         if not ui_only:
-            print("set chip type: " + str(chip_type))
             self.led_strip.set_chip_type(chip_type)
 
         channel_mapping = self.channel_mapping_combobox.itemData(self.channel_mapping_combobox.currentIndex())
