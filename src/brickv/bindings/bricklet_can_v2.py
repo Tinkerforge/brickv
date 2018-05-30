@@ -19,7 +19,7 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 ReadFrameLowLevel = namedtuple('ReadFrameLowLevel', ['success', 'frame_type', 'identifier', 'data_length', 'data_data'])
-GetTransceiverConfiguration = namedtuple('TransceiverConfiguration', ['baud_rate', 'transceiver_mode'])
+GetTransceiverConfiguration = namedtuple('TransceiverConfiguration', ['baud_rate', 'sample_point', 'transceiver_mode'])
 GetQueueConfigurationLowLevel = namedtuple('QueueConfigurationLowLevel', ['write_buffer_size', 'write_buffer_timeout', 'write_backlog_size', 'read_buffer_sizes_length', 'read_buffer_sizes_data', 'read_backlog_size'])
 GetReadFilterConfiguration = namedtuple('ReadFilterConfiguration', ['filter_mode', 'filter_mask', 'filter_identifier'])
 GetErrorLogLowLevel = namedtuple('ErrorLogLowLevel', ['transceiver_state', 'transceiver_write_error_level', 'transceiver_read_error_level', 'transceiver_stuffing_error_count', 'transceiver_format_error_count', 'transceiver_ack_error_count', 'transceiver_bit1_error_count', 'transceiver_bit0_error_count', 'transceiver_crc_error_count', 'write_buffer_timeout_error_count', 'read_buffer_overflow_error_count', 'read_buffer_overflow_error_occurred_length', 'read_buffer_overflow_error_occurred_data', 'read_backlog_overflow_error_count'])
@@ -231,11 +231,12 @@ class BrickletCANV2(Device):
         """
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_FRAME_READ_CALLBACK_CONFIGURATION, (), '', '!')
 
-    def set_transceiver_configuration(self, baud_rate, transceiver_mode):
+    def set_transceiver_configuration(self, baud_rate, sample_point, transceiver_mode):
         """
         Sets the transceiver configuration for the CAN bus communication.
 
-        The baud rate can be configured in bit/s between 10 and 1000 kbit/s.
+        The baud rate can be configured in bit/s between 10 and 1000 kbit/s and the
+        sample point can be configured in 1/10 % between 50 and 90 %.
 
         The CAN transceiver has three different modes:
 
@@ -247,18 +248,19 @@ class BrickletCANV2(Device):
           detection nor acknowledgement. Only the receiving part of the transceiver
           is connected to the CAN bus.
 
-        The default is: 125 kbit/s and normal transceiver mode.
+        The default is: 125 kbit/s, 62.5 % and normal transceiver mode.
         """
         baud_rate = int(baud_rate)
+        sample_point = int(sample_point)
         transceiver_mode = int(transceiver_mode)
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_TRANSCEIVER_CONFIGURATION, (baud_rate, transceiver_mode), 'I B', '')
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_TRANSCEIVER_CONFIGURATION, (baud_rate, sample_point, transceiver_mode), 'I H B', '')
 
     def get_transceiver_configuration(self):
         """
         Returns the configuration as set by :func:`Set Transceiver Configuration`.
         """
-        return GetTransceiverConfiguration(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_TRANSCEIVER_CONFIGURATION, (), '', 'I B'))
+        return GetTransceiverConfiguration(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_TRANSCEIVER_CONFIGURATION, (), '', 'I H B'))
 
     def set_queue_configuration_low_level(self, write_buffer_size, write_buffer_timeout, write_backlog_size, read_buffer_sizes_length, read_buffer_sizes_data, read_backlog_size):
         """

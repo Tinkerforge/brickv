@@ -60,6 +60,7 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
 
         self.combo_frame_type.currentIndexChanged.connect(self.frame_type_changed)
         self.spin_baud_rate.valueChanged.connect(self.transceiver_configuration_changed)
+        self.spin_sample_point.valueChanged.connect(self.transceiver_configuration_changed)
         self.combo_transceiver_mode.currentIndexChanged.connect(self.transceiver_configuration_changed)
 
         self.spin_write_buffer_size.valueChanged.connect(self.queue_configuration_changed)
@@ -222,6 +223,7 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
 
     def get_transceiver_configuration_async(self, config):
         self.spin_baud_rate.setValue(config.baud_rate)
+        self.spin_sample_point.setValue(config.sample_point / 10.0)
         self.combo_transceiver_mode.setCurrentIndex(config.transceiver_mode)
         self.button_save_transceiver_configuration.setEnabled(False)
 
@@ -383,14 +385,16 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
 
     def save_transceiver_configuration(self):
         baud_rate = self.spin_baud_rate.value()
+        sample_point = int(self.spin_sample_point.value() * 10)
         transceiver_mode = self.combo_transceiver_mode.currentIndex()
 
         # FIXME: add validation
-        self.can.set_transceiver_configuration(baud_rate, transceiver_mode)
+        self.can.set_transceiver_configuration(baud_rate, sample_point, transceiver_mode)
         self.button_save_transceiver_configuration.setEnabled(False)
 
     def reset_transceiver_configuration(self):
         self.spin_baud_rate.setValue(125000)
+        self.spin_sample_point.setValue(62.5)
         self.combo_transceiver_mode.setCurrentIndex(0)
 
     def save_queue_configuration(self):

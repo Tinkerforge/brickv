@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>884</width>
+    <width>1012</width>
     <height>636</height>
    </rect>
   </property>
@@ -184,9 +184,32 @@
       </widget>
      </item>
      <item>
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Sample Point [%]:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="spin_sample_point">
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="minimum">
+        <double>50.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>90.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>62.500000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>Transceiver Mode:</string>
+        <string>Mode:</string>
        </property>
       </widget>
      </item>
