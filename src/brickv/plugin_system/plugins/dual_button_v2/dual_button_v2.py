@@ -65,7 +65,6 @@ class DualButtonV2(COMCUPluginBase, Ui_DualButtonV2):
         self.count = 0
 
     def cb_button_state(self, state):
-        print(state)
         self.button_l, self.button_r = state 
         led_text_button_l = ''
         led_text_button_r = ''
