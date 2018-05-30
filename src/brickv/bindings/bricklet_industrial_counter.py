@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-29.      #
+# This file was automatically generated on 2018-05-30.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -8,8 +8,6 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -209,7 +207,8 @@ class BrickletIndustrialCounter(Device):
 
     def get_signal_data(self, channel):
         """
-        Returns the signal data (duty cycle, period, frequency and value) for the given channel.
+        Returns the signal data (duty cycle, period, frequency and value) for the
+        given channel.
 
         The units are:
 
@@ -224,7 +223,8 @@ class BrickletIndustrialCounter(Device):
 
     def get_all_signal_data(self):
         """
-        Returns the signal data (duty cycle, period, frequency and value) for all for chanels.
+        Returns the signal data (duty cycle, period, frequency and value) for all four
+        channels.
 
         The units are:
 
@@ -264,7 +264,7 @@ class BrickletIndustrialCounter(Device):
         """
         Returns the activation state of the given channel.
 
-        true = activate, false = deactivate.
+        true = activated, false = deactivated.
         """
         channel = int(channel)
 
@@ -274,7 +274,7 @@ class BrickletIndustrialCounter(Device):
         """
         Returns the activation state of all four channels.
 
-        true = activate, false = deactivate.
+        true = activated, false = deactivated.
         """
         return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_COUNTER_ACTIVE, (), '', '4!')
 
@@ -366,7 +366,7 @@ class BrickletIndustrialCounter(Device):
     def set_channel_led_config(self, channel, config):
         """
         Each channel has a corresponding LED. You can turn the LED Off, On or show a
-        heartbeat. You can also ste the LED to "Channel Status". In this mode the
+        heartbeat. You can also set the LED to "Channel Status". In this mode the
         LED is on if the channel is high and off otherwise.
 
         By default all channel LEDs are configured as "Channel Status".

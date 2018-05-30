@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-29.      #
+# This file was automatically generated on 2018-05-30.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -8,8 +8,6 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -108,7 +106,7 @@ class BrickletIndustrialQuadRelayV2(Device):
 
     def set_value(self, value):
         """
-        Sets the output value of all four relays. A value of *true* closes the
+        Sets the value of all four relays. A value of *true* closes the
         relay and a value of *false* opens the relay.
 
         Use :func:`Set Selected Value` to only change one relay.
@@ -137,10 +135,11 @@ class BrickletIndustrialQuadRelayV2(Device):
         close and in 1.5s channel 0 will open again
 
         A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
-        have a RS485 bus and a Quad Relay Bricklet connected to one of the slave
-        stacks. You can now call this function every second, with a time parameter
-        of two seconds and channel 0 closed. Channel 0 will be closed all the time. If now
-        the RS485 connection is lost, then channel 0 will be opened in at most two seconds.
+        have a RS485 bus and a Industrial Quad Relay Bricklet 2.0 connected to one of
+        the slave stacks. You can now call this function every second, with a time
+        parameter of two seconds and channel 0 closed. Channel 0 will be closed all the
+        time. If now the RS485 connection is lost, then channel 0 will be opened in at
+        most two seconds.
         """
         channel = int(channel)
         value = bool(value)
@@ -162,7 +161,8 @@ class BrickletIndustrialQuadRelayV2(Device):
 
     def set_selected_value(self, channel, value):
         """
-        Sets the output value of the specified channel without affecting the other channels.
+        Sets the output value of the specified channel without affecting the other
+        channels.
         """
         channel = int(channel)
         value = bool(value)
@@ -172,7 +172,7 @@ class BrickletIndustrialQuadRelayV2(Device):
     def set_channel_led_config(self, led, config):
         """
         Each channel has a corresponding LED. You can turn the LED Off, On or show a
-        heartbeat. You can also ste the LED to "Channel Status". In this mode the
+        heartbeat. You can also set the LED to "Channel Status". In this mode the
         LED is on if the channel is high and off otherwise.
 
         By default all channel LEDs are configured as "Channel Status".

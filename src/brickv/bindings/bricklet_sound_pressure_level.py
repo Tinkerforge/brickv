@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-29.      #
+# This file was automatically generated on 2018-05-30.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -8,8 +8,6 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -127,7 +125,8 @@ class BrickletSoundPressureLevel(Device):
 
     def get_decibel(self):
         """
-        Returns the measured decibels. The values are given in dB/10 (tenths dB).
+        Returns the measured sound pressure in decibels. The values are given in
+        dB/10 (tenths dB).
 
         The Bricklet supports the weighting standards dB(A), dB(B), dB(C), dB(D),
         dB(Z) and ITU-R 468. You can configure the weighting with :func:`Set Configuration`.
@@ -189,7 +188,7 @@ class BrickletSoundPressureLevel(Device):
 
     def get_spectrum_low_level(self):
         """
-        Returns the spectrum. The length of the spectrum is between
+        Returns the frequency spectrum. The length of the spectrum is between
         512 (FFT size 1024) and 64 (FFT size 128). See :func:`Set Configuration`.
 
         Each array element is one bin of the FFT. The first bin is always the
@@ -199,7 +198,7 @@ class BrickletSoundPressureLevel(Device):
         In sum the frequency of the spectrum always has a range from 0 to
         20480Hz (the FFT is applied to samples with a frequency of 40960Hz).
 
-        The Returned data is already equalized, which means that the microphone
+        The returned data is already equalized, which means that the microphone
         frequency response is compensated and the weighting function is applied
         (see :func:`Set Configuration` for the available weighting standards). Use
         dB(Z) if you need the unaltered spectrum.
@@ -212,11 +211,11 @@ class BrickletSoundPressureLevel(Device):
 
     def set_spectrum_callback_configuration(self, period):
         """
-        The period in ms is the period with which the :cb:`Spectrum` callback is triggered
-        periodically. A value of 0 turns the callback off.
+        The period in ms is the period with which the :cb:`Spectrum` callback is
+        triggered periodically. A value of 0 turns the callback off.
 
-        Every new measured spectrum will be send at most once. Set the period to 1 to make
-        sure that you get every spectrum.
+        Every new measured spectrum will be send at most once. Set the period to 1 to
+        make sure that you get every spectrum.
 
         The default value is 0.
         """
@@ -226,7 +225,8 @@ class BrickletSoundPressureLevel(Device):
 
     def get_spectrum_callback_configuration(self):
         """
-        Returns the callback configuration as set by :func:`Get Spectrum Callback Configuration`.
+        Returns the callback configuration as set by
+        :func:`Get Spectrum Callback Configuration`.
         """
         return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_SPECTRUM_CALLBACK_CONFIGURATION, (), '', 'I')
 
@@ -409,7 +409,7 @@ class BrickletSoundPressureLevel(Device):
 
     def get_spectrum(self):
         """
-        Returns the spectrum. The length of the spectrum is between
+        Returns the frequency spectrum. The length of the spectrum is between
         512 (FFT size 1024) and 64 (FFT size 128). See :func:`Set Configuration`.
 
         Each array element is one bin of the FFT. The first bin is always the
@@ -419,7 +419,7 @@ class BrickletSoundPressureLevel(Device):
         In sum the frequency of the spectrum always has a range from 0 to
         20480Hz (the FFT is applied to samples with a frequency of 40960Hz).
 
-        The Returned data is already equalized, which means that the microphone
+        The returned data is already equalized, which means that the microphone
         frequency response is compensated and the weighting function is applied
         (see :func:`Set Configuration` for the available weighting standards). Use
         dB(Z) if you need the unaltered spectrum.

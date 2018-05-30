@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-29.      #
+# This file was automatically generated on 2018-05-30.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -8,8 +8,6 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -151,32 +149,31 @@ class BrickletLEDStripV2(Device):
 
     def set_led_values_low_level(self, index, value_length, value_chunk_offset, value_chunk_data):
         """
-        Sets the RGB(W) values for the LEDs starting from the *index*.
+        Sets the RGB(W) values for the LEDs starting from *index*.
         You can set at most 2048 RGB values or 1536 RGBW values.
 
         To make the colors show correctly you need to configure the chip type
-        (:func:`Set Chip Type`) and a channel mapping (:func:`Set Channel Mapping`)
+        (see :func:`Set Chip Type`) and a channel mapping (see :func:`Set Channel Mapping`)
         according to the connected LEDs.
 
         If the channel mapping has 3 colors, you need to give the data in the sequence
         RGBRGBRGB... if the channel mapping has 4 colors you need to give data in the
         sequence RGBWRGBWRGBW...
 
-        The data is double buffered and the colors will be transfered to actual
-        LEDs when the next frame duration ends, see :func:`Set Frame Duration`.
+        The data is double buffered and the colors will be transfered to the
+        LEDs when the next frame duration ends (see :func:`Set Frame Duration`).
 
         Generic approach:
 
-        * Set the frame duration to a value that represents
-          the number of frames per second you want to achieve.
+        * Set the frame duration to a value that represents the number of frames per
+          second you want to achieve.
         * Set all of the LED colors for one frame.
         * Wait for the :cb:`Frame Started` callback.
         * Set all of the LED colors for next frame.
         * Wait for the :cb:`Frame Started` callback.
-        * and so on.
+        * And so on.
 
-        This approach ensures that you can change the LED colors with
-        a fixed frame rate.
+        This approach ensures that you can change the LED colors with a fixed frame rate.
         """
         index = int(index)
         value_length = int(value_length)
@@ -187,7 +184,7 @@ class BrickletLEDStripV2(Device):
 
     def get_led_values_low_level(self, index, length):
         """
-
+        Returns the RGB(W) values as set by :func:`Set LED Values`.
         """
         index = int(index)
         length = int(length)
@@ -238,9 +235,6 @@ class BrickletLEDStripV2(Device):
         too.
 
         The default value is 1.66MHz.
-
-        .. note::
-         The frequency in firmware version 2.0.0 is fixed at 2MHz.
         """
         frequency = int(frequency)
 
@@ -317,7 +311,8 @@ class BrickletLEDStripV2(Device):
 
     def get_frame_started_callback_configuration(self):
         """
-        Returns the configuration as set by :func:`Set Frame Started Callback Configuration`.
+        Returns the configuration as set by
+        :func:`Set Frame Started Callback Configuration`.
         """
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_FRAME_STARTED_CALLBACK_CONFIGURATION, (), '', '!')
 
@@ -463,32 +458,31 @@ class BrickletLEDStripV2(Device):
 
     def set_led_values(self, index, value):
         """
-        Sets the RGB(W) values for the LEDs starting from the *index*.
+        Sets the RGB(W) values for the LEDs starting from *index*.
         You can set at most 2048 RGB values or 1536 RGBW values.
 
         To make the colors show correctly you need to configure the chip type
-        (:func:`Set Chip Type`) and a channel mapping (:func:`Set Channel Mapping`)
+        (see :func:`Set Chip Type`) and a channel mapping (see :func:`Set Channel Mapping`)
         according to the connected LEDs.
 
         If the channel mapping has 3 colors, you need to give the data in the sequence
         RGBRGBRGB... if the channel mapping has 4 colors you need to give data in the
         sequence RGBWRGBWRGBW...
 
-        The data is double buffered and the colors will be transfered to actual
-        LEDs when the next frame duration ends, see :func:`Set Frame Duration`.
+        The data is double buffered and the colors will be transfered to the
+        LEDs when the next frame duration ends (see :func:`Set Frame Duration`).
 
         Generic approach:
 
-        * Set the frame duration to a value that represents
-          the number of frames per second you want to achieve.
+        * Set the frame duration to a value that represents the number of frames per
+          second you want to achieve.
         * Set all of the LED colors for one frame.
         * Wait for the :cb:`Frame Started` callback.
         * Set all of the LED colors for next frame.
         * Wait for the :cb:`Frame Started` callback.
-        * and so on.
+        * And so on.
 
-        This approach ensures that you can change the LED colors with
-        a fixed frame rate.
+        This approach ensures that you can change the LED colors with a fixed frame rate.
         """
         index = int(index)
         value = list(map(int, value))
@@ -513,7 +507,7 @@ class BrickletLEDStripV2(Device):
 
     def get_led_values(self, index, length):
         """
-
+        Returns the RGB(W) values as set by :func:`Set LED Values`.
         """
         index = int(index)
         length = int(length)

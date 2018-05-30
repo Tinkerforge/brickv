@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-02-28.      #
+# This file was automatically generated on 2018-05-30.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -145,7 +145,7 @@ class BrickletDMX(Device):
 
     def get_dmx_mode(self):
         """
-        Returns the DMX mode, as set by func:`Set DMX Mode`.
+        Returns the DMX mode, as set by :func:`Set DMX Mode`.
         """
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_DMX_MODE, (), '', 'B')
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-29.      #
+# This file was automatically generated on 2018-05-30.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -8,8 +8,6 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -136,7 +134,7 @@ class BrickletPTCV2(Device):
 
     def get_temperature(self):
         """
-        Returns the temperature of connected sensor. The value
+        Returns the temperature of the connected sensor. The value
         has a range of -246 to 849 °C and is given in °C/100,
         e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
 
@@ -322,7 +320,7 @@ class BrickletPTCV2(Device):
         moving average will give the cleanest results.
 
         The default value is 1 for resistance and 40 for temperature. The default values match
-        the non-changable averaging settings of the old PTC Bricklet 1.0
+        the non-changeable averaging settings of the old PTC Bricklet 1.0
         """
         moving_average_length_resistance = int(moving_average_length_resistance)
         moving_average_length_temperature = int(moving_average_length_temperature)

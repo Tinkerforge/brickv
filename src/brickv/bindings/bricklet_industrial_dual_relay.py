@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-29.      #
+# This file was automatically generated on 2018-05-30.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -8,8 +8,6 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -102,7 +100,7 @@ class BrickletIndustrialDualRelay(Device):
     def set_value(self, channel0, channel1):
         """
         Sets the state of the relays, *true* means on and *false* means off.
-        For example: (true, false) turns relay 1 on and relay 2 off.
+        For example: (true, false) turns relay 0 on and relay 1 off.
 
         If you just want to set one of the relays and don't know the current state
         of the other relay, you can get the state with :func:`Get Value` or you
@@ -125,7 +123,7 @@ class BrickletIndustrialDualRelay(Device):
 
     def set_monoflop(self, channel, value, time):
         """
-        The first parameter can be 1 or 2 (relay 1 or relay 2). The second parameter
+        The first parameter can be 0 or 1 (relay 0 or relay 1). The second parameter
         is the desired state of the relay (*true* means on and *false* means off).
         The third parameter indicates the time (in ms) that the relay should hold
         the state.
@@ -134,8 +132,8 @@ class BrickletIndustrialDualRelay(Device):
         Relay 1 will turn on and in 1.5s it will turn off again.
 
         A monoflop can be used as a failsafe mechanism. For example: Lets assume you
-        have a RS485 bus and a Dual Relay Bricklet connected to one of the slave
-        stacks. You can now call this function every second, with a time parameter
+        have a RS485 bus and a Industrial Dual Relay Bricklet connected to one of the
+        slave stacks. You can now call this function every second, with a time parameter
         of two seconds. The relay will be on all the time. If now the RS485
         connection is lost, the relay will turn off in at most two seconds.
         """
@@ -159,7 +157,8 @@ class BrickletIndustrialDualRelay(Device):
 
     def set_selected_value(self, channel, value):
         """
-        Sets the state of the selected relay (1 or 2), *true* means on and *false* means off.
+        Sets the state of the selected relay (0 or 1), *true* means on and *false*
+        means off.
 
         The other relay remains untouched.
         """

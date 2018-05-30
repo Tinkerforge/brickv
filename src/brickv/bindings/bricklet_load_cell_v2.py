@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-29.      #
+# This file was automatically generated on 2018-05-30.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -8,8 +8,6 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -220,7 +218,7 @@ class BrickletLoadCellV2(Device):
 
     def calibrate(self, weight):
         """
-        To calibrate your Load Cell Bricklet you have to
+        To calibrate your Load Cell Bricklet 2.0 you have to
 
         * empty the scale and call this function with 0 and
         * add a known weight to the scale and call this function with the weight in

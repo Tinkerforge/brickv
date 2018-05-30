@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-29.      #
+# This file was automatically generated on 2018-05-30.      #
 #                                                           #
 # Python Bindings Version 2.1.16                            #
 #                                                           #
@@ -8,8 +8,6 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -23,6 +21,7 @@ GetInputValueCallbackConfiguration = namedtuple('InputValueCallbackConfiguration
 GetAllInputValueCallbackConfiguration = namedtuple('AllInputValueCallbackConfiguration', ['period', 'value_has_to_change'])
 GetMonoflop = namedtuple('Monoflop', ['value', 'time', 'time_remaining'])
 GetEdgeCountConfiguration = namedtuple('EdgeCountConfiguration', ['edge_type', 'debounce'])
+GetPWMConfiguration = namedtuple('PWMConfiguration', ['frequency', 'duty_cycle'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -35,9 +34,9 @@ class BrickletIO4V2(Device):
     DEVICE_DISPLAY_NAME = 'IO-4 Bricklet 2.0'
     DEVICE_URL_PART = 'io4_v2' # internal
 
-    CALLBACK_INPUT_VALUE = 15
-    CALLBACK_ALL_INPUT_VALUE = 16
-    CALLBACK_MONOFLOP_DONE = 17
+    CALLBACK_INPUT_VALUE = 17
+    CALLBACK_ALL_INPUT_VALUE = 18
+    CALLBACK_MONOFLOP_DONE = 19
 
 
     FUNCTION_SET_VALUE = 1
@@ -54,6 +53,8 @@ class BrickletIO4V2(Device):
     FUNCTION_GET_EDGE_COUNT = 12
     FUNCTION_SET_EDGE_COUNT_CONFIGURATION = 13
     FUNCTION_GET_EDGE_COUNT_CONFIGURATION = 14
+    FUNCTION_SET_PWM_CONFIGURATION = 15
+    FUNCTION_GET_PWM_CONFIGURATION = 16
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -111,6 +112,8 @@ class BrickletIO4V2(Device):
         self.response_expected[BrickletIO4V2.FUNCTION_GET_EDGE_COUNT] = BrickletIO4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO4V2.FUNCTION_SET_EDGE_COUNT_CONFIGURATION] = BrickletIO4V2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIO4V2.FUNCTION_GET_EDGE_COUNT_CONFIGURATION] = BrickletIO4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIO4V2.FUNCTION_SET_PWM_CONFIGURATION] = BrickletIO4V2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO4V2.FUNCTION_GET_PWM_CONFIGURATION] = BrickletIO4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO4V2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletIO4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO4V2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletIO4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO4V2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletIO4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -131,7 +134,7 @@ class BrickletIO4V2(Device):
 
     def set_value(self, value):
         """
-        Sets the output value of all four Channels. A value of *true* or *false* outputs
+        Sets the output value of all four channels. A value of *true* or *false* outputs
         logic 1 or logic 0 respectively on the corresponding channel.
 
         Use :func:`Set Selected Value` to change only one output channel state.
@@ -181,10 +184,10 @@ class BrickletIO4V2(Device):
 
         For example:
 
-        * (0, 'i', true) will set channel-0 as input pull-up.
-        * (1, 'i', false) will set channel-1 as input default (floating if nothing is connected).
-        * (2, 'o', true) will set channel-2 as output high.
-        * (3, 'o', false) will set channel-3 as output low.
+        * (0, 'i', true) will set channel 0 as input pull-up.
+        * (1, 'i', false) will set channel 1 as input default (floating if nothing is connected).
+        * (2, 'o', true) will set channel 2 as output high.
+        * (3, 'o', false) will set channel 3 as output low.
 
         The default configuration is input with pull-up.
         """
@@ -261,7 +264,7 @@ class BrickletIO4V2(Device):
 
     def set_monoflop(self, channel, value, time):
         """
-        The first parameter  is the desired state of the channel (*true* means output *high*
+        The first parameter is the desired state of the channel (*true* means output *high*
         and *false* means output *low*). The second parameter indicates the time (in ms) that
         the channel should hold the state.
 
@@ -269,7 +272,7 @@ class BrickletIO4V2(Device):
         The channel will turn on and in 1.5s it will turn off again.
 
         A monoflop can be used as a failsafe mechanism. For example: Lets assume you
-        have a RS485 bus and a IO4 Bricklet is connected to one of the slave
+        have a RS485 bus and a IO-4 Bricklet 2.0 is connected to one of the slave
         stacks. You can now call this function every second, with a time parameter
         of two seconds. The channel will be *high* all the time. If now the RS485
         connection is lost, the channel will turn *low* in at most two seconds.
@@ -339,6 +342,26 @@ class BrickletIO4V2(Device):
         channel = int(channel)
 
         return GetEdgeCountConfiguration(*self.ipcon.send_request(self, BrickletIO4V2.FUNCTION_GET_EDGE_COUNT_CONFIGURATION, (channel,), 'B', 'B B'))
+
+    def set_pwm_configuration(self, channel, frequency, duty_cycle):
+        """
+        .. note: Not implemented yet, will be added in a future firmware version.
+        """
+        channel = int(channel)
+        frequency = int(frequency)
+        duty_cycle = int(duty_cycle)
+
+        self.ipcon.send_request(self, BrickletIO4V2.FUNCTION_SET_PWM_CONFIGURATION, (channel, frequency, duty_cycle), 'B I H', '')
+
+    def get_pwm_configuration(self, channel):
+        """
+        .. note: Not implemented yet, will be added in a future firmware version.
+
+        Returns the PWM configuration as set by :func:`Set PWM Configuration`.
+        """
+        channel = int(channel)
+
+        return GetPWMConfiguration(*self.ipcon.send_request(self, BrickletIO4V2.FUNCTION_GET_PWM_CONFIGURATION, (channel,), 'B', 'I H'))
 
     def get_spitfp_error_count(self):
         """
