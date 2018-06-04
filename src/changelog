@@ -343,7 +343,7 @@
 - Handle unknown client status for WIFI Extension 2.0 correctly
 - Add moving average length spinbox to Distance US Bricklet plugin
 - Add support for RGBW LEDs, channel mapping and SK6812RGBW (NeoPixel RGBW),
-  LPD8806 und ADA102 (DotStar) chip types to LED Strip Bricklet plugin
+  LPD8806 and ADA102 (DotStar) chip types to LED Strip Bricklet plugin
 
 2017-01-25: 2.3.7 (39f5d0f)
 - Warn about unsupported RS485 baud rates and modes on RED Brick
@@ -403,6 +403,14 @@
 2018-03-07: 2.3.14 (0622fad)
 - Add support for RED Brick Image 1.11
 
-<unknown>: 2.3.15 (<unknown>)
+2018-06-04: 2.3.15 (<unknown>)
+- Add support for CAN 2.0, Industrial Counter, Industrial Digital In 4 2.0,
+  Industrial Dual Relay, Industrial Quad Relay 2.0, IO-4 2.0, LED Strip 2.0,
+  Load Cell 2.0, Particulate Matter, PTC 2.0, Real-Time Clock 2.0, RS232 2.0,
+  Sound Pressure Level, Thermocouple 2.0 and Voltage/Current 2.0 Bricklet
+- Add Data Logger support for CAN 2.0, Industrial Counter, Industrial Digital
+  In 4 2.0, Industrial Dual Relay, Industrial Quad Relay 2.0, IO-4 2.0, LED
+  Strip 2.0, Load Cell 2.0, Particulate Matter, PTC 2.0, Real-Time Clock 2.0,
+  Sound Pressure Level, Thermocouple 2.0 and Voltage/Current 2.0 Bricklet
 - Add Data Logger support for logging all stations and sensors with the Outdoor
   Weather Bricklet, before only the first stations and sensors could be logged

@@ -24,7 +24,13 @@
   Outdoor Weather, Rotary Encoder 2.0, Solid State 2.0 and Temperature IR 2.0
   Bricklet
 
-2018-03-09: 2.0.6 (<unknown>)
+2018-03-09: 2.0.6 (a6785df)
 - Fix API bindings imports for Bricklets added in version 2.0.5
 - Add support for logging all stations and sensors with the Outdoor Weather
   Bricklet, before only the first station and sensor could be logged
+
+2018-06-04: 2.0.7 (<unknown>)
+- Add Data Logger support for CAN 2.0, Industrial Counter, Industrial Digital
+  In 4 2.0, Industrial Dual Relay, Industrial Quad Relay 2.0, IO-4 2.0, LED
+  Strip 2.0, Load Cell 2.0, Particulate Matter, PTC 2.0, Real-Time Clock 2.0,
+  Sound Pressure Level, Thermocouple 2.0 and Voltage/Current 2.0 Bricklet
