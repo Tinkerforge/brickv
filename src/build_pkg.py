@@ -374,6 +374,10 @@ def build_linux_pkg():
     print('changing directory modes to 0755')
     system('find dist/linux -type d -exec chmod 0755 {} \;')
 
+    print('changing file modes')
+    system('find dist/linux -type f -perm 664 -exec chmod 0644 {} \;')
+    system('find dist/linux -type f -perm 775 -exec chmod 0755 {} \;')
+
     print('changing owner to root')
     system('sudo chown -R root:root dist/linux')
 
@@ -383,8 +387,11 @@ def build_linux_pkg():
     print('changing owner back to original user')
     system('sudo chown -R ${USER}:${USER} dist/linux')
 
-    #print('checking Debian package')
-    #system('lintian --pedantic brickv-{0}_all.deb'.format(BRICKV_VERSION))
+    if os.path.exists('/usr/bin/lintian'):
+        print('checking Debian package')
+        system('lintian --pedantic brickv-{0}_all.deb'.format(BRICKV_VERSION))
+    else:
+        print('skipping lintian check')
 
 
 BRICK_FLASH_VERSION = '1.0.1'
@@ -435,19 +442,26 @@ def build_linux_flash_pkg():
 
     print('changing binary and directory modes to 0755')
     system('chmod 0755 dist/linux/usr/bin/brick-flash')
-    system('find dist/linux/usr -type d -exec chmod 0755 {} \;')
+    system('find dist/linux -type d -exec chmod 0755 {} \;')
+
+    print('changing file modes')
+    system('find dist/linux -type f -perm 664 -exec chmod 0644 {} \;')
+    system('find dist/linux -type f -perm 775 -exec chmod 0755 {} \;')
 
     print('changing owner to root')
-    system('sudo chown -R root:root dist/linux/usr')
+    system('sudo chown -R root:root dist/linux')
 
     print('building Debian package')
     system('dpkg -b dist/linux brick-flash-{0}_all.deb'.format(BRICK_FLASH_VERSION))
 
     print('changing owner back to original user')
-    system('sudo chown -R ${USER}:${USER} dist/linux/usr')
+    system('sudo chown -R ${USER}:${USER} dist/linux')
 
-    #print('checking Debian package')
-    #system('lintian --pedantic brick-flash-{0}_all.deb'.format(BRICK_FLASH_VERSION))
+    if os.path.exists('/usr/bin/lintian'):
+        print('checking Debian package')
+        system('lintian --pedantic brick-flash-{0}_all.deb'.format(BRICK_FLASH_VERSION))
+    else:
+        print('skipping lintian check')
 
 
 BRICK_LOGGER_VERSION = '2.0.7'
