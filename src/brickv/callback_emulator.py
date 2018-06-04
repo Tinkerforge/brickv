@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 import threading
+import logging
 
 from PyQt4.QtCore import QObject, pyqtSignal
 
@@ -31,7 +32,8 @@ class CallbackEmulator(QObject):
     qtcb_data = pyqtSignal(object)
     qtcb_error = pyqtSignal()
 
-    def __init__(self, data_getter, data_callback, error_callback, use_data_signal=True, ignore_last_data=False):
+    def __init__(self, data_getter, data_callback, error_callback, use_data_signal=True,
+                 ignore_last_data=False, log_exception=False):
         QObject.__init__(self)
 
         self.period = 0 # milliseconds
@@ -41,6 +43,7 @@ class CallbackEmulator(QObject):
         self.data_callback = data_callback
         self.error_callback = error_callback
         self.ignore_last_data = ignore_last_data
+        self.log_exception = log_exception
         self.last_data = None
 
         if self.use_data_signal:
@@ -66,6 +69,9 @@ class CallbackEmulator(QObject):
         try:
             data = self.data_getter()
         except Error:
+            if self.log_exception:
+                logging.exception('Error while getting callback data')
+
             self.qtcb_error.emit()
 
             # an error occurred, retry in 5 seconds if period was not set
