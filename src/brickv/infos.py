@@ -149,7 +149,7 @@ class BrickMasterInfo(BrickInfo):
     def __init__(self):
         BrickInfo.__init__(self)
 
-        self.bricklets = {'a': None, 'b': None, 'c': None, 'd': None, 'i-a': None, 'i-b': None, 'i-c': None, 'i-d': None }
+        self.bricklets = {'a': None, 'b': None, 'c': None, 'd': None, 'i-a': None, 'i-b': None, 'i-c': None, 'i-d': None}
         self.extensions = {'ext0': None, 'ext1': None}
 
     def __repr__(self):

@@ -23,7 +23,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from zipfile import ZipFile
 try:
     from StringIO import StringIO as FileLike
 except ImportError:
@@ -939,7 +938,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             # Convert plugin back from list of bytes to something we can put in ZipFile
             zip_file = str(bytearray(plugin))
             try:
-                zf = ZipFile(FileLike(zip_file), 'r')
+                zf = zipfile.ZipFile(FileLike(zip_file), 'r')
             except:
                 progress.cancel()
                 if popup:

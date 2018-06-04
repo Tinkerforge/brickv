@@ -33,7 +33,7 @@ from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, \
                         QPushButton, QHBoxLayout, QVBoxLayout, \
                         QLabel, QFrame, QSpacerItem, QSizePolicy, \
                         QStandardItemModel, QStandardItem, QToolButton, \
-                        QLineEdit, QCursor, QMenu, QAction, \
+                        QLineEdit, QCursor, QMenu, \
                         QSortFilterProxyModel, QCheckBox, QComboBox
 
 from brickv.ui_mainwindow import Ui_MainWindow

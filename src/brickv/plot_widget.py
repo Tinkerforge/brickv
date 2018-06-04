@@ -32,7 +32,7 @@ import time
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
                         QPainter, QSizePolicy, QFontMetrics, QPixmap, \
                         QIcon, QColor, QPainterPath, QLabel, QTransform, \
-                        QSpinBox, QPen
+                        QSpinBox
 from PyQt4.QtCore import QTimer, Qt, QSize, QRectF, QLineF, QPoint
 
 CurveConfig = namedtuple('CurveConfig', 'title color value_getter value_formatter')

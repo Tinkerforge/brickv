@@ -578,7 +578,7 @@ try:
 except ImportError:
     from queue import Queue, Empty
 
-class TFSerial:
+class TFSerial(object):
     def __init__(self, master):
         self.master = master
         self.timeout = 1
@@ -638,7 +638,7 @@ class TFSerial:
     def inWaiting(self):
         return len(self.read_buffer)
 
-class ESPFlash:
+class ESPFlash(object):
     def __init__(self, master, progress=None):
         self.master = master
         self.progress = progress
