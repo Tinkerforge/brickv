@@ -360,7 +360,7 @@ class CurveArea(QWidget):
         QWidget.__init__(self, plot)
 
         self.plot = plot
-        
+
         self.max_points = None
 
         # FIXME: need to enable opaque painting to avoid that updates of other
@@ -415,7 +415,7 @@ class CurveArea(QWidget):
                 # but it didnt't look good.
                 curve_x = self.plot.curves_x[0]
                 curve_y = self.plot.curves_y[0]
-                
+
                 t = time.time()
                 if self.max_points == None:
                     self.max_points = []
@@ -437,22 +437,22 @@ class CurveArea(QWidget):
                 for c in range(len(self.plot.curves_x)):
                     if not self.plot.curves_visible[c]:
                         continue
-    
+
                     curve_x = self.plot.curves_x[c]
                     curve_y = self.plot.curves_y[c]
                     path = QPainterPath()
                     lineTo = path.lineTo
-    
+
                     if self.plot.curve_motion_granularity > 1:
                         start = max(min(bisect.bisect_left(curve_x, inverted_event_rect.left()), len(curve_x) - 1) - 1, 0)
                     else:
                         start = 0
-    
+
                     path.moveTo(curve_x[start], curve_y[start])
-    
+
                     for i in xrange(start + 1, len(curve_x)):
                         lineTo(curve_x[i], curve_y[i])
-    
+
                     painter.setPen(self.plot.curve_configs[c].color)
                     painter.drawPath(path)
 

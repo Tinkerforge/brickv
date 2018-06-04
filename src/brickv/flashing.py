@@ -1055,36 +1055,36 @@ class FlashingWindow(QDialog, Ui_Flashing):
                             break
                     except:
                         pass
-    
+
                     if counter == 10:
                         progress.cancel()
                         if popup:
                             self.popup_fail('Bricklet', 'Device did not enter bootloader mode in 2.5s (second try)')
                         return False
-    
+
                     time.sleep(0.25)
                     counter += 1
 
                 num_packets = len(plugin)/64
                 index_list = range(num_packets)
-                
+
                 progress.setLabelText('Writing plugin (second try): ' + name)
                 progress.setMaximum(len(index_list))
                 progress.setValue(0)
                 progress.show()
-    
+
                 for position in index_list:
                     start = position * 64
                     end = (position + 1) * 64
                     bricklet.set_write_firmware_pointer(start)
                     bricklet.write_firmware(plugin[start:end])
                     progress.setValue(position)
-    
+
                 progress.setLabelText('Changing from bootloader mode to firmware mode (second try)')
                 progress.setMaximum(0)
                 progress.setValue(0)
                 progress.show()
-    
+
                 mode_ret = bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_FIRMWARE)
                 if mode_ret != 0 and mode_ret != 2: # 0 = ok, 2 = no change
                     error_str = ''
@@ -1098,12 +1098,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         error_str = 'CRC Mismatch (Error 5, second try)'
                     else: # unkown error case
                         error_str = 'Error ' + str(mode_ret)
-    
+
                     progress.cancel()
                     if popup:
                         self.popup_fail('Bricklet', 'Coud not change from bootloader mode to firmware mode: ' + error_str)
                     return False
-                
+
             counter = 0
             while True:
                 try:

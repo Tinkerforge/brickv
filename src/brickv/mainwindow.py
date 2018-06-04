@@ -667,7 +667,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                             position = 'i-' + bricklet_info.position
                             set_device_info_value('position', position)
                             break
-                
+
                 for brick_info in infos.get_brick_infos():
                     if brick_info.uid == connected_uid:
                         if position in brick_info.bricklets and brick_info.bricklets[position] != device_info:
@@ -695,7 +695,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             elif device_info.type == 'brick':
                 for bricklet_info in infos.get_bricklet_infos():
-                    connected_uid = bricklet_info.connected_uid 
+                    connected_uid = bricklet_info.connected_uid
 
                     # Find out if Bricklet is connected to an isolator, in this case
                     # We make a direct connection to the Brick.
