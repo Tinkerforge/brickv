@@ -1064,7 +1064,7 @@ class IPConnection(object):
 
             if len(form) == 0:
                 cb()
-            elif len(form) == 1:
+            elif len(form.split(' ')) == 1:
                 cb(unpack_payload(payload, form))
             else:
                 cb(*unpack_payload(payload, form))
