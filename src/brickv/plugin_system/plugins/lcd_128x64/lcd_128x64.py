@@ -158,6 +158,8 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
         self.invert_checkbox.stateChanged.connect(self.new_configuration)
 
         self.current_char_value = -1
+
+        self.write_line_response_expected = False
         
         self.cbe_touch_position = CallbackEmulator(self.lcd.get_touch_position,
                                                    self.scribble_area.touch_position,
@@ -228,12 +230,19 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
         self.scribble_area.update()
 
     def start(self):
+        # Use response expected for write_line function, to make sure that the
+        # data queue can't fill up while you move the slider around.
+        self.write_line_response_expected = self.lcd.get_response_expected(self.lcd.FUNCTION_WRITE_LINE)
+        self.lcd.set_response_expected(self.lcd.FUNCTION_WRITE_LINE, True)
+
         async_call(self.lcd.get_display_configuration, None, self.cb_display_configuration, self.increase_error_count)
         async_call(self.lcd.read_pixels, (0, 0, 127, 63), self.cb_read_pixels, self.increase_error_count)
         self.cbe_touch_position.set_period(25)
         self.cbe_touch_gesture.set_period(25)
 
     def stop(self):
+        self.lcd.set_response_expected(self.lcd.FUNCTION_WRITE_LINE, self.write_line_response_expected)
+
         self.cbe_touch_position.set_period(0)
         self.cbe_touch_gesture.set_period(0)
 

@@ -115,6 +115,8 @@ class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
 
         self.current_char_value = -1
 
+        self.write_line_response_expected = False
+
     def char_slider_changed(self, value):
         if value != self.current_char_value:
             self.current_char_value = value
@@ -175,11 +177,16 @@ class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
         self.scribble_area.update()
 
     def start(self):
+        # Use response expected for write_line function, to make sure that the
+        # data queue can't fill up while you move the slider around.
+        self.write_line_response_expected = self.oled.get_response_expected(self.oled.FUNCTION_WRITE_LINE)
+        self.oled.set_response_expected(self.oled.FUNCTION_WRITE_LINE, True)
+
         async_call(self.oled.get_display_configuration, None, self.cb_display_configuration, self.increase_error_count)
         async_call(self.oled.read_pixels, (0, 0, 127, 63), self.cb_read_pixels, self.increase_error_count)
 
     def stop(self):
-        pass
+        self.oled.set_response_expected(self.oled.FUNCTION_WRITE_LINE, self.write_line_response_expected)
 
     def destroy(self):
         pass
