@@ -158,12 +158,12 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
         async_call(self.sound_pressure_level.get_configuration, None, self.get_configuration_async, self.increase_error_count)
         self.cbe_get_decibel.set_period(50)
         
-        self.sound_pressure_level.set_spectrum_callback_configuration(1)
+        async_call(self.sound_pressure_level.set_spectrum_callback_configuration, (1,), None, self.increase_error_count)
         self.sound_pressure_level.register_callback(self.sound_pressure_level.CALLBACK_SPECTRUM, self.qtcb_spectrum.emit)
 
     def stop(self):
         self.cbe_get_decibel.set_period(0)
-        self.sound_pressure_level.set_spectrum_callback_configuration(0)
+        async_call(self.sound_pressure_level.set_spectrum_callback_configuration, (0,), None, self.increase_error_count)
 
     def destroy(self):
         pass
