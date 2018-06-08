@@ -30,7 +30,7 @@
   Bricklet, before only the first station and sensor could be logged
 
 2018-06-08: 2.0.7 (57b191d)
-- Add Data Logger support for CAN 2.0, Industrial Counter, Industrial Digital
-  In 4 2.0, Industrial Dual Relay, Industrial Quad Relay 2.0, IO-4 2.0, LED
-  Strip 2.0, Load Cell 2.0, Particulate Matter, PTC 2.0, Real-Time Clock 2.0,
-  Sound Pressure Level, Thermocouple 2.0 and Voltage/Current 2.0 Bricklet
+- Add support for CAN 2.0, Industrial Counter, Industrial Digital In 4 2.0,
+  Industrial Dual Relay, Industrial Quad Relay 2.0, IO-4 2.0, LED Strip 2.0,
+  Load Cell 2.0, Particulate Matter, PTC 2.0, Real-Time Clock 2.0, Sound
+  Pressure Level, Thermocouple 2.0 and Voltage/Current 2.0 Bricklet
