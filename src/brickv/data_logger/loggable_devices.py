@@ -180,7 +180,7 @@ else:
     from tinkerforge.bricklet_joystick import BrickletJoystick
     from tinkerforge.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
     from tinkerforge.bricklet_led_strip import BrickletLEDStrip
-    from tinkerforge.bricklet_led_strip import BrickletLEDStripV2
+    from tinkerforge.bricklet_led_strip_v2 import BrickletLEDStripV2
     from tinkerforge.bricklet_line import BrickletLine
     from tinkerforge.bricklet_linear_poti import BrickletLinearPoti
     from tinkerforge.bricklet_load_cell import BrickletLoadCell
