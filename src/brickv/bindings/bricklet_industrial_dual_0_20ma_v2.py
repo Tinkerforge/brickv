@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-28.      #
+# This file was automatically generated on 2018-06-08.      #
 #                                                           #
-# Python Bindings Version 2.1.16                            #
+# Python Bindings Version 2.1.17                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -127,10 +127,10 @@ class BrickletIndustrialDual020mAV2(Device):
         self.response_expected[BrickletIndustrialDual020mAV2.FUNCTION_READ_UID] = BrickletIndustrialDual020mAV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDual020mAV2.FUNCTION_GET_IDENTITY] = BrickletIndustrialDual020mAV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletIndustrialDual020mAV2.CALLBACK_CURRENT] = 'i'
+        self.callback_formats[BrickletIndustrialDual020mAV2.CALLBACK_CURRENT] = 'B i'
 
 
-    def get_current(self, channels):
+    def get_current(self, channel):
         """
         Returns the current of the specified channel. The value is in nA and between
         0nA and 22505322nA (22.5mA).
@@ -147,11 +147,11 @@ class BrickletIndustrialDual020mAV2(Device):
         :cb:`Current` callback. You can set the callback configuration
         with :func:`Set Current Callback Configuration`.
         """
-        channels = int(channels)
+        channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_CURRENT, (channels,), 'B', 'i')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_CURRENT, (channel,), 'B', 'i')
 
-    def set_current_callback_configuration(self, channels, period, value_has_to_change, option, min, max):
+    def set_current_callback_configuration(self, channel, period, value_has_to_change, option, min, max):
         """
         The period in ms is the period with which the :cb:`Current` callback is triggered
         periodically. A value of 0 turns the callback off.
@@ -175,7 +175,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
          "'x'",    "Threshold is turned off"
          "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
-         "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
          "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
@@ -183,22 +183,22 @@ class BrickletIndustrialDual020mAV2(Device):
 
         The default value is (0, false, 'x', 0, 0).
         """
-        channels = int(channels)
+        channel = int(channel)
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
         option = create_char(option)
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_CURRENT_CALLBACK_CONFIGURATION, (channels, period, value_has_to_change, option, min, max), 'B I ! c H H', '')
+        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_CURRENT_CALLBACK_CONFIGURATION, (channel, period, value_has_to_change, option, min, max), 'B I ! c i i', '')
 
-    def get_current_callback_configuration(self, channels):
+    def get_current_callback_configuration(self, channel):
         """
         Returns the callback configuration as set by :func:`Set Current Callback Configuration`.
         """
-        channels = int(channels)
+        channel = int(channel)
 
-        return GetCurrentCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_CURRENT_CALLBACK_CONFIGURATION, (channels,), 'B', 'I ! c H H'))
+        return GetCurrentCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_CURRENT_CALLBACK_CONFIGURATION, (channel,), 'B', 'I ! c i i'))
 
     def set_sample_rate(self, rate):
         """

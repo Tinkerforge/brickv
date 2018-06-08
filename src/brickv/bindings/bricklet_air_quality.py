@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-28.      #
+# This file was automatically generated on 2018-06-08.      #
 #                                                           #
-# Python Bindings Version 2.1.16                            #
+# Python Bindings Version 2.1.17                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -239,7 +239,7 @@ class BrickletAirQuality(Device):
 
          "'x'",    "Threshold is turned off"
          "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
-         "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
          "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
@@ -253,13 +253,13 @@ class BrickletAirQuality(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_IAQ_INDEX_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_IAQ_INDEX_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
 
     def get_iaq_index_callback_configuration(self):
         """
         Returns the callback configuration as set by :func:`Set IAQ Index Callback Configuration`.
         """
-        return GetIAQIndexCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_IAQ_INDEX_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
+        return GetIAQIndexCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_IAQ_INDEX_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
 
     def get_temperature(self):
         """
@@ -296,7 +296,7 @@ class BrickletAirQuality(Device):
 
          "'x'",    "Threshold is turned off"
          "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
-         "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
          "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
@@ -310,13 +310,13 @@ class BrickletAirQuality(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_TEMPERATURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_TEMPERATURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
 
     def get_temperature_callback_configuration(self):
         """
         Returns the callback configuration as set by :func:`Set Temperature Callback Configuration`.
         """
-        return GetTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
+        return GetTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
 
     def get_humidity(self):
         """
@@ -353,7 +353,7 @@ class BrickletAirQuality(Device):
 
          "'x'",    "Threshold is turned off"
          "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
-         "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
          "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
@@ -367,13 +367,13 @@ class BrickletAirQuality(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_HUMIDITY_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_HUMIDITY_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
 
     def get_humidity_callback_configuration(self):
         """
         Returns the callback configuration as set by :func:`Set Humidity Callback Configuration`.
         """
-        return GetHumidityCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_HUMIDITY_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
+        return GetHumidityCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_HUMIDITY_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
 
     def get_air_pressure(self):
         """
@@ -410,7 +410,7 @@ class BrickletAirQuality(Device):
 
          "'x'",    "Threshold is turned off"
          "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
-         "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
          "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
@@ -424,13 +424,13 @@ class BrickletAirQuality(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_AIR_PRESSURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_AIR_PRESSURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
 
     def get_air_pressure_callback_configuration(self):
         """
         Returns the callback configuration as set by :func:`Set Air Pressure Callback Configuration`.
         """
-        return GetAirPressureCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_AIR_PRESSURE_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
+        return GetAirPressureCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_AIR_PRESSURE_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
 
     def get_spitfp_error_count(self):
         """

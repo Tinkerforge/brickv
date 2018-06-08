@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-28.      #
+# This file was automatically generated on 2018-06-08.      #
 #                                                           #
-# Python Bindings Version 2.1.16                            #
+# Python Bindings Version 2.1.17                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -168,7 +168,7 @@ class BrickletBarometerV2(Device):
 
          "'x'",    "Threshold is turned off"
          "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
-         "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
          "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
@@ -182,13 +182,13 @@ class BrickletBarometerV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_SET_AIR_PRESSURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', '')
+        self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_SET_AIR_PRESSURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
 
     def get_air_pressure_callback_configuration(self):
         """
         Returns the callback configuration as set by :func:`Set Air Pressure Callback Configuration`.
         """
-        return GetAirPressureCallbackConfiguration(*self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_GET_AIR_PRESSURE_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
+        return GetAirPressureCallbackConfiguration(*self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_GET_AIR_PRESSURE_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
 
     def get_altitude(self):
         """
@@ -228,7 +228,7 @@ class BrickletBarometerV2(Device):
 
          "'x'",    "Threshold is turned off"
          "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
-         "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
          "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
@@ -242,13 +242,13 @@ class BrickletBarometerV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_SET_ALTITUDE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', '')
+        self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_SET_ALTITUDE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
 
     def get_altitude_callback_configuration(self):
         """
         Returns the callback configuration as set by :func:`Set Altitude Callback Configuration`.
         """
-        return GetAltitudeCallbackConfiguration(*self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_GET_ALTITUDE_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
+        return GetAltitudeCallbackConfiguration(*self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_GET_ALTITUDE_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
 
     def get_temperature(self):
         """
@@ -292,7 +292,7 @@ class BrickletBarometerV2(Device):
 
          "'x'",    "Threshold is turned off"
          "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
-         "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
          "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
@@ -306,13 +306,13 @@ class BrickletBarometerV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_SET_TEMPERATURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', '')
+        self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_SET_TEMPERATURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
 
     def get_temperature_callback_configuration(self):
         """
         Returns the callback configuration as set by :func:`Set Temperature Callback Configuration`.
         """
-        return GetTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_GET_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
+        return GetTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_GET_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
 
     def set_moving_average_configuration(self, moving_average_length_air_pressure, moving_average_length_altitude, moving_average_length_temperature):
         """

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-30.      #
+# This file was automatically generated on 2018-06-08.      #
 #                                                           #
-# Python Bindings Version 2.1.16                            #
+# Python Bindings Version 2.1.17                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -164,7 +164,7 @@ class BrickletThermocoupleV2(Device):
 
          "'x'",    "Threshold is turned off"
          "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
-         "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
          "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
@@ -178,13 +178,13 @@ class BrickletThermocoupleV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_SET_TEMPERATURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', '')
+        self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_SET_TEMPERATURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
 
     def get_temperature_callback_configuration(self):
         """
         Returns the callback configuration as set by :func:`Set Temperature Callback Configuration`.
         """
-        return GetTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_GET_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
+        return GetTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_GET_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
 
     def set_configuration(self, averaging, thermocouple_type, filter):
         """

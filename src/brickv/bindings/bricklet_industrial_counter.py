@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-30.      #
+# This file was automatically generated on 2018-06-08.      #
 #                                                           #
-# Python Bindings Version 2.1.16                            #
+# Python Bindings Version 2.1.17                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -26,7 +26,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletIndustrialCounter(Device):
     """
-    TBD
+    4 channel counter up to 4MHz
     """
 
     DEVICE_IDENTIFIER = 293
@@ -95,7 +95,6 @@ class BrickletIndustrialCounter(Device):
     DUTY_CYCLE_PRESCALER_8192 = 13
     DUTY_CYCLE_PRESCALER_16384 = 14
     DUTY_CYCLE_PRESCALER_32768 = 15
-    DUTY_CYCLE_PRESCALER_AUTO = 255
     FREQUENCY_INTEGRATION_TIME_128_MS = 0
     FREQUENCY_INTEGRATION_TIME_256_MS = 1
     FREQUENCY_INTEGRATION_TIME_512_MS = 2
@@ -105,7 +104,6 @@ class BrickletIndustrialCounter(Device):
     FREQUENCY_INTEGRATION_TIME_8192_MS = 6
     FREQUENCY_INTEGRATION_TIME_16384_MS = 7
     FREQUENCY_INTEGRATION_TIME_32768_MS = 8
-    FREQUENCY_INTEGRATION_TIME_AUTO = 255
     CHANNEL_LED_CONFIG_OFF = 0
     CHANNEL_LED_CONFIG_ON = 1
     CHANNEL_LED_CONFIG_SHOW_HEARTBEAT = 2

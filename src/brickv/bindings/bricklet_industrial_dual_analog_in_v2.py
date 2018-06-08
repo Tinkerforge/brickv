@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-05-28.      #
+# This file was automatically generated on 2018-06-08.      #
 #                                                           #
-# Python Bindings Version 2.1.16                            #
+# Python Bindings Version 2.1.17                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -130,10 +130,10 @@ class BrickletIndustrialDualAnalogInV2(Device):
         self.response_expected[BrickletIndustrialDualAnalogInV2.FUNCTION_READ_UID] = BrickletIndustrialDualAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualAnalogInV2.FUNCTION_GET_IDENTITY] = BrickletIndustrialDualAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletIndustrialDualAnalogInV2.CALLBACK_VOLTAGE] = 'i'
+        self.callback_formats[BrickletIndustrialDualAnalogInV2.CALLBACK_VOLTAGE] = 'B i'
 
 
-    def get_voltage(self, channels):
+    def get_voltage(self, channel):
         """
         Returns the voltage for the given channel in mV.
 
@@ -142,11 +142,11 @@ class BrickletIndustrialDualAnalogInV2(Device):
         :cb:`Voltage` callback. You can set the callback configuration
         with :func:`Set Voltage Callback Configuration`.
         """
-        channels = int(channels)
+        channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_VOLTAGE, (channels,), 'B', 'i')
+        return self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_VOLTAGE, (channel,), 'B', 'i')
 
-    def set_voltage_callback_configuration(self, channels, period, value_has_to_change, option, min, max):
+    def set_voltage_callback_configuration(self, channel, period, value_has_to_change, option, min, max):
         """
         The period in ms is the period with which the :cb:`Voltage` callback is triggered
         periodically. A value of 0 turns the callback off.
@@ -170,7 +170,7 @@ class BrickletIndustrialDualAnalogInV2(Device):
 
          "'x'",    "Threshold is turned off"
          "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
-         "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
          "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
@@ -178,22 +178,22 @@ class BrickletIndustrialDualAnalogInV2(Device):
 
         The default value is (0, false, 'x', 0, 0).
         """
-        channels = int(channels)
+        channel = int(channel)
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
         option = create_char(option)
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_SET_VOLTAGE_CALLBACK_CONFIGURATION, (channels, period, value_has_to_change, option, min, max), 'B I ! c H H', '')
+        self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_SET_VOLTAGE_CALLBACK_CONFIGURATION, (channel, period, value_has_to_change, option, min, max), 'B I ! c i i', '')
 
-    def get_voltage_callback_configuration(self, channels):
+    def get_voltage_callback_configuration(self, channel):
         """
         Returns the callback configuration as set by :func:`Set Voltage Callback Configuration`.
         """
-        channels = int(channels)
+        channel = int(channel)
 
-        return GetVoltageCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_VOLTAGE_CALLBACK_CONFIGURATION, (channels,), 'B', 'I ! c H H'))
+        return GetVoltageCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_VOLTAGE_CALLBACK_CONFIGURATION, (channel,), 'B', 'I ! c i i'))
 
     def set_sample_rate(self, rate):
         """
