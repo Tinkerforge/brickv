@@ -151,7 +151,9 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
 
         if not self.frame_read_callback_was_enabled:
             try:
+                self.can.set_response_expected(self.can.FUNCTION_SET_FRAME_READ_CALLBACK_CONFIGURATION, False)
                 self.can.set_frame_read_callback_configuration(False)
+                self.can.set_response_expected(self.can.FUNCTION_SET_FRAME_READ_CALLBACK_CONFIGURATION, True)
             except:
                 pass
 
