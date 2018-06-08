@@ -47,7 +47,7 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
         self.can.register_callback(self.can.CALLBACK_FRAME_READ,
                                    self.qtcb_frame_read.emit)
 
-        self.last_filename = os.path.join(get_home_path(), 'can_bricklet_history.log')
+        self.last_filename = os.path.join(get_home_path(), 'can_bricklet_v2_history.log')
 
         self.frame_read_callback_was_enabled = False
 
