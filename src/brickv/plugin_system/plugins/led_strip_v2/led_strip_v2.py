@@ -356,27 +356,22 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
         brightness = self.brightness_slider.value() * 8
         chip_type, num_channels = self.chip_type_combobox.itemData(self.chip_type_combobox.currentIndex())
 
-        if num_channels == 4:
-            led_block = 12
-        else:
-            led_block = 16
+        self.gradient_counter += num_leds * self.box_speed.value() / 100.0 / 4.0
 
-        self.gradient_counter += max(num_leds, led_block) * self.box_speed.value() / 100.0 / 4.0
-
-        range_leds_len = max(num_leds, led_block)
-        range_leds = range(range_leds_len)
-        range_leds = range_leds[int(self.gradient_counter) % range_leds_len:] + range_leds[:int(self.gradient_counter) % range_leds_len]
-        range_leds = reversed(range_leds)
+        range_leds = range(num_leds)
+        range_leds = range_leds[int(self.gradient_counter) % num_leds:] + range_leds[:int(self.gradient_counter) % num_leds]
 
         intensity = self.gradient_intensity.value() / 100.0
         self.label_gradient_intensity.setText(str(self.gradient_intensity.value()) + '%')
 
         values = []
-        for i in range_leds:
-            r, g, b = colorsys.hsv_to_rgb(1.0*i/range_leds_len, 1, intensity)
+        for i in reversed(range_leds):
+            r, g, b = colorsys.hsv_to_rgb(1.0*i/(num_leds-1), 1, intensity)
             values.append(int(r*255))
             values.append(int(g*255))
             values.append(int(b*255))
+            if num_channels == 4:
+                values.append(0)
 
         self.led_strip.set_led_values(0, values)
 
