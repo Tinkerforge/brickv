@@ -96,7 +96,6 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
             combo.addItem('8192') 
             combo.addItem('16384') 
             combo.addItem('32768') 
-            combo.addItem('Auto')
             combo.currentIndexChanged.connect(get_combo_lambda(channel))
 
         pos += 1
@@ -111,7 +110,6 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
             combo.addItem('8192ms')
             combo.addItem('16384ms')
             combo.addItem('32768ms')
-            combo.addItem('Auto')
             combo.currentIndexChanged.connect(get_combo_lambda(channel))
 
         pos += 3
