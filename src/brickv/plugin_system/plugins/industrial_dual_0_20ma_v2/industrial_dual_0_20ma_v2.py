@@ -23,14 +23,18 @@ Boston, MA 02111-1307, USA.
 
 import functools
 
-from PyQt4.QtCore import Qt, QSize
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QFrame, QSizePolicy, QPushButton
+from PyQt4.QtCore import Qt, QSize, QObject
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QGridLayout, \
+                        QFrame, QSizePolicy, QPushButton, QSpinBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_industrial_dual_0_20ma_v2 import BrickletIndustrialDual020mAV2
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
+
+CH_0 = 0
+CH_1 = 1
 
 class FixedSizeLabel(QLabel):
     maximum_size_hint = None
@@ -55,23 +59,33 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         self.str_connected = 'Channel {0} is <font color="green">connected</font>'
         self.str_not_connected = 'Channel {0} is <font color="red">not connected</font>'
 
-        self.cbe_current0 = CallbackEmulator(functools.partial(self.dual020.get_current, 0),
-                                             functools.partial(self.cb_current, 0),
+        self.cbe_current0 = CallbackEmulator(functools.partial(self.dual020.get_current, CH_0),
+                                             functools.partial(self.cb_current, CH_0),
                                              self.increase_error_count)
-        self.cbe_current1 = CallbackEmulator(functools.partial(self.dual020.get_current, 1),
-                                             functools.partial(self.cb_current, 1),
+        self.cbe_current1 = CallbackEmulator(functools.partial(self.dual020.get_current, CH_1),
+                                             functools.partial(self.cb_current, CH_1),
                                              self.increase_error_count)
 
-        self.connected_labels = [FixedSizeLabel(self.str_not_connected.format(0)),
-                                 FixedSizeLabel(self.str_not_connected.format(1))]
+        self.connected_labels = [FixedSizeLabel(self.str_not_connected.format(CH_0)),
+                                 FixedSizeLabel(self.str_not_connected.format(CH_1))]
 
         self.current_current = [None, None] # float, mA
 
         self.btn_clear_graph = QPushButton('Clear Graph')
 
-        plots = [('Channel 0', Qt.red, lambda: self.current_current[0], lambda value: '{:.02f} mA'.format(round(value, 2))),
-                 ('Channel 1', Qt.blue, lambda: self.current_current[1], lambda value: '{:.02f} mA'.format(round(value, 2)))]
-        self.plot_widget = PlotWidget('Current [mA]', plots, clear_button=self.btn_clear_graph, extra_key_widgets=self.connected_labels)
+        plots = [('Channel 0',
+                  Qt.red,
+                  lambda: self.current_current[CH_0],
+                  lambda value: '{:.02f} mA'.format(round(value, 2))),
+                 ('Channel 1',
+                  Qt.blue,
+                  lambda: self.current_current[CH_1],
+                  lambda value: '{:.02f} mA'.format(round(value, 2)))]
+
+        self.plot_widget = PlotWidget('Current [mA]',
+                                      plots,
+                                      clear_button = self.btn_clear_graph,
+                                      extra_key_widgets = self.connected_labels)
 
         h_sp = QSizePolicy()
         h_sp.setHorizontalPolicy(QSizePolicy.Expanding)
@@ -94,25 +108,148 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         self.gain_combo.currentIndexChanged.connect(self.gain_combo_index_changed)
         self.gain_combo.setSizePolicy(h_sp)
 
+        self.led_config_ch0_label = QLabel('Channel 0')
+        self.led_config_ch1_label = QLabel('Channel 1')
+        self.led_config_label = QLabel('LED Config:')
+        self.led_status_config_label = QLabel('LED Status Config:')
+        self.led_status_config_ch0_min_label = QLabel('Min:')
+        self.led_status_config_ch0_max_label = QLabel('Max:')
+        self.led_status_config_ch1_min_label = QLabel('Min:')
+        self.led_status_config_ch1_max_label = QLabel('Max:')
+
+        self.led_config_ch0_combo = QComboBox()
+        self.led_config_ch0_combo.addItem('Off')
+        self.led_config_ch0_combo.addItem('On')
+        self.led_config_ch0_combo.addItem('Show Heartbeat')
+        self.led_config_ch0_combo.addItem('Show Channel Status')
+        self.led_config_ch0_combo.setSizePolicy(h_sp)
+        self.led_config_ch0_combo.currentIndexChanged.connect(self.led_config_ch0_combo_changed)
+
+        self.led_config_ch1_combo = QComboBox()
+        self.led_config_ch1_combo.addItem('Off')
+        self.led_config_ch1_combo.addItem('On')
+        self.led_config_ch1_combo.addItem('Show Heartbeat')
+        self.led_config_ch1_combo.addItem('Show Channel Status')
+        self.led_config_ch1_combo.setSizePolicy(h_sp)
+        self.led_config_ch1_combo.currentIndexChanged.connect(self.led_config_ch1_combo_changed)
+
+        self.led_status_config_ch0_combo = QComboBox()
+        self.led_status_config_ch0_combo.addItem('Threshold')
+        self.led_status_config_ch0_combo.addItem('Intensity')
+        self.led_status_config_ch0_combo.setSizePolicy(h_sp)
+        self.led_status_config_ch0_combo.currentIndexChanged.connect(self.led_status_config_ch0_combo_changed)
+
+        self.led_status_config_ch1_combo = QComboBox()
+        self.led_status_config_ch1_combo.addItem('Threshold')
+        self.led_status_config_ch1_combo.addItem('Intensity')
+        self.led_status_config_ch1_combo.setSizePolicy(h_sp)
+        self.led_status_config_ch1_combo.currentIndexChanged.connect(self.led_status_config_ch1_combo_changed)
+
+        self.led_status_config_ch0_min_sbox = QSpinBox()
+        self.led_status_config_ch0_max_sbox = QSpinBox()
+        self.led_status_config_ch1_min_sbox = QSpinBox()
+        self.led_status_config_ch1_max_sbox = QSpinBox()
+
+        self.led_status_config_ch0_min_sbox.setValue(0)
+        self.led_status_config_ch0_min_sbox.setMinimum(0)
+        self.led_status_config_ch0_min_sbox.setSingleStep(1)
+        self.led_status_config_ch0_min_sbox.setSuffix(' mA')
+        self.led_status_config_ch0_min_sbox.setMaximum(19)
+        self.led_status_config_ch0_min_sbox.valueChanged.connect(self.led_status_config_ch0_min_sbox_changed)
+
+        self.led_status_config_ch0_max_sbox.setValue(0)
+        self.led_status_config_ch0_max_sbox.setMinimum(0)
+        self.led_status_config_ch0_max_sbox.setSingleStep(1)
+        self.led_status_config_ch0_max_sbox.setSuffix(' mA')
+        self.led_status_config_ch0_max_sbox.setMaximum(20)
+        self.led_status_config_ch0_max_sbox.valueChanged.connect(self.led_status_config_ch0_max_sbox_changed)
+
+        self.led_status_config_ch1_min_sbox.setValue(0)
+        self.led_status_config_ch1_min_sbox.setMinimum(0)
+        self.led_status_config_ch1_min_sbox.setSingleStep(1)
+        self.led_status_config_ch1_min_sbox.setSuffix(' mA')
+        self.led_status_config_ch1_min_sbox.setMaximum(19)
+        self.led_status_config_ch1_min_sbox.valueChanged.connect(self.led_status_config_ch1_min_sbox_changed)
+
+        self.led_status_config_ch1_max_sbox.setValue(0)
+        self.led_status_config_ch1_max_sbox.setMinimum(0)
+        self.led_status_config_ch1_max_sbox.setSingleStep(1)
+        self.led_status_config_ch1_max_sbox.setSuffix(' mA')
+        self.led_status_config_ch1_max_sbox.setMaximum(20)
+        self.led_status_config_ch1_max_sbox.valueChanged.connect(self.led_status_config_ch1_max_sbox_changed)
+
         hlayout = QHBoxLayout()
-        hlayout.addWidget(self.sample_rate_label)
-        hlayout.addWidget(self.sample_rate_combo)
-        hlayout.addWidget(self.gain_label)
-        hlayout.addWidget(self.gain_combo)
+        self.led_status_config_ch0_min_sbox.setSizePolicy(h_sp)
+        self.led_status_config_ch0_max_sbox.setSizePolicy(h_sp)
+        hlayout.addWidget(self.led_status_config_ch0_min_label)
+        hlayout.addWidget(self.led_status_config_ch0_min_sbox)
+        hlayout.addWidget(self.led_status_config_ch0_max_label)
+        hlayout.addWidget(self.led_status_config_ch0_max_sbox)
+
+        hlayout1 = QHBoxLayout()
+        self.led_status_config_ch1_min_sbox.setSizePolicy(h_sp)
+        self.led_status_config_ch1_max_sbox.setSizePolicy(h_sp)
+        hlayout1.addWidget(self.led_status_config_ch1_min_label)
+        hlayout1.addWidget(self.led_status_config_ch1_min_sbox)
+        hlayout1.addWidget(self.led_status_config_ch1_max_label)
+        hlayout1.addWidget(self.led_status_config_ch1_max_sbox)
 
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 
+        line1 = QFrame()
+        line1.setFrameShape(QFrame.HLine)
+        line1.setFrameShadow(QFrame.Sunken)
+
+        line2 = QFrame()
+        line2.setFrameShape(QFrame.HLine)
+        line2.setFrameShadow(QFrame.Sunken)
+
+        glayout = QGridLayout()
+
+        glayout.addWidget(line, 0, 0, 1, 3) # line-1
+        glayout.addWidget(self.sample_rate_label, 1, 0, 1, 1)
+        glayout.addWidget(self.sample_rate_combo, 1, 1, 1, 2)
+        glayout.addWidget(self.gain_label, 2, 0, 1, 1)
+        glayout.addWidget(self.gain_combo, 2, 1, 1, 2)
+        glayout.addWidget(line1, 3, 0, 1, 3) # line-2
+        glayout.addWidget(self.led_config_ch0_label, 4, 1, 1, 1)
+        glayout.addWidget(self.led_config_ch1_label, 4, 2, 1, 1)
+        glayout.addWidget(line2, 5, 0, 1, 3) # line-3
+        glayout.addWidget(self.led_config_label, 6, 0, 1, 1)
+        glayout.addWidget(self.led_config_ch0_combo, 6, 1, 1, 1)
+        glayout.addWidget(self.led_config_ch1_combo, 6, 2, 1, 1)
+        glayout.addWidget(self.led_status_config_label, 7, 0, 1, 1)
+        glayout.addWidget(self.led_status_config_ch0_combo, 7, 1, 1, 1)
+        glayout.addWidget(self.led_status_config_ch1_combo, 7, 2, 1, 1)
+        glayout.addLayout(hlayout, 8, 1, 1, 1)
+        glayout.addLayout(hlayout1, 8, 2, 1, 1)
+
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)
         layout.addWidget(self.btn_clear_graph)
-        layout.addWidget(line)
-        layout.addLayout(hlayout)
+        layout.addLayout(glayout)
+
+        self.ui_group_ch_status_ch0 = [self.led_status_config_ch0_combo,
+                                       self.led_status_config_ch0_min_sbox,
+                                       self.led_status_config_ch0_max_sbox]
+
+        self.ui_group_ch_status_ch1 = [self.led_status_config_ch1_combo,
+                                       self.led_status_config_ch1_min_sbox,
+                                       self.led_status_config_ch1_max_sbox]
 
     def start(self):
-        async_call(self.dual020.get_current, 0, lambda x: self.cb_current(0, x), self.increase_error_count)
-        async_call(self.dual020.get_current, 1, lambda x: self.cb_current(1, x), self.increase_error_count)
+        async_call(self.dual020.get_current,
+                   CH_0,
+                   lambda x: self.cb_current(CH_0, x),
+                   self.increase_error_count)
+
+        async_call(self.dual020.get_current,
+                   CH_1,
+                   lambda x: self.cb_current(CH_1, x),
+                   self.increase_error_count)
+
         self.cbe_current0.set_period(100)
         self.cbe_current1.set_period(100)
 
@@ -124,6 +261,26 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         async_call(self.dual020.get_gain,
                    None,
                    self.get_gain_async,
+                   self.increase_error_count)
+
+        async_call(self.dual020.get_channel_led_config,
+                   CH_0,
+                   lambda config: self.get_channel_led_config_async(CH_0, config),
+                   self.increase_error_count)
+
+        async_call(self.dual020.get_channel_led_status_config,
+                   CH_0,
+                   lambda config: self.get_channel_led_status_config_async(CH_0, config),
+                   self.increase_error_count)
+
+        async_call(self.dual020.get_channel_led_config,
+                   CH_1,
+                   lambda config: self.get_channel_led_config_async(CH_1, config),
+                   self.increase_error_count)
+
+        async_call(self.dual020.get_channel_led_status_config,
+                   CH_1,
+                   lambda config: self.get_channel_led_status_config_async(CH_1, config),
                    self.increase_error_count)
 
         self.plot_widget.stop = False
@@ -153,11 +310,113 @@ class IndustrialDual020mAV2(COMCUPluginBase):
                    None,
                    self.increase_error_count)
 
-    def get_sample_rate_async(self, rate):
-        self.sample_rate_combo.setCurrentIndex(rate)
+    def led_status_config_ch0_min_sbox_changed(self, value):
+        QObject.sender(self).blockSignals(True)
 
-    def get_gain_async(self, rate):
-        self.gain_combo.setCurrentIndex(rate)
+        if value >= self.led_status_config_ch0_max_sbox.value():
+            self.led_status_config_ch0_max_sbox.setValue(self.led_status_config_ch0_min_sbox.value() + 1)
+
+        self.dual020.set_channel_led_status_config(CH_0,
+                                                   self.led_status_config_ch0_min_sbox.value() * 1000000,
+                                                   self.led_status_config_ch0_max_sbox.value() * 1000000,
+                                                   self.led_status_config_ch0_combo.currentIndex())
+
+        QObject.sender(self).blockSignals(False)
+
+    def led_status_config_ch0_max_sbox_changed(self, value):
+        QObject.sender(self).blockSignals(True)
+
+        if value <= self.led_status_config_ch0_min_sbox.value():
+            self.led_status_config_ch0_min_sbox.setValue(self.led_status_config_ch0_max_sbox.value() - 1)
+
+        self.dual020.set_channel_led_status_config(CH_0,
+                                                   self.led_status_config_ch0_min_sbox.value() * 1000000,
+                                                   self.led_status_config_ch0_max_sbox.value() * 1000000,
+                                                   self.led_status_config_ch0_combo.currentIndex())
+
+        QObject.sender(self).blockSignals(False)
+
+    def led_status_config_ch1_min_sbox_changed(self, value):
+        QObject.sender(self).blockSignals(True)
+
+        if value >= self.led_status_config_ch1_max_sbox.value():
+            self.led_status_config_ch1_max_sbox.setValue(self.led_status_config_ch1_min_sbox.value() + 1)
+
+        self.dual020.set_channel_led_status_config(CH_1,
+                                                   self.led_status_config_ch1_min_sbox.value() * 1000000,
+                                                   self.led_status_config_ch1_max_sbox.value() * 1000000,
+                                                   self.led_status_config_ch1_combo.currentIndex())
+
+        QObject.sender(self).blockSignals(False)
+
+    def led_status_config_ch1_max_sbox_changed(self, value):
+        QObject.sender(self).blockSignals(True)
+
+        if value <= self.led_status_config_ch1_min_sbox.value():
+            self.led_status_config_ch1_min_sbox.setValue(self.led_status_config_ch1_max_sbox.value() - 1)
+
+        self.dual020.set_channel_led_status_config(CH_1,
+                                                   self.led_status_config_ch1_min_sbox.value() * 1000000,
+                                                   self.led_status_config_ch1_max_sbox.value() * 1000000,
+                                                   self.led_status_config_ch1_combo.currentIndex())
+
+        QObject.sender(self).blockSignals(False)
+
+    def led_status_config_ch0_combo_changed(self, index):
+        if index == self.dual020.CHANNEL_LED_STATUS_CONFIG_INTENSITY:
+            self.led_status_config_ch0_max_sbox.setEnabled(True)
+        elif index == self.dual020.CHANNEL_LED_STATUS_CONFIG_THRESHOLD:
+            self.led_status_config_ch0_max_sbox.setEnabled(False)
+        else:
+            return
+
+        self.dual020.set_channel_led_status_config(CH_0,
+                                                   self.led_status_config_ch0_min_sbox.value() * 1000000,
+                                                   self.led_status_config_ch0_max_sbox.value() * 1000000,
+                                                   index)
+
+    def led_status_config_ch1_combo_changed(self, index):
+        if index == self.dual020.CHANNEL_LED_STATUS_CONFIG_INTENSITY:
+            self.led_status_config_ch1_max_sbox.setEnabled(True)
+        elif index == self.dual020.CHANNEL_LED_STATUS_CONFIG_THRESHOLD:
+            self.led_status_config_ch1_max_sbox.setEnabled(False)
+        else:
+            return
+
+        self.dual020.set_channel_led_status_config(CH_1,
+                                                   self.led_status_config_ch1_min_sbox.value() * 1000000,
+                                                   self.led_status_config_ch1_max_sbox.value() * 1000000,
+                                                   index)
+
+    def led_config_ch0_combo_changed(self, index):
+        if index != self.dual020.CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS:
+            for e in self.ui_group_ch_status_ch0:
+                e.setEnabled(False)
+        else:
+            for e in self.ui_group_ch_status_ch0:
+                e.setEnabled(True)
+
+            if self.led_status_config_ch0_combo.currentIndex() == self.dual020.CHANNEL_LED_STATUS_CONFIG_INTENSITY:
+                self.led_status_config_ch0_max_sbox.setEnabled(True)
+            else:
+                self.led_status_config_ch0_max_sbox.setEnabled(False)
+
+        self.dual020.set_channel_led_config(CH_0, index)
+
+    def led_config_ch1_combo_changed(self, index):
+        if index != self.dual020.CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS:
+            for e in self.ui_group_ch_status_ch1:
+                e.setEnabled(False)
+        else:
+            for e in self.ui_group_ch_status_ch1:
+                e.setEnabled(True)
+
+            if self.led_status_config_ch1_combo.currentIndex() == self.dual020.CHANNEL_LED_STATUS_CONFIG_INTENSITY:
+                self.led_status_config_ch1_max_sbox.setEnabled(True)
+            else:
+                self.led_status_config_ch1_max_sbox.setEnabled(False)
+
+        self.dual020.set_channel_led_config(CH_1, index)
 
     def cb_current(self, channel, current):
         value = current / 1000000.0
@@ -167,3 +426,29 @@ class IndustrialDual020mAV2(COMCUPluginBase):
             self.connected_labels[channel].setText(self.str_not_connected.format(channel))
         else:
             self.connected_labels[channel].setText(self.str_connected.format(channel))
+
+    def get_sample_rate_async(self, rate):
+        self.sample_rate_combo.setCurrentIndex(rate)
+
+    def get_gain_async(self, rate):
+        self.gain_combo.setCurrentIndex(rate)
+
+    def get_channel_led_config_async(self, channel, config):
+        if channel == CH_0:
+            self.led_config_ch0_combo.setCurrentIndex(config)
+            self.led_config_ch0_combo_changed(config)
+        elif channel == CH_1:
+            self.led_config_ch1_combo.setCurrentIndex(config)
+            self.led_config_ch1_combo_changed(config)
+
+    def get_channel_led_status_config_async(self, channel, c):
+        if channel == CH_0:
+            self.led_status_config_ch0_combo.setCurrentIndex(c.config)
+            self.led_status_config_ch0_combo_changed(c.config)
+            self.led_status_config_ch0_max_sbox.setValue(c.max / 1000000)
+            self.led_status_config_ch0_min_sbox.setValue(c.min / 1000000)
+        elif channel == CH_1:
+            self.led_status_config_ch1_combo.setCurrentIndex(c.config)
+            self.led_status_config_ch1_combo_changed(c.config)
+            self.led_status_config_ch1_max_sbox.setValue(c.max / 1000000)
+            self.led_status_config_ch1_min_sbox.setValue(c.min / 1000000)
