@@ -387,15 +387,27 @@ class SAMBA(object):
 
         # Set Security flag. Without this a Brick will not correctly boot from
         # flash after reset if it entered bootloader-mode by holding the erase
-        # button during a power-cycle. But this has the downside that entering
-        # bootloader-mode by holding the erase button during a power-cycle now
-        # results in the Brick being in an zombie state between bootloader and
-        # firmware for 15 seconds before it properly enters bootloader-mode.
-        self.reset_progress('Setting Security flag', 0)
+        # button during a power-cycle. In that case the Brick has to be power-
+        # cycled to boot again, just pressing the reset button is not enough.
+        #
+        # But this has the downside for SAM3/4S that entering bootloader-mode
+        # by holding the erase button during a power-cycle now results in the
+        # Brick being in an zombie state between bootloader and firmware for 15
+        # seconds before it properly enters bootloader-mode.
+        #
+        # An additional downside: entering bootloader-mode by holding the erase
+        # button during a power-cycle doesn't work anymore for SAM4E. Enterging
+        # bootloader-mode only works by pressing the reset button while holding
+        # the erase button. This is a critical problem for devices without a
+        # reset button.
+        #
+        # Because the problems outweigh the gains the Security flag is not set.
+        if False:
+            self.reset_progress('Setting Security flag', 0)
 
-        self.wait_for_flash_ready('before setting Security flag')
-        self.write_flash_command(EEFC_FCR_FCMD_SGPB, 0)
-        self.wait_for_flash_ready('after setting Security flag')
+            self.wait_for_flash_ready('before setting Security flag')
+            self.write_flash_command(EEFC_FCR_FCMD_SGPB, 0)
+            self.wait_for_flash_ready('after setting Security flag')
 
         # Set Boot-from-Flash flag. Retry this up to 5 times, becasue on SAM4
         # series chips this might fail with a flash-memory-error on the first try
