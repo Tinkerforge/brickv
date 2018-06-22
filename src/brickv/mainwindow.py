@@ -90,7 +90,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.set_tree_view_defaults()
 
         self.tab_widget.removeTab(1) # remove dummy tab
-        self.tab_widget.setUsesScrollButtons(True) # force scroll buttons, otherwise they will be missing on Mac OS X
+        self.tab_widget.setUsesScrollButtons(True) # force scroll buttons, otherwise they will be missing on macOS
 
         self.name = '<unknown>'
         self.uid = '<unknown>'

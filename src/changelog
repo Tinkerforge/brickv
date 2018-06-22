@@ -121,7 +121,7 @@
 - Add plugins for Voltage/Current Bricklet and GPS Bricklet
 
 2012-12-21: 1.1.17 (f3032dd)
-- Downgrade packaged Qt to 4.7 on Mac OS X to fix a graph rendering problem
+- Downgrade packaged Qt to 4.7 on macOS to fix a graph rendering problem
 
 2012-12-27: 1.1.18 (c3d06ba)
 - Use BMPs and add alpha channel in code (instead of GIFs or pixmaps)
@@ -231,7 +231,7 @@
 - Improve GUI for NFC/RFID Bricklet read and write operations
 - Windows installer and drivers are signed now
 - Fix occasional bounce of the connect button
-- Fix GUI font selection on Mac OS X 10.9 and 10.10
+- Fix GUI font selection on macOS 10.9 and 10.10
 
 2014-12-18: 2.2.1 (86ca845)
 - Exclude file system cache from memory value on RED Brick overview tab
@@ -273,7 +273,7 @@
 2015-07-29: 2.2.6 (2dec29a)
 - Add mobile Internet configuration tab to RED Brick plugin
 - Add hex-view to RS232 Bricklet plugin
-- Avoid warnings when reading non-existing config file on Mac OS X
+- Avoid warnings when reading non-existing config file on macOS
 - Ensure programs directory exists on RED Brick before importing a program
 - Add position column to main device tree
 - Add support for Ambient Light Bricklet 2.0 to RED Brick server monitoring
@@ -309,12 +309,12 @@
 2015-11-04: 2.3.1 (0475a2d)
 - Add millisecond interval support for Data Logger
 - Add custom strftime format for data logger
-- Improve GUI font selection on Mac OS X 10.11
-- Sign Brickv.app on Mac OS X to silence the Gate Keeper
+- Improve GUI font selection on macOS 10.11
+- Sign Brickv.app on macOS to silence the Gate Keeper
 
 2015-11-05: 2.3.2 (3d3df3e)
 - Ignore errors during locale initialization
-- Change modeless dialog handling to workaround problem on Mac OS X
+- Change modeless dialog handling to workaround problem on macOS
 
 2016-01-06: 2.3.3 (8e7c45b)
 - Add authentication support for Data Logger
@@ -375,7 +375,7 @@
 
 2017-07-27: 2.3.10 (0060527)
 - Add support for RS485 Bricklet
-- Enable scroll buttons for main device tab bar on Mac OS X
+- Enable scroll buttons for main device tab bar on macOS
 - Improve usability of Real-Time Clock Bricklets calibration dialog
 - Fix firmware auto-update for Co-MCU Bricklets
 - Fix order of DOP values in GPS Bricklet 2.0 plugin

@@ -194,7 +194,7 @@ class TerminalWidget(QWidget):
         # the original code tried to be clever about painting an caching. it
         # only painted the screen if it was dirty. for the redraws when the
         # dirty flag was not set it relyed on the OS not the clear the cash.
-        # but this does not work (at least on Mac OS X). instead of caching in
+        # but this does not work (at least on macOS). instead of caching in
         # the OS cache the screen in a pixmap to have full control over it
         if self._pixmap == None or self.size() != self._pixmap.size():
             self._pixmap = QPixmap(self.size())

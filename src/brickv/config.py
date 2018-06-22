@@ -87,7 +87,7 @@ def legacy_set_remember_secret(remember):
 if sys.platform.startswith('linux') or sys.platform.startswith('freebsd'):
     from brickv.config_linux import *
 elif sys.platform == 'darwin':
-    from brickv.config_macosx import *
+    from brickv.config_macos import *
 elif sys.platform == 'win32':
     from brickv.config_windows import *
 else:

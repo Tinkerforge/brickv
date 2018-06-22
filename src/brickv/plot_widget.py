@@ -475,7 +475,7 @@ class Plot(QWidget):
             self.curve_outer_border = 0 # px, fixed
 
         if sys.platform == 'darwin':
-            # FIXME: there is a 1px vertical offset in the curve drawing on Mac OS X.
+            # FIXME: there is a 1px vertical offset in the curve drawing on macOS.
             #        it's not clear what the reason is, just workaround it for now
             self.curve_y_offset = 1
         else:

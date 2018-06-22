@@ -79,7 +79,7 @@ if sys.platform.startswith('linux'):
 elif sys.platform == 'win32':
     data_files += collect_data_files('build_data/windows/', ['brickv-icon.ico'])
 elif sys.platform == 'darwin':
-    data_files += collect_data_files('build_data/macosx/')
+    data_files += collect_data_files('build_data/macos/')
 
 # Run setup
 setup_arguments = {
@@ -120,7 +120,7 @@ elif sys.platform == 'win32':
                              'win32file',
                              'win32api'],
             'excludes':     ['config_linux',
-                             'config_macosx',
+                             'config_macos',
                              '_gtkagg',
                              '_tkagg',
                              'Tkconstants',
@@ -149,7 +149,7 @@ elif sys.platform == 'darwin':
     options = {
         'py2app': {
             'argv_emulation': True,
-            'iconfile':       'build_data/macosx/brickv-icon.icns',
+            'iconfile':       'build_data/macos/brickv-icon.icns',
             'site_packages':  True,
             'includes':       ['atexit',
                                'sip',

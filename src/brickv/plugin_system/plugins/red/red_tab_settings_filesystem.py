@@ -45,7 +45,7 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
 
         self.is_tab_on_focus = False
 
-        # For OSX progress bar text fix
+        # For macOS progress bar text fix
         self.label_fs_expand_info.hide()
         self.line.hide()
         self.label_pbar_fs_capacity_utilization.hide()

@@ -96,7 +96,7 @@ def main():
     try:
         locale.setlocale(locale.LC_ALL, '')
     except locale.Error:
-        pass # ignore this as it might fail on Mac OS X, we'll fallback to UTF-8 in that case
+        pass # ignore this as it might fail on macOS, we'll fallback to UTF-8 in that case
 
     argv = sys.argv
 
@@ -104,14 +104,14 @@ def main():
         argv += ['-style', 'windowsxp']
 
     if sys.platform == 'darwin':
-        # fix OSX 10.9 font
+        # fix macOS 10.9 font
         # http://successfulsoftware.net/2013/10/23/fixing-qt-4-for-mac-os-x-10-9-mavericks/
         # https://bugreports.qt-project.org/browse/QTBUG-32789
         QFont.insertSubstitution('.Lucida Grande UI', 'Lucida Grande')
-        # fix OSX 10.10 font
+        # fix macOS 10.10 font
         # https://bugreports.qt-project.org/browse/QTBUG-40833
         QFont.insertSubstitution('.Helvetica Neue DeskInterface', 'Helvetica Neue')
-        # fix OSX 10.11 font
+        # fix macOS 10.11 font
         # https://bugreports.qt.io/browse/QTBUG-47206
         QFont.insertSubstitution('.SF NS Text', 'Helvetica Neue')
 

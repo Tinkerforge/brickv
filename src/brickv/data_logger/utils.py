@@ -40,7 +40,7 @@ if 'merged_data_logger_modules' not in globals():
 def utf8_strftime(timestamp, fmt):
     encoding = locale.getlocale()[1]
 
-    # FIXME: Mac OS X doesn't have LANG set when running from an .app container.
+    # FIXME: macOS doesn't have LANG set when running from an .app container.
     # therefore, locale.setlocale() cannot detect the encoding from the environment.
     # in this case we just default to UTF-8 and hope for the best
     if encoding == None:

@@ -33,6 +33,6 @@ Building Packages
 -----------------
 
 The Python script ``src/build_pkg.py`` can build a Debian package for
-Linux, a ``setup.exe`` for Windows and a Disk Image for Mac OS X. Run::
+Linux, a ``setup.exe`` for Windows and a Disk Image for macOS. Run::
 
  python build_pkg.py

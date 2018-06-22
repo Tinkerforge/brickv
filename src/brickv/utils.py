@@ -76,7 +76,7 @@ def get_existing_directory(*args, **kwargs):
     if len(directory) > 0:
         directory = QDir.toNativeSeparators(directory)
 
-        # FIXME: on Mac OS X the getExistingDirectory() might return the directory with
+        # FIXME: on macOS the getExistingDirectory() might return the directory with
         #        the last part being invalid, try to find the valid part of the directory
         if sys.platform == 'darwin':
             while len(directory) > 0 and not os.path.isdir(directory):
@@ -92,7 +92,7 @@ def get_main_window():
     return None
 
 def get_modeless_dialog_flags(default=Qt.WindowFlags(0)):
-    # FIXME: on Mac OS X (at least since 10.10) modeless QDialogs don't work
+    # FIXME: on macOS (at least since 10.10) modeless QDialogs don't work
     # properly anymore. they don't show up if the programs is run from an .app
     # container. Setting the tool window flag for such dialogs works around this
     if sys.platform == 'darwin':

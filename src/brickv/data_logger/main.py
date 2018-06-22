@@ -124,7 +124,7 @@ if __name__ == '__main__':
     try:
         locale.setlocale(locale.LC_ALL, '')
     except locale.Error:
-        pass # ignore this as it might fail on Mac OS X, we'll fallback to UTF-8 in that case
+        pass # ignore this as it might fail on macOS, we'll fallback to UTF-8 in that case
 
     parser = argparse.ArgumentParser(description='Tinkerforge Data Logger')
 

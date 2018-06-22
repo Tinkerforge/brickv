@@ -3,7 +3,7 @@
 brickv (Brick Viewer)
 Copyright (C) 2012, 2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
-config_macosx.py: Config Handling for Mac OSX
+config_macos.py: Config Handling for macOS
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

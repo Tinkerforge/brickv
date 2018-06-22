@@ -387,7 +387,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             flags |= REDFile.FLAG_REPLACE
 
         # FIXME: preserving the executable bit this way only works well on
-        #        Linux and Mac OS X hosts. on Windows Python deduces this from
+        #        Linux and macOS hosts. on Windows Python deduces this from
         #        the file extension. this does not work if the executable is
         #        cross-compiled and doesn't have the typical Windows file
         #        extensions for executables
