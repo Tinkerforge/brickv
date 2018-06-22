@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-08.      #
+# This file was automatically generated on 2018-06-22.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -205,7 +205,7 @@ class BrickletOLED128x64V2(Device):
     def draw_buffered_frame(self, force_complete_redraw):
         """
         Draws the currently buffered frame. Normally each call of :func:`Write Pixels` or
-        :func:`Write Line` draws directly onto the disply. If you turn automatic draw off
+        :func:`Write Line` draws directly onto the display. If you turn automatic draw off
         (:func:`Set Display Configuration`), the data is written in a temporary buffer and
         only transferred to the display by calling this function.
 
@@ -223,9 +223,9 @@ class BrickletOLED128x64V2(Device):
 
         The errors are divided into
 
-        * ack checksum errors,
+        * ACK checksum errors,
         * message checksum errors,
-        * frameing errors and
+        * framing errors and
         * overflow errors.
 
         The errors counts are for errors that occur on the Bricklet side. All
@@ -240,7 +240,7 @@ class BrickletOLED128x64V2(Device):
 
         You can change from bootloader mode to firmware mode and vice versa. A change
         from bootloader mode to firmware mode will only take place if the entry function,
-        device identifier und crc are present and correct.
+        device identifier and CRC are present and correct.
 
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.

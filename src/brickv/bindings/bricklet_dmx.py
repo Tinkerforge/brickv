@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-08.      #
+# This file was automatically generated on 2018-06-22.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -138,6 +138,8 @@ class BrickletDMX(Device):
         Sets the DMX mode to either master or slave.
 
         Calling this function sets frame number to 0.
+
+        The default value is 0 (master).
         """
         dmx_mode = int(dmx_mode)
 
@@ -302,9 +304,9 @@ class BrickletDMX(Device):
 
         The errors are divided into
 
-        * ack checksum errors,
+        * ACK checksum errors,
         * message checksum errors,
-        * frameing errors and
+        * framing errors and
         * overflow errors.
 
         The errors counts are for errors that occur on the Bricklet side. All
@@ -319,7 +321,7 @@ class BrickletDMX(Device):
 
         You can change from bootloader mode to firmware mode and vice versa. A change
         from bootloader mode to firmware mode will only take place if the entry function,
-        device identifier und crc are present and correct.
+        device identifier and CRC are present and correct.
 
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
