@@ -314,7 +314,7 @@ class SAMBA(object):
             offset += self.flash_page_size
 
         if self.sam_series == 3:
-            # SAM3S flash programming erata: FWS must be 6
+            # SAM3S flash programming errata: FWS must be 6
             self.write_uint32(EEFC_FMR, 0x06 << 8)
 
         # Unlock
