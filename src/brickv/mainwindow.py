@@ -634,7 +634,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     device_info = infos.BrickMasterInfo()
                 elif device_identifier == BrickRED.DEVICE_IDENTIFIER:
                     device_info = infos.BrickREDInfo()
-                elif position == '0':
+                elif '0' <= position <= '9':
                     device_info = infos.BrickInfo()
                     something_changed_ref[0] = True
                 else:
