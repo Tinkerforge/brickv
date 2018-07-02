@@ -119,7 +119,7 @@ class BrickInfo(DeviceInfo):
     def __init__(self):
         DeviceInfo.__init__(self)
 
-        self.bricklets = {'a': None, 'b': None, 'i-a': None, 'i-b': None}
+        self.bricklets = {'a': None, 'b': None, 'z-a': None, 'z-b': None}
 
     def __repr__(self):
         a = 'Not connected'
@@ -130,16 +130,16 @@ class BrickInfo(DeviceInfo):
             a = '{0} ({1})'.format(self.bricklets['a'].name, self.bricklets['a'].uid)
         if self.bricklets['b'] != None:
             b = '{0} ({1})'.format(self.bricklets['b'].name, self.bricklets['b'].uid)
-        if self.bricklets['i-a'] != None:
-            ia = '{0} ({1})'.format(self.bricklets['i-a'].name, self.bricklets['i-a'].uid)
-        if self.bricklets['i-b'] != None:
-            ib = '{0} ({1})'.format(self.bricklets['i-b'].name, self.bricklets['i-b'].uid)
+        if self.bricklets['z-a'] != None:
+            ia = '{0} ({1})'.format(self.bricklets['z-a'].name, self.bricklets['z-a'].uid)
+        if self.bricklets['z-b'] != None:
+            ib = '{0} ({1})'.format(self.bricklets['z-b'].name, self.bricklets['z-b'].uid)
 
         return super(BrickInfo, self).__repr__() + """  Bricklets:
    a: {0}
    b: {1}
-   i-a: {2}
-   i-b: {3}
+   z-a: {2}
+   z-b: {3}
 """.format(a, b, ia, ib)
 
 class BrickMasterInfo(BrickInfo):
@@ -149,7 +149,7 @@ class BrickMasterInfo(BrickInfo):
     def __init__(self):
         BrickInfo.__init__(self)
 
-        self.bricklets = {'a': None, 'b': None, 'c': None, 'd': None, 'i-a': None, 'i-b': None, 'i-c': None, 'i-d': None}
+        self.bricklets = {'a': None, 'b': None, 'c': None, 'd': None, 'z-a': None, 'z-b': None, 'z-c': None, 'z-d': None}
         self.extensions = {'ext0': None, 'ext1': None}
 
     def __repr__(self):
@@ -167,16 +167,16 @@ class BrickMasterInfo(BrickInfo):
             c = '{0} ({1})'.format(self.bricklets['c'].name, self.bricklets['c'].uid)
         if self.bricklets['d'] != None:
             d = '{0} ({1})'.format(self.bricklets['d'].name, self.bricklets['d'].uid)
-        if self.bricklets['i-c'] != None:
-            ic = '{0} ({1})'.format(self.bricklets['i-c'].name, self.bricklets['i-c'].uid)
-        if self.bricklets['i-d'] != None:
-            id = '{0} ({1})'.format(self.bricklets['i-d'].name, self.bricklets['i-d'].uid)
+        if self.bricklets['z-c'] != None:
+            ic = '{0} ({1})'.format(self.bricklets['z-c'].name, self.bricklets['z-c'].uid)
+        if self.bricklets['z-d'] != None:
+            id = '{0} ({1})'.format(self.bricklets['z-d'].name, self.bricklets['z-d'].uid)
 
         # Bricklet a and b are already printed by BrickInfo
         return BrickInfo.__repr__(self) + """   c: {0}
    d: {1}
-   i-c: {2}
-   i-d: {3}
+   z-c: {2}
+   z-d: {3}
   Extensions:
    ext0: {4}
    ext1: {5}

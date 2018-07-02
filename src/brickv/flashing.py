@@ -60,7 +60,7 @@ NO_BRICK = 'No Brick found'
 NO_EXTENSION = 'No Extension found'
 NO_BOOTLOADER = 'No Brick in Bootloader found'
 
-PORT_NAMES = ('a', 'b', 'c', 'd', 'i-a', 'i-b', 'i-c', 'i-d')
+PORT_NAMES = ('a', 'b', 'c', 'd', 'z-a', 'z-b', 'z-c', 'z-d')
 
 def error_to_name(e):
     if e.value == Error.TIMEOUT:
@@ -814,7 +814,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.combo_port.clear()
 
         if index < 0 or len(self.brick_infos) == 0:
-            self.combo_port.addItems(['A', 'B', 'C', 'D', 'I-A', 'I-B', 'I-C', 'I-D'])
+            self.combo_port.addItems(['A', 'B', 'C', 'D', 'Z-A', 'Z-B', 'Z-C', 'Z-D'])
             return
 
         brick_info = self.brick_infos[index]
