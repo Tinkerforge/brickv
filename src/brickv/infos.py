@@ -36,6 +36,8 @@ class AbstractInfo(object):
     name = ''
     firmware_version_installed = (0, 0, 0)
     firmware_version_latest = (0, 0, 0)
+    can_have_extension = False
+    bricklets = []
 
 class FirmwareInfo(AbstractInfo):
     type = 'firmware'
