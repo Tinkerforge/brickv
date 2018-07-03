@@ -61,7 +61,7 @@ class PluginBase(QWidget, object):
         if override_base_name != None:
             self.base_name = override_base_name
             # This is a little bit of a hack, but as far as i can see has no problems.
-            # If a new Bricklet (with comcu) is enumerated and currently unkown,
+            # If a new Bricklet (with comcu) is enumerated and currently unknown,
             # we still want to be able to flash a firmware on it.
             # To be able to do this we instanciate the GPSV2 class. It has all of the
             # functions necessary to flash (the FIDs are at the same position for all

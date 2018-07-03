@@ -397,7 +397,7 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         elif update.open_load == 3:
             self.status_open_load.setText('Phase A and B')
         else:
-            self.status_open_load.setText('Unkown')
+            self.status_open_load.setText('Unknown')
 
         if update.short_to_ground == 0:
             self.status_short_to_ground.setText('No')
@@ -408,7 +408,7 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         elif update.short_to_ground == 3:
             self.status_short_to_ground.setText('Phase A and B')
         else:
-            self.status_short_to_ground.setText('Unkown')
+            self.status_short_to_ground.setText('Unknown')
 
         if update.over_temperature == 0:
             self.status_over_temperature.setText('No')

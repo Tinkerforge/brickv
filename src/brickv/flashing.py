@@ -1032,7 +1032,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     error_str = 'Device identifier incorrect (Error 4)'
                 elif mode_ret == 5:
                     error_str = 'CRC Mismatch (Error 5)'
-                else: # unkown error case
+                else: # unknown error case
                     error_str = 'Error ' + str(mode_ret)
 
                 # In case of CRC error we try again with whole firmware.
@@ -1096,7 +1096,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         error_str = 'Device identifier incorrect (Error 4, second try)'
                     elif mode_ret == 5:
                         error_str = 'CRC Mismatch (Error 5, second try)'
-                    else: # unkown error case
+                    else: # unknown error case
                         error_str = 'Error ' + str(mode_ret)
 
                     progress.cancel()

@@ -392,7 +392,7 @@ class REDTabExtension(REDTab, Ui_REDTabExtension):
                                        'Ethernet')
                 self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1].start_update_data()
             else:
-                extension_name = 'Unkown Extension'
+                extension_name = 'Unknown Extension'
                 if t == 1:
                     extension_name = 'Chibi Extension'
                 elif t == 3:
