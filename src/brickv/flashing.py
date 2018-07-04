@@ -869,6 +869,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.combo_plugin.setCurrentIndex(0)
             return
 
+        port_info = self.combo_port.itemData(index)
         if port_info == None or port_info.url_part == None or len(port_info.url_part) == 0:
             self.combo_plugin.setCurrentIndex(0)
             return
