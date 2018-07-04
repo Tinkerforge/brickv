@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2016 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2016-2018 Olaf Lüke <olaf@tinkerforge.com>
 
 comcu_bootloader.py: COMCU Bootloader plugin implementation
 
@@ -54,7 +54,7 @@ class COMCUBootloader(QWidget):
         QApplication.processEvents()
         main_window.flashing_window.tab_widget.setCurrentPage(2)
         QApplication.processEvents()
-        combo_brick = main_window.flashing_window.combo_brick
+        combo_parent = main_window.flashing_window.combo_parent
         combo_port  = main_window.flashing_window.combo_port
 
         connected_uid = self.info.connected_uid
@@ -67,9 +67,9 @@ class COMCUBootloader(QWidget):
                     connected_uid = bricklet_info.connected_uid
                     break
         
-        for i in range(combo_brick.count()):
-            if '[' + connected_uid + ']' in combo_brick.itemText(i):
-                combo_brick.setCurrentIndex(i)
+        for i in range(combo_parent.count()):
+            if '[' + connected_uid + ']' in combo_parent.itemText(i):
+                combo_parent.setCurrentIndex(i)
                 QApplication.processEvents()
                 break
 

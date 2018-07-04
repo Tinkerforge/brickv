@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2012-2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2012-2015, 2018 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 infos.py: Common information structures for Tools/Bricks/Bricklets
@@ -37,7 +37,6 @@ class AbstractInfo(object):
     firmware_version_installed = (0, 0, 0)
     firmware_version_latest = (0, 0, 0)
     can_have_extension = False
-    bricklets = []
 
 class FirmwareInfo(AbstractInfo):
     type = 'firmware'
@@ -89,9 +88,14 @@ class DeviceInfo(AbstractInfo):
     tab_window = None
     tab_index = -1
     enumeration_type = -1
+    reverse_connection = None
+
+    def __init__(self, connections = None):
+        self.connections = connections or dict()
+        self.bricklet_ports = tuple()
 
     def __repr__(self):
-        return """{0} ({1}):
+        repr_str = """{0} ({1}):
   connected UID: {2},
   position: {3},
   fw version installed: {4},
@@ -105,6 +109,12 @@ class DeviceInfo(AbstractInfo):
            self.firmware_version_installed, self.firmware_version_latest,
            self.hardware_version, self.device_identifier,
            self.url_part, self.plugin, self.tab_window)
+
+        if len(self.connections) > 0:
+            repr_str += "  Connections:\n"
+            for port, con in self.connections.items():
+                repr_str += "   {0}: {1} ({2})\n".format(port, con.name, con.uid)
+        return repr_str
 
     def get_combo_item(self):
         version_str = get_version_string(self.firmware_version_installed)
@@ -121,28 +131,7 @@ class BrickInfo(DeviceInfo):
     def __init__(self):
         DeviceInfo.__init__(self)
 
-        self.bricklets = {'a': None, 'b': None, 'z-a': None, 'z-b': None}
-
-    def __repr__(self):
-        a = 'Not connected'
-        b = 'Not connected'
-        ia = 'Not connected'
-        ib = 'Not connected'
-        if self.bricklets['a'] != None:
-            a = '{0} ({1})'.format(self.bricklets['a'].name, self.bricklets['a'].uid)
-        if self.bricklets['b'] != None:
-            b = '{0} ({1})'.format(self.bricklets['b'].name, self.bricklets['b'].uid)
-        if self.bricklets['z-a'] != None:
-            ia = '{0} ({1})'.format(self.bricklets['z-a'].name, self.bricklets['z-a'].uid)
-        if self.bricklets['z-b'] != None:
-            ib = '{0} ({1})'.format(self.bricklets['z-b'].name, self.bricklets['z-b'].uid)
-
-        return super(BrickInfo, self).__repr__() + """  Bricklets:
-   a: {0}
-   b: {1}
-   z-a: {2}
-   z-b: {3}
-""".format(a, b, ia, ib)
+        self.bricklet_ports = ('a', 'b')
 
 class BrickMasterInfo(BrickInfo):
     can_have_extension = True
@@ -151,44 +140,13 @@ class BrickMasterInfo(BrickInfo):
     def __init__(self):
         BrickInfo.__init__(self)
 
-        self.bricklets = {'a': None, 'b': None, 'c': None, 'd': None, 'z-a': None, 'z-b': None, 'z-c': None, 'z-d': None}
+        self.bricklet_ports = ('a', 'b', 'c', 'd')
         self.extensions = {'ext0': None, 'ext1': None}
 
-    def __repr__(self):
-        ext0 = 'No Extension'
-        ext1 = 'No Extension'
-        c = 'Not connected'
-        d = 'Not connected'
-        ic = 'Not connected'
-        id = 'Not connected'
-        if self.extensions['ext0'] != None:
-            ext0 = self.extensions['ext0'].name
-        if self.extensions['ext1'] != None:
-            ext1 = self.extensions['ext1'].name
-        if self.bricklets['c'] != None:
-            c = '{0} ({1})'.format(self.bricklets['c'].name, self.bricklets['c'].uid)
-        if self.bricklets['d'] != None:
-            d = '{0} ({1})'.format(self.bricklets['d'].name, self.bricklets['d'].uid)
-        if self.bricklets['z-c'] != None:
-            ic = '{0} ({1})'.format(self.bricklets['z-c'].name, self.bricklets['z-c'].uid)
-        if self.bricklets['z-d'] != None:
-            id = '{0} ({1})'.format(self.bricklets['z-d'].name, self.bricklets['z-d'].uid)
-
-        # Bricklet a and b are already printed by BrickInfo
-        return BrickInfo.__repr__(self) + """   c: {0}
-   d: {1}
-   z-c: {2}
-   z-d: {3}
-  Extensions:
-   ext0: {4}
-   ext1: {5}
-""".format(c, d, ic, id, ext0, ext1)
 
 class BrickREDInfo(BrickInfo):
     def __init__(self):
         BrickInfo.__init__(self)
-
-        self.bricklets = {}
 
 def get_version_string(version_tuple):
     return '.'.join(map(str, version_tuple))

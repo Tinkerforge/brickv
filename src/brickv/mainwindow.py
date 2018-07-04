@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2009-2012, 2018 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 mainwindow.py: New/Removed Bricks are handled here and plugins shown if clicked
@@ -655,64 +655,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             set_device_info_value('device_identifier', device_identifier)
             set_device_info_value('enumeration_type', enumeration_type)
 
+            # Update connections and reverse_connection with new device
+            for info in infos.get_device_infos():
+                if info == device_info:
+                    continue
 
-            if device_info.type == 'bricklet':
-                connected_uid = device_info.connected_uid
-                # In case of isolator we make the connection between the isolated Bricklet and
-                # the Brick directly
-                if position == 'z':
-                    for bricklet_info in infos.get_bricklet_infos():
-                        if bricklet_info.uid == connected_uid:
-                            connected_uid = bricklet_info.connected_uid
-                            position = 'z-' + bricklet_info.position
-                            set_device_info_value('position', position)
-                            break
+                if info.uid != '' and info.uid == device_info.connected_uid:
+                    try:
+                        if info.connections[device_info.position] != device_info:
+                            raise
+                    except:
+                        info.connections[device_info.position] = device_info
+                        device_info.reverse_connection = info
+                        something_changed_ref[0] = True
 
-                for brick_info in infos.get_brick_infos():
-                    if brick_info.uid == connected_uid:
-                        if position in brick_info.bricklets and brick_info.bricklets[position] != device_info:
-                            brick_info.bricklets[position] = device_info
-                            something_changed_ref[0] = True
-
-                # Find out if new device is connected to isolator and update infos if necessary
-                for bricklet_info in infos.get_bricklet_infos():
-                    if bricklet_info.position.startswith('z'):
-                        if bricklet_info.connected_uid == device_info.uid:
-                            connected_uid = device_info.connected_uid
-                            position = 'z-' + device_info.position
-                            if getattr(bricklet_info, 'position') != position:
-                                setattr(bricklet_info, 'position', position)
-                                something_changed_ref[0] = True
-
-                            for brick_info in infos.get_brick_infos():
-                                if brick_info.uid == connected_uid:
-                                    if position in brick_info.bricklets and brick_info.bricklets[position] != bricklet_info:
-                                        brick_info.bricklets[position] = bricklet_info
-                                        something_changed_ref[0] = True
-                                        break
-
-                            break
-
-            elif device_info.type == 'brick':
-                for bricklet_info in infos.get_bricklet_infos():
-                    connected_uid = bricklet_info.connected_uid
-
-                    # Find out if Bricklet is connected to an isolator, in this case
-                    # We make a direct connection to the Brick.
-                    if bricklet_info.position.startswith('z'):
-                        for bricklet_info2 in infos.get_bricklet_infos():
-                            if bricklet_info2.uid == connected_uid:
-                                connected_uid = bricklet_info2.connected_uid
-                                position = 'z-' + bricklet_info2.position
-                                if getattr(bricklet_info, 'position') != position:
-                                    setattr(bricklet_info, 'position', position)
-                                    something_changed_ref[0] = True
-                                break
-
-                    if connected_uid == device_info.uid:
-                        if position in device_info.bricklets and device_info.bricklets[bricklet_info.position] != bricklet_info:
-                            device_info.bricklets[bricklet_info.position] = bricklet_info
-                            something_changed_ref[0] = True
+                if info.connected_uid != '' and info.connected_uid == device_info.uid:
+                    try:
+                        if device_info.connections[info.position] != info:
+                            raise
+                    except:
+                        device_info.connections[info.position] = info
+                        info.reverse_connection = device_info
+                        something_changed_ref[0] = True
 
             if device_info.plugin == None:
                 self.plugin_manager.create_plugin_instance(device_identifier, self.ipcon, device_info)
@@ -737,9 +701,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.remove_device_info(device_info.uid)
 
             if device_info.type == 'brick':
-                for port in device_info.bricklets:
-                    if device_info.bricklets[port] and device_info.bricklets[port].uid == uid:
-                        device_info.bricklets[port] = None
+                for port, info in device_info.connections.items():
+                    if info.uid == uid:
+                        del device_info.connections[port]
 
         self.update_tree_view()
 
@@ -911,16 +875,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.tree_view_model.clear()
 
-        search_infos = []
+        for info in infos.get_device_infos():
+            # If a device has a reverse connection, it will be handled as a child below.
+            if info.reverse_connection != None:
+                continue
 
-        for info in infos.get_brick_infos():
-            search_infos.append(info)
-
-        for info in infos.get_bricklet_infos():
-            if info.connected_uid == '0':
-                search_infos.append(info)
-
-        for info in search_infos:
             if info.position != '0' and info.connected_uid != '0':
                 position_prefix = info.connected_uid
             else:
@@ -939,15 +898,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.tree_view_model.appendRow(parent)
 
-            for port in sorted(info.bricklets):
-                if info.bricklets[port]:
-                    child = [QStandardItem(info.bricklets[port].name),
-                             QStandardItem(info.bricklets[port].uid),
-                             QStandardItem(info.bricklets[port].position.upper()),
-                             QStandardItem('.'.join(map(str, info.bricklets[port].firmware_version_installed)))]
-                    for item in child:
+            # Search for childs up to a recursion depth of 3 at most.
+            for connected_info1 in sorted(info.connections.values()):
+                child1 = [QStandardItem(connected_info1.name),
+                          QStandardItem(connected_info1.uid),
+                          QStandardItem(connected_info1.position.upper()),
+                          QStandardItem('.'.join(map(str, connected_info1.firmware_version_installed)))]
+                for item in child1:
+                    item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                parent[0].appendRow(child1)
+
+                for connected_info2 in sorted(connected_info1.connections.values()):
+                    child2 = [QStandardItem(connected_info2.name),
+                              QStandardItem(connected_info2.uid),
+                              QStandardItem(connected_info2.position.upper()),
+                              QStandardItem('.'.join(map(str, connected_info2.firmware_version_installed)))]
+                    for item in child2:
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                    parent[0].appendRow(child)
+                    child1[0].appendRow(child2)
+
+                    for connected_info3 in sorted(connected_info2.connections.values()):
+                        child3 = [QStandardItem(connected_info3.name),
+                                  QStandardItem(connected_info3.uid),
+                                  QStandardItem(connected_info3.position.upper()),
+                                  QStandardItem('.'.join(map(str, connected_info3.firmware_version_installed)))]
+                        for item in child3:
+                            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                        child2[0].appendRow(child3)
+
 
             if info.can_have_extension:
                 extensions = []

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012, 2018 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
 Copyright (C) 2012, 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
@@ -100,17 +100,20 @@ class AdvancedWindow(QDialog, Ui_Advanced):
     def brick_changed(self, index):
         self.combo_port.clear()
 
-        if self.combo_brick.currentIndex() < 0 or len(self.brick_infos) == 0:
-            self.combo_port.addItems(['A', 'B', 'C', 'D'])
+        if index < 0 or index > self.combo_brick.count():
             return
 
         info = self.brick_infos[index]
 
-        for key in sorted(info.bricklets.keys()):
-            if info.bricklets[key] is None:
+        for key in ['a', 'b', 'c', 'd']:
+            try:
+                if info.connections[key].type == 'bricklet':
+                    self.combo_port.addItem('{0}: {1}'.format(key.upper(), info.connections[key].get_combo_item()))
+                else:
+                    raise
+            except:
                 self.combo_port.addItem(key.upper())
-            else:
-                self.combo_port.addItem('{0}: {1}'.format(key.upper(), info.bricklets[key].get_combo_item()))
+
 
         self.update_ui_state()
         self.update_calibration()
