@@ -85,7 +85,6 @@ class LoadCellV2(COMCUPluginBase):
                                            self.cb_weight,
                                            self.increase_error_count)
 
-        self.gain = 0 # 128x
         self.current_weight = None # int, g
         self.calibration = None
 
@@ -122,11 +121,20 @@ class LoadCellV2(COMCUPluginBase):
         self.rate_combo.addItem("80 Hz")
         self.rate_combo.currentIndexChanged.connect(self.new_config)
 
+        self.gain_label = QLabel('Gain:')
+        self.gain_combo = QComboBox()
+        self.gain_combo.addItem("128x")
+        self.gain_combo.addItem("64x")
+        self.gain_combo.addItem("32x")
+        self.gain_combo.currentIndexChanged.connect(self.new_config)
+
         hlayout = QHBoxLayout()
         hlayout.addWidget(self.label_average)
         hlayout.addWidget(self.spin_average)
         hlayout.addWidget(self.rate_label)
         hlayout.addWidget(self.rate_combo)
+        hlayout.addWidget(self.gain_label)
+        hlayout.addWidget(self.gain_combo)
         hlayout.addStretch()
         hlayout.addWidget(self.button_calibration)
         hlayout.addWidget(self.button_tare)
@@ -168,7 +176,7 @@ class LoadCellV2(COMCUPluginBase):
         self.spin_average.setValue(avg)
 
     def get_configuration_async(self, conf):
-        self.gain = conf.gain
+        self.gain_combo.setCurrentIndex(conf.gain)
         self.rate_combo.setCurrentIndex(conf.rate)
 
     def get_info_led_config_async(self, value):
@@ -201,7 +209,9 @@ class LoadCellV2(COMCUPluginBase):
 
     def new_config(self, value):
         rate = self.rate_combo.currentIndex()
-        self.lc.set_configuration(rate, self.gain)
+        gain = self.gain_combo.currentIndex()
+
+        self.lc.set_configuration(rate, gain)
 
     def spin_average_finished(self):
         self.lc.set_moving_average(self.spin_average.value())
