@@ -30,16 +30,6 @@ from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class DualButtonV2(COMCUPluginBase, Ui_DualButtonV2):
-    qtcb_state_changed = pyqtSignal(int, int, int, int)
-
-    AT_ON = 0
-    AT_OFF = 1
-    ON = 2
-    OFF = 3
-
-    PRESSED = 0
-    RELEASED = 1
-
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletDualButtonV2, *args)
 
@@ -48,12 +38,16 @@ class DualButtonV2(COMCUPluginBase, Ui_DualButtonV2):
         self.button = self.device
 
         self.cbe_button_state = CallbackEmulator(self.button.get_button_state,
-                                                 self.cb_button_state,
+                                                 self.get_button_state_async,
                                                  self.increase_error_count)
-        self.led_r = DualButtonV2.OFF
-        self.led_l = DualButtonV2.OFF
-        self.button_r = DualButtonV2.RELEASED
-        self.button_l = DualButtonV2.RELEASED
+
+        self.cbe_led_state = CallbackEmulator(self.button.get_led_state,
+                                              self.get_led_state_async,
+                                              self.increase_error_count)
+        self.led_r = BrickletDualButtonV2.LED_STATE_OFF
+        self.led_l = BrickletDualButtonV2.LED_STATE_OFF
+        self.button_r = BrickletDualButtonV2.BUTTON_STATE_RELEASED
+        self.button_l = BrickletDualButtonV2.BUTTON_STATE_RELEASED
 
         self.button_led_on_button_r.clicked.connect(self.on_button_r_clicked)
         self.button_led_on_button_l.clicked.connect(self.on_button_l_clicked)
@@ -64,104 +58,104 @@ class DualButtonV2(COMCUPluginBase, Ui_DualButtonV2):
 
         self.count = 0
 
-    def cb_button_state(self, state):
-        self.button_l, self.button_r = state 
+    def get_button_state_async(self, state):
+        self.button_l, self.button_r = state
         led_text_button_l = ''
         led_text_button_r = ''
 
-        if self.led_l in (DualButtonV2.ON, DualButtonV2.AT_ON):
+        if self.led_l in (BrickletDualButtonV2.LED_STATE_ON, BrickletDualButtonV2.LED_STATE_AUTO_TOGGLE_ON):
             led_text_button_l = ', LED On'
         else:
             led_text_button_l = ', LED Off'
 
-        if self.led_r in (DualButtonV2.ON, DualButtonV2.AT_ON):
+        if self.led_r in (BrickletDualButtonV2.LED_STATE_ON, BrickletDualButtonV2.LED_STATE_AUTO_TOGGLE_ON):
             led_text_button_r = ', LED On'
         else:
             led_text_button_r = ', LED Off'
 
-        if self.button_l == DualButtonV2.RELEASED:
+        if self.button_l == BrickletDualButtonV2.BUTTON_STATE_RELEASED:
             self.label_status_button_l.setText('Released' + led_text_button_l)
         else:
             self.label_status_button_l.setText('Pressed' + led_text_button_l)
 
-        if self.button_r == DualButtonV2.RELEASED:
+        if self.button_r == BrickletDualButtonV2.BUTTON_STATE_RELEASED:
             self.label_status_button_r.setText('Released' + led_text_button_r)
         else:
             self.label_status_button_r.setText('Pressed' + led_text_button_r)
 
+        self.update_buttons()
+
     def on_button_l_clicked(self):
-        self.led_l = DualButtonV2.ON
-        self.button.set_led_state(DualButtonV2.ON, self.led_r)
+        self.led_l = BrickletDualButtonV2.LED_STATE_ON
+        self.button.set_led_state(BrickletDualButtonV2.LED_STATE_ON, self.led_r)
         self.update_buttons()
 
     def on_button_r_clicked(self):
-        self.led_r = DualButtonV2.ON
-        self.button.set_led_state(self.led_l, DualButtonV2.ON)
+        self.led_r = BrickletDualButtonV2.LED_STATE_ON
+        self.button.set_led_state(self.led_l, BrickletDualButtonV2.LED_STATE_ON)
         self.update_buttons()
 
     def off_button_l_clicked(self):
-        self.led_l = DualButtonV2.OFF
-        self.button.set_led_state(DualButtonV2.OFF, self.led_r)
+        self.led_l = BrickletDualButtonV2.LED_STATE_OFF
+        self.button.set_led_state(BrickletDualButtonV2.LED_STATE_OFF, self.led_r)
         self.update_buttons()
 
     def off_button_r_clicked(self):
-        self.led_r = DualButtonV2.OFF
-        self.button.set_led_state(self.led_l, DualButtonV2.OFF)
+        self.led_r = BrickletDualButtonV2.LED_STATE_OFF
+        self.button.set_led_state(self.led_l, BrickletDualButtonV2.LED_STATE_OFF)
         self.update_buttons()
 
     def toggle_button_l_clicked(self):
-        self.led_l = DualButtonV2.AT_OFF
-        self.button.set_led_state(DualButtonV2.AT_OFF, self.led_r)
+        self.led_l = BrickletDualButtonV2.LED_STATE_AUTO_TOGGLE_OFF
+        self.button.set_led_state(BrickletDualButtonV2.LED_STATE_AUTO_TOGGLE_OFF, self.led_r)
         self.update_buttons()
 
     def toggle_button_r_clicked(self):
-        self.led_r = DualButtonV2.AT_OFF
-        self.button.set_led_state(self.led_l, DualButtonV2.AT_OFF)
+        self.led_r = BrickletDualButtonV2.LED_STATE_AUTO_TOGGLE_OFF
+        self.button.set_led_state(self.led_l, BrickletDualButtonV2.LED_STATE_AUTO_TOGGLE_OFF)
         self.update_buttons()
 
     def update_buttons(self):
-        if self.led_r == DualButtonV2.ON:
+        if self.led_r == BrickletDualButtonV2.LED_STATE_ON:
             self.button_toggle_button_r.setEnabled(True)
             self.button_led_on_button_r.setEnabled(False)
             self.button_led_off_button_r.setEnabled(True)
-        elif self.led_r == DualButtonV2.OFF:
+        elif self.led_r == BrickletDualButtonV2.LED_STATE_OFF:
             self.button_toggle_button_r.setEnabled(True)
             self.button_led_on_button_r.setEnabled(True)
             self.button_led_off_button_r.setEnabled(False)
-        elif self.led_r in (DualButtonV2.AT_OFF, DualButtonV2.AT_ON):
+        elif self.led_r in (BrickletDualButtonV2.LED_STATE_AUTO_TOGGLE_ON, BrickletDualButtonV2.LED_STATE_AUTO_TOGGLE_OFF):
             self.button_toggle_button_r.setEnabled(False)
             self.button_led_on_button_r.setEnabled(True)
             self.button_led_off_button_r.setEnabled(True)
 
-        if self.led_l == DualButtonV2.ON:
+        if self.led_l == BrickletDualButtonV2.LED_STATE_ON:
             self.button_toggle_button_l.setEnabled(True)
             self.button_led_on_button_l.setEnabled(False)
             self.button_led_off_button_l.setEnabled(True)
-        elif self.led_l == DualButtonV2.OFF:
+        elif self.led_l == BrickletDualButtonV2.LED_STATE_OFF:
             self.button_toggle_button_l.setEnabled(True)
             self.button_led_on_button_l.setEnabled(True)
             self.button_led_off_button_l.setEnabled(False)
-        elif self.led_l in (DualButtonV2.AT_OFF, DualButtonV2.AT_ON):
+        elif self.led_l in (BrickletDualButtonV2.LED_STATE_AUTO_TOGGLE_ON, BrickletDualButtonV2.LED_STATE_AUTO_TOGGLE_OFF):
             self.button_toggle_button_l.setEnabled(False)
             self.button_led_on_button_l.setEnabled(True)
             self.button_led_off_button_l.setEnabled(True)
 
-    def cb_state_changed(self, button_l, button_r, led_l, led_r):
-        self.count += 1
-        self.get_led_state_async((led_l, led_r))
-        self.get_button_state_async((button_l, button_r))
-
     def get_led_state_async(self, led):
         self.led_l, self.led_r = led
+        self.get_button_state_async((self.button_l, self.button_r))
 
-        self.update_buttons()
 
     def start(self):
         async_call(self.button.get_led_state, None, self.get_led_state_async, self.increase_error_count)
-        self.cbe_button_state.set_period(100)
+        async_call(self.button.get_button_state, None, self.get_button_state_async, self.increase_error_count)
+        self.cbe_button_state.set_period(200)
+        self.cbe_led_state.set_period(200)
 
     def stop(self):
         self.cbe_button_state.set_period(0)
+        self.cbe_led_state.set_period(0)
 
     def destroy(self):
         pass
