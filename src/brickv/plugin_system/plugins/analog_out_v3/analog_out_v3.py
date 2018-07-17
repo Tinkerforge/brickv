@@ -21,49 +21,22 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBox
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBox, QFrame
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_analog_out_v3 import BrickletAnalogOutV3
+from brickv.plugin_system.plugins.analog_out_v3.ui_analog_out_v3 import Ui_AnalogOutV3
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class VoltageLabel(QLabel):
-    def setText(self, voltage):
-        text = "Input Voltage: {:.2f} V".format(round(voltage / 1000.0, 2))
-        super(VoltageLabel, self).setText(text)
-
-class AnalogOutV3(COMCUPluginBase):
+class AnalogOutV3(COMCUPluginBase, Ui_AnalogOutV3):
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletAnalogOutV3, *args)
 
+        self.setupUi(self)
         self.ao = self.device
-
-        self.input_voltage_label = VoltageLabel()
-
-        self.output_voltage_label = QLabel('Output Voltage [mV]:')
-        self.output_voltage_box = QSpinBox()
-        self.output_voltage_box.setMinimum(0)
-        self.output_voltage_box.setMaximum(12000)
-        self.output_voltage_box.setSingleStep(1)
-
-        layout_h1 = QHBoxLayout()
-        layout_h1.addStretch()
-        layout_h1.addWidget(self.output_voltage_label)
-        layout_h1.addWidget(self.output_voltage_box)
-        layout_h1.addStretch()
-
-        layout_h2 = QHBoxLayout()
-        layout_h2.addStretch()
-        layout_h2.addWidget(self.input_voltage_label)
-        layout_h2.addStretch()
-
-        layout = QVBoxLayout(self)
-        layout.addLayout(layout_h2)
-        layout.addLayout(layout_h1)
-        layout.addStretch()
-
+        
         self.output_voltage_box.editingFinished.connect(self.voltage_finished)
 
         self.cbe_input_voltage = CallbackEmulator(self.ao.get_input_voltage,
@@ -86,14 +59,15 @@ class AnalogOutV3(COMCUPluginBase):
         return device_identifier == BrickletAnalogOutV3.DEVICE_IDENTIFIER
 
     def cb_get_output_voltage(self, voltage):
-        self.output_voltage_box.setValue(voltage)
+        self.output_voltage_box.setValue(voltage/1000.0)
 
     def cb_get_input_voltage(self, voltage):
-        self.input_voltage_label.setText(voltage)
+        self.input_voltage_label.setText("{:.3f} V".format(round(voltage / 1000.0, 2)))
 
     def voltage_finished(self):
-        value = self.output_voltage_box.value()
+        value = int(round(self.output_voltage_box.value()*1000, 0))
         try:
+            print(value)
             self.ao.set_output_voltage(value)
         except ip_connection.Error:
             return
