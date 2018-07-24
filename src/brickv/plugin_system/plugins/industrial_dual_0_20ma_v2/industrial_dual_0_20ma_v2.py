@@ -313,10 +313,6 @@ class IndustrialDual020mAV2(COMCUPluginBase):
     def led_status_config_ch0_min_sbox_changed(self, value):
         QObject.sender(self).blockSignals(True)
 
-        if self.led_status_config_ch0_combo.currentIndex() == 0:
-            if value >= self.led_status_config_ch0_max_sbox.value():
-                self.led_status_config_ch0_max_sbox.setValue(self.led_status_config_ch0_min_sbox.value() + 1)
-
         self.dual020.set_channel_led_status_config(CH_0,
                                                    self.led_status_config_ch0_min_sbox.value() * 1000000,
                                                    self.led_status_config_ch0_max_sbox.value() * 1000000,
@@ -326,10 +322,6 @@ class IndustrialDual020mAV2(COMCUPluginBase):
 
     def led_status_config_ch0_max_sbox_changed(self, value):
         QObject.sender(self).blockSignals(True)
-
-        if self.led_status_config_ch0_combo.currentIndex() == 0:
-            if value <= self.led_status_config_ch0_min_sbox.value():
-                self.led_status_config_ch0_min_sbox.setValue(self.led_status_config_ch0_max_sbox.value() - 1)
 
         self.dual020.set_channel_led_status_config(CH_0,
                                                    self.led_status_config_ch0_min_sbox.value() * 1000000,
@@ -341,9 +333,6 @@ class IndustrialDual020mAV2(COMCUPluginBase):
     def led_status_config_ch1_min_sbox_changed(self, value):
         QObject.sender(self).blockSignals(True)
 
-        if self.led_status_config_ch1_combo.currentIndex() == 0:
-            if value >= self.led_status_config_ch1_max_sbox.value():
-                self.led_status_config_ch1_max_sbox.setValue(self.led_status_config_ch1_min_sbox.value() + 1)
 
         self.dual020.set_channel_led_status_config(CH_1,
                                                    self.led_status_config_ch1_min_sbox.value() * 1000000,
@@ -354,10 +343,6 @@ class IndustrialDual020mAV2(COMCUPluginBase):
 
     def led_status_config_ch1_max_sbox_changed(self, value):
         QObject.sender(self).blockSignals(True)
-
-        if self.led_status_config_ch1_combo.currentIndex() == 0:
-            if value <= self.led_status_config_ch1_min_sbox.value():
-                self.led_status_config_ch1_min_sbox.setValue(self.led_status_config_ch1_max_sbox.value() - 1)
 
         self.dual020.set_channel_led_status_config(CH_1,
                                                    self.led_status_config_ch1_min_sbox.value() * 1000000,
