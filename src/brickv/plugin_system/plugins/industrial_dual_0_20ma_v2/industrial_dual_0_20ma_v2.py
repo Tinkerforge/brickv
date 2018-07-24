@@ -154,7 +154,7 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         self.led_status_config_ch0_min_sbox.setMinimum(0)
         self.led_status_config_ch0_min_sbox.setSingleStep(1)
         self.led_status_config_ch0_min_sbox.setSuffix(' mA')
-        self.led_status_config_ch0_min_sbox.setMaximum(19)
+        self.led_status_config_ch0_min_sbox.setMaximum(20)
         self.led_status_config_ch0_min_sbox.valueChanged.connect(self.led_status_config_ch0_min_sbox_changed)
 
         self.led_status_config_ch0_max_sbox.setValue(0)
@@ -168,7 +168,7 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         self.led_status_config_ch1_min_sbox.setMinimum(0)
         self.led_status_config_ch1_min_sbox.setSingleStep(1)
         self.led_status_config_ch1_min_sbox.setSuffix(' mA')
-        self.led_status_config_ch1_min_sbox.setMaximum(19)
+        self.led_status_config_ch1_min_sbox.setMaximum(20)
         self.led_status_config_ch1_min_sbox.valueChanged.connect(self.led_status_config_ch1_min_sbox_changed)
 
         self.led_status_config_ch1_max_sbox.setValue(0)
@@ -313,8 +313,9 @@ class IndustrialDual020mAV2(COMCUPluginBase):
     def led_status_config_ch0_min_sbox_changed(self, value):
         QObject.sender(self).blockSignals(True)
 
-        if value >= self.led_status_config_ch0_max_sbox.value():
-            self.led_status_config_ch0_max_sbox.setValue(self.led_status_config_ch0_min_sbox.value() + 1)
+        if self.led_status_config_ch0_combo.currentIndex() == 0:
+            if value >= self.led_status_config_ch0_max_sbox.value():
+                self.led_status_config_ch0_max_sbox.setValue(self.led_status_config_ch0_min_sbox.value() + 1)
 
         self.dual020.set_channel_led_status_config(CH_0,
                                                    self.led_status_config_ch0_min_sbox.value() * 1000000,
@@ -326,8 +327,9 @@ class IndustrialDual020mAV2(COMCUPluginBase):
     def led_status_config_ch0_max_sbox_changed(self, value):
         QObject.sender(self).blockSignals(True)
 
-        if value <= self.led_status_config_ch0_min_sbox.value():
-            self.led_status_config_ch0_min_sbox.setValue(self.led_status_config_ch0_max_sbox.value() - 1)
+        if self.led_status_config_ch0_combo.currentIndex() == 0:
+            if value <= self.led_status_config_ch0_min_sbox.value():
+                self.led_status_config_ch0_min_sbox.setValue(self.led_status_config_ch0_max_sbox.value() - 1)
 
         self.dual020.set_channel_led_status_config(CH_0,
                                                    self.led_status_config_ch0_min_sbox.value() * 1000000,
@@ -339,8 +341,9 @@ class IndustrialDual020mAV2(COMCUPluginBase):
     def led_status_config_ch1_min_sbox_changed(self, value):
         QObject.sender(self).blockSignals(True)
 
-        if value >= self.led_status_config_ch1_max_sbox.value():
-            self.led_status_config_ch1_max_sbox.setValue(self.led_status_config_ch1_min_sbox.value() + 1)
+        if self.led_status_config_ch1_combo.currentIndex() == 0:
+            if value >= self.led_status_config_ch1_max_sbox.value():
+                self.led_status_config_ch1_max_sbox.setValue(self.led_status_config_ch1_min_sbox.value() + 1)
 
         self.dual020.set_channel_led_status_config(CH_1,
                                                    self.led_status_config_ch1_min_sbox.value() * 1000000,
@@ -352,8 +355,9 @@ class IndustrialDual020mAV2(COMCUPluginBase):
     def led_status_config_ch1_max_sbox_changed(self, value):
         QObject.sender(self).blockSignals(True)
 
-        if value <= self.led_status_config_ch1_min_sbox.value():
-            self.led_status_config_ch1_min_sbox.setValue(self.led_status_config_ch1_max_sbox.value() - 1)
+        if self.led_status_config_ch1_combo.currentIndex() == 0:
+            if value <= self.led_status_config_ch1_min_sbox.value():
+                self.led_status_config_ch1_min_sbox.setValue(self.led_status_config_ch1_max_sbox.value() - 1)
 
         self.dual020.set_channel_led_status_config(CH_1,
                                                    self.led_status_config_ch1_min_sbox.value() * 1000000,
@@ -363,26 +367,12 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         QObject.sender(self).blockSignals(False)
 
     def led_status_config_ch0_combo_changed(self, index):
-        if index == self.dual020.CHANNEL_LED_STATUS_CONFIG_INTENSITY:
-            self.led_status_config_ch0_max_sbox.setEnabled(True)
-        elif index == self.dual020.CHANNEL_LED_STATUS_CONFIG_THRESHOLD:
-            self.led_status_config_ch0_max_sbox.setEnabled(False)
-        else:
-            return
-
         self.dual020.set_channel_led_status_config(CH_0,
                                                    self.led_status_config_ch0_min_sbox.value() * 1000000,
                                                    self.led_status_config_ch0_max_sbox.value() * 1000000,
                                                    index)
 
     def led_status_config_ch1_combo_changed(self, index):
-        if index == self.dual020.CHANNEL_LED_STATUS_CONFIG_INTENSITY:
-            self.led_status_config_ch1_max_sbox.setEnabled(True)
-        elif index == self.dual020.CHANNEL_LED_STATUS_CONFIG_THRESHOLD:
-            self.led_status_config_ch1_max_sbox.setEnabled(False)
-        else:
-            return
-
         self.dual020.set_channel_led_status_config(CH_1,
                                                    self.led_status_config_ch1_min_sbox.value() * 1000000,
                                                    self.led_status_config_ch1_max_sbox.value() * 1000000,
@@ -396,11 +386,6 @@ class IndustrialDual020mAV2(COMCUPluginBase):
             for e in self.ui_group_ch_status_ch0:
                 e.setEnabled(True)
 
-            if self.led_status_config_ch0_combo.currentIndex() == self.dual020.CHANNEL_LED_STATUS_CONFIG_INTENSITY:
-                self.led_status_config_ch0_max_sbox.setEnabled(True)
-            else:
-                self.led_status_config_ch0_max_sbox.setEnabled(False)
-
         self.dual020.set_channel_led_config(CH_0, index)
 
     def led_config_ch1_combo_changed(self, index):
@@ -410,11 +395,6 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         else:
             for e in self.ui_group_ch_status_ch1:
                 e.setEnabled(True)
-
-            if self.led_status_config_ch1_combo.currentIndex() == self.dual020.CHANNEL_LED_STATUS_CONFIG_INTENSITY:
-                self.led_status_config_ch1_max_sbox.setEnabled(True)
-            else:
-                self.led_status_config_ch1_max_sbox.setEnabled(False)
 
         self.dual020.set_channel_led_config(CH_1, index)
 
