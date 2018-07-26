@@ -49,8 +49,8 @@ class UVLight(PluginBase):
 
         self.current_uv_light = None
 
-        plots = [('UV Light', Qt.red, lambda: self.current_uv_light, u'{} µW/cm²'.format)]
-        self.plot_widget = PlotWidget(u'UV Light [µW/cm²]', plots, extra_key_widgets=[self.index_label])
+        plots = [('UV Light', Qt.red, lambda: self.current_uv_light, u'{} mW/m²'.format)]
+        self.plot_widget = PlotWidget(u'UV Light [mW/m²]', plots, extra_key_widgets=[self.index_label])
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)
@@ -74,7 +74,7 @@ class UVLight(PluginBase):
         return device_identifier == BrickletUVLight.DEVICE_IDENTIFIER
 
     def cb_uv_light(self, uv_light):
-        self.current_uv_light = uv_light
+        self.current_uv_light = uv_light / 10.0
 
         index = round(uv_light/250.0, 1)
         self.index_label.setText(unicode(index))
