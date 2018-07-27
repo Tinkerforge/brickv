@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>673</width>
-    <height>177</height>
+    <height>442</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -77,18 +77,31 @@
    </item>
    <item>
     <widget class="QWidget" name="widget_voltage" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <layout class="QGridLayout" name="gridLayout_3">
       <property name="margin">
        <number>0</number>
       </property>
-      <item>
+      <item row="1" column="0">
        <widget class="QLabel" name="label_voltage">
         <property name="text">
-         <string>Output Voltage [mV]:</string>
+         <string>Output Voltage:</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="1" column="2">
+       <widget class="QSpinBox" name="spin_voltage">
+        <property name="suffix">
+         <string> mV</string>
+        </property>
+        <property name="maximum">
+         <number>10000</number>
+        </property>
+        <property name="singleStep">
+         <number>100</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
        <widget class="QSlider" name="slider_voltage">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -107,24 +120,14 @@
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QSpinBox" name="spin_voltage">
-        <property name="maximum">
-         <number>10000</number>
-        </property>
-        <property name="singleStep">
-         <number>100</number>
-        </property>
-       </widget>
-      </item>
-      <item>
+      <item row="0" column="0">
        <widget class="QLabel" name="label_voltage_range">
         <property name="text">
          <string>Range:</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="0" column="1" colspan="2">
        <widget class="QComboBox" name="box_voltage_range">
         <item>
          <property name="text">
@@ -143,18 +146,34 @@
    </item>
    <item>
     <widget class="QWidget" name="widget_current" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QGridLayout" name="gridLayout_2">
       <property name="margin">
        <number>0</number>
       </property>
-      <item>
+      <item row="1" column="0">
        <widget class="QLabel" name="label_current">
         <property name="text">
-         <string>Output Current [µA]:</string>
+         <string>Output Current:</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="1" column="2">
+       <widget class="QSpinBox" name="spin_current">
+        <property name="suffix">
+         <string> µA</string>
+        </property>
+        <property name="minimum">
+         <number>4000</number>
+        </property>
+        <property name="maximum">
+         <number>20000</number>
+        </property>
+        <property name="singleStep">
+         <number>100</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
        <widget class="QSlider" name="slider_current">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -176,27 +195,14 @@
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QSpinBox" name="spin_current">
-        <property name="minimum">
-         <number>4000</number>
-        </property>
-        <property name="maximum">
-         <number>20000</number>
-        </property>
-        <property name="singleStep">
-         <number>100</number>
-        </property>
-       </widget>
-      </item>
-      <item>
+      <item row="0" column="0">
        <widget class="QLabel" name="label_current_range">
         <property name="text">
          <string>Range:</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="0" column="1" colspan="2">
        <widget class="QComboBox" name="box_current_range">
         <item>
          <property name="text">
@@ -213,6 +219,120 @@
           <string>0 - 24 mA</string>
          </property>
         </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_channel_status_led" native="true">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>LED Config:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_sbox_csl_max">
+        <property name="text">
+         <string>Max:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_cbox_csl_lsc">
+        <property name="text">
+         <string>LED Status Config:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_sbox_csl_min">
+        <property name="text">
+         <string>Min:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="cbox_csl_lc">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <item>
+         <property name="text">
+          <string>Off</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>On</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Show Heartbeat</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Show Channel Status</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="cbox_csl_lsc">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <item>
+         <property name="text">
+          <string>Threshold</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Intensity</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QSpinBox" name="sbox_csl_min">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QSpinBox" name="sbox_csl_max">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
        </widget>
       </item>
      </layout>

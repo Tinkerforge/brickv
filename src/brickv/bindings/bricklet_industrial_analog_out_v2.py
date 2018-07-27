@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-22.      #
+# This file was automatically generated on 2018-07-26.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -19,6 +19,7 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetConfiguration = namedtuple('Configuration', ['voltage_range', 'current_range'])
+GetChannelLEDStatusConfig = namedtuple('ChannelLEDStatusConfig', ['min', 'max', 'config'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -41,6 +42,10 @@ class BrickletIndustrialAnalogOutV2(Device):
     FUNCTION_GET_CURRENT = 6
     FUNCTION_SET_CONFIGURATION = 7
     FUNCTION_GET_CONFIGURATION = 8
+    FUNCTION_SET_CHANNEL_LED_CONFIG = 9
+    FUNCTION_GET_CHANNEL_LED_CONFIG = 10
+    FUNCTION_SET_CHANNEL_LED_STATUS_CONFIG = 11
+    FUNCTION_GET_CHANNEL_LED_STATUS_CONFIG = 12
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -59,6 +64,12 @@ class BrickletIndustrialAnalogOutV2(Device):
     CURRENT_RANGE_4_TO_20MA = 0
     CURRENT_RANGE_0_TO_20MA = 1
     CURRENT_RANGE_0_TO_24MA = 2
+    CHANNEL_LED_CONFIG_OFF = 0
+    CHANNEL_LED_CONFIG_ON = 1
+    CHANNEL_LED_CONFIG_SHOW_HEARTBEAT = 2
+    CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS = 3
+    CHANNEL_LED_STATUS_CONFIG_THRESHOLD = 0
+    CHANNEL_LED_STATUS_CONFIG_INTENSITY = 1
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -92,6 +103,10 @@ class BrickletIndustrialAnalogOutV2(Device):
         self.response_expected[BrickletIndustrialAnalogOutV2.FUNCTION_GET_CURRENT] = BrickletIndustrialAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialAnalogOutV2.FUNCTION_SET_CONFIGURATION] = BrickletIndustrialAnalogOutV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialAnalogOutV2.FUNCTION_GET_CONFIGURATION] = BrickletIndustrialAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialAnalogOutV2.FUNCTION_SET_CHANNEL_LED_CONFIG] = BrickletIndustrialAnalogOutV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialAnalogOutV2.FUNCTION_GET_CHANNEL_LED_CONFIG] = BrickletIndustrialAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialAnalogOutV2.FUNCTION_SET_CHANNEL_LED_STATUS_CONFIG] = BrickletIndustrialAnalogOutV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialAnalogOutV2.FUNCTION_GET_CHANNEL_LED_STATUS_CONFIG] = BrickletIndustrialAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialAnalogOutV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletIndustrialAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialAnalogOutV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletIndustrialAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialAnalogOutV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletIndustrialAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -185,6 +200,42 @@ class BrickletIndustrialAnalogOutV2(Device):
         Returns the configuration as set by :func:`Set Configuration`.
         """
         return GetConfiguration(*self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
+
+    def set_channel_led_config(self, channel, config):
+        """
+
+        """
+        channel = int(channel)
+        config = int(config)
+
+        self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_SET_CHANNEL_LED_CONFIG, (channel, config), 'B B', '')
+
+    def get_channel_led_config(self, channel):
+        """
+        Returns the Channel LED configuration as set by :func:`Set Channel LED Config`
+        """
+        channel = int(channel)
+
+        return self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 'B')
+
+    def set_channel_led_status_config(self, channel, min, max, config):
+        """
+
+        """
+        channel = int(channel)
+        min = int(min)
+        max = int(max)
+        config = int(config)
+
+        self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_SET_CHANNEL_LED_STATUS_CONFIG, (channel, min, max, config), 'B H H B', '')
+
+    def get_channel_led_status_config(self, channel):
+        """
+        Returns the Channel LED configuration as set by :func:`Set Channel LED Status Config`
+        """
+        channel = int(channel)
+
+        return GetChannelLEDStatusConfig(*self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_GET_CHANNEL_LED_STATUS_CONFIG, (channel,), 'B', 'H H B'))
 
     def get_spitfp_error_count(self):
         """
