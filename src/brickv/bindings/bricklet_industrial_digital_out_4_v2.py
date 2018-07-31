@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-22.      #
+# This file was automatically generated on 2018-07-27.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -199,8 +199,7 @@ class BrickletIndustrialDigitalOut4V2(Device):
         Activates a PWM for the given channel with the frequency given in 1/10Hz and the duty
         cycle given in 1/100%.
 
-        You need to set the channel to output before you call this function, otherwise it will
-        be ignored. To turn the PWM off again, you can set the frequency to 0 or any other
+        To turn the PWM off again, you can set the frequency to 0 or any other
         function that changes a value of the channel (e.g. :func:`Set Selected Value`).
 
         The maximum duty cycle value is 10000 (100%). The optocoupler of the Industrial Digital

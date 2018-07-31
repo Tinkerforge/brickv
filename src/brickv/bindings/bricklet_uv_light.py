@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-08.      #
+# This file was automatically generated on 2018-07-31.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -72,10 +72,11 @@ class BrickletUVLight(Device):
     def get_uv_light(self):
         """
         Returns the UV light intensity of the sensor, the intensity is given
-        in µW/cm².
+        in 1/10 mW/m². The sensor has already weighted the intensity with the erythemal
+        action spectrum to get the skin-affecting irradiation.
 
-        To get UV Index you have to divide the value by 250. For example, a UV Light
-        intensity of 500µW/cm² is equivalent to an UV Index of 2.
+        To get UV index you just have to divide the value by 250. For example, a UV
+        light intensity of 500 is equivalent to an UV index of 2.
 
         If you want to get the intensity periodically, it is recommended to use the
         :cb:`UV Light` callback and set the period with

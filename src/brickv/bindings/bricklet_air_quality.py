@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-22.      #
+# This file was automatically generated on 2018-07-27.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -146,7 +146,20 @@ class BrickletAirQuality(Device):
 
     def get_all_values(self):
         """
+        Returns all values measured by the Air Quality Bricklet. The values ae IAQ (In-Air Quality) Index,
+        IAQ Index Accuracy, Temperature, Humidity and Air Pressure.
 
+        .. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
+           :scale: 100 %
+           :alt: Air Quality Index description
+           :align: center
+           :target: ../../_images/Misc/bricklet_air_quality_iaq_index.png
+
+        * IAQ Index: The IAQ Index goes from 0 to 500. The higher the IAQ index, the greater the level of air pollution.
+        * IAQ Index Accuracy: The accuracy goes from 0 = unreliable to 3 = high.
+        * Temperature: The temperature is given in steps of 0.01 °C
+        * Humidity: The relative humidity is given in steps of 0.01 %RH.
+        * Air Pressure. The air pressure is given in steps of 0.01 mbar.
         """
         return GetAllValues(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_ALL_VALUES, (), '', 'i B i i i'))
 
@@ -206,7 +219,13 @@ class BrickletAirQuality(Device):
 
     def get_iaq_index(self):
         """
-        TBD
+        Returns the IAQ (In-Air Quality) Index. The IAQ Index goes from 0 to 500. The higher the IAQ index, the greater the level of air pollution.
+
+        .. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
+           :scale: 100 %
+           :alt: Air Quality Index description
+           :align: center
+           :target: ../../_images/Misc/bricklet_air_quality_iaq_index.png
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -263,7 +282,7 @@ class BrickletAirQuality(Device):
 
     def get_temperature(self):
         """
-        TBD
+        Returns temperature in steps of 0.01 °C.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -320,7 +339,7 @@ class BrickletAirQuality(Device):
 
     def get_humidity(self):
         """
-        TBD
+        Returns relative humidity in steps of 0.01 %RH.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -377,7 +396,7 @@ class BrickletAirQuality(Device):
 
     def get_air_pressure(self):
         """
-        TBD
+        Returns air pressure in steps of 0.01 mbar.
 
 
         If you want to get the value periodically, it is recommended to use the

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-22.      #
+# This file was automatically generated on 2018-07-27.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -194,7 +194,7 @@ class BrickletLCD128x64(Device):
         changes are written into a temporary buffer and only shown on the display after
         a call of :func:`Draw Buffered Frame`.
 
-        The default values are contrast 21, backlight intensity 100, inverting off
+        The default values are contrast 14, backlight intensity 100, inverting off
         and automatic draw on.
         """
         contrast = int(contrast)

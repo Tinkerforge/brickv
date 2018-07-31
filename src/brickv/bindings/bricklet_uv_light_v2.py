@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-22.      #
+# This file was automatically generated on 2018-07-31.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -18,8 +18,9 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
-GetUVALightCallbackConfiguration = namedtuple('UVALightCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
-GetUVBLightCallbackConfiguration = namedtuple('UVBLightCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
+GetUVACallbackConfiguration = namedtuple('UVACallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
+GetUVBCallbackConfiguration = namedtuple('UVBCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
+GetUVICallbackConfiguration = namedtuple('UVICallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -32,16 +33,22 @@ class BrickletUVLightV2(Device):
     DEVICE_DISPLAY_NAME = 'UV Light Bricklet 2.0'
     DEVICE_URL_PART = 'uv_light_v2' # internal
 
-    CALLBACK_UVA_LIGHT = 4
-    CALLBACK_UVB_LIGHT = 8
+    CALLBACK_UVA = 4
+    CALLBACK_UVB = 8
+    CALLBACK_UVI = 12
 
 
-    FUNCTION_GET_UVA_LIGHT = 1
-    FUNCTION_SET_UVA_LIGHT_CALLBACK_CONFIGURATION = 2
-    FUNCTION_GET_UVA_LIGHT_CALLBACK_CONFIGURATION = 3
-    FUNCTION_GET_UVB_LIGHT = 5
-    FUNCTION_SET_UVB_LIGHT_CALLBACK_CONFIGURATION = 6
-    FUNCTION_GET_UVB_LIGHT_CALLBACK_CONFIGURATION = 7
+    FUNCTION_GET_UVA = 1
+    FUNCTION_SET_UVA_CALLBACK_CONFIGURATION = 2
+    FUNCTION_GET_UVA_CALLBACK_CONFIGURATION = 3
+    FUNCTION_GET_UVB = 5
+    FUNCTION_SET_UVB_CALLBACK_CONFIGURATION = 6
+    FUNCTION_GET_UVB_CALLBACK_CONFIGURATION = 7
+    FUNCTION_GET_UVI = 9
+    FUNCTION_SET_UVI_CALLBACK_CONFIGURATION = 10
+    FUNCTION_GET_UVI_CALLBACK_CONFIGURATION = 11
+    FUNCTION_SET_CONFIGURATION = 13
+    FUNCTION_GET_CONFIGURATION = 14
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -60,6 +67,11 @@ class BrickletUVLightV2(Device):
     THRESHOLD_OPTION_INSIDE = 'i'
     THRESHOLD_OPTION_SMALLER = '<'
     THRESHOLD_OPTION_GREATER = '>'
+    INTEGRATION_TIME_50MS = 0
+    INTEGRATION_TIME_100MS = 1
+    INTEGRATION_TIME_200MS = 2
+    INTEGRATION_TIME_400MS = 3
+    INTEGRATION_TIME_800MS = 4
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -85,12 +97,17 @@ class BrickletUVLightV2(Device):
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[BrickletUVLightV2.FUNCTION_GET_UVA_LIGHT] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletUVLightV2.FUNCTION_SET_UVA_LIGHT_CALLBACK_CONFIGURATION] = BrickletUVLightV2.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletUVLightV2.FUNCTION_GET_UVA_LIGHT_CALLBACK_CONFIGURATION] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletUVLightV2.FUNCTION_GET_UVB_LIGHT] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletUVLightV2.FUNCTION_SET_UVB_LIGHT_CALLBACK_CONFIGURATION] = BrickletUVLightV2.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletUVLightV2.FUNCTION_GET_UVB_LIGHT_CALLBACK_CONFIGURATION] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletUVLightV2.FUNCTION_GET_UVA] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletUVLightV2.FUNCTION_SET_UVA_CALLBACK_CONFIGURATION] = BrickletUVLightV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletUVLightV2.FUNCTION_GET_UVA_CALLBACK_CONFIGURATION] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletUVLightV2.FUNCTION_GET_UVB] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletUVLightV2.FUNCTION_SET_UVB_CALLBACK_CONFIGURATION] = BrickletUVLightV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletUVLightV2.FUNCTION_GET_UVB_CALLBACK_CONFIGURATION] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletUVLightV2.FUNCTION_GET_UVI] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletUVLightV2.FUNCTION_SET_UVI_CALLBACK_CONFIGURATION] = BrickletUVLightV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletUVLightV2.FUNCTION_GET_UVI_CALLBACK_CONFIGURATION] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletUVLightV2.FUNCTION_SET_CONFIGURATION] = BrickletUVLightV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletUVLightV2.FUNCTION_GET_CONFIGURATION] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletUVLightV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletUVLightV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletUVLightV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -104,32 +121,35 @@ class BrickletUVLightV2(Device):
         self.response_expected[BrickletUVLightV2.FUNCTION_READ_UID] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletUVLightV2.FUNCTION_GET_IDENTITY] = BrickletUVLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletUVLightV2.CALLBACK_UVA_LIGHT] = 'I'
-        self.callback_formats[BrickletUVLightV2.CALLBACK_UVB_LIGHT] = 'I'
+        self.callback_formats[BrickletUVLightV2.CALLBACK_UVA] = 'i'
+        self.callback_formats[BrickletUVLightV2.CALLBACK_UVB] = 'i'
+        self.callback_formats[BrickletUVLightV2.CALLBACK_UVI] = 'i'
 
 
-    def get_uva_light(self):
+    def get_uva(self):
         """
-        Returns the UVA light intensity of the sensor, the intensity is given
-        in µW/cm².
+        Returns the UVA intensity of the sensor, the intensity is given
+        in 1/10 mW/m². The sensor has not weighted the intensity with the erythemal
+        action spectrum to get the skin-affecting irradiation. Therefore, you cannot
+        just divide the value by 250 to get the UVA index. To get the UV index use
+        :ref:`Get UVI`.
 
-        UVA light index (UVAI) can be calculated as:
-        UVAI = ((UVA * 2) / 9) * 0.01
+        If the sensor is saturated, then -1 is returned, see :func:`Set Configuration`.
 
         If you want to get the intensity periodically, it is recommended to use the
-        :cb:`UVA Light` callback and set the period with
-        :func:`Set UVA Light Callback Configuration`.
+        :cb:`UVA` callback and set the period with
+        :func:`Set UVA Callback Configuration`.
 
 
         If you want to get the value periodically, it is recommended to use the
-        :cb:`UVA Light` callback. You can set the callback configuration
-        with :func:`Set UVA Light Callback Configuration`.
+        :cb:`UVA` callback. You can set the callback configuration
+        with :func:`Set UVA Callback Configuration`.
         """
-        return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVA_LIGHT, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVA, (), '', 'i')
 
-    def set_uva_light_callback_configuration(self, period, value_has_to_change, option, min, max):
+    def set_uva_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`UVA Light` callback is triggered
+        The period in ms is the period with which the :cb:`UVA` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -141,7 +161,7 @@ class BrickletUVLightV2(Device):
 
         It is furthermore possible to constrain the callback with thresholds.
 
-        The `option`-parameter together with min/max sets a threshold for the :cb:`UVA Light` callback.
+        The `option`-parameter together with min/max sets a threshold for the :cb:`UVA` callback.
 
         The following options are possible:
 
@@ -165,36 +185,38 @@ class BrickletUVLightV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_SET_UVA_LIGHT_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c I I', '')
+        self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_SET_UVA_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
 
-    def get_uva_light_callback_configuration(self):
+    def get_uva_callback_configuration(self):
         """
-        Returns the callback configuration as set by :func:`Set UVA Light Callback Configuration`.
+        Returns the callback configuration as set by :func:`Set UVA Callback Configuration`.
         """
-        return GetUVALightCallbackConfiguration(*self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVA_LIGHT_CALLBACK_CONFIGURATION, (), '', 'I ! c I I'))
+        return GetUVACallbackConfiguration(*self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVA_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
 
-    def get_uvb_light(self):
+    def get_uvb(self):
         """
-        Returns the UVB light intensity of the sensor, the intensity is given
-        in µW/cm².
+        Returns the UVB intensity of the sensor, the intensity is given
+        in 1/10 mW/m². The sensor has not weighted the intensity with the erythemal
+        action spectrum to get the skin-affecting irradiation. Therefore, you cannot
+        just divide the value by 250 to get the UVB index. To get the UV index use
+        :ref:`Get UVI`.
 
-        UVB light index (UVBI) can be calculated as:
-        UVBI = ((UVB * 4) / 8) * 0.01
+        If the sensor is saturated, then -1 is returned, see :func:`Set Configuration`.
 
         If you want to get the intensity periodically, it is recommended to use the
-        :cb:`UVB Light` callback and set the period with
-        :func:`Set UVB Light Callback Configuration`.
+        :cb:`UVB` callback and set the period with
+        :func:`Set UVB Callback Configuration`.
 
 
         If you want to get the value periodically, it is recommended to use the
-        :cb:`UVB Light` callback. You can set the callback configuration
-        with :func:`Set UVB Light Callback Configuration`.
+        :cb:`UVB` callback. You can set the callback configuration
+        with :func:`Set UVB Callback Configuration`.
         """
-        return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVB_LIGHT, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVB, (), '', 'i')
 
-    def set_uvb_light_callback_configuration(self, period, value_has_to_change, option, min, max):
+    def set_uvb_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`UVB Light` callback is triggered
+        The period in ms is the period with which the :cb:`UVB` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -206,7 +228,7 @@ class BrickletUVLightV2(Device):
 
         It is furthermore possible to constrain the callback with thresholds.
 
-        The `option`-parameter together with min/max sets a threshold for the :cb:`UVB Light` callback.
+        The `option`-parameter together with min/max sets a threshold for the :cb:`UVB` callback.
 
         The following options are possible:
 
@@ -230,13 +252,99 @@ class BrickletUVLightV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_SET_UVB_LIGHT_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c I I', '')
+        self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_SET_UVB_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
 
-    def get_uvb_light_callback_configuration(self):
+    def get_uvb_callback_configuration(self):
         """
-        Returns the callback configuration as set by :func:`Set UVB Light Callback Configuration`.
+        Returns the callback configuration as set by :func:`Set UVB Callback Configuration`.
         """
-        return GetUVBLightCallbackConfiguration(*self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVB_LIGHT_CALLBACK_CONFIGURATION, (), '', 'I ! c I I'))
+        return GetUVBCallbackConfiguration(*self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVB_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
+
+    def get_uvi(self):
+        """
+        Returns the UV index of the sensor, the index is given in 1/10.
+
+        If the sensor is saturated, then -1 is returned, see :func:`Set Configuration`.
+
+        If you want to get the intensity periodically, it is recommended to use the
+        :cb:`UVI` callback and set the period with
+        :func:`Set UVI Callback Configuration`.
+
+
+        If you want to get the value periodically, it is recommended to use the
+        :cb:`UVI` callback. You can set the callback configuration
+        with :func:`Set UVI Callback Configuration`.
+        """
+        return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVI, (), '', 'i')
+
+    def set_uvi_callback_configuration(self, period, value_has_to_change, option, min, max):
+        """
+        The period in ms is the period with which the :cb:`UVI` callback is triggered
+        periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change
+        within the period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        It is furthermore possible to constrain the callback with thresholds.
+
+        The `option`-parameter together with min/max sets a threshold for the :cb:`UVI` callback.
+
+        The following options are possible:
+
+        .. csv-table::
+         :header: "Option", "Description"
+         :widths: 10, 100
+
+         "'x'",    "Threshold is turned off"
+         "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
+         "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
+         "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
+
+        If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
+
+        The default value is (0, false, 'x', 0, 0).
+        """
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+        option = create_char(option)
+        min = int(min)
+        max = int(max)
+
+        self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_SET_UVI_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
+
+    def get_uvi_callback_configuration(self):
+        """
+        Returns the callback configuration as set by :func:`Set UVI Callback Configuration`.
+        """
+        return GetUVICallbackConfiguration(*self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVI_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
+
+    def set_configuration(self, integration_time):
+        """
+        Sets the configuration of the sensor. The integration time can be configured
+        between 50 and 800 ms. With a shorter integration time the sensor reading updates
+        more often but contains more noise. With a longer integration the sensor reading
+        contains less noise but updates less often.
+
+        With a longer integration time (especially 800 ms) and a higher UV intensity the
+        sensor can be saturated. If this happens the UVA/UVB/UVI readings are all -1.
+        In this case you need to choose a shorter integration time.
+
+        Default value: 400 ms.
+        """
+        integration_time = int(integration_time)
+
+        self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_SET_CONFIGURATION, (integration_time,), 'B', '')
+
+    def get_configuration(self):
+        """
+        Returns the configuration as set by :func:`Set Configuration`.
+        """
+        return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_CONFIGURATION, (), '', 'B')
 
     def get_spitfp_error_count(self):
         """

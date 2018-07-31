@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-07-26.      #
+# This file was automatically generated on 2018-07-31.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -290,7 +290,7 @@ class BrickletDistanceIRV2(Device):
 
     def get_distance_led_config(self):
         """
-        Returns the LED configuration as set by :func:`Set Info LED Config`
+        Returns the LED configuration as set by :func:`Set Distance LED Config`
         """
         return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_DISTANCE_LED_CONFIG, (), '', 'B')
 

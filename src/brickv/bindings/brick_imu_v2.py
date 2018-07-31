@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-22.      #
+# This file was automatically generated on 2018-07-27.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -135,6 +135,7 @@ class BrickIMUV2(Device):
     SENSOR_FUSION_OFF = 0
     SENSOR_FUSION_ON = 1
     SENSOR_FUSION_ON_WITHOUT_MAGNETOMETER = 2
+    SENSOR_FUSION_ON_WITHOUT_FAST_MAGNETOMETER_CALIBRATION = 3
     COMMUNICATION_METHOD_NONE = 0
     COMMUNICATION_METHOD_USB = 1
     COMMUNICATION_METHOD_SPI_STACK = 2
@@ -570,6 +571,12 @@ class BrickIMUV2(Device):
         In this mode the calculated orientation is relative (with magnetometer it is
         absolute with respect to the earth). However, the calculation can't be influenced
         by spurious magnetic fields.
+
+        Since firmware version 2.0.13 you can also use a fusion mode without fast
+        magnetometer calibration. This mode is the same as the normal fusion mode,
+        but the fast magnetometer calibration is turned off. So to find the orientation
+        the first time will likely take longer, but small magnetic influences might
+        not affect the automatic calibration as much.
 
         By default sensor fusion is on.
 
