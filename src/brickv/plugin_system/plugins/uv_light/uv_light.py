@@ -33,7 +33,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class IndexLabel(FixedSizeLabel):
     def setText(self, text):
-        super(IndexLabel, self).setText('UV Index: ' + text)
+        super(IndexLabel, self).setText(' UV Index: ' + text + ' ')
 
 class UVLight(PluginBase):
     def __init__(self, *args):
@@ -45,7 +45,7 @@ class UVLight(PluginBase):
                                              self.cb_uv_light,
                                              self.increase_error_count)
 
-        self.index_label = IndexLabel('UV Index:')
+        self.index_label = IndexLabel(' UV Index: ? ')
 
         self.current_uv_light = None
 
@@ -80,14 +80,19 @@ class UVLight(PluginBase):
         self.index_label.setText(unicode(index))
 
         if index < 2.5:
-            color = 'green'
+            background = 'green'
+            color = 'white'
         elif index < 5.5:
-            color = 'yellow'
+            background = 'yellow'
+            color = 'black'
         elif index < 7.5:
-            color = 'orange'
+            background = 'orange'
+            color = 'black'
         elif index < 10.5:
-            color = 'red'
+            background = 'red'
+            color = 'white'
         else:
-            color = 'magenta'
+            background = 'magenta'
+            color = 'white'
 
-        self.index_label.setStyleSheet('QLabel {{ color : {0} }}'.format(color))
+        self.index_label.setStyleSheet('QLabel {{ background : {0}; color : {1} }}'.format(background, color))
