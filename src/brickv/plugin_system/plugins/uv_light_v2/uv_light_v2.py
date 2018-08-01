@@ -75,6 +75,7 @@ class UVLightV2(COMCUPluginBase):
 
         self.saturation_label = QLabel('Sensor is saturated, choose a shorter integration time!')
         self.saturation_label.setStyleSheet('QLabel { color : red }')
+        self.saturation_label.hide()
 
         hlayout = QHBoxLayout()
         hlayout.addWidget(self.time_label)
