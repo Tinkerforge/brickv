@@ -406,14 +406,14 @@ class IndustrialDual020mAV2(COMCUPluginBase):
             self.led_config_ch1_combo.setCurrentIndex(config)
             self.led_config_ch1_combo_changed(config)
 
-    def get_channel_led_status_config_async(self, channel, c):
+    def get_channel_led_status_config_async(self, channel, config):
         if channel == CH_0:
-            self.led_status_config_ch0_combo.setCurrentIndex(c.config)
-            self.led_status_config_ch0_combo_changed(c.config)
-            self.led_status_config_ch0_max_sbox.setValue(c.max / 1000000)
-            self.led_status_config_ch0_min_sbox.setValue(c.min / 1000000)
+            self.led_status_config_ch0_combo.setCurrentIndex(config.config)
+            self.led_status_config_ch0_combo_changed(config.config)
+            self.led_status_config_ch0_max_sbox.setValue(config.max / 1000000)
+            self.led_status_config_ch0_min_sbox.setValue(config.min / 1000000)
         elif channel == CH_1:
-            self.led_status_config_ch1_combo.setCurrentIndex(c.config)
-            self.led_status_config_ch1_combo_changed(c.config)
-            self.led_status_config_ch1_max_sbox.setValue(c.max / 1000000)
-            self.led_status_config_ch1_min_sbox.setValue(c.min / 1000000)
+            self.led_status_config_ch1_combo.setCurrentIndex(config.config)
+            self.led_status_config_ch1_combo_changed(config.config)
+            self.led_status_config_ch1_max_sbox.setValue(config.max / 1000000)
+            self.led_status_config_ch1_min_sbox.setValue(config.min / 1000000)
