@@ -25,6 +25,7 @@ from datetime import datetime
 from threading import Thread
 import time
 import math
+import random
 
 from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QDialog
@@ -65,51 +66,80 @@ class MeasurmentThread(Thread):
         self.calibration = calibration
         self.running = True
 
+    def get_rtc_timestamp(self):
+        rtc_now = 0
+        getter_start = time.time()
+
+        while self.running:
+            try:
+                rtc_now = self.calibration.rtc.get_timestamp() / 1000.0
+                break
+            except Exception as e:
+                if self.running:
+                    self.calibration.qtcb_timeout.emit()
+
+                time.sleep(0.1)
+
+        getter_end = time.time()
+        getter_diff = getter_end - getter_start
+
+        return rtc_now, getter_diff
+
     def loop(self):
         local_start = time.time()
 
-        try:
-            rtc_start = self.calibration.rtc.get_timestamp() / 1000.0
-        except:
-            self.calibration.qtcb_measurement_error.emit('Could not get Real-Time Clock timestamp')
-            return
+        rtc_start, getter_diff = self.get_rtc_timestamp()
 
         local_now = local_start
         rtc_now = rtc_start
 
-        time.sleep(1)
-
         while self.running:
+            last_getter_diff = getter_diff
             last_local = local_now
             last_rtc = rtc_now
 
+            sleep_target = random.uniform(0.95, 1.45)
+
+            sleep_start = time.time()
+            time.sleep(sleep_target)
+            sleep_end = time.time()
+            sleep_diff = sleep_end - sleep_start
+
+            if self.running and (sleep_diff < sleep_target - 0.1 or sleep_diff > sleep_target + 0.5):
+                self.calibration.qtcb_warning.emit('Measurement might be tainted by abnormal sleep: {:.03f} seconds'.format(sleep_diff))
+
             local_now = time.time()
 
-            try:
-                rtc_now = self.calibration.rtc.get_timestamp() / 1000.0
-            except:
-                self.calibration.qtcb_measurement_error.emit('Could not get Real-Time Clock timestamp')
-                return
+            rtc_now, getter_diff = self.get_rtc_timestamp()
 
             local_diff = local_now - last_local
 
-            if local_diff < 0.9 or local_diff > 1.1:
-                self.calibration.qtcb_measurement_error.emit('Measurement interrupted by Local Clock jump')
-                return
+            # the current local-diff is mostly affected by the last-getter-diff
+            # and the current sleep-diff. the current getter-diff has no effect
+            # as it didn't happen between the last and the current local measurement
+            if self.running and (local_diff < sleep_target - 0.1 or local_diff > last_getter_diff + sleep_diff + 0.25):
+                self.calibration.qtcb_warning.emit('Measurement might be tainted by Local Clock jump: {:.03f} seconds'.format(local_diff))
 
             rtc_diff = rtc_now - last_rtc
 
-            if rtc_diff < 0.9 or rtc_diff > 1.1:
-                self.calibration.qtcb_measurement_error.emit('Measurement interrupted by Real-Time Clock jump')
-                return
+            # the current rtc-diff is mostly affected by the last-getter-diff,
+            # the current getter-diff and current sleep-diff. in contrast to the
+            # local-diff, the rtc-diff is affected by both getter-diffs. on average
+            # one should assume that the RTC is sampled in the middle of the
+            # getter-diff. but in the worst case the RTC might be sampled at the
+            # beginning of the last-getter-diff and at the end of the current
+            # getter-diff. therefore, both getter-diffs have to be added for an
+            # upper bound on the rtc-diff
+            if self.running and (rtc_diff < sleep_target - 0.1 or rtc_diff > last_getter_diff + sleep_diff + getter_diff + 0.25):
+                self.calibration.qtcb_warning.emit('Measurement might be tainted by Real-Time Clock jump: {:.03f} seconds'.format(rtc_diff))
 
-            self.calibration.qtcb_measured_duration.emit(local_now - local_start, rtc_now - rtc_start)
-
-            time.sleep(1)
+            if self.running:
+                self.calibration.qtcb_measured_duration.emit(local_now - local_start, rtc_now - rtc_start)
 
 class Calibration(QDialog, Ui_Calibration):
     qtcb_measured_duration = pyqtSignal(float, float)
-    qtcb_measurement_error = pyqtSignal(str)
+    qtcb_warning = pyqtSignal(str)
+    qtcb_timeout = pyqtSignal()
 
     def __init__(self, parent):
         QDialog.__init__(self, parent, get_modeless_dialog_flags())
@@ -122,12 +152,16 @@ class Calibration(QDialog, Ui_Calibration):
         self.measured_ppm_avg = 0
         self.measured_ppm_history = []
         self.measured_ppm_index = 0
+        self.timeout_count = 0
 
-        self.label_error_title.hide()
-        self.label_error_message.hide()
+        self.label_warning_title.hide()
+        self.label_warning_message.hide()
+        self.label_timeout_title.hide()
+        self.label_timeout_count.hide()
 
         self.qtcb_measured_duration.connect(self.cb_measured_duration)
-        self.qtcb_measurement_error.connect(self.cb_measurement_error)
+        self.qtcb_warning.connect(self.cb_warning)
+        self.qtcb_timeout.connect(self.cb_timeout)
 
         self.button_restart.clicked.connect(self.restart)
         self.button_close.clicked.connect(self.close)
@@ -157,13 +191,18 @@ class Calibration(QDialog, Ui_Calibration):
         if self.measurment_thread != None:
             self.measurment_thread.running = False
 
-        self.label_error_title.hide()
-        self.label_error_message.hide()
+        self.label_warning_title.hide()
+        self.label_warning_message.hide()
+        self.label_timeout_title.hide()
+        self.label_timeout_count.hide()
 
         self.measured_ppm = 0
         self.measured_ppm_avg = 0
         self.measured_ppm_history = []
         self.measured_ppm_index = 0
+        self.timeout_count = 0
+
+        self.cb_measured_duration(0, 0)
 
         self.measurment_thread = MeasurmentThread(self)
         self.measurment_thread.start()
@@ -195,16 +234,16 @@ class Calibration(QDialog, Ui_Calibration):
         rtc_hour = int(rtc_duration) / 3600
         rtc_minute = int(rtc_duration) / 60 % 60
         rtc_second = int(rtc_duration) % 60
-        rtc_millisecond = int((rtc_duration % 1) * 1000000)
+        rtc_centisecond = int((rtc_duration % 1) * 100)
 
-        self.label_measured_rtc_duration.setText('%d:%02d:%02d.%06d' % (rtc_hour, rtc_minute, rtc_second, rtc_millisecond))
+        self.label_measured_rtc_duration.setText('%d:%02d:%02d.%02d' % (rtc_hour, rtc_minute, rtc_second, rtc_centisecond))
 
         local_hour = int(local_duration) / 3600
         local_minute = int(local_duration) / 60 % 60
         local_second = int(local_duration) % 60
-        local_millisecond = int((local_duration % 1) * 1000000)
+        local_microsecond = int((local_duration % 1) * 1000000)
 
-        self.label_measured_local_duration.setText('%d:%02d:%02d.%06d' % (local_hour, local_minute, local_second, local_millisecond))
+        self.label_measured_local_duration.setText('%d:%02d:%02d.%06d' % (local_hour, local_minute, local_second, local_microsecond))
 
         self.label_measured_difference.setText('%.06f seconds' % (rtc_duration - local_duration))
 
@@ -242,13 +281,19 @@ class Calibration(QDialog, Ui_Calibration):
         else:
             self.label_measured_offset.setText('undefined')
 
-    def cb_measurement_error(self, message):
-        self.measurment_thread = None
+    def cb_warning(self, message):
+        self.label_warning_message.setText(message)
 
-        self.label_error_message.setText(message)
+        self.label_warning_title.show()
+        self.label_warning_message.show()
 
-        self.label_error_title.show()
-        self.label_error_message.show()
+    def cb_timeout(self):
+        self.timeout_count += 1
+
+        self.label_timeout_count.setText(str(self.timeout_count))
+
+        self.label_timeout_title.show()
+        self.label_timeout_count.show()
 
 class RealTimeClock(PluginBase, Ui_RealTimeClock):
     qtcb_alarm = pyqtSignal(int, int, int, int, int, int, int, int, int)

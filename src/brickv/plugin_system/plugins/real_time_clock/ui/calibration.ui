@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>703</width>
-    <height>769</height>
+    <height>884</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,7 +55,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>0:00:00.000000</string>
+           <string>0:00:00.00</string>
           </property>
          </widget>
         </item>
@@ -97,7 +97,7 @@
           </property>
          </widget>
         </item>
-        <item row="10" column="0" colspan="2">
+        <item row="11" column="0" colspan="2">
          <widget class="QPushButton" name="button_restart">
           <property name="text">
            <string>Restart</string>
@@ -105,7 +105,7 @@
          </widget>
         </item>
         <item row="9" column="0">
-         <widget class="QLabel" name="label_error_title">
+         <widget class="QLabel" name="label_warning_title">
           <property name="font">
            <font>
             <weight>75</weight>
@@ -113,12 +113,15 @@
            </font>
           </property>
           <property name="text">
-           <string>Error:</string>
+           <string>Latest Warning:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
           </property>
          </widget>
         </item>
         <item row="9" column="1">
-         <widget class="QLabel" name="label_error_message">
+         <widget class="QLabel" name="label_warning_message">
           <property name="font">
            <font>
             <weight>75</weight>
@@ -127,6 +130,9 @@
           </property>
           <property name="text">
            <string>&lt;message&gt;</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -161,6 +167,32 @@
           </property>
           <property name="wordWrap">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="0">
+         <widget class="QLabel" name="label_timeout_title">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Timeouts:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="1">
+         <widget class="QLabel" name="label_timeout_count">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>&lt;count&gt;</string>
           </property>
          </widget>
         </item>
