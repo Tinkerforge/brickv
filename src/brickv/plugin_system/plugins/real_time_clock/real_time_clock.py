@@ -3,7 +3,7 @@
 Real-Time Clock Plugin
 Copyright (C) 2016 Matthias Bolte <matthias@tinkerforge.com>
 
-real_time_clock.py: Hall Effect Plugin Implementation
+real_time_clock.py: Real-Time Clock Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
