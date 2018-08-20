@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-07-31.      #
+# This file was automatically generated on 2018-08-17.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -18,6 +18,9 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
+GetBatteryStatistics = namedtuple('BatteryStatistics', ['battery_connected', 'capacity_full', 'capacity_nominal', 'capacity_remaining', 'percentage_charge', 'time_to_empty', 'time_to_full', 'voltage_battery', 'voltage_usb', 'voltage_dc', 'current_flow', 'temperature_battery'])
+GetPowerOff = namedtuple('PowerOff', ['power_off_delay', 'power_off_duration', 'raspberry_pi_off', 'bricklets_off', 'enable_sleep_indicator'])
+GetTime = namedtuple('Time', ['year', 'month', 'day', 'hour', 'minute', 'second', 'weekday'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -32,6 +35,11 @@ class BrickletHAT(Device):
 
 
 
+    FUNCTION_GET_BATTERY_STATISTICS = 1
+    FUNCTION_SET_POWER_OFF = 2
+    FUNCTION_GET_POWER_OFF = 3
+    FUNCTION_SET_TIME = 4
+    FUNCTION_GET_TIME = 5
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -45,6 +53,13 @@ class BrickletHAT(Device):
     FUNCTION_READ_UID = 249
     FUNCTION_GET_IDENTITY = 255
 
+    WEEKDAY_MONDAY = 1
+    WEEKDAY_TUESDAY = 2
+    WEEKDAY_WEDNESDAY = 3
+    WEEKDAY_THURSDAY = 4
+    WEEKDAY_FRIDAY = 5
+    WEEKDAY_SATURDAY = 6
+    WEEKDAY_SUNDAY = 7
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -70,6 +85,11 @@ class BrickletHAT(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletHAT.FUNCTION_GET_BATTERY_STATISTICS] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletHAT.FUNCTION_SET_POWER_OFF] = BrickletHAT.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletHAT.FUNCTION_GET_POWER_OFF] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletHAT.FUNCTION_SET_TIME] = BrickletHAT.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletHAT.FUNCTION_GET_TIME] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHAT.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHAT.FUNCTION_SET_BOOTLOADER_MODE] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHAT.FUNCTION_GET_BOOTLOADER_MODE] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -84,6 +104,50 @@ class BrickletHAT(Device):
         self.response_expected[BrickletHAT.FUNCTION_GET_IDENTITY] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+
+    def get_battery_statistics(self):
+        """
+
+        """
+        return GetBatteryStatistics(*self.ipcon.send_request(self, BrickletHAT.FUNCTION_GET_BATTERY_STATISTICS, (), '', '! i i i i i i i i i i i'))
+
+    def set_power_off(self, power_off_delay, power_off_duration, raspberry_pi_off, bricklets_off, enable_sleep_indicator):
+        """
+
+        """
+        power_off_delay = int(power_off_delay)
+        power_off_duration = int(power_off_duration)
+        raspberry_pi_off = bool(raspberry_pi_off)
+        bricklets_off = bool(bricklets_off)
+        enable_sleep_indicator = bool(enable_sleep_indicator)
+
+        self.ipcon.send_request(self, BrickletHAT.FUNCTION_SET_POWER_OFF, (power_off_delay, power_off_duration, raspberry_pi_off, bricklets_off, enable_sleep_indicator), 'I I ! ! !', '')
+
+    def get_power_off(self):
+        """
+
+        """
+        return GetPowerOff(*self.ipcon.send_request(self, BrickletHAT.FUNCTION_GET_POWER_OFF, (), '', 'I I ! ! !'))
+
+    def set_time(self, year, month, day, hour, minute, second, weekday):
+        """
+
+        """
+        year = int(year)
+        month = int(month)
+        day = int(day)
+        hour = int(hour)
+        minute = int(minute)
+        second = int(second)
+        weekday = int(weekday)
+
+        self.ipcon.send_request(self, BrickletHAT.FUNCTION_SET_TIME, (year, month, day, hour, minute, second, weekday), 'H B B B B B B', '')
+
+    def get_time(self):
+        """
+
+        """
+        return GetTime(*self.ipcon.send_request(self, BrickletHAT.FUNCTION_GET_TIME, (), '', 'H B B B B B B'))
 
     def get_spitfp_error_count(self):
         """
