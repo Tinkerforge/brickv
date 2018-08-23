@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-07-31.      #
+# This file was automatically generated on 2018-08-23.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -132,7 +132,7 @@ class BrickletUVLightV2(Device):
         in 1/10 mW/m². The sensor has not weighted the intensity with the erythemal
         action spectrum to get the skin-affecting irradiation. Therefore, you cannot
         just divide the value by 250 to get the UVA index. To get the UV index use
-        :ref:`Get UVI`.
+        :func:`Get UVI`.
 
         If the sensor is saturated, then -1 is returned, see :func:`Set Configuration`.
 
@@ -199,7 +199,7 @@ class BrickletUVLightV2(Device):
         in 1/10 mW/m². The sensor has not weighted the intensity with the erythemal
         action spectrum to get the skin-affecting irradiation. Therefore, you cannot
         just divide the value by 250 to get the UVB index. To get the UV index use
-        :ref:`Get UVI`.
+        :func:`Get UVI`.
 
         If the sensor is saturated, then -1 is returned, see :func:`Set Configuration`.
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-08-17.      #
+# This file was automatically generated on 2018-08-23.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -113,7 +113,7 @@ class BrickletHAT(Device):
 
     def set_power_off(self, power_off_delay, power_off_duration, raspberry_pi_off, bricklets_off, enable_sleep_indicator):
         """
-
+        Enable Sleep Indicator => status led blinks in 1s interval => ~0.3mA
         """
         power_off_delay = int(power_off_delay)
         power_off_duration = int(power_off_duration)
