@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-07-27.      #
+# This file was automatically generated on 2018-08-27.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -20,7 +20,8 @@ except ValueError:
 
 GetAllValues = namedtuple('AllValues', ['iaq_index', 'iaq_index_accuracy', 'temperature', 'humidity', 'air_pressure'])
 GetAllValuesCallbackConfiguration = namedtuple('AllValuesCallbackConfiguration', ['period', 'value_has_to_change'])
-GetIAQIndexCallbackConfiguration = namedtuple('IAQIndexCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
+GetIAQIndex = namedtuple('IAQIndex', ['iaq_index', 'iaq_index_accuracy'])
+GetIAQIndexCallbackConfiguration = namedtuple('IAQIndexCallbackConfiguration', ['period', 'value_has_to_change'])
 GetTemperatureCallbackConfiguration = namedtuple('TemperatureCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
 GetHumidityCallbackConfiguration = namedtuple('HumidityCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
 GetAirPressureCallbackConfiguration = namedtuple('AirPressureCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
@@ -138,7 +139,7 @@ class BrickletAirQuality(Device):
         self.response_expected[BrickletAirQuality.FUNCTION_GET_IDENTITY] = BrickletAirQuality.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletAirQuality.CALLBACK_ALL_VALUES] = 'i B i i i'
-        self.callback_formats[BrickletAirQuality.CALLBACK_IAQ_INDEX] = 'i'
+        self.callback_formats[BrickletAirQuality.CALLBACK_IAQ_INDEX] = 'i B'
         self.callback_formats[BrickletAirQuality.CALLBACK_TEMPERATURE] = 'i'
         self.callback_formats[BrickletAirQuality.CALLBACK_HUMIDITY] = 'i'
         self.callback_formats[BrickletAirQuality.CALLBACK_AIR_PRESSURE] = 'i'
@@ -219,7 +220,8 @@ class BrickletAirQuality(Device):
 
     def get_iaq_index(self):
         """
-        Returns the IAQ (In-Air Quality) Index. The IAQ Index goes from 0 to 500. The higher the IAQ index, the greater the level of air pollution.
+        Returns the IAQ (In-Air Quality) index and accuracy. The IAQ index goes from
+        0 to 500. The higher the IAQ index, the greater the level of air pollution.
 
         .. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
            :scale: 100 %
@@ -227,58 +229,37 @@ class BrickletAirQuality(Device):
            :align: center
            :target: ../../_images/Misc/bricklet_air_quality_iaq_index.png
 
-
         If you want to get the value periodically, it is recommended to use the
         :cb:`IAQ Index` callback. You can set the callback configuration
         with :func:`Set IAQ Index Callback Configuration`.
         """
-        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_IAQ_INDEX, (), '', 'i')
+        return GetIAQIndex(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_IAQ_INDEX, (), '', 'i B'))
 
-    def set_iaq_index_callback_configuration(self, period, value_has_to_change, option, min, max):
+    def set_iaq_index_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`IAQ Index` callback is triggered
-        periodically. A value of 0 turns the callback off.
+        The period in ms is the period with which the :cb:`IAQ Index`
+        callback is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
-        triggered after the value has changed. If the value didn't change
-        within the period, the callback is triggered immediately on change.
+        triggered after at least one of the values has changed. If the values didn't
+        change within the period, the callback is triggered immediately on change.
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
 
-        It is furthermore possible to constrain the callback with thresholds.
-
-        The `option`-parameter together with min/max sets a threshold for the :cb:`IAQ Index` callback.
-
-        The following options are possible:
-
-        .. csv-table::
-         :header: "Option", "Description"
-         :widths: 10, 100
-
-         "'x'",    "Threshold is turned off"
-         "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
-         "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
-         "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
-         "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
-
-        If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
+        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
-        option = create_char(option)
-        min = int(min)
-        max = int(max)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_IAQ_INDEX_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_IAQ_INDEX_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
 
     def get_iaq_index_callback_configuration(self):
         """
-        Returns the callback configuration as set by :func:`Set IAQ Index Callback Configuration`.
+        Returns the callback configuration as set by
+        :func:`Set IAQ Index Callback Configuration`.
         """
-        return GetIAQIndexCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_IAQ_INDEX_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
+        return GetIAQIndexCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_IAQ_INDEX_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
     def get_temperature(self):
         """
