@@ -771,12 +771,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
             return base58encode(self.current_bricklet_device().read_uid())
 
         brick = self.current_parent_device()
-        port = self.current_bricklet_info().position
+        port = self.current_bricklet_port()
         return self.parent.ipcon.read_bricklet_uid(brick, port)
 
     def uid_save_clicked(self):
         brick = self.current_parent_device()
-        port = self.current_bricklet_info().position
+        port = self.current_bricklet_port()
         uid = self.edit_uid.text()
 
         if len(uid) == 0:
@@ -830,8 +830,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.combo_port.clear()
 
         brick_info = self.combo_parent.itemData(index)
+
         if brick_info == None:
             return
+
         first_index = None
 
         # First display all of the standard ports of the Brick and add
@@ -844,9 +846,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         first_index = self.combo_port.count()
 
                     name = '{0}: {1}'.format(port.upper(), bricklet_info.get_combo_item())
-                    self.combo_port.addItem(name, bricklet_info)
+                    self.combo_port.addItem(name, (port, bricklet_info))
                     continue
-            self.combo_port.addItem(port.upper(), None)
+
+            self.combo_port.addItem(port.upper(), (port, None))
 
         # Then we fill the non-standard ports (e.g. RPi or Isolator Bricklet)
         for port, bricklet_info in brick_info.connections.items():
@@ -858,7 +861,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     first_index = self.combo_port.count()
 
                 name = '{0}: {1}'.format(port.upper(), bricklet_info.get_combo_item())
-                self.combo_port.addItem(name, bricklet_info)
+                self.combo_port.addItem(name, (port, bricklet_info))
 
         if first_index != None:
             self.combo_port.setCurrentIndex(first_index)
@@ -873,7 +876,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.combo_plugin.setCurrentIndex(0)
             return
 
-        port_info = self.combo_port.itemData(index)
+        port_info = self.combo_port.itemData(index)[1]
+
         if port_info == None or port_info.url_part == None or len(port_info.url_part) == 0:
             self.combo_plugin.setCurrentIndex(0)
             return
@@ -1235,17 +1239,17 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 self.popup_fail('Bricklet', 'Could not read plugin file')
                 return
         else:
-            bricklet_info = self.combo_port.itemData(self.combo_port.currentIndex())
             url_part = self.combo_plugin.itemData(self.combo_plugin.currentIndex())
-            name = bricklet_info.name
-            version = bricklet_info.firmware_version_latest
+            plugin_info = self.plugin_infos[url_part]
+            name = plugin_info.name
+            version = plugin_info.firmware_version_latest
             plugin = self.download_bricklet_plugin(progress, url_part, self.current_bricklet_has_comcu(), name, version, popup=True)
 
             if not plugin:
                 return
 
         # Flash plugin
-        port = self.current_bricklet_info().position
+        port = self.current_bricklet_port()
         brick = self.current_parent_device()
         bricklet = self.current_bricklet_device()
 
@@ -1265,7 +1269,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
     def current_bricklet_info(self):
         try:
-            return self.combo_port.itemData(self.combo_port.currentIndex())
+            return self.combo_port.itemData(self.combo_port.currentIndex())[1]
+        except:
+            return None
+
+    def current_bricklet_port(self):
+        try:
+            return self.combo_port.itemData(self.combo_port.currentIndex())[0]
         except:
             return None
 
