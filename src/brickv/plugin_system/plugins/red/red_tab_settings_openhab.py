@@ -499,17 +499,28 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
 
         def cb_open(red_file):
             def cb_write(error):
+                def cb_openhab_set_configs_ownership(result):
+                    okay, message = check_script_result(result, decode_stderr=True)
+
+                    if not okay:
+                        QMessageBox.critical(get_main_window(),
+                                             'Apply Changes Error',
+                                             u'Error while setting ownership of {0}: {1}'.format(config.display_name, message))
+                    else:
+                        config.set_content(content)
+
                 red_file.release()
 
                 self.action_in_progress = False
                 self.update_ui_state()
 
                 if error != None:
-                    QMessageBox.critical(get_main_window(), 'Apply Changes Error',
+                    QMessageBox.critical(get_main_window(),
+                                        'Apply Changes Error',
                                          u'Error while writing {0}: {1}'.format(config.display_name, error))
                     return
 
-                config.set_content(content)
+                self.script_manager.execute_script('openhab_set_configs_ownership', cb_openhab_set_configs_ownership)
 
             red_file.write_async(content.encode('utf-8'), cb_write)
 
