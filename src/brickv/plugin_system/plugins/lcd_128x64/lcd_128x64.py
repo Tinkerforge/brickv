@@ -66,7 +66,7 @@ class ScribbleArea(QWidget):
         
     def touch_position(self, data):
         self.touch_x = data.x
-        self.touch_y = 63-data.y
+        self.touch_y = data.y
         self.touch_pressure = data.pressure
         self.touch_age = data.age
         
