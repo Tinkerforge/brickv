@@ -49,7 +49,6 @@ class HAT(COMCUPluginBase, Ui_HAT):
                                self.checkbox_rpi_off.isChecked(), 
                                self.checkbox_bricklets_off.isChecked(),
                                self.checkbox_sleep_indicator.isChecked())
-        print("test")
 
     def cb_battery_statistics(self, stats):
         if stats.battery_connected:
