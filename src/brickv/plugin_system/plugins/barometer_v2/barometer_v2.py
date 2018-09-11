@@ -68,7 +68,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.cbe_a.set_period(100)
         self.cbe_t.set_period(100)
 
-        self.sbox_cal_ref_air_pressure.setValue(1013.250)
+        self.sbox_cal_actual_air_pressure.setValue(1013.250)
         async_call(self.parent.barometer.get_calibration,
                    None,
                    self.get_calibration_async,
@@ -83,7 +83,7 @@ class Calibration(QDialog, Ui_Calibration):
                    self.parent.increase_error_count)
 
     def btn_cal_calibrate_clicked(self):
-        self.parent.barometer.set_calibration(int(self.p * 1000), int(self.sbox_cal_ref_air_pressure.value()*1000))
+        self.parent.barometer.set_calibration(int(self.p * 1000), int(self.sbox_cal_actual_air_pressure.value()*1000))
 
         async_call(self.parent.barometer.get_calibration,
                    None,
@@ -91,10 +91,10 @@ class Calibration(QDialog, Ui_Calibration):
                    self.parent.increase_error_count)
 
     def get_calibration_async(self, cal):
-        if cal.measured_air_pressure == 0 and cal.reference_air_pressure == 0:
-            self.sbox_cal_ref_air_pressure.setValue(1013.250)
+        if cal.measured_air_pressure == 0 and cal.actual_air_pressure == 0:
+            self.sbox_cal_actual_air_pressure.setValue(1013.250)
         else:
-            self.sbox_cal_ref_air_pressure.setValue(cal.reference_air_pressure/1000.0)
+            self.sbox_cal_actual_air_pressure.setValue(cal.actual_air_pressure/1000.0)
 
     def cb_get_p(self, air_pressure):
         self.p = air_pressure / 1000.0

@@ -22,7 +22,7 @@ GetAirPressureCallbackConfiguration = namedtuple('AirPressureCallbackConfigurati
 GetAltitudeCallbackConfiguration = namedtuple('AltitudeCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
 GetTemperatureCallbackConfiguration = namedtuple('TemperatureCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
 GetMovingAverageConfiguration = namedtuple('MovingAverageConfiguration', ['moving_average_length_air_pressure', 'moving_average_length_altitude', 'moving_average_length_temperature'])
-GetCalibration = namedtuple('Calibration', ['measured_air_pressure', 'reference_air_pressure'])
+GetCalibration = namedtuple('Calibration', ['measured_air_pressure', 'actual_air_pressure'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -366,20 +366,20 @@ class BrickletBarometerV2(Device):
         """
         return self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_GET_REFERENCE_AIR_PRESSURE, (), '', 'i')
 
-    def set_calibration(self, measured_air_pressure, reference_air_pressure):
+    def set_calibration(self, measured_air_pressure, actual_air_pressure):
         """
         Sets one point air pressure offset calibration value. The offset
         is the difference between currently measured air pressure by the
-        sensor and the air pressure measured by an accurate reference
-        barometer in mbar/1000. The values has a range of 260000 to 1260000.
+        sensor and the actual air pressure measured by an accurate barometer in
+        mbar/1000. The values has a range of 260000 to 1260000.
 
         After calibration the air pressure measurements will achieve accuracy
         of about 0.1 mbar.
         """
         measured_air_pressure = int(measured_air_pressure)
-        reference_air_pressure = int(reference_air_pressure)
+        actual_air_pressure = int(actual_air_pressure)
 
-        self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_SET_CALIBRATION, (measured_air_pressure, reference_air_pressure), 'i i', '')
+        self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_SET_CALIBRATION, (measured_air_pressure, actual_air_pressure), 'i i', '')
 
     def get_calibration(self):
         """

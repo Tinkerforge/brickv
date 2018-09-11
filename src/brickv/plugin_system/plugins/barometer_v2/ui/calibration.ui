@@ -19,7 +19,7 @@
      <item row="7" column="0" colspan="2">
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Step 2:&lt;/span&gt; Air pressure calibration.&lt;br/&gt;&lt;br/&gt;A) Measure the air pressure with a precise reference barometer.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;B) Enter the measured air pressure below in mbar.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;C) Click &amp;quot;Calibrate Air Pressure&amp;quot;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Step 2:&lt;/span&gt; Air pressure calibration.&lt;br/&gt;&lt;br/&gt;A) Measure the air pressure with a precise barometer.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;B) Enter the measured air pressure below in mbar.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;C) Click &amp;quot;Calibrate Air Pressure&amp;quot;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::RichText</enum>
@@ -43,7 +43,7 @@
      <item row="8" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Reference Air Pressure:</string>
+        <string>Actual Air Pressure:</string>
        </property>
       </widget>
      </item>
@@ -114,7 +114,7 @@
       </widget>
      </item>
      <item row="8" column="1">
-      <widget class="QDoubleSpinBox" name="sbox_cal_ref_air_pressure">
+      <widget class="QDoubleSpinBox" name="sbox_cal_actual_air_pressure">
        <property name="suffix">
         <string> mbar</string>
        </property>
