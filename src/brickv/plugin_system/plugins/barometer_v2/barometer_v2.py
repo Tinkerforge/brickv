@@ -268,7 +268,8 @@ class BarometerV2(COMCUPluginBase):
         self.plot_widget_air_pressure.stop = True
 
     def destroy(self):
-        pass
+        if self.calibration != None:
+            self.calibration.close()
 
     @staticmethod
     def has_device_identifier(device_identifier):
