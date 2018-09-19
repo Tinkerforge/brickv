@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QGridLayout, \
-                        QPushButton, QSpinBox, QFrame, QDoubleSpinBox, QDialog
+                        QPushButton, QSpinBox, QFrame, QDoubleSpinBox, QDialog, QComboBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings import ip_connection
@@ -48,7 +48,7 @@ class Calibration(QDialog, Ui_Calibration):
 
         self.btn_cal_remove.clicked.connect(self.btn_cal_remove_clicked)
         self.btn_cal_calibrate.clicked.connect(self.btn_cal_calibrate_clicked)
- 
+
         self.cbe_p = CallbackEmulator(self.parent.barometer.get_air_pressure,
                                       self.cb_get_p,
                                       self.parent.increase_error_count)
@@ -106,7 +106,7 @@ class Calibration(QDialog, Ui_Calibration):
 
     def cb_get_t(self, temperature):
         self.t = temperature/100.0
-        self.lbl_t.setText(u'{:.3f} °C'.format(self.t))
+        self.lbl_t.setText(u'{:.2f} °C'.format(self.t))
 
     def closeEvent(self, event):
         self.cbe_p.set_period(0)
@@ -141,39 +141,31 @@ class BarometerV2(COMCUPluginBase):
         self.btn_calibration = QPushButton('Calibration...')
         self.btn_calibration.clicked.connect(self.btn_calibration_clicked)
 
-        self.lbl_temperature = QLabel(u'Temperature:')
         self.lbl_temperature_value = QLabel('-')
 
-        self.lbl_reference = QLabel('Reference Air Pressure:')
         self.sbox_reference_air_pressure = QDoubleSpinBox()
-        self.sbox_reference_air_pressure.setSuffix(' mbar')
         self.sbox_reference_air_pressure.setMinimum(260)
         self.sbox_reference_air_pressure.setMaximum(1260)
         self.sbox_reference_air_pressure.setDecimals(3)
-        self.sbox_reference_air_pressure.setValue(1013.250)
+        self.sbox_reference_air_pressure.setValue(1013.25)
         self.sbox_reference_air_pressure.setSingleStep(1)
         self.btn_use_current = QPushButton('Use Current')
         self.btn_use_current.clicked.connect(self.btn_use_current_clicked)
-        self.sbox_reference_air_pressure.valueChanged.connect(self.sbox_reference_air_pressure_value_changed)
+        self.sbox_reference_air_pressure.editingFinished.connect(self.sbox_reference_air_pressure_editing_finished)
 
-        self.sbox_moving_avg_len_altitude = QSpinBox()
-        self.sbox_moving_avg_len_temperature = QSpinBox()
         self.sbox_moving_avg_len_air_pressure = QSpinBox()
-        self.sbox_moving_avg_len_altitude.setMinimum(1)
-        self.sbox_moving_avg_len_altitude.setMaximum(1000)
-        self.sbox_moving_avg_len_altitude.setSingleStep(1)
-        self.sbox_moving_avg_len_altitude.setValue(100)
-        self.sbox_moving_avg_len_temperature.setMinimum(1)
-        self.sbox_moving_avg_len_temperature.setMaximum(1000)
-        self.sbox_moving_avg_len_temperature.setSingleStep(1)
-        self.sbox_moving_avg_len_temperature.setValue(100)
         self.sbox_moving_avg_len_air_pressure.setMinimum(1)
         self.sbox_moving_avg_len_air_pressure.setMaximum(1000)
         self.sbox_moving_avg_len_air_pressure.setSingleStep(1)
         self.sbox_moving_avg_len_air_pressure.setValue(100)
-        self.sbox_moving_avg_len_altitude.editingFinished.connect(self.sbox_moving_avg_len_editing_finished)
-        self.sbox_moving_avg_len_temperature.editingFinished.connect(self.sbox_moving_avg_len_editing_finished)
         self.sbox_moving_avg_len_air_pressure.editingFinished.connect(self.sbox_moving_avg_len_editing_finished)
+
+        self.sbox_moving_avg_len_temperature = QSpinBox()
+        self.sbox_moving_avg_len_temperature.setMinimum(1)
+        self.sbox_moving_avg_len_temperature.setMaximum(1000)
+        self.sbox_moving_avg_len_temperature.setSingleStep(1)
+        self.sbox_moving_avg_len_temperature.setValue(100)
+        self.sbox_moving_avg_len_temperature.editingFinished.connect(self.sbox_moving_avg_len_editing_finished)
 
         plot_config_air_pressure = [('Air Pressure',
                                     Qt.red,
@@ -189,44 +181,77 @@ class BarometerV2(COMCUPluginBase):
                                                    plot_config_air_pressure,
                                                    self.btn_clear_graphs)
 
-        self.plot_widget_altitude= PlotWidget('Altitude [m]',
-                                              plot_config_altitude,
-                                              self.btn_clear_graphs)
+        self.plot_widget_altitude = PlotWidget('Altitude [m]',
+                                               plot_config_altitude,
+                                               self.btn_clear_graphs)
+
+        self.combo_data_rate = QComboBox()
+        self.combo_data_rate.addItem('Off', BrickletBarometerV2.DATA_RATE_OFF)
+        self.combo_data_rate.addItem('1 Hz', BrickletBarometerV2.DATA_RATE_1HZ)
+        self.combo_data_rate.addItem('10 Hz', BrickletBarometerV2.DATA_RATE_10HZ)
+        self.combo_data_rate.addItem('25 Hz', BrickletBarometerV2.DATA_RATE_25HZ)
+        self.combo_data_rate.addItem('50 Hz', BrickletBarometerV2.DATA_RATE_50HZ)
+        self.combo_data_rate.addItem('75 Hz', BrickletBarometerV2.DATA_RATE_75HZ)
+        self.combo_data_rate.currentIndexChanged.connect(self.new_sensor_config)
+
+        self.combo_air_pressure_low_pass_filter = QComboBox()
+        self.combo_air_pressure_low_pass_filter.addItem('Off', BrickletBarometerV2.LOW_PASS_FILTER_OFF)
+        self.combo_air_pressure_low_pass_filter.addItem('1/9th', BrickletBarometerV2.LOW_PASS_FILTER_1_9TH)
+        self.combo_air_pressure_low_pass_filter.addItem('1/20th', BrickletBarometerV2.LOW_PASS_FILTER_1_20TH)
+        self.combo_air_pressure_low_pass_filter.currentIndexChanged.connect(self.new_sensor_config)
 
         # Layout
-        line = QFrame()
         layout_h1 = QHBoxLayout()
-        layout_h2 = QHBoxLayout()
-        layout_h3 = QHBoxLayout()
-        layout_g1 = QGridLayout()
-        layout = QVBoxLayout(self)
-
         layout_h1.addWidget(self.plot_widget_air_pressure)
         layout_h1.addWidget(self.plot_widget_altitude)
-        layout_h2.addWidget(self.btn_clear_graphs)
 
+        layout = QVBoxLayout(self)
+        layout.addLayout(layout_h1)
+
+        line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 
-        layout_g1.addWidget(self.lbl_temperature, 0, 0)
-        layout_g1.addWidget(self.lbl_temperature_value, 0, 1, 1, 3)
-        layout_g1.addWidget(self.lbl_reference, 1, 0)
-        layout_g1.addWidget(self.sbox_reference_air_pressure, 1, 1)
-        layout_g1.addWidget(self.btn_use_current, 1, 2, 1, 2)
-        layout_g1.addWidget(QLabel('Moving Average Length (Air Pressure, Altitude, Temperature):'), 2, 0)
-        layout_g1.addWidget(self.sbox_moving_avg_len_air_pressure, 2, 1)
-        layout_g1.addWidget(self.sbox_moving_avg_len_altitude, 2, 2)
-        layout_g1.addWidget(self.sbox_moving_avg_len_temperature, 2, 3)
-
-        layout_h3.addWidget(self.btn_calibration)
-
-        layout.addLayout(layout_h1)
-        layout.addLayout(layout_h2)
         layout.addWidget(line)
-        layout.addLayout(layout_g1)
+
+        layout_h2 = QHBoxLayout()
+        layout_h2.addWidget(QLabel('Reference Air Pressure [mbar]:'))
+        layout_h2.addWidget(self.sbox_reference_air_pressure)
+        layout_h2.addWidget(self.btn_use_current)
+        layout_h2.addStretch()
+        layout_h2.addWidget(QLabel('Temperature:'))
+        layout_h2.addWidget(self.lbl_temperature_value)
+        layout_h2.addStretch()
+        layout_h2.addWidget(self.btn_clear_graphs)
+
+        layout.addLayout(layout_h2)
+
+        layout_h3 = QHBoxLayout()
+        layout_h3.addWidget(QLabel('Air Pressure Moving Average Length:'))
+        layout_h3.addWidget(self.sbox_moving_avg_len_air_pressure)
+        layout_h3.addStretch()
+        layout_h3.addWidget(QLabel('Temperature Moving Average Length:'))
+        layout_h3.addWidget(self.sbox_moving_avg_len_temperature)
+
         layout.addLayout(layout_h3)
 
+        layout_h4 = QHBoxLayout()
+        layout_h4.addWidget(QLabel('Data Rate:'))
+        layout_h4.addWidget(self.combo_data_rate)
+        layout_h4.addStretch()
+        layout_h4.addWidget(QLabel('Air Pressure Low Pass Filter:'))
+        layout_h4.addWidget(self.combo_air_pressure_low_pass_filter)
+        layout_h4.addStretch()
+        layout_h4.addWidget(self.btn_calibration)
+
+        layout.addLayout(layout_h4)
+
     def start(self):
+        async_call(self.barometer.get_air_pressure,
+                   None,
+                   self.cb_get_air_pressure,
+                   self.increase_error_count)
+
         async_call(self.barometer.get_altitude,
                    None,
                    self.cb_get_altitude,
@@ -235,11 +260,6 @@ class BarometerV2(COMCUPluginBase):
         async_call(self.barometer.get_temperature,
                    None,
                    self.cb_get_temperature,
-                   self.increase_error_count)
-
-        async_call(self.barometer.get_air_pressure,
-                   None,
-                   self.cb_get_air_pressure,
                    self.increase_error_count)
 
         async_call(self.barometer.get_reference_air_pressure,
@@ -252,20 +272,25 @@ class BarometerV2(COMCUPluginBase):
                    self.get_moving_average_configuration_async,
                    self.increase_error_count)
 
-        self.cbe_altitude.set_period(100)
-        self.cbe_temperature.set_period(100)
-        self.cbe_air_pressure.set_period(100)
+        async_call(self.barometer.get_sensor_configuration,
+                   None,
+                   self.get_sensor_configuration_async,
+                   self.increase_error_count)
 
-        self.plot_widget_altitude.stop = False
+        self.cbe_air_pressure.set_period(50)
+        self.cbe_altitude.set_period(50)
+        self.cbe_temperature.set_period(100)
+
         self.plot_widget_air_pressure.stop = False
+        self.plot_widget_altitude.stop = False
 
     def stop(self):
+        self.cbe_air_pressure.set_period(0)
         self.cbe_altitude.set_period(0)
         self.cbe_temperature.set_period(0)
-        self.cbe_air_pressure.set_period(0)
 
-        self.plot_widget_altitude.stop = True
         self.plot_widget_air_pressure.stop = True
+        self.plot_widget_altitude.stop = True
 
     def destroy(self):
         if self.calibration != None:
@@ -275,41 +300,50 @@ class BarometerV2(COMCUPluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletBarometerV2.DEVICE_IDENTIFIER
 
+    def cb_get_air_pressure(self, air_pressure):
+        self.current_air_pressure = air_pressure / 1000.0
+
     def cb_get_altitude(self, altitude):
         self.current_altitude = altitude / 1000.0
 
     def cb_get_temperature(self, temperature):
         self.current_temperature = temperature / 100.0
-        self.lbl_temperature_value.setText(u'{:.3f} °C'.format(self.current_temperature))
-
-    def cb_get_air_pressure(self, air_pressure):
-        self.current_air_pressure = air_pressure / 1000.0
+        self.lbl_temperature_value.setText(u'{:.2f} °C'.format(self.current_temperature))
 
     def get_reference_air_pressure_async(self, air_pressure):
         self.sbox_reference_air_pressure.setValue(air_pressure / 1000.0)
 
     def btn_use_current_clicked(self):
         self.barometer.set_reference_air_pressure(0)
-
         async_call(self.barometer.get_reference_air_pressure,
                    None,
                    self.get_reference_air_pressure_async,
                    self.increase_error_count)
 
-    def sbox_reference_air_pressure_value_changed(self, value):
-        self.barometer.set_reference_air_pressure(value * 1000.0)
+    def sbox_reference_air_pressure_editing_finished(self):
+        self.barometer.set_reference_air_pressure(self.sbox_reference_air_pressure.value() * 1000.0)
 
     def get_moving_average_configuration_async(self, avg):
-        m_avg_air_pressure, m_avg_altitude, m_avg_temperature = avg
+        m_avg_air_pressure, m_avg_temperature = avg
 
-        self.sbox_moving_avg_len_altitude.setValue(m_avg_altitude)
-        self.sbox_moving_avg_len_temperature.setValue(m_avg_temperature)
         self.sbox_moving_avg_len_air_pressure.setValue(m_avg_air_pressure)
+        self.sbox_moving_avg_len_temperature.setValue(m_avg_temperature)
 
     def sbox_moving_avg_len_editing_finished(self):
         self.barometer.set_moving_average_configuration(self.sbox_moving_avg_len_air_pressure.value(),
-                                                        self.sbox_moving_avg_len_altitude.value(),
                                                         self.sbox_moving_avg_len_temperature.value())
+
+    def get_sensor_configuration_async(self, config):
+        data_rate, air_pressure_low_pass_filter = config
+
+        self.combo_data_rate.setCurrentIndex(self.combo_data_rate.findData(data_rate))
+        self.combo_air_pressure_low_pass_filter.setCurrentIndex(self.combo_air_pressure_low_pass_filter.findData(air_pressure_low_pass_filter))
+
+    def new_sensor_config(self):
+        data_rate = self.combo_data_rate.itemData(self.combo_data_rate.currentIndex())
+        air_pressure_low_pass_filter = self.combo_air_pressure_low_pass_filter.itemData(self.combo_air_pressure_low_pass_filter.currentIndex())
+
+        self.barometer.set_sensor_configuration(data_rate, air_pressure_low_pass_filter)
 
     def btn_calibration_clicked(self):
         if self.calibration == None:
