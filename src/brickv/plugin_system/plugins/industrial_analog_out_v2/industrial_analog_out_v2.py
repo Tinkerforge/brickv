@@ -53,14 +53,14 @@ class IndustrialAnalogOutV2(COMCUPluginBase, Ui_IndustrialAnalogOutV2):
 
         self.checkbox_enable.clicked.connect(self.enable_changed)
 
-        self.cbox_csl_lc.currentIndexChanged.connect(self.cbox_csl_lc_changed)
-        self.cbox_csl_lsc.currentIndexChanged.connect(self.cbox_csl_lsc_changed)
-        self.sbox_csl_min.valueChanged.connect(self.sbox_csl_min_changed)
-        self.sbox_csl_max.valueChanged.connect(self.sbox_csl_max_changed)
+        self.cbox_osl_lc.currentIndexChanged.connect(self.cbox_osl_lc_changed)
+        self.cbox_osl_lsc.currentIndexChanged.connect(self.cbox_osl_lsc_changed)
+        self.sbox_osl_min.valueChanged.connect(self.sbox_osl_min_changed)
+        self.sbox_osl_max.valueChanged.connect(self.sbox_osl_max_changed)
 
-        self.ui_grp_show_ch_status = [self.cbox_csl_lsc,
-                                      self.sbox_csl_min,
-                                      self.sbox_csl_max]
+        self.ui_grp_show_ch_status = [self.cbox_osl_lsc,
+                                      self.sbox_osl_min,
+                                      self.sbox_osl_max]
 
         self.box_voltage_range.setCurrentIndex(1)
         self.box_current_range.setCurrentIndex(0)
@@ -74,7 +74,7 @@ class IndustrialAnalogOutV2(COMCUPluginBase, Ui_IndustrialAnalogOutV2):
         async_call(self.ao.get_current, None, self.new_current, self.increase_error_count)
         async_call(self.ao.get_enabled, None, self.cb_get_enabled, self.increase_error_count)
         async_call(self.ao.get_configuration, None, self.cb_get_configuration, self.increase_error_count)
-        async_call(self.ao.get_channel_led_config, 0, self.cb_get_channel_led_config, self.increase_error_count)
+        async_call(self.ao.get_out_led_config, None, self.cb_get_out_led_config, self.increase_error_count)
 
     def stop(self):
         pass
@@ -92,7 +92,7 @@ class IndustrialAnalogOutV2(COMCUPluginBase, Ui_IndustrialAnalogOutV2):
         except:
             return
 
-        if self.cbox_csl_lc.currentIndex() < BrickletIndustrialAnalogOutV2.CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS:
+        if self.cbox_osl_lc.currentIndex() < BrickletIndustrialAnalogOutV2.OUT_LED_CONFIG_SHOW_OUT_STATUS:
             for e in self.ui_grp_show_ch_status:
                 e.setEnabled(False)
 
@@ -105,39 +105,39 @@ class IndustrialAnalogOutV2(COMCUPluginBase, Ui_IndustrialAnalogOutV2):
             for e in self.ui_grp_show_ch_status:
                 e.setEnabled(False)
 
-    def cbox_csl_lc_changed(self, index):
-        if index == BrickletIndustrialAnalogOutV2.CHANNEL_LED_CONFIG_OFF:
+    def cbox_osl_lc_changed(self, index):
+        if index == BrickletIndustrialAnalogOutV2.OUT_LED_CONFIG_OFF:
             try:
-                self.ao.set_channel_led_config(0, index)
+                self.ao.set_out_led_config(index)
             except:
                 return
 
             for e in self.ui_grp_show_ch_status:
                 e.setEnabled(False)
-        elif index == BrickletIndustrialAnalogOutV2.CHANNEL_LED_CONFIG_ON:
+        elif index == BrickletIndustrialAnalogOutV2.OUT_LED_CONFIG_ON:
             try:
-                self.ao.set_channel_led_config(0, index)
+                self.ao.set_out_led_config(index)
             except:
                 return
 
             for e in self.ui_grp_show_ch_status:
                 e.setEnabled(False)
-        elif index == BrickletIndustrialAnalogOutV2.CHANNEL_LED_CONFIG_SHOW_HEARTBEAT:
+        elif index == BrickletIndustrialAnalogOutV2.OUT_LED_CONFIG_SHOW_HEARTBEAT:
             try:
-                self.ao.set_channel_led_config(0, index)
+                self.ao.set_out_led_config(index)
             except:
                 return
 
             for e in self.ui_grp_show_ch_status:
                 e.setEnabled(False)
-        elif index == BrickletIndustrialAnalogOutV2.CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS:
-            min = self.sbox_csl_min.value()
-            max = self.sbox_csl_max.value()
-            config = self.cbox_csl_lsc.currentIndex()
+        elif index == BrickletIndustrialAnalogOutV2.OUT_LED_CONFIG_SHOW_OUT_STATUS:
+            min = self.sbox_osl_min.value()
+            max = self.sbox_osl_max.value()
+            config = self.cbox_osl_lsc.currentIndex()
 
             try:
-                self.ao.set_channel_led_config(0, index)
-                self.ao.set_channel_led_status_config(0, min, max, config)
+                self.ao.set_out_led_config(index)
+                self.ao.set_out_led_status_config(min, max, config)
             except:
                 return
 
@@ -201,7 +201,7 @@ class IndustrialAnalogOutV2(COMCUPluginBase, Ui_IndustrialAnalogOutV2):
             self.mode_current()
             async_call(self.ao.get_current, None, self.new_current, self.increase_error_count)
 
-        async_call(self.ao.get_channel_led_config, 0, self.cb_get_channel_led_config, self.increase_error_count)
+        async_call(self.ao.get_out_led_config, None, self.cb_get_out_led_config, self.increase_error_count)
 
     def voltage_changed(self, value):
         try:
@@ -256,41 +256,41 @@ class IndustrialAnalogOutV2(COMCUPluginBase, Ui_IndustrialAnalogOutV2):
 
         if v:
             if vr == BrickletIndustrialAnalogOutV2.VOLTAGE_RANGE_0_TO_5V:
-                self.sbox_csl_min.setMinimum(0)
-                self.sbox_csl_min.setMaximum(5000)
-                self.sbox_csl_min.setSuffix(" mV")
-                self.sbox_csl_max.setMinimum(0)
-                self.sbox_csl_max.setMaximum(5000)
-                self.sbox_csl_max.setSuffix(" mV")
+                self.sbox_osl_min.setMinimum(0)
+                self.sbox_osl_min.setMaximum(5000)
+                self.sbox_osl_min.setSuffix(" mV")
+                self.sbox_osl_max.setMinimum(0)
+                self.sbox_osl_max.setMaximum(5000)
+                self.sbox_osl_max.setSuffix(" mV")
             elif vr == BrickletIndustrialAnalogOutV2.VOLTAGE_RANGE_0_TO_10V:
-                self.sbox_csl_min.setMinimum(0)
-                self.sbox_csl_min.setMaximum(10000)
-                self.sbox_csl_min.setSuffix(" mV")
-                self.sbox_csl_max.setMinimum(0)
-                self.sbox_csl_max.setMaximum(10000)
-                self.sbox_csl_max.setSuffix(" mV")
+                self.sbox_osl_min.setMinimum(0)
+                self.sbox_osl_min.setMaximum(10000)
+                self.sbox_osl_min.setSuffix(" mV")
+                self.sbox_osl_max.setMinimum(0)
+                self.sbox_osl_max.setMaximum(10000)
+                self.sbox_osl_max.setSuffix(" mV")
         else:
             if cr == BrickletIndustrialAnalogOutV2.CURRENT_RANGE_4_TO_20MA:
-                self.sbox_csl_min.setMinimum(4000)
-                self.sbox_csl_min.setMaximum(20000)
-                self.sbox_csl_min.setSuffix(" uA")
-                self.sbox_csl_max.setMinimum(4000)
-                self.sbox_csl_max.setMaximum(20000)
-                self.sbox_csl_max.setSuffix(" uA")
+                self.sbox_osl_min.setMinimum(4000)
+                self.sbox_osl_min.setMaximum(20000)
+                self.sbox_osl_min.setSuffix(" uA")
+                self.sbox_osl_max.setMinimum(4000)
+                self.sbox_osl_max.setMaximum(20000)
+                self.sbox_osl_max.setSuffix(" uA")
             elif cr == BrickletIndustrialAnalogOutV2.CURRENT_RANGE_0_TO_20MA:
-                self.sbox_csl_min.setMinimum(0)
-                self.sbox_csl_min.setMaximum(20000)
-                self.sbox_csl_min.setSuffix(" uA")
-                self.sbox_csl_max.setMinimum(0)
-                self.sbox_csl_max.setMaximum(20000)
-                self.sbox_csl_max.setSuffix(" uA")
+                self.sbox_osl_min.setMinimum(0)
+                self.sbox_osl_min.setMaximum(20000)
+                self.sbox_osl_min.setSuffix(" uA")
+                self.sbox_osl_max.setMinimum(0)
+                self.sbox_osl_max.setMaximum(20000)
+                self.sbox_osl_max.setSuffix(" uA")
             elif cr == BrickletIndustrialAnalogOutV2.CURRENT_RANGE_0_TO_24MA:
-                self.sbox_csl_min.setMinimum(0)
-                self.sbox_csl_min.setMaximum(24000)
-                self.sbox_csl_min.setSuffix(" uA")
-                self.sbox_csl_max.setMinimum(0)
-                self.sbox_csl_max.setMaximum(24000)
-                self.sbox_csl_max.setSuffix(" uA")
+                self.sbox_osl_min.setMinimum(0)
+                self.sbox_osl_min.setMaximum(24000)
+                self.sbox_osl_min.setSuffix(" uA")
+                self.sbox_osl_max.setMinimum(0)
+                self.sbox_osl_max.setMaximum(24000)
+                self.sbox_osl_max.setSuffix(" uA")
 
     def config_changed(self, value):
         try:
@@ -321,73 +321,70 @@ class IndustrialAnalogOutV2(COMCUPluginBase, Ui_IndustrialAnalogOutV2):
             for e in self.ui_grp_show_ch_status:
                 e.setEnabled(False)
 
-    def cb_get_channel_led_config(self, config):
-        if config == BrickletIndustrialAnalogOutV2.CHANNEL_LED_CONFIG_OFF:
+    def cb_get_out_led_config(self, config):
+        if config == BrickletIndustrialAnalogOutV2.OUT_LED_CONFIG_OFF:
             for e in self.ui_grp_show_ch_status:
                 e.setEnabled(False)
 
-            self.cbox_csl_lc.setCurrentIndex(config)
+            self.cbox_osl_lc.setCurrentIndex(config)
 
-        elif config == BrickletIndustrialAnalogOutV2.CHANNEL_LED_CONFIG_ON:
+        elif config == BrickletIndustrialAnalogOutV2.OUT_LED_CONFIG_ON:
             for e in self.ui_grp_show_ch_status:
                 e.setEnabled(False)
 
-            self.cbox_csl_lc.setCurrentIndex(config)
+            self.cbox_osl_lc.setCurrentIndex(config)
 
-        elif config == BrickletIndustrialAnalogOutV2.CHANNEL_LED_CONFIG_SHOW_HEARTBEAT:
+        elif config == BrickletIndustrialAnalogOutV2.OUT_LED_CONFIG_SHOW_HEARTBEAT:
             for e in self.ui_grp_show_ch_status:
                 e.setEnabled(False)
 
-            self.cbox_csl_lc.setCurrentIndex(config)
+            self.cbox_osl_lc.setCurrentIndex(config)
 
-        elif config == BrickletIndustrialAnalogOutV2.CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS:
-            async_call(self.ao.get_channel_led_status_config, 0, self.cb_get_channel_led_status_config, self.increase_error_count)
+        elif config == BrickletIndustrialAnalogOutV2.OUT_LED_CONFIG_SHOW_OUT_STATUS:
+            async_call(self.ao.get_out_led_status_config, None, self.cb_get_out_led_status_config, self.increase_error_count)
 
             if self.checkbox_enable.isChecked():
                 for e in self.ui_grp_show_ch_status:
                     e.setEnabled(True)
 
-    def cb_get_channel_led_status_config(self, config):
-        self.cbox_csl_lc.blockSignals(True)
-        self.cbox_csl_lsc.blockSignals(True)
-        self.sbox_csl_min.blockSignals(True)
-        self.sbox_csl_max.blockSignals(True)
+    def cb_get_out_led_status_config(self, config):
+        self.cbox_osl_lc.blockSignals(True)
+        self.cbox_osl_lsc.blockSignals(True)
+        self.sbox_osl_min.blockSignals(True)
+        self.sbox_osl_max.blockSignals(True)
 
-        self.cbox_csl_lsc.setCurrentIndex(config.config)
-        self.cbox_csl_lc.setCurrentIndex(BrickletIndustrialAnalogOutV2.CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS)
+        self.cbox_osl_lsc.setCurrentIndex(config.config)
+        self.cbox_osl_lc.setCurrentIndex(BrickletIndustrialAnalogOutV2.OUT_LED_CONFIG_SHOW_OUT_STATUS)
         self.update_led_status_config_gui(self.radio_voltage.isChecked())
 
-        self.sbox_csl_min.setValue(config.min)
-        self.sbox_csl_max.setValue(config.max)
+        self.sbox_osl_min.setValue(config.min)
+        self.sbox_osl_max.setValue(config.max)
 
-        self.cbox_csl_lc.blockSignals(False)
-        self.cbox_csl_lsc.blockSignals(False)
-        self.sbox_csl_min.blockSignals(False)
-        self.sbox_csl_max.blockSignals(False)
+        self.cbox_osl_lc.blockSignals(False)
+        self.cbox_osl_lsc.blockSignals(False)
+        self.sbox_osl_min.blockSignals(False)
+        self.sbox_osl_max.blockSignals(False)
 
-    def cbox_csl_lsc_changed(self, value):
+    def cbox_osl_lsc_changed(self, value):
         try:
-            self.ao.set_channel_led_status_config(0,
-                                                  self.sbox_csl_min.value(),
-                                                  self.sbox_csl_max.value(),
-                                                  value)
+            self.ao.set_out_led_status_config(self.sbox_osl_min.value(),
+                                              self.sbox_osl_max.value(),
+                                              value)
         except:
             pass
 
-    def sbox_csl_min_changed(self, value):
+    def sbox_osl_min_changed(self, value):
         try:
-            self.ao.set_channel_led_status_config(0,
-                                                  value,
-                                                  self.sbox_csl_max.value(),
-                                                  self.cbox_csl_lsc.currentIndex())
+            self.ao.set_out_led_status_config(value,
+                                              self.sbox_osl_max.value(),
+                                              self.cbox_osl_lsc.currentIndex())
         except:
             pass
 
-    def sbox_csl_max_changed(self, value):
+    def sbox_osl_max_changed(self, value):
         try:
-            self.ao.set_channel_led_status_config(0,
-                                                  self.sbox_csl_min.value(),
-                                                  value,
-                                                  self.cbox_csl_lsc.currentIndex())
+            self.ao.set_out_led_status_config(self.sbox_osl_min.value(),
+                                              value,
+                                              self.cbox_osl_lsc.currentIndex())
         except:
             pass
