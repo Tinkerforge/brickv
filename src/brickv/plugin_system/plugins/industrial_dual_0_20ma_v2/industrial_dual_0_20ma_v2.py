@@ -76,11 +76,11 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         plots = [('Channel 0',
                   Qt.red,
                   lambda: self.current_current[CH_0],
-                  lambda value: '{:.02f} mA'.format(round(value, 2))),
+                  lambda value: '{:.03f} mA'.format(round(value, 3))),
                  ('Channel 1',
                   Qt.blue,
                   lambda: self.current_current[CH_1],
-                  lambda value: '{:.02f} mA'.format(round(value, 2)))]
+                  lambda value: '{:.03f} mA'.format(round(value, 3)))]
 
         self.plot_widget = PlotWidget('Current [mA]',
                                       plots,
@@ -145,37 +145,41 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         self.led_status_config_ch1_combo.setSizePolicy(h_sp)
         self.led_status_config_ch1_combo.currentIndexChanged.connect(self.led_status_config_ch1_combo_changed)
 
-        self.led_status_config_ch0_min_sbox = QSpinBox()
-        self.led_status_config_ch0_max_sbox = QSpinBox()
-        self.led_status_config_ch1_min_sbox = QSpinBox()
-        self.led_status_config_ch1_max_sbox = QSpinBox()
+        self.led_status_config_ch0_min_sbox = QDoubleSpinBox()
+        self.led_status_config_ch0_max_sbox = QDoubleSpinBox()
+        self.led_status_config_ch1_min_sbox = QDoubleSpinBox()
+        self.led_status_config_ch1_max_sbox = QDoubleSpinBox()
 
         self.led_status_config_ch0_min_sbox.setValue(0)
         self.led_status_config_ch0_min_sbox.setMinimum(0)
-        self.led_status_config_ch0_min_sbox.setSingleStep(1)
+        self.led_status_config_ch0_min_sbox.setSingleStep(0.5)
+        self.led_status_config_ch0_min_sbox.setDecimals(3)
         self.led_status_config_ch0_min_sbox.setSuffix(' mA')
-        self.led_status_config_ch0_min_sbox.setMaximum(20)
+        self.led_status_config_ch0_min_sbox.setMaximum(22.5)
         self.led_status_config_ch0_min_sbox.valueChanged.connect(self.led_status_config_ch0_min_sbox_changed)
 
         self.led_status_config_ch0_max_sbox.setValue(0)
         self.led_status_config_ch0_max_sbox.setMinimum(0)
-        self.led_status_config_ch0_max_sbox.setSingleStep(1)
+        self.led_status_config_ch0_max_sbox.setSingleStep(0.5)
+        self.led_status_config_ch0_max_sbox.setDecimals(3)
         self.led_status_config_ch0_max_sbox.setSuffix(' mA')
-        self.led_status_config_ch0_max_sbox.setMaximum(20)
+        self.led_status_config_ch0_max_sbox.setMaximum(22.5)
         self.led_status_config_ch0_max_sbox.valueChanged.connect(self.led_status_config_ch0_max_sbox_changed)
 
         self.led_status_config_ch1_min_sbox.setValue(0)
         self.led_status_config_ch1_min_sbox.setMinimum(0)
-        self.led_status_config_ch1_min_sbox.setSingleStep(1)
+        self.led_status_config_ch1_min_sbox.setSingleStep(0.5)
+        self.led_status_config_ch1_min_sbox.setDecimals(3)
         self.led_status_config_ch1_min_sbox.setSuffix(' mA')
-        self.led_status_config_ch1_min_sbox.setMaximum(20)
+        self.led_status_config_ch1_min_sbox.setMaximum(22.5)
         self.led_status_config_ch1_min_sbox.valueChanged.connect(self.led_status_config_ch1_min_sbox_changed)
 
         self.led_status_config_ch1_max_sbox.setValue(0)
         self.led_status_config_ch1_max_sbox.setMinimum(0)
-        self.led_status_config_ch1_max_sbox.setSingleStep(1)
+        self.led_status_config_ch1_max_sbox.setSingleStep(0.5)
+        self.led_status_config_ch1_max_sbox.setDecimals(3)
         self.led_status_config_ch1_max_sbox.setSuffix(' mA')
-        self.led_status_config_ch1_max_sbox.setMaximum(20)
+        self.led_status_config_ch1_max_sbox.setMaximum(22.5)
         self.led_status_config_ch1_max_sbox.valueChanged.connect(self.led_status_config_ch1_max_sbox_changed)
 
         hlayout = QHBoxLayout()
@@ -410,10 +414,10 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         if channel == CH_0:
             self.led_status_config_ch0_combo.setCurrentIndex(config.config)
             self.led_status_config_ch0_combo_changed(config.config)
-            self.led_status_config_ch0_max_sbox.setValue(config.max / 1000000)
-            self.led_status_config_ch0_min_sbox.setValue(config.min / 1000000)
+            self.led_status_config_ch0_max_sbox.setValue(config.max / 1000000.0)
+            self.led_status_config_ch0_min_sbox.setValue(config.min / 1000000.0)
         elif channel == CH_1:
             self.led_status_config_ch1_combo.setCurrentIndex(config.config)
             self.led_status_config_ch1_combo_changed(config.config)
-            self.led_status_config_ch1_max_sbox.setValue(config.max / 1000000)
-            self.led_status_config_ch1_min_sbox.setValue(config.min / 1000000)
+            self.led_status_config_ch1_max_sbox.setValue(config.max / 1000000.0)
+            self.led_status_config_ch1_min_sbox.setValue(config.min / 1000000.0)
