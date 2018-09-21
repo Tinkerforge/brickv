@@ -25,7 +25,7 @@ import functools
 
 from PyQt4.QtCore import Qt, QSize, QObject
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QGridLayout, \
-                        QFrame, QSizePolicy, QPushButton, QSpinBox
+                        QFrame, QSizePolicy, QDoubleSpinBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_industrial_dual_0_20ma_v2 import BrickletIndustrialDual020mAV2
@@ -71,8 +71,6 @@ class IndustrialDual020mAV2(COMCUPluginBase):
 
         self.current_current = [None, None] # float, mA
 
-        self.btn_clear_graph = QPushButton('Clear Graph')
-
         plots = [('Channel 0',
                   Qt.red,
                   lambda: self.current_current[CH_0],
@@ -84,7 +82,6 @@ class IndustrialDual020mAV2(COMCUPluginBase):
 
         self.plot_widget = PlotWidget('Current [mA]',
                                       plots,
-                                      clear_button = self.btn_clear_graph,
                                       extra_key_widgets = self.connected_labels)
 
         h_sp = QSizePolicy()
@@ -232,7 +229,6 @@ class IndustrialDual020mAV2(COMCUPluginBase):
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)
-        layout.addWidget(self.btn_clear_graph)
         layout.addLayout(glayout)
 
         self.ui_group_ch_status_ch0 = [self.led_status_config_ch0_combo,
