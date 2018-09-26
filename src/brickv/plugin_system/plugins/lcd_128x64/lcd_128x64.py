@@ -63,6 +63,7 @@ class ScribbleArea(QWidget):
         self.gesture = 0
         self.gesture_age = 10000
         self.gesture_age_max = 1000
+        self.gesture_pressure_max = 0
         
     def touch_position(self, data):
         self.touch_x = data.x
@@ -74,6 +75,7 @@ class ScribbleArea(QWidget):
         
     def touch_gesture(self, data):
         self.gesture = data.gesture
+        self.gesture_pressure_max = data.pressure_max
         self.gesture_age = data.age
 
     def clear_image(self):
@@ -111,11 +113,17 @@ class ScribbleArea(QWidget):
             painter.drawEllipse(self.touch_x * self.image_pen_width - self.circle_width/2.0, self.touch_y * self.image_pen_width - self.circle_width/2.0, self.circle_width, self.circle_width)
             if self.touch_pressure > 100:
                 painter.drawEllipse(self.touch_x * self.image_pen_width - self.circle_width/3.0, self.touch_y * self.image_pen_width - self.circle_width/3.0, self.circle_width/1.5, self.circle_width/1.5)
-                if self.touch_pressure > 150:
+                if self.touch_pressure > 175:
                     painter.drawEllipse(self.touch_x * self.image_pen_width - self.circle_width/6.0, self.touch_y * self.image_pen_width - self.circle_width/6.0, self.circle_width/3.0, self.circle_width/3.0)
                     
         if self.gesture_age < self.gesture_age_max:
-            painter.setPen(Qt.darkGreen)
+            pen_width = 1
+            if self.gesture_pressure_max > 100:
+                pen_width = 2
+                if self.gesture_pressure_max > 175:
+                    pen_width = 3
+
+            painter.setPen(QPen(Qt.darkGreen, pen_width))
             if self.gesture == BrickletLCD128x64.GESTURE_LEFT_TO_RIGHT:
                 painter.drawChord(20-75/2.0, 20, 75, 10, 90*16, -180*16)
             elif self.gesture == BrickletLCD128x64.GESTURE_RIGHT_TO_LEFT:
@@ -124,8 +132,6 @@ class ScribbleArea(QWidget):
                 painter.drawChord(20, 20, 10, 75, 0, 180*16)
             if self.gesture == BrickletLCD128x64.GESTURE_TOP_TO_BOTTOM:
                 painter.drawChord(20, 20-75/2.0, 10, 75, 0, -180*16)
-             
-                
 
     def draw_line_to(self, end_point):
         painter = QPainter(self.image)

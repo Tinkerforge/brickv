@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-07-27.      #
+# This file was automatically generated on 2018-09-25.      #
 #                                                           #
 # Python Bindings Version 2.1.17                            #
 #                                                           #
@@ -22,7 +22,7 @@ ReadPixelsLowLevel = namedtuple('ReadPixelsLowLevel', ['pixels_length', 'pixels_
 GetDisplayConfiguration = namedtuple('DisplayConfiguration', ['contrast', 'backlight', 'invert', 'automatic_draw'])
 GetTouchPosition = namedtuple('TouchPosition', ['pressure', 'x', 'y', 'age'])
 GetTouchPositionCallbackConfiguration = namedtuple('TouchPositionCallbackConfiguration', ['period', 'value_has_to_change'])
-GetTouchGesture = namedtuple('TouchGesture', ['gesture', 'duration', 'x_start', 'y_start', 'x_end', 'y_end', 'age'])
+GetTouchGesture = namedtuple('TouchGesture', ['gesture', 'duration', 'pressure_max', 'x_start', 'y_start', 'x_end', 'y_end', 'age'])
 GetTouchGestureCallbackConfiguration = namedtuple('TouchGestureCallbackConfiguration', ['period', 'value_has_to_change'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -122,7 +122,7 @@ class BrickletLCD128x64(Device):
         self.response_expected[BrickletLCD128x64.FUNCTION_GET_IDENTITY] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletLCD128x64.CALLBACK_TOUCH_POSITION] = 'H H H I'
-        self.callback_formats[BrickletLCD128x64.CALLBACK_TOUCH_GESTURE] = 'B I H H H H I'
+        self.callback_formats[BrickletLCD128x64.CALLBACK_TOUCH_GESTURE] = 'B I H H H H H I'
 
 
     def write_pixels_low_level(self, x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data):
@@ -291,7 +291,7 @@ class BrickletLCD128x64(Device):
 
         The *age*-parameter corresponds to the age of gesture in ms (how long ago it was).
         """
-        return GetTouchGesture(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_TOUCH_GESTURE, (), '', 'B I H H H H I'))
+        return GetTouchGesture(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_TOUCH_GESTURE, (), '', 'B I H H H H H I'))
 
     def set_touch_gesture_callback_configuration(self, period, value_has_to_change):
         """
