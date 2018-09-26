@@ -273,24 +273,24 @@ class IndustrialAnalogOutV2(COMCUPluginBase, Ui_IndustrialAnalogOutV2):
             if cr == BrickletIndustrialAnalogOutV2.CURRENT_RANGE_4_TO_20MA:
                 self.sbox_osl_min.setMinimum(4000)
                 self.sbox_osl_min.setMaximum(20000)
-                self.sbox_osl_min.setSuffix(" uA")
+                self.sbox_osl_min.setSuffix(u" µA")
                 self.sbox_osl_max.setMinimum(4000)
                 self.sbox_osl_max.setMaximum(20000)
-                self.sbox_osl_max.setSuffix(" uA")
+                self.sbox_osl_max.setSuffix(u" µA")
             elif cr == BrickletIndustrialAnalogOutV2.CURRENT_RANGE_0_TO_20MA:
                 self.sbox_osl_min.setMinimum(0)
                 self.sbox_osl_min.setMaximum(20000)
-                self.sbox_osl_min.setSuffix(" uA")
+                self.sbox_osl_min.setSuffix(u" µA")
                 self.sbox_osl_max.setMinimum(0)
                 self.sbox_osl_max.setMaximum(20000)
-                self.sbox_osl_max.setSuffix(" uA")
+                self.sbox_osl_max.setSuffix(u" µA")
             elif cr == BrickletIndustrialAnalogOutV2.CURRENT_RANGE_0_TO_24MA:
                 self.sbox_osl_min.setMinimum(0)
                 self.sbox_osl_min.setMaximum(24000)
-                self.sbox_osl_min.setSuffix(" uA")
+                self.sbox_osl_min.setSuffix(u" µA")
                 self.sbox_osl_max.setMinimum(0)
                 self.sbox_osl_max.setMaximum(24000)
-                self.sbox_osl_max.setSuffix(" uA")
+                self.sbox_osl_max.setSuffix(u" µA")
 
     def config_changed(self, value):
         try:
