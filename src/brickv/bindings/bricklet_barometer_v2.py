@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-22.      #
+# This file was automatically generated on 2018-09-28.      #
 #                                                           #
-# Python Bindings Version 2.1.17                            #
+# Python Bindings Version 2.1.18                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -272,8 +270,8 @@ class BrickletBarometerV2(Device):
 
         This temperature is used internally for temperature compensation
         of the air pressure measurement. It is not as accurate as the
-        temperature measured by the :ref:`temperature_bricklet` or the
-        :ref:`temperature_ir_bricklet`.
+        temperature measured by the :ref:`temperature_v2_bricklet` or the
+        :ref:`temperature_ir_v2_bricklet`.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -331,7 +329,7 @@ class BrickletBarometerV2(Device):
     def set_moving_average_configuration(self, moving_average_length_air_pressure, moving_average_length_temperature):
         """
         Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
-        for the air pressure, altitude and temperature.
+        for the air pressure and temperature measurements.
 
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
@@ -381,13 +379,21 @@ class BrickletBarometerV2(Device):
 
     def set_calibration(self, measured_air_pressure, actual_air_pressure):
         """
-        Sets one point air pressure offset calibration value. The offset
-        is the difference between currently measured air pressure by the
-        sensor and the actual air pressure measured by an accurate barometer in
-        mbar/1000. The values has a range of 260000 to 1260000.
+        Sets the one point calibration (OPC) values for the air pressure measurement.
 
-        After calibration the air pressure measurements will achieve accuracy
-        of about 0.1 mbar.
+        Before the Bricklet can be calibrated any previous calibration has to be removed
+        by setting ``measured air pressure`` and ``actual air pressure`` to 0.
+
+        Then the current air pressure has to be measured using the Bricklet
+        (``measured air pressure``) and with and accurate reference barometer
+        (``actual air pressure``) at the same time and passed to this function in
+        mbar/1000.
+
+        After proper calibration the air pressure measurement can achieve an accuracy
+        up to 0.2 mbar.
+
+        The calibration is saved in the EEPROM of the Bricklet and only needs to be
+        configured once.
         """
         measured_air_pressure = int(measured_air_pressure)
         actual_air_pressure = int(actual_air_pressure)
@@ -396,13 +402,21 @@ class BrickletBarometerV2(Device):
 
     def get_calibration(self):
         """
-        Returns the air pressure offset values as set by :func:`Set Calibration`.
+        Returns the air pressure one point calibration values as set by
+        :func:`Set Calibration`.
         """
         return GetCalibration(*self.ipcon.send_request(self, BrickletBarometerV2.FUNCTION_GET_CALIBRATION, (), '', 'i i'))
 
     def set_sensor_configuration(self, data_rate, air_pressure_low_pass_filter):
         """
+        Configures the data rate and air pressure low pass filter. The low pass filter
+        cut-off frequency (if enabled) can be set to 1/9th or 1/20th of the configure
+        data rate to decrease the noise on the air pressure data.
 
+        The low pass filter configuration only applies to the air pressure measurement.
+        There is no low pass filter for the temperature measurement.
+
+        The default values are 50Hz data rate and 1/9th low pass filter.
         """
         data_rate = int(data_rate)
         air_pressure_low_pass_filter = int(air_pressure_low_pass_filter)

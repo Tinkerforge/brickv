@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-07-31.      #
+# This file was automatically generated on 2018-09-28.      #
 #                                                           #
-# Python Bindings Version 2.1.17                            #
+# Python Bindings Version 2.1.18                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -256,14 +254,14 @@ class BrickletDistanceIRV2(Device):
         Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
         for the resistance and temperature.
 
-        Setting the length to 1 will turn the averaging off. With less
-        averaging, there is more noise on the data.
+        Setting the length to 1 will turn the averaging off. With less averaging, there
+        is more noise on the data.
 
         The range for the averaging is 1-1000.
 
-        New data is gathered every ~10ms. With a moving average of length 1000 the resulting
-        averaging window has a length of aproximately 10s. If you want to do long term measurements the longest
-        moving average will give the cleanest results.
+        New data is gathered every ~10ms. With a moving average of length 1000 the
+        resulting averaging window has a length of approximately 10s. If you want to do
+        long term measurements the longest moving average will give the cleanest results.
 
         The default value is 25.
         """
@@ -311,7 +309,7 @@ class BrickletDistanceIRV2(Device):
 
     def get_sensor_type(self):
         """
-        Returns the sensor type as set by :func:`Set Sensor Type`
+        Returns the sensor type as set by :func:`Set Sensor Type`.
         """
         return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_SENSOR_TYPE, (), '', 'B')
 

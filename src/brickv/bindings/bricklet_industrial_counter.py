@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-22.      #
+# This file was automatically generated on 2018-09-28.      #
 #                                                           #
-# Python Bindings Version 2.1.17                            #
+# Python Bindings Version 2.1.18                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -363,7 +363,7 @@ class BrickletIndustrialCounter(Device):
 
     def set_channel_led_config(self, channel, config):
         """
-        Each channel has a corresponding LED. You can turn the LED Off, On or show a
+        Each channel has a corresponding LED. You can turn the LED off, on or show a
         heartbeat. You can also set the LED to "Channel Status". In this mode the
         LED is on if the channel is high and off otherwise.
 
@@ -376,7 +376,7 @@ class BrickletIndustrialCounter(Device):
 
     def get_channel_led_config(self, channel):
         """
-        Returns the Channel LED configuration as set by :func:`Set Channel LED Config`
+        Returns the channel LED configuration as set by :func:`Set Channel LED Config`
         """
         channel = int(channel)
 

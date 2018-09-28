@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-08-02.      #
+# This file was automatically generated on 2018-09-28.      #
 #                                                           #
-# Python Bindings Version 2.1.17                            #
+# Python Bindings Version 2.1.18                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -217,7 +215,7 @@ class BrickletIndustrialDualAnalogInV2(Device):
         """
         Sets offset and gain of MCP3911 internal calibration registers.
 
-        See MCP3911 datasheet 7.7 and 7.8. The Industrial Dual Analog In Bricklet
+        See MCP3911 datasheet 7.7 and 7.8. The Industrial Dual Analog In Bricklet 2.0
         is already factory calibrated by Tinkerforge. It should not be necessary
         for you to use this function
         """
@@ -241,7 +239,7 @@ class BrickletIndustrialDualAnalogInV2(Device):
 
     def set_channel_led_config(self, channel, config):
         """
-        Each channel has a corresponding LED. You can turn the LED Off, On or show a
+        Each channel has a corresponding LED. You can turn the LED off, on or show a
         heartbeat. You can also set the LED to "Channel Status". In this mode the
         LED can either be turned on with a pre-defined threshold or the intensity
         of the LED can change with the measured value.
@@ -257,7 +255,7 @@ class BrickletIndustrialDualAnalogInV2(Device):
 
     def get_channel_led_config(self, channel):
         """
-        Returns the Channel LED configuration as set by :func:`Set Channel LED Config`
+        Returns the channel LED configuration as set by :func:`Set Channel LED Config`
         """
         channel = int(channel)
 
@@ -265,24 +263,29 @@ class BrickletIndustrialDualAnalogInV2(Device):
 
     def set_channel_led_status_config(self, channel, min, max, config):
         """
-        Sets the channel LED status config. This config is used if the channel LED is configured
-        as Channel Status, see :func:`Set Channel LED Config`.
+        Sets the channel LED status config. This config is used if the channel LED is
+        configured as "Channel Status", see :func:`Set Channel LED Config`.
 
-        For each channel you can choose between the threshold and intensity.
+        For each channel you can choose between threshold and intensity mode.
 
-        In the threshold-mode you can define a positive threshold in mV as the "min" parameter. The "max"
-        parameter has to be 0. Example: If you set a positive threshold of 10V, the LED will turn on
-        as soon as the voltage exceeds 10V and turn off again if it goes below 10V. You can also define
-        a negative threshold. For that you set the "max" parameter to the threshold value in nA and set
-        the "min" parameter to 0. Example: If you set a negative threshold of 10V, the LED will turn on
-        as soon as the voltage goes below 10V and the LED will turn off when the voltage exceeds 10V.
+        In threshold mode you can define a positive or a negative threshold.
+        For a positive threshold set the "min" parameter to the threshold value in mV
+        above which the LED should turn on and set the "max" parameter to 0. Example:
+        If you set a positive threshold of 10V, the LED will turn on as soon as the
+        voltage exceeds 10V and turn off again if it goes below 10V.
+        For a negative threshold set the "max" parameter to the threshold value in mV
+        below which the LED should turn on and set the "min" parameter to 0. Example:
+        If you set a negative threshold of 10V, the LED will turn on as soon as the
+        voltage goes below 10V and the LED will turn off when the voltage exceeds 10V.
 
-        In the intensity-mode you can define a range that is used to scale the brightness of the LED.
-        Example with min=4V, max=20V: The LED is off at 4V, on at 20V and the brightness is linearly
-        scaled between the vales 4V and 20V. If the min value is greater than the max value, the
-        LED brightness is scaled the other way around.
+        In intensity mode you can define a range in mV that is used to scale the brightness
+        of the LED. Example with min=4V, max=20V: The LED is off at 4V, on at 20V
+        and the brightness is linearly scaled between the values 4V and 20V. If the
+        min value is greater than the max value, the LED brightness is scaled the other
+        way around.
 
-        By default the channel LED status config is set to intensity with min=0V and max=10V.
+        By default the channel LED status config is set to intensity with min=0V and
+        max=10V.
         """
         channel = int(channel)
         min = int(min)
@@ -293,7 +296,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
 
     def get_channel_led_status_config(self, channel):
         """
-        Returns the Channel LED configuration as set by :func:`Set Channel LED Status Config`
+        Returns the channel LED status configuration as set by
+        :func:`Set Channel LED Status Config`.
         """
         channel = int(channel)
 

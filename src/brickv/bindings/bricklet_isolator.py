@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-22.      #
+# This file was automatically generated on 2018-09-28.      #
 #                                                           #
-# Python Bindings Version 2.1.17                            #
+# Python Bindings Version 2.1.18                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -113,8 +111,7 @@ class BrickletIsolator(Device):
         between Bricks and Bricklets according to the amount of data that is transferred.
 
         The baudrate for communication config between
-        Brick and Isolator Bricklet can be set thorugh the API of the Brick.
-
+        Brick and Isolator Bricklet can be set through the API of the Brick.
 
         The baudrate will be increased exponentially if lots of data is send/received and
         decreased linearly if little data is send/received.
@@ -150,7 +147,7 @@ class BrickletIsolator(Device):
         """
         Sets the baudrate for a the communication between Isolator Bricklet
         and the connected Bricklet. The baudrate for communication between
-        Brick and Isolator Bricklet can be set thorugh the API of the Brick.
+        Brick and Isolator Bricklet can be set through the API of the Brick.
 
         The baudrate can be in the range 400000 to 2000000.
 

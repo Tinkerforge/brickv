@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-07-27.      #
+# This file was automatically generated on 2018-09-28.      #
 #                                                           #
-# Python Bindings Version 2.1.17                            #
+# Python Bindings Version 2.1.18                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -113,7 +111,7 @@ class BrickletIndustrialDigitalOut4V2(Device):
 
     def set_value(self, value):
         """
-        Sets the output value of all four Channels. A value of *true* or *false* outputs
+        Sets the output value of all four channels. A value of *true* or *false* outputs
         logic 1 or logic 0 respectively on the corresponding channel.
 
         Use :func:`Set Selected Value` to change only one output channel state.
@@ -127,7 +125,7 @@ class BrickletIndustrialDigitalOut4V2(Device):
 
     def get_value(self):
         """
-        Returns the logic levels that are currently measured on the channels.
+        Returns the logic levels that are currently output on the channels.
         """
         return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_GET_VALUE, (), '', '4!')
 
@@ -150,7 +148,7 @@ class BrickletIndustrialDigitalOut4V2(Device):
         The channel will turn on and in 1.5s it will turn off again.
 
         A monoflop can be used as a failsafe mechanism. For example: Lets assume you
-        have a RS485 bus and a IO4 Bricklet is connected to one of the slave
+        have a RS485 bus and a IO-4 Bricklet is connected to one of the slave
         stacks. You can now call this function every second, with a time parameter
         of two seconds. The channel will be *high* all the time. If now the RS485
         connection is lost, the channel will turn *low* in at most two seconds.
@@ -173,26 +171,26 @@ class BrickletIndustrialDigitalOut4V2(Device):
 
         return GetMonoflop(*self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_GET_MONOFLOP, (channel,), 'B', '! I I'))
 
-    def set_channel_led_config(self, led, config):
+    def set_channel_led_config(self, channel, config):
         """
-        Each channel has a corresponding LED. You can turn the LED Off, On or show a
+        Each channel has a corresponding LED. You can turn the LED off, on or show a
         heartbeat. You can also set the LED to "Channel Status". In this mode the
         LED is on if the channel is high and off otherwise.
 
         By default all channel LEDs are configured as "Channel Status".
         """
-        led = int(led)
+        channel = int(channel)
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_SET_CHANNEL_LED_CONFIG, (led, config), 'B B', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_SET_CHANNEL_LED_CONFIG, (channel, config), 'B B', '')
 
-    def get_channel_led_config(self, led):
+    def get_channel_led_config(self, channel):
         """
-        Returns the Channel LED configuration as set by :func:`Set Channel LED Config`
+        Returns the channel LED configuration as set by :func:`Set Channel LED Config`
         """
-        led = int(led)
+        channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_GET_CHANNEL_LED_CONFIG, (led,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 'B')
 
     def set_pwm_configuration(self, channel, frequency, duty_cycle):
         """

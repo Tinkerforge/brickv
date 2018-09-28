@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-09-25.      #
+# This file was automatically generated on 2018-09-28.      #
 #                                                           #
-# Python Bindings Version 2.1.17                            #
+# Python Bindings Version 2.1.18                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -129,16 +127,18 @@ class BrickletLCD128x64(Device):
         """
         Writes pixels to the specified window.
 
-        The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are written
-        into the window line by line from left to right.
+        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are written
+        into the window line by line top to bottom and each line is written from left to
+        right.
 
         If automatic draw is enabled (default) the pixels are directly written to
-        the screen and only changes are updated. If you only need to update a few
-        pixels, only these pixels are updated on the screen, the rest stays the same.
+        the screen. Only pixels that have actually changed are updated on the screen,
+        the rest stays the same.
 
-        If automatic draw is disabled the pixels are written to a buffer and the
-        buffer is transferred to the display only after :func:`Draw Buffered Frame`
-        is called.
+        If automatic draw is disabled the pixels are written to an internal buffer and
+        the buffer is transferred to the display only after :func:`Draw Buffered Frame`
+        is called. This can be used to avoid flicker when drawing a complex frame in
+        multiple steps.
 
         Automatic draw can be configured with the :func:`Set Display Configuration`
         function.
@@ -157,11 +157,12 @@ class BrickletLCD128x64(Device):
         """
         Reads pixels from the specified window.
 
-        The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are read
-        from the window line by line from left to right.
+        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are read
+        from the window line by line top to bottom and each line is read from left to
+        right.
 
-        If automatic draw is enabled the pixels that are read are always the same that are
-        shown on the display.
+        If automatic draw is enabled (default) the pixels that are read are always the
+        same that are shown on the display.
 
         If automatic draw is disabled the pixels are read from the internal buffer
         (see :func:`Draw Buffered Frame`).
@@ -187,11 +188,11 @@ class BrickletLCD128x64(Device):
         Sets the configuration of the display.
 
         You can set a contrast value from 0 to 63, a backlight intensity value
-        from 0 to 100 and you can invert the color (black/white) of the display.
+        from 0 to 100 and you can invert the color (white/black) of the display.
 
         If automatic draw is set to *true*, the display is automatically updated with every
-        call of :func:`Write Pixels` or :func:`Write Line`. If it is set to false, the
-        changes are written into a temporary buffer and only shown on the display after
+        call of :func:`Write Pixels` and :func:`Write Line`. If it is set to false, the
+        changes are written into an internal buffer and only shown on the display after
         a call of :func:`Draw Buffered Frame`.
 
         The default values are contrast 14, backlight intensity 100, inverting off
@@ -229,12 +230,13 @@ class BrickletLCD128x64(Device):
 
     def draw_buffered_frame(self, force_complete_redraw):
         """
-        Draws the currently buffered frame. Normally each call of :func:`Write Pixels` or
+        Draws the currently buffered frame. Normally each call of :func:`Write Pixels` and
         :func:`Write Line` draws directly onto the display. If you turn automatic draw off
-        (:func:`Set Display Configuration`), the data is written in a temporary buffer and
-        only transferred to the display by calling this function.
+        (:func:`Set Display Configuration`), the data is written in an internal buffer and
+        only transferred to the display by calling this function. This can be used to
+        avoid flicker when drawing a complex frame in multiple steps.
 
-        Set the *force complete redraw* parameter to *true* to redraw the whole display
+        Set the `force complete redraw` to *true* to redraw the whole display
         instead of only the changed parts. Normally it should not be necessary to set this to
         *true*. It may only become necessary in case of stuck pixels because of errors.
         """
@@ -244,12 +246,12 @@ class BrickletLCD128x64(Device):
 
     def get_touch_position(self):
         """
-        Returns the last valid touch position.
+        Returns the last valid touch position:
 
-        * *X*: Touch position on x-axis (0-127)
-        * *Y*: Touch position on y-axis (0-63)
-        * *Pressure*: Amount of pressure applied by the user (0-300).
-        * *Age*: Age of touch press in ms (how long ago it was).
+        * Pressure: Amount of pressure applied by the user (0-300)
+        * X: Touch position on x-axis (0-127)
+        * Y: Touch position on y-axis (0-63)
+        * Age: Age of touch press in ms (how long ago it was)
         """
         return GetTouchPosition(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_TOUCH_POSITION, (), '', 'H H H I'))
 
@@ -285,11 +287,11 @@ class BrickletLCD128x64(Device):
 
         The gestures are swipes from left to right, right to left, top to bottom and bottom to top.
 
-        Additionally to the gestures a vector with a start and end position of the gesture is is
-        provided. You can use this vecotr do determine a more exact location of the gesture (e.g.
+        Additionally to the gestures a vector with a start and end position of the gesture is
+        provided. You can use this vector do determine a more exact location of the gesture (e.g.
         the swipe from top to bottom was on the left or right part of the screen).
 
-        The *age*-parameter corresponds to the age of gesture in ms (how long ago it was).
+        The age parameter corresponds to the age of gesture in ms (how long ago it was).
         """
         return GetTouchGesture(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_TOUCH_GESTURE, (), '', 'B I H H H H H I'))
 
@@ -463,16 +465,18 @@ class BrickletLCD128x64(Device):
         """
         Writes pixels to the specified window.
 
-        The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are written
-        into the window line by line from left to right.
+        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are written
+        into the window line by line top to bottom and each line is written from left to
+        right.
 
         If automatic draw is enabled (default) the pixels are directly written to
-        the screen and only changes are updated. If you only need to update a few
-        pixels, only these pixels are updated on the screen, the rest stays the same.
+        the screen. Only pixels that have actually changed are updated on the screen,
+        the rest stays the same.
 
-        If automatic draw is disabled the pixels are written to a buffer and the
-        buffer is transferred to the display only after :func:`Draw Buffered Frame`
-        is called.
+        If automatic draw is disabled the pixels are written to an internal buffer and
+        the buffer is transferred to the display only after :func:`Draw Buffered Frame`
+        is called. This can be used to avoid flicker when drawing a complex frame in
+        multiple steps.
 
         Automatic draw can be configured with the :func:`Set Display Configuration`
         function.
@@ -505,11 +509,12 @@ class BrickletLCD128x64(Device):
         """
         Reads pixels from the specified window.
 
-        The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are read
-        from the window line by line from left to right.
+        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are read
+        from the window line by line top to bottom and each line is read from left to
+        right.
 
-        If automatic draw is enabled the pixels that are read are always the same that are
-        shown on the display.
+        If automatic draw is enabled (default) the pixels that are read are always the
+        same that are shown on the display.
 
         If automatic draw is disabled the pixels are read from the internal buffer
         (see :func:`Draw Buffered Frame`).

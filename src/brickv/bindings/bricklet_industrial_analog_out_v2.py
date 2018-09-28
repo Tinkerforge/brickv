@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-07-31.      #
+# This file was automatically generated on 2018-09-28.      #
 #                                                           #
-# Python Bindings Version 2.1.17                            #
+# Python Bindings Version 2.1.18                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -203,7 +201,14 @@ class BrickletIndustrialAnalogOutV2(Device):
 
     def set_out_led_config(self, config):
         """
+        You can turn the Out LED off, on or show a
+        heartbeat. You can also set the LED to "Out Status". In this mode the
+        LED can either be turned on with a pre-defined threshold or the intensity
+        of the LED can change with the output value (voltage or current).
 
+        You can configure the channel status behavior with :func:`Set Out LED Status Config`.
+
+        By default the LED is configured as "Out Status"
         """
         config = int(config)
 
@@ -217,7 +222,30 @@ class BrickletIndustrialAnalogOutV2(Device):
 
     def set_out_led_status_config(self, min, max, config):
         """
+        Sets the Out LED status config. This config is used if the Out LED is
+        configured as "Out Status", see :func:`Set Out LED Config`.
 
+        For each channel you can choose between threshold and intensity mode.
+
+        In threshold mode you can define a positive or a negative threshold.
+        For a positive threshold set the "min" parameter to the threshold value in mV or
+        µA above which the LED should turn on and set the "max" parameter to 0. Example:
+        If you set a positive threshold of 5V, the LED will turn on as soon as the
+        output value exceeds 5V and turn off again if it goes below 5V.
+        For a negative threshold set the "max" parameter to the threshold value in mV or
+        µA below which the LED should turn on and set the "min" parameter to 0. Example:
+        If you set a negative threshold of 5V, the LED will turn on as soon as the
+        output value goes below 5V and the LED will turn off when the output value
+        exceeds 5V.
+
+        In intensity mode you can define a range mV or µA that is used to scale the brightness
+        of the LED. Example with min=2V, max=8V: The LED is off at 2V and below, on at
+        8V and above and the brightness is linearly scaled between the values 2V and 8V.
+        If the min value is greater than the max value, the LED brightness is scaled the
+        other way around.
+
+        By default the channel LED status config is set to intensity with min=0V and
+        max=10V.
         """
         min = int(min)
         max = int(max)
@@ -227,7 +255,7 @@ class BrickletIndustrialAnalogOutV2(Device):
 
     def get_out_led_status_config(self):
         """
-        Returns the Out LED configuration as set by :func:`Set Out LED Status Config`
+        Returns the Out LED status configuration as set by :func:`Set Out LED Status Config`.
         """
         return GetOutLEDStatusConfig(*self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_GET_OUT_LED_STATUS_CONFIG, (), '', 'H H B'))
 

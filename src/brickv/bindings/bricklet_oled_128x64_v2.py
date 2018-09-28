@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-22.      #
+# This file was automatically generated on 2018-09-28.      #
 #                                                           #
-# Python Bindings Version 2.1.17                            #
+# Python Bindings Version 2.1.18                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -105,16 +103,18 @@ class BrickletOLED128x64V2(Device):
         """
         Writes pixels to the specified window.
 
-        The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are written
-        into the window line by line from left to right.
+        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are written
+        into the window line by line top to bottom and each line is written from left to
+        right.
 
         If automatic draw is enabled (default) the pixels are directly written to
-        the screen and only changes are updated. If you only need to update a few
-        pixels, only these pixels are updated on the screen, the rest stays the same.
+        the screen. Only pixels that have actually changed are updated on the screen,
+        the rest stays the same.
 
-        If automatic draw is disabled the pixels are written to a buffer and the
-        buffer is transferred to the display only after :func:`Draw Buffered Frame`
-        is called.
+        If automatic draw is disabled the pixels are written to an internal buffer and
+        the buffer is transferred to the display only after :func:`Draw Buffered Frame`
+        is called. This can be used to avoid flicker when drawing a complex frame in
+        multiple steps.
 
         Automatic draw can be configured with the :func:`Set Display Configuration`
         function.
@@ -133,11 +133,12 @@ class BrickletOLED128x64V2(Device):
         """
         Reads pixels from the specified window.
 
-        The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are read
-        from the window line by line from left to right.
+        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are read
+        from the window line by line top to bottom and each line is read from left to
+        right.
 
-        If automatic draw is enabled the pixels that are read are always the same that are
-        shown on the display.
+        If automatic draw is enabled (default) the pixels that are read are always the
+        same that are shown on the display.
 
         If automatic draw is disabled the pixels are read from the internal buffer
         (see :func:`Draw Buffered Frame`).
@@ -162,16 +163,15 @@ class BrickletOLED128x64V2(Device):
         """
         Sets the configuration of the display.
 
-        You can set a contrast value from 0 to 255
-        and you can invert the color (black/white) of the display.
+        You can set a contrast value from 0 to 255 and you can invert the color
+        (white/black) of the display.
 
         If automatic draw is set to *true*, the display is automatically updated with every
         call of :func:`Write Pixels` or :func:`Write Line`. If it is set to false, the
-        changes are written into a temporary buffer and only shown on the display after
+        changes are written into an internal buffer and only shown on the display after
         a call of :func:`Draw Buffered Frame`.
 
-        The default values are contrast 143, inverting off
-        and automatic draw on.
+        The default values are contrast 143, inverting off and automatic draw on.
         """
         contrast = int(contrast)
         invert = bool(invert)
@@ -204,12 +204,13 @@ class BrickletOLED128x64V2(Device):
 
     def draw_buffered_frame(self, force_complete_redraw):
         """
-        Draws the currently buffered frame. Normally each call of :func:`Write Pixels` or
+        Draws the currently buffered frame. Normally each call of :func:`Write Pixels` and
         :func:`Write Line` draws directly onto the display. If you turn automatic draw off
-        (:func:`Set Display Configuration`), the data is written in a temporary buffer and
-        only transferred to the display by calling this function.
+        (:func:`Set Display Configuration`), the data is written in an internal buffer and
+        only transferred to the display by calling this function. This can be used to
+        avoid flicker when drawing a complex frame in multiple steps.
 
-        Set the *force complete redraw* parameter to *true* to redraw the whole display
+        Set the `force complete redraw` to *true* to redraw the whole display
         instead of only the changed parts. Normally it should not be necessary to set this to
         *true*. It may only become necessary in case of stuck pixels because of errors.
         """
@@ -361,16 +362,18 @@ class BrickletOLED128x64V2(Device):
         """
         Writes pixels to the specified window.
 
-        The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are written
-        into the window line by line from left to right.
+        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are written
+        into the window line by line top to bottom and each line is written from left to
+        right.
 
         If automatic draw is enabled (default) the pixels are directly written to
-        the screen and only changes are updated. If you only need to update a few
-        pixels, only these pixels are updated on the screen, the rest stays the same.
+        the screen. Only pixels that have actually changed are updated on the screen,
+        the rest stays the same.
 
-        If automatic draw is disabled the pixels are written to a buffer and the
-        buffer is transferred to the display only after :func:`Draw Buffered Frame`
-        is called.
+        If automatic draw is disabled the pixels are written to an internal buffer and
+        the buffer is transferred to the display only after :func:`Draw Buffered Frame`
+        is called. This can be used to avoid flicker when drawing a complex frame in
+        multiple steps.
 
         Automatic draw can be configured with the :func:`Set Display Configuration`
         function.
@@ -403,11 +406,12 @@ class BrickletOLED128x64V2(Device):
         """
         Reads pixels from the specified window.
 
-        The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are read
-        from the window line by line from left to right.
+        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are read
+        from the window line by line top to bottom and each line is read from left to
+        right.
 
-        If automatic draw is enabled the pixels that are read are always the same that are
-        shown on the display.
+        If automatic draw is enabled (default) the pixels that are read are always the
+        same that are shown on the display.
 
         If automatic draw is disabled the pixels are read from the internal buffer
         (see :func:`Draw Buffered Frame`).

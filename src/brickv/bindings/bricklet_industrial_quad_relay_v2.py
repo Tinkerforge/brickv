@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-22.      #
+# This file was automatically generated on 2018-09-28.      #
 #                                                           #
-# Python Bindings Version 2.1.17                            #
+# Python Bindings Version 2.1.18                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -169,26 +169,26 @@ class BrickletIndustrialQuadRelayV2(Device):
 
         self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_SELECTED_VALUE, (channel, value), 'B !', '')
 
-    def set_channel_led_config(self, led, config):
+    def set_channel_led_config(self, channel, config):
         """
-        Each channel has a corresponding LED. You can turn the LED Off, On or show a
+        Each channel has a corresponding LED. You can turn the LED off, on or show a
         heartbeat. You can also set the LED to "Channel Status". In this mode the
         LED is on if the channel is high and off otherwise.
 
         By default all channel LEDs are configured as "Channel Status".
         """
-        led = int(led)
+        channel = int(channel)
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_CHANNEL_LED_CONFIG, (led, config), 'B B', '')
+        self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_CHANNEL_LED_CONFIG, (channel, config), 'B B', '')
 
-    def get_channel_led_config(self, led):
+    def get_channel_led_config(self, channel):
         """
-        Returns the Channel LED configuration as set by :func:`Set Channel LED Config`
+        Returns the channel LED configuration as set by :func:`Set Channel LED Config`
         """
-        led = int(led)
+        channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_CHANNEL_LED_CONFIG, (led,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 'B')
 
     def get_spitfp_error_count(self):
         """

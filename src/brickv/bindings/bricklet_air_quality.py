@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-08-27.      #
+# This file was automatically generated on 2018-09-28.      #
 #                                                           #
-# Python Bindings Version 2.1.17                            #
+# Python Bindings Version 2.1.18                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -30,7 +28,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletAirQuality(Device):
     """
-    Measures relative IAQ index, temperature, humidity and air pressure
+    Measures IAQ index, temperature, humidity and air pressure
     """
 
     DEVICE_IDENTIFIER = 297
@@ -147,8 +145,9 @@ class BrickletAirQuality(Device):
 
     def get_all_values(self):
         """
-        Returns all values measured by the Air Quality Bricklet. The values ae IAQ (In-Air Quality) Index,
-        IAQ Index Accuracy, Temperature, Humidity and Air Pressure.
+        Returns all values measured by the Air Quality Bricklet. The values are
+        IAQ (Indoor Air Quality) Index, IAQ Index Accuracy, Temperature, Humidity and
+        Air Pressure.
 
         .. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
            :scale: 100 %
@@ -156,30 +155,33 @@ class BrickletAirQuality(Device):
            :align: center
            :target: ../../_images/Misc/bricklet_air_quality_iaq_index.png
 
-        * IAQ Index: The IAQ Index goes from 0 to 500. The higher the IAQ index, the greater the level of air pollution.
-        * IAQ Index Accuracy: The accuracy goes from 0 = unreliable to 3 = high.
-        * Temperature: The temperature is given in steps of 0.01 °C
-        * Humidity: The relative humidity is given in steps of 0.01 %RH.
-        * Air Pressure. The air pressure is given in steps of 0.01 mbar.
+        The values have these ranges and units:
+
+        * IAQ Index: 0 to 500, higher value means greater level of air pollution
+        * IAQ Index Accuracy: 0 = unreliable to 3 = high
+        * Temperature: in steps of 0.01 °C
+        * Humidity: in steps of 0.01 %RH
+        * Air Pressure: in steps of 0.01 mbar
         """
         return GetAllValues(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_ALL_VALUES, (), '', 'i B i i i'))
 
     def set_temperature_offset(self, offset):
         """
-        Sets a temperature offset in 1/100°C. A offset of 10 will decrease the temperature
-        by 0.1°C.
+        Sets a temperature offset in 1/100°C. A offset of 10 will decrease the measured
+        temperature by 0.1°C.
 
         If you install this Bricklet into an enclosure and you want to measure the ambient
         temperature, you may have to decrease the measured temperature by some value to
-        include for the error because of the heating inside of the enclosure.
+        compensate for the error because of the heating inside of the enclosure.
 
-        We would recommend that you leave the parts in the enclosure running for at least
+        We recommend that you leave the parts in the enclosure running for at least
         24 hours such that a temperature equilibrium can be reached. After that you can measure
         the temperature directly outside of enclosure and set the difference as offset.
 
-        This temperature difference is used to calculate the correct ambient humidity and
-        also for the in air quality measurements. If the precision of the measurements is
-        important to you we recommend that you set this value.
+        This temperature offset is used to calculate the relative humidity and
+        IAQ index measurements. In case the Bricklet is installed in an enclosure, we
+        recommend to measure and set the temperature offset to imporve the accuracy of
+        the measurements.
         """
         offset = int(offset)
 
@@ -220,12 +222,12 @@ class BrickletAirQuality(Device):
 
     def get_iaq_index(self):
         """
-        Returns the IAQ (In-Air Quality) index and accuracy. The IAQ index goes from
+        Returns the IAQ index and accuracy. The IAQ index goes from
         0 to 500. The higher the IAQ index, the greater the level of air pollution.
 
         .. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
            :scale: 100 %
-           :alt: Air Quality Index description
+           :alt: IAQ index description
            :align: center
            :target: ../../_images/Misc/bricklet_air_quality_iaq_index.png
 

@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-22.      #
+# This file was automatically generated on 2018-09-28.      #
 #                                                           #
-# Python Bindings Version 2.1.17                            #
+# Python Bindings Version 2.1.18                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -113,12 +111,13 @@ class BrickletOneWire(Device):
 
     def search_bus_low_level(self):
         """
-        Returns a list of up to 64 Identifiers of the connected 1-Wire devices.
-        Each identifier has 64 bits and consists of 8 bit family code, 48 bit ID and
-        8 bit CRC.
+        Returns a list of up to 64 identifiers of the connected 1-Wire devices.
+        Each identifier is 64-bit and consists of 8-bit family code, 48-bit ID and
+        8-bit CRC.
 
-        To get these Identifiers the Bricklet runs the SEARCH ROM algorithm, as
-        `defined by maxim <https://www.maximintegrated.com/en/app-notes/index.mvp/id/187>`__.
+        To get these identifiers the Bricklet runs the
+        `SEARCH ROM algorithm <https://www.maximintegrated.com/en/app-notes/index.mvp/id/187>`__,
+        as defined by Maxim.
         """
         return SearchBusLowLevel(*self.ipcon.send_request(self, BrickletOneWire.FUNCTION_SEARCH_BUS_LOW_LEVEL, (), '', 'H H 7Q B'))
 
@@ -144,12 +143,13 @@ class BrickletOneWire(Device):
 
     def write_command(self, identifier, command):
         """
-        Writes a command to the 1-Wire device with the given identifier. You can obain
+        Writes a command to the 1-Wire device with the given identifier. You can obtain
         the identifier by calling :func:`Search Bus`. The MATCH ROM operation is used to
-        write the command
+        write the command.
 
-        If you only have one device connected you can set the identifier to 0. In this case
-        the SKIP ROM command is used to write the command.
+        If you only have one device connected or want to broadcast to all devices
+        you can set the identifier to 0. In this case the SKIP ROM operation is used to
+        write the command.
         """
         identifier = int(identifier)
         command = int(command)
@@ -317,12 +317,13 @@ class BrickletOneWire(Device):
 
     def search_bus(self):
         """
-        Returns a list of up to 64 Identifiers of the connected 1-Wire devices.
-        Each identifier has 64 bits and consists of 8 bit family code, 48 bit ID and
-        8 bit CRC.
+        Returns a list of up to 64 identifiers of the connected 1-Wire devices.
+        Each identifier is 64-bit and consists of 8-bit family code, 48-bit ID and
+        8-bit CRC.
 
-        To get these Identifiers the Bricklet runs the SEARCH ROM algorithm, as
-        `defined by maxim <https://www.maximintegrated.com/en/app-notes/index.mvp/id/187>`__.
+        To get these identifiers the Bricklet runs the
+        `SEARCH ROM algorithm <https://www.maximintegrated.com/en/app-notes/index.mvp/id/187>`__,
+        as defined by Maxim.
         """
         with self.stream_lock:
             ret = self.search_bus_low_level()

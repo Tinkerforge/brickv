@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-06-22.      #
+# This file was automatically generated on 2018-09-28.      #
 #                                                           #
-# Python Bindings Version 2.1.17                            #
+# Python Bindings Version 2.1.18                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -131,13 +129,13 @@ class BrickletIO16V2(Device):
 
     def set_value(self, value):
         """
-        Sets the output value of all four Channels. A value of *true* or *false* outputs
+        Sets the output value of all sixteen channels. A value of *true* or *false* outputs
         logic 1 or logic 0 respectively on the corresponding channel.
 
         Use :func:`Set Selected Value` to change only one output channel state.
 
-        For example: (True, True, False, False, ..., False) will turn the channels 0-1 high and the
-        channels 2-15 low.
+        For example: (True, True, False, False, ..., False) will turn the channels 0-1
+        high and the channels 2-15 low.
 
         .. note::
          This function does nothing for channels that are configured as input. Pull-up
@@ -204,7 +202,19 @@ class BrickletIO16V2(Device):
 
     def set_input_value_callback_configuration(self, channel, period, value_has_to_change):
         """
+        This callback can be configured per channel.
 
+        The period in ms is the period with which the :cb:`Input Value`
+        callback is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
         """
         channel = int(channel)
         period = int(period)
@@ -214,7 +224,8 @@ class BrickletIO16V2(Device):
 
     def get_input_value_callback_configuration(self, channel):
         """
-
+        Returns the callback configuration as set by
+        :func:`Set Input Value Callback Configuration`.
         """
         channel = int(channel)
 
@@ -222,7 +233,17 @@ class BrickletIO16V2(Device):
 
     def set_all_input_value_callback_configuration(self, period, value_has_to_change):
         """
+        The period in ms is the period with which the :cb:`All Input Value`
+        callback is triggered periodically. A value of 0 turns the callback off.
 
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -231,13 +252,30 @@ class BrickletIO16V2(Device):
 
     def get_all_input_value_callback_configuration(self):
         """
-
+        Returns the callback configuration as set by
+        :func:`Set All Input Value Callback Configuration`.
         """
         return GetAllInputValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_ALL_INPUT_VALUE_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
     def set_monoflop(self, channel, value, time):
         """
+        Configures a monoflop of the specified channel.
 
+        The second parameter is the desired value of the specified
+        channel. A *true* means relay closed and a *false* means relay open.
+
+        The third parameter indicates the time (in ms) that the channels should hold
+        the value.
+
+        If this function is called with the parameters (0, 1, 1500) channel 0 will
+        close and in 1.5s channel 0 will open again
+
+        A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
+        have a RS485 bus and a IO-16 Bricklet 2.0 connected to one of
+        the slave stacks. You can now call this function every second, with a time
+        parameter of two seconds and channel 0 closed. Channel 0 will be closed all the
+        time. If now the RS485 connection is lost, then channel 0 will be opened in at
+        most two seconds.
         """
         channel = int(channel)
         value = bool(value)
