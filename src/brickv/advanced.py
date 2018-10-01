@@ -100,7 +100,7 @@ class AdvancedWindow(QDialog, Ui_Advanced):
     def brick_changed(self, index):
         self.combo_port.clear()
 
-        if index < 0 or index > self.combo_brick.count():
+        if index < 0 or index >= len(self.brick_infos):
             return
 
         info = self.brick_infos[index]
@@ -113,7 +113,6 @@ class AdvancedWindow(QDialog, Ui_Advanced):
                     raise
             except:
                 self.combo_port.addItem(key.upper())
-
 
         self.update_ui_state()
         self.update_calibration()
