@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-09-28.      #
+# This file was automatically generated on 2018-10-04.      #
 #                                                           #
 # Python Bindings Version 2.1.18                            #
 #                                                           #
@@ -94,7 +94,7 @@ class BrickletDistanceIRV2(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletDistanceIRV2.FUNCTION_GET_DISTANCE] = BrickletDistanceIRV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDistanceIRV2.FUNCTION_SET_DISTANCE_CALLBACK_CONFIGURATION] = BrickletDistanceIRV2.RESPONSE_EXPECTED_TRUE
@@ -267,13 +267,13 @@ class BrickletDistanceIRV2(Device):
         """
         moving_average_length = int(moving_average_length)
 
-        self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_SET_MOVING_AVERAGE_CONFIGURATION, (moving_average_length,), 'B', '')
+        self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_SET_MOVING_AVERAGE_CONFIGURATION, (moving_average_length,), 'H', '')
 
     def get_moving_average_configuration(self):
         """
         Returns the moving average configuration as set by :func:`Set Moving Average Configuration`.
         """
-        return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_MOVING_AVERAGE_CONFIGURATION, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_MOVING_AVERAGE_CONFIGURATION, (), '', 'H')
 
     def set_distance_led_config(self, config):
         """
