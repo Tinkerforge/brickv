@@ -34,3 +34,8 @@
   Industrial Dual Relay, Industrial Quad Relay 2.0, IO-4 2.0, LED Strip 2.0,
   Load Cell 2.0, Particulate Matter, PTC 2.0, Real-Time Clock 2.0, Sound
   Pressure Level, Thermocouple 2.0 and Voltage/Current 2.0 Bricklet
+
+2018-10-05: 2.0.8 (<unknown>)
+- Add support for Air Quality, Analog Out 3.0, Barometer 2.0, Distance IR 2.0,
+  Dual Button 2.0, Industrial Dual 0-20mA 2.0, Industrial Dual Analog In 2.0,
+  IO-16 2.0, Temperature 2.0 and UV Light 2.0 Bricklet

@@ -464,7 +464,7 @@ def build_linux_flash_pkg():
         print('skipping lintian check')
 
 
-BRICK_LOGGER_VERSION = '2.0.7'
+BRICK_LOGGER_VERSION = '2.0.8'
 
 def build_logger_zip():
     print('building brick-logger ZIP file')
