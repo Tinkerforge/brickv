@@ -404,20 +404,25 @@
 - Add support for RED Brick Image 1.11
 
 2018-06-08: 2.3.15 (f2558ec)
-- Add support (including Data Logger) for CAN 2.0, Industrial Counter,
-  Industrial Digital In 4 2.0, Industrial Dual Relay, Industrial Quad Relay 2.0,
-  IO-4 2.0, LED Strip 2.0, Load Cell 2.0, Particulate Matter, PTC 2.0,
-  Real-Time Clock 2.0, RS232 2.0, Sound Pressure Level, Thermocouple 2.0 and
-  Voltage/Current 2.0 Bricklet
+- Add support for CAN 2.0, Industrial Counter, Industrial Digital In 4 2.0,
+  Industrial Dual Relay, Industrial Quad Relay 2.0, IO-4 2.0, LED Strip 2.0,
+  Load Cell 2.0, Particulate Matter, PTC 2.0, Real-Time Clock 2.0, RS232 2.0,
+  Sound Pressure Level, Thermocouple 2.0 and Voltage/Current 2.0 Bricklet
+- Add Data Logger support for CAN 2.0, Industrial Counter, Industrial Digital
+  In 4 2.0, Industrial Dual Relay, Industrial Quad Relay 2.0, IO-4 2.0, LED
+  Strip 2.0, Load Cell 2.0, Particulate Matter, PTC 2.0, Real-Time Clock 2.0,
+  Sound Pressure Level, Thermocouple 2.0 and Voltage/Current 2.0 Bricklet
 - Add Data Logger support for logging all stations and sensors with the Outdoor
   Weather Bricklet, before only the first stations and sensors could be logged
 
-2018-10-05: 2.3.16 (<unknown>)
-- Add support (including Data Logger) for Air Quality, Analog Out 3.0,
-  Barometer 2.0, Distance IR 2.0, Dual Button 2.0, Industrial Analog Out 2.0,
-  Industrial Digital Out 4 2.0, Industrial Dual 0-20mA 2.0, Industrial Dual
-  Analog In 2.0, IO-16 2.0, Isolator, LCD 128x64, OLED 128x64 2.0, One Wire,
-  Temperature 2.0 and UV Light 2.0 Bricklet
+2018-10-05: 2.3.16 (c88e821)
+- Add support for Air Quality, Analog Out 3.0, Barometer 2.0, Distance IR 2.0,
+  Dual Button 2.0, Industrial Analog Out 2.0, Industrial Digital Out 4 2.0,
+  Industrial Dual 0-20mA 2.0, Industrial Dual Analog In 2.0, IO-16 2.0, Isolator,
+  LCD 128x64, OLED 128x64 2.0, One Wire, Temperature 2.0 and UV Light 2.0 Bricklet
+- Add Data Logger support for Air Quality, Analog Out 3.0, Barometer 2.0,
+  Distance IR 2.0, Dual Button 2.0, Industrial Dual 0-20mA 2.0, Industrial Dual
+  Analog In 2.0, IO-16 2.0, Temperature 2.0 and UV Light 2.0 Bricklet
 - Add gain control to Load Cell Bricklet 2.0 plugin
 - Show correct unit in UV Light Bricklet plugin
 - Make Real-Time Clock Bricklet (2.0) calibration process more robust
