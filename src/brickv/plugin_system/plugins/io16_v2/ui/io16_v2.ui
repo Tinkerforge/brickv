@@ -1159,7 +1159,7 @@
           </font>
          </property>
          <property name="text">
-          <string>8 (B1)</string>
+          <string>8 (B0)</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
