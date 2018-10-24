@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-10-05.      #
+# This file was automatically generated on 2018-10-24.      #
 #                                                           #
 # Python Bindings Version 2.1.19                            #
 #                                                           #
@@ -208,9 +208,8 @@ class BrickletRS232V2(Device):
 
     def set_buffer_config(self, send_buffer_size, receive_buffer_size):
         """
-        Sets the send and receive buffer size in byte. In sum there is
-        10240 byte (10kb) buffer available and the minimum buffer size
-        is 1024 byte (1kb) for both.
+        Sets the send and receive buffer size in byte. In total the buffers have to be
+        10240 byte (10kb) in size, the minimum buffer size is 1024 byte (1kb) for each.
 
         The current buffer content is lost if this function is called.
 

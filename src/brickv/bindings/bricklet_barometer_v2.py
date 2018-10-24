@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-10-05.      #
+# This file was automatically generated on 2018-10-24.      #
 #                                                           #
 # Python Bindings Version 2.1.19                            #
 #                                                           #
@@ -415,6 +415,10 @@ class BrickletBarometerV2(Device):
 
         The low pass filter configuration only applies to the air pressure measurement.
         There is no low pass filter for the temperature measurement.
+
+        A higher data rate will result in a less precise temperature because of
+        self-heating of the sensor. If the accuracy of the temperature reading is
+        important to you, we would recommend the 1Hz data rate.
 
         The default values are 50Hz data rate and 1/9th low pass filter.
         """

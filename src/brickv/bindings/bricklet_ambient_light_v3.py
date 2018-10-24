@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-10-05.      #
+# This file was automatically generated on 2018-10-24.      #
 #                                                           #
 # Python Bindings Version 2.1.19                            #
 #                                                           #
@@ -18,6 +18,8 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
+GetIlluminanceCallbackConfiguration = namedtuple('IlluminanceCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
+GetConfiguration = namedtuple('Configuration', ['illuminance_range', 'integration_time'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -30,8 +32,14 @@ class BrickletAmbientLightV3(Device):
     DEVICE_DISPLAY_NAME = 'Ambient Light Bricklet 3.0'
     DEVICE_URL_PART = 'ambient_light_v3' # internal
 
+    CALLBACK_ILLUMINANCE = 4
 
 
+    FUNCTION_GET_ILLUMINANCE = 1
+    FUNCTION_SET_ILLUMINANCE_CALLBACK_CONFIGURATION = 2
+    FUNCTION_GET_ILLUMINANCE_CALLBACK_CONFIGURATION = 3
+    FUNCTION_SET_CONFIGURATION = 5
+    FUNCTION_GET_CONFIGURATION = 6
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -45,6 +53,26 @@ class BrickletAmbientLightV3(Device):
     FUNCTION_READ_UID = 249
     FUNCTION_GET_IDENTITY = 255
 
+    THRESHOLD_OPTION_OFF = 'x'
+    THRESHOLD_OPTION_OUTSIDE = 'o'
+    THRESHOLD_OPTION_INSIDE = 'i'
+    THRESHOLD_OPTION_SMALLER = '<'
+    THRESHOLD_OPTION_GREATER = '>'
+    ILLUMINANCE_RANGE_UNLIMITED = 6
+    ILLUMINANCE_RANGE_64000LUX = 0
+    ILLUMINANCE_RANGE_32000LUX = 1
+    ILLUMINANCE_RANGE_16000LUX = 2
+    ILLUMINANCE_RANGE_8000LUX = 3
+    ILLUMINANCE_RANGE_1300LUX = 4
+    ILLUMINANCE_RANGE_600LUX = 5
+    INTEGRATION_TIME_50MS = 0
+    INTEGRATION_TIME_100MS = 1
+    INTEGRATION_TIME_150MS = 2
+    INTEGRATION_TIME_200MS = 3
+    INTEGRATION_TIME_250MS = 4
+    INTEGRATION_TIME_300MS = 5
+    INTEGRATION_TIME_350MS = 6
+    INTEGRATION_TIME_400MS = 7
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -70,6 +98,11 @@ class BrickletAmbientLightV3(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletAmbientLightV3.FUNCTION_GET_ILLUMINANCE] = BrickletAmbientLightV3.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAmbientLightV3.FUNCTION_SET_ILLUMINANCE_CALLBACK_CONFIGURATION] = BrickletAmbientLightV3.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletAmbientLightV3.FUNCTION_GET_ILLUMINANCE_CALLBACK_CONFIGURATION] = BrickletAmbientLightV3.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAmbientLightV3.FUNCTION_SET_CONFIGURATION] = BrickletAmbientLightV3.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAmbientLightV3.FUNCTION_GET_CONFIGURATION] = BrickletAmbientLightV3.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAmbientLightV3.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletAmbientLightV3.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAmbientLightV3.FUNCTION_SET_BOOTLOADER_MODE] = BrickletAmbientLightV3.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAmbientLightV3.FUNCTION_GET_BOOTLOADER_MODE] = BrickletAmbientLightV3.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -83,7 +116,107 @@ class BrickletAmbientLightV3(Device):
         self.response_expected[BrickletAmbientLightV3.FUNCTION_READ_UID] = BrickletAmbientLightV3.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAmbientLightV3.FUNCTION_GET_IDENTITY] = BrickletAmbientLightV3.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletAmbientLightV3.CALLBACK_ILLUMINANCE] = 'I'
 
+
+    def get_illuminance(self):
+        """
+        Returns the illuminance of the ambient light sensor. The measurement range goes
+        up to about 100000lux, but above 64000lux the precision starts to drop.
+        The illuminance is given in lux/100, i.e. a value of 450000 means that an
+        illuminance of 4500lux is measured.
+
+        An illuminance of 0lux indicates that the sensor is saturated and the
+        configuration should be modified, see :func:`Set Configuration`.
+
+
+        If you want to get the value periodically, it is recommended to use the
+        :cb:`Illuminance` callback. You can set the callback configuration
+        with :func:`Set Illuminance Callback Configuration`.
+        """
+        return self.ipcon.send_request(self, BrickletAmbientLightV3.FUNCTION_GET_ILLUMINANCE, (), '', 'I')
+
+    def set_illuminance_callback_configuration(self, period, value_has_to_change, option, min, max):
+        """
+        The period in ms is the period with which the :cb:`Illuminance` callback is triggered
+        periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change
+        within the period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        It is furthermore possible to constrain the callback with thresholds.
+
+        The `option`-parameter together with min/max sets a threshold for the :cb:`Illuminance` callback.
+
+        The following options are possible:
+
+        .. csv-table::
+         :header: "Option", "Description"
+         :widths: 10, 100
+
+         "'x'",    "Threshold is turned off"
+         "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
+         "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
+         "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
+
+        If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
+
+        The default value is (0, false, 'x', 0, 0).
+        """
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+        option = create_char(option)
+        min = int(min)
+        max = int(max)
+
+        self.ipcon.send_request(self, BrickletAmbientLightV3.FUNCTION_SET_ILLUMINANCE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c I I', '')
+
+    def get_illuminance_callback_configuration(self):
+        """
+        Returns the callback configuration as set by :func:`Set Illuminance Callback Configuration`.
+        """
+        return GetIlluminanceCallbackConfiguration(*self.ipcon.send_request(self, BrickletAmbientLightV3.FUNCTION_GET_ILLUMINANCE_CALLBACK_CONFIGURATION, (), '', 'I ! c I I'))
+
+    def set_configuration(self, illuminance_range, integration_time):
+        """
+        Sets the configuration. It is possible to configure an illuminance range
+        between 0-600lux and 0-64000lux and an integration time between 50ms and 400ms.
+
+        The unlimited illuminance range allows to measure up to about 100000lux, but
+        above 64000lux the precision starts to drop.
+
+        A smaller illuminance range increases the resolution of the data. A longer
+        integration time will result in less noise on the data.
+
+        If the actual measure illuminance is out-of-range then the current illuminance
+        range maximum +0.01lux is reported by :func:`Get Illuminance` and the
+        :cb:`Illuminance` callback. For example, 800001 for the 0-8000lux range.
+
+        With a long integration time the sensor might be saturated before the measured
+        value reaches the maximum of the selected illuminance range. In this case 0lux
+        is reported by :func:`Get Illuminance` and the :cb:`Illuminance` callback.
+
+        If the measurement is out-of-range or the sensor is saturated then you should
+        configure the next higher illuminance range. If the highest range is already
+        in use, then start to reduce the integration time.
+
+        The default values are 0-8000lux illuminance range and 150ms integration time.
+        """
+        illuminance_range = int(illuminance_range)
+        integration_time = int(integration_time)
+
+        self.ipcon.send_request(self, BrickletAmbientLightV3.FUNCTION_SET_CONFIGURATION, (illuminance_range, integration_time), 'B B', '')
+
+    def get_configuration(self):
+        """
+        Returns the configuration as set by :func:`Set Configuration`.
+        """
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletAmbientLightV3.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
     def get_spitfp_error_count(self):
         """
@@ -224,5 +357,14 @@ class BrickletAmbientLightV3(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletAmbientLightV3.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def register_callback(self, callback_id, function):
+        """
+        Registers the given *function* with the given *callback_id*.
+        """
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
+        else:
+            self.registered_callbacks[callback_id] = function
 
 AmbientLightV3 = BrickletAmbientLightV3 # for backward compatibility

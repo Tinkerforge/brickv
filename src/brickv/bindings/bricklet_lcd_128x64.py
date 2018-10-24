@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-10-05.      #
+# This file was automatically generated on 2018-10-24.      #
 #                                                           #
 # Python Bindings Version 2.1.19                            #
 #                                                           #
@@ -27,7 +27,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletLCD128x64(Device):
     """
-    LCD with 128x64 pixel
+    7.1cm (2.8") display with 128x64 pixel and touch screen
     """
 
     DEVICE_IDENTIFIER = 298
