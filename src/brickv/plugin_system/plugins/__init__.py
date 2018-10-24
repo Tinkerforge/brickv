@@ -3,6 +3,7 @@ from brickv.plugin_system.plugins.accelerometer import device_class as accelerom
 from brickv.plugin_system.plugins.air_quality import device_class as air_quality
 from brickv.plugin_system.plugins.ambient_light import device_class as ambient_light
 from brickv.plugin_system.plugins.ambient_light_v2 import device_class as ambient_light_v2
+from brickv.plugin_system.plugins.ambient_light_v3 import device_class as ambient_light_v3
 from brickv.plugin_system.plugins.analog_in import device_class as analog_in
 from brickv.plugin_system.plugins.analog_in_v2 import device_class as analog_in_v2
 from brickv.plugin_system.plugins.analog_in_v3 import device_class as analog_in_v3
@@ -128,6 +129,7 @@ device_classes = [
     air_quality,
     ambient_light,
     ambient_light_v2,
+    ambient_light_v3,
     analog_in,
     analog_in_v2,
     analog_in_v3,
