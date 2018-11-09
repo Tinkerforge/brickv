@@ -1,5 +1,6 @@
 from brickv.plugin_system.plugins.ac_current import device_class as ac_current
 from brickv.plugin_system.plugins.accelerometer import device_class as accelerometer
+from brickv.plugin_system.plugins.accelerometer_v2 import device_class as accelerometer_v2
 from brickv.plugin_system.plugins.air_quality import device_class as air_quality
 from brickv.plugin_system.plugins.ambient_light import device_class as ambient_light
 from brickv.plugin_system.plugins.ambient_light_v2 import device_class as ambient_light_v2
@@ -85,6 +86,7 @@ from brickv.plugin_system.plugins.ozone import device_class as ozone
 from brickv.plugin_system.plugins.particulate_matter import device_class as particulate_matter
 from brickv.plugin_system.plugins.piezo_buzzer import device_class as piezo_buzzer
 from brickv.plugin_system.plugins.piezo_speaker import device_class as piezo_speaker
+from brickv.plugin_system.plugins.piezo_speaker_v2 import device_class as piezo_speaker_v2
 from brickv.plugin_system.plugins.pressure import device_class as pressure
 from brickv.plugin_system.plugins.ptc import device_class as ptc
 from brickv.plugin_system.plugins.ptc_v2 import device_class as ptc_v2
@@ -127,6 +129,7 @@ from brickv.plugin_system.plugins.voltage_current_v2 import device_class as volt
 device_classes = [
     ac_current,
     accelerometer,
+    accelerometer_v2,
     air_quality,
     ambient_light,
     ambient_light_v2,
@@ -212,6 +215,7 @@ device_classes = [
     particulate_matter,
     piezo_buzzer,
     piezo_speaker,
+    piezo_speaker_v2,
     pressure,
     ptc,
     ptc_v2,
