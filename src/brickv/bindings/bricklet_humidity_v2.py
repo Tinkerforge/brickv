@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-10-24.      #
+# This file was automatically generated on 2018-11-28.      #
 #                                                           #
-# Python Bindings Version 2.1.19                            #
+# Python Bindings Version 2.1.20                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -272,12 +272,11 @@ class BrickletHumidityV2(Device):
 
         The range for the averaging is 1-1000.
 
-        New data is gathered every 50ms\*. With a moving average of length 1000 the resulting
+        New data is gathered every 50ms*. With a moving average of length 1000 the resulting
         averaging window has a length of 50s. If you want to do long term measurements the longest
         moving average will give the cleanest results.
 
         The default value is 5.
-
 
         \* In firmware version 2.0.3 we added the :func:`Set Samples Per Second` function. It
         configures the measurement frequency. Since high frequencies can result in self-heating

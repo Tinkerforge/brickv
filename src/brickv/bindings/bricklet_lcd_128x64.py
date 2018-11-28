@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-10-24.      #
+# This file was automatically generated on 2018-11-28.      #
 #                                                           #
-# Python Bindings Version 2.1.19                            #
+# Python Bindings Version 2.1.20                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -22,6 +22,16 @@ GetTouchPosition = namedtuple('TouchPosition', ['pressure', 'x', 'y', 'age'])
 GetTouchPositionCallbackConfiguration = namedtuple('TouchPositionCallbackConfiguration', ['period', 'value_has_to_change'])
 GetTouchGesture = namedtuple('TouchGesture', ['gesture', 'duration', 'pressure_max', 'x_start', 'y_start', 'x_end', 'y_end', 'age'])
 GetTouchGestureCallbackConfiguration = namedtuple('TouchGestureCallbackConfiguration', ['period', 'value_has_to_change'])
+GetGUIButton = namedtuple('GUIButton', ['active', 'position_x', 'position_y', 'width', 'height', 'text'])
+GetGUIButtonPressedCallbackConfiguration = namedtuple('GUIButtonPressedCallbackConfiguration', ['period', 'value_has_to_change'])
+GetGUISlider = namedtuple('GUISlider', ['active', 'position_x', 'position_y', 'length', 'direction', 'value'])
+GetGUISliderValueCallbackConfiguration = namedtuple('GUISliderValueCallbackConfiguration', ['period', 'value_has_to_change'])
+GetGUITabConfiguration = namedtuple('GUITabConfiguration', ['change_tab_config', 'clear_gui'])
+GetGUITabText = namedtuple('GUITabText', ['active', 'text'])
+GetGUITabIcon = namedtuple('GUITabIcon', ['active', 'icon'])
+GetGUITabSelectedCallbackConfiguration = namedtuple('GUITabSelectedCallbackConfiguration', ['period', 'value_has_to_change'])
+GetGUIGraphConfiguration = namedtuple('GUIGraphConfiguration', ['active', 'graph_type', 'position_x', 'position_y', 'width', 'height', 'text_x', 'text_y'])
+GetGUIGraphDataLowLevel = namedtuple('GUIGraphDataLowLevel', ['data_length', 'data_chunk_offset', 'data_chunk_data'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -36,6 +46,9 @@ class BrickletLCD128x64(Device):
 
     CALLBACK_TOUCH_POSITION = 11
     CALLBACK_TOUCH_GESTURE = 15
+    CALLBACK_GUI_BUTTON_PRESSED = 25
+    CALLBACK_GUI_SLIDER_VALUE = 32
+    CALLBACK_GUI_TAB_SELECTED = 44
 
 
     FUNCTION_WRITE_PIXELS_LOW_LEVEL = 1
@@ -51,6 +64,40 @@ class BrickletLCD128x64(Device):
     FUNCTION_GET_TOUCH_GESTURE = 12
     FUNCTION_SET_TOUCH_GESTURE_CALLBACK_CONFIGURATION = 13
     FUNCTION_GET_TOUCH_GESTURE_CALLBACK_CONFIGURATION = 14
+    FUNCTION_DRAW_LINE = 16
+    FUNCTION_DRAW_BOX = 17
+    FUNCTION_DRAW_TEXT = 18
+    FUNCTION_SET_GUI_BUTTON = 19
+    FUNCTION_GET_GUI_BUTTON = 20
+    FUNCTION_REMOVE_GUI_BUTTON = 21
+    FUNCTION_SET_GUI_BUTTON_PRESSED_CALLBACK_CONFIGURATION = 22
+    FUNCTION_GET_GUI_BUTTON_PRESSED_CALLBACK_CONFIGURATION = 23
+    FUNCTION_GET_GUI_BUTTON_PRESSED = 24
+    FUNCTION_SET_GUI_SLIDER = 26
+    FUNCTION_GET_GUI_SLIDER = 27
+    FUNCTION_REMOVE_GUI_SLIDER = 28
+    FUNCTION_SET_GUI_SLIDER_VALUE_CALLBACK_CONFIGURATION = 29
+    FUNCTION_GET_GUI_SLIDER_VALUE_CALLBACK_CONFIGURATION = 30
+    FUNCTION_GET_GUI_SLIDER_VALUE = 31
+    FUNCTION_SET_GUI_TAB_CONFIGURATION = 33
+    FUNCTION_GET_GUI_TAB_CONFIGURATION = 34
+    FUNCTION_SET_GUI_TAB_TEXT = 35
+    FUNCTION_GET_GUI_TAB_TEXT = 36
+    FUNCTION_SET_GUI_TAB_ICON = 37
+    FUNCTION_GET_GUI_TAB_ICON = 38
+    FUNCTION_REMOVE_GUI_TAB = 39
+    FUNCTION_SET_GUI_TAB_SELECTED = 40
+    FUNCTION_SET_GUI_TAB_SELECTED_CALLBACK_CONFIGURATION = 41
+    FUNCTION_GET_GUI_TAB_SELECTED_CALLBACK_CONFIGURATION = 42
+    FUNCTION_GET_GUI_TAB_SELECTED = 43
+    FUNCTION_SET_GUI_GRAPH_CONFIGURATION = 45
+    FUNCTION_GET_GUI_GRAPH_CONFIGURATION = 46
+    FUNCTION_SET_GUI_GRAPH_DATA_LOW_LEVEL = 47
+    FUNCTION_GET_GUI_GRAPH_DATA_LOW_LEVEL = 48
+    FUNCTION_REMOVE_GUI_GRAPH = 49
+    FUNCTION_REMOVE_ALL_GUI = 50
+    FUNCTION_SET_TOUCH_LED_CONFIG = 51
+    FUNCTION_GET_TOUCH_LED_CONFIG = 52
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -68,6 +115,30 @@ class BrickletLCD128x64(Device):
     GESTURE_RIGHT_TO_LEFT = 1
     GESTURE_TOP_TO_BOTTOM = 2
     GESTURE_BOTTOM_TO_TOP = 3
+    COLOR_WHITE = False
+    COLOR_BLACK = True
+    FONT_6X8 = 0
+    FONT_6X16 = 1
+    FONT_6X24 = 2
+    FONT_6X32 = 3
+    FONT_12X16 = 4
+    FONT_12X24 = 5
+    FONT_12X32 = 6
+    FONT_18X24 = 7
+    FONT_18X32 = 8
+    FONT_24X32 = 9
+    DIRECTION_HORIZONTAL = 0
+    DIRECTION_VERTICAL = 1
+    CHANGE_TAB_ON_CLICK = 1
+    CHANGE_TAB_ON_SWIPE = 2
+    CHANGE_TAB_ON_CLICK_AND_SWIPE = 3
+    GRAPH_TYPE_DOT = 0
+    GRAPH_TYPE_LINE = 1
+    GRAPH_TYPE_BAR = 2
+    TOUCH_LED_CONFIG_OFF = 0
+    TOUCH_LED_CONFIG_ON = 1
+    TOUCH_LED_CONFIG_SHOW_HEARTBEAT = 2
+    TOUCH_LED_CONFIG_SHOW_TOUCH = 3
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -91,7 +162,7 @@ class BrickletLCD128x64(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletLCD128x64.FUNCTION_WRITE_PIXELS_LOW_LEVEL] = BrickletLCD128x64.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletLCD128x64.FUNCTION_READ_PIXELS_LOW_LEVEL] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -106,6 +177,40 @@ class BrickletLCD128x64(Device):
         self.response_expected[BrickletLCD128x64.FUNCTION_GET_TOUCH_GESTURE] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLCD128x64.FUNCTION_SET_TOUCH_GESTURE_CALLBACK_CONFIGURATION] = BrickletLCD128x64.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletLCD128x64.FUNCTION_GET_TOUCH_GESTURE_CALLBACK_CONFIGURATION] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_DRAW_LINE] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_DRAW_BOX] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_DRAW_TEXT] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_SET_GUI_BUTTON] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_GET_GUI_BUTTON] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_REMOVE_GUI_BUTTON] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_SET_GUI_BUTTON_PRESSED_CALLBACK_CONFIGURATION] = BrickletLCD128x64.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_GET_GUI_BUTTON_PRESSED_CALLBACK_CONFIGURATION] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_GET_GUI_BUTTON_PRESSED] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_SET_GUI_SLIDER] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_GET_GUI_SLIDER] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_REMOVE_GUI_SLIDER] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_SET_GUI_SLIDER_VALUE_CALLBACK_CONFIGURATION] = BrickletLCD128x64.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_GET_GUI_SLIDER_VALUE_CALLBACK_CONFIGURATION] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_GET_GUI_SLIDER_VALUE] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_SET_GUI_TAB_CONFIGURATION] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_GET_GUI_TAB_CONFIGURATION] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_SET_GUI_TAB_TEXT] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_GET_GUI_TAB_TEXT] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_SET_GUI_TAB_ICON] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_GET_GUI_TAB_ICON] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_REMOVE_GUI_TAB] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_SET_GUI_TAB_SELECTED] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_SET_GUI_TAB_SELECTED_CALLBACK_CONFIGURATION] = BrickletLCD128x64.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_GET_GUI_TAB_SELECTED_CALLBACK_CONFIGURATION] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_GET_GUI_TAB_SELECTED] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_SET_GUI_GRAPH_CONFIGURATION] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_GET_GUI_GRAPH_CONFIGURATION] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_SET_GUI_GRAPH_DATA_LOW_LEVEL] = BrickletLCD128x64.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_GET_GUI_GRAPH_DATA_LOW_LEVEL] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD128x64.FUNCTION_REMOVE_GUI_GRAPH] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_REMOVE_ALL_GUI] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_SET_TOUCH_LED_CONFIG] = BrickletLCD128x64.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD128x64.FUNCTION_GET_TOUCH_LED_CONFIG] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLCD128x64.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLCD128x64.FUNCTION_SET_BOOTLOADER_MODE] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLCD128x64.FUNCTION_GET_BOOTLOADER_MODE] = BrickletLCD128x64.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -121,6 +226,9 @@ class BrickletLCD128x64(Device):
 
         self.callback_formats[BrickletLCD128x64.CALLBACK_TOUCH_POSITION] = 'H H H I'
         self.callback_formats[BrickletLCD128x64.CALLBACK_TOUCH_GESTURE] = 'B I H H H H H I'
+        self.callback_formats[BrickletLCD128x64.CALLBACK_GUI_BUTTON_PRESSED] = 'B !'
+        self.callback_formats[BrickletLCD128x64.CALLBACK_GUI_SLIDER_VALUE] = 'B B'
+        self.callback_formats[BrickletLCD128x64.CALLBACK_GUI_TAB_SELECTED] = 'b'
 
 
     def write_pixels_low_level(self, x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data):
@@ -221,6 +329,10 @@ class BrickletLCD128x64(Device):
 
         The display uses a special 5x7 pixel charset. You can view the characters
         of the charset in Brick Viewer.
+
+        This function is a 1:1 replacement for the function with the same name
+        in the LCD 20x4 Bricklet. You can draw text at a specific pixel position
+        and with different font sizes with the :func:`Draw Text` function.
         """
         line = int(line)
         position = int(position)
@@ -320,6 +432,531 @@ class BrickletLCD128x64(Device):
         :func:`Set Touch Gesture Callback Configuration`.
         """
         return GetTouchGestureCallbackConfiguration(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_TOUCH_GESTURE_CALLBACK_CONFIGURATION, (), '', 'I !'))
+
+    def draw_line(self, position_x_start, position_y_start, position_x_end, position_y_end, color):
+        """
+        Draws a white or black line from (x, y)-start to (x, y)-end.
+        The x values have to be within the range of 0 to 127 and the y
+        values have t be within the range of 0 to 63.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        position_x_start = int(position_x_start)
+        position_y_start = int(position_y_start)
+        position_x_end = int(position_x_end)
+        position_y_end = int(position_y_end)
+        color = bool(color)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_DRAW_LINE, (position_x_start, position_y_start, position_x_end, position_y_end, color), 'B B B B !', '')
+
+    def draw_box(self, position_x_start, position_y_start, position_x_end, position_y_end, fill, color):
+        """
+        Draws a white or black box from (x, y)-start to (x, y)-end.
+        The x values have to be within the range of 0 to 127 and the y
+        values have to be within the range of 0 to 63.
+
+        If you set fill to true, the box will be filled with the
+        color. Otherwise only the outline will be drawn.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        position_x_start = int(position_x_start)
+        position_y_start = int(position_y_start)
+        position_x_end = int(position_x_end)
+        position_y_end = int(position_y_end)
+        fill = bool(fill)
+        color = bool(color)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_DRAW_BOX, (position_x_start, position_y_start, position_x_end, position_y_end, fill, color), 'B B B B ! !', '')
+
+    def draw_text(self, position_x, position_y, font, color, text):
+        """
+        Draws a text with up to 22 characters at the pixel position (x, y).
+
+        The x values have to be within the range of 0 to 127 and the y
+        values have to be within the range of 0 to 63.
+
+        You can use one of 9 different font sizes and draw the text in white or black.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        position_x = int(position_x)
+        position_y = int(position_y)
+        font = int(font)
+        color = bool(color)
+        text = create_string(text)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_DRAW_TEXT, (position_x, position_y, font, color, text), 'B B B ! 22s', '')
+
+    def set_gui_button(self, index, position_x, position_y, width, height, text):
+        """
+        Draws a clickable button at position (x, y) with the given text
+        of up to 16 characters.
+
+        You can use up to 12 buttons (index 0-11).
+
+        The x position + width has to be within the range of 1 to 128 and the y
+        position + height has to be within the range of 1 to 64.
+
+        The minimum useful width/height of a button is 3.
+
+        You can enable a callback for a button press with
+        :func:`Set GUI Button Pressed Callback Configuration`. The callback will
+        be triggered for press and release-events.
+
+        The button is drawn in a separate GUI buffer and the button-frame will
+        always stay on top of the graphics drawn with :func:`Write Pixels`. To
+        remove the button use :func:`Remove GUI Button`.
+
+        If you want an icon instead of text, you can draw the icon inside of the
+        button with :func:`Write Pixels`.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+        position_x = int(position_x)
+        position_y = int(position_y)
+        width = int(width)
+        height = int(height)
+        text = create_string(text)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_SET_GUI_BUTTON, (index, position_x, position_y, width, height, text), 'B B B B B 16s', '')
+
+    def get_gui_button(self, index):
+        """
+        Returns the button properties for a given `Index` as set by :func:`Set GUI Button`.
+
+        Additionally the `Active` parameter shows if a button is currently active/visible
+        or not.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        return GetGUIButton(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_GUI_BUTTON, (index,), 'B', '! B B B B 16s'))
+
+    def remove_gui_button(self, index):
+        """
+        Removes the button with the given index.
+
+        You can use index 255 to remove all buttons.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_REMOVE_GUI_BUTTON, (index,), 'B', '')
+
+    def set_gui_button_pressed_callback_configuration(self, period, value_has_to_change):
+        """
+        The period in ms is the period with which the :cb:`GUI Button Pressed` callback
+        is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_SET_GUI_BUTTON_PRESSED_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+
+    def get_gui_button_pressed_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set GUI Button Pressed Callback Configuration`.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        return GetGUIButtonPressedCallbackConfiguration(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_GUI_BUTTON_PRESSED_CALLBACK_CONFIGURATION, (), '', 'I !'))
+
+    def get_gui_button_pressed(self, index):
+        """
+        Returns the state of the button for the given index.
+
+        The state can either be pressed (true) or released (false).
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        return self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_GUI_BUTTON_PRESSED, (index,), 'B', '!')
+
+    def set_gui_slider(self, index, position_x, position_y, length, direction, value):
+        """
+        Draws a slider at position (x, y) with the given length.
+
+        You can use up to 6 sliders (index 0-5).
+
+        If you use the horizontal direction, the x position + length has to be
+        within the range of 1 to 128 and the y position has to be within
+        the range of 0 to 46.
+
+        If you use the vertical direction, the y position + length has to be
+        within the range of 1 to 64 and the x position has to be within
+        the range of 0 to 110.
+
+        The minimum length of a slider is 8.
+
+        The parameter value is the start-position of the slider, it can
+        be between 0 and length-8.
+
+        You can enable a callback for the slider value with
+        :func:`Set GUI Slider Value Callback Configuration`.
+
+        The slider is drawn in a separate GUI buffer and it will
+        always stay on top of the graphics drawn with :func:`Write Pixels`. To
+        remove the button use :func:`Remove GUI Slider`.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+        position_x = int(position_x)
+        position_y = int(position_y)
+        length = int(length)
+        direction = int(direction)
+        value = int(value)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_SET_GUI_SLIDER, (index, position_x, position_y, length, direction, value), 'B B B B B B', '')
+
+    def get_gui_slider(self, index):
+        """
+        Returns the slider properties for a given `Index` as set by :func:`Set GUI Slider`.
+
+        Additionally the `Active` parameter shows if a button is currently active/visible
+        or not.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        return GetGUISlider(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_GUI_SLIDER, (index,), 'B', '! B B B B B'))
+
+    def remove_gui_slider(self, index):
+        """
+        Removes the slider with the given index.
+
+        You can use index 255 to remove all slider.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_REMOVE_GUI_SLIDER, (index,), 'B', '')
+
+    def set_gui_slider_value_callback_configuration(self, period, value_has_to_change):
+        """
+        The period in ms is the period with which the :cb:`GUI Slider Value` callback
+        is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_SET_GUI_SLIDER_VALUE_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+
+    def get_gui_slider_value_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set GUI Slider Value Callback Configuration`.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        return GetGUISliderValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_GUI_SLIDER_VALUE_CALLBACK_CONFIGURATION, (), '', 'I !'))
+
+    def get_gui_slider_value(self, index):
+        """
+        Returns the current slider value for the given index.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        return self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_GUI_SLIDER_VALUE, (index,), 'B', 'B')
+
+    def set_gui_tab_configuration(self, change_tab_config, clear_gui):
+        """
+        Sets the general configuration for tabs. You can configure the tabs to only
+        accept clicks or only swipes (gesture left/right and right/left) or both.
+
+        Additionally, if you set `Clear GUI` to true, all of the GUI elements (buttons,
+        slider, graphs) will automatically be removed on every tab change.
+
+        By default click and swipe as well as automatic GUI clear is enabled.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        change_tab_config = int(change_tab_config)
+        clear_gui = bool(clear_gui)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_SET_GUI_TAB_CONFIGURATION, (change_tab_config, clear_gui), 'B !', '')
+
+    def get_gui_tab_configuration(self):
+        """
+        Returns the tab configuration as set by :func:`Set GUI Tab Configuration`.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        return GetGUITabConfiguration(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_GUI_TAB_CONFIGURATION, (), '', 'B !'))
+
+    def set_gui_tab_text(self, index, text):
+        """
+        Adds a text-tab with the given index. The text can have a length of up to 5 characters.
+
+        You can use up to 10 tabs (index 0-9).
+
+        A text-tab with the same index as a icon-tab will overwrite the icon-tab.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+        text = create_string(text)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_SET_GUI_TAB_TEXT, (index, text), 'B 5s', '')
+
+    def get_gui_tab_text(self, index):
+        """
+        Returns the text for a given index as set by :func:`Set GUI Tab Text`.
+
+        Additionally the `Active` parameter shows if the tab is currently active/visible
+        or not.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        return GetGUITabText(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_GUI_TAB_TEXT, (index,), 'B', '! 5s'))
+
+    def set_gui_tab_icon(self, index, icon):
+        """
+        Adds a icon-tab with the given index. The icon can have a width of 28 pixels
+        with a height of 6 pixels. It is drawn line-by-line from left to right.
+
+        You can use up to 10 tabs (index 0-9).
+
+        A icon-tab with the same index as a text-tab will overwrite the text-tab.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+        icon = list(map(bool, icon))
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_SET_GUI_TAB_ICON, (index, icon), 'B 168!', '')
+
+    def get_gui_tab_icon(self, index):
+        """
+        Returns the icon for a given index as set by :func:`Set GUI Tab Icon`.
+
+        Additionally the `Active` parameter shows if the tab is currently active/visible
+        or not.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        return GetGUITabIcon(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_GUI_TAB_ICON, (index,), 'B', '! 168!'))
+
+    def remove_gui_tab(self, index):
+        """
+        Removes the tab with the given index.
+
+        You can use index 255 to remove all tabs.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_REMOVE_GUI_TAB, (index,), 'B', '')
+
+    def set_gui_tab_selected(self, index):
+        """
+        Sets the tab with the given index as selected (drawn as selected on the display).
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_SET_GUI_TAB_SELECTED, (index,), 'B', '')
+
+    def set_gui_tab_selected_callback_configuration(self, period, value_has_to_change):
+        """
+        The period in ms is the period with which the :cb:`GUI Tab Selected` callback
+        is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_SET_GUI_TAB_SELECTED_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+
+    def get_gui_tab_selected_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set GUI Tab Selected Callback Configuration`.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        return GetGUITabSelectedCallbackConfiguration(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_GUI_TAB_SELECTED_CALLBACK_CONFIGURATION, (), '', 'I !'))
+
+    def get_gui_tab_selected(self):
+        """
+        Returns the index of the currently selected tab.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_GUI_TAB_SELECTED, (), '', 'b')
+
+    def set_gui_graph_configuration(self, index, graph_type, position_x, position_y, width, height, text_x, text_y):
+        """
+        Sets the configuration for up to four graphs (index 0-3).
+
+        The graph type can be dot-, line- or bar-graph.
+
+        The x and y position are pixel positions. They have to be within
+        the range of (0, 0) to (127, 63). The maximum width is 118 and the
+        maximum height is 63.
+
+        You can add a text for the x and y axis with at most 4 characters each.
+        The text is drawn at the inside of the graph and it can overwrite some
+        of the graph data. If you need the text outside of the graph you can
+        leave this text here empty and use :func:`Draw Text` to draw the caption
+        outside of the graph.
+
+        The data of the graph can be set and updated with :func:`Set GUI Graph Data`.
+
+        The graph is drawn in a separate GUI buffer and the graph-frame and data will
+        always stay on top of the graphics drawn with :func:`Write Pixels`. To
+        remove the graph use :func:`Remove GUI Graph`.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+        graph_type = int(graph_type)
+        position_x = int(position_x)
+        position_y = int(position_y)
+        width = int(width)
+        height = int(height)
+        text_x = create_string(text_x)
+        text_y = create_string(text_y)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_SET_GUI_GRAPH_CONFIGURATION, (index, graph_type, position_x, position_y, width, height, text_x, text_y), 'B B B B B B 4s 4s', '')
+
+    def get_gui_graph_configuration(self, index):
+        """
+        Returns the graph properties for a given `Index` as set by :func:`Set GUI Graph Configuration`.
+
+        Additionally the `Active` parameter shows if a graph is currently active/visible
+        or not.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        return GetGUIGraphConfiguration(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_GUI_GRAPH_CONFIGURATION, (index,), 'B', '! B B B B B 4s 4s'))
+
+    def set_gui_graph_data_low_level(self, index, data_length, data_chunk_offset, data_chunk_data):
+        """
+        Sets the data for a graph with the given index. You have to configure the graph with
+        :func:`Set GUI Graph Configuration` before you can set the first data.
+
+        The graph will show the first n values of the data that you set, where
+        n is the width set with :func:`Set GUI Graph Configuration`. If you set
+        less then n values it will show the rest of the values as zero.
+
+        The maximum number of data-points you can set is 118 (which also corresponds to the
+        maximum width of the graph).
+
+        You have to scale your values to be between 0 and 255. 0 will be shown
+        at the bottom of the graph and 255 at the top.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+        data_length = int(data_length)
+        data_chunk_offset = int(data_chunk_offset)
+        data_chunk_data = list(map(int, data_chunk_data))
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_SET_GUI_GRAPH_DATA_LOW_LEVEL, (index, data_length, data_chunk_offset, data_chunk_data), 'B H H 59B', '')
+
+    def get_gui_graph_data_low_level(self, index):
+        """
+        Returns the graph data for a given index as set by :func:`Set GUI Graph Data`.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        return GetGUIGraphDataLowLevel(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_GUI_GRAPH_DATA_LOW_LEVEL, (index,), 'B', 'H H 59B'))
+
+    def remove_gui_graph(self, index):
+        """
+        Removes the graph with the given index.
+
+        You can use index 255 to remove all graphs.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_REMOVE_GUI_GRAPH, (index,), 'B', '')
+
+    def remove_all_gui(self):
+        """
+        Removes all GUI elements (buttons, slider, graphs, tabs).
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_REMOVE_ALL_GUI, (), '', '')
+
+    def set_touch_led_config(self, config):
+        """
+        Sets the touch LED configuration. By default the LED is on if the
+        LCD is touched.
+
+        You can also turn the LED permanently on/off or show a heartbeat.
+
+        If the Bricklet is in bootloader mode, the LED is off.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        config = int(config)
+
+        self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_SET_TOUCH_LED_CONFIG, (config,), 'B', '')
+
+    def get_touch_led_config(self):
+        """
+        Returns the configuration as set by :func:`Set Touch LED Config`
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_TOUCH_LED_CONFIG, (), '', 'B')
 
     def get_spitfp_error_count(self):
         """
@@ -547,6 +1184,73 @@ class BrickletLCD128x64(Device):
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Pixels stream is out-of-sync')
 
         return pixels_data[:pixels_length]
+
+    def set_gui_graph_data(self, index, data):
+        """
+        Sets the data for a graph with the given index. You have to configure the graph with
+        :func:`Set GUI Graph Configuration` before you can set the first data.
+
+        The graph will show the first n values of the data that you set, where
+        n is the width set with :func:`Set GUI Graph Configuration`. If you set
+        less then n values it will show the rest of the values as zero.
+
+        The maximum number of data-points you can set is 118 (which also corresponds to the
+        maximum width of the graph).
+
+        You have to scale your values to be between 0 and 255. 0 will be shown
+        at the bottom of the graph and 255 at the top.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+        data = list(map(int, data))
+
+        if len(data) > 65535:
+            raise Error(Error.INVALID_PARAMETER, 'Data can be at most 65535 items long')
+
+        data_length = len(data)
+        data_chunk_offset = 0
+
+        if data_length == 0:
+            data_chunk_data = [0] * 59
+            ret = self.set_gui_graph_data_low_level(index, data_length, data_chunk_offset, data_chunk_data)
+        else:
+            with self.stream_lock:
+                while data_chunk_offset < data_length:
+                    data_chunk_data = create_chunk_data(data, data_chunk_offset, 59, 0)
+                    ret = self.set_gui_graph_data_low_level(index, data_length, data_chunk_offset, data_chunk_data)
+                    data_chunk_offset += 59
+
+        return ret
+
+    def get_gui_graph_data(self, index):
+        """
+        Returns the graph data for a given index as set by :func:`Set GUI Graph Data`.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        with self.stream_lock:
+            ret = self.get_gui_graph_data_low_level(index)
+            data_length = ret.data_length
+            data_out_of_sync = ret.data_chunk_offset != 0
+            data_data = ret.data_chunk_data
+
+            while not data_out_of_sync and len(data_data) < data_length:
+                ret = self.get_gui_graph_data_low_level(index)
+                data_length = ret.data_length
+                data_out_of_sync = ret.data_chunk_offset != len(data_data)
+                data_data += ret.data_chunk_data
+
+            if data_out_of_sync: # discard remaining stream to bring it back in-sync
+                while ret.data_chunk_offset + 59 < data_length:
+                    ret = self.get_gui_graph_data_low_level(index)
+                    data_length = ret.data_length
+
+                raise Error(Error.STREAM_OUT_OF_SYNC, 'Data stream is out-of-sync')
+
+        return data_data[:data_length]
 
     def register_callback(self, callback_id, function):
         """

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-10-05.      #
+# This file was automatically generated on 2018-11-28.      #
 #                                                           #
-# Python Bindings Version 2.1.19                            #
+# Python Bindings Version 2.1.20                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -145,8 +145,12 @@ class BrickletParticulateMatter(Device):
         Enables/Disables the fan and the laser diode of the sensors. The sensor is
         enabled by default.
 
-        The sensor takes about 30 after it is enabled to settle and produce stable
+        The sensor takes about 30 seconds after it is enabled to settle and produce stable
         values.
+
+        The laser diode has a lifetime of about 8000 hours. If you want to measure in
+        an interval with a long idle time (e.g. hourly) you should turn the
+        laser diode off between the measurements.
         """
         enable = bool(enable)
 
