@@ -35,6 +35,6 @@ try:
         main()
 except ImportError:
     print('Could not import brickv. Please make sure that brickv is installed properly. ' + \
-          'If you want to start brickv from source, you should direclty call "python main.py".')
+          'If you want to start brickv from source, you should directly call "python main.py".')
 
     sys.exit(1)
