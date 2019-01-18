@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 
 import re
 import json
+import Queue
 import urllib2
 import posixpath
 import functools
@@ -93,6 +94,7 @@ Please make sure that your internet connection is working.'
 
         self.update_info = None
         self.current_state = self.STATE_INIT
+        self.update_install_serialisation_queue = Queue.Queue()
 
         self.pbar.hide()
         self.label_pbar.hide()
@@ -105,31 +107,42 @@ Please make sure that your internet connection is working.'
     def closeEvent(self, event):
         self.dialog_session = False
 
+    def handle_update_tf_software_install_cb(self):
+        if self.update_info['processed'] == self.update_info['updates_total']:
+            self.pbar.setValue(100)
+            self.label_pbar.setText('')
+            self.label_pbar.hide()
+
+            if self.update_info['error']:
+                self.set_current_state(self.STATE_INIT)
+                self.tedit_main.setText(self.update_info['error_messages'])
+            else:
+                self.set_current_state(self.STATE_UPDATE_DONE)
+                self.tedit_main.setText(self.MESSAGE_INFO_STATE_UPDATE_DONE)
+        else:
+            self.pbar.setValue(75 + int(( float(self.update_info['processed']) / float(self.update_info['updates_total'])) * 25.0))
+            # Go for the next update to be installed.
+            self.do_next_update_install()
+
     def cb_update_tf_software_copy_bindings(self, result):
         if not self.dialog_session:
             return
 
-        self.pbar.setValue(100)
-        self.label_pbar.setText('')
-        self.label_pbar.hide()
-
         if not result or result.exit_code != 0:
             self.update_info['error'] = True
             self.update_info['error_messages'] += 'Error while copying bindings:\n'
+
+            if result.stdout:
+                self.update_info['error_messages'] += result.stdout
 
             if result.stderr:
                 self.update_info['error_messages'] += result.stderr
 
             self.update_info['error_messages'] += '\n\n'
 
-        if self.update_info['error']:
-            self.set_current_state(self.STATE_INIT)
-            self.tedit_main.setText(self.update_info['error_messages'])
-        else:
-            self.set_current_state(self.STATE_UPDATE_DONE)
-            self.tedit_main.setText(self.MESSAGE_INFO_STATE_UPDATE_DONE)
+        self.handle_update_tf_software_install_cb()
 
-    def cb_update_tf_software_install(self, name, result):
+    def cb_update_tf_software_install(self, is_binding, name, result):
         if not self.dialog_session:
             return
 
@@ -151,74 +164,45 @@ Please make sure that your internet connection is working.'
             self.update_info['error'] = True
             self.update_info['error_messages'] += 'Error while installing ' + display_name + ':\n'
 
+            if result.stdout:
+                self.update_info['error_messages'] += result.stdout + '\n'
+
             if result.stderr:
                 self.update_info['error_messages'] += result.stderr
 
             self.update_info['error_messages'] += '\n\n'
+
+            self.handle_update_tf_software_install_cb()
         else:
-            self.pbar.setValue(75 + (((self.update_info['processed'] * 100.00) / self.update_info['updates_total']) / 6))
             self.label_pbar.setText('Installed ' + display_name)
 
-            if self.update_info['processed'] == self.update_info['updates_total']:
-                found = False
+            if is_binding:
+                '''
+                Copy the bindings from the temp directory to the target directory.
 
-                # Check if bindings must be copied.
-                for d in self.update_info['bindings']:
-                    if not d['update']:
-                        continue
+                This copy will update the changelog which is the basis of update detection.
+                It is important to ensure that the copying is done *AFTER* the update process was successful.
+                '''
+                self.script_manager.execute_script('update_tf_software_copy_bindings',
+                                                   self.cb_update_tf_software_copy_bindings,
+                                                   [posixpath.join(self.update_info['temp_dir'], 'bindings')])
+            else:
+                self.handle_update_tf_software_install_cb()
 
-                    found = True
-
-                    self.script_manager.execute_script('update_tf_software_copy_bindings',
-                                                       self.cb_update_tf_software_copy_bindings,
-                                                       [posixpath.join(self.update_info['temp_dir'], 'bindings')])
-
-                    break
-
-                if not found:
-                    self.pbar.setValue(100)
-                    self.label_pbar.setText('')
-                    self.label_pbar.hide()
-
-                    if self.update_info['error']:
-                        self.set_current_state(self.STATE_INIT)
-                        self.tedit_main.setText(self.update_info['error_messages'])
-                    else:
-                        self.set_current_state(self.STATE_UPDATE_DONE)
-                        self.tedit_main.setText(self.MESSAGE_INFO_STATE_UPDATE_DONE)
-
-    def do_install_update(self, name, temp_dir, update_path):
+    def do_next_update_install(self):
         if not self.dialog_session:
             return
 
+        update_candidate = self.update_install_serialisation_queue.get()
+
+        # Initiate install of the current update.
         self.script_manager.execute_script('update_tf_software_install',
-                                           lambda r: self.cb_update_tf_software_install(name, r),
-                                           [name, temp_dir, update_path])
-
-    def start_installing_updates(self):
-        if not self.dialog_session:
-            return
-
-        if self.update_info['error']:
-            self.set_current_state(self.STATE_INIT)
-            self.tedit_main.setText(self.update_info['error_messages'])
-        else:
-            self.update_info['error'] = False
-            self.update_info['processed'] = 0
-            self.update_info['error_messages'] = ''
-
-            if self.update_info['brickv']['update']:
-                self.do_install_update(self.update_info['brickv']['name'],
-                                       self.update_info['temp_dir'],
-                                       posixpath.join(self.update_info['temp_dir'], 'brickv_linux_latest.deb'))
-
-            for d in sorted(self.update_info['bindings'], key=lambda d: d['name']):
-                if not d['update']:
-                    continue
-
-                self.do_install_update(d['name'],
-                                       self.update_info['temp_dir'],
-                                       posixpath.join(self.update_info['temp_dir'], 'tinkerforge_' + d['name'] + '_bindings_latest.zip'))
+                                           lambda r: self.cb_update_tf_software_install(update_candidate['is_binding'],
+                                                                                        update_candidate['name'],
+                                                                                        r),
+                                           [update_candidate['name'],
+                                            update_candidate['temp_dir'],
+                                            update_candidate['temp_dir_abs_path']])
 
     def write_async_cb_r(self, name, red_file, exception):
         red_file.release()
@@ -245,13 +229,27 @@ Please make sure that your internet connection is working.'
             self.update_info['error_messages'] += 'Error while writing' + \
                                                   display_name + 'update:\n' + \
                                                   str(exception) + '\n\n'
+        else:
+            # Enqueue updates to be installed.
+            if name == 'brickv':
+                self.update_install_serialisation_queue.put({'is_binding': False,
+                                                             'name': self.update_info['brickv']['name'],
+                                                             'temp_dir': self.update_info['temp_dir'],
+                                                             'temp_dir_abs_path': posixpath.join(self.update_info['temp_dir'], brickv_linux_latest.deb)})
+            else:
+                self.update_install_serialisation_queue.put({'is_binding': True,
+                                                             'name': d['name'],
+                                                             'temp_dir': self.update_info['temp_dir'],
+                                                             'temp_dir_abs_path': posixpath.join(self.update_info['temp_dir'], 'tinkerforge_' + d['name'] + '_bindings_latest.zip')})
 
         self.pbar.setValue(50 + (((self.update_info['processed'] * 100.00) / self.update_info['updates_total']) / 6))
         self.label_pbar.setText('Stored ' + display_name)
 
         if self.update_info['processed'] == self.update_info['updates_total']:
             self.pbar.setValue(75)
-            self.start_installing_updates()
+            self.update_info['processed'] = 0
+            # Start serially installing the updates.
+            self.do_next_update_install()
 
     def do_write_update_file(self, name, data, red_file):
         if not self.dialog_session:

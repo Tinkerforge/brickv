@@ -8,7 +8,7 @@ echostderr() { echo "$@" 1>&2; }
 
 case "$1" in
   "brickv")
-    $(/usr/bin/which apt-get) purge brickv -y &> /dev/null; \
+    $(/usr/bin/which apt-get) remove --purge brickv -y &> /dev/null; \
     $(/usr/bin/which dpkg) -i $3 &> /dev/null
 
     if [ $? = 0 ]; then
