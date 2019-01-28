@@ -21,8 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QTextCursor
-from PyQt4.QtCore import pyqtSignal
+from PyQt5.QtGui import QTextCursor
+from PyQt5.QtCore import pyqtSignal
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_rs232_v2 import BrickletRS232V2
@@ -30,7 +30,7 @@ from brickv.plugin_system.plugins.rs232_v2.ui_rs232_v2 import Ui_RS232_V2
 from brickv.async_call import async_call
 from brickv.hex_validator import HexValidator
 
-from brickv.plugin_system.plugins.rs232.qhexedit import QHexeditWidget
+from brickv.qhexedit import QHexeditWidget
 
 CBOX_IDX_FC_HW = 2
 BAUDRATE_MAX_RS232  = 250000
@@ -149,27 +149,23 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
     def get_line_ending(self):
         selected_line_ending = self.line_ending_combobox.currentText()
 
-        if selected_line_ending == '\\n':
-            hex_le = '0A'
-        elif selected_line_ending == '\\r':
-            hex_le = '0D'
-        elif selected_line_ending == '\\r\\n':
-            hex_le = '0D0A'
-        elif selected_line_ending == '\\n\\r':
-            hex_le = '0A0D'
-        elif selected_line_ending == '\\0':
-            hex_le = "00"
-        elif selected_line_ending == 'Hex:':
-            hex_le = self.line_ending_lineedit.text()
-        else:
-            hex_le = ''
+        d = {
+            '\\n': '0A',
+            '\\r': '0D',
+            '\\r\\n':'0D0A',
+            '\\n\\r':'0A0D',
+            '\\0': '00',
+            'Hex:': self.line_ending_lineedit.text()
+        }
+
+        hex_le = d.get(selected_line_ending, '')
 
         try:
-            line_ending = hex_le.decode('hex')
+            line_ending = bytes.fromhex(hex_le)
         except TypeError:
             # TODO: Handle Error!
             # Should never happen, because LineEdit has a validator applied
-            line_ending = ''
+            line_ending = bytes()
 
         return line_ending
 
@@ -177,12 +173,9 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
         pos = 0
         written = 0
         text = self.input_combobox.currentText().encode('utf-8') + self.get_line_ending()
-        c = ['\0']*len(text)
-        for i, t in enumerate(text):
-            c[i] = t
 
-        while pos < len(c):
-            written = self.rs232.write(c[pos:])
+        while pos < len(text):
+            written = self.rs232.write(text[pos:])
             pos = pos + written
 
         self.input_combobox.setCurrentIndex(0)

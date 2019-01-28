@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
@@ -25,7 +25,7 @@ Boston, MA 02111-1307, USA.
 
 import threading
 
-from PyQt4 import QtCore
+from PyQt5 import QtCore
 
 # Usage:
 # object_instance = create_object_in_qt_main_thread(Class, (data_1, data_2, ..., data_n))

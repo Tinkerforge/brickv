@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget
+from PyQt5.QtWidgets import QWidget
 
 class REDTab(QWidget):
     def __init__(self, parent=None):

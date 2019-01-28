@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
@@ -26,14 +26,16 @@ Boston, MA 02111-1307, USA.
 
 # Windows:
 #   dependencies:
-#       pythonxy (2.6)
-#       py2exe
+#       pythonxy (3.2)
+#       pyinstaller
+#       PyQt5
+#       pyserial
 #       nsis
 #       win redistributables vcredist under winxp
 
 import sys
-if (sys.hexversion & 0xFF000000) != 0x02000000:
-    print 'Python 2.x required'
+if (sys.hexversion & 0xFF000000) != 0x03000000:
+    print('Python 3.x required')
     sys.exit(1)
 
 import os
@@ -41,13 +43,17 @@ import base64
 import shutil
 import struct
 import subprocess
+import traceback
+import getpass
 from brickv.config import BRICKV_VERSION
 
 
 def system(command):
-    if os.system(command) != 0:
-        sys.exit(1)
-
+    try:
+        if subprocess.call(command) != 0:
+            sys.exit(1)
+    except:
+        traceback.print_exc()
 
 def check_output(*args, **kwargs):
     if 'stdout' in kwargs:
@@ -69,7 +75,7 @@ def check_output(*args, **kwargs):
 
 
 def specialize_template(template_filename, destination_filename, replacements):
-    template_file = open(template_filename, 'rb')
+    template_file = open(template_filename, 'r')
     lines = []
     replaced = set()
 
@@ -89,7 +95,11 @@ def specialize_template(template_filename, destination_filename, replacements):
     if replaced != set(replacements.keys()):
         raise Exception('Not all replacements for {0} have been applied'.format(template_filename))
 
-    destination_file = open(destination_filename, 'wb')
+    try:
+        os.makedirs(os.path.dirname(destination_filename))
+    except:
+        pass
+    destination_file = open(destination_filename, 'w+')
     destination_file.writelines(lines)
     destination_file.close()
 
@@ -100,6 +110,8 @@ def prepare_manifest(root_path):
     excluded_patterns = []
 
     for plugin_name in sorted(os.listdir(plugins_path)):
+        if '__pycache__' in plugin_name:
+            continue
         plugin_path = os.path.join(plugins_path, plugin_name)
 
         if not os.path.isdir(plugin_path):
@@ -123,205 +135,8 @@ def prepare_manifest(root_path):
         else:
             raise Exception('No bindings found corresponding to plugin {0}'.format(plugin_name))
 
-    specialize_template('MANIFEST.in.template', 'MANIFEST.in',
+    specialize_template(os.path.join(root_path, 'MANIFEST.in.template'), os.path.join(root_path, 'MANIFEST.in'),
                         {'<<EXCLUDES>>': '\n'.join(excluded_patterns)})
-
-
-def freeze_images():
-    directory = 'brickv'
-    image_files = []
-
-    for root, dirnames, names in os.walk(directory):
-        for name in names:
-            full_name = os.path.join(root, name)
-
-            if os.path.isfile(full_name):
-                _, ext = os.path.splitext(name)
-                ext = ext[1:]
-
-                if ext in ['bmp', 'png', 'jpg']:
-                    image_files.append([full_name.replace('\\', '/').replace(directory + '/', ''), ext])
-
-    images = open(os.path.join(directory, 'frozen_images.py'), 'wb')
-    images.write('image_data = {\n'.encode('utf-8'))
-
-    for image_file in image_files:
-        image_data = base64.b64encode(file(os.path.join(directory, image_file[0]), 'rb').read())
-        images.write("'{0}': ['{1}', '{2}'],\n".format(image_file[0], image_file[1], image_data).encode('utf-8'))
-
-    images.write('}\n'.encode('utf-8'))
-    images.close()
-
-
-def build_macos_pkg():
-    print('building brickv disk image')
-    root_path = os.getcwd()
-
-    print('removing old build directories')
-    build_path = os.path.join(root_path, 'build')
-    dist_path = os.path.join(root_path, 'dist')
-
-    if os.path.exists(build_path):
-        shutil.rmtree(build_path)
-
-    if os.path.exists(dist_path):
-        shutil.rmtree(dist_path)
-
-    print('freezing images')
-    freeze_images()
-
-    print('calling build_all_ui.py release')
-    system('python build_all_ui.py release')
-
-    print('preparing manifest')
-    prepare_manifest(root_path)
-
-    print('calling setup.py py2app build')
-    system('python setup.py py2app build')
-
-    print('calling build_plugin_list.py to undo previous release run')
-    system('python build_plugin_list.py')
-
-    print('copying build data')
-    build_data_path = os.path.join(root_path, 'build_data', 'macos', '*')
-    resources_path = os.path.join(dist_path, 'Brickv.app', 'Contents', 'Resources')
-    system('cp -R {0} {1}'.format(build_data_path, resources_path))
-
-    print('patching __boot__.py')
-    boot_path = os.path.join(resources_path, '__boot__.py')
-    boot_prefix = 'import os\nimport sys\nos.environ["RESOURCEPATH"] = os.path.dirname(os.path.realpath(__file__))\n'
-
-    with open(boot_path, 'rb') as f:
-        boot = f.read()
-
-    with open(boot_path, 'wb') as f:
-        f.write(boot_prefix + boot)
-
-    print('signing brickv binary')
-    system('security unlock-keychain /Users/$USER/Library/Keychains/login.keychain')
-    # NOTE: codesign_identity contains "Developer ID Application: ..."
-    codesign_command = 'codesign --force --verbose=2 --sign "`cat codesign_identity`" {0}'
-    frameworks_path = os.path.join(dist_path, 'Brickv.app', 'Contents', 'Frameworks')
-    qtcore_framework = os.path.join(frameworks_path, 'QtCore.framework')
-    qtgui_framework = os.path.join(frameworks_path, 'QtGui.framework')
-    qtopengl_framework = os.path.join(frameworks_path, 'QtOpenGL.framework')
-
-    os.unlink(os.path.join(qtcore_framework, 'QtCore'))
-    shutil.move(os.path.join(qtcore_framework, 'QtCore.prl'), os.path.join(qtcore_framework, 'Versions', 'Current'))
-    shutil.move(os.path.join(qtcore_framework, 'Contents'), os.path.join(qtcore_framework, 'Versions', 'Current'))
-
-    os.unlink(os.path.join(qtgui_framework, 'QtGui'))
-    os.unlink(os.path.join(qtgui_framework, 'Resources'))
-    shutil.move(os.path.join(qtgui_framework, 'QtGui.prl'), os.path.join(qtgui_framework, 'Versions', 'Current'))
-    shutil.move(os.path.join(qtgui_framework, 'Contents'), os.path.join(qtgui_framework, 'Versions', 'Current'))
-
-    os.unlink(os.path.join(qtopengl_framework, 'QtOpenGL'))
-    shutil.move(os.path.join(qtopengl_framework, 'QtOpenGL.prl'), os.path.join(qtopengl_framework, 'Versions', 'Current'))
-    shutil.move(os.path.join(qtopengl_framework, 'Contents'), os.path.join(qtopengl_framework, 'Versions', 'Current'))
-
-    system(codesign_command.format(os.path.join(frameworks_path, 'Python.framework')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'QtCore.framework')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'QtGui.framework')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'QtOpenGL.framework')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'libbz2.1.0.6.dylib')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'libcrypto.1.0.0.dylib')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'libdbus-1.3.dylib')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'libiconv.2.dylib')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'libintl.8.dylib')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'libncurses.6.dylib')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'libpng16.16.dylib')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'libssl.1.0.0.dylib')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'libtcl8.6.dylib')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'libtk8.6.dylib')))
-    system(codesign_command.format(os.path.join(frameworks_path, 'libz.1.2.11.dylib')))
-    system(codesign_command.format(os.path.join(dist_path, 'Brickv.app', 'Contents', 'MacOS', 'python')))
-    system(codesign_command.format(os.path.join(dist_path, 'Brickv.app')))
-
-    system('codesign --verify --deep --verbose=2 {0}'.format(os.path.join(dist_path, 'Brickv.app')))
-
-    print('building disk image')
-    dmg_name = 'brickv_macos_{0}.dmg'.format(BRICKV_VERSION.replace('.', '_'))
-
-    if os.path.exists(dmg_name):
-        os.remove(dmg_name)
-
-    system('hdiutil create -fs HFS+ -volname "Brickv-{0}" -srcfolder dist {1}'.format(BRICKV_VERSION, dmg_name))
-
-
-# https://github.com/rfk/www.rfk.id.au/blob/master/content/blog/entry/code-signing-py2exe/index.html
-def sign_py2exe(exepath):
-    # First, sign a *copy* of the file so that we know its final size.
-    execopy = os.path.join(os.path.dirname(exepath), 'temp-' + os.path.basename(exepath))
-    shutil.copy2(exepath, execopy)
-    system('X:\\sign.bat ' + execopy)
-
-    # Figure out the size of the appended signature.
-    comment_size = os.stat(execopy).st_size - os.stat(exepath).st_size
-    os.unlink(execopy)
-
-    # Write the correct comment size as the last two bytes of the file.
-    with open(exepath, "r+") as f:
-        f.seek(-2, os.SEEK_END)
-        f.write(struct.pack("<H", comment_size))
-
-    # Now we can sign the file for real.
-    system('X:\\sign.bat ' + exepath)
-
-
-def build_windows_pkg():
-    print('building brickv NSIS installer')
-    root_path = os.getcwd()
-
-    print('removing old build directories')
-    build_path = os.path.join(root_path, 'build')
-    dist_path = os.path.join(root_path, 'dist')
-
-    if os.path.exists(build_path):
-        shutil.rmtree(build_path)
-
-    if os.path.exists(dist_path):
-        shutil.rmtree(dist_path)
-
-    print('freezing images')
-    freeze_images()
-
-    print('calling build_all_ui.py release')
-    system('python build_all_ui.py release')
-
-    print('preparing manifest')
-    prepare_manifest(root_path)
-
-    print('calling setup.py py2exe')
-    system('python setup.py py2exe')
-
-    print('calling build_plugin_list.py to undo previous release run')
-    system('python build_plugin_list.py')
-
-    # FIXME: doesn't work yet
-    #if os.path.exists('X:\\sign.bat'):
-    #    sign_py2exe('dist\\brickv.exe')
-
-    print('creating NSIS script from template')
-    nsis_template_path = os.path.join(root_path, 'build_data', 'windows', 'nsis', 'brickv_installer.nsi.template')
-    nsis_path = os.path.join(dist_path, 'nsis', 'brickv_installer.nsi')
-    specialize_template(nsis_template_path, nsis_path,
-                        {'<<BRICKV_DOT_VERSION>>': BRICKV_VERSION,
-                         '<<BRICKV_UNDERSCORE_VERSION>>': BRICKV_VERSION.replace('.', '_')})
-
-    print('building NSIS installer')
-    system('"C:\\Program Files (x86)\\NSIS\\makensis.exe" dist\\nsis\\brickv_installer.nsi')
-    installer = 'brickv_windows_{0}.exe'.format(BRICKV_VERSION.replace('.', '_'))
-
-    if os.path.exists(installer):
-        os.unlink(installer)
-
-    shutil.move(os.path.join(dist_path, 'nsis', installer), root_path)
-
-    print('signing NSIS installer')
-    system('signtool.exe sign /v /tr http://rfc3161timestamp.globalsign.com/advanced /td sha256 /n "Tinkerforge GmbH" ' + installer)
-
-    print('verifying signature')
-    system('signtool.exe verify /v /pa ' + installer)
 
 
 def build_linux_pkg():
@@ -339,16 +154,16 @@ def build_linux_pkg():
         shutil.rmtree(egg_info_path)
 
     print('calling build_all_ui.py release')
-    system('python build_all_ui.py release')
+    system(['python', 'build_all_ui.py',  'release'])
 
     print('preparing manifest')
     prepare_manifest(root_path)
 
     print('calling setup.py sdist')
-    system('python setup.py sdist')
+    system(['python', 'setup.py', 'sdist'])
 
     print('calling build_plugin_list.py to undo previous release run')
-    system('python build_plugin_list.py')
+    system(['python', 'build_plugin_list.py'])
 
     if os.path.exists(egg_info_path):
         shutil.rmtree(egg_info_path)
@@ -359,7 +174,7 @@ def build_linux_pkg():
     shutil.copytree(build_data_path, linux_path)
 
     print('unpacking sdist tar file')
-    system('tar -x -C {0} -f {0}/brickv-{1}.tar.gz brickv-{1}/brickv'.format(dist_path, BRICKV_VERSION))
+    system(['tar', '-x', '-C', dist_path, '-f' '{0}/brickv-{1}.tar.gz'.format(dist_path, BRICKV_VERSION), 'brickv-{}/brickv'.format(BRICKV_VERSION)])
 
     print('copying unpacked brickv source')
     unpacked_path = os.path.join(dist_path, 'brickv-{0}'.format(BRICKV_VERSION), 'brickv')
@@ -367,31 +182,32 @@ def build_linux_pkg():
     shutil.copytree(unpacked_path, linux_share_path)
 
     print('creating DEBIAN/control from template')
-    installed_size = int(check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split('\t')[0])
+    out = check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux'])
+    installed_size = int(out.split(b'\t')[0])
     control_path = os.path.join(linux_path, 'DEBIAN', 'control')
     specialize_template(control_path, control_path,
                         {'<<VERSION>>': BRICKV_VERSION,
                          '<<INSTALLED_SIZE>>': str(installed_size)})
 
     print('changing directory modes to 0755')
-    system('find dist/linux -type d -exec chmod 0755 {} \;')
+    system(['find', 'dist/linux', '-type', 'd', '-exec', 'chmod 0755 {} \;'])
 
     print('changing file modes')
-    system('find dist/linux -type f -perm 664 -exec chmod 0644 {} \;')
-    system('find dist/linux -type f -perm 775 -exec chmod 0755 {} \;')
+    system(['find', 'dist/linux', '-type', 'f', '-perm', '664', '-exec', 'chmod 0644 {} \;'])
+    system(['find', 'dist/linux', '-type', 'f', '-perm', '775', '-exec', 'chmod 0755 {} \;'])
 
     print('changing owner to root')
-    system('sudo chown -R root:root dist/linux')
+    system(['sudo', 'chown', '-R', 'root:root', 'dist/linux'])
 
     print('building Debian package')
-    system('dpkg -b dist/linux brickv-{0}_all.deb'.format(BRICKV_VERSION))
+    system(['dpkg', '-b', 'dist/linux', 'brickv-{0}_all.deb'.format(BRICKV_VERSION)])
 
     print('changing owner back to original user')
-    system('sudo chown -R ${USER}:${USER} dist/linux')
+    system(['sudo', 'chown', '-R', '${0}:${0}'.format(getpass.getuser()), 'dist/linux'])
 
     if os.path.exists('/usr/bin/lintian'):
         print('checking Debian package')
-        system('lintian --pedantic brickv-{0}_all.deb'.format(BRICKV_VERSION))
+        system(['lintian', '--pedantic', 'brickv-{0}_all.deb'.format(BRICKV_VERSION)])
     else:
         print('skipping lintian check')
 
@@ -416,10 +232,10 @@ def build_linux_flash_pkg():
     shutil.copytree(build_data_path, linux_path)
 
     print('creating brick-flash from template')
-    with open(os.path.join(root_path, 'brickv', 'brick-flash.template'), 'rb') as f:
+    with open(os.path.join(root_path, 'brickv', 'brick-flash.template'), 'r') as f:
         template = f.read()
 
-    with open(os.path.join(root_path, 'brickv', 'samba.py'), 'rb') as f:
+    with open(os.path.join(root_path, 'brickv', 'samba.py'), 'r') as f:
         samba_lines = f.readlines()
 
     while len(samba_lines) > 0 and not samba_lines[0].startswith('#### skip here for brick-flash ####'):
@@ -432,7 +248,7 @@ def build_linux_flash_pkg():
 
     os.makedirs(os.path.join(linux_path, 'usr', 'bin'))
 
-    with open(os.path.join(linux_path, 'usr', 'bin', 'brick-flash'), 'wb') as f:
+    with open(os.path.join(linux_path, 'usr', 'bin', 'brick-flash'), 'w') as f:
         f.write(template)
 
     print('creating DEBIAN/control from template')
@@ -443,30 +259,30 @@ def build_linux_flash_pkg():
                          '<<INSTALLED_SIZE>>': str(installed_size)})
 
     print('changing binary and directory modes to 0755')
-    system('chmod 0755 dist/linux/usr/bin/brick-flash')
-    system('find dist/linux -type d -exec chmod 0755 {} \;')
+    system(['chmod', '0755', 'dist/linux/usr/bin/brick-flash'])
+    system(['find', 'dist/linux', '-type', 'd', '-exec', 'chmod 0755 {} \;'])
 
     print('changing file modes')
-    system('find dist/linux -type f -perm 664 -exec chmod 0644 {} \;')
-    system('find dist/linux -type f -perm 775 -exec chmod 0755 {} \;')
+    system(['find', 'dist/linux', '-type', 'f', '-perm', '664', '-exec', 'chmod 0644 {} \;'])
+    system(['find', 'dist/linux', '-type', 'f', '-perm', '775', '-exec', 'chmod 0755 {} \;'])
 
     print('changing owner to root')
-    system('sudo chown -R root:root dist/linux')
+    system(['sudo', 'chown', '-R', 'root:root', 'dist/linux'])
 
     print('building Debian package')
-    system('dpkg -b dist/linux brick-flash-{0}_all.deb'.format(BRICK_FLASH_VERSION))
+    system(['dpkg', '-b', 'dist/linux', 'brick-flash-{0}_all.deb'.format(BRICK_FLASH_VERSION)])
 
     print('changing owner back to original user')
-    system('sudo chown -R ${USER}:${USER} dist/linux')
+    system(['sudo', 'chown', '-R', '${0}:${0}'.format(getpass.getuser()), 'dist/linux'])
 
     if os.path.exists('/usr/bin/lintian'):
         print('checking Debian package')
-        system('lintian --pedantic brick-flash-{0}_all.deb'.format(BRICK_FLASH_VERSION))
+        system(['lintian', '--pedantic', 'brick-flash-{0}_all.deb'.format(BRICK_FLASH_VERSION)])
     else:
         print('skipping lintian check')
 
 
-BRICK_LOGGER_VERSION = '2.0.9'
+BRICK_LOGGER_VERSION = '2.0.8'
 
 def build_logger_zip():
     print('building brick-logger ZIP file')
@@ -481,13 +297,13 @@ def build_logger_zip():
     os.makedirs(dist_path)
 
     print('creating brick-logger.py from template')
-    with open(os.path.join(root_path, 'brickv', 'data_logger', 'brick-logger.py.template'), 'rb') as f:
+    with open(os.path.join(root_path, 'brickv', 'data_logger', 'brick-logger.py.template'), 'r') as f:
         template = f.read()
 
     template = template.replace('<<VERSION>>', BRICK_LOGGER_VERSION)
 
     for module in ['configuration', 'data_logger', 'event_logger', 'loggable_devices', 'job', 'main', 'utils']:
-        with open(os.path.join(root_path, 'brickv', 'data_logger', module + '.py'), 'rb') as f:
+        with open(os.path.join(root_path, 'brickv', 'data_logger', module + '.py'), 'r') as f:
             lines = f.readlines()
 
         while len(lines) > 0 and not lines[0].startswith('#### skip here for brick-logger ####'):
@@ -498,11 +314,11 @@ def build_logger_zip():
 
         template = template.replace('#### insert {0} module here ####'.format(module), ''.join(lines))
 
-    with open(os.path.join(dist_path, 'brick-logger.py'), 'wb') as f:
+    with open(os.path.join(dist_path, 'brick-logger.py'), 'w') as f:
         f.write(template)
 
     print('changing brick-logger.py mode to 0755')
-    system('chmod 0755 dist/brick-logger.py')
+    system(['chmod', '0755', 'dist/brick-logger.py'])
 
     print('building ZIP file')
     zip_name = 'brick_logger_{0}.zip'.format(BRICK_LOGGER_VERSION.replace('.', '_'))
@@ -510,8 +326,7 @@ def build_logger_zip():
     if os.path.exists(zip_name):
         os.remove(zip_name)
 
-    system('cd {0}; zip -q ../{1} brick-logger.py'.format(dist_path, zip_name))
-
+    system(['cd', '{};'.format(dist_path), 'zip', '-q', '../{}'.format(zip_name), 'brick-logger.py'])
 
 # run 'python build_pkg.py' to build the windows/linux/macos package
 if __name__ == '__main__':
@@ -526,10 +341,9 @@ if __name__ == '__main__':
             build_linux_flash_pkg()
         else:
             build_linux_pkg()
-    elif sys.platform == 'win32':
-        build_windows_pkg()
-    elif sys.platform == 'darwin':
-        build_macos_pkg()
+    elif sys.platform == 'win32' or sys.platform == 'darwin':
+        print('error: Please build Windows or Mac OSX binaries with pyinstaller and the spec files in the brickv folder.')
+        sys.exit(1)
     else:
         print('error: unsupported platform: ' + sys.platform)
         sys.exit(1)

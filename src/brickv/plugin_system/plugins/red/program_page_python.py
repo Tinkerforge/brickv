@@ -21,6 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import html
+
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_python import Ui_ProgramPagePython
@@ -97,7 +99,7 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
+        self.set_formatted_sub_title('Specify how the {language} program [{name}] should be executed.')
 
         self.update_combo_version('python', self.combo_version)
 
@@ -113,19 +115,19 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
 
         if program != None:
             # start mode
-            start_mode_api_name = program.cast_custom_option_value('python.start_mode', unicode, '<unknown>')
+            start_mode_api_name = program.cast_custom_option_value('python.start_mode', str, '<unknown>')
             start_mode          = Constants.get_python_start_mode(start_mode_api_name)
 
             self.combo_start_mode.setCurrentIndex(start_mode)
 
             # script file
-            self.combo_script_file_selector.set_current_text(program.cast_custom_option_value('python.script_file', unicode, ''))
+            self.combo_script_file_selector.set_current_text(program.cast_custom_option_value('python.script_file', str, ''))
 
             # module name
-            self.edit_module_name.setText(program.cast_custom_option_value('python.module_name', unicode, ''))
+            self.edit_module_name.setText(program.cast_custom_option_value('python.module_name', str, ''))
 
             # command
-            self.edit_command.setText(program.cast_custom_option_value('python.command', unicode, ''))
+            self.edit_command.setText(program.cast_custom_option_value('python.command', str, ''))
 
             # working directory
             self.combo_working_directory_selector.set_current_text(program.working_directory)
@@ -133,7 +135,7 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
             # options
             self.option_list_editor.clear()
 
-            for option in program.cast_custom_option_value_list('python.options', unicode, []):
+            for option in program.cast_custom_option_value_list('python.options', str, []):
                 self.option_list_editor.add_item(option)
 
         self.update_ui_state()
@@ -206,22 +208,22 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         options           = ' '.join(self.option_list_editor.get_items())
 
         if start_mode == Constants.PYTHON_START_MODE_WEB_INTERFACE:
-            html = u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.python_start_mode_display_names[start_mode]))
+            html_text = 'Start Mode: {0}<br/>'.format(html.escape(Constants.python_start_mode_display_names[start_mode]))
         else:
-            html  = u'Python Version: {0}<br/>'.format(Qt.escape(self.combo_version.itemText(version)))
-            html += u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.python_start_mode_display_names[start_mode]))
+            html_text  = 'Python Version: {0}<br/>'.format(html.escape(self.combo_version.itemText(version)))
+            html_text += 'Start Mode: {0}<br/>'.format(html.escape(Constants.python_start_mode_display_names[start_mode]))
 
             if start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE:
-                html += u'Script File: {0}<br/>'.format(Qt.escape(script_file))
+                html_text += 'Script File: {0}<br/>'.format(html.escape(script_file))
             elif start_mode == Constants.PYTHON_START_MODE_MODULE_NAME:
-                html += u'Module Name: {0}<br/>'.format(Qt.escape(module_name))
+                html_text += 'Module Name: {0}<br/>'.format(html.escape(module_name))
             elif start_mode == Constants.PYTHON_START_MODE_COMMAND:
-                html += u'Command: {0}<br/>'.format(Qt.escape(command))
+                html_text += 'Command: {0}<br/>'.format(html.escape(command))
 
-            html += u'Working Directory: {0}<br/>'.format(Qt.escape(working_directory))
-            html += u'Python Options: {0}<br/>'.format(Qt.escape(options))
+            html_text += 'Working Directory: {0}<br/>'.format(html.escape(working_directory))
+            html_text += 'Python Options: {0}<br/>'.format(html.escape(options))
 
-        return html
+        return html_text
 
     def get_custom_options(self):
         return {

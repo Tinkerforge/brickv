@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 
 import collections
 
-from PyQt4.QtGui import QComboBox, QSpinBox, QCheckBox
+from PyQt5.QtWidgets import QComboBox, QSpinBox, QCheckBox
 
 from brickv.data_logger.event_logger import EventLogger, GUILogger
 

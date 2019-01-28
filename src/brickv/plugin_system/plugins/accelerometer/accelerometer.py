@@ -24,9 +24,9 @@ Boston, MA 02111-1307, USA.
 
 import math
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QCheckBox, \
-                        QFont, QFrame
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QCheckBox, QFrame
+from PyQt5.QtGui import QFont
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer
@@ -38,7 +38,7 @@ class PitchLabel(FixedSizeLabel):
     def setText(self, x, y, z):
         try:
             pitch = int(round(math.atan(x/(math.sqrt(y*y + z*z)))*180/math.pi, 0))
-            text = u'Pitch: {}°'.format(pitch)
+            text = 'Pitch: {}°'.format(pitch)
             super(PitchLabel, self).setText(text)
         except:
             # In case of division by 0 or similar we simply don't update the text
@@ -48,7 +48,7 @@ class RollLabel(FixedSizeLabel):
     def setText(self, x, y, z):
         try:
             roll = int(round(math.atan(y/math.sqrt(x*x+z*z))*180/math.pi, 0))
-            text = u'Roll: {}°'.format(roll)
+            text = 'Roll: {}°'.format(roll)
             super(RollLabel, self).setText(text)
         except:
             # In case of division by 0 or similar we simply don't update the text
@@ -56,7 +56,7 @@ class RollLabel(FixedSizeLabel):
 
 class TemperatureLabel(FixedSizeLabel):
     def setText(self, t):
-        text = u'Temperature: {0}°C'.format(t)
+        text = 'Temperature: {0}°C'.format(t)
         super(TemperatureLabel, self).setText(text)
 
 class Accelerometer(PluginBase):
@@ -132,6 +132,7 @@ class Accelerometer(PluginBase):
         hlayout.addWidget(self.enable_led)
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 

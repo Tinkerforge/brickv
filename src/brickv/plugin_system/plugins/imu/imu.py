@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy, QAction
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtWidgets import QLabel, QVBoxLayout, QSizePolicy, QAction
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.imu.ui_imu import Ui_IMU
@@ -228,10 +228,10 @@ in the image above, then press "Save Orientation".""")
         self.yaw = yaw
 
     def led_clicked(self):
-        if 'On' in self.led_button.text():
+        if 'On' in self.led_button.text().replace('&',''):
             self.led_button.setText('Turn LEDs Off')
             self.imu.leds_on()
-        elif 'Off' in self.led_button.text():
+        elif 'Off' in self.led_button.text().replace('&',''):
             self.led_button.setText('Turn LEDs On')
             self.imu.leds_off()
 

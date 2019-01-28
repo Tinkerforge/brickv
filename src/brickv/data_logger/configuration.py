@@ -34,34 +34,17 @@ if 'merged_data_logger_modules' not in globals():
 else:
     from tinkerforge.ip_connection import base58decode
 
-def fix_strings(obj):
-    if isinstance(obj, unicode):
-        return obj.encode('utf-8')
-    elif isinstance(obj, dict):
-        fixed_obj = {}
-
-        for key in obj:
-            fixed_obj[fix_strings(key)] = fix_strings(obj[key])
-
-        return fixed_obj
-    elif isinstance(obj, list):
-        return [fix_strings(item) for item in obj]
-    else:
-        return obj
-
 def load_and_validate_config(filename):
     EventLogger.info('Loading config from file: {0}'.format(filename))
 
     try:
-        with open(filename, 'rb') as f:
+        with open(filename, 'r') as f:
             s = f.read()
 
-        config = json.loads(s, encoding='utf-8')
+        config = json.loads(s)
     except Exception as e:
         EventLogger.critical('Could not parse config file as JSON: {0}'.format(e))
         return None
-
-    config = fix_strings(config)
 
     if not ConfigValidator(config).validate():
         return None
@@ -74,9 +57,9 @@ def save_config(config, filename):
     EventLogger.info('Saving config to file: {0}'.format(filename))
 
     try:
-        s = json.dumps(config, ensure_ascii=False, sort_keys=True, indent=2).encode('utf-8')
+        s = json.dumps(config, ensure_ascii=False, sort_keys=True, indent=2)
 
-        with open(filename, 'wb') as f:
+        with open(filename, 'w') as f:
             f.write(s)
     except Exception as e:
         EventLogger.critical('Could not write config file as JSON: {0}'.format(e))
@@ -162,7 +145,7 @@ class ConfigValidator(object):
             except KeyError:
                 self._report_error('Host "{0}" has no name'.format(host_id))
             else:
-                if not isinstance(name, basestring):
+                if not isinstance(name, str):
                     self._report_error('Name of host "{0}" is not a string'.format(host_id))
                 elif len(name) == 0:
                     self._report_error('Name of host "{0}" is empty'.format(host_id))
@@ -186,7 +169,7 @@ class ConfigValidator(object):
             else:
                 if secret == None:
                     pass
-                elif not isinstance(secret, basestring):
+                elif not isinstance(secret, str):
                     self._report_error('Secret of host "{0}" is not a string'.format(host_id))
                 elif len(secret) > 64:
                     self._report_error('Secret of host "{0}" is too long'.format(host_id))
@@ -204,7 +187,7 @@ class ConfigValidator(object):
         except KeyError:
             self._report_error('"data" section has no "time_format" member')
         else:
-            if not isinstance(time_format, basestring):
+            if not isinstance(time_format, str):
                 self._report_error('"data/time_format" is not a string')
             elif time_format not in ['de', 'de-msec', 'us', 'us-msec', 'iso', 'iso-msec', 'unix', 'unix-msec', 'strftime']:
                 self._report_error('Invalid "data/time_format" value: {0}'.format(time_format))
@@ -215,7 +198,7 @@ class ConfigValidator(object):
         except KeyError:
             data['time_format_strftime'] = '%Y%m%d_%H%M%S'
         else:
-            if not isinstance(time_format_strftime, basestring):
+            if not isinstance(time_format_strftime, str):
                 self._report_error('"data/time_format_strftime" is not a string')
 
         self._validate_data_csv()
@@ -242,7 +225,7 @@ class ConfigValidator(object):
         except KeyError:
             self._report_error('"data/csv" section has no "file_name" member')
         else:
-            if not isinstance(file_name, basestring):
+            if not isinstance(file_name, str):
                 self._report_error('"data/csv/file_name" is not an string')
             elif len(file_name) == 0:
                 self._report_error('"data/csv/file_name" is empty')
@@ -260,7 +243,7 @@ class ConfigValidator(object):
         except KeyError:
             self._report_error('"debug" section has no "time_format" member')
         else:
-            if not isinstance(time_format, basestring):
+            if not isinstance(time_format, str):
                 self._report_error('"debug/time_format" is not a string')
             elif time_format not in ['de', 'us', 'iso', 'unix']:
                 self._report_error('Invalid "debug/time_format" value: {0}'.format(time_format))
@@ -289,7 +272,7 @@ class ConfigValidator(object):
         except KeyError:
             self._report_error('"debug/log" section has no "file_name" member')
         else:
-            if not isinstance(file_name, basestring):
+            if not isinstance(file_name, str):
                 self._report_error('"debug/log/file_name" is not an string')
             elif len(file_name) == 0:
                 self._report_error('"debug/log/file_name" is empty')
@@ -300,7 +283,7 @@ class ConfigValidator(object):
         except KeyError:
             self._report_error('"debug/log" section has no "level" member')
         else:
-            if not isinstance(level, basestring):
+            if not isinstance(level, str):
                 self._report_error('"debug/log/level" is not an integer')
             elif level not in ['debug', 'info', 'warning', 'error', 'critical']:
                 self._report_error('Invalid "debug/log/level" value: {0}'.format(level))
@@ -324,7 +307,7 @@ class ConfigValidator(object):
                 self._report_error('Device has no UID')
                 continue
 
-            if not isinstance(uid, basestring):
+            if not isinstance(uid, str):
                 self._report_error('Device UID is not a string')
                 continue
 
@@ -346,7 +329,7 @@ class ConfigValidator(object):
                 self._report_error('Device "{0}" has no name'.format(uid))
                 continue
 
-            if not isinstance(name, basestring):
+            if not isinstance(name, str):
                 self._report_error('Name of device "{0}" is not a string'.format(uid))
                 continue
             elif len(name) == 0:
@@ -364,7 +347,7 @@ class ConfigValidator(object):
             except KeyError:
                 self._report_error('Device "{0}" has no host'.format(uid))
             else:
-                if not isinstance(host, basestring):
+                if not isinstance(host, str):
                     self._report_error('Host of device "{0}" is not a string'.format(uid))
                 elif len(host) == 0:
                     self._report_error('Host of device "{0}" is empty'.format(uid))
@@ -450,7 +433,7 @@ class ConfigValidator(object):
                                 valid = False
 
                                 if option_spec['type'] == 'choice':
-                                    if not isinstance(value, basestring):
+                                    if not isinstance(value, str):
                                         self._report_error('Value of option "{0}" of device "{1}" is not a string'
                                                            .format(option_spec['name'], uid))
                                         continue

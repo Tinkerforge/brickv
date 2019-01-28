@@ -30,12 +30,11 @@ import functools
 import logging
 from datetime import datetime
 
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import Qt, QRegExp
-from PyQt4.QtGui import QDialog, QMessageBox, QPalette, QStandardItemModel, \
-                        QStandardItem, QLineEdit, QSpinBox, QCheckBox, QComboBox, \
-                        QHBoxLayout, QRegExpValidator, QTextCursor, QIcon, QColor, \
-                        QWidget
+from PyQt5 import QtCore
+from PyQt5.QtCore import Qt, QRegExp
+from PyQt5.QtWidgets import QDialog, QMessageBox, QLineEdit, QSpinBox, QCheckBox, QComboBox, \
+                        QHBoxLayout, QWidget
+from PyQt5.QtGui import QPalette, QStandardItemModel, QStandardItem, QRegExpValidator, QIcon, QColor, QTextCursor
 
 from brickv import config
 from brickv.bindings.ip_connection import BASE58
@@ -156,7 +155,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         if len(t) == 0:
             t = '<empty>'
 
-        self.combo_data_time_format.addItem((t + ' (strftime)').decode('utf-8'), 'strftime')
+        self.combo_data_time_format.addItem((t + ' (strftime)'), 'strftime')
 
         self.combo_debug_time_format.addItem(utils.timestamp_to_de(self.example_timestamp) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
         self.combo_debug_time_format.addItem(utils.timestamp_to_us(self.example_timestamp) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
@@ -231,9 +230,8 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.tab_widget.currentChanged.connect(self.tab_reset_warning)
         self.btn_clear_data.clicked.connect(self.btn_clear_data_clicked)
 
-        self.connect(self._gui_logger, QtCore.SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE), self.add_debug_message)
-        self.connect(self._gui_logger, QtCore.SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT),
-                     self.highlight_debug_tab)
+        self._gui_logger.newEventMessage.connect(self.add_debug_message)
+        self._gui_logger.newEventTabHighlight.connect(self.highlight_debug_tab)
 
         self.combo_host.currentIndexChanged.connect(self._host_index_changed)
 
@@ -251,7 +249,9 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             from brickv.data_logger import main
 
             self._gui_job = GuiDataJob(name="GuiData-Writer")
-            self.connect(self._gui_job, QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), self.table_add_row)
+
+            self._gui_job.signalNewData.connect(self.table_add_row)
+            #self.connect(self._gui_job, QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), self.table_add_row)
 
             self.data_logger_thread = main.main(None, GuiConfigHandler.create_config(self), self._gui_job, None, None, None)
 
@@ -269,7 +269,9 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.btn_start_logging.setText("Start Logging")
         self.btn_start_logging.setIcon(QIcon(load_pixmap('data_logger/start-icon.png')))
 
-        self.disconnect(self._gui_job, QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), self.table_add_row)
+
+        self._gui_job.signalNewData.disconnect(self.table_add_row)
+        #self.disconnect(self._gui_job, QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), self.table_add_row)
         self.data_logger_thread = None
         self._gui_job = None
 
@@ -298,7 +300,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         if len(t) == 0:
             t = '<empty>'
 
-        self.combo_data_time_format.setItemText(index, (t + ' (strftime)').decode('utf-8'))
+        self.combo_data_time_format.setItemText(index, (t + ' (strftime)'))
 
         if self.edit_data_time_format_strftime.isVisible():
             self.edit_data_time_format_strftime.setFocus()
@@ -419,7 +421,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         """
             Sets the font Color and an icon, if given, at a specific tab.
         """
-        from PyQt4.QtGui import QIcon
+        from PyQt5.QtGui import QIcon
 
         self.tab_widget.tabBar().setTabTextColor(tab_index, color)
         if icon is not None:
@@ -465,13 +467,13 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.edit_secret.setText(secret if secret != None else '')
 
         self.combo_data_time_format.setCurrentIndex(max(self.combo_data_time_format.findData(config['data']['time_format']), 0))
-        self.edit_data_time_format_strftime.setText(config['data']['time_format_strftime'].decode('utf-8'))
+        self.edit_data_time_format_strftime.setText(config['data']['time_format_strftime'])
         self.check_data_to_csv_file.setChecked(config['data']['csv']['enabled'])
-        self.edit_csv_file_name.setText(config['data']['csv']['file_name'].decode('utf-8'))
+        self.edit_csv_file_name.setText(config['data']['csv']['file_name'])
 
         self.combo_debug_time_format.setCurrentIndex(max(self.combo_debug_time_format.findData(config['debug']['time_format']), 0))
         self.check_debug_to_log_file.setChecked(config['debug']['log']['enabled'])
-        self.edit_log_file_name.setText(config['debug']['log']['file_name'].decode('utf-8'))
+        self.edit_log_file_name.setText(config['debug']['log']['file_name'])
         self.combo_log_level.setCurrentIndex(max(self.combo_debug_time_format.findData(config['debug']['log']['level']), 0))
 
     def update_devices_tab(self, config):
@@ -557,9 +559,9 @@ class SetupDialog(QDialog, Ui_SetupDialog):
                     widget_option_value = QComboBox()
 
                     for option_value_spec in option_spec['values']:
-                        widget_option_value.addItem(option_value_spec[0].decode('utf-8'), option_value_spec[1])
+                        widget_option_value.addItem(option_value_spec[0], option_value_spec[1])
 
-                    widget_option_value.setCurrentIndex(widget_option_value.findText(device['options'][option_spec['name']]['value'].decode('utf-8')))
+                    widget_option_value.setCurrentIndex(widget_option_value.findText(device['options'][option_spec['name']]['value']))
                 elif option_spec['type'] == 'int':
                     widget_option_value = QSpinBox()
                     widget_option_value.setRange(option_spec['minimum'], option_spec['maximum'])
@@ -615,12 +617,12 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             except ValueError:
                 pass
 
-        self.model_data.appendRow([QStandardItem(csv_data.timestamp.decode('utf-8')),
+        self.model_data.appendRow([QStandardItem(csv_data.timestamp),
                                    QStandardItem(csv_data.name),
                                    QStandardItem(csv_data.uid),
                                    QStandardItem(csv_data.var_name),
                                    QStandardItem(str(csv_data.raw_data)),
-                                   QStandardItem(csv_data.var_unit.decode('utf-8'))])
+                                   QStandardItem(csv_data.var_unit)])
 
         if row_number != None:
             self.model_data.setHeaderData(rows, Qt.Vertical, str(row_number + 1))

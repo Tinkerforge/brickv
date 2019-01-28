@@ -21,8 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QGridLayout, \
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QGridLayout, \
                         QPushButton, QSpinBox, QFrame, QDoubleSpinBox, QDialog, QComboBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
@@ -106,7 +106,7 @@ class Calibration(QDialog, Ui_Calibration):
 
     def cb_get_t(self, temperature):
         self.t = temperature/100.0
-        self.lbl_t.setText(u'{:.2f} °C'.format(self.t))
+        self.lbl_t.setText('{:.2f} °C'.format(self.t))
 
     def closeEvent(self, event):
         self.cbe_p.set_period(0)
@@ -209,6 +209,7 @@ class BarometerV2(COMCUPluginBase):
         layout.addLayout(layout_h1)
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 
@@ -308,7 +309,7 @@ class BarometerV2(COMCUPluginBase):
 
     def cb_get_temperature(self, temperature):
         self.current_temperature = temperature / 100.0
-        self.lbl_temperature_value.setText(u'{:.2f} °C'.format(self.current_temperature))
+        self.lbl_temperature_value.setText('{:.2f} °C'.format(self.current_temperature))
 
     def get_reference_air_pressure_async(self, air_pressure):
         self.sbox_reference_air_pressure.setValue(air_pressure / 1000.0)

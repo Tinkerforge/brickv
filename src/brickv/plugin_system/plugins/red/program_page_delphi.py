@@ -27,6 +27,7 @@ from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_delphi import Ui_ProgramPageDelphi
 from brickv.plugin_system.plugins.red.script_manager import check_script_result
 import posixpath
+import html
 
 def get_fpc_versions(script_manager, callback):
     def cb_versions(result):
@@ -119,7 +120,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
+        self.set_formatted_sub_title('Specify how the {language} program [{name}] should be executed.')
 
         def cb_fpc_versions(versions):
             if versions[0].version != None:
@@ -157,19 +158,19 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
             self.edit_mode = True
 
             # start mode
-            start_mode_api_name = program.cast_custom_option_value('delphi.start_mode', unicode, '<unknown>')
+            start_mode_api_name = program.cast_custom_option_value('delphi.start_mode', str, '<unknown>')
             start_mode          = Constants.get_delphi_start_mode(start_mode_api_name)
 
             self.combo_start_mode.setCurrentIndex(start_mode)
 
             # executable
-            self.edit_executable.setText(program.cast_custom_option_value('delphi.executable', unicode, ''))
+            self.edit_executable.setText(program.cast_custom_option_value('delphi.executable', str, ''))
 
             # compile from source
             self.check_compile_from_source.setChecked(program.cast_custom_option_value('delphi.compile_from_source', bool, False))
 
             # build system
-            build_system_api_name = program.cast_custom_option_value('delphi.build_system', unicode, '<unknown>')
+            build_system_api_name = program.cast_custom_option_value('delphi.build_system', str, '<unknown>')
             build_system          = Constants.get_delphi_build_system(build_system_api_name)
 
             self.combo_build_system.setCurrentIndex(build_system)
@@ -180,13 +181,13 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
             # make options
             self.make_option_list_editor.clear()
 
-            for make_option in program.cast_custom_option_value_list('delphi.make_options', unicode, []):
+            for make_option in program.cast_custom_option_value_list('delphi.make_options', str, []):
                 self.make_option_list_editor.add_item(make_option)
 
             # lazbuild options
             self.lazbuild_option_list_editor.clear()
 
-            for lazbuild_option in program.cast_custom_option_value_list('delphi.lazbuild_options', unicode, []):
+            for lazbuild_option in program.cast_custom_option_value_list('delphi.lazbuild_options', str, []):
                 self.lazbuild_option_list_editor.add_item(lazbuild_option)
 
         self.update_ui_state()
@@ -257,26 +258,26 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
         make_options        = ' '.join(self.make_option_list_editor.get_items())
         lazbuild_options    = ' '.join(self.lazbuild_option_list_editor.get_items())
 
-        html = u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.delphi_start_mode_display_names[start_mode]))
+        html_text = 'Start Mode: {0}<br/>'.format(html.escape(Constants.delphi_start_mode_display_names[start_mode]))
 
         if start_mode == Constants.DELPHI_START_MODE_EXECUTABLE:
-            html += u'Executable: {0}<br/>'.format(Qt.escape(executable))
+            html_text += 'Executable: {0}<br/>'.format(html.escape(executable))
 
         if compile_from_source:
-            html += u'Compile From Source: Enabled<br/>'
-            html += u'Build System: {0}<br/>'.format(Qt.escape(Constants.delphi_build_system_display_names[build_system]))
+            html_text += 'Compile From Source: Enabled<br/>'
+            html_text += 'Build System: {0}<br/>'.format(html.escape(Constants.delphi_build_system_display_names[build_system]))
         else:
-            html += u'Compile From Source: Disabled<br/>'
+            html_text += 'Compile From Source: Disabled<br/>'
 
-        html += u'Working Directory: {0}<br/>'.format(Qt.escape(working_directory))
+        html_text += 'Working Directory: {0}<br/>'.format(html.escape(working_directory))
 
         if compile_from_source:
             if build_system == Constants.DELPHI_BUILD_SYSTEM_FPCMAKE:
-                html += u'Make Options: {0}<br/>'.format(Qt.escape(make_options))
+                html_text += 'Make Options: {0}<br/>'.format(html.escape(make_options))
             elif build_system == Constants.DELPHI_BUILD_SYSTEM_LAZBUILD:
-                html += u'Lazbuild Options: {0}<br/>'.format(Qt.escape(lazbuild_options))
+                html_text += 'Lazbuild Options: {0}<br/>'.format(html.escape(lazbuild_options))
 
-        return html
+        return html_text
 
     def get_custom_options(self):
         return {

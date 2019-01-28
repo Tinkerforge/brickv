@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import QTimer
+from PyQt5.QtCore import QTimer
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_outdoor_weather import BrickletOutdoorWeather
 from brickv.plugin_system.plugins.outdoor_weather.ui_outdoor_weather import Ui_OutdoorWeather

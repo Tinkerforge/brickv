@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
@@ -23,8 +23,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QValidator
-from PyQt4.QtCore import QRegExp
+from PyQt5.QtGui import QValidator
+from PyQt5.QtCore import QRegExp
 
 class HexValidator(QValidator):
     def __init__(self, max_bytes=-1):

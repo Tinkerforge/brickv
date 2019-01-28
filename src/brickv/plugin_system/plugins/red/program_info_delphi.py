@@ -41,7 +41,7 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
         show_advanced_options = self.check_show_advanced_options.isChecked()
 
         # start mode
-        start_mode_api_name   = self.program.cast_custom_option_value('delphi.start_mode', unicode, '<unknown>')
+        start_mode_api_name   = self.program.cast_custom_option_value('delphi.start_mode', str, '<unknown>')
         start_mode            = Constants.get_delphi_start_mode(start_mode_api_name)
         start_mode_executable = start_mode == Constants.DELPHI_START_MODE_EXECUTABLE
 
@@ -50,7 +50,7 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
         # executable
         self.label_executable_title.setVisible(start_mode_executable)
         self.label_executable.setVisible(start_mode_executable)
-        self.label_executable.setText(self.program.cast_custom_option_value('delphi.executable', unicode, ''))
+        self.label_executable.setText(self.program.cast_custom_option_value('delphi.executable', str, ''))
 
         # compile from source
         compile_from_source = self.program.cast_custom_option_value('delphi.compile_from_source', bool, False)
@@ -61,7 +61,7 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
             self.label_compile_from_source.setText('Disabled')
 
         # build system
-        build_system_api_name = self.program.cast_custom_option_value('delphi.build_system', unicode, '<unknown>')
+        build_system_api_name = self.program.cast_custom_option_value('delphi.build_system', str, '<unknown>')
         build_system          = Constants.get_delphi_build_system(build_system_api_name)
         build_system_fpcmake  = build_system == Constants.DELPHI_BUILD_SYSTEM_FPCMAKE
         build_system_lazbuild = build_system == Constants.DELPHI_BUILD_SYSTEM_LAZBUILD
@@ -78,12 +78,12 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
         # make options
         self.label_make_options_title.setVisible(compile_from_source and show_advanced_options and build_system_fpcmake)
         self.label_make_options.setVisible(compile_from_source and show_advanced_options and build_system_fpcmake)
-        self.label_make_options.setText('\n'.join(self.program.cast_custom_option_value_list('delphi.make_options', unicode, [])))
+        self.label_make_options.setText('\n'.join(self.program.cast_custom_option_value_list('delphi.make_options', str, [])))
 
         # lazbuild options
         self.label_lazbuild_options_title.setVisible(compile_from_source and show_advanced_options and build_system_lazbuild)
         self.label_lazbuild_options.setVisible(compile_from_source and show_advanced_options and build_system_lazbuild)
-        self.label_lazbuild_options.setText('\n'.join(self.program.cast_custom_option_value_list('delphi.lazbuild_options', unicode, [])))
+        self.label_lazbuild_options.setText('\n'.join(self.program.cast_custom_option_value_list('delphi.lazbuild_options', str, [])))
 
     # overrides ProgramInfo.close_all_dialogs
     def close_all_dialogs(self):

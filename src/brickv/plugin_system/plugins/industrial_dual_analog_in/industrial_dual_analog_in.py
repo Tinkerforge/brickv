@@ -24,8 +24,8 @@ Boston, MA 02111-1307, USA.
 
 import functools
 
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QPushButton, QFrame, QDialog, QMessageBox
-from PyQt4.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QPushButton, QFrame, QDialog, QMessageBox
+from PyQt5.QtCore import Qt
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
@@ -172,6 +172,7 @@ class IndustrialDualAnalogIn(PluginBase):
         hlayout.addWidget(self.calibration_button)
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 

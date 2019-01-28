@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, QTimer
+from PyQt5.QtCore import pyqtSignal, QTimer
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.dual_relay.ui_dual_relay import Ui_DualRelay
@@ -156,7 +156,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
         if self.dr1_button.minimumWidth() < width:
             self.dr1_button.setMinimumWidth(width)
 
-        if 'On' in self.dr1_button.text():
+        if 'On' in self.dr1_button.text().replace('&',''):
             self.dr1_button.setText('Switch Off')
             self.dr1_image.setPixmap(self.a1_pixmap)
         else:
@@ -183,7 +183,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
         if self.dr2_button.minimumWidth() < width:
             self.dr2_button.setMinimumWidth(width)
 
-        if 'On' in self.dr2_button.text():
+        if 'On' in self.dr2_button.text().replace('&',''):
             self.dr2_button.setText('Switch Off')
             self.dr2_image.setPixmap(self.a2_pixmap)
         else:

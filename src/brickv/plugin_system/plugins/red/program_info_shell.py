@@ -49,7 +49,7 @@ class ProgramInfoShell(ProgramInfo, Ui_ProgramInfoShell):
         self.get_executable_versions('shell', cb_shell_versions)
 
         # start mode
-        start_mode_api_name    = self.program.cast_custom_option_value('shell.start_mode', unicode, '<unknown>')
+        start_mode_api_name    = self.program.cast_custom_option_value('shell.start_mode', str, '<unknown>')
         start_mode             = Constants.get_shell_start_mode(start_mode_api_name)
         start_mode_script_file = start_mode == Constants.SHELL_START_MODE_SCRIPT_FILE
         start_mode_command     = start_mode == Constants.SHELL_START_MODE_COMMAND
@@ -59,12 +59,12 @@ class ProgramInfoShell(ProgramInfo, Ui_ProgramInfoShell):
         # script file
         self.label_script_file_title.setVisible(start_mode_script_file)
         self.label_script_file.setVisible(start_mode_script_file)
-        self.label_script_file.setText(self.program.cast_custom_option_value('shell.script_file', unicode, '<unknown>'))
+        self.label_script_file.setText(self.program.cast_custom_option_value('shell.script_file', str, '<unknown>'))
 
         # command
         self.label_command_title.setVisible(start_mode_command)
         self.label_command.setVisible(start_mode_command)
-        self.label_command.setText(self.program.cast_custom_option_value('shell.command', unicode, '<unknown>'))
+        self.label_command.setText(self.program.cast_custom_option_value('shell.command', str, '<unknown>'))
 
         # working directory
         self.label_working_directory_title.setVisible(show_advanced_options)
@@ -74,4 +74,4 @@ class ProgramInfoShell(ProgramInfo, Ui_ProgramInfoShell):
         # options
         self.label_options_title.setVisible(show_advanced_options)
         self.label_options.setVisible(show_advanced_options)
-        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('shell.options', unicode, [])))
+        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('shell.options', str, [])))

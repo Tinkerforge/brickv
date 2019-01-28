@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2011 Loic Jaquemet loic.jaquemet+python@gmail.com
@@ -27,8 +27,9 @@
 # * Remove QBuffer and QIODevice and replace it by str
 # * Remove Font picker
 
-from PyQt4.Qt import Qt
-from PyQt4.QtGui import QFontMetrics, QMenu, QClipboard, QApplication, QAbstractScrollArea, QAction, QPen, QPainter
+from PyQt5.Qt import Qt
+from PyQt5.QtGui import QFontMetrics, QClipboard, QPen, QPainter
+from PyQt5.QtWidgets import QMenu, QApplication, QAbstractScrollArea, QAction
 
 import string
 

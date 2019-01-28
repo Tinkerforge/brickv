@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget, QMessageBox
+from PyQt5.QtWidgets import QWidget, QMessageBox
 
 from brickv.bindings.ip_connection import IPConnection
 from brickv.plugin_system.plugins.master.ui_chibi import Ui_Chibi
@@ -47,7 +47,7 @@ class Chibi(QWidget, Ui_Chibi):
     def start(self):
         if self.parent.firmware_version >= (1, 1, 0):
             self.update_generator = self.start_async()
-            self.update_generator.next()
+            next(self.update_generator)
 
     def start_async(self):
         self.update_address = 0
@@ -58,23 +58,23 @@ class Chibi(QWidget, Ui_Chibi):
 
         def get_chibi_address_async(address_async):
             self.update_address = address_async
-            self.update_generator.next()
+            next(self.update_generator)
 
         def get_chibi_slave_address_async(chibi_slave_address_async):
             self.update_chibi_slave_address = chibi_slave_address_async
-            self.update_generator.next()
+            next(self.update_generator)
 
         def get_chibi_master_address_async(chibi_master_address_async):
             self.update_chibi_master_address = chibi_master_address_async
-            self.update_generator.next()
+            next(self.update_generator)
 
         def get_chibi_frequency_async(chibi_frequency_async):
             self.update_chibi_frequency = chibi_frequency_async
-            self.update_generator.next()
+            next(self.update_generator)
 
         def get_chibi_channel_async(chibi_channel_async):
             self.update_chibi_channel = chibi_channel_async
-            self.update_generator.next()
+            next(self.update_generator)
 
         async_call(self.master.get_chibi_address, None, get_chibi_address_async, self.parent.increase_error_count)
         yield
@@ -180,7 +180,11 @@ class Chibi(QWidget, Ui_Chibi):
         if address_slave_text == '':
             address_slave = []
         else:
-            address_slave = map(int, address_slave_text.split(','))
+            try:
+                address_slave = list(map(int, address_slave_text.split(',')))
+            except:
+                QMessageBox.critical(get_main_window(), "Configuration", "Could not save configuration: Slave address list was not a list of integers separated by ','", QMessageBox.Ok)
+                return
             address_slave.append(0)
 
         self.master.set_chibi_frequency(frequency)

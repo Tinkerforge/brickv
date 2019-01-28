@@ -25,8 +25,8 @@ Boston, MA 02111-1307, USA.
 import struct
 import time
 
-from PyQt4.QtCore import QTimer
-from PyQt4.QtGui import QWidget, QMessageBox, QLabel
+from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QWidget, QMessageBox, QLabel
 
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_extension import Ui_REDTabExtension
@@ -201,25 +201,25 @@ class RS485(QWidget, Ui_RS485):
 
         # Type
         data = struct.pack('I', new_config['type'])
-        eeprom[0] = ord(data[0])
-        eeprom[1] = ord(data[1])
-        eeprom[2] = ord(data[2])
-        eeprom[3] = ord(data[3])
+        eeprom[0] = data[0]
+        eeprom[1] = data[1]
+        eeprom[2] = data[2]
+        eeprom[3] = data[3]
 
         # Slave address
         for i, slave in enumerate(new_config['slave_address']):
             data = struct.pack('I', slave)
-            eeprom[100 + i*4] = ord(data[0])
-            eeprom[101 + i*4] = ord(data[1])
-            eeprom[102 + i*4] = ord(data[2])
-            eeprom[103 + i*4] = ord(data[3])
+            eeprom[100 + i*4] = data[0]
+            eeprom[101 + i*4] = data[1]
+            eeprom[102 + i*4] = data[2]
+            eeprom[103 + i*4] = data[3]
 
         # Baudrate
         data = struct.pack('I', new_config['baudrate'])
-        eeprom[400] = ord(data[0])
-        eeprom[401] = ord(data[1])
-        eeprom[402] = ord(data[2])
-        eeprom[403] = ord(data[3])
+        eeprom[400] = data[0]
+        eeprom[401] = data[1]
+        eeprom[402] = data[2]
+        eeprom[403] = data[3]
 
         # Parity
         eeprom[404] = ord(new_config['parity'])
@@ -239,7 +239,7 @@ class RS485(QWidget, Ui_RS485):
                 self.parent.script_manager.execute_script('restart_brickd', None)
                 popup_ok('Saved configuration successfully, restarting brickd.')
 
-        new_config['eeprom_file'].write_async(map(chr, data), lambda x: cb_error(new_config, x), None)
+        new_config['eeprom_file'].write_async(data, lambda x: cb_error(new_config, x), None)
 
     def rs485_type_changed(self, index):
         if index == 0:
@@ -266,7 +266,7 @@ class RS485(QWidget, Ui_RS485):
         if slave_text == '':
             address_slave = []
         else:
-            address_slave = map(int, slave_text.split(','))
+            address_slave = list(map(int, slave_text.split(',')))
 
         return address_slave
 
@@ -281,7 +281,7 @@ class Ethernet(QWidget, Ui_Ethernet):
         self.extension = extension
         self.config = config
 
-        mac = map(lambda x: int(x, 16), self.config['mac'].split(':'))
+        mac = list(map(lambda x: int(x, 16), self.config['mac'].split(':')))
         self.ethernet_mac6.setValue(mac[0])
         self.ethernet_mac5.setValue(mac[1])
         self.ethernet_mac4.setValue(mac[2])
@@ -336,7 +336,7 @@ class Ethernet(QWidget, Ui_Ethernet):
                 self.parent.script_manager.execute_script('restart_brickd', None)
                 popup_ok('Saved configuration successfully, restarting brickd.')
 
-        new_config['eeprom_file'].write_async(map(chr, data), lambda x: cb_error(new_config, x), None)
+        new_config['eeprom_file'].write_async(data, lambda x: cb_error(new_config, x), None)
 
 class Unsupported(QWidget, Ui_Unsupported):
     def __init__(self, parent, extension, config):

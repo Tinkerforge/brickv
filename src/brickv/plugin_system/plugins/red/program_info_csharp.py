@@ -49,7 +49,7 @@ class ProgramInfoCSharp(ProgramInfo, Ui_ProgramInfoCSharp):
         self.get_executable_versions('mono', cb_mono_versions)
 
         # start mode
-        start_mode_api_name   = self.program.cast_custom_option_value('csharp.start_mode', unicode, '<unknown>')
+        start_mode_api_name   = self.program.cast_custom_option_value('csharp.start_mode', str, '<unknown>')
         start_mode            = Constants.get_csharp_start_mode(start_mode_api_name)
         start_mode_executable = start_mode == Constants.CSHARP_START_MODE_EXECUTABLE
 
@@ -58,7 +58,7 @@ class ProgramInfoCSharp(ProgramInfo, Ui_ProgramInfoCSharp):
         # executable
         self.label_executable_title.setVisible(start_mode_executable)
         self.label_executable.setVisible(start_mode_executable)
-        self.label_executable.setText(self.program.cast_custom_option_value('csharp.executable', unicode, '<unknown>'))
+        self.label_executable.setText(self.program.cast_custom_option_value('csharp.executable', str, '<unknown>'))
 
         # working directory
         self.label_working_directory_title.setVisible(show_advanced_options)
@@ -68,4 +68,4 @@ class ProgramInfoCSharp(ProgramInfo, Ui_ProgramInfoCSharp):
         # options
         self.label_options_title.setVisible(show_advanced_options)
         self.label_options.setVisible(show_advanced_options)
-        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('csharp.options', unicode, [])))
+        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('csharp.options', str, [])))

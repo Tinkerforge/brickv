@@ -22,9 +22,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QWidget, QLinearGradient, \
-                        QPainter, QSizePolicy, QColor
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QSizePolicy
+from PyQt5.QtGui import QPainter, QLinearGradient, QColor
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity

@@ -26,8 +26,9 @@ import functools
 import weakref
 import threading
 import time
+import traceback
 
-from PyQt4 import QtCore
+from PyQt5 import QtCore
 
 from brickv.bindings.ip_connection import Error
 from brickv.bindings.brick_red import BrickRED
@@ -148,7 +149,7 @@ class REDBrick(BrickRED):
                 try:
                     callback_function(callback_target, *args, **kwargs)
                 except:
-                    pass
+                    traceback.print_exc()
             else:
                 dead_callbacks.append(cookie)
 
@@ -416,9 +417,6 @@ class REDString(REDObject):
     MAX_GET_CHUNK_BUFFER_LENGTH = 63
 
     def __str__(self):
-        return str(self._data)
-
-    def __unicode__(self):
         return self._data
 
     def __repr__(self):
@@ -446,7 +444,7 @@ class REDString(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get length of string object {0}'.format(self.object_id), error_code)
 
-        data_utf8 = ''
+        data_utf8 = bytes()
 
         while len(data_utf8) < length:
             try:
@@ -458,14 +456,14 @@ class REDString(REDObject):
             if error_code != REDError.E_SUCCESS:
                 raise REDError('Could not get chunk of string object {0} at offset {1}'.format(self.object_id, len(data_utf8)), error_code)
 
-            data_utf8 += chunk
+            data_utf8 += bytes(map(ord, chunk))
 
         self._data = data_utf8.decode('utf-8')
 
     def allocate(self, data):
         self.release()
 
-        data_unicode   = unicode(data)
+        data_unicode   = str(data)
         data_utf8      = data_unicode.encode('utf-8')
         chunk          = data_utf8[:REDString.MAX_ALLOCATE_BUFFER_LENGTH]
         remaining_data = data_utf8[REDString.MAX_ALLOCATE_BUFFER_LENGTH:]
@@ -508,7 +506,7 @@ class REDString(REDObject):
 
 def _red_string_to_unicode(red_string):
     if red_string != None:
-        return unicode(red_string)
+        return str(red_string)
     else:
         return None
 
@@ -606,7 +604,7 @@ class REDList(REDObject):
 
         for item in self._items:
             if isinstance(item, REDString):
-                items.append(unicode(item))
+                items.append(str(item))
             else:
                 items.append(item)
 
@@ -678,7 +676,7 @@ class REDFileBase(REDObject):
     EVENT_READABLE = BrickRED.FILE_EVENT_READABLE
     EVENT_WRITABLE = BrickRED.FILE_EVENT_WRITABLE
 
-    # data is always a bytearray containing the read data.
+    # data is always a bytes object containing the read data.
     # on success error is None, on failure error is an Exception object
     AsyncReadResult = namedtuple('AsyncReadResult', 'data error')
 
@@ -806,7 +804,7 @@ class REDFileBase(REDObject):
         if error != None and isinstance(error, Error):
             self._session.increase_error_count()
 
-        data = bytearray().join(self._read_async_data.data_chunks)
+        data = bytes().join(self._read_async_data.data_chunks)
 
         self._read_async_data._qtcb_result.emit(REDFileBase.AsyncReadResult(data, error))
         self._read_async_data = None
@@ -833,7 +831,7 @@ class REDFileBase(REDObject):
         self._read_async_data.burst_length += length_read
         self._read_async_data.data_length  += length_read
 
-        self._read_async_data.data_chunks.append(bytearray(buf[:length_read]))
+        self._read_async_data.data_chunks.append(bytes(buf[:length_read]))
 
         if self._read_async_data.data_length >= self._read_async_data.max_length:
             # read max_length data, report the result
@@ -908,7 +906,7 @@ class REDFileBase(REDObject):
         if self.object_id is None:
             raise RuntimeError('Cannot write to unattached file object')
 
-        remaining_data = bytearray(data)
+        remaining_data = bytes(data)
 
         while len(remaining_data) > 0:
             chunk, length_to_write = _get_zero_padded_chunk(remaining_data,
@@ -933,8 +931,11 @@ class REDFileBase(REDObject):
         if self._write_async_data != None:
             raise RuntimeError('Another asynchronous write is already in progress')
 
+        if isinstance(data, str):
+            data = data.encode('utf-8')
+
         self._write_async_data = create_object_in_qt_main_thread(REDFileBase.WriteAsyncData,
-                                                                 (bytearray(data), result_callback, status_callback))
+                                                                 (data, result_callback, status_callback))
 
         self._report_write_async_status()
         self._next_write_async_burst()
@@ -943,7 +944,7 @@ class REDFileBase(REDObject):
         if self.object_id is None:
             raise RuntimeError('Cannot read from unattached file object')
 
-        data = bytearray()
+        data = bytes()
 
         while length > 0:
             length_to_read = min(length, REDFileBase.MAX_READ_BUFFER_LENGTH)
@@ -961,7 +962,7 @@ class REDFileBase(REDObject):
             if length_read == 0:
                 break
 
-            data   += bytearray(chunk[:length_read])
+            data   += bytes(chunk[:length_read])
             length -= length_read
 
         return data
@@ -1230,7 +1231,7 @@ class REDDirectory(REDObject):
     @property
     def name(self):    return _red_string_to_unicode(self._name)
     @property
-    def entries(self): return [unicode(entry) for entry in self._entries]
+    def entries(self): return [str(entry) for entry in self._entries]
 
 
 DIRECTORY_FLAG_RECURSIVE = BrickRED.DIRECTORY_FLAG_RECURSIVE
@@ -1599,7 +1600,7 @@ class REDProgramBase(REDObject):
             if error_code != REDError.E_SUCCESS:
                 raise REDError('Could not get custom option value of program object {0}'.format(self.object_id), error_code)
 
-            custom_options[unicode(name)] = _attach_or_release(self._session, REDString, custom_option_value_string_id)
+            custom_options[str(name)] = _attach_or_release(self._session, REDString, custom_option_value_string_id)
 
         self._custom_options = custom_options
 
@@ -1631,7 +1632,7 @@ class REDProgramBase(REDObject):
             if error_code != REDError.E_SUCCESS:
                 raise REDError('Could not set custom option for program object {0}'.format(self.object_id), error_code)
 
-            self._custom_options[unicode(name)] = value
+            self._custom_options[str(name)] = value
 
     def set_custom_option_value_list(self, name, values):
         if self.object_id is None:
@@ -1640,26 +1641,26 @@ class REDProgramBase(REDObject):
         # FIXME: remove all custom options that start with <name>.item* to ensure that
         #        shrinking a list doesn't leaf old items behind
         for i, value in enumerate(values):
-            self.set_custom_option_value(name + '.item' + str(i), unicode(value))
+            self.set_custom_option_value(name + '.item' + str(i), str(value))
 
-        self.set_custom_option_value(name + '.length', unicode(len(values)))
+        self.set_custom_option_value(name + '.length', str(len(values)))
 
     def cast_custom_option_value(self, name, cast, default):
         try:
-            string = self._custom_options[unicode(name)]
+            string = self._custom_options[str(name)]
         except KeyError:
             return default
 
         if cast == bool:
-            if unicode(string) == 'true':
+            if str(string) == 'true':
                 return True
-            elif unicode(string) == 'false':
+            elif str(string) == 'false':
                 return False
             else:
                 return default
         else:
             try:
-                return cast(unicode(string))
+                return cast(str(string))
             except ValueError:
                 return default
 

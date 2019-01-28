@@ -26,7 +26,9 @@ import json
 import socket
 import struct
 
-from PyQt4 import Qt, QtCore, QtGui
+from PyQt5 import Qt, QtCore
+from PyQt5.QtWidgets import QDialog, QMessageBox, QLineEdit, QWidget, QInputDialog
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_network import Ui_REDTabSettingsNetwork
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_network_wireless_connect_hidden \
@@ -151,10 +153,10 @@ CONNECTION_CONFIG_ETHERNET_DICT = \
         }
     }
 
-class REDTabSettingsNetworkWirelessConnectHidden(QtGui.QDialog,
+class REDTabSettingsNetworkWirelessConnectHidden(QDialog,
                                                  Ui_REDTabSettingsNetworkWirelessConnectHidden):
     def __init__(self, parent, parameters):
-        QtGui.QDialog.__init__(self)
+        QDialog.__init__(self)
         self.setupUi(self)
 
         self.parameters = parameters
@@ -208,14 +210,14 @@ class REDTabSettingsNetworkWirelessConnectHidden(QtGui.QDialog,
 
     def do_verify(self):
         if self.ledit_ssid.text() == '':
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Network',
                                        'Please provide access point name.')
             return False
 
         if self.cbox_encryption.currentIndex() > 0 \
            and self.ledit_wpa_key.text() == '':
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
                                            'Please provide WPA key.')
                 return False
@@ -244,9 +246,9 @@ class REDTabSettingsNetworkWirelessConnectHidden(QtGui.QDialog,
 
     def slot_chkbox_wpa_key_show_state_changed(self, state):
         if state == QtCore.Qt.Checked:
-            self.ledit_wpa_key.setEchoMode(QtGui.QLineEdit.Normal)
+            self.ledit_wpa_key.setEchoMode(QLineEdit.Normal)
         else:
-            self.ledit_wpa_key.setEchoMode(QtGui.QLineEdit.Password)
+            self.ledit_wpa_key.setEchoMode(QLineEdit.Password)
 
     def slot_pbutton_cancel_clicked(self):
         self.done(0)
@@ -288,9 +290,9 @@ class REDTabSettingsNetworkWirelessConnectHidden(QtGui.QDialog,
 
             self.done(1)
 
-class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
+class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
     def __init__(self):
-        QtGui.QWidget.__init__(self)
+        QWidget.__init__(self)
         self.setupUi(self)
 
         self.session        = None # Set from REDTabSettings
@@ -324,12 +326,12 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                  'wired_settings': None}
 
 
-        self.ap_tree_model = QtGui.QStandardItemModel(0, 4)
+        self.ap_tree_model = QStandardItemModel(0, 4)
 
-        self.ap_tree_model.setHorizontalHeaderItem(0, QtGui.QStandardItem('SSID'))
-        self.ap_tree_model.setHorizontalHeaderItem(1, QtGui.QStandardItem('Channel'))
-        self.ap_tree_model.setHorizontalHeaderItem(2, QtGui.QStandardItem('Security'))
-        self.ap_tree_model.setHorizontalHeaderItem(3, QtGui.QStandardItem('Signal Quality'))
+        self.ap_tree_model.setHorizontalHeaderItem(0, QStandardItem('SSID'))
+        self.ap_tree_model.setHorizontalHeaderItem(1, QStandardItem('Channel'))
+        self.ap_tree_model.setHorizontalHeaderItem(2, QStandardItem('Security'))
+        self.ap_tree_model.setHorizontalHeaderItem(3, QStandardItem('Signal Quality'))
 
         self.tree_net_wireless_ap.setModel(self.ap_tree_model)
 
@@ -353,10 +355,8 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         self.widget_working_please_wait.hide()
         self.cbox_net_intf.currentIndexChanged.connect(self.slot_cbox_net_intf_current_idx_changed)
         self.cbox_net_conftype.currentIndexChanged.connect(self.slot_cbox_net_conftype_current_idx_changed)
-        QtCore.QObject.connect(self.tree_net_wireless_ap.selectionModel(),
-                               QtCore.SIGNAL('selectionChanged(QItemSelection, QItemSelection)'),
-                               self.slot_tree_net_wireless_ap_selection_changed)
-        self.ledit_net_wireless_key.setEchoMode(QtGui.QLineEdit.Password)
+        self.tree_net_wireless_ap.selectionModel().selectionChanged.connect(self.slot_tree_net_wireless_ap_selection_changed)
+        self.ledit_net_wireless_key.setEchoMode(QLineEdit.Password)
         self.chkbox_net_wireless_key_show.stateChanged.connect(self.slot_net_wireless_key_show_state_changed)
 
     def tab_on_focus(self):
@@ -400,12 +400,12 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             self.is_connecting = False
             self.update_gui(WORKING_STATE_DONE)
             if result and result.stderr == '' and result.exit_code == 0:
-                QtGui.QMessageBox.information(get_main_window(),
+                QMessageBox.information(get_main_window(),
                                               'Settings | Network',
                                               'Configuration saved.')
                 self.slot_network_conf_refresh_clicked()
             else:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
                                            'Error saving configuration:\n\n' + result.stderr)
 
@@ -416,7 +416,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 if result is not None:
                     self.is_connecting = False
                     self.update_gui(WORKING_STATE_DONE)
-                    QtGui.QMessageBox.critical(get_main_window(),
+                    QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
                                                'Error saving configuration.')
                 else:
@@ -453,7 +453,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             self.is_connecting = False
             self.update_gui(WORKING_STATE_DONE)
 
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Network',
                                        'Error saving configuration.')
 
@@ -475,12 +475,12 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         def cb_settings_network_apply_nm(result):
             self.update_gui(WORKING_STATE_DONE)
             if result and result.stderr == '' and result.exit_code == 0:
-                QtGui.QMessageBox.information(get_main_window(),
+                QMessageBox.information(get_main_window(),
                                               'Settings | Network',
                                               'Configuration saved.')
                 self.slot_network_conf_refresh_clicked()
             else:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
                                            'Error saving configuration:\n\n' + result.stderr)
 
@@ -488,7 +488,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             cbox_cidx = self.cbox_net_intf.currentIndex()
             itype = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE)
             iname = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE)
-            iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', 'None')
+            iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', fallback='None')
 
             self.network_all_data['manager_settings'].set('Settings', 'wireless_interface', iname)
             self.network_all_data['wired_settings'].set('wired-default', 'default', 'False')
@@ -661,7 +661,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         list_items = [item]
 
         for i in range(self.ap_tree_model.columnCount() - 1):
-            _item = QtGui.QStandardItem('')
+            _item = QStandardItem('')
             _item.setEnabled(False)
             _item.setSelectable(False)
             list_items.append(_item)
@@ -681,7 +681,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
             # Populating the current network status section and hostname
             if self.is_connecting and not self.image_version_lt_1_10:
-                self.label_net_gen_cstat_status.setText(unicode('Connecting'))
+                self.label_net_gen_cstat_status.setText('Connecting')
                 self.label_net_gen_cstat_intf.setText('-')
                 self.label_net_gen_cstat_ip.setText('-')
                 self.label_net_gen_cstat_mask.setText('-')
@@ -690,14 +690,14 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             elif self.network_all_data['status'] is not None:
                 self.label_net_hostname.setText(self.network_all_data['status']['cstat_hostname'])
 
-                self.label_net_gen_cstat_status.setText(unicode(self.network_all_data['status']['cstat_status']))
+                self.label_net_gen_cstat_status.setText(str(self.network_all_data['status']['cstat_status']))
 
                 if self.network_all_data['status']['cstat_intf_active']['name'] is not None:
                     if self.network_all_data['status']['cstat_intf_active']['type'] == INTERFACE_TYPE_WIRELESS:
-                        intf_stat_str = unicode(self.network_all_data['status']['cstat_intf_active']['name']) + ' : Wireless'
+                        intf_stat_str = str(self.network_all_data['status']['cstat_intf_active']['name']) + ' : Wireless'
                         self.label_net_gen_cstat_intf.setText(intf_stat_str)
                     else:
-                        intf_stat_str = unicode(self.network_all_data['status']['cstat_intf_active']['name']) + ' : Wired'
+                        intf_stat_str = str(self.network_all_data['status']['cstat_intf_active']['name']) + ' : Wired'
                         self.label_net_gen_cstat_intf.setText(intf_stat_str)
 
                     self.label_net_gen_cstat_ip.setText(self.network_all_data['status']['cstat_intf_active']['ip'])
@@ -852,7 +852,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
         elif state == WORKING_STATE_SCAN:
             self.work_in_progress = True
-            item = QtGui.QStandardItem('Scanning...')
+            item = QStandardItem('Scanning...')
             item.setData(AP_STATUS_NONE, AP_STATUS_USER_ROLE)
             self.ap_tree_model_clear_add_item(item)
             self.ledit_net_wireless_key.setText('')
@@ -896,7 +896,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         self.address_configuration_gui(False)
 
         self.ap_tree_model_clear_add_item(None)
-        item = QtGui.QStandardItem('No access points found. Scan again?')
+        item = QStandardItem('No access points found. Scan again?')
         item.setData(AP_COL, AP_COL_USER_ROLE)
         item.setData(AP_STATUS_NONE, AP_STATUS_USER_ROLE)
         item.setEnabled(False)
@@ -915,18 +915,18 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
             self.ap_tree_model_clear_add_item(None)
 
-            for nidx, apdict in scan_data.iteritems():
-                if not unicode(apdict['essid']):
+            for nidx, apdict in scan_data.items():
+                if len(str(apdict['essid'])) == 0:
                     continue
 
-                essid = unicode(apdict['essid'])
-                bssid = unicode(apdict['bssid'])
-                channel = unicode(apdict['channel'])
-                encryption = unicode(apdict['encryption'])
-                encryption_method = unicode(apdict['encryption_method'])
-                quality = unicode(apdict['quality'])
+                essid = str(apdict['essid'])
+                bssid = str(apdict['bssid'])
+                channel = str(apdict['channel'])
+                encryption = str(apdict['encryption'])
+                encryption_method = str(apdict['encryption_method'])
+                quality = str(apdict['quality'])
 
-                ap_item = QtGui.QStandardItem(essid)
+                ap_item = QStandardItem(essid)
                 ap_item.setData(AP_COL, AP_COL_USER_ROLE)
                 ap_item.setData(encryption, AP_ENCRYPTION_USER_ROLE)
                 ap_item.setData(essid, AP_NAME_USER_ROLE)
@@ -940,44 +940,44 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 else:
                     ap_item.setData(int(quality), AP_QUALITY_USER_ROLE)
 
-                channel_item = QtGui.QStandardItem(channel)
+                channel_item = QStandardItem(channel)
 
                 if encryption == 'Off':
-                    encryption_method_item = QtGui.QStandardItem('Open')
+                    encryption_method_item = QStandardItem('Open')
                 else:
                     if encryption_method == 'WPA1':
-                        encryption_method_item = QtGui.QStandardItem('WPA1')
+                        encryption_method_item = QStandardItem('WPA1')
                         ap_item.setData(AP_ENC_METHOD_WPA1,
                                         AP_ENCRYPTION_METHOD_USER_ROLE)
                     elif encryption_method == 'WPA2':
-                        encryption_method_item = QtGui.QStandardItem('WPA2')
+                        encryption_method_item = QStandardItem('WPA2')
                         ap_item.setData(AP_ENC_METHOD_WPA2,
                                         AP_ENCRYPTION_METHOD_USER_ROLE)
                     else:
-                        encryption_method_item = QtGui.QStandardItem('Unsupported')
+                        encryption_method_item = QStandardItem('Unsupported')
                         ap_item.setData(AP_ENC_METHOD_UNSUPPORTED,
                                         AP_ENCRYPTION_METHOD_USER_ROLE)
 
                 if self.image_version_lt_1_10:
                     try:
                         _key = self.network_all_data['wireless_settings'].get(bssid, 'key', '')
-                        ap_item.setData(unicode(_key), AP_KEY_USER_ROLE)
+                        ap_item.setData(str(_key), AP_KEY_USER_ROLE)
                     except:
                         ap_item.setData('', AP_KEY_USER_ROLE)
                 else:
                     try:
-                        if essid == self.network_all_data['wireless_settings'].get('wifi', 'ssid', ''):
-                            _key = self.network_all_data['wireless_settings'].get('wifi-security', 'psk', '')
+                        if essid == self.network_all_data['wireless_settings'].get('wifi', 'ssid', fallback=''):
+                            _key = self.network_all_data['wireless_settings'].get('wifi-security', 'psk', fallback='')
                         else:
                             _key= ''
-                        ap_item.setData(unicode(_key), AP_KEY_USER_ROLE)
+                        ap_item.setData(str(_key), AP_KEY_USER_ROLE)
                     except:
                         ap_item.setData('', AP_KEY_USER_ROLE)
 
                 # Checking if the access point is associated
                 ap_item.setData(AP_STATUS_NOT_ASSOCIATED, AP_STATUS_USER_ROLE)
-                for key, value in self.network_all_data['interfaces']['wireless_links'].iteritems():
-                    if (unicode(value['bssid']) == unicode(bssid)) and value['status']:
+                for key, value in self.network_all_data['interfaces']['wireless_links'].items():
+                    if (str(value['bssid']) == str(bssid)) and value['status']:
                         ap_item.setData(AP_STATUS_ASSOCIATED, AP_STATUS_USER_ROLE)
                         break
 
@@ -1026,7 +1026,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 else:
                     try:
                         if essid and \
-                           essid != self.network_all_data['wireless_settings'].get('wifi', 'ssid', ''):
+                           essid != self.network_all_data['wireless_settings'].get('wifi', 'ssid', fallback=''):
                                 ap_item.setData(CBOX_NET_CONTYPE_INDEX_DHCP,
                                                 AP_ADDRESS_CONF_USER_ROLE)
                                 ap_item.setData('0.0.0.0', AP_IP_USER_ROLE)
@@ -1038,7 +1038,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                             _gw = None
                             _dns = None
                             _mask = None
-                            _method = self.network_all_data['wireless_settings'].get('ipv4', 'method', '')
+                            _method = self.network_all_data['wireless_settings'].get('ipv4', 'method', fallback='')
                             if _method == '' or _method == 'None':
                                 ap_item.setData(CBOX_NET_CONTYPE_INDEX_DHCP,
                                                 AP_ADDRESS_CONF_USER_ROLE)
@@ -1048,11 +1048,11 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                 ap_item.setData('0.0.0.0', AP_DNS_USER_ROLE)
                             elif _method == 'manual':
                                 _cidr = ''
-                                _address1 = self.network_all_data['wireless_settings'].get('ipv4', 'address1', '')
+                                _address1 = self.network_all_data['wireless_settings'].get('ipv4', 'address1', fallback='')
                                 _ip, _cidr = _address1.split(',')[0].split('/')
                                 _mask = self.cidr_to_netmask(_cidr)
                                 _gw = _address1.split(',')[1]
-                                _dns = self.network_all_data['wireless_settings'].get('ipv4', 'dns', '').split(';')[0]
+                                _dns = self.network_all_data['wireless_settings'].get('ipv4', 'dns', fallback='').split(';')[0]
                                 if not _ip or not _gw or not _mask or not _dns:
                                     ap_item.setData(CBOX_NET_CONTYPE_INDEX_DHCP,
                                                     AP_ADDRESS_CONF_USER_ROLE)
@@ -1082,7 +1082,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                         ap_item.setData('0.0.0.0', AP_GATEWAY_USER_ROLE)
                         ap_item.setData('0.0.0.0', AP_DNS_USER_ROLE)
 
-                quality_item = QtGui.QStandardItem(quality+'%')
+                quality_item = QStandardItem(quality+'%')
 
                 self.ap_tree_model.appendRow([ap_item, channel_item, encryption_method_item, quality_item])
 
@@ -1126,7 +1126,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                             self.cbox_net_intf.addItem(intf+' : Wireless')
 
                             self.cbox_net_intf.setItemData(self.cbox_net_intf.count() - 1,
-                                                           unicode(intf), INTERFACE_NAME_USER_ROLE)
+                                                           str(intf), INTERFACE_NAME_USER_ROLE)
 
                             self.cbox_net_intf.setItemData(self.cbox_net_intf.count() - 1,
                                                            INTERFACE_TYPE_WIRELESS, INTERFACE_TYPE_USER_ROLE)
@@ -1145,13 +1145,13 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                    len(self.network_all_data['interfaces']['wired']) > 0:
                         if self.image_version_lt_1_10:
                             try:
-                                cwintf = unicode(self.network_all_data['manager_settings'].get('Settings', 'wired_interface', 'None'))
+                                cwintf = str(self.network_all_data['manager_settings'].get('Settings', 'wired_interface', fallback='None'))
                             except:
                                 cwintf = 'None'
                         else:
                             if self.network_all_data['wired_settings']:
                                 try:
-                                    cwintf = unicode(self.network_all_data['wired_settings'].get('connection', 'interface-name', 'None'))
+                                    cwintf = str(self.network_all_data['wired_settings'].get('connection', 'interface-name', fallback='None'))
                                 except:
                                     cwintf = 'None'
                             else:
@@ -1169,7 +1169,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                 self.cbox_net_intf.setItemData(idx_cbox, INTERFACE_STATE_INACTIVE,
                                                                INTERFACE_STATE_USER_ROLE)
 
-                            self.cbox_net_intf.setItemData(self.cbox_net_intf.count() - 1, unicode(intf), INTERFACE_NAME_USER_ROLE)
+                            self.cbox_net_intf.setItemData(self.cbox_net_intf.count() - 1, str(intf), INTERFACE_NAME_USER_ROLE)
 
                             self.cbox_net_intf.setItemData(idx_cbox, INTERFACE_TYPE_WIRED, INTERFACE_TYPE_USER_ROLE)
 
@@ -1177,7 +1177,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                             if cwintf == intf:
                                 if self.image_version_lt_1_10:
                                     try:
-                                        _ip = self.network_all_data['wired_settings'].get('wired-default', 'ip', 'None')
+                                        _ip = self.network_all_data['wired_settings'].get('wired-default', 'ip', fallback='None')
                                     except:
                                         _ip = 'None'
                                 else:
@@ -1185,13 +1185,13 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                         _ip = 'None'
                                         _mask = 'None'
                                         _ip_address = 'None'
-                                        _method = self.network_all_data['wired_settings'].get('ipv4', 'method', 'None')
+                                        _method = self.network_all_data['wired_settings'].get('ipv4', 'method', fallback='None')
                                         if _method == 'None':
                                             _ip = 'None'
                                             _mask = 'None'
                                         elif _method == 'manual':
                                             _cidr = None
-                                            _ip_address = self.network_all_data['wired_settings'].get('ipv4', 'address1', 'None')
+                                            _ip_address = self.network_all_data['wired_settings'].get('ipv4', 'address1', fallback='None')
                                             _ip_address_split = _ip_address.split(',')
                                             _ip, _cidr = _ip_address_split[0].split('/')
                                             if _ip == 'None' or not _cidr:
@@ -1224,7 +1224,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
                                     if self.image_version_lt_1_10:
                                         try:
-                                            _mask = self.network_all_data['wired_settings'].get('wired-default', 'netmask', '')
+                                            _mask = self.network_all_data['wired_settings'].get('wired-default', 'netmask', fallback='')
                                             if _mask == '' or _mask == 'None':
                                                 self.cbox_net_intf.setItemData(idx_cbox, '0.0.0.0',
                                                                                INTERFACE_TYPE_WIRED_MASK_USER_ROLE)
@@ -1236,7 +1236,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                                                            INTERFACE_TYPE_WIRED_MASK_USER_ROLE)
 
                                         try:
-                                            _gw = self.network_all_data['wired_settings'].get('wired-default', 'gateway', '')
+                                            _gw = self.network_all_data['wired_settings'].get('wired-default', 'gateway', fallback='')
                                             if _gw == '' or _gw == 'None':
                                                 self.cbox_net_intf.setItemData(idx_cbox, '0.0.0.0',
                                                                                INTERFACE_TYPE_WIRED_GATEWAY_USER_ROLE)
@@ -1248,7 +1248,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                                                            INTERFACE_TYPE_WIRED_GATEWAY_USER_ROLE)
 
                                         try:
-                                            _dns = self.network_all_data['wired_settings'].get('wired-default', 'dns1', '')
+                                            _dns = self.network_all_data['wired_settings'].get('wired-default', 'dns1', fallback='')
                                             if _dns == '' or _dns == 'None':
                                                 self.cbox_net_intf.setItemData(idx_cbox, '0.0.0.0',
                                                                                INTERFACE_TYPE_WIRED_DNS_USER_ROLE)
@@ -1267,7 +1267,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                                                            INTERFACE_TYPE_WIRED_MASK_USER_ROLE)
 
                                         try:
-                                            _ip_address = self.network_all_data['wired_settings'].get('ipv4', 'address1', 'None')
+                                            _ip_address = self.network_all_data['wired_settings'].get('ipv4', 'address1', fallback='None')
                                             _ip_address_split = _ip_address.split(',')
                                             if len(_ip_address_split) < 2:
                                                 _gw == 'None'
@@ -1284,7 +1284,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                                                            INTERFACE_TYPE_WIRED_GATEWAY_USER_ROLE)
 
                                         try:
-                                            _dns = self.network_all_data['wired_settings'].get('ipv4', 'dns', '')
+                                            _dns = self.network_all_data['wired_settings'].get('ipv4', 'dns', fallback='')
                                             if _dns == '' or _dns == 'None':
                                                 self.cbox_net_intf.setItemData(idx_cbox, '0.0.0.0',
                                                                                INTERFACE_TYPE_WIRED_DNS_USER_ROLE)
@@ -1349,11 +1349,11 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 if result and result.stdout and not result.stderr and result.exit_code == 0:
                     self.network_all_data['scan_result'] = json.loads(result.stdout)
                     self.update_access_points(self.network_all_data['scan_result'])
-                    QtGui.QMessageBox.information(get_main_window(),
+                    QMessageBox.information(get_main_window(),
                                                   'Settings | Network',
                                                   'Scan finished')
                 else:
-                    QtGui.QMessageBox.critical(get_main_window(),
+                    QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
                                                'Wireless scan failed:\n\n' + result.stderr)
                 self.update_connect_button_state()
@@ -1361,9 +1361,9 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             if self.image_version_lt_1_10:
                 try:
                     # Saving currently configured wireless interface
-                    wlintf_restore_to = unicode(self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', ''))
+                    wlintf_restore_to = str(self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', fallback=''))
                 except Exception as e:
-                    QtGui.QMessageBox.critical(get_main_window(),
+                    QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
                                                'Wireless scan failed:\n\n{0}'.format(e))
                     return
@@ -1379,7 +1379,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                                    cb_settings_network_wireless_scan)
 
         else:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Network',
                                        'Scan only possible for wireless interfaces.')
 
@@ -1415,7 +1415,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 network_refresh_task_done(False)
 
                 if result and result.stderr:
-                    QtGui.QMessageBox.critical(get_main_window(),
+                    QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
                                                'Error executing network status script:\n\n' + result.stderr)
 
@@ -1446,7 +1446,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 network_refresh_task_done(False)
 
                 if result and result.stderr:
-                    QtGui.QMessageBox.critical(get_main_window(),
+                    QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
                                                'Error executing network get interfaces script:\n\n' + result.stderr)
 
@@ -1467,7 +1467,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 network_refresh_task_done(False)
 
                 if result and result.stderr:
-                    QtGui.QMessageBox.critical(get_main_window(),
+                    QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
                                                'Error executing wireless scan cache script:\n\n' + result.stderr)
 
@@ -1500,9 +1500,9 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                     TextFile.ERROR_KIND_UTF8: 'decoding'
                 }
 
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
-                                           'Error {0} {1} file:\n\n{2}'.format(kind_text[kind], title, unicode(error)))
+                                           'Error {0} {1} file:\n\n{2}'.format(kind_text[kind], title, str(error)))
             else:
                 network_refresh_task_done(True)
 
@@ -1569,19 +1569,19 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
         if not apname:
             self.update_gui(WORKING_STATE_DONE)
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Network',
                                        'Configure an access point first.')
             return False, None
         elif enc_method == AP_ENC_METHOD_UNSUPPORTED:
             self.update_gui(WORKING_STATE_DONE)
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Network',
                                        'Encryption method not supported.')
             return False, None
         elif enc == 'On' and not key:
             self.update_gui(WORKING_STATE_DONE)
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Network',
                                        'Please provide WPA key.')
             return False, None
@@ -1615,14 +1615,14 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         def cb_settings_network_apply_nm(result):
             self.update_gui(WORKING_STATE_DONE)
             if result and result.stderr == '' and result.exit_code == 0:
-                QtGui.QMessageBox.information(get_main_window(),
+                QMessageBox.information(get_main_window(),
                                               'Settings | Network',
                                               'Configuration saved.')
                 self.is_connecting = False
                 self.slot_network_conf_refresh_clicked()
             else:
                 self.is_connecting = False
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
                                            'Error saving configuration:\n\n' + result.stderr)
 
@@ -1662,7 +1662,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 address_conf = self.cbox_net_conftype.currentIndex()
                 enc_method = ap_item.data(AP_ENCRYPTION_METHOD_USER_ROLE)
 
-                iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', 'None')
+                iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', fallback='None')
                 self.network_all_data['manager_settings'].set('Settings', 'wireless_interface', iname)
 
                 # Check BSSID section
@@ -1712,7 +1712,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                     self.network_all_data['wireless_settings'].remove_option(bssid, 'key')
             # Wired
             else:
-                iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wired_interface', '')
+                iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wired_interface', fallback='')
 
                 # Check default wired profile section
                 if not self.network_all_data['wired_settings'].has_section('wired-default'):
@@ -1735,7 +1735,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                         self.network_all_data['wired_settings'].set('wired-default', 'default', 'True')
                     except:
                         self.update_gui(WORKING_STATE_DONE)
-                        QtGui.QMessageBox.critical(get_main_window(),
+                        QMessageBox.critical(get_main_window(),
                                                    'Settings | Network',
                                                    'Error saving configuration.')
                         return
@@ -1759,7 +1759,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                         self.network_all_data['wired_settings'].set('wired-default', 'default', 'True')
                     except:
                         self.update_gui(WORKING_STATE_DONE)
-                        QtGui.QMessageBox.critical(get_main_window(),
+                        QMessageBox.critical(get_main_window(),
                                                    'Settings | Network',
                                                    'Error saving configuration.')
                         return
@@ -1843,21 +1843,21 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 err_msg = 'Error occured while changing hostname.'
 
                 if result.stderr:
-                    err_msg = err_msg + '\n\n' + unicode(result.stderr)
+                    err_msg = err_msg + '\n\n' + str(result.stderr)
 
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
                                            err_msg)
 
             self.slot_network_conf_refresh_clicked()
 
         hostname_old = self.label_net_hostname.text()
-        input_dialog_hostname = QtGui.QInputDialog()
-        input_dialog_hostname.setInputMode(QtGui.QInputDialog.TextInput)
+        input_dialog_hostname = QInputDialog()
+        input_dialog_hostname.setInputMode(QInputDialog.TextInput)
         hostname_new, ok = input_dialog_hostname.getText(get_main_window(),
                                                      'Change Hostname',
                                                      'Hostname:',
-                                                     QtGui.QLineEdit.Normal,
+                                                     QLineEdit.Normal,
                                                      self.label_net_hostname.text())
         if not ok or not hostname_new:
             return
@@ -1869,14 +1869,14 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         try:
             hostname_new.encode('ascii')
         except:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Network',
                                        'Hostname contains non ASCII characters.')
             return
 
         # Checking for blank spaces
         if ' ' in hostname_new:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Network',
                                        'Hostname contains blank spaces.')
             return
@@ -2065,9 +2065,9 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
     def slot_net_wireless_key_show_state_changed(self, state):
         if state == QtCore.Qt.Checked:
-            self.ledit_net_wireless_key.setEchoMode(QtGui.QLineEdit.Normal)
+            self.ledit_net_wireless_key.setEchoMode(QLineEdit.Normal)
         else:
-            self.ledit_net_wireless_key.setEchoMode(QtGui.QLineEdit.Password)
+            self.ledit_net_wireless_key.setEchoMode(QLineEdit.Password)
 
     def slot_cbox_net_conftype_current_idx_changed(self, idx):
         if idx == CBOX_NET_CONTYPE_INDEX_STATIC:

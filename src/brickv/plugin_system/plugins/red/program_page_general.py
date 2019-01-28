@@ -23,8 +23,9 @@ Boston, MA 02111-1307, USA.
 
 import re
 
-from PyQt4.QtCore import QRegExp
-from PyQt4.QtGui import QRegExpValidator, QMessageBox
+from PyQt5.QtCore import QRegExp
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtGui import QRegExpValidator
 
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
@@ -75,11 +76,11 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
 
             self.setSubTitle('Specify name and description for the program.')
 
-            self.edit_name.setText(program.cast_custom_option_value('name', unicode, '<unknown>'))
+            self.edit_name.setText(program.cast_custom_option_value('name', str, '<unknown>'))
             self.edit_identifier.setText(program.identifier)
-            self.text_description.setPlainText(program.cast_custom_option_value('description', unicode, ''))
+            self.text_description.setPlainText(program.cast_custom_option_value('description', str, ''))
 
-            language_api_name = program.cast_custom_option_value('language', unicode, '<unknown>')
+            language_api_name = program.cast_custom_option_value('language', str, '<unknown>')
 
             try:
                 language = Constants.get_language(language_api_name)
@@ -146,7 +147,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
 
         if unique_identifier in self.wizard().identifiers:
             QMessageBox.critical(get_main_window(), 'New Program Error',
-                                 u'Could not auto-generate unique identifier from program name [{0}] because all tested ones are already in use.'
+                                 'Could not auto-generate unique identifier from program name [{0}] because all tested ones are already in use.'
                                  .format(name))
 
     def check_identifier(self, identifier):
@@ -182,8 +183,8 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
             program.set_custom_option_value('name', name) # FIXME: async_call
         except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
-                                 u'Could not update name of program [{0}]:\n\n{1}'
-                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                 'Could not update name of program [{0}]:\n\n{1}'
+                                 .format(program.cast_custom_option_value('name', str, '<unknown>'), e))
             return
 
         description = self.get_field('description')
@@ -192,8 +193,8 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
             program.set_custom_option_value('description', description) # FIXME: async_call
         except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
-                                 u'Could not update description of program [{0}]:\n\n{1}'
-                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                 'Could not update description of program [{0}]:\n\n{1}'
+                                 .format(program.cast_custom_option_value('name', str, '<unknown>'), e))
             return
 
         self.set_last_edit_timestamp()

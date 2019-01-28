@@ -23,10 +23,7 @@ Boston, MA 02111-1307, USA.
 
 import os
 
-try:
-    import configparser
-except:
-    import ConfigParser as configparser # Python 2 fallback
+import configparser
 
 from brickv.config_common import *
 
@@ -60,7 +57,7 @@ def set_config_value(section, option, value):
     if not os.path.exists(CONFIG_DIRNAME):
         os.makedirs(CONFIG_DIRNAME)
 
-    with open(CONFIG_FILENAME, 'wb') as f:
+    with open(CONFIG_FILENAME, 'w') as f:
         scp.write(f)
 
 def get_host_info_strings(max_count):

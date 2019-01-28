@@ -23,7 +23,9 @@ Boston, MA 02111-1307, USA.
 
 import json
 
-from PyQt4 import Qt, QtCore, QtGui
+from PyQt5 import Qt, QtCore
+from PyQt5.QtWidgets import QMessageBox, QWidget, QLineEdit, QDialog
+from PyQt5.QtGui import QRegExpValidator
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_mobile_internet import Ui_REDTabSettingsMobileInternet
 from brickv.plugin_system.plugins.red.red_tab_settings_mobile_internet_provider_preset_dialog import REDTabSettingsMobileInternetProviderPresetDialog
@@ -67,9 +69,9 @@ MESSAGE_INFORMATION_CONNECT_OK = 'Configuration saved and applied successfully.'
 
 INTERVAL_REFRESH_STATUS = 3000 # In milliseconds
 
-class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInternet):
+class REDTabSettingsMobileInternet(QWidget, Ui_REDTabSettingsMobileInternet):
     def __init__(self):
-        QtGui.QWidget.__init__(self)
+        QWidget.__init__(self)
         self.setupUi(self)
 
         self.session        = None # Set from REDTabSettings
@@ -85,11 +87,11 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         self.sarea_mi.hide()
 
         regex_sim_card_pin = QtCore.QRegExp('\\d+')
-        validator_sim_card_pin = QtGui.QRegExpValidator(regex_sim_card_pin)
+        validator_sim_card_pin = QRegExpValidator(regex_sim_card_pin)
         self.ledit_mi_sim_card_pin.setValidator(validator_sim_card_pin)
 
         regex_dial = QtCore.QRegExp('[\\d*#]+')
-        validator_dial = QtGui.QRegExpValidator(regex_dial)
+        validator_dial = QRegExpValidator(regex_dial)
         self.ledit_mi_dial.setValidator(validator_dial)
 
         self.status_refresh_timer = Qt.QTimer(self)
@@ -139,22 +141,22 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
 
     def chkbox_mi_password_state_changed(self, state):
         if state == QtCore.Qt.Checked:
-            self.ledit_mi_password.setEchoMode(QtGui.QLineEdit.Normal)
+            self.ledit_mi_password.setEchoMode(QLineEdit.Normal)
         else:
-            self.ledit_mi_password.setEchoMode(QtGui.QLineEdit.Password)
+            self.ledit_mi_password.setEchoMode(QLineEdit.Password)
 
     def chkbox_mi_sim_card_pin_state_changed(self, state):
         if state == QtCore.Qt.Checked:
-            self.ledit_mi_sim_card_pin.setEchoMode(QtGui.QLineEdit.Normal)
+            self.ledit_mi_sim_card_pin.setEchoMode(QLineEdit.Normal)
         else:
-            self.ledit_mi_sim_card_pin.setEchoMode(QtGui.QLineEdit.Password)
+            self.ledit_mi_sim_card_pin.setEchoMode(QLineEdit.Password)
 
     def pbutton_mi_provider_presets_clicked(self):
         provider_preset_dialog = REDTabSettingsMobileInternetProviderPresetDialog(self,
                                                                                   self.session,
                                                                                   dict_provider,
                                                                                   dict_country)
-        if provider_preset_dialog.exec_() == QtGui.QDialog.Accepted:
+        if provider_preset_dialog.exec_() == QDialog.Accepted:
             if provider_preset_dialog.label_mi_preview_apn.text() and \
                provider_preset_dialog.label_mi_preview_apn.text() != '-':
                     self.ledit_mi_apn.setText(provider_preset_dialog.label_mi_preview_apn.text())
@@ -198,7 +200,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         result, message = self.validate_configuration_fields()
 
         if not result:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        message)
             return
@@ -263,7 +265,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         try:
             dict_status = json.loads(result.stdout)
         except Exception as e:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_STATUS_DECODE + ':\n\n' +str(e))
 
@@ -312,39 +314,39 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         self.update_gui(EVENT_GUI_CONNECT_RETURNED)
 
         if result.exit_code == 2:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CONNECT_TEST)
             return
 
         if result.exit_code == 3:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CONNECT_SERVICE_CREATION)
             return
 
         if result.exit_code == 4:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CONNECT_SERVICE_EXECUTION)
             return
 
         if result.exit_code == 7 or \
            result.exit_code == 8:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CONNECT_TEST_DEVICE_UNAVAILABLE)
                 return
 
         if result.exit_code == 12:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CONNECT_TEST_PIN)
             return
 
         if result.exit_code == 13 or \
            result.exit_code == 98:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CONNECT_TEST_REGISTER_NETWORK)
             return
@@ -352,7 +354,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_CONNECT):
             return
 
-        QtGui.QMessageBox.information(get_main_window(),
+        QMessageBox.information(get_main_window(),
                                       MESSAGEBOX_TITLE,
                                       MESSAGE_INFORMATION_CONNECT_OK)
 
@@ -367,7 +369,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         try:
             dict_configuration = json.loads(result.stdout)
         except Exception as e:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_REFERSH_DECODE + ':\n\n' +str(e))
             return

@@ -23,8 +23,8 @@ Boston, MA 02111-1307, USA.
 
 import os
 
-from PyQt4.QtCore import pyqtSignal, QTimer
-from PyQt4.QtGui import QMessageBox, QTreeWidgetItem
+from PyQt5.QtCore import pyqtSignal, QTimer
+from PyQt5.QtWidgets import QMessageBox, QTreeWidgetItem
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_can import BrickletCAN
@@ -292,10 +292,10 @@ class CAN(PluginBase, Ui_CAN):
         self.last_filename = filename
 
         try:
-            f = open(filename, 'wb')
+            f = open(filename, 'w')
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save History Error',
-                                 u'Could not open {0} for writing:\n\n{1}'.format(filename, e))
+                                 'Could not open {0} for writing:\n\n{1}'.format(filename, e))
             return
 
         root = self.tree_frames.invisibleRootItem()
@@ -312,10 +312,10 @@ class CAN(PluginBase, Ui_CAN):
 
         try:
             # FIXME: add progress dialog if content is bigger than some megabytes
-            f.write(''.join(content).encode('utf-8'))
+            f.write(''.join(content))
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save History Error',
-                                 u'Could not write to {0}:\n\n{1}'.format(filename, e))
+                                 'Could not write to {0}:\n\n{1}'.format(filename, e))
 
         f.close()
 

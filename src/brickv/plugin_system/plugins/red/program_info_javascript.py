@@ -38,7 +38,7 @@ class ProgramInfoJavaScript(ProgramInfo, Ui_ProgramInfoJavaScript):
         show_advanced_options = self.check_show_advanced_options.isChecked()
 
         # flavor
-        flavor_api_name = self.program.cast_custom_option_value('javascript.flavor', unicode, '<unknown>')
+        flavor_api_name = self.program.cast_custom_option_value('javascript.flavor', str, '<unknown>')
         flavor          = Constants.get_javascript_flavor(flavor_api_name)
         flavor_browser  = flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER
         flavor_nodejs   = flavor == Constants.JAVASCRIPT_FLAVOR_NODEJS
@@ -60,7 +60,7 @@ class ProgramInfoJavaScript(ProgramInfo, Ui_ProgramInfoJavaScript):
         self.line.setVisible(flavor_nodejs)
 
         # start mode
-        start_mode_api_name    = self.program.cast_custom_option_value('javascript.start_mode', unicode, '<unknown>')
+        start_mode_api_name    = self.program.cast_custom_option_value('javascript.start_mode', str, '<unknown>')
         start_mode             = Constants.get_javascript_start_mode(start_mode_api_name)
         start_mode_script_file = start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE
         start_mode_command     = start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND
@@ -72,12 +72,12 @@ class ProgramInfoJavaScript(ProgramInfo, Ui_ProgramInfoJavaScript):
         # script file
         self.label_script_file_title.setVisible(flavor_nodejs and start_mode_script_file)
         self.label_script_file.setVisible(flavor_nodejs and start_mode_script_file)
-        self.label_script_file.setText(self.program.cast_custom_option_value('javascript.script_file', unicode, '<unknown>'))
+        self.label_script_file.setText(self.program.cast_custom_option_value('javascript.script_file', str, '<unknown>'))
 
         # command
         self.label_command_title.setVisible(flavor_nodejs and start_mode_command)
         self.label_command.setVisible(flavor_nodejs and start_mode_command)
-        self.label_command.setText(self.program.cast_custom_option_value('javascript.command', unicode, '<unknown>'))
+        self.label_command.setText(self.program.cast_custom_option_value('javascript.command', str, '<unknown>'))
 
         # working directory
         self.label_working_directory_title.setVisible(flavor_nodejs and show_advanced_options)
@@ -87,4 +87,4 @@ class ProgramInfoJavaScript(ProgramInfo, Ui_ProgramInfoJavaScript):
         # options
         self.label_options_title.setVisible(flavor_nodejs and show_advanced_options)
         self.label_options.setVisible(flavor_nodejs and show_advanced_options)
-        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('javascript.options', unicode, [])))
+        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('javascript.options', str, [])))

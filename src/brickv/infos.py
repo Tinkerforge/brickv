@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QApplication
+from PyQt5.QtWidgets import QApplication
 
 from brickv import config
 
@@ -191,7 +191,7 @@ def get_extension_infos():
 
     for brick_info in get_brick_infos():
         if brick_info.can_have_extension:
-            extension_infos += filter(lambda value: value != None, brick_info.extensions.values())
+            extension_infos += list(filter(lambda value: value != None, brick_info.extensions.values()))
 
     return sorted(extension_infos, key=lambda x: x.name)
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
@@ -23,8 +23,8 @@ Boston, MA 02111-1307, USA.
 """
 
 import sys
-if (sys.hexversion & 0xFF000000) != 0x02000000:
-    print 'Python 2.x required'
+if (sys.hexversion & 0xFF000000) != 0x03000000:
+    print('Python 3.x required')
     sys.exit(1)
 
 import os
@@ -44,6 +44,9 @@ plugins = os.path.join(root, 'brickv', 'plugin_system', 'plugins')
 bindings = os.path.join(root, 'brickv', 'bindings')
 
 for plugin in sorted(os.listdir(plugins)):
+    if '__pycache__' in plugin:
+        continue
+		
     if not os.path.isfile(os.path.join(plugins, plugin, '__init__.py')):
         continue
 

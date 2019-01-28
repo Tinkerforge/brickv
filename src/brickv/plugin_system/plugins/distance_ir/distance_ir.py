@@ -24,8 +24,8 @@ Boston, MA 02111-1307, USA.
 
 import os
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
                         QLineEdit, QApplication, QMessageBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
@@ -140,7 +140,7 @@ class AnalogLabel(FixedSizeLabel):
 
 class DistanceIR(PluginBase):
     NUM_VALUES = 128
-    DIVIDER = 2**12/NUM_VALUES
+    DIVIDER = 2**12//NUM_VALUES
 
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletDistanceIR, *args)
@@ -175,6 +175,7 @@ class DistanceIR(PluginBase):
         self.plot_widget = PlotWidget('Distance [cm]', plots, extra_key_widgets=[self.analog_label])
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 
@@ -223,16 +224,16 @@ class DistanceIR(PluginBase):
 
         spline.set_points(points)
 
-        px = range(0, 2**12, DistanceIR.DIVIDER)
+        px = range(0, int(2**12), DistanceIR.DIVIDER)
         py = []
 
         for X in px:
             py.append(spline.get_value(X))
 
-        for i in range(x[0]/DistanceIR.DIVIDER):
+        for i in range(x[0]//DistanceIR.DIVIDER):
             py[i] = y[0]
 
-        for i in range(x[-1]/DistanceIR.DIVIDER, 2**12/DistanceIR.DIVIDER):
+        for i in range(x[-1]//DistanceIR.DIVIDER, 2**12//DistanceIR.DIVIDER):
             py[i] = y[-1]
 
         for i in range(len(py)):
@@ -253,12 +254,15 @@ class DistanceIR(PluginBase):
         except ip_connection.Error:
             return
 
-    def sample_save_clicked(self):
+    def _save_samples(self):
         x = []
         y = []
         filename = self.sample_edit.text()
 
-        with open(filename, 'rb') as f:
+        if len(filename) == 0:
+            return
+
+        with open(filename, 'r') as f:
             for line in f:
                 c = line.find('#')
                 if c != -1:
@@ -296,6 +300,11 @@ class DistanceIR(PluginBase):
                     return
 
         self.sample_interpolate(x, y)
+
+    def sample_save_clicked(self):
+        self.sample_save.setDisabled(True)
+        self._save_samples()
+        self.sample_save.setEnabled(True)
 
     def cb_distance(self, distance):
         self.current_distance = distance / 10.0

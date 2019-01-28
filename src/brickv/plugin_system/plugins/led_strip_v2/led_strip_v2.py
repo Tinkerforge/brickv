@@ -26,12 +26,14 @@ does not have to be correct!
 
 import colorsys
 
-from PyQt4.QtCore import pyqtSignal, QTimer
+from PyQt5.QtCore import pyqtSignal, QTimer
+from PyQt5.QtWidgets import QMessageBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.led_strip_v2.ui_led_strip_v2 import Ui_LEDStripV2
 from brickv.bindings.bricklet_led_strip_v2 import BrickletLEDStripV2
 from brickv.async_call import async_call
+from brickv.utils import get_main_window
 
 class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
     qtcb_frame_started = pyqtSignal(int)
@@ -81,7 +83,7 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
         self.dot_direction = 1
 
         self.voltage = 0
-        
+
         self.frame_started_callback_was_enabled = False
 
         self.voltage_timer = QTimer()
@@ -353,12 +355,17 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
 
     def render_color_gradient(self):
         num_leds = self.box_num_led.value()
+        if num_leds < 2:
+            QMessageBox.warning(get_main_window(), 'Color gradient',
+                                'Can not render color gradient: There is only one LED configured.',
+                                QMessageBox.Ok)
+            return
         brightness = self.brightness_slider.value() * 8
         chip_type, num_channels = self.chip_type_combobox.itemData(self.chip_type_combobox.currentIndex())
 
         self.gradient_counter += num_leds * self.box_speed.value() / 100.0 / 4.0
 
-        range_leds = range(num_leds)
+        range_leds = list(range(num_leds))
         range_leds = range_leds[int(self.gradient_counter) % num_leds:] + range_leds[:int(self.gradient_counter) % num_leds]
 
         intensity = self.gradient_intensity.value() / 100.0

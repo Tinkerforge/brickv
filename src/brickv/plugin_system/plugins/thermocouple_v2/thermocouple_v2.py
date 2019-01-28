@@ -21,8 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, pyqtSignal
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QFrame
+from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QFrame
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_thermocouple_v2 import BrickletThermocoupleV2
@@ -51,8 +51,8 @@ class ThermocoupleV2(COMCUPluginBase):
         self.error_label = QLabel('Current Errors: None')
         self.error_label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
 
-        plots = [('Temperature', Qt.red, lambda: self.current_temperature, u'{:.2f} °C'.format)]
-        self.plot_widget = PlotWidget(u'Temperature [°C]', plots, extra_key_widgets=[self.error_label])
+        plots = [('Temperature', Qt.red, lambda: self.current_temperature, '{:.2f} °C'.format)]
+        self.plot_widget = PlotWidget('Temperature [°C]', plots, extra_key_widgets=[self.error_label])
 
         self.averaging_label = QLabel('Averaging:')
         self.averaging_combo = QComboBox()
@@ -91,6 +91,7 @@ class ThermocoupleV2(COMCUPluginBase):
         hlayout.addWidget(self.filter_combo)
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 

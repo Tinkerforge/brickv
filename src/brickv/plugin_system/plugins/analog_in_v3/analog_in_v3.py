@@ -21,8 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QFrame, QComboBox, QDialog, QPushButton
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QFrame, QComboBox, QDialog, QPushButton
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_analog_in_v3 import BrickletAnalogInV3
@@ -39,7 +39,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.parent = parent
 
         self.setupUi(self)
-        
+
         self.current_value = 0
 
         self.button_cal_remove.clicked.connect(self.remove_clicked)
@@ -122,7 +122,7 @@ class AnalogInV3(COMCUPluginBase):
         self.oversampling_combo.addItem('16384x (286.72ms)')
 
         self.oversampling_combo.currentIndexChanged.connect(self.oversampling_combo_index_changed)
-        
+
         self.calibration = None
         self.calibration_button = QPushButton('Calibration...')
         self.calibration_button.clicked.connect(self.calibration_button_clicked)
@@ -134,6 +134,7 @@ class AnalogInV3(COMCUPluginBase):
         layout_h1.addWidget(self.calibration_button)
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 
@@ -141,7 +142,7 @@ class AnalogInV3(COMCUPluginBase):
         layout.addWidget(self.plot_widget)
         layout.addWidget(line)
         layout.addLayout(layout_h1)
-        
+
     def calibration_button_clicked(self):
         if self.calibration == None:
             self.calibration = Calibration(self)

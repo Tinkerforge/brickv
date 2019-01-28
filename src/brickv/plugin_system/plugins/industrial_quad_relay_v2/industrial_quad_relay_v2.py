@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, pyqtSignal, QTimer
+from PyQt5.QtCore import Qt, pyqtSignal, QTimer
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.industrial_quad_relay_v2.ui_industrial_quad_relay_v2 import Ui_IndustrialQuadRelayV2
@@ -124,7 +124,7 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
         return device_identifier == BrickletIndustrialQuadRelayV2.DEVICE_IDENTIFIER
 
     def relay_button_clicked(self, button):
-        if 'On' in self.relay_buttons[button].text():
+        if 'On' in self.relay_buttons[button].text().replace('&',''):
             value = True
             self.relay_buttons[button].setText('Switch Off')
             self.relay_button_icons[button].setPixmap(self.close_pixmap)

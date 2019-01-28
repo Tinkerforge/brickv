@@ -9,8 +9,9 @@
 import array
 import threading
 import serial
+import traceback
 
-from PyQt4.QtCore import pyqtSignal, QObject
+from PyQt5.QtCore import pyqtSignal, QObject
 
 __version__ = "0.1"
 
@@ -222,20 +223,22 @@ class Terminal(object):
         self.cx = 0
         self.cy = 0
         # Tab stops
-        self.tab_stops = range(0, self.w, 8)
+        self.tab_stops = list(range(0, self.w, 8))
 
     # UTF-8 functions
     def utf8_decode(self, d):
         o = ''
         for c in d:
-            char = ord(c)
+            #char = ord(c)
+            char = c
+            c = chr(c)
             if self.utf8_units_count != self.utf8_units_received:
                 self.utf8_units_received += 1
                 if (char & 0xc0) == 0x80:
                     self.utf8_char = (self.utf8_char << 6) | (char & 0x3f)
                     if self.utf8_units_count == self.utf8_units_received:
                         if self.utf8_char < 0x10000:
-                            o += unichr(self.utf8_char)
+                            o += chr(self.utf8_char)
                         self.utf8_units_count = self.utf8_units_received = 0
                 else:
                     o += '?'
@@ -716,8 +719,7 @@ class Terminal(object):
                 except ValueError:
                     tab_stops = self.tab_stops
                     tab_stops.append(self.cx)
-                    tab_stops.sort()
-                    self.tab_stops = tab_stops
+                    self.tab_stops = sorted(tab_stops)
             elif m == '2':
                 try:
                     self.tab_stops.remove(self.cx)
@@ -979,13 +981,13 @@ class Terminal(object):
                         char_msb = char & 0xf0
                         if char_msb == 0x20:
                             # Intermediate bytes (added to function)
-                            self.vt100_parse_func += unichr(char)
+                            self.vt100_parse_func += chr(char)
                         elif char_msb == 0x30 and self.vt100_parse_state == 'csi':
                             # Parameter byte
-                            self.vt100_parse_param += unichr(char)
+                            self.vt100_parse_param += chr(char)
                         else:
                             # Function byte
-                            self.vt100_parse_func += unichr(char)
+                            self.vt100_parse_func += chr(char)
                             self.vt100_parse_process()
                         return True
         self.vt100_lastchar = char
@@ -1020,7 +1022,11 @@ class Terminal(object):
     def pipe(self, d):
         o = ''
         for c in d:
-            char = ord(c)
+            if isinstance(c, str):
+                char = ord(c)
+            else:
+                char = c
+                c = chr(c)
             if self.vt100_keyfilter_escape:
                 self.vt100_keyfilter_escape = False
                 try:
@@ -1081,7 +1087,7 @@ class Terminal(object):
                     attr_ = attr
                 wx += self.utf8_charwidth(char)
                 if wx <= self.w:
-                    line[-1] += unichr(char)
+                    line[-1] += chr(char)
             screen.append(line)
 
         return (cx, cy), screen
@@ -1129,12 +1135,12 @@ class SerialSession(QObject):
         try:
             self.serial.close()
         except:
-            pass
+            traceback.print_exc()
 
         try:
             self.thread.join()
         except:
-            pass
+            traceback.print_exc()
 
     def dump(self):
         if self.term == None:
@@ -1144,6 +1150,6 @@ class SerialSession(QObject):
     def write(self, data):
         try:
             data = self.term.pipe(data)
-            self.serial.write(data)
+            self.serial.write(data.encode('utf-8'))
         except:
-            pass
+            traceback.print_exc()

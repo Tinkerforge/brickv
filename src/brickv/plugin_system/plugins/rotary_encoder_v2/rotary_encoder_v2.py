@@ -23,8 +23,8 @@ Boston, MA 02111-1307, USA.
 
 import functools
 
-from PyQt4.QtCore import pyqtSignal, Qt
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QPushButton
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_rotary_encoder_v2 import BrickletRotaryEncoderV2

@@ -21,16 +21,17 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QDialog, QMessageBox
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_server_monitoring_add_host_dialog \
      import Ui_REDTabSettingsServerMonitoringAddHostDialog
 from brickv.plugin_system.plugins.red.api import *
 from brickv.utils import get_main_window
 
-class REDTabSettingsServerMonitoringAddHostDialog(QtGui.QDialog, Ui_REDTabSettingsServerMonitoringAddHostDialog):
+class REDTabSettingsServerMonitoringAddHostDialog(QDialog, Ui_REDTabSettingsServerMonitoringAddHostDialog):
     def __init__(self, parent):
-        QtGui.QDialog.__init__(self, parent)
+        QDialog.__init__(self, parent)
         self.setupUi(self)
 
         self.host   = ''
@@ -53,7 +54,7 @@ class REDTabSettingsServerMonitoringAddHostDialog(QtGui.QDialog, Ui_REDTabSettin
 
     def slot_pbutton_sm_add_host_add_clicked(self):
         if not self.ledit_sm_add_host_host.text():
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Server Monitoring',
                                        'Host name is empty.')
             return
@@ -61,20 +62,20 @@ class REDTabSettingsServerMonitoringAddHostDialog(QtGui.QDialog, Ui_REDTabSettin
         try:
             self.ledit_sm_add_host_host.text().encode('ascii')
         except:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Server Monitoring',
                                        'Host name contains non ASCII characters.')
             return
 
         if self.chkbox_sm_add_host_authentication.checkState() == QtCore.Qt.Checked and \
            not self.ledit_sm_add_host_secret.text():
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Server Monitoring',
                                            'No secrets specified.')
                 return
 
         self.host = self.ledit_sm_add_host_host.text()
-        self.port = unicode(self.sbox_sm_add_host_port.value())
+        self.port = self.sbox_sm_add_host_port.value()
         self.secret = self.ledit_sm_add_host_secret.text()
 
         self.accept()

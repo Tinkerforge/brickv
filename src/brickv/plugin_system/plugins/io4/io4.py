@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, QTimer
+from PyQt5.QtCore import pyqtSignal, QTimer
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.io4.ui_io4 import Ui_IO4
@@ -84,15 +84,15 @@ class IO4(PluginBase, Ui_IO4):
 
         def get_port_async(value):
             self.init_value = value
-            self.init_async_generator.next()
+            next(self.init_async_generator)
 
         def get_port_configuration_async(conf):
             self.init_dir, self.init_config = conf
-            self.init_async_generator.next()
+            next(self.init_async_generator)
 
         def get_monoflop_async(init_monoflop):
             self.init_monoflop = init_monoflop
-            self.init_async_generator.next()
+            next(self.init_async_generator)
 
         def get_debounce_period_async(debounce_period):
             self.debounce_edit.setText(str(debounce_period))
@@ -120,7 +120,7 @@ class IO4(PluginBase, Ui_IO4):
 
     def start(self):
         self.init_async_generator = self.init_async()
-        self.init_async_generator.next()
+        next(self.init_async_generator)
 
         self.cbe_value.set_period(50)
 
@@ -174,7 +174,7 @@ class IO4(PluginBase, Ui_IO4):
     def update_monoflop_ui_state(self):
         pin = int(self.pin_box.currentText())
 
-        if self.port_direction[pin].text() == 'Output' and \
+        if self.port_direction[pin].text().replace('&','') == 'Output' and \
            self.direction_box.currentText() == 'Output' and \
            self.has_monoflop:
             self.time_spinbox.setEnabled(not self.monoflop_active[pin])
@@ -215,7 +215,7 @@ class IO4(PluginBase, Ui_IO4):
                 self.port_value[i].setText('Low')
 
     def pin_changed(self, pin):
-        if self.port_direction[pin].text() == 'Input':
+        if self.port_direction[pin].text().replace('&','') == 'Input':
             index = 0
         else:
             index = 1
@@ -233,7 +233,7 @@ class IO4(PluginBase, Ui_IO4):
             self.value_box.addItem('High')
             self.value_box.addItem('Low')
 
-            if self.port_config[pin].text() == 'High':
+            if self.port_config[pin].text().replace('&','') == 'High':
                 self.value_box.setCurrentIndex(0)
             else:
                 self.value_box.setCurrentIndex(1)
@@ -241,7 +241,7 @@ class IO4(PluginBase, Ui_IO4):
             self.value_box.addItem('Pull-Up')
             self.value_box.addItem('Default')
 
-            if self.port_config[pin].text() == 'Pull-Up':
+            if self.port_config[pin].text().replace('&','') == 'Pull-Up':
                 self.value_box.setCurrentIndex(0)
             else:
                 self.value_box.setCurrentIndex(1)

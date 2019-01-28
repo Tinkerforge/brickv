@@ -49,7 +49,7 @@ class ProgramInfoPerl(ProgramInfo, Ui_ProgramInfoPerl):
         self.get_executable_versions('perl', cb_perl_versions)
 
         # start mode
-        start_mode_api_name    = self.program.cast_custom_option_value('perl.start_mode', unicode, '<unknown>')
+        start_mode_api_name    = self.program.cast_custom_option_value('perl.start_mode', str, '<unknown>')
         start_mode             = Constants.get_perl_start_mode(start_mode_api_name)
         start_mode_script_file = start_mode == Constants.PERL_START_MODE_SCRIPT_FILE
         start_mode_command     = start_mode == Constants.PERL_START_MODE_COMMAND
@@ -59,12 +59,12 @@ class ProgramInfoPerl(ProgramInfo, Ui_ProgramInfoPerl):
         # script file
         self.label_script_file_title.setVisible(start_mode_script_file)
         self.label_script_file.setVisible(start_mode_script_file)
-        self.label_script_file.setText(self.program.cast_custom_option_value('perl.script_file', unicode, '<unknown>'))
+        self.label_script_file.setText(self.program.cast_custom_option_value('perl.script_file', str, '<unknown>'))
 
         # command
         self.label_command_title.setVisible(start_mode_command)
         self.label_command.setVisible(start_mode_command)
-        self.label_command.setText(self.program.cast_custom_option_value('perl.command', unicode, '<unknown>'))
+        self.label_command.setText(self.program.cast_custom_option_value('perl.command', str, '<unknown>'))
 
         # working directory
         self.label_working_directory_title.setVisible(show_advanced_options)
@@ -74,4 +74,4 @@ class ProgramInfoPerl(ProgramInfo, Ui_ProgramInfoPerl):
         # options
         self.label_options_title.setVisible(show_advanced_options)
         self.label_options.setVisible(show_advanced_options)
-        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('perl.options', unicode, [])))
+        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('perl.options', str, [])))

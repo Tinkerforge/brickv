@@ -23,8 +23,8 @@ Boston, MA 02111-1307, USA.
 
 import os
 
-from PyQt4.QtCore import pyqtSignal, QTimer
-from PyQt4.QtGui import QMessageBox, QTreeWidgetItem, QAction
+from PyQt5.QtCore import pyqtSignal, QTimer
+from PyQt5.QtWidgets import QMessageBox, QTreeWidgetItem, QAction
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_can_v2 import BrickletCANV2, GetReadFilterConfiguration
@@ -358,10 +358,10 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
         self.last_filename = filename
 
         try:
-            f = open(filename, 'wb')
+            f = open(filename, 'w')
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save History Error',
-                                 u'Could not open {0} for writing:\n\n{1}'.format(filename, e))
+                                 'Could not open {0} for writing:\n\n{1}'.format(filename, e))
             return
 
         root = self.tree_frames.invisibleRootItem()
@@ -378,10 +378,10 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
 
         try:
             # FIXME: add progress dialog if content is bigger than some megabytes
-            f.write(''.join(content).encode('utf-8'))
+            f.write(''.join(content))
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save History Error',
-                                 u'Could not write to {0}:\n\n{1}'.format(filename, e))
+                                 'Could not write to {0}:\n\n{1}'.format(filename, e))
 
         f.close()
 
@@ -410,10 +410,10 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
             read_buffer_sizes = []
         else:
             try:
-                read_buffer_sizes = map(int, read_buffer_sizes_str.split(','))
+                read_buffer_sizes = list(map(int, read_buffer_sizes_str.split(',')))
             except:
                 QMessageBox.critical(get_main_window(), 'Save Queue Configuration Error',
-                                     'Read Buffer Sizes could not be parsed as comma-separated list of integters.')
+                                     'Read Buffer Sizes could not be parsed as comma-separated list of integers.')
                 return
 
             if len(read_buffer_sizes) > 32:

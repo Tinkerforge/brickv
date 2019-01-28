@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QPushButton, \
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QPushButton, \
                         QSpinBox, QFrame, QDoubleSpinBox
 
 from brickv.plugin_system.plugin_base import PluginBase
@@ -117,6 +117,7 @@ class Barometer(PluginBase):
         layout.addLayout(layout_h1)
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 

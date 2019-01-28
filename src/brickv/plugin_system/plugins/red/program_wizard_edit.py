@@ -45,9 +45,9 @@ class ProgramWizardEdit(ProgramWizard):
         elif name == 'identifier':
             return self.program.identifier
         elif name == 'name':
-            return self.program.cast_custom_option_value('name', unicode, '<unknown>')
+            return self.program.cast_custom_option_value('name', str, '<unknown>')
         elif name == 'language':
-            language_api_name = self.program.cast_custom_option_value('language', unicode, '<unknown>')
+            language_api_name = self.program.cast_custom_option_value('language', str, '<unknown>')
 
             try:
                 return Constants.get_language(language_api_name)

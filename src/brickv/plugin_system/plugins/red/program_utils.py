@@ -27,8 +27,8 @@ import stat
 import posixpath
 from collections import namedtuple
 
-from PyQt4.QtCore import Qt, QDir, QDateTime
-from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem, \
+from PyQt5.QtCore import Qt, QDir, QDateTime
+from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QTreeWidgetItem, \
                          QProgressDialog, QProgressBar, QInputDialog
 
 from brickv.plugin_system.plugins.red.api import *
@@ -1477,7 +1477,7 @@ class TextFile(object):
 
 
 def get_key_from_value(dictionary, value):
-    return dictionary.keys()[dictionary.values().index(value)]
+    return list(dictionary.keys())[list(dictionary.values()).index(value)]
 
 
 def set_current_combo_index_from_data(combo, data):
@@ -1508,21 +1508,21 @@ def get_file_display_size(size):
 
 
 def has_program_start_mode_web_interface(program):
-    language_api_name               = program.cast_custom_option_value('language', unicode, '<unknown>')
+    language_api_name               = program.cast_custom_option_value('language', str, '<unknown>')
     php_start_mode_web_interface    = False
     python_start_mode_web_interface = False
     javascript_flavor_browser       = False
 
     if language_api_name == 'php':
-        php_start_mode_api_name      = program.cast_custom_option_value('php.start_mode', unicode, '<unknown>')
+        php_start_mode_api_name      = program.cast_custom_option_value('php.start_mode', str, '<unknown>')
         php_start_mode               = Constants.get_php_start_mode(php_start_mode_api_name)
         php_start_mode_web_interface = php_start_mode == Constants.PHP_START_MODE_WEB_INTERFACE
     elif language_api_name == 'python':
-        python_start_mode_api_name      = program.cast_custom_option_value('python.start_mode', unicode, '<unknown>')
+        python_start_mode_api_name      = program.cast_custom_option_value('python.start_mode', str, '<unknown>')
         python_start_mode               = Constants.get_python_start_mode(python_start_mode_api_name)
         python_start_mode_web_interface = python_start_mode == Constants.PYTHON_START_MODE_WEB_INTERFACE
     elif language_api_name == 'javascript':
-        javascript_flavor_api_name = program.cast_custom_option_value('javascript.flavor', unicode, '<unknown>')
+        javascript_flavor_api_name = program.cast_custom_option_value('javascript.flavor', str, '<unknown>')
         javascript_flavor          = Constants.get_javascript_flavor(javascript_flavor_api_name)
         javascript_flavor_browser  = javascript_flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER
 

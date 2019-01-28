@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QDialog, QTabWidget
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QDialog, QTabWidget
 
 from brickv.plugin_system.plugins.imu.ui_calibrate import Ui_Calibrate
 from brickv.plugin_system.plugins.imu.calibrate_accelerometer import CalibrateAccelerometer

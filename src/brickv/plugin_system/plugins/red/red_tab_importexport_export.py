@@ -24,9 +24,10 @@ Boston, MA 02111-1307, USA.
 import os
 import posixpath
 import time
+import html
 
-from PyQt4.QtCore import Qt, QTimer, QDateTime
-from PyQt4.QtGui import QWidget, QTreeWidgetItem, QMessageBox
+from PyQt5.QtCore import Qt, QTimer, QDateTime
+from PyQt5.QtWidgets import QWidget, QTreeWidgetItem, QMessageBox
 
 from brickv.async_call import async_call
 from brickv.utils import get_main_window, get_home_path, get_save_file_name
@@ -45,10 +46,10 @@ class ChunkedDownloader(ChunkedDownloaderBase):
         string_args = []
 
         for arg in args:
-            string_args.append(Qt.escape(unicode(arg)))
+            string_args.append(html.escape(arg))
 
         if len(string_args) > 0:
-            message = unicode(message).format(*tuple(string_args))
+            message = message.format(*tuple(string_args))
 
         self.widget.progress.close()
         QMessageBox.critical(get_main_window(), 'Export Error', message)
@@ -132,14 +133,14 @@ class REDTabImportExportExport(QWidget, Ui_REDTabImportExportExport):
             for first_upload in sorted(sorted_programs.keys()):
                 for identifier in sorted(sorted_programs[first_upload].keys()):
                     program  = sorted_programs[first_upload][identifier]
-                    language = program.cast_custom_option_value('language', unicode, '<unknown>')
+                    language = program.cast_custom_option_value('language', str, '<unknown>')
 
                     try:
                         language = Constants.get_language_display_name(language)
                     except:
                         pass
 
-                    item = QTreeWidgetItem([program.cast_custom_option_value('name', unicode, '<unknown>'), identifier, language])
+                    item = QTreeWidgetItem([program.cast_custom_option_value('name', str, '<unknown>'), identifier, language])
 
                     self.tree_programs.addTopLevelItem(item)
                     item.setSelected(True)

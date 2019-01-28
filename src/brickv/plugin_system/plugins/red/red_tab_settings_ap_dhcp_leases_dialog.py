@@ -22,7 +22,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QMessageBox,  QDialog
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_ap_dhcp_leases_dialog import Ui_REDTabSettingsAPDhcpLeasesDialog
 from brickv.plugin_system.plugins.red.api import *
@@ -37,9 +39,9 @@ DEFAULT_TVIEW_MAC_HEADER_WIDTH        = 130 # in pixels
 DEFAULT_TVIEW_IP_HEADER_WIDTH         = 130 # in pixels
 DEFAULT_TVIEW_EXPIRATION_HEADER_WIDTH = 150 # in pixels
 
-class REDTabSettingsAPDhcpLeasesDialog(QtGui.QDialog, Ui_REDTabSettingsAPDhcpLeasesDialog):
+class REDTabSettingsAPDhcpLeasesDialog(QDialog, Ui_REDTabSettingsAPDhcpLeasesDialog):
     def __init__(self, parent, session):
-        QtGui.QDialog.__init__(self, parent)
+        QDialog.__init__(self, parent)
 
         self.setupUi(self)
 
@@ -59,11 +61,11 @@ class REDTabSettingsAPDhcpLeasesDialog(QtGui.QDialog, Ui_REDTabSettingsAPDhcpLea
 
             leases_lines = content.splitlines()
 
-            leases_model = QtGui.QStandardItemModel(0, 3, self)
-            leases_model.setHorizontalHeaderItem(0, QtGui.QStandardItem("Hostname"))
-            leases_model.setHorizontalHeaderItem(1, QtGui.QStandardItem("MAC"))
-            leases_model.setHorizontalHeaderItem(2, QtGui.QStandardItem("IP"))
-            leases_model.setHorizontalHeaderItem(3, QtGui.QStandardItem("Expiration"))
+            leases_model = QStandardItemModel(0, 3, self)
+            leases_model.setHorizontalHeaderItem(0, QStandardItem("Hostname"))
+            leases_model.setHorizontalHeaderItem(1, QStandardItem("MAC"))
+            leases_model.setHorizontalHeaderItem(2, QStandardItem("IP"))
+            leases_model.setHorizontalHeaderItem(3, QStandardItem("Expiration"))
 
             for i, l in enumerate(leases_lines):
                 l_split = l.strip().split(' ')
@@ -75,11 +77,11 @@ class REDTabSettingsAPDhcpLeasesDialog(QtGui.QDialog, Ui_REDTabSettingsAPDhcpLea
                         continue
 
                     if j == 0:
-                        leases_model.setItem(i, 3, QtGui.QStandardItem(QtCore.QDateTime.fromTime_t(int(l_split[j])).toString('yyyy-MM-dd HH:mm:ss')))
+                        leases_model.setItem(i, 3, QStandardItem(QtCore.QDateTime.fromTime_t(int(l_split[j])).toString('yyyy-MM-dd HH:mm:ss')))
                     elif j == 3:
-                        leases_model.setItem(i, 0, QtGui.QStandardItem(l_split[j]))
+                        leases_model.setItem(i, 0, QStandardItem(l_split[j]))
                     else:
-                        leases_model.setItem(i, j, QtGui.QStandardItem(l_split[j]))
+                        leases_model.setItem(i, j, QStandardItem(l_split[j]))
 
             self.tview_ap_leases.setModel(leases_model)
 
@@ -98,7 +100,7 @@ class REDTabSettingsAPDhcpLeasesDialog(QtGui.QDialog, Ui_REDTabSettingsAPDhcpLea
             TextFile.ERROR_KIND_UTF8: 'decoding'
             }
 
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Access Point',
                                        'Error {0} dnsmasq leases file:\n\n{1}'.format(kind_text[kind], error))
 

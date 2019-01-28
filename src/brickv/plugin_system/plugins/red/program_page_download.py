@@ -27,9 +27,11 @@ import posixpath
 import re
 import sys
 import errno
+import html
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWizard, QTextCursor
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWizard
+from PyQt5.QtGui import QTextCursor
 
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
@@ -44,7 +46,7 @@ class ChunkedDownloader(ChunkedDownloaderBase):
         self.page = page
 
     def report_error(self, message, *args):
-        self.page.download_error(u'...error: ' + message, *args)
+        self.page.download_error('...error: ' + message, *args)
 
     def set_progress_maximum(self, maximum):
         self.page.progress_file.setRange(0, maximum)
@@ -101,12 +103,12 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
 
         self.edit_new_name_checker = MandatoryLineEditChecker(self, self.label_new_name, self.edit_new_name)
 
-        self.log(u'Going to download {0} to {1}'.format(self.download_kind, self.download_directory))
+        self.log('Going to download {0} to {1}'.format(self.download_kind, self.download_directory))
         self.edit_log.moveCursor(QTextCursor.StartOfLine)
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Download {0} of the {{language}} program [{{name}}].'.format(self.download_kind))
+        self.set_formatted_sub_title('Download {0} of the {{language}} program [{{name}}].'.format(self.download_kind))
 
         self.wizard().rejected.connect(self.cancel_download)
 
@@ -166,9 +168,9 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
 
     def log(self, message, bold=False, pre=False):
         if bold:
-            self.edit_log.appendHtml(u'<b>{0}</b>'.format(Qt.escape(message)))
+            self.edit_log.appendHtml('<b>{0}</b>'.format(html.escape(message)))
         elif pre:
-            self.edit_log.appendHtml(u'<pre>{0}</pre>'.format(message))
+            self.edit_log.appendHtml('<pre>{0}</pre>'.format(message))
         else:
             self.edit_log.appendPlainText(message)
 
@@ -185,10 +187,10 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         string_args = []
 
         for arg in args:
-            string_args.append(Qt.escape(unicode(arg)))
+            string_args.append(html.escape(str(arg)))
 
         if len(string_args) > 0:
-            message = unicode(message).format(*tuple(string_args))
+            message = str(message).format(*tuple(string_args))
 
         self.log(message, bold=True)
 
@@ -208,7 +210,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.progress_total.setRange(0, self.get_total_step_count())
 
         # download files
-        self.next_step(u'Downloading {0}...'.format(self.download_kind), log=False)
+        self.next_step('Downloading {0}...'.format(self.download_kind), log=False)
 
         self.root_directory = self.wizard().program.root_directory
 
@@ -232,7 +234,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         else:
             source_path = posixpath.join(self.root_directory, 'bin', self.download.source)
 
-        self.next_step(u'Downloading {0}...'.format(self.download.source))
+        self.next_step('Downloading {0}...'.format(self.download.source))
 
         self.chunked_downloader = ChunkedDownloader(self)
 
@@ -276,10 +278,10 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.chunked_downloader.start(self.target_path)
 
     def start_conflict_resolution(self):
-        self.log(u'...target file {0} already exists'.format(self.target_path))
+        self.log('...target file {0} already exists'.format(self.target_path))
 
         if self.auto_conflict_resolution == ProgramPageDownload.CONFLICT_RESOLUTION_REPLACE:
-            self.log(u'...replacing {0}'.format(self.download.target))
+            self.log('...replacing {0}'.format(self.download.target))
             self.continue_download_file(True)
         elif self.auto_conflict_resolution == ProgramPageDownload.CONFLICT_RESOLUTION_SKIP:
             self.log('...skipped')
@@ -294,13 +296,13 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
                                                   .format(get_file_display_size(target_stat.st_size),
                                                           timestamp_to_date_at_time(int(target_stat.st_mtime))))
             except Exception as e:
-                self.label_existing_stats.setText(u'<b>Error</b>: Could not get informarion for target file: {0}', Qt.escape(unicode(e)))
+                self.label_existing_stats.setText('<b>Error</b>: Could not get informarion for target file: {0}', html.escape(str(e)))
 
             self.label_new_stats.setText('{0}, last modified on {1}'
                                          .format(self.chunked_downloader.source_display_size,
                                                  timestamp_to_date_at_time(int(self.chunked_downloader.source_file.modification_time))))
 
-            self.label_replace_help.setText(self.replace_help_template.replace('<FILE>', Qt.escape(self.download.target)))
+            self.label_replace_help.setText(self.replace_help_template.replace('<FILE>', html.escape(self.download.target)))
             self.check_rename_new_file.setChecked(self.auto_conflict_resolution == ProgramPageDownload.CONFLICT_RESOLUTION_RENAME)
             self.edit_new_name.setText('') # force a new-name check
             self.edit_new_name.setText(os.path.split(self.download.target)[1])
@@ -312,7 +314,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         if not self.conflict_resolution_in_progress or self.check_rename_new_file.isChecked():
             return
 
-        self.log(u'...replacing {0}'.format(self.download.target))
+        self.log('...replacing {0}'.format(self.download.target))
 
         if self.check_remember_decision.isChecked():
             self.auto_conflict_resolution = ProgramPageDownload.CONFLICT_RESOLUTION_REPLACE
@@ -336,7 +338,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
             return
 
         self.rename_download_target(self.edit_new_name.text())
-        self.log(u'...downloading as {0}'.format(self.download.target))
+        self.log('...downloading as {0}'.format(self.download.target))
 
         if self.check_remember_decision.isChecked():
             self.auto_conflict_resolution = ProgramPageDownload.CONFLICT_RESOLUTION_RENAME

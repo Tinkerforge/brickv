@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2011 Loic Jaquemet loic.jaquemet+python@gmail.com
@@ -27,8 +27,9 @@
 # * Remove QBuffer and QIODevice and replace it by str
 # * Remove Font picker
 
-from PyQt4.Qt import Qt
-from PyQt4.QtGui import QFontMetrics, QMenu, QClipboard, QApplication, QAbstractScrollArea, QAction, QPen, QPainter
+from PyQt5.Qt import Qt
+from PyQt5.QtGui import QFontMetrics, QClipboard, QPen, QPainter
+from PyQt5.QtWidgets import QMenu, QApplication, QAbstractScrollArea, QAction
 
 import string
 
@@ -450,6 +451,7 @@ class QHexeditWidget(QAbstractScrollArea):
     // Name: pixelToWord(int x, int y) const
     '''
     def pixelToWord(self, x, y) :
+
         if self.highlighting == self.highlightingData:
             #// the right edge of a box is kinda quirky, so we pretend there is one
             #// extra character there
@@ -459,14 +461,14 @@ class QHexeditWidget(QAbstractScrollArea):
             x -= self.line1()
 
             #// scale x/y down to character from pixels
-            if (x % self.font_width >= self.font_width / 2 ):
-                x = x / self.font_width + 1
+            if (x % self.font_width >= self.font_width // 2 ):
+                x = x // self.font_width + 1
             else:
-                x = x / self.font_width
-            y /= self.font_height
+                x = x // self.font_width
+            y //= self.font_height
 
             #// make x relative to rendering mode of the bytes
-            x /= (self.charsPerWord() + 1)
+            x //= (self.charsPerWord() + 1)
         elif self.highlighting == self.highlightingAscii:
             x = qBound(self.asciiDumpLeft(), x, self.line3())
 
@@ -474,11 +476,11 @@ class QHexeditWidget(QAbstractScrollArea):
             x -= self.asciiDumpLeft()
 
             #// scale x/y down to character from pixels
-            x /= self.font_width
-            y /= self.font_height
+            x //= self.font_width
+            y //= self.font_height
 
             #// make x relative to rendering mode of the bytes
-            x /= self.word_width
+            x //= self.word_width
         else:
             #Q_ASSERT(0)
             pass
@@ -495,7 +497,7 @@ class QHexeditWidget(QAbstractScrollArea):
 
 
         #// convert byte offset to word offset, rounding up
-        start_offset /= self.word_width
+        start_offset //= self.word_width
 
         if((self.origin % self.word_width) != 0) :
             start_offset += 1
@@ -840,7 +842,6 @@ class QHexeditWidget(QAbstractScrollArea):
     // Name: paintEvent(QPaintEvent *)
     '''
     def paintEvent(self, event) :
-
         painter = QPainter(self.viewport())
         painter.translate(-self.horizontalScrollBar().value() * self.font_width, 0)
         word_count = 0

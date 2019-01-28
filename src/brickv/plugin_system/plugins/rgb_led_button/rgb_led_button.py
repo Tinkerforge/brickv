@@ -21,9 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QColor
+from PyQt5.QtGui import QColor
 
-from PyQt4.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_rgb_led_button import BrickletRGBLEDButton
 from brickv.plugin_system.plugins.rgb_led_button.ui_rgb_led_button import Ui_RGBLEDButton

@@ -23,8 +23,8 @@ Boston, MA 02111-1307, USA.
 
 import time
 
-from PyQt4.QtCore import pyqtSignal, QTimer
-from PyQt4.QtGui import QWidget
+from PyQt5.QtCore import pyqtSignal, QTimer
+from PyQt5.QtWidgets import QWidget
 
 from brickv.plugin_system.plugins.imu.ui_calibrate_gyroscope_bias import Ui_calibrate_gyroscope_bias
 

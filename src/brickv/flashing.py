@@ -23,22 +23,20 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-try:
-    from StringIO import StringIO as FileLike
-except ImportError:
-    from io import BytesIO as FileLike
+from io import BytesIO as FileLike
 
 import zipfile
 import os
-import urllib2
+import urllib.request
+import urllib.error
 import time
 import struct
 import traceback
 from serial import SerialException
 
-from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QApplication, QColor, QDialog, QMessageBox, \
-                        QProgressDialog, QStandardItemModel, QStandardItem, QBrush
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QColor, QStandardItemModel, QStandardItem, QBrush
+from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox, QProgressDialog
 
 from brickv.ui_flashing import Ui_Flashing
 from brickv.bindings.brick_master import BrickMaster
@@ -186,10 +184,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
         okay = True
 
         try:
-            response = urllib2.urlopen(LATEST_VERSIONS_URL, timeout=10)
-            latest_versions_data = response.read()
+            response = urllib.request.urlopen(LATEST_VERSIONS_URL, timeout=10)
+            latest_versions_data = response.read().decode('utf-8')
             response.close()
-        except urllib2.URLError:
+        except urllib.error.URLError:
             okay = False
             progress.cancel()
             self.combo_firmware.setEnabled(False)
@@ -475,7 +473,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         preferred_index = self.combo_serial_port.count()
 
                 if len(port[1]) > 0 and port[0] != port[1]:
-                    self.combo_serial_port.addItem(u'{0} - {1}'.format(port[0], port[1]), port[0])
+                    self.combo_serial_port.addItem('{0} - {1}'.format(port[0], port[1]), port[0])
                 else:
                     self.combo_serial_port.addItem(port[0], port[0])
 
@@ -600,16 +598,16 @@ class FlashingWindow(QDialog, Ui_Flashing):
             response = None
 
             try:
-                response = urllib2.urlopen(FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version), timeout=10)
-            except urllib2.URLError:
+                response = urllib.request.urlopen(FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version), timeout=10)
+            except urllib.error.URLError:
                 pass
 
             beta = 5
 
             while response is None and beta > 0:
                 try:
-                    response = urllib2.urlopen(FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{2}_{3}_{4}_beta{1}.bin'.format(url_part, beta, *version), timeout=10)
-                except urllib2.URLError:
+                    response = urllib.request.urlopen(FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{2}_{3}_{4}_beta{1}.bin'.format(url_part, beta, *version), timeout=10)
+                except urllib.error.URLError:
                     beta -= 1
 
             if response is None:
@@ -622,7 +620,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 progress.reset(None, length)
                 progress.update(0)
                 QApplication.processEvents()
-                firmware = ''
+                firmware = bytes()
                 chunk = response.read(1024)
 
                 while len(chunk) > 0:
@@ -631,7 +629,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     chunk = response.read(1024)
 
                 response.close()
-            except urllib2.URLError:
+            except urllib.error.URLError:
                 progress.cancel()
                 self.popup_fail('Brick', 'Could not download {0} Brick firmware {1}.{2}.{3}'.format(name, *version))
                 return
@@ -669,7 +667,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 try:
                     imu_calibration_text = ''
-                    response = urllib2.urlopen(IMU_CALIBRATION_URL + '{0}.txt'.format(imu_uid), timeout=10)
+                    response = urllib.request.urlopen(IMU_CALIBRATION_URL + '{0}.txt'.format(imu_uid), timeout=10)
                     chunk = response.read(1024)
 
                     while len(chunk) > 0:
@@ -677,7 +675,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         chunk = response.read(1024)
 
                     response.close()
-                except urllib2.HTTPError as e:
+                except urllib.error.HTTPError as e:
                     if e.code == 404:
                         imu_calibration_text = None
                         self.popup_ok('IMU Brick', 'No factory calibration for IMU Brick [{0}] available'.format(imu_uid))
@@ -685,7 +683,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         progress.cancel()
                         self.popup_fail('IMU Brick', 'Could not download factory calibration for IMU Brick [{0}]'.format(imu_uid))
                         return
-                except urllib2.URLError:
+                except urllib.error.URLError:
                     progress.cancel()
                     self.popup_fail('IMU Brick', 'Could not download factory calibration for IMU Brick [{0}]'.format(imu_uid))
                     return
@@ -908,16 +906,16 @@ class FlashingWindow(QDialog, Ui_Flashing):
         response = None
 
         try:
-            response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{2}_{3}_{4}.{1}'.format(url_part, file_ext, *version), timeout=10)
-        except urllib2.URLError:
+            response = urllib.request.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{2}_{3}_{4}.{1}'.format(url_part, file_ext, *version), timeout=10)
+        except urllib.error.URLError:
             pass
 
         beta = 5
 
         while response is None and beta > 0:
             try:
-                response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{3}_{4}_{5}_beta{1}.{2}'.format(url_part, beta, file_ext, *version), timeout=10)
-            except urllib2.URLError:
+                response = urllib.request.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{3}_{4}_{5}_beta{1}.{2}'.format(url_part, beta, file_ext, *version), timeout=10)
+            except urllib.error.URLError:
                 beta -= 1
 
         if response is None:
@@ -931,16 +929,16 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.setMaximum(length)
             progress.setValue(0)
             QApplication.processEvents()
-            plugin = []
+            plugin = bytes()
             chunk = response.read(256)
 
             while len(chunk) > 0:
-                plugin += map(ord, chunk) # Convert plugin to list of bytes
+                plugin += chunk
                 progress.setValue(len(plugin))
                 chunk = response.read(256)
 
             response.close()
-        except urllib2.URLError:
+        except urllib.error.URLError:
             progress.cancel()
             if popup:
                 self.popup_fail('Bricklet', 'Could not download {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
@@ -962,7 +960,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.show()
 
             # Convert plugin back from list of bytes to something we can put in ZipFile
-            zip_file = str(bytearray(plugin))
+            zip_file = plugin
             try:
                 zf = zipfile.ZipFile(FileLike(zip_file), 'r')
             except:
@@ -984,7 +982,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 return False
 
             # Now convert plugin to list of bytes
-            plugin = map(ord, plugin_data)
+            plugin = plugin_data
             regular_plugin_upto = -1
             for i in reversed(range(4, len(plugin)-12)):
                 if plugin[i] == 0x12 and plugin[i-1] == 0x34 and plugin[i-2] == 0x56 and plugin[i-3] == 0x78:
@@ -1014,15 +1012,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 time.sleep(0.25)
                 counter += 1
 
-            num_packets = len(plugin)/64
+            num_packets = len(plugin)//64
             # If the magic number is in in the last page of the
             # flash, we write the whole thing
             if regular_plugin_upto >= (len(plugin) - 64 * 4):
-                index_list = range(num_packets)
+                index_list = list(range(num_packets))
             else:
                 # We write the 64 byte packets up to the end of the last page that has meaningful data
                 packet_up_to = ((regular_plugin_upto // 256) + 1) * 4
-                index_list = range(0, packet_up_to) + [num_packets - 4, num_packets - 3, num_packets - 2, num_packets - 1]
+                index_list = list(range(0, packet_up_to)) + [num_packets - 4, num_packets - 3, num_packets - 2, num_packets - 1]
 
             progress.setLabelText('Writing plugin: ' + name)
             progress.setMaximum(len(index_list))
@@ -1086,7 +1084,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     counter += 1
 
                 num_packets = len(plugin)/64
-                index_list = range(num_packets)
+                index_list = list(range(num_packets))
 
                 progress.setLabelText('Writing plugin (second try): ' + name)
                 progress.setMaximum(len(index_list))
@@ -1163,7 +1161,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             chunk = plugin[offset:offset + IPConnection.PLUGIN_CHUNK_SIZE]
 
             if len(chunk) < IPConnection.PLUGIN_CHUNK_SIZE:
-                chunk += [0] * (IPConnection.PLUGIN_CHUNK_SIZE - len(chunk))
+                chunk += bytes([0]) * (IPConnection.PLUGIN_CHUNK_SIZE - len(chunk))
 
             plugin_chunks.append(chunk)
             offset += IPConnection.PLUGIN_CHUNK_SIZE
@@ -1200,7 +1198,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         for chunk in plugin_chunks:
             try:
-                read_chunk = list(self.parent.ipcon.read_bricklet_plugin(brick, port, position))
+                read_chunk = bytes(self.parent.ipcon.read_bricklet_plugin(brick, port, position))
             except Error as e:
                 progress.cancel()
                 if popup:
@@ -1233,7 +1231,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             try:
                 with open(plugin_file_name, 'rb') as f:
-                    plugin = map(ord, f.read()) # Convert plugin to list of bytes
+                    plugin = f.read()
             except IOError:
                 progress.cancel()
                 self.popup_fail('Bricklet', 'Could not read plugin file')
@@ -1398,11 +1396,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
         progress = self.create_progress_bar('Discovering')
 
         try:
-            urllib2.urlopen("http://download.tinkerforge.com", timeout=10).read()
+            urllib.request.urlopen("http://download.tinkerforge.com", timeout=10).read()
             self.label_no_update_connection.hide()
             self.label_no_firmware_connection.hide()
             self.label_no_plugin_connection.hide()
-        except urllib2.URLError:
+        except urllib.error.URLError:
             progress.cancel()
             self.label_no_update_connection.show()
             self.label_no_firmware_connection.show()
@@ -1473,7 +1471,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 items.append(parent)
 
                 # Search for childs up to a recursion depth of 3 at most.
-                for connected_info1 in sorted(info.connections.values()):
+                for connected_info1 in info.connections.values():
                     child1 = [QStandardItem(connected_info1.position.upper() + ': ' + connected_info1.name),
                               QStandardItem(connected_info1.uid),
                               QStandardItem(get_version_string(connected_info1.firmware_version_installed)),
@@ -1487,7 +1485,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         item.setData(color, Qt.BackgroundRole)
                     parent[0].appendRow(child1)
 
-                    for connected_info2 in sorted(connected_info1.connections.values()):
+                    for connected_info2 in connected_info1.connections.values():
                         child2 = [QStandardItem(connected_info2.position.upper() + ': ' + connected_info2.name),
                                   QStandardItem(connected_info2.uid),
                                   QStandardItem(get_version_string(connected_info2.firmware_version_installed)),
@@ -1501,7 +1499,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                             item.setData(color, Qt.BackgroundRole)
                         child1[0].appendRow(child2)
 
-                        for connected_info3 in sorted(connected_info2.connections.values()):
+                        for connected_info3 in connected_info2.connections.values():
                             child3 = [QStandardItem(connected_info3.position.upper() + ': ' + connected_info3.name),
                                       QStandardItem(connected_info3.uid),
                                       QStandardItem(get_version_string(connected_info3.firmware_version_installed)),
@@ -1600,16 +1598,16 @@ class FlashingWindow(QDialog, Ui_Flashing):
         response = None
 
         try:
-            response = urllib2.urlopen(FIRMWARE_URL + 'extensions/{0}/extension_{0}_firmware_{1}_{2}_{3}.zbin'.format(url_part, *version), timeout=10)
-        except urllib2.URLError:
+            response = urllib.request.urlopen(FIRMWARE_URL + 'extensions/{0}/extension_{0}_firmware_{1}_{2}_{3}.zbin'.format(url_part, *version), timeout=10)
+        except urllib.error.URLError:
             pass
 
         beta = 5
 
         while response is None and beta > 0:
             try:
-                response = urllib2.urlopen(FIRMWARE_URL + 'extensions/{0}/extension{0}_firmware_{2}_{3}_{4}_beta{1}.zbin'.format(url_part, beta, *version), timeout=10)
-            except urllib2.URLError:
+                response = urllib.request.urlopen(FIRMWARE_URL + 'extensions/{0}/extension{0}_firmware_{2}_{3}_{4}_beta{1}.zbin'.format(url_part, beta, *version), timeout=10)
+            except urllib.error.URLError:
                 beta -= 1
 
         if response is None:
@@ -1631,7 +1629,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 chunk = response.read(256)
 
             response.close()
-        except urllib2.URLError:
+        except urllib.error.URLError:
             progress.cancel()
             if popup:
                 self.popup_fail('Extension', 'Could not download {0} Extension firmware {1}.{2}.{3}'.format(name, *version))

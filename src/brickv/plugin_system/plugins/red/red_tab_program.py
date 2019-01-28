@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QApplication, QMessageBox, QTreeWidgetItem
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtWidgets import QApplication, QMessageBox, QTreeWidgetItem
 
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_program import Ui_REDTabProgram
@@ -134,7 +134,7 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
         program_info.name_changed.connect(self.refresh_program_name)
         program_info.status_changed.connect(self.refresh_program_status)
 
-        item = QTreeWidgetItem([program.cast_custom_option_value('name', unicode, '<unknown>'),
+        item = QTreeWidgetItem([program.cast_custom_option_value('name', str, '<unknown>'),
                                 get_program_short_status(program)])
         item.setData(0, Qt.UserRole, program_info)
 
@@ -186,7 +186,7 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
             item = self.tree_programs.topLevelItem(i)
 
             if item.data(0, Qt.UserRole).program == program:
-                item.setText(0, program.cast_custom_option_value('name', unicode, '<unknown>'))
+                item.setText(0, program.cast_custom_option_value('name', str, '<unknown>'))
 
     def refresh_program_status(self, program):
         for i in range(self.tree_programs.topLevelItemCount()):
@@ -257,9 +257,9 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
 
         program_info = selected_items[0].data(0, Qt.UserRole)
         program      = program_info.program
-        name         = program.cast_custom_option_value('name', unicode, '<unknown>')
+        name         = program.cast_custom_option_value('name', str, '<unknown>')
         button       = QMessageBox.question(get_main_window(), 'Delete Program',
-                                            u'Deleting program [{0}] is irreversible. All files of this program will be deleted.'.format(name),
+                                            'Deleting program [{0}] is irreversible. All files of this program will be deleted.'.format(name),
                                             QMessageBox.Ok, QMessageBox.Cancel)
 
         if not self.tab_is_alive or button != QMessageBox.Ok:
@@ -272,7 +272,7 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
             program.purge() # FIXME: async_call
         except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Delete Program Error',
-                                 u'Could not delete program [{0}]:\n\n{1}'.format(name, e))
+                                 'Could not delete program [{0}]:\n\n{1}'.format(name, e))
             return
 
         self.stacked_container.removeWidget(program_info)

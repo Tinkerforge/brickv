@@ -23,9 +23,9 @@ Boston, MA 02111-1307, USA.
 
 import math
 
-from PyQt4.QtCore import Qt, QPoint, QPointF
-from PyQt4.QtGui import QWidget, QSizePolicy, QPainter, QColor, QPen, \
-                        QFontMetrics, QRadialGradient, QPolygonF
+from PyQt5.QtCore import Qt, QPoint, QPointF
+from PyQt5.QtWidgets import QWidget, QSizePolicy
+from PyQt5.QtGui import QPainter, QColor, QPen, QFontMetrics, QRadialGradient, QPolygonF
 
 EPSILON = 0.000001
 DEBUG = False

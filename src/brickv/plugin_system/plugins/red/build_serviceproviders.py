@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Copyright (C) 2015 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
@@ -27,7 +27,8 @@ print("Generating mobile internet serviceprovider data:")
 
 import os
 import json
-import urllib2
+import urllib.request
+import urllib.error
 import xml.etree.ElementTree as ET
 from pprint import pformat
 
@@ -38,7 +39,7 @@ DATA_FILE = 'serviceprovider_data.py'
 try:
     print('[*] Downloading provider database')
 
-    response = urllib2.urlopen(XML_URL, timeout=10)
+    response = urllib.request.urlopen(XML_URL, timeout=10)
     xml_data = response.read()
     response.close()
 

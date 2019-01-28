@@ -28,7 +28,11 @@ import sys
 import zlib
 from operator import itemgetter
 
-from PyQt4 import QtCore, QtGui
+import html
+
+from PyQt5 import QtCore
+from PyQt5.QtCore import QSortFilterProxyModel
+from PyQt5.QtGui import QStandardItem, QStandardItemModel
 
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOverview
@@ -42,14 +46,16 @@ DEFAULT_TVIEW_NIC_HEADER_WIDTH = 210 # in pixels
 DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_FIRST = 210 # in pixels
 DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER = 105 # in pixels
 
-class ProcessesProxyModel(QtGui.QSortFilterProxyModel):
+class ProcessesProxyModel(QSortFilterProxyModel):
     # overrides QSortFilterProxyModel.lessThan
     def lessThan(self, left, right):
         # cpu and mem
         if left.column() in [3, 4]:
+            if right.data(QtCore.Qt.UserRole + 1) is None:
+                return QSortFilterProxyModel.lessThan(self, left, right)
             return left.data(QtCore.Qt.UserRole + 1) < right.data(QtCore.Qt.UserRole + 1)
 
-        return QtGui.QSortFilterProxyModel.lessThan(self, left, right)
+        return QSortFilterProxyModel.lessThan(self, left, right)
 
 class REDTabOverview(REDTab, Ui_REDTabOverview):
     def __init__(self):
@@ -133,14 +139,14 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
         okay, message = check_script_result(result, decode_stderr=True)
 
         if not okay:
-            self.label_error.setText('<b>Error:</b> ' + QtCore.Qt.escape(message))
+            self.label_error.setText('<b>Error:</b> ' + html.escape(message))
             self.label_error.show()
             return
 
         self.label_error.hide()
 
         try:
-            data = json.loads(zlib.decompress(buffer(result.stdout)).decode('utf-8'))
+            data = json.loads(zlib.decompress(memoryview(result.stdout)).decode('utf-8'))
 
             days, days_remainder = divmod(int(data['uptime']), 24 * 60 * 60)
             hours, hours_remainder = divmod(days_remainder, 60 * 60)
@@ -224,9 +230,9 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
         for i, key in enumerate(nic_data_dict):
             if key not in self.nic_previous_bytes:
                 self.nic_time = time.time()
-                self.nic_item_model.setItem(i, 0, QtGui.QStandardItem(key))
-                self.nic_item_model.setItem(i, 1, QtGui.QStandardItem("Collecting data..."))
-                self.nic_item_model.setItem(i, 2, QtGui.QStandardItem("Collecting data..."))
+                self.nic_item_model.setItem(i, 0, QStandardItem(key))
+                self.nic_item_model.setItem(i, 1, QStandardItem("Collecting data..."))
+                self.nic_item_model.setItem(i, 2, QStandardItem("Collecting data..."))
             else:
                 download_rate = _get_nic_transfer_rate(nic_data_dict[key][1],
                                                        self.nic_previous_bytes[key]['received'],
@@ -236,9 +242,9 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
                                                      self.nic_previous_bytes[key]['sent'],
                                                      delta)
 
-                self.nic_item_model.setItem(i, 0, QtGui.QStandardItem(key))
-                self.nic_item_model.setItem(i, 1, QtGui.QStandardItem(download_rate + " KiB/s"))
-                self.nic_item_model.setItem(i, 2, QtGui.QStandardItem(upload_rate + " KiB/s"))
+                self.nic_item_model.setItem(i, 0, QStandardItem(key))
+                self.nic_item_model.setItem(i, 1, QStandardItem(download_rate + " KiB/s"))
+                self.nic_item_model.setItem(i, 2, QStandardItem(upload_rate + " KiB/s"))
 
             self.nic_previous_bytes[key] = {'sent': nic_data_dict[key][0],
                                             'received': nic_data_dict[key][1]}
@@ -260,29 +266,29 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
         processes_data_list_sorted = processes_data_list_sorted[:self.sbox_number_of_process.value()]
 
         for i, p in enumerate(processes_data_list_sorted):
-            name = unicode(p['name'])
-            cmdline = unicode(p['cmd'])
+            name = p['name']
+            cmdline = p['cmd']
 
             if len(cmdline) == 0:
                 cmdline = name
 
-            item_name = QtGui.QStandardItem(name)
+            item_name = QStandardItem(name)
             item_name.setToolTip(cmdline)
             self.process_item_model.setItem(i, 0, item_name)
 
-            item_pid = QtGui.QStandardItem(unicode(p['pid']))
+            item_pid = QStandardItem(p['pid'])
             self.process_item_model.setItem(i, 1, item_pid)
 
-            item_user = QtGui.QStandardItem(unicode(p['user']))
+            item_user = QStandardItem(p['user'])
             self.process_item_model.setItem(i, 2, item_user)
 
             cpu = p['cpu']
-            item_cpu = QtGui.QStandardItem(unicode(cpu / 10.0)+'%')
+            item_cpu = QStandardItem(str(cpu / 10.0)+'%')
             item_cpu.setData(cpu)
             self.process_item_model.setItem(i, 3, item_cpu)
 
             mem = p['mem']
-            item_mem = QtGui.QStandardItem(unicode(mem / 10.0)+'%')
+            item_mem = QStandardItem(str(mem / 10.0)+'%')
             item_mem.setData(mem)
             self.process_item_model.setItem(i, 4, item_mem)
 
@@ -310,11 +316,11 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
         return "%.2f" % n
 
     def setup_tview_nic(self):
-        self.nic_item_model = QtGui.QStandardItemModel(0, 3, self)
-        self.nic_item_model.setHorizontalHeaderItem(0, QtGui.QStandardItem("Interface"))
-        self.nic_item_model.setHorizontalHeaderItem(1, QtGui.QStandardItem("Download"))
-        self.nic_item_model.setHorizontalHeaderItem(2, QtGui.QStandardItem("Upload"))
-        self.nic_item_model.setItem(0, 0, QtGui.QStandardItem("Collecting data..."))
+        self.nic_item_model = QStandardItemModel(0, 3, self)
+        self.nic_item_model.setHorizontalHeaderItem(0, QStandardItem("Interface"))
+        self.nic_item_model.setHorizontalHeaderItem(1, QStandardItem("Download"))
+        self.nic_item_model.setHorizontalHeaderItem(2, QStandardItem("Upload"))
+        self.nic_item_model.setItem(0, 0, QStandardItem("Collecting data..."))
         self.tview_nic.setModel(self.nic_item_model)
         self.tview_nic.setColumnWidth(0, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(1, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
@@ -328,13 +334,13 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
         self.nic_previous_bytes = {}
 
     def setup_tview_process(self):
-        self.process_item_model = QtGui.QStandardItemModel(0, 5, self)
-        self.process_item_model.setHorizontalHeaderItem(0, QtGui.QStandardItem("Name"))
-        self.process_item_model.setHorizontalHeaderItem(1, QtGui.QStandardItem("PID"))
-        self.process_item_model.setHorizontalHeaderItem(2, QtGui.QStandardItem("User"))
-        self.process_item_model.setHorizontalHeaderItem(3, QtGui.QStandardItem("CPU"))
-        self.process_item_model.setHorizontalHeaderItem(4, QtGui.QStandardItem("Memory"))
-        self.process_item_model.setItem(0, 0, QtGui.QStandardItem("Collecting data..."))
+        self.process_item_model = QStandardItemModel(0, 5, self)
+        self.process_item_model.setHorizontalHeaderItem(0, QStandardItem("Name"))
+        self.process_item_model.setHorizontalHeaderItem(1, QStandardItem("PID"))
+        self.process_item_model.setHorizontalHeaderItem(2, QStandardItem("User"))
+        self.process_item_model.setHorizontalHeaderItem(3, QStandardItem("CPU"))
+        self.process_item_model.setHorizontalHeaderItem(4, QStandardItem("Memory"))
+        self.process_item_model.setItem(0, 0, QStandardItem("Collecting data..."))
         self.process_item_proxy_model = ProcessesProxyModel(self)
         self.process_item_proxy_model.setSourceModel(self.process_item_model)
         self.tview_process.setModel(self.process_item_proxy_model)
@@ -355,10 +361,10 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
     def reset_tview_nic(self):
         self.nic_item_model.clear()
         self.nic_previous_bytes.clear()
-        self.nic_item_model.setHorizontalHeaderItem(0, QtGui.QStandardItem("Interface"))
-        self.nic_item_model.setHorizontalHeaderItem(1, QtGui.QStandardItem("Download"))
-        self.nic_item_model.setHorizontalHeaderItem(2, QtGui.QStandardItem("Upload"))
-        self.nic_item_model.setItem(0, 0, QtGui.QStandardItem("Collecting data..."))
+        self.nic_item_model.setHorizontalHeaderItem(0, QStandardItem("Interface"))
+        self.nic_item_model.setHorizontalHeaderItem(1, QStandardItem("Download"))
+        self.nic_item_model.setHorizontalHeaderItem(2, QStandardItem("Upload"))
+        self.nic_item_model.setItem(0, 0, QStandardItem("Collecting data..."))
         self.tview_nic.setColumnWidth(0, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(1, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(2, DEFAULT_TVIEW_NIC_HEADER_WIDTH)

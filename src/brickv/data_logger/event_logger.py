@@ -29,8 +29,8 @@ Boston, MA 02111-1307, USA.
 #---------------------------------------------------------------------------
 
 if 'merged_data_logger_modules' not in globals():
-    from PyQt4 import QtCore
-    from PyQt4.QtCore import SIGNAL
+    from PyQt5 import QtCore
+    from PyQt5.QtCore import pyqtSignal
 
 import logging
 from datetime import datetime
@@ -169,8 +169,11 @@ if 'merged_data_logger_modules' not in globals():
         _output_format_warning = "<font color=\"orange\">{asctime} - <b>{levelname:8}</b> - {message}</font>"
         _output_format_critical = "<font color=\"red\">{asctime} - <b>{levelname:8}</b> - {message}</font>"
 
-        SIGNAL_NEW_MESSAGE = "newEventMessage"
-        SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT = "newEventTabHighlight"
+        #SIGNAL_NEW_MESSAGE = "newEventMessage"
+        #SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT = "newEventTabHighlight"
+
+        newEventMessage = pyqtSignal(str)
+        newEventTabHighlight = pyqtSignal()
 
         def __init__(self, name, log_level):
             logging.Logger.__init__(self, name, log_level)
@@ -197,16 +200,13 @@ if 'merged_data_logger_modules' not in globals():
         def log(self, level, msg):
             if level >= self.level:
                 asctime = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.now())
-                levelname = logging._levelNames.get(level)
+                levelname = logging.getLevelName(level)
 
                 if level == logging.WARN or level == logging.WARNING:
-                    self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE),
-                              GUILogger._output_format_warning.format(asctime=asctime, levelname=levelname, message=msg))
-                    self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT))
+                    self.newEventMessage.emit(GUILogger._output_format_warning.format(asctime=asctime, levelname=levelname, message=msg))
+                    self.newEventTabHighlight.emit()
                 elif level == logging.CRITICAL or level == logging.ERROR:
-                    self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE),
-                              GUILogger._output_format_critical.format(asctime=asctime, levelname=levelname, message=msg))
-                    self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT))
+                    self.newEventMessage.emit(GUILogger._output_format_critical.format(asctime=asctime, levelname=levelname, message=msg))
+                    self.newEventTabHighlight.emit()
                 else:
-                    self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE),
-                              GUILogger._output_format.format(asctime=asctime, levelname=levelname, message=msg))
+                    self.newEventMessage.emit(GUILogger._output_format.format(asctime=asctime, levelname=levelname, message=msg))

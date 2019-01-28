@@ -108,7 +108,7 @@ def unpack_cpool(class_file):
     skip = False
     main_ref = None
 
-    for i in xrange(count):
+    for i in range(count):
         if skip:
             skip = False
             items.append((None, None))
@@ -157,13 +157,13 @@ def has_main_method(class_file):
     # skip fields
     field_count = unpack_H(class_file)
 
-    for i in xrange(field_count):
+    for i in range(field_count):
         access_flags, name_ref, descriptor_ref = unpack_HHH(class_file)
 
         # skip attributes
         attribute_count = unpack_H(class_file)
 
-        for i in xrange(attribute_count):
+        for i in range(attribute_count):
             attribute_name, attribute_size = unpack_HI(class_file)
 
             if len(class_file.read(attribute_size)) != attribute_size:
@@ -172,7 +172,7 @@ def has_main_method(class_file):
     # unpack methods
     methods_count = unpack_H(class_file)
 
-    for i in xrange(methods_count):
+    for i in range(methods_count):
         access_flags, name_ref, descriptor_ref = unpack_HHH(class_file)
 
         if main_ref == name_ref and \
@@ -183,7 +183,7 @@ def has_main_method(class_file):
         # skip attributes
         attribute_count = unpack_H(class_file)
 
-        for i in xrange(attribute_count):
+        for i in range(attribute_count):
             attribute_name, attribute_size = unpack_HI(class_file)
 
             if len(class_file.read(attribute_size)) != attribute_size:

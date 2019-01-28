@@ -21,9 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPainter, \
-                        QColor, QBrush, QFrame, QComboBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QFrame, QComboBox
+from PyQt5.QtGui import QPainter, QColor, QBrush
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_ambient_light_v3 import BrickletAmbientLightV3
@@ -107,6 +107,7 @@ class AmbientLightV3(COMCUPluginBase):
         hlayout.addWidget(self.time_combo)
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 

@@ -25,24 +25,15 @@ Boston, MA 02111-1307, USA.
 import os
 import sys
 
-from PyQt4.QtGui import QPixmap, QColor
-from PyQt4.QtCore import Qt, QByteArray
+from PyQt5.QtGui import QPixmap, QColor
+from PyQt5.QtCore import Qt, QByteArray
 
 from brickv.utils import get_resources_path
 
-if hasattr(sys, 'frozen'):
-    from brickv.frozen_images import image_data
-else:
-    image_data = None
 
-def load_pixmap(path, apply_mask=False):
-    if image_data != None:
-        data = QByteArray.fromBase64(image_data[path][1])
-        pixmap = QPixmap()
-        pixmap.loadFromData(data, image_data[path][0])
-    else:
-        absolute_path = os.path.join(get_resources_path(), path)
-        pixmap = QPixmap(absolute_path)
+def load_pixmap(path):
+    absolute_path = get_resources_path(path)
+    pixmap = QPixmap(absolute_path)
 
     return pixmap
 

@@ -26,16 +26,16 @@ import json
 import sys
 import math
 
-from PyQt4 import  QtGui
+from PyQt5.QtWidgets import QWidget, QMessageBox
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_filesystem import Ui_REDTabSettingsFileSystem
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import report_script_result
 from brickv.utils import get_main_window
 
-class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
+class REDTabSettingsFileSystem(QWidget, Ui_REDTabSettingsFileSystem):
     def __init__(self):
-        QtGui.QWidget.__init__(self)
+        QWidget.__init__(self)
         self.setupUi(self)
 
         self.session        = None # Set from REDTabSettings
@@ -100,12 +100,12 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
 
         percentage_utilization_v = min(int(math.ceil((used_size / avialable_size) * 100.0)), 100)
 
-        # due to common file system overahead 100% will normally never be
+        # due to common file system overhead 100% will normally never be
         # reached just fake 100% in this case to avoid user confusion
         if percentage_utilization_v >= 95:
             percentage_utilization_v = 100
 
-        percentage_utilization = unicode(percentage_utilization_v)
+        percentage_utilization = str(percentage_utilization_v)
 
         self.pbar_fs_capacity_utilization.setEnabled(True)
 
@@ -144,7 +144,7 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
                                         'Error expanding file system'):
                 return
 
-            QtGui.QMessageBox.information(get_main_window(),
+            QMessageBox.information(get_main_window(),
                                           'Settings | Services',
                                           'File system expansion will be complete after reboot, rebooting RED Brick now.')
 

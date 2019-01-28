@@ -27,6 +27,7 @@ from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_c import Ui_ProgramPageC
 from brickv.plugin_system.plugins.red.script_manager import check_script_result
 import posixpath
+import html
 
 def get_gcc_versions(script_manager, callback):
     def cb_versions(result):
@@ -92,7 +93,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
+        self.set_formatted_sub_title('Specify how the {language} program [{name}] should be executed.')
 
         def cb_gcc_versions(versions):
             if versions[0].version != None:
@@ -122,13 +123,13 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
             self.edit_mode = True
 
             # start mode
-            start_mode_api_name = program.cast_custom_option_value('c.start_mode', unicode, '<unknown>')
+            start_mode_api_name = program.cast_custom_option_value('c.start_mode', str, '<unknown>')
             start_mode          = Constants.get_c_start_mode(start_mode_api_name)
 
             self.combo_start_mode.setCurrentIndex(start_mode)
 
             # executable
-            self.edit_executable.setText(program.cast_custom_option_value('c.executable', unicode, ''))
+            self.edit_executable.setText(program.cast_custom_option_value('c.executable', str, ''))
 
             # compile from source
             self.check_compile_from_source.setChecked(program.cast_custom_option_value('c.compile_from_source', bool, False))
@@ -139,7 +140,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
             # make options
             self.make_option_list_editor.clear()
 
-            for make_option in program.cast_custom_option_value_list('c.make_options', unicode, []):
+            for make_option in program.cast_custom_option_value_list('c.make_options', str, []):
                 self.make_option_list_editor.add_item(make_option)
 
         self.update_ui_state()
@@ -180,22 +181,22 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         working_directory   = self.get_field('c.working_directory')
         make_options        = ' '.join(self.make_option_list_editor.get_items())
 
-        html = u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.c_start_mode_display_names[start_mode]))
+        html_text = 'Start Mode: {0}<br/>'.format(html.escape(Constants.c_start_mode_display_names[start_mode]))
 
         if start_mode == Constants.C_START_MODE_EXECUTABLE:
-            html += u'Executable: {0}<br/>'.format(Qt.escape(executable))
+            html_text += 'Executable: {0}<br/>'.format(html.escape(executable))
 
         if compile_from_source:
-            html += u'Compile From Source: Enabled<br/>'
+            html_text += 'Compile From Source: Enabled<br/>'
         else:
-            html += u'Compile From Source: Disabled<br/>'
+            html_text += 'Compile From Source: Disabled<br/>'
 
-        html += u'Working Directory: {0}<br/>'.format(Qt.escape(working_directory))
+        html_text += 'Working Directory: {0}<br/>'.format(html.escape(working_directory))
 
         if compile_from_source:
-            html += u'Make Options: {0}<br/>'.format(Qt.escape(make_options))
+            html_text += 'Make Options: {0}<br/>'.format(html.escape(make_options))
 
-        return html
+        return html_text
 
     def get_custom_options(self):
         return {

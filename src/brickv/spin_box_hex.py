@@ -22,8 +22,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import QRegExp
-from PyQt4.QtGui import QSpinBox, QRegExpValidator
+from PyQt5.QtCore import QRegExp
+from PyQt5.QtWidgets import QSpinBox
+from PyQt5.QtGui import QRegExpValidator
 
 class SpinBoxHex(QSpinBox):
     def __init__(self, parent=None, default_value=0):

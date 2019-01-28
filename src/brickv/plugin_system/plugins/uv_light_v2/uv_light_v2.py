@@ -21,8 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QVBoxLayout, QLabel, QComboBox, QHBoxLayout, QFrame
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QComboBox, QHBoxLayout, QFrame
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_uv_light_v2 import BrickletUVLightV2
@@ -59,10 +59,10 @@ class UVLightV2(COMCUPluginBase):
         self.current_uvb = None
         self.current_uvi = None
 
-        plots = [('UVA', Qt.red, lambda: self.current_uva, u'{} mW/m²'.format),
-                 ('UVB', Qt.darkGreen, lambda: self.current_uvb, u'{} mW/m²'.format)]
+        plots = [('UVA', Qt.red, lambda: self.current_uva, '{} mW/m²'.format),
+                 ('UVB', Qt.darkGreen, lambda: self.current_uvb, '{} mW/m²'.format)]
 
-        self.plot_widget = PlotWidget(u'UV [mW/m²]', plots, extra_key_widgets=[self.index_label])
+        self.plot_widget = PlotWidget('UV [mW/m²]', plots, extra_key_widgets=[self.index_label])
 
         self.time_label = QLabel('Integration Time:')
         self.time_combo = QComboBox()
@@ -84,6 +84,7 @@ class UVLightV2(COMCUPluginBase):
         hlayout.addWidget(self.saturation_label)
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 
@@ -150,7 +151,7 @@ class UVLightV2(COMCUPluginBase):
 
         uvi = round(uvi / 10.0, 1)
 
-        self.index_label.setText(unicode(uvi))
+        self.index_label.setText(str(uvi))
 
         if uvi < 2.5:
             background = 'green'

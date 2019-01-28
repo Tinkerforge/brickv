@@ -21,18 +21,19 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4 import Qt, QtCore, QtGui
+from PyQt5 import Qt, QtCore
+from PyQt5.QtWidgets import QWidget, QSpinBox, QHBoxLayout
 
 from brickv.plugin_system.plugins.red.qxt_span_slider import QxtSpanSlider
 
-class widgetSpinBoxSpanSlider(QtGui.QWidget):
+class widgetSpinBoxSpanSlider(QWidget):
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
 
         self.span_slider = QxtSpanSlider()
-        self.sbox_lower = QtGui.QSpinBox()
-        self.sbox_upper = QtGui.QSpinBox()
-        self.horizontal_layout = QtGui.QHBoxLayout()
+        self.sbox_lower = QSpinBox()
+        self.sbox_upper = QSpinBox()
+        self.horizontal_layout = QHBoxLayout()
         self.horizontal_layout.setContentsMargins(5, 5, 5, 5)
         self.horizontal_layout.addWidget(self.sbox_lower)
         self.horizontal_layout.addWidget(self.span_slider)

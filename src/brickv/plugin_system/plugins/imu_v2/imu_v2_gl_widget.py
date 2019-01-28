@@ -22,23 +22,20 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtOpenGL import QGLWidget
+import math
+from PyQt5.QtWidgets import QOpenGLWidget
+from PyQt5.QtGui import QOpenGLContext, QOpenGLVersionProfile, QSurfaceFormat
 
-from OpenGL.GL import GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, \
-                      GL_LESS, GL_MODELVIEW, GL_QUADS, GL_PROJECTION, GL_SMOOTH, \
-                      GL_LINES, GL_COMPILE, GL_TRIANGLES, GL_CULL_FACE, glBegin, \
-                      glCallList, glClear, glClearColor, glClearDepth, glColor3f, \
-                      glDepthFunc, glEnable, glEnd, glEndList, glGenLists, glLoadIdentity, \
-                      glMatrixMode, glNewList, glPopMatrix, glPushMatrix, glShadeModel, \
-                      glTranslatef, glVertex3fv, glVertex3f, glViewport, glScalef, \
-                      glMultMatrixf, glLineWidth, glNormal3fv, glNormal3f, GL_NORMALIZE, \
-                      GL_LIGHTING, glLightfv, GL_LIGHT0, GL_POSITION, GL_AMBIENT_AND_DIFFUSE, \
-                      GL_COLOR_MATERIAL, GL_FRONT, glColorMaterial, glDisable
-from OpenGL.GLU import gluPerspective
+class IMUV2GLWidget(QOpenGLWidget):
+    def __init__(self, parent=None):
+        QOpenGLWidget.__init__(self, parent)
+        format = QSurfaceFormat()
+        format.setSamples(16)
+        QOpenGLWidget.setFormat(self, format)
 
-class IMUV2GLWidget(QGLWidget):
-    def __init__(self, parent=None, name=None):
-        QGLWidget.__init__(self, parent, name)
+        self.profile = QOpenGLVersionProfile()
+        self.profile.setVersion(2, 1)
+
         self.parent = parent
 
         self.vertices = [
@@ -118,254 +115,267 @@ class IMUV2GLWidget(QGLWidget):
                   [2.0*(xz - wy), 2.0*(yz + wx), 1.0 - 2.0*(xx + yy), 0.0],
                   [0.0, 0.0, 0.0, 1.0]]
 
-        self.updateGL()
+        QOpenGLWidget.update(self)
 
     def initializeGL(self):
-        glClearColor(0.85, 0.85, 0.85, 1.0)
-        glClearDepth(1.0)
-        glDepthFunc(GL_LESS)
-        glEnable(GL_DEPTH_TEST)
-        glEnable(GL_CULL_FACE)
+        self.gl = self.context().versionFunctions(self.profile)
+        gl = self.gl
+        gl.initializeOpenGLFunctions()
 
-        glShadeModel(GL_SMOOTH)
-        glEnable(GL_NORMALIZE)
-        glEnable(GL_COLOR_MATERIAL)
-        glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE)
-        glLightfv(GL_LIGHT0, GL_POSITION, (0.0, 0.0, 1.0, 0.0))
-        glEnable(GL_LIGHT0)
+        gl.glClearColor(0.85, 0.85, 0.85, 1.0)
+        gl.glClearDepth(1.0)
+        gl.glDepthFunc(gl.GL_LESS)
+        gl.glEnable(gl.GL_DEPTH_TEST)
+        gl.glEnable(gl.GL_CULL_FACE)
 
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
+        gl.glShadeModel(gl.GL_SMOOTH)
+        gl.glEnable(gl.GL_NORMALIZE)
+        gl.glEnable(gl.GL_COLOR_MATERIAL)
+        gl.glColorMaterial(gl.GL_FRONT, gl.GL_AMBIENT_AND_DIFFUSE)
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, (0.0, 0.0, 1.0, 0.0))
+        gl.glEnable(gl.GL_LIGHT0)
 
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glLoadIdentity()
 
-        self.display_list = glGenLists(1)
-        glNewList(self.display_list, GL_COMPILE)
-        glScalef(0.5, 0.5, 0.5)
+        gl.glMatrixMode(gl.GL_MODELVIEW)
+        gl.glLoadIdentity()
 
-        glEnable(GL_LIGHTING)
+        self.display_list = gl.glGenLists(1)
+        gl.glNewList(self.display_list, gl.GL_COMPILE)
+        gl.glScalef(0.5, 0.5, 0.5)
+
+        gl.glEnable(gl.GL_LIGHTING)
 
         # board
-        glColor3f(0.0, 0.0, 0.0)
+        gl.glColor3f(0.0, 0.0, 0.0)
         self.draw_cuboid(4.0, 4.0, 0.16)
 
         # USB connector
-        glPushMatrix()
-        glColor3f(0.5, 0.51, 0.58)
-        glTranslatef(0.0, -1.6, 0.28)
+        gl.glPushMatrix()
+        gl.glColor3f(0.5, 0.51, 0.58)
+        gl.glTranslatef(0.0, -1.6, 0.28)
         self.draw_cuboid(0.75, 0.9, 0.4)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # right button
-        glPushMatrix()
-        glColor3f(0.5, 0.51, 0.58)
-        glTranslatef(1.15, -1.85, 0.16)
+        gl.glPushMatrix()
+        gl.glColor3f(0.5, 0.51, 0.58)
+        gl.glTranslatef(1.15, -1.85, 0.16)
         self.draw_cuboid(0.4, 0.3, 0.16)
-        glColor3f(0.0, 0.0, 0.0)
-        glTranslatef(0.0, -0.155, 0.025)
+        gl.glColor3f(0.0, 0.0, 0.0)
+        gl.glTranslatef(0.0, -0.155, 0.025)
         self.draw_cuboid(0.18, 0.1, 0.08)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # left button
-        glPushMatrix()
-        glColor3f(0.5, 0.51, 0.58)
-        glTranslatef(-1.15, -1.85, 0.16)
+        gl.glPushMatrix()
+        gl.glColor3f(0.5, 0.51, 0.58)
+        gl.glTranslatef(-1.15, -1.85, 0.16)
         self.draw_cuboid(0.4, 0.3, 0.16)
-        glColor3f(0.0, 0.0, 0.0)
-        glTranslatef(0.0, -0.155, 0.025)
+        gl.glColor3f(0.0, 0.0, 0.0)
+        gl.glTranslatef(0.0, -0.155, 0.025)
         self.draw_cuboid(0.18, 0.1, 0.08)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # left btb top
-        glPushMatrix()
-        glColor3f(1.0, 1.0, 1.0)
-        glTranslatef(-1.65, 0.0, 0.38)
+        gl.glPushMatrix()
+        gl.glColor3f(1.0, 1.0, 1.0)
+        gl.glTranslatef(-1.65, 0.0, 0.38)
         self.draw_cuboid(0.5, 1.4, 0.9)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # right btb top
-        glPushMatrix()
-        glColor3f(1.0, 1.0, 1.0)
-        glTranslatef(1.65, 0.0, 0.38)
+        gl.glPushMatrix()
+        gl.glColor3f(1.0, 1.0, 1.0)
+        gl.glTranslatef(1.65, 0.0, 0.38)
         self.draw_cuboid(0.5, 1.4, 0.9)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # left btb bottom
-        glPushMatrix()
-        glColor3f(1.0, 1.0, 1.0)
-        glTranslatef(-1.65, 0.0, -0.33)
+        gl.glPushMatrix()
+        gl.glColor3f(1.0, 1.0, 1.0)
+        gl.glTranslatef(-1.65, 0.0, -0.33)
         self.draw_cuboid(0.5, 1.4, 0.5)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # right btb bottom
-        glPushMatrix()
-        glColor3f(1.0, 1.0, 1.0)
-        glTranslatef(1.65, 0.0, -0.33)
+        gl.glPushMatrix()
+        gl.glColor3f(1.0, 1.0, 1.0)
+        gl.glTranslatef(1.65, 0.0, -0.33)
         self.draw_cuboid(0.5, 1.4, 0.5)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # left bricklet port
-        glPushMatrix()
-        glColor3f(1.0, 1.0, 1.0)
-        glTranslatef(-0.85, 1.8, -0.23)
+        gl.glPushMatrix()
+        gl.glColor3f(1.0, 1.0, 1.0)
+        gl.glTranslatef(-0.85, 1.8, -0.23)
         self.draw_cuboid(1.2, 0.4, 0.3)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # right bricklet port
-        glPushMatrix()
-        glColor3f(1.0, 1.0, 1.0)
-        glTranslatef(0.85, 1.8, -0.23)
+        gl.glPushMatrix()
+        gl.glColor3f(1.0, 1.0, 1.0)
+        gl.glTranslatef(0.85, 1.8, -0.23)
         self.draw_cuboid(1.2, 0.4, 0.3)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # left direction LED
-        glPushMatrix()
-        glColor3f(0.0, 0.5, 0.0)
-        glTranslatef(-1.05, 1.425, 0.115)
+        gl.glPushMatrix()
+        gl.glColor3f(0.0, 0.5, 0.0)
+        gl.glTranslatef(-1.05, 1.425, 0.115)
         self.draw_cuboid(0.1, 0.2, 0.07)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # top direction LED
-        glPushMatrix()
-        glColor3f(0.0, 0.5, 0.0)
-        glTranslatef(-0.675, 1.8, 0.115)
+        gl.glPushMatrix()
+        gl.glColor3f(0.0, 0.5, 0.0)
+        gl.glTranslatef(-0.675, 1.8, 0.115)
         self.draw_cuboid(0.2, 0.1, 0.07)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # right direction LED
-        glPushMatrix()
-        glColor3f(0.0, 0.5, 0.0)
-        glTranslatef(-0.3, 1.425, 0.115)
+        gl.glPushMatrix()
+        gl.glColor3f(0.0, 0.5, 0.0)
+        gl.glTranslatef(-0.3, 1.425, 0.115)
         self.draw_cuboid(0.1, 0.2, 0.07)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # bottom direction LED
-        glPushMatrix()
-        glColor3f(0.0, 0.5, 0.0)
-        glTranslatef(-0.675, 1.05, 0.115)
+        gl.glPushMatrix()
+        gl.glColor3f(0.0, 0.5, 0.0)
+        gl.glTranslatef(-0.675, 1.05, 0.115)
         self.draw_cuboid(0.2, 0.1, 0.07)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # left y orientation LED
-        glPushMatrix()
-        glColor3f(0.0, 0.0, 1.0)
-        glTranslatef(0.275, 1.7, 0.115)
+        gl.glPushMatrix()
+        gl.glColor3f(0.0, 0.0, 1.0)
+        gl.glTranslatef(0.275, 1.7, 0.115)
         self.draw_cuboid(0.1, 0.2, 0.07)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # right y orientation LED
-        glPushMatrix()
-        glColor3f(1.0, 0.0, 0.0)
-        glTranslatef(0.425, 1.7, 0.115)
+        gl.glPushMatrix()
+        gl.glColor3f(1.0, 0.0, 0.0)
+        gl.glTranslatef(0.425, 1.7, 0.115)
         self.draw_cuboid(0.1, 0.2, 0.07)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # top z orientation LED
-        glPushMatrix()
-        glColor3f(1.0, 0.0, 0.0)
-        glTranslatef(0.35, 1.15, 0.115)
+        gl.glPushMatrix()
+        gl.glColor3f(1.0, 0.0, 0.0)
+        gl.glTranslatef(0.35, 1.15, 0.115)
         self.draw_cuboid(0.2, 0.1, 0.07)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # bottom z orientation LED
-        glPushMatrix()
-        glColor3f(0.0, 0.0, 1.0)
-        glTranslatef(0.35, 1.0, 0.115)
+        gl.glPushMatrix()
+        gl.glColor3f(0.0, 0.0, 1.0)
+        gl.glTranslatef(0.35, 1.0, 0.115)
         self.draw_cuboid(0.2, 0.1, 0.07)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # top x orientation LED
-        glPushMatrix()
-        glColor3f(1.0, 0.0, 0.0)
-        glTranslatef(1.0, 1.15, 0.115)
+        gl.glPushMatrix()
+        gl.glColor3f(1.0, 0.0, 0.0)
+        gl.glTranslatef(1.0, 1.15, 0.115)
         self.draw_cuboid(0.2, 0.1, 0.07)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # bottom x orientation LED
-        glPushMatrix()
-        glColor3f(0.0, 0.0, 1.0)
-        glTranslatef(1.0, 1.0, 0.115)
+        gl.glPushMatrix()
+        gl.glColor3f(0.0, 0.0, 1.0)
+        gl.glTranslatef(1.0, 1.0, 0.115)
         self.draw_cuboid(0.2, 0.1, 0.07)
-        glPopMatrix()
+        gl.glPopMatrix()
 
         # top alignment corner
-        glPushMatrix()
-        glColor3f(1.0, 1.0, 1.0)
-        glBegin(GL_TRIANGLES)
-        glNormal3f(0.0, 0.0, 1.0)
-        glVertex3f(-2.0, -2.0, 0.09)
-        glVertex3f(-1.1, -2.0, 0.09)
-        glVertex3f(-2.0, -1.1, 0.09)
-        glEnd()
-        glPopMatrix()
+        gl.glPushMatrix()
+        gl.glColor3f(1.0, 1.0, 1.0)
+        gl.glBegin(gl.GL_TRIANGLES)
+        gl.glNormal3f(0.0, 0.0, 1.0)
+        gl.glVertex3f(-2.0, -2.0, 0.09)
+        gl.glVertex3f(-1.1, -2.0, 0.09)
+        gl.glVertex3f(-2.0, -1.1, 0.09)
+        gl.glEnd()
+        gl.glPopMatrix()
 
         # bottom alignment corner
-        glPushMatrix()
-        glColor3f(1.0, 1.0, 1.0)
-        glBegin(GL_TRIANGLES)
-        glNormal3f(0.0, 0.0, -1.0)
-        glVertex3f(-2.0, -2.0, -0.09)
-        glVertex3f(-2.0, -1.1, -0.09)
-        glVertex3f(-1.1, -2.0, -0.09)
-        glEnd()
-        glPopMatrix()
+        gl.glPushMatrix()
+        gl.glColor3f(1.0, 1.0, 1.0)
+        gl.glBegin(gl.GL_TRIANGLES)
+        gl.glNormal3f(0.0, 0.0, -1.0)
+        gl.glVertex3f(-2.0, -2.0, -0.09)
+        gl.glVertex3f(-2.0, -1.1, -0.09)
+        gl.glVertex3f(-1.1, -2.0, -0.09)
+        gl.glEnd()
+        gl.glPopMatrix()
 
-        glDisable(GL_LIGHTING)
+        gl.glDisable(gl.GL_LIGHTING)
 
         # axis
-        glPushMatrix()
-        glTranslatef(-2.3, -2.3, -0.38)
-        glLineWidth(3.0)
-        glBegin(GL_LINES)
-        glColor3f(1,0,0) # x axis is red
-        glVertex3f(0,0,0)
-        glVertex3f(3,0,0)
-        glColor3f(0,0.5,0) # y axis is green
-        glVertex3f(0,0,0)
-        glVertex3f(0,3,0)
-        glColor3f(0,0,1) # z axis is blue
-        glVertex3f(0,0,0)
-        glVertex3f(0,0,3)
-        glEnd()
-        glLineWidth(1.0)
-        glPopMatrix()
+        gl.glPushMatrix()
+        gl.glTranslatef(-2.3, -2.3, -0.38)
+        gl.glLineWidth(3.0)
+        gl.glBegin(gl.GL_LINES)
+        gl.glColor3f(1,0,0) # x axis is red
+        gl.glVertex3f(0,0,0)
+        gl.glVertex3f(3,0,0)
+        gl.glColor3f(0,0.5,0) # y axis is green
+        gl.glVertex3f(0,0,0)
+        gl.glVertex3f(0,3,0)
+        gl.glColor3f(0,0,1) # z axis is blue
+        gl.glVertex3f(0,0,0)
+        gl.glVertex3f(0,0,3)
+        gl.glEnd()
+        gl.glLineWidth(1.0)
+        gl.glPopMatrix()
 
-        glEndList()
+        gl.glEndList()
+
+    def perspective(self, fov_y, aspect, z_near, z_far):
+        f_height = math.tan(fov_y / 2 * (math.pi/180)) * z_near
+        f_width = f_height * aspect
+        self.gl.glFrustum(-f_width, f_width, -f_height, f_height, z_near, z_far)
 
     def resizeGL(self, width, height):
         if height == 0:
             height = 1
+        gl = self.gl
 
-        glViewport(0, 0, width, height)
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluPerspective(45.0, float(width)/float(height), 0.1, 100.0)
-        glMatrixMode(GL_MODELVIEW)
+        gl.glViewport(0, 0, width, height)
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glLoadIdentity()
+        self.perspective(45.0, float(width)/float(height), 0.1, 100.0)
+        gl.glMatrixMode(gl.GL_MODELVIEW)
 
     # main drawing function.
     def paintGL(self):
         if self.parent.ipcon == None:
             return
+        gl = self.gl
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
 
         # Move Right And Into The Screen
-        glLoadIdentity()
-        glTranslatef(0.0, 0.0, -5.0)
-        glMultMatrixf(self.m)
+        gl.glLoadIdentity()
+        gl.glTranslatef(0.0, 0.0, -5.0)
+        gl.glMultMatrixf([item for line in self.m for item in line]) # call with flattened list of lists
 
-        glCallList(self.display_list)
+        gl.glCallList(self.display_list)
 
     def quad(self, a, b, c, d, n):
         # draw a quad
-        glBegin(GL_QUADS)
-        glNormal3fv(self.normals[n])
-        glVertex3fv(self.vertices[a])
-        glVertex3fv(self.vertices[b])
-        glVertex3fv(self.vertices[c])
-        glVertex3fv(self.vertices[d])
-        glEnd()
+        gl = self.gl
+
+        gl.glBegin(gl.GL_QUADS)
+        gl.glNormal3fv(self.normals[n])
+        gl.glVertex3fv(self.vertices[a])
+        gl.glVertex3fv(self.vertices[b])
+        gl.glVertex3fv(self.vertices[c])
+        gl.glVertex3fv(self.vertices[d])
+        gl.glEnd()
 
     def cube(self):
         # map vertices to faces
@@ -377,10 +387,12 @@ class IMUV2GLWidget(QGLWidget):
         self.quad(5, 4, 0, 1, 4)
 
     def draw_cuboid(self, x, y, z):
-        glPushMatrix()
-        glScalef(x, y, z) # size cuboid
+        gl = self.gl
+
+        gl.glPushMatrix()
+        gl.glScalef(x, y, z) # size cuboid
         self.cube()
-        glPopMatrix()
+        gl.glPopMatrix()
 
     def save_orientation(self):
         self.save_orientation_flag = True

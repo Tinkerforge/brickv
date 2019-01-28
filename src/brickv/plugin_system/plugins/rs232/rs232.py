@@ -21,8 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QTextCursor
-from PyQt4.QtCore import pyqtSignal
+from PyQt5.QtGui import QTextCursor
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import pyqtSignal
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_rs232 import BrickletRS232
@@ -30,7 +31,7 @@ from brickv.plugin_system.plugins.rs232.ui_rs232 import Ui_RS232
 from brickv.async_call import async_call
 from brickv.hex_validator import HexValidator
 
-from brickv.plugin_system.plugins.rs232.qhexedit import QHexeditWidget
+from brickv.qhexedit import QHexeditWidget
 
 FLOWCONTROL_OFF = 0
 FLOWCONTROL_SW = 1
@@ -142,42 +143,43 @@ class RS232(PluginBase, Ui_RS232):
     def get_line_ending(self):
         selected_line_ending = self.line_ending_combobox.currentText()
 
-        if selected_line_ending == '\\n':
-            hex_le = '0A'
-        elif selected_line_ending == '\\r':
-            hex_le = '0D'
-        elif selected_line_ending == '\\r\\n':
-            hex_le = '0D0A'
-        elif selected_line_ending == '\\n\\r':
-            hex_le = '0A0D'
-        elif selected_line_ending == '\\0':
-            hex_le = "00"
-        elif selected_line_ending == 'Hex:':
-            hex_le = self.line_ending_lineedit.text()
-        else:
-            hex_le = ''
+        d = {
+            '\\n': '0A',
+            '\\r': '0D',
+            '\\r\\n':'0D0A',
+            '\\n\\r':'0A0D',
+            '\\0': '00',
+            'Hex:': self.line_ending_lineedit.text()
+        }
+
+        hex_le = d.get(selected_line_ending, '')
 
         try:
-            line_ending = hex_le.decode('hex')
+            line_ending = bytes.fromhex(hex_le)
         except TypeError:
             # TODO: Handle Error!
             # Should never happen, because LineEdit has a validator applied
-            line_ending = ''
+            line_ending = bytes()
 
         return line_ending
 
     def input_changed(self):
         text = self.input_combobox.currentText().encode('utf-8') + self.get_line_ending()
-        c = ['\0']*60
-        for i, t in enumerate(text):
-            c[i] = t
-
         length = len(text)
+        if length > 60:
+            QMessageBox.critical(self, 'RS 232',
+                                 'Input length was too long. Maybe you tried to send to many non-ASCII characters?\n(Got {} bytes, but only 60 are allowed)'.format(length),
+                                 QMessageBox.Ok)
+            return
+        if length < 60:
+            text += bytes([0] * (60 - length))
+
+        #length = len(text)
         written = 0
         while length != 0:
-            written = self.rs232.write(c, length)
-            c = c[written:]
-            c = c + ['\0']*written
+            written = self.rs232.write(text, length)
+            text = text[written:]
+            text = text + bytes([0]*written)
             length = length - written
 
         self.input_combobox.setCurrentIndex(0)

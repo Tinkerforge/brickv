@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import sys
-if (sys.hexversion & 0xFF000000) != 0x02000000:
-    print 'Python 2.x required'
+if (sys.hexversion & 0xFF000000) != 0x03000000:
+    print('Python 3.x required')
     sys.exit(1)
 
 import os
@@ -18,9 +18,9 @@ for f in os.walk(brickv):
     if 'build_ui.py' in f[2]:
         print('building ' + f[0])
         os.chdir(f[0])
-        system('python build_ui.py')
+        system('python3 build_ui.py')
 
 args = ' '.join(sys.argv[1:])
 print('calling build_plugin_list.py ' + args)
 os.chdir(cwd)
-system('python build_plugin_list.py ' + args)
+system('python3 build_plugin_list.py ' + args)

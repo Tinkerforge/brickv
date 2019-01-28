@@ -25,8 +25,8 @@ Boston, MA 02111-1307, USA.
 import os
 import time
 
-from PyQt4.QtGui import QWidget, QMessageBox, QProgressDialog, QLineEdit
-from PyQt4.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QMessageBox, QProgressDialog, QLineEdit
+from PyQt5.QtCore import Qt
 
 from brickv.plugin_system.plugins.master.ui_wifi import Ui_Wifi
 from brickv.plugin_system.plugins.master.wifi_status import WifiStatus
@@ -50,11 +50,11 @@ class Wifi(QWidget, Ui_Wifi):
 
         self.wifi_password.setEchoMode(QLineEdit.Password)
         self.wifi_password_show.stateChanged.connect(self.wifi_password_show_state_changed)
-        
+
         self.wifi_change_key.stateChanged.connect(self.wifi_change_key_changed)
 
         self.wifi_status = None
-        
+
 
     def start(self):
         if self.parent.firmware_version >= (1, 3, 0):
@@ -121,7 +121,7 @@ class Wifi(QWidget, Ui_Wifi):
                 self.wifi_secret.setEchoMode(QLineEdit.Normal)
             else:
                 self.wifi_secret.setEchoMode(QLineEdit.Password)
-        
+
     def wifi_change_key_changed(self, state):
         if state == Qt.Checked:
             self.wifi_key.setEnabled(True)
@@ -491,7 +491,7 @@ class Wifi(QWidget, Ui_Wifi):
         cert_path = url_edit.text()
         try:
             if os.path.isfile(cert_path):
-                certificate_file = map(ord, file(cert_path, 'rb').read()) # Convert certificate to list of bytes
+                certificate_file = file(cert_path, 'rb').read()
                 certificate_length = len(certificate_file)
                 if certificate_length > 6*1024:
                     QMessageBox.critical(get_main_window(), "Save", "Certificate too big (max size: 6kB).", QMessageBox.Ok)
@@ -574,22 +574,22 @@ class Wifi(QWidget, Ui_Wifi):
             except:
                 self.popup_fail('Key cannot contain non-ASCII characters')
                 return
-    
+
             if '"' in key:
                 self.popup_fail('Key cannot contain quotation mark')
                 return
-    
+
             if self.wifi_encryption.currentText() in 'WEP':
                 if len(key) == 0:
                     self.popup_fail('WEP key cannot be empty')
                     return
-    
+
                 try:
                     int(key, 16)
                 except:
                     self.popup_fail('WEP key has to be in hexadecimal notation')
                     return
-    
+
                 if len(key) != 10 and len(key) != 26:
                     self.popup_fail('WEP key has to be either 10 or 26 hexadecimal digits long')
                     return
@@ -599,7 +599,7 @@ class Wifi(QWidget, Ui_Wifi):
                 if len(key) < 8:
                     self.popup_fail('WPA/WPA2 key has to be at least 8 chars long')
                     return
-    
+
                 # Since we can't read the key anymore we have to always use the long key API
                 if self.parent.firmware_version >= (2, 0, 2):
                     key = '-'
@@ -658,7 +658,7 @@ class Wifi(QWidget, Ui_Wifi):
         power_mode_old = self.master.get_wifi_power_mode()
         encryption_old, key_old, key_index_old, eap_options_old, ca_certificate_length_old, client_certificate_length_old, private_key_length_old = self.master.get_wifi_encryption()
         ssid_old, connection_old, ip_old, sub_old, gw_old, port_old = self.master.get_wifi_configuration()
-        
+
         hostname_old = hostname
         if self.parent.firmware_version >= (2, 0, 5):
             hostname_old = self.master.get_wifi_hostname()

@@ -51,7 +51,7 @@ class ProgramInfoPython(ProgramInfo, Ui_ProgramInfoPython):
         self.get_executable_versions('python', cb_python_versions)
 
         # start mode
-        start_mode_api_name      = self.program.cast_custom_option_value('python.start_mode', unicode, '<unknown>')
+        start_mode_api_name      = self.program.cast_custom_option_value('python.start_mode', str, '<unknown>')
         start_mode               = Constants.get_python_start_mode(start_mode_api_name)
         start_mode_script_file   = start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE
         start_mode_module_name   = start_mode == Constants.PYTHON_START_MODE_MODULE_NAME
@@ -67,17 +67,17 @@ class ProgramInfoPython(ProgramInfo, Ui_ProgramInfoPython):
         # script file
         self.label_script_file_title.setVisible(start_mode_script_file)
         self.label_script_file.setVisible(start_mode_script_file)
-        self.label_script_file.setText(self.program.cast_custom_option_value('python.script_file', unicode, '<unknown>'))
+        self.label_script_file.setText(self.program.cast_custom_option_value('python.script_file', str, '<unknown>'))
 
         # module name
         self.label_module_name_title.setVisible(start_mode_module_name)
         self.label_module_name.setVisible(start_mode_module_name)
-        self.label_module_name.setText(self.program.cast_custom_option_value('python.module_name', unicode, '<unknown>'))
+        self.label_module_name.setText(self.program.cast_custom_option_value('python.module_name', str, '<unknown>'))
 
         # command
         self.label_command_title.setVisible(start_mode_command)
         self.label_command.setVisible(start_mode_command)
-        self.label_command.setText(self.program.cast_custom_option_value('python.command', unicode, '<unknown>'))
+        self.label_command.setText(self.program.cast_custom_option_value('python.command', str, '<unknown>'))
 
         # url
         self.label_url_title.setVisible(start_mode_web_interface)
@@ -92,4 +92,4 @@ class ProgramInfoPython(ProgramInfo, Ui_ProgramInfoPython):
         # options
         self.label_options_title.setVisible(show_advanced_options and not start_mode_web_interface)
         self.label_options.setVisible(show_advanced_options and not start_mode_web_interface)
-        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('python.options', unicode, [])))
+        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('python.options', str, [])))

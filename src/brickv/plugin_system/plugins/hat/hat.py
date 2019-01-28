@@ -21,8 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QSpinBox, QSlider, QWidget, QImage, QPainter, QPen, QAction
-from PyQt4.QtCore import pyqtSignal, Qt, QPoint, QSize
+from PyQt5.QtWidgets import QSpinBox, QSlider, QWidget, QAction
+from PyQt5.QtGui import QImage, QPainter, QPen
+from PyQt5.QtCore import pyqtSignal, Qt, QPoint, QSize
 
 from brickv.bindings.bricklet_hat import BrickletHAT
 from brickv.plugin_system.plugins.hat.ui_hat import Ui_HAT
@@ -42,10 +43,10 @@ class HAT(COMCUPluginBase, Ui_HAT):
         self.setupUi(self)
 
         self.hat = self.device
-              
+
         self.cbe_battery_statistics = CallbackEmulator(self.hat.get_battery_statistics,
                                                        self.cb_battery_statistics,
-                                                       self.increase_error_count) 
+                                                       self.increase_error_count)
 
         self.cbe_time = CallbackEmulator(self.hat.get_time,
                                          self.cb_time,
@@ -66,7 +67,7 @@ class HAT(COMCUPluginBase, Ui_HAT):
             widget.setEnabled(self.manual_time_set_active)
 
         self.button_time_system.setEnabled(not self.manual_time_set_active)
-    
+
     def button_time_manual_pressed(self):
         if self.manual_time_set_active:
             year = self.spin_year.value()
@@ -76,7 +77,7 @@ class HAT(COMCUPluginBase, Ui_HAT):
             minute = self.spin_minute.value()
             second = self.spin_second.value()
             weekday = self.combo_weekday.currentIndex() + 1
-            
+
             self.hat.set_time(year, month, day, hour, minute, second, weekday)
             self.button_time_manual.setText('Set Time Manually')
         else:
@@ -99,9 +100,9 @@ class HAT(COMCUPluginBase, Ui_HAT):
         self.hat.set_time(year, month, day, hour, minute, second, weekday)
 
     def button_sleep_pressed(self):
-        self.hat.set_power_off(self.spinbox_sleep_delay.value(), 
-                               self.spinbox_sleep_duration.value(), 
-                               self.checkbox_rpi_off.isChecked(), 
+        self.hat.set_power_off(self.spinbox_sleep_delay.value(),
+                               self.spinbox_sleep_duration.value(),
+                               self.checkbox_rpi_off.isChecked(),
                                self.checkbox_bricklets_off.isChecked(),
                                self.checkbox_sleep_indicator.isChecked())
 
@@ -118,7 +119,7 @@ class HAT(COMCUPluginBase, Ui_HAT):
                 port = chr(ord('a') + i)
                 try:
                     bricklet = bricklets[port]
-                    text ='{0} ({1})'.format(bricklet.name, bricklet.uid) 
+                    text ='{0} ({1})'.format(bricklet.name, bricklet.uid)
                     if text != self.ports[i].text():
                         self.ports[i].setText(text)
                         self.ports[i].mousePressEvent = self.get_port_label_clicked_lambda(bricklet.uid)
@@ -150,12 +151,12 @@ class HAT(COMCUPluginBase, Ui_HAT):
         self.label_capacity_full.setText('{0}mAh'.format(stats.capacity_full))
         self.label_capacity_nominal.setText('{0}mAh'.format(stats.capacity_nominal))
         self.label_capacity_remaining.setText('{0}mAh'.format(stats.capacity_remaining))
-        self.label_percentage_charge.setText(u'{:.2f}%'.format(stats.percentage_charge/100.0))
+        self.label_percentage_charge.setText('{:.2f}%'.format(stats.percentage_charge/100.0))
         self.label_voltage_battery.setText('{:.2f}V'.format(stats.voltage_battery/1000.0))
         self.label_voltage_usb.setText('{:.2f}V'.format(stats.voltage_usb/1000.0))
         self.label_voltage_dc.setText('{:.2f}V'.format(stats.voltage_dc/1000.0))
         self.label_current_flow.setText('{:.2f}A'.format(stats.current_flow/1000.0))
-        self.label_temperature_battery.setText(u'{:.2f}°C'.format(stats.temperature_battery/100.0))
+        self.label_temperature_battery.setText('{:.2f}°C'.format(stats.temperature_battery/100.0))
 
 
 

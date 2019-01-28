@@ -617,7 +617,7 @@ device_specs = {
                 'type': 'int',
                 'minimum': -2147483648,
                 'maximum': 2147483647,
-                'suffix': u'°C/100',
+                'suffix': '°C/100',
                 'default': 0
             }
         ]

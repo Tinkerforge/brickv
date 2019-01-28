@@ -25,8 +25,9 @@ import os
 import posixpath
 import sys
 
-from PyQt4.QtCore import Qt, QDir
-from PyQt4.QtGui import QIcon, QListWidgetItem, QApplication
+from PyQt5.QtCore import Qt, QDir
+from PyQt5.QtWidgets import QListWidgetItem, QApplication
+from PyQt5.QtGui import QIcon
 
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
@@ -59,7 +60,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify the files to be uploaded for the {language} program [{name}].')
+        self.set_formatted_sub_title('Specify the files to be uploaded for the {language} program [{name}].')
         self.list_files.clear()
         self.update_ui_state()
 

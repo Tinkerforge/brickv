@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, QFrame
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
@@ -47,9 +47,9 @@ class TemperatureIR(PluginBase):
         self.current_ambient = None # float, °C
         self.current_object = None # float, °C
 
-        plots = [('Ambient', Qt.blue, lambda: self.current_ambient, u'{} °C'.format),
-                 ('Object', Qt.red, lambda: self.current_object, u'{} °C'.format)]
-        self.plot_widget = PlotWidget(u'Temperature [°C]', plots)
+        plots = [('Ambient', Qt.blue, lambda: self.current_ambient, '{} °C'.format),
+                 ('Object', Qt.red, lambda: self.current_object, '{} °C'.format)]
+        self.plot_widget = PlotWidget('Temperature [°C]', plots)
 
         self.spin_emissivity = QSpinBox()
         self.spin_emissivity.setMinimum(6553)
@@ -63,6 +63,7 @@ class TemperatureIR(PluginBase):
         hlayout.addStretch()
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 

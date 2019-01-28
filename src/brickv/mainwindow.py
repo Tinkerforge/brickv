@@ -28,13 +28,13 @@ import time
 import gc
 import functools
 
-from PyQt4.QtCore import pyqtSignal, Qt, QTimer, QEvent
-from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, \
+from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QEvent, QSortFilterProxyModel
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QCursor
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, \
                         QPushButton, QHBoxLayout, QVBoxLayout, \
                         QLabel, QFrame, QSpacerItem, QSizePolicy, \
-                        QStandardItemModel, QStandardItem, QToolButton, \
-                        QLineEdit, QCursor, QMenu, \
-                        QSortFilterProxyModel, QCheckBox, QComboBox
+                         QToolButton, QLineEdit, QMenu, \
+                        QCheckBox, QComboBox
 
 from brickv.ui_mainwindow import Ui_MainWindow
 from brickv.plugin_system.plugin_manager import PluginManager
@@ -42,7 +42,7 @@ from brickv.bindings.ip_connection import IPConnection
 from brickv.flashing import FlashingWindow
 from brickv.advanced import AdvancedWindow
 from brickv.data_logger.setup_dialog import SetupDialog as DataLoggerWindow
-from brickv.async_call import async_start_thread, async_next_session, async_call
+from brickv.async_call import async_start_thread, async_next_session, async_call, stop_async_thread
 from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
 from brickv import config
@@ -60,12 +60,12 @@ class DevicesProxyModel(QSortFilterProxyModel):
             right_position = right.data(USER_ROLE_POSITION)
 
             if left_position != None and right_position != None:
-                return cmp(left_position, right_position) < 0
+                return left_position < right_position
 
         return QSortFilterProxyModel.lessThan(self, left, right)
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    qtcb_enumerate = pyqtSignal(str, str, 'char', type((0,)), type((0,)), int, int)
+    qtcb_enumerate = pyqtSignal(str, str, str, type((0,)), type((0,)), int, int)
     qtcb_connected = pyqtSignal(int)
     qtcb_disconnected = pyqtSignal(int)
 
@@ -177,6 +177,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
 
         self.exit_brickv()
+        event.accept()
+        stop_async_thread()
+
+        # Without this, the quit event seems to not reach the main loop under OSX.
+        QApplication.quit()
 
     def exit_brickv(self, signl=None, frme=None):
         if self.current_device_info is not None:
@@ -342,7 +347,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return True
 
         try:
-            secret = self.edit_secret.text().encode('ascii')
+            secret = self.edit_secret.text()
+            secret.encode('ascii') # Try to encode the secret, as only ASCII chars are allowed. Don't save the result, as the IP Connection do the same.
         except:
             self.do_disconnect()
 
@@ -528,7 +534,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 info_bars[action[0]].addWidget(button)
 
         def more_clicked(button, info_bar):
-            visible = button.text() == 'More'
+            visible = button.text().replace('&', '') == 'More' # remove &s, they mark the buttons hotkey
 
             if visible:
                 button.setText('Less')
@@ -556,6 +562,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         layout.addLayout(info_bars[1])
 
         line = QFrame()
+        line.setObjectName("MainWindow_line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 
@@ -701,9 +708,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.remove_device_info(device_info.uid)
 
             if device_info.type == 'brick':
+                to_delete = []
                 for port, info in device_info.connections.items():
                     if info.uid == uid:
-                        del device_info.connections[port]
+                        to_delete.append(port)
+                for key in to_delete:
+                    del device_info.connections[key]
 
         self.update_tree_view()
 
@@ -899,7 +909,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tree_view_model.appendRow(parent)
 
             # Search for childs up to a recursion depth of 3 at most.
-            for connected_info1 in sorted(info.connections.values()):
+            for connected_info1 in info.connections.values():
                 child1 = [QStandardItem(connected_info1.name),
                           QStandardItem(connected_info1.uid),
                           QStandardItem(connected_info1.position.upper()),
@@ -908,7 +918,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                 parent[0].appendRow(child1)
 
-                for connected_info2 in sorted(connected_info1.connections.values()):
+                for connected_info2 in connected_info1.connections.values():
                     child2 = [QStandardItem(connected_info2.name),
                               QStandardItem(connected_info2.uid),
                               QStandardItem(connected_info2.position.upper()),
@@ -917,7 +927,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                     child1[0].appendRow(child2)
 
-                    for connected_info3 in sorted(connected_info2.connections.values()):
+                    for connected_info3 in connected_info2.connections.values():
                         child3 = [QStandardItem(connected_info3.name),
                                   QStandardItem(connected_info3.uid),
                                   QStandardItem(connected_info3.position.upper()),

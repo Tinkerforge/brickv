@@ -23,7 +23,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4 import QtGui
+from PyQt5.QtWidgets import QMessageBox, QWidget
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_brickd import Ui_REDTabSettingsBrickd
 from brickv.plugin_system.plugins.red.api import *
@@ -44,9 +44,9 @@ CBOX_BRICKD_LED_TRIGGER_MMC = 3
 CBOX_BRICKD_LED_TRIGGER_OFF = 4
 CBOX_BRICKD_LED_TRIGGER_ON = 5
 
-class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
+class REDTabSettingsBrickd(QWidget, Ui_REDTabSettingsBrickd):
     def __init__(self):
-        QtGui.QWidget.__init__(self)
+        QWidget.__init__(self)
         self.setupUi(self)
 
         self.session        = None # Set from REDTabSettings
@@ -200,7 +200,7 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
                     self.brickd_conf = config_parser.parse(result.data.decode('utf-8'))
                     self.update_brickd_widget_data()
                 else:
-                    QtGui.QMessageBox.critical(get_main_window(),
+                    QMessageBox.critical(get_main_window(),
                                                'Settings | Brickd',
                                                'Error reading brickd config file.')
 
@@ -211,7 +211,7 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
 
         def cb_open_error():
             self.brickd_button_refresh_enabled(True)
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Brickd',
                                        'Error opening brickd config file.')
 
@@ -279,12 +279,12 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
                 get_main_window().setEnabled(True)
 
                 if result is not None:
-                    QtGui.QMessageBox.critical(get_main_window(),
+                    QMessageBox.critical(get_main_window(),
                                                'Settings | Brickd',
                                                'Error writing brickd config file.')
                     return
 
-                QtGui.QMessageBox.information(get_main_window(),
+                QMessageBox.information(get_main_window(),
                                               'Settings | Brick Daemon',
                                               'Saved configuration successfully, will now restart Brick Daemon.')
 
@@ -294,7 +294,7 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
 
         def cb_open_error():
             get_main_window().setEnabled(True)
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Brickd',
                                        'Error opening brickd config file.')
 

@@ -22,9 +22,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, Qt
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QFrame, \
-                        QPainter, QPushButton, QBrush
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QFrame, QPushButton
+from PyQt5.QtGui import QPainter, QBrush
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection

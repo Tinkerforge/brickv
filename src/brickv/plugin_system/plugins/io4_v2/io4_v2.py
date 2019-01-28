@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import QTimer
+from PyQt5.QtCore import QTimer
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.io4_v2.ui_io4_v2 import Ui_IO4V2
@@ -138,11 +138,11 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
     def generator_ch_status_update_timeout(self):
         def async_get_value(value):
             self.async_data_store['all_ch_status_update']['ch_values'] = value
-            self.gen_ch_status_update_timeout.next()
+            next(self.gen_ch_status_update_timeout)
 
         def async_get_configuration(config):
             self.async_data_store['all_ch_status_update']['ch_config'] = config
-            self.gen_ch_status_update_timeout.next()
+            next(self.gen_ch_status_update_timeout)
 
         def async_get_monoflop(channel, monoflop):
             if self.async_data_store['all_ch_status_update']['monoflop'][channel]['running']:
@@ -164,7 +164,7 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
                     self.async_data_store['all_ch_status_update']['monoflop'][i]['running'] = False
                     self.lbl_st_ch_monoflop_t[channel].setText('0')
 
-            self.gen_ch_status_update_timeout.next()
+            next(self.gen_ch_status_update_timeout)
 
         async_call(self.io.get_value, None, async_get_value, self.increase_error_count)
 
@@ -213,16 +213,16 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
             return
 
         self.gen_ch_status_update_timeout = self.generator_ch_status_update_timeout()
-        self.gen_ch_status_update_timeout.next()
+        next(self.gen_ch_status_update_timeout)
 
     def generator_iv_cb_timeout(self):
         def async_get_value(value):
             self.async_data_store['iv_cb']['values'] = value
-            self.gen_iv_cb_timeout.next()
+            next(self.gen_iv_cb_timeout)
 
         def async_get_configuration(channel, config):
             self.async_data_store['iv_cb']['direction'][channel] = config.direction
-            self.gen_iv_cb_timeout.next()
+            next(self.gen_iv_cb_timeout)
 
         async_call(self.io.get_value, None, async_get_value, self.increase_error_count)
 
@@ -253,7 +253,7 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
             return
 
         self.gen_iv_cb_timeout = self.generator_iv_cb_timeout()
-        self.gen_iv_cb_timeout.next()
+        next(self.gen_iv_cb_timeout)
 
     def btn_monoflop_go_clicked(self):
         channel = self.cbox_cfg_ch.currentIndex()
@@ -370,11 +370,11 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
 
         def async_get_configuration(config):
             self.async_data_store['update_current_channel_info']['config'] = config
-            self.gen_update_current_channel_info.next()
+            next(self.gen_update_current_channel_info)
 
         def async_get_value(value):
             self.async_data_store['update_current_channel_info']['value'] = value
-            self.gen_update_current_channel_info.next()
+            next(self.gen_update_current_channel_info)
 
         async_call(self.io.get_configuration, ch_index, async_get_configuration, self.increase_error_count)
 
@@ -402,4 +402,4 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
 
     def update_current_channel_info(self, ch_index):
         self.gen_update_current_channel_info = self.generator_update_current_channel_info(ch_index)
-        self.gen_update_current_channel_info.next()
+        next(self.gen_update_current_channel_info)

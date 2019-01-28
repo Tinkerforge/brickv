@@ -27,15 +27,12 @@ from collections import namedtuple
 import logging
 import functools
 
-from PyQt4.QtGui import QApplication
-from PyQt4.QtCore import QThread, QEvent
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtCore import QThread, QEvent
 
 from brickv.bindings import ip_connection
 
-try:
-    from queue import Queue
-except:
-    from Queue import Queue # Python 2 fallback
+from queue import Queue
 
 ASYNC_EVENT = 12345
 
@@ -45,6 +42,10 @@ async_session_lock = Lock()
 async_session_id = 1
 
 AsyncCall = namedtuple('AsyncCall', 'func_to_call parameter result_callback error_callback report_exception log_exception session_id')
+
+def stop_async_thread():
+    with async_session_lock:
+        async_call_queue.put(None)
 
 def async_call(func_to_call, parameter=None, result_callback=None,
                error_callback=None, report_exception=False, log_exception=False):
@@ -81,6 +82,9 @@ def async_start_thread(parent):
         def run(self):
             while True:
                 ac = async_call_queue.get()
+
+                if ac is None:
+                    break
 
                 if not ac.func_to_call:
                     continue

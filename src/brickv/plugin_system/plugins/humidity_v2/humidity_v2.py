@@ -21,8 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QCheckBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_humidity_v2 import BrickletHumidityV2
@@ -39,21 +39,21 @@ class HumidityV2(COMCUPluginBase):
         self.cbe_humidity = CallbackEmulator(self.hum.get_humidity,
                                              self.cb_humidity,
                                              self.increase_error_count)
-        
+
         self.cbe_temperature = CallbackEmulator(self.hum.get_temperature,
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 
         self.current_humidity = None # float, %RH
         self.current_temperature = None # float, °C
-        
+
         moving_average_humidity = MovingAverageConfig(1, 1000, self.new_moving_average_humidity)
-        plots_humidity = [(u'Relative Humidity', Qt.red, lambda: self.current_humidity, u'{} %RH'.format)]
-        self.plot_widget_humidity = PlotWidget(u'Relative Humidity [%RH]', plots_humidity, moving_average_config=moving_average_humidity)
-        
+        plots_humidity = [('Relative Humidity', Qt.red, lambda: self.current_humidity, '{} %RH'.format)]
+        self.plot_widget_humidity = PlotWidget('Relative Humidity [%RH]', plots_humidity, moving_average_config=moving_average_humidity)
+
         moving_average_temperature = MovingAverageConfig(1, 1000, self.new_moving_average_temperature)
-        plots_temperature = [(u'Temperature', Qt.red, lambda: self.current_temperature, u'{} °C'.format)]
-        self.plot_widget_temperature = PlotWidget(u'Temperature [°C]', plots_temperature, moving_average_config=moving_average_temperature)
+        plots_temperature = [('Temperature', Qt.red, lambda: self.current_temperature, '{} °C'.format)]
+        self.plot_widget_temperature = PlotWidget('Temperature [°C]', plots_temperature, moving_average_config=moving_average_temperature)
 
         self.enable_heater = QCheckBox("Enable Heater")
         self.enable_heater.stateChanged.connect(self.enable_heater_changed)
@@ -61,16 +61,16 @@ class HumidityV2(COMCUPluginBase):
         layout_plot = QHBoxLayout()
         layout_plot.addWidget(self.plot_widget_humidity)
         layout_plot.addWidget(self.plot_widget_temperature)
-        
+
         layout_config = QHBoxLayout()
         layout_config.addStretch()
         layout_config.addWidget(self.enable_heater)
         layout_config.addStretch()
-        
+
         layout_main = QVBoxLayout(self)
         layout_main.addLayout(layout_plot)
         layout_main.addLayout(layout_config)
-        
+
     def new_moving_average_humidity(self, value):
         self.hum.set_moving_average_configuration(value, self.plot_widget_temperature.get_moving_average_value())
 
@@ -111,10 +111,10 @@ class HumidityV2(COMCUPluginBase):
 
     def cb_humidity(self, humidity):
         self.current_humidity = humidity / 100.0
-        
+
     def cb_temperature(self, temperature):
         self.current_temperature = temperature / 100.0
-        
+
     def cb_heater_configuration(self, heater_config):
         if heater_config == 0:
             self.enable_heater.setChecked(False)

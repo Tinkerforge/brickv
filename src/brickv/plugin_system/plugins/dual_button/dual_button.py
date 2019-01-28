@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.dual_button.ui_dual_button import Ui_DualButton

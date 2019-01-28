@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QMessageBox
+from PyQt5.QtWidgets import QMessageBox
 
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
@@ -52,7 +52,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify when the {language} program [{name}] should be executed.')
+        self.set_formatted_sub_title('Specify when the {language} program [{name}] should be executed.')
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_START_MODE)
 
         # if a program exists then this page is used in an edit wizard
@@ -123,16 +123,16 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
             program.set_schedule(start_mode, continue_after_error, start_interval, start_fields) # FIXME: async_call
         except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
-                                 u'Could not update stdio redirection of program [{0}]:\n\n{1}'
-                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                 'Could not update stdio redirection of program [{0}]:\n\n{1}'
+                                 .format(program.cast_custom_option_value('name', str, '<unknown>'), e))
             return
 
         try:
             program.set_custom_option_value('started_once_after_upload', False) # FIXME: async_call
         except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
-                                 u'Could not update custom options of program [{0}]:\n\n{1}'
-                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                 'Could not update custom options of program [{0}]:\n\n{1}'
+                                 .format(program.cast_custom_option_value('name', str, '<unknown>'), e))
             return
 
         self.set_last_edit_timestamp()

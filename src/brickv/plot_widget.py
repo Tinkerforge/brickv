@@ -29,17 +29,34 @@ import bisect
 from collections import namedtuple
 import time
 
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
-                        QPainter, QSizePolicy, QFontMetrics, QPixmap, \
-                        QIcon, QColor, QPainterPath, QLabel, QTransform, \
-                        QSpinBox
-from PyQt4.QtCore import QTimer, Qt, QSize, QRectF, QLineF, QPoint
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
+                        QSizePolicy, QLabel, QSpinBox
+
+from PyQt5.QtGui import QPainter, QFontMetrics, QPixmap, QIcon, QColor, QPainterPath, QTransform, QPen
+
+from PyQt5.QtCore import QTimer, Qt, QSize, QRectF, QLineF, QPoint
 
 CurveConfig = namedtuple('CurveConfig', 'title color value_getter value_formatter')
 MovingAverageConfig = namedtuple('MovingAverageConfig', 'min_length max_length callback')
 
 EPSILON = 0.000001
 DEBUG = False
+
+def safe_min(*args):
+    if None in args:
+        return None
+    try:
+        iterator = iter(args[0])
+        if None in args[0]:
+            return None
+    except TypeError:
+        pass
+    return min(*args)
+
+def safe_max(*args):
+    if all(i is None for i in args) and len(args) > 0:
+        return None
+    return max(*[i for i in args if i is not None])
 
 def istr(i):
     return str(int(i))
@@ -406,6 +423,10 @@ class CurveArea(QWidget):
 
             painter.save()
             painter.setTransform(transform)
+            pen = QPen()
+            pen.setCosmetic(True)
+            pen.setWidth(0)
+            painter.setPen(pen)
 
             if False and self.plot.curves_visible[0]:
                 # Currently unused support for bar graphs.
@@ -427,11 +448,17 @@ class CurveArea(QWidget):
                             self.max_points[i] = (t, curve_y[i])
 
                 for i in range(len(self.plot.curves_x[0])):
-                    painter.setPen(self.plot.curve_configs[0].color)
+                    pen.setColor(self.plot.curve_configs[0].color)
+                    painter.setPen(pen)
+                    #painter.setPen(self.plot.curve_configs[0].color)
                     painter.drawLine(QPoint(curve_x[i], 0), QPoint(curve_x[i], curve_y[i]))
-                    painter.setPen(Qt.white)
+                    pen.setColor(Qt.white)
+                    painter.setPen(pen)
+                    #painter.setPen(Qt.white)
                     painter.drawLine(QPoint(curve_x[i], curve_y[i]), QPoint(curve_x[i], y_max_scale))
-                    painter.setPen(Qt.darkGreen)
+                    pen.setColor(Qt.darkGreen)
+                    painter.setPen(pen)
+                    #painter.setPen(Qt.darkGreen)
                     painter.drawPoint(QPoint(curve_x[i], self.max_points[i][1]))
             else:
                 for c in range(len(self.plot.curves_x)):
@@ -444,16 +471,17 @@ class CurveArea(QWidget):
                     lineTo = path.lineTo
 
                     if self.plot.curve_motion_granularity > 1:
-                        start = max(min(bisect.bisect_left(curve_x, inverted_event_rect.left()), len(curve_x) - 1) - 1, 0)
+                        start = max(safe_min(bisect.bisect_left(curve_x, inverted_event_rect.left()), len(curve_x) - 1) - 1, 0)
                     else:
                         start = 0
 
                     path.moveTo(curve_x[start], curve_y[start])
 
-                    for i in xrange(start + 1, len(curve_x)):
+                    for i in range(start + 1, len(curve_x)):
                         lineTo(curve_x[i], curve_y[i])
-
-                    painter.setPen(self.plot.curve_configs[c].color)
+                    pen.setColor(self.plot.curve_configs[c].color)
+                    painter.setPen(pen)
+                    #painter.setPen(self.plot.curve_configs[c].color)
                     painter.drawPath(path)
 
             painter.restore()
@@ -649,7 +677,7 @@ class Plot(QWidget):
             if self.y_min == None:
                 self.y_min = y
             else:
-                self.y_min = min(self.y_min, y)
+                self.y_min = safe_min(self.y_min, y)
 
             if self.y_max == None:
                 self.y_max = y
@@ -668,7 +696,7 @@ class Plot(QWidget):
         if self.curves_y_min[c] == None:
             self.curves_y_min[c] = y
         else:
-            self.curves_y_min[c] = min(self.curves_y_min[c], y)
+            self.curves_y_min[c] = safe_min(self.curves_y_min[c], y)
 
         if self.curves_y_max[c] == None:
             self.curves_y_max[c] = y
@@ -690,7 +718,7 @@ class Plot(QWidget):
                 else:
                     self.curves_x_max[c] = None
 
-                self.curves_y_min[c] = min(self.curves_y[c])
+                self.curves_y_min[c] = safe_min(self.curves_y[c])
                 self.curves_y_max[c] = max(self.curves_y[c])
 
                 self.update_x_min_max_y_min_max()
@@ -698,7 +726,7 @@ class Plot(QWidget):
                 self.partial_update_enabled = True
             else:
                 self.curves_x_max[c] = self.curves_x[c][-1]
-                self.x_max = min(self.curves_x_max)
+                self.x_max = safe_min(self.curves_x_max)
 
         if self.curves_visible[c] and (last_y_min != self.y_min or last_y_max != self.y_max):
             self.update_y_min_max_scale()
@@ -713,13 +741,13 @@ class Plot(QWidget):
         if self.y_type == None:
             self.y_type = type(y[0])
 
-        x = map(float, x) # also makes a copy of x
-        y = map(float, y) # also makes a copy of y
+        x = list(map(float, x)) # also makes a copy of x
+        y = list(map(float, y)) # also makes a copy of y
 
         x_min = x[0]
         x_max = x[-1]
 
-        y_min = min(y)
+        y_min = safe_min(y)
         y_max = max(y)
 
         last_y_min = self.y_min
@@ -735,7 +763,7 @@ class Plot(QWidget):
             if self.y_min == None:
                 self.y_min = y_min
             else:
-                self.y_min = min(self.y_min, y_min)
+                self.y_min = safe_min(self.y_min, y_min)
 
             if self.y_max == None:
                 self.y_max = y_max
@@ -751,7 +779,7 @@ class Plot(QWidget):
         self.curves_y_min[c] = y_min
         self.curves_y_max[c] = y_max
 
-        self.x_max = min(self.curves_x_max)
+        self.x_max = safe_min(self.curves_x_max)
 
         if self.curves_visible[c] and (last_y_min != self.y_min or last_y_max != self.y_max):
             self.update_y_min_max_scale()
@@ -761,12 +789,12 @@ class Plot(QWidget):
     def update_x_min_max_y_min_max(self):
         last_x_min, last_x_max, last_y_min, last_y_max = self.x_min, self.x_max, self.y_min, self.y_max
 
-        self.x_min = min(self.curves_x_min)
-        self.x_max = min(self.curves_x_max)
+        self.x_min = safe_min(self.curves_x_min)
+        self.x_max = safe_min(self.curves_x_max)
 
         if sum(map(int, self.curves_visible)) > 0:
-            self.y_min = min([curve_y_min for k, curve_y_min in enumerate(self.curves_y_min) if self.curves_visible[k]])
-            self.y_max = max([curve_y_max for k, curve_y_max in enumerate(self.curves_y_max) if self.curves_visible[k]])
+            self.y_min = safe_min([curve_y_min for k, curve_y_min in enumerate(self.curves_y_min) if self.curves_visible[k]])
+            self.y_max = safe_max([curve_y_max for k, curve_y_max in enumerate(self.curves_y_max) if self.curves_visible[k]])
         else:
             self.y_min = None
             self.y_max = None
@@ -898,8 +926,8 @@ class FixedSizeToolButton(QToolButton):
         hint = QToolButton.sizeHint(self)
 
         if self.maximum_size_hint != None:
-            hint = QSize(max(hint.width(), self.maximum_size_hint.width()),
-                         max(hint.height(), self.maximum_size_hint.height()))
+            hint = QSize(safe_max(hint.width(), self.maximum_size_hint.width()),
+                         safe_max(hint.height(), self.maximum_size_hint.height()))
 
         self.maximum_size_hint = hint
 
@@ -912,8 +940,8 @@ class FixedSizeLabel(QLabel):
         hint = QLabel.sizeHint(self)
 
         if self.maximum_size_hint != None:
-            hint = QSize(max(hint.width(), self.maximum_size_hint.width()),
-                         max(hint.height(), self.maximum_size_hint.height()))
+            hint = QSize(safe_max(hint.width(), self.maximum_size_hint.width()),
+                         safe_max(hint.height(), self.maximum_size_hint.height()))
 
         self.maximum_size_hint = hint
 
@@ -1086,7 +1114,7 @@ class PlotWidget(QWidget):
                 for key_item in self.key_items:
                     widths.append(key_item.width())
 
-                width = max(widths)
+                width = safe_max(widths)
 
                 for key_item in self.key_items:
                     size = key_item.minimumSize()

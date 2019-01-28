@@ -21,8 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QSpinBox, QSlider, QWidget, QImage, QPainter, QPen, QAction
-from PyQt4.QtCore import pyqtSignal, Qt, QPoint, QSize, QTimer
+from PyQt5.QtWidgets import QSpinBox, QSlider, QWidget, QAction
+from PyQt5.QtGui import QImage, QPainter, QPen
+from PyQt5.QtCore import pyqtSignal, Qt, QPoint, QSize, QTimer
 
 from brickv.bindings.bricklet_hat_zero import BrickletHATZero
 from brickv.plugin_system.plugins.hat_zero.ui_hat_zero import Ui_HATZero

@@ -21,12 +21,10 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, Qt
-from PyQt4.QtGui import QVBoxLayout, QWidget, QLinearGradient, \
-                        QPainter, QSizePolicy, QColor
-                        
-from PyQt4.QtGui import QSpinBox, QSlider, QWidget, QImage, QPainter, QPen, QAction
-from PyQt4.QtCore import pyqtSignal, Qt, QPoint, QSize
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QSpinBox, QSlider, QSizePolicy, QAction
+
+from PyQt5.QtGui import QLinearGradient, QImage, QPainter, QPen, QColor
+from PyQt5.QtCore import pyqtSignal, Qt, QPoint, QSize
 
 from brickv.bindings.bricklet_sound_pressure_level import BrickletSoundPressureLevel
 from brickv.plugin_system.plugins.sound_pressure_level.ui_sound_pressure_level import Ui_SoundPressureLevel
@@ -88,21 +86,21 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
         self.cbe_get_decibel = CallbackEmulator(self.sound_pressure_level.get_decibel,
                                                 self.cb_get_decibel,
                                                 self.increase_error_count)
-        
+
         self.qtcb_spectrum.connect(self.cb_spectrum)
-        
+
         self.thermo = TuningThermo()
-        
-        plots_spectrum = [(u'Spectrum', Qt.red, None, u'{} °C'.format)]
-        self.plot_widget_spectrum = PlotWidget(u'Value [dB]', plots_spectrum, clear_button=None, x_diff=20480, x_scale_title_text='Frequency [Hz]', x_scale_skip_last_tick=False, key=None)
+
+        plots_spectrum = [('Spectrum', Qt.red, None, '{} °C'.format)]
+        self.plot_widget_spectrum = PlotWidget('Value [dB]', plots_spectrum, clear_button=None, x_diff=20480, x_scale_title_text='Frequency [Hz]', x_scale_skip_last_tick=False, key=None)
         self.plot_widget_spectrum.set_x_scale(512*40/5, 1)
-        
+
         self.combo_fft_size.currentIndexChanged.connect(self.config_changed)
         self.combo_weighting.currentIndexChanged.connect(self.config_changed)
-        
+
         self.layout_graph.addWidget(self.plot_widget_spectrum)
         self.layout_decibel.insertWidget(3, self.thermo)
-        
+
         self.last_spectrum_length = 512
 
         self.last_y_data = [0]*512
@@ -117,7 +115,7 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
             return 2
         elif index == 3:
             return 4
-        
+
     def config_changed(self, _):
         self.last_y_data = [0]*512
         self.sound_pressure_level.set_configuration(self.combo_fft_size.currentIndex(), self.combo_weighting.currentIndex())
@@ -125,11 +123,11 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
     def cb_get_decibel(self, db):
         self.label_decibel.setText("{:.1f}".format(db/10.0))
         self.thermo.set_value(db)
-        
+
     def cb_spectrum(self, spectrum):
         length = len(spectrum)
-        num    = 20480/length
-        
+        num    = 20480//length
+
         x_data = list(range(0, num*length, num))
         y_data = list(map(lambda x: 20*math.log10(max(1, x/math.sqrt(2))), spectrum))
         if self.checkbox_decay.isChecked():
@@ -149,7 +147,7 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
         self.combo_fft_size.blockSignals(True)
         self.combo_fft_size.setCurrentIndex(config.fft_size)
         self.combo_fft_size.blockSignals(False)
-        
+
         self.combo_weighting.blockSignals(True)
         self.combo_weighting.setCurrentIndex(config.weighting)
         self.combo_weighting.blockSignals(False)
@@ -157,7 +155,7 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
     def start(self):
         async_call(self.sound_pressure_level.get_configuration, None, self.get_configuration_async, self.increase_error_count)
         self.cbe_get_decibel.set_period(50)
-        
+
         async_call(self.sound_pressure_level.set_spectrum_callback_configuration, (1,), None, self.increase_error_count)
         self.sound_pressure_level.register_callback(self.sound_pressure_level.CALLBACK_SPECTRUM, self.qtcb_spectrum.emit)
 

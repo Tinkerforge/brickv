@@ -38,15 +38,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.data_logger.event_logger import EventLogger
 
 def utf8_strftime(timestamp, fmt):
-    encoding = locale.getlocale()[1]
-
-    # FIXME: macOS doesn't have LANG set when running from an .app container.
-    # therefore, locale.setlocale() cannot detect the encoding from the environment.
-    # in this case we just default to UTF-8 and hope for the best
-    if encoding == None:
-        encoding = 'utf-8'
-
-    return datetime.fromtimestamp(timestamp).strftime(fmt).decode(encoding).encode('utf-8')
+    return datetime.fromtimestamp(timestamp).strftime(fmt)
 
 def timestamp_to_de(timestamp):
     return utf8_strftime(timestamp, '%d.%m.%Y %H:%M:%S')
@@ -97,7 +89,7 @@ def timestamp_to_unix_msec(timestamp):
 
 def timestamp_to_strftime(timestamp, time_format):
     try:
-        return utf8_strftime(timestamp, time_format.encode('utf-8'))
+        return utf8_strftime(timestamp, time_format)
     except Exception as e:
         return 'Error: ' + str(e).replace('\n', ' ')
 
@@ -295,10 +287,10 @@ class Utilities(object):
 
     def is_valid_string(string_value, min_length=0):
         """
-        Returns True if 'string_value' is of type basestring and has at least a size of
+        Returns True if 'string_value' is of type str and has at least a size of
         'min_length'
         """
-        if not isinstance(string_value, basestring) or len(string_value) < min_length:
+        if not isinstance(string_value, str) or len(string_value) < min_length:
             return False
         return True
 

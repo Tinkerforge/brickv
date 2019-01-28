@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, QTimer
-from PyQt4.QtGui import QWidget, QDialog, QMessageBox
+from PyQt5.QtCore import pyqtSignal, QTimer
+from PyQt5.QtWidgets import QWidget, QDialog, QMessageBox
 
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_info import ProgramInfoContext
@@ -124,7 +124,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.button_edit_schedule.clicked.connect(self.show_edit_schedule_wizard)
 
         # create language info widget
-        language_api_name = self.program.cast_custom_option_value('language', unicode, '<unknown>')
+        language_api_name = self.program.cast_custom_option_value('language', str, '<unknown>')
 
         try:
             language = Constants.get_language(language_api_name)
@@ -290,9 +290,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             self.set_edit_buttons_enabled(True)
 
         # general
-        name              = self.program.cast_custom_option_value('name', unicode, '<unknown>')
-        language_api_name = self.program.cast_custom_option_value('language', unicode, '<unknown>')
-        description       = self.program.cast_custom_option_value('description', unicode, '')
+        name              = self.program.cast_custom_option_value('name', str, '<unknown>')
+        language_api_name = self.program.cast_custom_option_value('language', str, '<unknown>')
+        description       = self.program.cast_custom_option_value('description', str, '')
         first_upload      = self.program.cast_custom_option_value('first_upload', int, 0)
         last_edit         = self.program.cast_custom_option_value('last_edit', int, 0)
 
@@ -493,8 +493,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             self.program.start()
         except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Start Error',
-                                 u'Could not start program [{0}]:\n\n{1}'
-                                 .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                 'Could not start program [{0}]:\n\n{1}'
+                                 .format(self.program.cast_custom_option_value('name', str, '<unknown>'), e))
 
     def exit_process(self):
         if self.program.last_spawned_process != None:
@@ -502,33 +502,33 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
                 self.program.last_spawned_process.kill(REDProcess.SIGNAL_TERMINATE)
             except (Error, REDError) as e:
                 QMessageBox.critical(get_main_window(), 'Exit Error',
-                                     u'Could not exit current process of program [{0}]:\n\n{1}'
-                                     .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                     'Could not exit current process of program [{0}]:\n\n{1}'
+                                     .format(self.program.cast_custom_option_value('name', str, '<unknown>'), e))
     def kill_process(self):
         if self.program.last_spawned_process != None:
             try:
                 self.program.last_spawned_process.kill(REDProcess.SIGNAL_KILL)
             except (Error, REDError) as e:
                 QMessageBox.critical(get_main_window(), 'Kill Error',
-                                     u'Could not kill current process of program [{0}]:\n\n{1}'
-                                     .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                     'Could not kill current process of program [{0}]:\n\n{1}'
+                                     .format(self.program.cast_custom_option_value('name', str, '<unknown>'), e))
 
     def continue_schedule(self):
         try:
             self.program.continue_schedule()
         except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Schedule Error',
-                                 u'Could not continue schedule of program [{0}]:\n\n{1}'
-                                 .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                 'Could not continue schedule of program [{0}]:\n\n{1}'
+                                 .format(self.program.cast_custom_option_value('name', str, '<unknown>'), e))
 
     def send_stdin_pipe_input(self):
         if self.program.last_spawned_process != None and self.program.last_spawned_process.stdin != None:
             try:
-                self.program.last_spawned_process.stdin.write_async((self.edit_stdin_pipe_input.text() + u'\n').encode('utf-8'))
+                self.program.last_spawned_process.stdin.write_async((self.edit_stdin_pipe_input.text() + '\n').encode('utf-8'))
             except (Error, REDError) as e:
                 QMessageBox.critical(get_main_window(), 'Pipe Input Error',
-                                     u'Could not write to stdin of current process of program [{0}]:\n\n{1}'
-                                     .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                     'Could not write to stdin of current process of program [{0}]:\n\n{1}'
+                                     .format(self.program.cast_custom_option_value('name', str, '<unknown>'), e))
             else:
                 self.edit_stdin_pipe_input.setText('')
 
@@ -585,7 +585,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             self.set_edit_buttons_enabled(True)
 
     def show_edit_language_wizard(self):
-        language_api_name = self.program.cast_custom_option_value('language', unicode, '<unknown>')
+        language_api_name = self.program.cast_custom_option_value('language', str, '<unknown>')
 
         try:
             language_page = Constants.get_language_page(language_api_name)

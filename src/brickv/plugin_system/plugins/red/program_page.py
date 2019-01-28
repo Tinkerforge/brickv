@@ -22,9 +22,10 @@ Boston, MA 02111-1307, USA.
 """
 
 import time
+import html
 
-from PyQt4.QtCore import QTimer
-from PyQt4.QtGui import QWizardPage, QMessageBox
+from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QWizardPage, QMessageBox
 
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import *
@@ -40,7 +41,7 @@ class ProgramPage(QWizardPage):
 
     def set_formatted_sub_title(self, sub_title):
         language = Constants.language_display_names[self.get_field('language')]
-        name     = Qt.escape(self.get_field('name'))
+        name     = html.escape(self.get_field('name'))
 
         self.setSubTitle(sub_title.format(**{'language': language, 'name': name}))
 
@@ -55,8 +56,8 @@ class ProgramPage(QWizardPage):
             program.set_custom_option_value('last_edit', int(time.time())) # FIXME: async_call
         except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
-                                 u'Could not update last edit timestamp of program [{0}]:\n\n{1}'
-                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                 'Could not update last edit timestamp of program [{0}]:\n\n{1}'
+                                 .format(program.cast_custom_option_value('name', str, '<unknown>'), e))
 
     # to be used on language configuration pages
     def get_executable_versions(self, executable_name, callback):
@@ -131,8 +132,8 @@ class ProgramPage(QWizardPage):
             program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
         except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
-                                 u'Could not update command of program [{0}]:\n\n{1}'
-                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                 'Could not update command of program [{0}]:\n\n{1}'
+                                 .format(program.cast_custom_option_value('name', str, '<unknown>'), e))
             return False
 
         # custom options
@@ -141,13 +142,13 @@ class ProgramPage(QWizardPage):
         custom_options['editable_arguments_offset']   = editable_arguments_offset
         custom_options['editable_environment_offset'] = editable_environment_offset
 
-        for name, value in custom_options.iteritems():
+        for name, value in custom_options.items():
             try:
                 program.set_custom_option_value(name, value) # FIXME: async_call
             except (Error, REDError) as e:
                 QMessageBox.critical(get_main_window(), 'Edit Program Error',
-                                     u'Could not update custom options of program [{0}]:\n\n{1}'
-                                     .format(program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                     'Could not update custom options of program [{0}]:\n\n{1}'
+                                     .format(program.cast_custom_option_value('name', str, '<unknown>'), e))
                 return False
 
         self.set_last_edit_timestamp()

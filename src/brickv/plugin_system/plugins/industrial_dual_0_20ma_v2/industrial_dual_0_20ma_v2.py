@@ -23,8 +23,8 @@ Boston, MA 02111-1307, USA.
 
 import functools
 
-from PyQt4.QtCore import Qt, QSize, QObject
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QGridLayout, \
+from PyQt5.QtCore import Qt, QSize, QObject
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QGridLayout, \
                         QFrame, QSizePolicy, QDoubleSpinBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
@@ -196,14 +196,17 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         hlayout1.addWidget(self.led_status_config_ch1_max_sbox)
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 
         line1 = QFrame()
+        line1.setObjectName("line1")
         line1.setFrameShape(QFrame.HLine)
         line1.setFrameShadow(QFrame.Sunken)
 
         line2 = QFrame()
+        line2.setObjectName("line2")
         line2.setFrameShape(QFrame.HLine)
         line2.setFrameShadow(QFrame.Sunken)
 

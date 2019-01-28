@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QMessageBox
+from PyQt5.QtWidgets import QMessageBox
 
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
@@ -57,7 +57,7 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify how standard input, output and error of the {language} program [{name}] should be redirected.')
+        self.set_formatted_sub_title('Specify how standard input, output and error of the {language} program [{name}] should be redirected.')
         self.combo_stdin_redirection.setCurrentIndex(Constants.DEFAULT_STDIN_REDIRECTION)
         self.combo_stdout_redirection.setCurrentIndex(Constants.DEFAULT_STDOUT_REDIRECTION)
         self.combo_stderr_redirection.setCurrentIndex(Constants.DEFAULT_STDERR_REDIRECTION)
@@ -166,8 +166,8 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
                                           stderr_redirection, stderr_file) # FIXME: async_call
         except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
-                                 u'Could not update stdio redirection of program [{0}]:\n\n{1}'
-                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                 'Could not update stdio redirection of program [{0}]:\n\n{1}'
+                                 .format(program.cast_custom_option_value('name', str, '<unknown>'), e))
             return
 
         self.set_last_edit_timestamp()

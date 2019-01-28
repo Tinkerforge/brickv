@@ -42,7 +42,7 @@ class ProgramInfoC(ProgramInfo, Ui_ProgramInfoC):
         compile_from_source   = self.program.cast_custom_option_value('c.compile_from_source', bool, False)
 
         # start mode
-        start_mode_api_name   = self.program.cast_custom_option_value('c.start_mode', unicode, '<unknown>')
+        start_mode_api_name   = self.program.cast_custom_option_value('c.start_mode', str, '<unknown>')
         start_mode            = Constants.get_c_start_mode(start_mode_api_name)
         start_mode_executable = start_mode == Constants.C_START_MODE_EXECUTABLE
 
@@ -51,7 +51,7 @@ class ProgramInfoC(ProgramInfo, Ui_ProgramInfoC):
         # executable
         self.label_executable_title.setVisible(start_mode_executable)
         self.label_executable.setVisible(start_mode_executable)
-        self.label_executable.setText(self.program.cast_custom_option_value('c.executable', unicode, ''))
+        self.label_executable.setText(self.program.cast_custom_option_value('c.executable', str, ''))
 
         # compile from source
         if compile_from_source:
@@ -67,7 +67,7 @@ class ProgramInfoC(ProgramInfo, Ui_ProgramInfoC):
         # make options
         self.label_make_options_title.setVisible(compile_from_source and show_advanced_options)
         self.label_make_options.setVisible(compile_from_source and show_advanced_options)
-        self.label_make_options.setText('\n'.join(self.program.cast_custom_option_value_list('c.make_options', unicode, [])))
+        self.label_make_options.setText('\n'.join(self.program.cast_custom_option_value_list('c.make_options', str, [])))
 
     # overrides ProgramInfo.close_all_dialogs
     def close_all_dialogs(self):

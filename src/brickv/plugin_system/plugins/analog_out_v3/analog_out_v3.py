@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBox, QFrame
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBox, QFrame
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings import ip_connection
@@ -36,7 +36,7 @@ class AnalogOutV3(COMCUPluginBase, Ui_AnalogOutV3):
 
         self.setupUi(self)
         self.ao = self.device
-        
+
         self.output_voltage_box.editingFinished.connect(self.voltage_finished)
 
         self.cbe_input_voltage = CallbackEmulator(self.ao.get_input_voltage,
@@ -67,7 +67,6 @@ class AnalogOutV3(COMCUPluginBase, Ui_AnalogOutV3):
     def voltage_finished(self):
         value = int(round(self.output_voltage_box.value()*1000, 0))
         try:
-            print(value)
             self.ao.set_output_voltage(value)
         except ip_connection.Error:
             return

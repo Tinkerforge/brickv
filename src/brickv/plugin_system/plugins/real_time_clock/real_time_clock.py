@@ -27,8 +27,8 @@ import time
 import math
 import random
 
-from PyQt4.QtCore import Qt, pyqtSignal
-from PyQt4.QtGui import QDialog
+from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtWidgets import QDialog
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.real_time_clock.ui_real_time_clock import Ui_RealTimeClock
@@ -276,7 +276,7 @@ class Calibration(QDialog, Ui_Calibration):
             else:
                 stddev_color = 'FF0000'
 
-            self.label_measured_offset.setText(u'%.03f ppm (%s%.03f ppm</font> <font color="#%s">± %.03f ppm</font>)' %
+            self.label_measured_offset.setText('%.03f ppm (%s%.03f ppm</font> <font color="#%s">± %.03f ppm</font>)' %
                                                (self.measured_ppm, measured_ppm_avg_color, self.measured_ppm_avg, stddev_color, stddev))
         else:
             self.label_measured_offset.setText('undefined')

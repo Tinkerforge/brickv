@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import QTimer
-from PyQt4.QtGui import QAction
+from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QAction
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.master.ui_master import Ui_Master

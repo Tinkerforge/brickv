@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import QTimer, pyqtSignal
+from PyQt5.QtCore import QTimer, pyqtSignal
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.segment_display_4x7.ui_segment_display_4x7 import Ui_SegmentDisplay4x7

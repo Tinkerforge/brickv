@@ -24,7 +24,8 @@ Boston, MA 02111-1307, USA.
 
 import json
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QWidget, QLineEdit, QMessageBox
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_ap import Ui_REDTabSettingsAP
 from brickv.plugin_system.plugins.red.red_tab_settings_ap_dhcp_leases_dialog import REDTabSettingsAPDhcpLeasesDialog
@@ -43,9 +44,9 @@ AP_INTERFACE_MASK_USER_ROLE = QtCore.Qt.UserRole + 2
 HOSTAPD_CONF_PATH = '/etc/hostapd/hostapd.conf'
 DNSMASQ_CONF_PATH = '/etc/dnsmasq.conf'
 
-class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
+class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
     def __init__(self):
-        QtGui.QWidget.__init__(self)
+        QWidget.__init__(self)
 
         self.setupUi(self)
 
@@ -194,9 +195,9 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
     def slot_chkbox_ap_wpa_key_show_state_changed(self, state):
         if state == QtCore.Qt.Checked:
-            self.ledit_ap_wpa_key.setEchoMode(QtGui.QLineEdit.Normal)
+            self.ledit_ap_wpa_key.setEchoMode(QLineEdit.Normal)
         else:
-            self.ledit_ap_wpa_key.setEchoMode(QtGui.QLineEdit.Password)
+            self.ledit_ap_wpa_key.setEchoMode(QLineEdit.Password)
 
     def slot_pbutton_ap_refresh_clicked(self):
         def cb_settings_ap_status(result):
@@ -216,7 +217,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                    ap_mode_status['ap_incomplete_config'] is None or \
                    ap_mode_status['ap_hardware_or_config_problem'] is None:
                     self.label_ap_status.setText('-')
-                    QtGui.QMessageBox.critical(get_main_window(),
+                    QMessageBox.critical(get_main_window(),
                                                'Settings | Access Point',
                                                'Error checking access point mode.')
                 elif not ap_mode_status['ap_incomplete_config'] and \
@@ -233,7 +234,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                 self.read_config_files()
             else:
                 self.label_ap_status.setText('-')
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
                                            'Error checking access point mode:\n\n' + result.stderr)
 
@@ -256,11 +257,11 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             if result and result.exit_code == 0:
                 self.slot_pbutton_ap_refresh_clicked()
 
-                QtGui.QMessageBox.information(get_main_window(),
+                QMessageBox.information(get_main_window(),
                                               'Settings | Access Point',
                                               'Access point settings saved.')
             else:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
                                            'Error saving access point settings:\n\n' + result.stderr)
 
@@ -273,7 +274,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
                 if ap_mode_status['ap_incomplete_config'] or \
                    ap_mode_status['ap_hardware_or_config_problem']:
-                        apply_dict['hostapd_driver'] = unicode('driver=rtl871xdrv')
+                        apply_dict['hostapd_driver'] = 'driver=rtl871xdrv'
                         self.script_manager.execute_script('settings_ap_apply',
                                                            cb_settings_ap_apply_2,
                                                            [json.dumps(apply_dict)])
@@ -316,7 +317,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                 self.sarea_ap.show()
                 self.update_button_text_state(BUTTON_STATE_DEFAULT)
 
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
                                            message)
                 return False
@@ -329,6 +330,12 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                            'WPA key not contain non-ASCII characters'):
             return
 
+        if len(self.ledit_ap_wpa_key.text()) < 8 or len(self.ledit_ap_wpa_key.text()) > 63:
+            QMessageBox.critical(get_main_window(),
+                                           'Settings | Access Point',
+                                           'Error saving access point settings:\n\nWPA key has to have a length between (inclusive) 8 and 63 characters.')
+            return
+
         if not check_ascii(self.ledit_ap_domain.text(),
                            'DNS domain not contain non-ASCII characters'):
             return
@@ -337,67 +344,67 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             interface = self.cbox_ap_interface.currentText()
 
             interface_ip_list = []
-            interface_ip_list.append(unicode(self.sbox_ap_intf_ip1.value()))
-            interface_ip_list.append(unicode(self.sbox_ap_intf_ip2.value()))
-            interface_ip_list.append(unicode(self.sbox_ap_intf_ip3.value()))
-            interface_ip_list.append(unicode(self.sbox_ap_intf_ip4.value()))
+            interface_ip_list.append(str(self.sbox_ap_intf_ip1.value()))
+            interface_ip_list.append(str(self.sbox_ap_intf_ip2.value()))
+            interface_ip_list.append(str(self.sbox_ap_intf_ip3.value()))
+            interface_ip_list.append(str(self.sbox_ap_intf_ip4.value()))
             interface_ip = '.'.join(interface_ip_list)
 
             interface_mask_list = []
-            interface_mask_list.append(unicode(self.sbox_ap_intf_mask1.value()))
-            interface_mask_list.append(unicode(self.sbox_ap_intf_mask2.value()))
-            interface_mask_list.append(unicode(self.sbox_ap_intf_mask3.value()))
-            interface_mask_list.append(unicode(self.sbox_ap_intf_mask4.value()))
+            interface_mask_list.append(str(self.sbox_ap_intf_mask1.value()))
+            interface_mask_list.append(str(self.sbox_ap_intf_mask2.value()))
+            interface_mask_list.append(str(self.sbox_ap_intf_mask3.value()))
+            interface_mask_list.append(str(self.sbox_ap_intf_mask4.value()))
             interface_mask = '.'.join(interface_mask_list)
 
             ssid = self.ledit_ap_ssid.text()
             ssid_hidden = self.chkbox_ap_ssid_hidden.isChecked()
             wpa_key = self.ledit_ap_wpa_key.text()
-            channel = unicode(self.sbox_ap_channel.value())
+            channel = self.sbox_ap_channel.value()
             enabled_dns_dhcp = self.chkbox_ap_enable_dns_dhcp.isChecked()
             domain = self.ledit_ap_domain.text()
 
             dhcp_start_list = []
-            dhcp_start_list.append(unicode(self.sbox_ap_pool_start1.value()))
-            dhcp_start_list.append(unicode(self.sbox_ap_pool_start2.value()))
-            dhcp_start_list.append(unicode(self.sbox_ap_pool_start3.value()))
-            dhcp_start_list.append(unicode(self.sbox_ap_pool_start4.value()))
+            dhcp_start_list.append(str(self.sbox_ap_pool_start1.value()))
+            dhcp_start_list.append(str(self.sbox_ap_pool_start2.value()))
+            dhcp_start_list.append(str(self.sbox_ap_pool_start3.value()))
+            dhcp_start_list.append(str(self.sbox_ap_pool_start4.value()))
             dhcp_start = '.'.join(dhcp_start_list)
 
             dhcp_end_list = []
-            dhcp_end_list.append(unicode(self.sbox_ap_pool_end1.value()))
-            dhcp_end_list.append(unicode(self.sbox_ap_pool_end2.value()))
-            dhcp_end_list.append(unicode(self.sbox_ap_pool_end3.value()))
-            dhcp_end_list.append(unicode(self.sbox_ap_pool_end4.value()))
+            dhcp_end_list.append(str(self.sbox_ap_pool_end1.value()))
+            dhcp_end_list.append(str(self.sbox_ap_pool_end2.value()))
+            dhcp_end_list.append(str(self.sbox_ap_pool_end3.value()))
+            dhcp_end_list.append(str(self.sbox_ap_pool_end4.value()))
             dhcp_end = '.'.join(dhcp_end_list)
 
             dhcp_mask_list = []
-            dhcp_mask_list.append(unicode(self.sbox_ap_pool_mask1.value()))
-            dhcp_mask_list.append(unicode(self.sbox_ap_pool_mask2.value()))
-            dhcp_mask_list.append(unicode(self.sbox_ap_pool_mask3.value()))
-            dhcp_mask_list.append(unicode(self.sbox_ap_pool_mask4.value()))
+            dhcp_mask_list.append(str(self.sbox_ap_pool_mask1.value()))
+            dhcp_mask_list.append(str(self.sbox_ap_pool_mask2.value()))
+            dhcp_mask_list.append(str(self.sbox_ap_pool_mask3.value()))
+            dhcp_mask_list.append(str(self.sbox_ap_pool_mask4.value()))
             dhcp_mask = '.'.join(dhcp_mask_list)
 
             if not interface:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
                                            'Interface empty.')
                 return
 
             elif not ssid:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
                                            'SSID empty.')
                 return
 
             elif not wpa_key:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
                                            'WPA key empty.')
                 return
 
             elif not domain:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
                                            'DNS Domain empty.')
                 return
@@ -416,7 +423,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             apply_dict['dhcp_mask']        = dhcp_mask
 
             if self.image_version.number >= (1, 10):
-                apply_dict['hostapd_driver'] = unicode('driver=nl80211')
+                apply_dict['hostapd_driver'] = 'driver=nl80211'
 
             self.label_working_wait.show()
             self.pbar_working_wait.show()
@@ -434,7 +441,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             self.sarea_ap.show()
             self.update_button_text_state(BUTTON_STATE_DEFAULT)
 
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Access Point',
                                        'Error occured while processing input data:\n\n{0}'.format(e))
 
@@ -508,7 +515,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                         if not broke:
                             self.cbox_ap_interface.setCurrentIndex(0)
                 else:
-                    QtGui.QMessageBox.critical(get_main_window(),
+                    QMessageBox.critical(get_main_window(),
                                                'Settings | Access Point',
                                                'Error getting access point interfaces:\n\n' + result.stderr)
 
@@ -551,7 +558,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                 self.sbox_ap_channel.setValue(int(channel))
                 self.ledit_ap_wpa_key.setText(wpa_key)
             except Exception as e:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
                                            'Error parsing hostapd.conf file:\n\n{0}'.format(e))
 
@@ -618,7 +625,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                 self.sbox_ap_pool_mask3.setValue(int(dhcp_option_netmask_list[2]))
                 self.sbox_ap_pool_mask4.setValue(int(dhcp_option_netmask_list[3]))
             except Exception as e:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
                                            'Error parsing dnsmasq.conf file:\n\n{0}'.format(e))
 
@@ -633,7 +640,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             TextFile.ERROR_KIND_UTF8: 'decoding'
             }
 
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        'Settings | Access Point',
                                        'Error {0} {1} file:\n\n{2}'.format(kind_text[kind], title, error))
 

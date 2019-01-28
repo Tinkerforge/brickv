@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_dust_detector import BrickletDustDetector
@@ -43,8 +43,8 @@ class DustDetector(PluginBase):
 
         self.current_dust_density = None
 
-        plots = [('Dust Density', Qt.red, lambda: self.current_dust_density, u'{} µg/m³'.format)]
-        self.plot_widget = PlotWidget(u'Dust Density [µg/m³]', plots)
+        plots = [('Dust Density', Qt.red, lambda: self.current_dust_density, '{} µg/m³'.format)]
+        self.plot_widget = PlotWidget('Dust Density [µg/m³]', plots)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)

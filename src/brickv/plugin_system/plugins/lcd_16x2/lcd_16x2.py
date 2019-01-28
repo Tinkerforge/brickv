@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QComboBox, QFrame, QGridLayout, QToolButton
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QComboBox, QFrame, QGridLayout, QToolButton
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
@@ -103,6 +103,7 @@ class LCD16x2(PluginBase):
 
         if self.firmware_version >= (2, 0, 1):
             line = QFrame()
+            line.setObjectName("line")
             line.setFrameShape(QFrame.HLine)
             line.setFrameShadow(QFrame.Sunken)
 
@@ -239,7 +240,7 @@ class LCD16x2(PluginBase):
 
     def bl_clicked(self):
         try:
-            if self.bl_button.text() == 'Backlight On':
+            if self.bl_button.text().replace('&','') == 'Backlight On':
                 self.lcd.backlight_on()
                 self.bl_button.setText('Backlight Off')
             else:
@@ -249,8 +250,8 @@ class LCD16x2(PluginBase):
             return
 
     def get_config(self):
-        cursor = self.cursor_button.text() == 'Cursor Off'
-        blink = self.blink_button.text() == 'Blink Off'
+        cursor = self.cursor_button.text().replace('&','') == 'Cursor Off'
+        blink = self.blink_button.text().replace('&','') == 'Blink Off'
         return (cursor, blink)
 
     def cursor_clicked(self):

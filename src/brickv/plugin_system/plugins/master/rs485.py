@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget, QMessageBox
+from PyQt5.QtWidgets import QWidget, QMessageBox
 
 from brickv.bindings.ip_connection import IPConnection
 from brickv.plugin_system.plugins.master.ui_rs485 import Ui_RS485
@@ -48,7 +48,7 @@ class RS485(QWidget, Ui_RS485):
         if self.parent.firmware_version >= (1, 2, 0):
             async_call(self.master.get_rs485_configuration, None, self.get_rs485_configuration_async, self.parent.increase_error_count)
             self.update_generator = self.start_async()
-            self.update_generator.next()
+            next(self.update_generator)
 
     def start_async(self):
         self.update_address = 0
@@ -56,11 +56,11 @@ class RS485(QWidget, Ui_RS485):
 
         def get_rs485_address_async(address_async):
             self.update_address = address_async
-            self.update_generator.next()
+            next(self.update_generator)
 
         def get_rs485_slave_address_async(update_address_slave_async):
             self.update_address_slave = update_address_slave_async
-            self.update_generator.next()
+            next(self.update_generator)
 
         async_call(self.master.get_rs485_address, None, get_rs485_address_async, self.parent.increase_error_count)
         yield
@@ -136,7 +136,7 @@ class RS485(QWidget, Ui_RS485):
         if address_slave_text == '':
             address_slave = []
         else:
-            address_slave = map(int, address_slave_text.split(','))
+            address_slave = list(map(int, address_slave_text.split(',')))
             address_slave.append(0)
 
         self.master.set_rs485_address(address)

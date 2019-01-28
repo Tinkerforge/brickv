@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, QTimer
+from PyQt5.QtCore import pyqtSignal, QTimer
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.solid_state_relay_v2.ui_solid_state_relay_v2 import Ui_SolidStateRelayV2
@@ -102,14 +102,14 @@ class SolidStateRelayV2(COMCUPluginBase, Ui_SolidStateRelayV2):
         if self.ssr_button.minimumWidth() < width:
             self.ssr_button.setMinimumWidth(width)
 
-        if 'On' in self.ssr_button.text():
+        if 'On' in self.ssr_button.text().replace('&',''):
             self.ssr_button.setText('Switch Off')
             self.ssr_image.setPixmap(self.a_pixmap)
         else:
             self.ssr_button.setText('Switch On')
             self.ssr_image.setPixmap(self.b_pixmap)
 
-        state = not 'On' in self.ssr_button.text()
+        state = not 'On' in self.ssr_button.text().replace('&','')
         try:
             self.ssr.set_state(state)
         except ip_connection.Error:

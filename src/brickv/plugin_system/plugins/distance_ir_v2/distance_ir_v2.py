@@ -23,8 +23,8 @@ Boston, MA 02111-1307, USA.
 
 import os
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
                         QLineEdit, QApplication, QMessageBox, QFrame, QSpinBox, QComboBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
@@ -85,6 +85,7 @@ class DistanceIRV2(COMCUPluginBase):
         self.plot_widget = PlotWidget('Distance [cm]', plots, extra_key_widgets=[self.analog_label])
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 

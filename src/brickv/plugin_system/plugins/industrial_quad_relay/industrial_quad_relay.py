@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, pyqtSignal, QTimer
+from PyQt5.QtCore import Qt, pyqtSignal, QTimer
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.industrial_quad_relay.ui_industrial_quad_relay import Ui_IndustrialQuadRelay
@@ -200,7 +200,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         value = 0
         i = 0
         for b in self.relay_buttons:
-            if 'Off' in b.text():
+            if 'Off' in b.text().replace('&',''):
                 value |= (1 << i)
             i += 1
         return value
@@ -223,7 +223,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
 
     def relay_button_clicked(self, button):
         value = self.get_current_value()
-        if 'On' in self.relay_buttons[button].text():
+        if 'On' in self.relay_buttons[button].text().replace('&',''):
             value |= (1 << button)
             self.relay_buttons[button].setText('Switch Off')
             self.relay_button_icons[button].setPixmap(self.close_pixmap)

@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QDialog
+from PyQt5.QtWidgets import QDialog
 
 from brickv.plugin_system.plugins.master.ui_wifi2_status import Ui_Wifi2Status
 from brickv.async_call import async_call

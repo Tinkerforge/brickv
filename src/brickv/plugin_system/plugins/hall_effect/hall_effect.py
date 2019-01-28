@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QFrame, QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, \
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QFrame, QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, \
                         QComboBox, QPushButton
 
 from brickv.plugin_system.plugin_base import PluginBase
@@ -81,6 +81,7 @@ class HallEffect(PluginBase):
         hlayout.addWidget(self.button_reset)
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 

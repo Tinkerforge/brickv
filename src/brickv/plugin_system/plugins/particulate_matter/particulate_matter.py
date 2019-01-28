@@ -21,8 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QCheckBox, QLabel
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QLabel
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_particulate_matter import BrickletParticulateMatter
@@ -48,12 +48,12 @@ class ParticulateMatter(COMCUPluginBase):
         self.current_pm_concentration_pm25 = None
         self.current_pm_concentration_pm100 = None
 
-        plots = [('PM1.0', Qt.red, lambda: self.current_pm_concentration_pm10, u'{} µg/m³'.format),
-                 ('PM2.5', Qt.darkGreen, lambda: self.current_pm_concentration_pm25, u'{} µg/m³'.format),
-                 ('PM10.0', Qt.blue, lambda: self.current_pm_concentration_pm100, u'{} µg/m³'.format)]
-        self.plot_widget = PlotWidget(u'PM Concentration [µg/m³]', plots)
+        plots = [('PM1.0', Qt.red, lambda: self.current_pm_concentration_pm10, '{} µg/m³'.format),
+                 ('PM2.5', Qt.darkGreen, lambda: self.current_pm_concentration_pm25, '{} µg/m³'.format),
+                 ('PM10.0', Qt.blue, lambda: self.current_pm_concentration_pm100, '{} µg/m³'.format)]
+        self.plot_widget = PlotWidget('PM Concentration [µg/m³]', plots)
 
-        self.label_count = QLabel(u'PM Count > 0.3, 0.5, 1.0, 2.5, 5.0, 10.0 µm:')
+        self.label_count = QLabel('PM Count > 0.3, 0.5, 1.0, 2.5, 5.0, 10.0 µm:')
         self.label_count_value = QLabel('0, 0, 0, 0, 0, 0')
 
         self.check_enable_sensor = QCheckBox('Enable Sensor')
@@ -143,7 +143,7 @@ class ParticulateMatter(COMCUPluginBase):
 
     def update_sensor_info(self):
         async_call(self.pm.get_sensor_info, None, self.get_sensor_info_async, self.increase_error_count)
-    
+
     def get_sensor_info_async(self, info):
         self.label_sensor_version_value.setText(str(info.sensor_version))
         self.label_last_error_code_value.setText(str(info.last_error_code))

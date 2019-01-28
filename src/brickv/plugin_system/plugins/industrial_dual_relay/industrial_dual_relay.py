@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, QTimer
+from PyQt5.QtCore import pyqtSignal, QTimer
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.industrial_dual_relay.ui_industrial_dual_relay import Ui_IndustrialDualRelay
@@ -157,7 +157,7 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
         if self.ch0_button.minimumWidth() < width:
             self.ch0_button.setMinimumWidth(width)
 
-        if 'On' in self.ch0_button.text():
+        if 'On' in self.ch0_button.text().replace('&',''):
             self.ch0_button.setText('Switch Off')
             self.ch0_image.setPixmap(self.a0_pixmap)
         else:
@@ -185,7 +185,7 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
         if self.ch1_button.minimumWidth() < width:
             self.ch1_button.setMinimumWidth(width)
 
-        if 'On' in self.ch1_button.text():
+        if 'On' in self.ch1_button.text().replace('&',''):
             self.ch1_button.setText('Switch Off')
             self.ch1_image.setPixmap(self.a1_pixmap)
         else:

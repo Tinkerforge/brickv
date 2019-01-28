@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from collections import namedtuple
 
-from PyQt4.QtGui import QWizard
+from PyQt5.QtWidgets import QWizard
 
 ProgramWizardContext = namedtuple('ProgramWizardContext', 'session identifiers script_manager image_version executable_versions')
 

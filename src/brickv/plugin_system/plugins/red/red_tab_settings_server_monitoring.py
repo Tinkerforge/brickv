@@ -24,7 +24,9 @@ Boston, MA 02111-1307, USA.
 import re
 import json
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QWidget, QMessageBox, QCheckBox, QLineEdit, QSpinBox, QComboBox, QPushButton, QLabel, QDialog
+from PyQt5.QtGui import QColor, QStandardItem, QStandardItemModel
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_server_monitoring import\
      Ui_REDTabSettingsServerMonitoring
@@ -138,8 +140,8 @@ EVENT_RETURNED_SAVE_FALSE            = 8
 EVENT_RETURNED_REFRESH_GENERIC       = 9
 EVENT_UPDATE_UIDS_IN_RULES           = 10
 
-COLOR_WARNING  = QtGui.QColor(255, 255, 0)
-COLOR_CRITICAL = QtGui.QColor(255, 0, 0)
+COLOR_WARNING  = QColor(255, 255, 0)
+COLOR_CRITICAL = QColor(255, 0, 0)
 
 EMPTY_SERVICE_NAME = '<Enter Service Name>'
 EMPTY_UID          = '<Enter UID>'
@@ -226,9 +228,9 @@ def quote(s):
     # the string $'b is then quoted as '$'"'"'b'
     return "'" + s.replace("'", "'\"'\"'") + "'"
 
-class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonitoring):
+class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring):
     def __init__(self):
-        QtGui.QWidget.__init__(self)
+        QWidget.__init__(self)
 
         self.setupUi(self)
 
@@ -250,7 +252,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         # This dictionary is needed to be kept in sync with all the GUI changes
         # on the hosts as some of the rule fields depend on available host information
         self.dict_hosts = {}
-        self.model_hosts = QtGui.QStandardItemModel()
+        self.model_hosts = QStandardItemModel()
         self.model_hosts.setHorizontalHeaderLabels(HEADERS_TVIEW_HOSTS)
         self.tview_sm_hosts.setModel(self.model_hosts)
         self.set_default_col_width_hosts()
@@ -261,7 +263,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         # No need to keep this data structure in sync with the changes made on the GUI model
         self.list_rules = []
         self.dict_email = {}
-        self.model_rules = QtGui.QStandardItemModel()
+        self.model_rules = QStandardItemModel()
         self.model_rules.setHorizontalHeaderLabels(HEADERS_TVIEW_RULES)
         self.tview_sm_rules.setModel(self.model_rules)
         self.set_default_col_width_rules()
@@ -389,7 +391,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.update_gui(EVENT_RETURNED_REFRESH_GENERIC)
             return
 
-        QtGui.QMessageBox.information(get_main_window(),
+        QMessageBox.information(get_main_window(),
                                       MESSAGEBOX_TITLE,
                                       MESSAGE_INFO_TEST_EMAIL_SENT)
 
@@ -419,7 +421,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                         widget_authentication = self.tview_sm_hosts.indexWidget(index_authentication)
                         widget_secret = self.tview_sm_hosts.indexWidget(index_secret)
 
-                        port = unicode(widget_port.value())
+                        port = widget_port.value()
                         authentication = widget_authentication.currentText()
                         secret = widget_secret.text()
 
@@ -452,7 +454,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         row_host = []
 
         for i in range(COUNT_COLUMNS_HOSTS_MODEL):
-            row_host.append(QtGui.QStandardItem(''))
+            row_host.append(QStandardItem(''))
 
         self.model_hosts.appendRow(row_host)
 
@@ -463,7 +465,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             if c == INDEX_COL_HOSTS_USED:
                 item = self.model_hosts.item(r, c)
                 index = self.model_hosts.indexFromItem(item)
-                chkbox = QtGui.QCheckBox()
+                chkbox = QCheckBox()
                 chkbox.setChecked(False)
                 chkbox.setEnabled(False)
                 self.tview_sm_hosts.setIndexWidget(index, chkbox)
@@ -472,7 +474,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             elif c == INDEX_COL_HOSTS_HOST:
                 item = self.model_hosts.item(r, c)
                 index = self.model_hosts.indexFromItem(item)
-                ledit = QtGui.QLineEdit()
+                ledit = QLineEdit()
                 ledit.setText(host)
 
                 if host == self.defaulthost:
@@ -486,7 +488,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             elif c == INDEX_COL_HOSTS_PORT:
                 item = self.model_hosts.item(r, c)
                 index = self.model_hosts.indexFromItem(item)
-                sbox = QtGui.QSpinBox()
+                sbox = QSpinBox()
                 sbox.setRange(1, 65535)
                 sbox.valueChanged.connect(self.slot_input_changed)
                 sbox.setValue(int(port))
@@ -496,7 +498,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             elif c == INDEX_COL_HOSTS_AUTHENTICATION:
                 item = self.model_hosts.item(r, c)
                 index = self.model_hosts.indexFromItem(item)
-                cbox = QtGui.QComboBox()
+                cbox = QComboBox()
                 cbox.addItems(ITEMS_AUTHENTICATION)
 
                 if not secret:
@@ -511,7 +513,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             elif c == INDEX_COL_HOSTS_SECRET:
                 item = self.model_hosts.item(r, c)
                 index = self.model_hosts.indexFromItem(item)
-                ledit = QtGui.QLineEdit()
+                ledit = QLineEdit()
 
                 if not secret:
                     ledit.setText('')
@@ -527,7 +529,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             elif c == INDEX_COL_HOSTS_REFRESH_UIDS:
                 item = self.model_hosts.item(r, c)
                 index = self.model_hosts.indexFromItem(item)
-                btn = QtGui.QPushButton()
+                btn = QPushButton()
                 btn.setText('Refresh UIDs')
                 btn.clicked.connect(self.slot_refresh_uids_clicked)
                 self.tview_sm_hosts.setIndexWidget(index, btn)
@@ -536,7 +538,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             elif c == INDEX_COL_HOSTS_REMOVE:
                 item = self.model_hosts.item(r, c)
                 index = self.model_hosts.indexFromItem(item)
-                btn = QtGui.QPushButton()
+                btn = QPushButton()
 
                 btn.setText('Remove')
 
@@ -643,7 +645,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         # and only consider an error if the script was called with wrong
         # arguments. Therefore we only need to check the exit code.
         if result and result.exit_code != 0:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_ENUMERATION_ERROR)
             restore_gui_on_exception()
@@ -652,7 +654,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         try:
             dict_enumerate = json.loads(result.stdout)
         except:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_SCRIPT_RETURN_DATA)
             restore_gui_on_exception()
@@ -771,7 +773,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         try:
             dict_return = json.loads(result.stdout)
         except:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_SCRIPT_RETURN_DATA)
             return
@@ -860,7 +862,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.defaulthost = result.stdout
 
         if not self.defaulthost:
-            QtGui.QMessageBox.information(get_main_window(),
+            QMessageBox.information(get_main_window(),
                                           MESSAGEBOX_TITLE,
                                           MESSAGE_ERROR_HOSTNAME_EMPTY)
             self.update_gui(EVENT_RETURNED_REFRESH_FALSE)
@@ -877,7 +879,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.update_gui(EVENT_RETURNED_SAVE_FALSE)
             return
 
-        QtGui.QMessageBox.information(get_main_window(),
+        QMessageBox.information(get_main_window(),
                                       MESSAGEBOX_TITLE,
                                       MESSAGE_INFO_SAVE_OK)
 
@@ -910,7 +912,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
             if cbox_uid.count() == 1:
                 cbox_uid.setEditable(True)
-                cbox_uid.setInsertPolicy(QtGui.QComboBox.InsertBeforeCurrent)
+                cbox_uid.setInsertPolicy(QComboBox.InsertBeforeCurrent)
                 cbox_uid.lineEdit().selectAll()
             else:
                 cbox_uid.setEditable(False)
@@ -919,7 +921,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             cbox_uid.clear()
             cbox_uid.addItem(EMPTY_UID)
             cbox_uid.setEditable(True)
-            cbox_uid.setInsertPolicy(QtGui.QComboBox.InsertBeforeCurrent)
+            cbox_uid.setInsertPolicy(QComboBox.InsertBeforeCurrent)
             cbox_uid.lineEdit().selectAll()
             return
 
@@ -1132,7 +1134,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         rule = []
 
         for i in range(COUNT_COLUMNS_RULES_MODEL):
-            rule.append(QtGui.QStandardItem(''))
+            rule.append(QStandardItem(''))
 
         self.model_rules.appendRow(rule)
 
@@ -1143,7 +1145,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             if c == INDEX_COL_RULES_NAME:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
-                ledit_name = QtGui.QLineEdit()
+                ledit_name = QLineEdit()
                 ledit_name.textEdited.connect(self.slot_input_changed)
                 ledit_name.setText(name)
                 self.tview_sm_rules.setIndexWidget(index, ledit_name)
@@ -1152,7 +1154,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             elif c == INDEX_COL_RULES_HOST:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
-                cbox = QtGui.QComboBox()
+                cbox = QComboBox()
 
                 cbox.setModel(self.model_hosts)
                 cbox.setModelColumn(INDEX_COL_HOSTS_HIDDEN_HOST)
@@ -1169,7 +1171,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             elif c == INDEX_COL_RULES_BRICKLET:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
-                cbox = QtGui.QComboBox()
+                cbox = QComboBox()
                 cbox.addItems(sorted(SUPPORTED_BRICKLETS.keys()))
 
                 for i in range(cbox.count()):
@@ -1197,7 +1199,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
                 item_uid = self.model_rules.item(r, c)
                 index_uid = self.model_rules.indexFromItem(item_uid)
-                cbox_uid = QtGui.QComboBox()
+                cbox_uid = QComboBox()
 
                 self.populate_cbox_uids(cbox_host, cbox_bricklet, cbox_uid)
 
@@ -1306,7 +1308,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             elif c == INDEX_COL_RULES_UNIT:
                 item_unit = self.model_rules.item(r, c)
                 index_unit = self.model_rules.indexFromItem(item_unit)
-                label_unit = QtGui.QLabel()
+                label_unit = QLabel()
                 item_bricklet = self.model_rules.item(r, INDEX_COL_RULES_BRICKLET)
                 index_bricklet = self.model_rules.indexFromItem(item_bricklet)
                 cbox_bricklet = self.tview_sm_rules.indexWidget(index_bricklet)
@@ -1317,7 +1319,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             elif c == INDEX_COL_RULES_EMAIL_NOTIFICATIONS:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
-                cbox = QtGui.QComboBox()
+                cbox = QComboBox()
                 cbox.addItems(COLUMN_EMAIL_NOTIFICATIONS_ITEMS)
 
                 if email_notification_enabled == '1':
@@ -1340,7 +1342,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             elif c == INDEX_COL_RULES_REMOVE:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
-                btn = QtGui.QPushButton('Remove')
+                btn = QPushButton('Remove')
                 btn.clicked.connect(self.slot_remove_rule_clicked)
                 self.tview_sm_rules.setIndexWidget(index, btn)
 
@@ -1462,97 +1464,97 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         rule_number, field_number, check_result = self.check_rules(check_only_email_fields = True)
 
         if check_result == CHECK_FAILED_EMAIL_FROM_EMPTY:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_FROM_EMPTY)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_FROM_NON_ASCII:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_FROM_NON_ASCII)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_FROM_WHITESPACE:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_FROM_WHITESPACE)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_FROM_MALFORMED:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_FROM_MALFORMED)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_TO_EMPTY:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_TO_EMPTY)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_TO_NON_ASCII:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_TO_NON_ASCII)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_TO_WHITESPACE:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_TO_WHITESPACE)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_TO_MALFORMED:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_TO_MALFORMED)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_SERVER_EMPTY:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_SERVER_EMPTY)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_SERVER_NON_ASCII:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_SERVER_NON_ASCII)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_SERVER_WHITESPACE:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_SERVER_WHITESPACE)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_USERNAME_EMPTY:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_USERNAME_EMPTY)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_USERNAME_NON_ASCII:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_USERNAME_NON_ASCII)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_USERNAME_WHITESPACE:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_USERNAME_WHITESPACE)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_PASSWORD_EMPTY:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_PASSWORD_NON_ASCII:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_NON_ASCII)
             return
@@ -1622,7 +1624,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     ledit_secret = self.tview_sm_hosts.indexWidget(index_secret)
 
                     host = ledit_host.text()
-                    port = unicode(sbox_port.value())
+                    port = sbox_port.value()
 
                     if not ledit_secret.isEnabled():
                         secret = ''
@@ -1661,13 +1663,13 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     host = ledit_host.text()
 
                     if chkbox_used.isChecked():
-                        reply = QtGui.QMessageBox.question(get_main_window(),
+                        reply = QMessageBox.question(get_main_window(),
                                                            MESSAGEBOX_TITLE,
                                                            MESSAGE_WARNING_REMOVE_DEPENDENT_RULES,
-                                                           QtGui.QMessageBox.Yes,
-                                                           QtGui.QMessageBox.No)
+                                                           QMessageBox.Yes,
+                                                           QMessageBox.No)
 
-                        if reply != QtGui.QMessageBox.Yes:
+                        if reply != QMessageBox.Yes:
                             return
 
                         # Remove rules those depend on the host that is being removed
@@ -1719,7 +1721,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
     def slot_pbutton_sm_add_rule_clicked(self):
         if not self.defaulthost:
-            QtGui.QMessageBox.critical(get_main_window(),
+            QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_NO_LOCALHOST)
             return
@@ -1743,13 +1745,13 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_pbutton_sm_remove_all_rules_clicked(self):
-        reply = QtGui.QMessageBox.question(get_main_window(),
+        reply = QMessageBox.question(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_WARNING_REMOVE_ALL_RULES,
-                                           QtGui.QMessageBox.Yes,
-                                           QtGui.QMessageBox.No)
+                                           QMessageBox.Yes,
+                                           QMessageBox.No)
 
-        if reply != QtGui.QMessageBox.Yes:
+        if reply != QMessageBox.Yes:
             return
 
         # Remove all rules from GUI model
@@ -1760,13 +1762,13 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_pbutton_sm_remove_all_hosts_clicked(self):
-        reply = QtGui.QMessageBox.question(get_main_window(),
+        reply = QMessageBox.question(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_WARNING_REMOVE_ALL_HOSTS,
-                                           QtGui.QMessageBox.Yes,
-                                           QtGui.QMessageBox.No)
+                                           QMessageBox.Yes,
+                                           QMessageBox.No)
 
-        if reply != QtGui.QMessageBox.Yes:
+        if reply != QMessageBox.Yes:
             return
 
         # Delete all hosts except the default one.
@@ -1807,7 +1809,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         add_host_dialog = REDTabSettingsServerMonitoringAddHostDialog(self)
         return_code_dialog = add_host_dialog.exec_()
 
-        if return_code_dialog == QtGui.QDialog.Accepted:
+        if return_code_dialog == QDialog.Accepted:
             # Check if host is already there
             for r in range(self.model_hosts.rowCount()):
                 for c in range(COUNT_COLUMNS_HOSTS_MODEL):
@@ -1817,7 +1819,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                         ledit_host = self.tview_sm_hosts.indexWidget(index_host)
 
                         if ledit_host.text() == add_host_dialog.host:
-                            QtGui.QMessageBox.critical(get_main_window(),
+                            QMessageBox.critical(get_main_window(),
                                                        MESSAGEBOX_TITLE,
                                                        MESSAGE_ERROR_HOST_ALREADY_EXISTS)
                             return
@@ -1860,7 +1862,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             rule = 'Rule-' + str(rule_number) + ', Field-' + str(field_number) + ': '
 
             if check_result == CHECK_FAILED_SERVICE_NAME_EMPTY:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            rule + MESSAGE_ERROR_CHECK_SERVICE_NAME_EMPTY)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
@@ -1874,140 +1876,140 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 return
 
             elif check_result == CHECK_FAILED_SERVICE_NAME_DUPLICATE:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            rule + MESSAGE_ERROR_CHECK_SERVICE_NAME_DUPLICATE)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_UID_EMPTY:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            rule + MESSAGE_ERROR_CHECK_UID_EMPTY)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_UID_INVALID:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            rule + MESSAGE_ERROR_CHECK_UID_INVALID)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_NON_ASCII:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            rule + MESSAGE_ERROR_CHECK_NON_ASCII)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_FROM_EMPTY:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_FROM_EMPTY)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_FROM_NON_ASCII:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_FROM_NON_ASCII)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_FROM_WHITESPACE:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_FROM_WHITESPACE)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_FROM_MALFORMED:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_FROM_MALFORMED)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_TO_EMPTY:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_TO_EMPTY)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_TO_NON_ASCII:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_TO_NON_ASCII)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_TO_WHITESPACE:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_TO_WHITESPACE)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_TO_MALFORMED:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_TO_MALFORMED)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_SERVER_EMPTY:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_SERVER_EMPTY)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_SERVER_NON_ASCII:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_SERVER_NON_ASCII)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_SERVER_WHITESPACE:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_SERVER_WHITESPACE)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_USERNAME_EMPTY:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_USERNAME_EMPTY)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_USERNAME_NON_ASCII:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_USERNAME_NON_ASCII)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_USERNAME_WHITESPACE:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_USERNAME_WHITESPACE)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_PASSWORD_EMPTY:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_PASSWORD_NON_ASCII:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_NON_ASCII)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
@@ -2016,12 +2018,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         result = self.check_unused_host()
 
         if not result:
-            reply = QtGui.QMessageBox.question(get_main_window(),
+            reply = QMessageBox.question(get_main_window(),
                                                MESSAGEBOX_TITLE,
                                                MESSAGE_WARNING_CHECK_UNUSED_HOST,
-                                               QtGui.QMessageBox.Yes,
-                                               QtGui.QMessageBox.No)
-            if reply != QtGui.QMessageBox.Yes:
+                                               QMessageBox.Yes,
+                                               QMessageBox.No)
+            if reply != QMessageBox.Yes:
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
@@ -2343,9 +2345,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
     def slot_chkbox_sm_email_password_show_state_changed(self, state):
         if state == QtCore.Qt.Checked:
-            self.ledit_sm_email_password.setEchoMode(QtGui.QLineEdit.Normal)
+            self.ledit_sm_email_password.setEchoMode(QLineEdit.Normal)
         else:
-            self.ledit_sm_email_password.setEchoMode(QtGui.QLineEdit.Password)
+            self.ledit_sm_email_password.setEchoMode(QLineEdit.Password)
 
     def slot_cbox_host_activated(self, index):
         sender = self.sender()
@@ -2475,7 +2477,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 if sender == self.tview_sm_rules.indexWidget(index_cbox_uid):
                     if index == sender.count() - 1:
                         sender.setEditable(True)
-                        sender.setInsertPolicy(QtGui.QComboBox.InsertBeforeCurrent)
+                        sender.setInsertPolicy(QComboBox.InsertBeforeCurrent)
                         sender.lineEdit().selectAll()
                     else:
                         sender.setEditable(False)

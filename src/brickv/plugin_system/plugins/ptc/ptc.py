@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QFrame
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_ptc import BrickletPTC
@@ -73,8 +73,8 @@ class PTC(PluginBase):
         self.wire_combo.currentIndexChanged.connect(self.wire_combo_index_changed)
         self.noise_combo.currentIndexChanged.connect(self.noise_combo_index_changed)
 
-        plots = [('Temperature', Qt.red, lambda: self.current_temperature, u'{} °C'.format)]
-        self.plot_widget = PlotWidget(u'Temperature [°C]', plots, extra_key_widgets=[self.connected_label])
+        plots = [('Temperature', Qt.red, lambda: self.current_temperature, '{} °C'.format)]
+        self.plot_widget = PlotWidget('Temperature [°C]', plots, extra_key_widgets=[self.connected_label])
 
         hlayout = QHBoxLayout()
         hlayout.addWidget(self.wire_label)
@@ -84,6 +84,7 @@ class PTC(PluginBase):
         hlayout.addWidget(self.noise_combo)
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 

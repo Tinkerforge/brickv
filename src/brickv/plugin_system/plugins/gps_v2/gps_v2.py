@@ -23,9 +23,9 @@ Boston, MA 02111-1307, USA.
 
 import datetime
 
-from PyQt4.QtCore import QUrl, pyqtSignal, QTimer
-from PyQt4.QtGui import QDesktopServices, QStandardItemModel, QStandardItem, \
-                        QHeaderView, QAction
+from PyQt5.QtCore import QUrl, pyqtSignal, QTimer
+from PyQt5.QtGui import QDesktopServices, QStandardItemModel, QStandardItem
+from PyQt5.QtWidgets import QHeaderView, QAction
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.gps_v2.ui_gps_v2 import Ui_GPSV2
@@ -77,21 +77,21 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
 
         self.gps_model = QStandardItemModel(32, 3, self)
         self.gps_table.setModel(self.gps_model)
-        self.gps_model.setHorizontalHeaderItem(0, QStandardItem(u'Elevation (°)'))
-        self.gps_model.setHorizontalHeaderItem(1, QStandardItem(u'Azimuth (°)'))
-        self.gps_model.setHorizontalHeaderItem(2, QStandardItem(u'SNR (dB)'))
+        self.gps_model.setHorizontalHeaderItem(0, QStandardItem('Elevation (°)'))
+        self.gps_model.setHorizontalHeaderItem(1, QStandardItem('Azimuth (°)'))
+        self.gps_model.setHorizontalHeaderItem(2, QStandardItem('SNR (dB)'))
         for i in range(32):
-            self.gps_model.setVerticalHeaderItem(i, QStandardItem(u'Sat ' + str(i+1)))
-        self.gps_table.horizontalHeader().setResizeMode(QHeaderView.Stretch)
+            self.gps_model.setVerticalHeaderItem(i, QStandardItem('Sat ' + str(i+1)))
+        self.gps_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         self.glo_model = QStandardItemModel(32, 3, self)
         self.glo_table.setModel(self.glo_model)
-        self.glo_model.setHorizontalHeaderItem(0, QStandardItem(u'Elevation (°)'))
-        self.glo_model.setHorizontalHeaderItem(1, QStandardItem(u'Azimuth (°)'))
-        self.glo_model.setHorizontalHeaderItem(2, QStandardItem(u'SNR (dB)'))
+        self.glo_model.setHorizontalHeaderItem(0, QStandardItem('Elevation (°)'))
+        self.glo_model.setHorizontalHeaderItem(1, QStandardItem('Azimuth (°)'))
+        self.glo_model.setHorizontalHeaderItem(2, QStandardItem('SNR (dB)'))
         for i in range(32):
-            self.glo_model.setVerticalHeaderItem(i, QStandardItem(u'Sat ' + str(i+1+64)))
-        self.glo_table.horizontalHeader().setResizeMode(QHeaderView.Stretch)
+            self.glo_model.setVerticalHeaderItem(i, QStandardItem('Sat ' + str(i+1+64)))
+        self.glo_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         self.fix_led_off_action = QAction('Off', self)
         self.fix_led_off_action.triggered.connect(lambda: self.gps.set_fix_led_config(BrickletGPSV2.FIX_LED_CONFIG_OFF))
@@ -295,13 +295,13 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
         while len(mmmmm_str) < 5:
             mmmmm_str = '0' + mmmmm_str
 
-        return u'{0}° {1}.{2}’'.format(dd_str, mm_str, mmmmm_str)
+        return '{0}° {1}.{2}’'.format(dd_str, mm_str, mmmmm_str)
 
     def make_dd_dddddd(self, degree, url=False):
         if url:
             return '%2.6f' % (degree / 1000000.0)
         else:
-            return u'%2.6f°' % (degree / 1000000.0)
+            return '%2.6f°' % (degree / 1000000.0)
 
     def make_ddmmss_sss(self, degree):
         dd = degree / 1000000
@@ -323,7 +323,7 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
         while len(sss_str) < 3:
             sss_str = '0' + sss_str
 
-        return u'{0}° {1}’ {2}.{3}’’'.format(dd_str, mm_str, ss_str, sss_str)
+        return '{0}° {1}’ {2}.{3}’’'.format(dd_str, mm_str, ss_str, sss_str)
 
     def cb_coordinates(self, lat, ns, long_, ew):
         if not self.had_fix:
@@ -377,7 +377,7 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
         if not self.had_fix:
             return
 
-        self.course.setText(u'(%.2f°)' % (course/100.0,))
+        self.course.setText('(%.2f°)' % (course/100.0,))
         self.speed.setText('%.2f km/h' % (speed/100.0,))
 
     def cb_date_time(self, date, time):

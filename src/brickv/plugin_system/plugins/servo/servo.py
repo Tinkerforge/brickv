@@ -26,9 +26,9 @@ import time
 import random
 from threading import Event
 
-from PyQt4.QtCore import Qt, QRect, QTimer, pyqtSignal, QThread
-from PyQt4.QtGui import QLabel, QWidget, QColor, QPainter, QInputDialog, \
-                        QErrorMessage, QAction
+from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSignal, QThread
+from PyQt5.QtWidgets import QLabel, QWidget, QInputDialog, QErrorMessage, QAction
+from PyQt5.QtGui import QColor, QPainter
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.servo.ui_servo import Ui_Servo
@@ -80,8 +80,8 @@ class ColorBar(QWidget):
 
         section = QRect()
 
-        num_intervalls_shown = num_intervalls*self.height/100
-        l = range(num_intervalls-num_intervalls_shown, num_intervalls)
+        num_intervalls_shown = (num_intervalls*self.height)//100
+        l = list(range(num_intervalls-num_intervalls_shown, num_intervalls))
         l.reverse()
         for i in l:
             if self.orientation == Qt.Horizontal:
@@ -250,7 +250,7 @@ class Servo(PluginBase, Ui_Servo):
         self.update_timer.start()
 
     def stop(self):
-        if self.test_button.text() == "Stop Test":
+        if self.test_button.text().replace('&','') == "Stop Test":
             self.test_button_clicked()
 
         self.update_timer.stop()
@@ -348,18 +348,18 @@ class Servo(PluginBase, Ui_Servo):
         self.position_list[i].set_value(pos/100)
 
     def velocity_update(self, i, vel):
-        self.velocity_list[i].set_height(vel*100/0xFFFF)
+        self.velocity_list[i].set_height(vel*100//0xFFFF)
 
     def acceleration_update(self, i, acc):
-        self.acceleration_list[i].set_height(acc*100/0xFFFF)
+        self.acceleration_list[i].set_height(acc*100//0xFFFF)
 
     def deactivate_servo(self, i):
-        if self.enable_list[i].text() != 'Off':
+        if self.enable_list[i].text().replace('&','') != 'Off':
             self.velocity_list[i].grey()
             self.acceleration_list[i].grey()
 
     def activate_servo(self, i):
-        if self.enable_list[i].text() != 'On':
+        if self.enable_list[i].text().replace('&','') != 'On':
             self.velocity_list[i].color()
             self.acceleration_list[i].color()
 
@@ -509,7 +509,7 @@ class Servo(PluginBase, Ui_Servo):
             time.sleep(3)
 
     def test_button_clicked(self):
-        if self.test_button.text() == "Start Test":
+        if self.test_button.text().replace('&','') == "Start Test":
             self.test_button.setText("Stop Test")
             self.test_event.set()
         else:

@@ -24,16 +24,16 @@ Boston, MA 02111-1307, USA.
 
 import json
 
-from PyQt4 import QtGui
+from PyQt5.QtWidgets import QWidget, QMessageBox
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_services import Ui_REDTabSettingsServices
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import report_script_result
 from brickv.utils import get_main_window
 
-class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
+class REDTabSettingsServices(QWidget, Ui_REDTabSettingsServices):
     def __init__(self):
-        QtGui.QWidget.__init__(self)
+        QWidget.__init__(self)
 
         self.setupUi(self)
 
@@ -134,7 +134,7 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
 
         get_main_window().setEnabled(True)
 
-        QtGui.QMessageBox.information(get_main_window(),
+        QMessageBox.information(get_main_window(),
                                       'Settings | Services',
                                       'Saved configuration successfully, will now reboot RED Brick.')
 

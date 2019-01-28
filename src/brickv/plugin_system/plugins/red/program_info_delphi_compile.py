@@ -23,11 +23,13 @@ Boston, MA 02111-1307, USA.
 
 import posixpath
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QDialog
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QDialog
 
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_info_delphi_compile import Ui_ProgramInfoDelphiCompile
+
+import html
 
 class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
     def __init__(self, parent, script_manager, program):
@@ -48,7 +50,7 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
         self.button_cancel.clicked.connect(self.cancel_script_execution)
         self.button_close.clicked.connect(self.reject)
 
-        build_system_api_name = program.cast_custom_option_value('delphi.build_system', unicode, '<unknown>')
+        build_system_api_name = program.cast_custom_option_value('delphi.build_system', str, '<unknown>')
         build_system          = Constants.get_delphi_build_system(build_system_api_name)
         build_system_fpcmake  = build_system == Constants.DELPHI_BUILD_SYSTEM_FPCMAKE
         build_system_lazbuild = build_system == Constants.DELPHI_BUILD_SYSTEM_LAZBUILD
@@ -61,9 +63,9 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
 
     def log(self, message, bold=False, pre=False):
         if bold:
-            self.edit_log.appendHtml(u'<b>{0}</b>'.format(Qt.escape(message)))
+            self.edit_log.appendHtml('<b>{0}</b>'.format(html.escape(message)))
         elif pre:
-            self.edit_log.appendHtml(u'<pre>{0}</pre>'.format(message))
+            self.edit_log.appendHtml('<pre>{0}</pre>'.format(message))
         else:
             self.edit_log.appendPlainText(message)
 
@@ -102,7 +104,7 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
         else:
             self.log('Executing fpcmake and make...')
 
-        make_options      = self.program.cast_custom_option_value_list('delphi.make_options', unicode, [])
+        make_options      = self.program.cast_custom_option_value_list('delphi.make_options', str, [])
         working_directory = posixpath.join(self.program.root_directory, 'bin', self.program.working_directory)
 
         if target != None:
@@ -152,7 +154,7 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
         else:
             self.log('Executing lazbuild...')
 
-        lazbuild_options  = self.program.cast_custom_option_value_list('delphi.lazbuild_options', unicode, []) + additional_options
+        lazbuild_options  = self.program.cast_custom_option_value_list('delphi.lazbuild_options', str, []) + additional_options
         working_directory = posixpath.join(self.program.root_directory, 'bin', self.program.working_directory)
 
         self.script_instance = self.script_manager.execute_script('lazbuild_helper', cb_lazbuild_helper, [working_directory] + lazbuild_options,

@@ -25,8 +25,8 @@ Boston, MA 02111-1307, USA.
 import os
 import sys
 
-from PyQt4.QtCore import Qt, QDir
-from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog
+from PyQt5.QtCore import Qt, QDir
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 
 def get_program_path():
     # from http://www.py2exe.org/index.cgi/WhereAmI
@@ -35,19 +35,29 @@ def get_program_path():
     else:
         path = __file__
 
-    return os.path.dirname(os.path.realpath(unicode(path, sys.getfilesystemencoding())))
+    return os.path.dirname(os.path.realpath(path))
 
-def get_resources_path():
-    if sys.platform == "darwin" and hasattr(sys, 'frozen'):
-        return os.path.join(os.path.split(get_program_path())[0], 'Resources')
-    else:
-        return get_program_path()
+def get_resources_path(relativePath):
+    try:
+        # PyInstaller stores data files in a tmp folder refered to as _MEIPASS
+        basePath = sys._MEIPASS
+    except Exception:
+        basePath = ''
+
+    path = os.path.join(basePath, relativePath)
+
+    # If the path still doesn't exist, this function won't help you
+    if not os.path.exists(path):
+        print("Resource not found: " + relativePath)
+        return None
+
+    return path
 
 def get_home_path():
     return QDir.toNativeSeparators(QDir.homePath())
 
 def get_open_file_name(*args, **kwargs):
-    filename = QFileDialog.getOpenFileName(*args, **kwargs)
+    filename, selected_filter = QFileDialog.getOpenFileName(*args, **kwargs)
 
     if len(filename) > 0:
         filename = QDir.toNativeSeparators(filename)
@@ -57,13 +67,15 @@ def get_open_file_name(*args, **kwargs):
 def get_open_file_names(*args, **kwargs):
     filenames = []
 
-    for filename in QFileDialog.getOpenFileNames(*args, **kwargs):
+    names, selected_filter = QFileDialog.getOpenFileNames(*args, **kwargs)
+
+    for filename in names:
         filenames.append(QDir.toNativeSeparators(filename))
 
     return filenames
 
 def get_save_file_name(*args, **kwargs):
-    filename = QFileDialog.getSaveFileName(*args, **kwargs)
+    filename, selected_filter = QFileDialog.getSaveFileName(*args, **kwargs)
 
     if len(filename) > 0:
         filename = QDir.toNativeSeparators(filename)
@@ -91,7 +103,7 @@ def get_main_window():
 
     return None
 
-def get_modeless_dialog_flags(default=Qt.WindowFlags(0)):
+def get_modeless_dialog_flags(default=Qt.WindowFlags(1)):
     # FIXME: on macOS (at least since 10.10) modeless QDialogs don't work
     # properly anymore. they don't show up if the programs is run from an .app
     # container. Setting the tool window flag for such dialogs works around this

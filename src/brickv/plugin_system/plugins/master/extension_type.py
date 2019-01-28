@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QDialog, QMessageBox
+from PyQt5.QtWidgets import QDialog, QMessageBox
 
 from brickv.plugin_system.plugins.master.ui_extension_type import Ui_ExtensionType
 from brickv.async_call import async_call

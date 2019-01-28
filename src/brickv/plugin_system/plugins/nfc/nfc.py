@@ -21,8 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, Qt
-from PyQt4.QtGui import QMessageBox, QTextCursor
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtGui import QTextCursor
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.nfc.ui_nfc import Ui_NFC
@@ -35,7 +36,7 @@ class NFC(COMCUPluginBase, Ui_NFC):
     qtcb_state_changed_cardemu = pyqtSignal(int, bool)
     qtcb_state_changed_p2p = pyqtSignal(int, bool)
     qtcb_state_changed_reader = pyqtSignal(int, bool)
-    
+
     MIFARE_OPERATION_READ = 1
     MIFARE_OPERATION_WRITE = 2
 
@@ -736,7 +737,8 @@ class NFC(COMCUPluginBase, Ui_NFC):
                      tag_id_type == self.nfc.TAG_TYPE_TYPE4:
                         self.current_tag_id['tag_id'] = tag_id
                         self.current_tag_id['tag_id_type'] = tag_id_type
-                        tag = 'Found Type 4 tag with ID <font color="green"><b>{0:02X} {1:02X} {2:02X} {3:02X} {4:02X} {5:02X} {6:02X}</b></font>'.format(*tag_id)
+                        #tag = 'Found Type 4 tag with ID <font color="green"><b>{0:02X} {1:02X} {2:02X} {3:02X} {4:02X} {5:02X} {6:02X}</b></font>'.format(*tag_id)
+                        tag = 'Found Type 4 tag with ID <font color="green"><b>{}</b></font>'.format(tag_id)
                         self.group_box_reader_read_page.setEnabled(True)
                         self.group_box_reader_write_page.setEnabled(True)
                 else:
@@ -781,7 +783,7 @@ class NFC(COMCUPluginBase, Ui_NFC):
             self.label_status.setText('Reader: Request page')
         elif state == self.nfc.READER_STATE_REQUEST_PAGE_READY:
             s = ''
-            page = self.nfc.reader_read_page() 
+            page = self.nfc.reader_read_page()
             page_index = self.spinbox_read_page.value()
 
             self.frame_mode_reader.setEnabled(True)
@@ -859,7 +861,7 @@ class NFC(COMCUPluginBase, Ui_NFC):
                    byte_1=hex(page[1]),
                    byte_2=hex(page[2]),
                    byte_3=hex(page[3]))
-                 
+
                 for index, sp in enumerate(self.key_write_spinbox):
                     if index > 3:
                         break
@@ -994,7 +996,7 @@ class NFC(COMCUPluginBase, Ui_NFC):
         if self.combo_reader_tag_type.currentIndex() == self.nfc.TAG_TYPE_MIFARE_CLASSIC:
             for sp in self.key_write_spinbox:
                 self.write_page_clicked_data.append(sp.value())
-            
+
             key = []
             key_number = self.combobox_read_key.currentIndex()
 

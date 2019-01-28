@@ -23,11 +23,11 @@ Boston, MA 02111-1307, USA.
 
 import functools
 
-from PyQt4.QtCore import QObject
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QVBoxLayout, QGridLayout, \
+from PyQt5.QtCore import QObject
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QVBoxLayout, QGridLayout, \
                         QComboBox, QPushButton, QFrame, QDialog, QMessageBox, QSizePolicy, \
                         QSpinBox
-from PyQt4.QtCore import Qt
+from PyQt5.QtCore import Qt
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_industrial_dual_analog_in_v2 import BrickletIndustrialDualAnalogInV2
@@ -169,14 +169,17 @@ class IndustrialDualAnalogInV2(COMCUPluginBase):
 
         # Define lines
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 
         line1 = QFrame()
+        line1.setObjectName("line1")
         line1.setFrameShape(QFrame.HLine)
         line1.setFrameShadow(QFrame.Sunken)
 
         line2 = QFrame()
+        line2.setObjectName("line2")
         line2.setFrameShape(QFrame.HLine)
         line2.setFrameShadow(QFrame.Sunken)
 

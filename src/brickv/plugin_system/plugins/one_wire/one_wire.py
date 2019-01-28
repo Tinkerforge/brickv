@@ -21,8 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QTextCursor, QTreeWidgetItem
-from PyQt4.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QTreeWidgetItem
+from PyQt5.QtGui import QTextCursor
+from PyQt5.QtCore import pyqtSignal
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_one_wire import BrickletOneWire

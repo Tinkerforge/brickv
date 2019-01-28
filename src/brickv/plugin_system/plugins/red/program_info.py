@@ -23,8 +23,8 @@ Boston, MA 02111-1307, USA.
 
 from collections import namedtuple
 
-from PyQt4.QtCore import QTimer
-from PyQt4.QtGui import QWidget
+from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QWidget
 
 ProgramInfoContext = namedtuple('ProgramInfoContext', 'session script_manager executable_versions program')
 

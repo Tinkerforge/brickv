@@ -22,7 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QMessageBox
+import html
+from PyQt5.QtWidgets import QMessageBox
 
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
@@ -96,7 +97,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
+        self.set_formatted_sub_title('Specify how the {language} program [{name}] should be executed.')
 
         def cb_nodejs_versions(versions):
             if versions[0].version != None:
@@ -111,7 +112,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
             # if a program exists then this page is used in an edit wizard
             if self.wizard().program != None:
                 program         = self.wizard().program
-                flavor_api_name = program.cast_custom_option_value('javascript.flavor', unicode, '<unknown>')
+                flavor_api_name = program.cast_custom_option_value('javascript.flavor', str, '<unknown>')
                 flavor          = Constants.get_javascript_flavor(flavor_api_name)
 
                 if flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER:
@@ -137,16 +138,16 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
 
         if program != None:
             # start mode
-            start_mode_api_name = program.cast_custom_option_value('javascript.start_mode', unicode, '<unknown>')
+            start_mode_api_name = program.cast_custom_option_value('javascript.start_mode', str, '<unknown>')
             start_mode          = Constants.get_javascript_start_mode(start_mode_api_name)
 
             self.combo_start_mode.setCurrentIndex(start_mode)
 
             # script file
-            self.combo_script_file_selector.set_current_text(program.cast_custom_option_value('javascript.script_file', unicode, ''))
+            self.combo_script_file_selector.set_current_text(program.cast_custom_option_value('javascript.script_file', str, ''))
 
             # command
-            self.edit_command.setText(program.cast_custom_option_value('javascript.command', unicode, ''))
+            self.edit_command.setText(program.cast_custom_option_value('javascript.command', str, ''))
 
             # working directory
             self.combo_working_directory_selector.set_current_text(program.working_directory)
@@ -154,7 +155,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
             # options
             self.option_list_editor.clear()
 
-            for option in program.cast_custom_option_value_list('javascript.options', unicode, []):
+            for option in program.cast_custom_option_value_list('javascript.options', str, []):
                 self.option_list_editor.add_item(option)
 
         self.update_ui_state()
@@ -214,20 +215,20 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         working_directory = self.get_field('javascript.working_directory')
         options           = ' '.join(self.option_list_editor.get_items())
 
-        html = u'JavaScript Flavor: {0}<br/>'.format(Qt.escape(self.combo_flavor.itemText(flavor)))
+        html_text = 'JavaScript Flavor: {0}<br/>'.format(html.escape(self.combo_flavor.itemText(flavor)))
 
         if flavor == Constants.JAVASCRIPT_FLAVOR_NODEJS:
-            html += u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.javascript_start_mode_display_names[start_mode]))
+            html_text += 'Start Mode: {0}<br/>'.format(html.escape(Constants.javascript_start_mode_display_names[start_mode]))
 
             if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE:
-                html += u'Script File: {0}<br/>'.format(Qt.escape(script_file))
+                html_text += 'Script File: {0}<br/>'.format(html.escape(script_file))
             elif start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND:
-                html += u'Command: {0}<br/>'.format(Qt.escape(command))
+                html_text += 'Command: {0}<br/>'.format(html.escape(command))
 
-            html += u'Working Directory: {0}<br/>'.format(Qt.escape(working_directory))
-            html += u'Node.js Options: {0}<br/>'.format(Qt.escape(options))
+            html_text += 'Working Directory: {0}<br/>'.format(html.escape(working_directory))
+            html_text += 'Node.js Options: {0}<br/>'.format(html.escape(options))
 
-        return html
+        return html_text
 
     def get_custom_options(self):
         return {
@@ -274,5 +275,5 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
                 program.set_schedule(REDProgram.START_MODE_NEVER, False, 0, '') # FIXME: async_call
             except (Error, REDError) as e:
                 QMessageBox.critical(get_main_window(), 'Edit Program Error',
-                                     u'Could not update schedule of program [{0}]:\n\n{1}'
-                                     .format(program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                     'Could not update schedule of program [{0}]:\n\n{1}'
+                                     .format(program.cast_custom_option_value('name', str, '<unknown>'), e))

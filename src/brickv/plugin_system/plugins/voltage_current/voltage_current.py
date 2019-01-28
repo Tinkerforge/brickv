@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QHBoxLayout
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QHBoxLayout
 
 from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent
 from brickv.plugin_system.plugins.voltage_current.ui_voltage_current import Ui_VoltageCurrent

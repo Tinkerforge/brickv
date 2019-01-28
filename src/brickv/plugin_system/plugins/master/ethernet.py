@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget, QMessageBox, QLineEdit
-from PyQt4.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QMessageBox, QLineEdit
+from PyQt5.QtCore import Qt
 
 from brickv.plugin_system.plugins.master.ui_ethernet import Ui_Ethernet
 from brickv.async_call import async_call
@@ -279,7 +279,7 @@ class Ethernet(QWidget, Ui_Ethernet):
         websocket_connections_old = websocket_connections
         port_websocket_old = port_websocket
         if self.parent.firmware_version >= (2, 2, 0):
-            secret_old = self.master.get_ethernet_authentication_secret()
+            secret_old = self.master.get_ethernet_authentication_secret().encode('ascii')
             websocket_connections, port_websocket = self.master.get_ethernet_websocket_configuration()
 
         saved_conf = self.master.get_ethernet_configuration()

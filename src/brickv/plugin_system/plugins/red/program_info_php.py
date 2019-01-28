@@ -51,7 +51,7 @@ class ProgramInfoPHP(ProgramInfo, Ui_ProgramInfoPHP):
         self.get_executable_versions('php', cb_php_versions)
 
         # start mode
-        start_mode_api_name      = self.program.cast_custom_option_value('php.start_mode', unicode, '<unknown>')
+        start_mode_api_name      = self.program.cast_custom_option_value('php.start_mode', str, '<unknown>')
         start_mode               = Constants.get_php_start_mode(start_mode_api_name)
         start_mode_script_file   = start_mode == Constants.PHP_START_MODE_SCRIPT_FILE
         start_mode_command       = start_mode == Constants.PHP_START_MODE_COMMAND
@@ -66,12 +66,12 @@ class ProgramInfoPHP(ProgramInfo, Ui_ProgramInfoPHP):
         # script file
         self.label_script_file_title.setVisible(start_mode_script_file)
         self.label_script_file.setVisible(start_mode_script_file)
-        self.label_script_file.setText(self.program.cast_custom_option_value('php.script_file', unicode, '<unknown>'))
+        self.label_script_file.setText(self.program.cast_custom_option_value('php.script_file', str, '<unknown>'))
 
         # command
         self.label_command_title.setVisible(start_mode_command)
         self.label_command.setVisible(start_mode_command)
-        self.label_command.setText(self.program.cast_custom_option_value('php.command', unicode, '<unknown>'))
+        self.label_command.setText(self.program.cast_custom_option_value('php.command', str, '<unknown>'))
 
         # url
         self.label_url_title.setVisible(start_mode_web_interface)
@@ -86,4 +86,4 @@ class ProgramInfoPHP(ProgramInfo, Ui_ProgramInfoPHP):
         # options
         self.label_options_title.setVisible(show_advanced_options and not start_mode_web_interface)
         self.label_options.setVisible(show_advanced_options and not start_mode_web_interface)
-        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('php.options', unicode, [])))
+        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('php.options', str, [])))

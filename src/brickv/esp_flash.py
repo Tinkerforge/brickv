@@ -70,10 +70,7 @@ class ESPROM(object):
 
     """ Read a SLIP packet from the serial port """
     def read(self):
-        if sys.hexversion < 0x03000000:
-            return self._slip_reader.next()
-        else:
-            return next(self._slip_reader)
+        return next(self._slip_reader)
 
     """ Write bytes to the serial port while performing SLIP escaping """
     def write(self, packet):
@@ -470,7 +467,7 @@ def slip_reader(port):
 
 
 def hexify(s):
-    if sys.hexversion < 0x03000000 or type(s) == str:
+    if isinstance(s, str):
         return ''.join('%02X' % ord(c) for c in s)
     else:
         return ''.join('%02X' % c for c in s)
@@ -567,16 +564,9 @@ entry": 1074792180, "num_params": 1, "params_start": 1074790400, "data": "FE0510
 from zipfile import ZipFile
 from threading import Thread
 
-try:
-    from StringIO import StringIO as FileLike
-except ImportError:
-    from io import BytesIO as FileLike
+from io import BytesIO as FileLike
 
-# Queue for Python 2, queue for Python 3
-try:
-    from Queue import Queue, Empty
-except ImportError:
-    from queue import Queue, Empty
+from queue import Queue, Empty
 
 class TFSerial(object):
     def __init__(self, master):
@@ -598,10 +588,7 @@ class TFSerial(object):
 
     def write(self, data):
         try:
-            if type(data) == str:
-                data = map(ord, data) # Python 2
-            else:
-                data = list(data) # Python 3
+            data = list(data) # Python 3
 
             while data != []:
                 data_chunk = data[:60]

@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_temperature import BrickletTemperature
@@ -43,8 +43,8 @@ class Temperature(PluginBase):
 
         self.current_temperature = None # float, °C
 
-        plots = [('Temperature', Qt.red, lambda: self.current_temperature, u'{:.2f} °C'.format)]
-        self.plot_widget = PlotWidget(u'Temperature [°C]', plots)
+        plots = [('Temperature', Qt.red, lambda: self.current_temperature, '{:.2f} °C'.format)]
+        self.plot_widget = PlotWidget('Temperature [°C]', plots)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)

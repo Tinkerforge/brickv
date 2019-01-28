@@ -23,10 +23,13 @@ Boston, MA 02111-1307, USA.
 """
 
 import posixpath
+import re
 import os
+import html
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWidget, QPlainTextEdit, QTextOption, QFont, QMessageBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QPlainTextEdit, QMessageBox
+from PyQt5.QtGui import QTextOption, QFont
 
 from brickv.plugin_system.plugins.red.ui_red_tab_importexport_systemlogs import Ui_REDTabImportExportSystemLogs
 from brickv.plugin_system.plugins.red.api import *
@@ -52,9 +55,9 @@ class SystemLog(object):
 
     def log(self, message, bold=False, pre=False):
         if bold:
-            self.edit.appendHtml(u'<b>{0}</b>'.format(Qt.escape(message)))
+            self.edit.appendHtml('<b>{0}</b>'.format(html.escape(message)))
         elif pre:
-            self.edit.appendHtml(u'<pre>{0}</pre>'.format(message))
+            self.edit.appendHtml('<pre>{0}</pre>'.format(message))
         else:
             self.edit.appendPlainText(message)
 
@@ -177,7 +180,7 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
 
                 if result.error != None:
                     if result.error.error_code != REDError.E_OPERATION_ABORTED:
-                        log.log(u'Error: ' + Qt.escape(unicode(result.error)), bold=True)
+                        log.log('Error: ' + html.escape(str(result.error)), bold=True)
 
                     return
 
@@ -185,8 +188,12 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
                     content = result.data.decode('utf-8')
                 except UnicodeDecodeError:
                     # FIXME: maybe add a encoding guesser here or try some common encodings if UTF-8 fails
-                    log.log(u'Error: Log file is not UTF-8 encoded', bold=True)
+                    log.log('Error: Log file is not UTF-8 encoded', bold=True)
                     return
+
+                if '\x00' in content:
+                    content = re.sub(r'(\n?)\x00+(\n?)', '\n[REBOOT]\n', content)
+                    #content = content.replace('\n\n[REBOOT]', '\n[REBOOT]')
 
                 log.set_content(content)
 
@@ -194,7 +201,7 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
             self.log_file.read_async(self.log_file.length, cb_read, cb_read_status)
 
         def cb_open_error(error):
-            log.log(u'Error: {0}'.format(error), bold=True)
+            log.log('Error: {0}'.format(error), bold=True)
 
             done()
 
@@ -215,18 +222,18 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
         log.last_filename = filename
 
         try:
-            f = open(filename, 'wb')
+            f = open(filename, 'w')
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save System Log Error',
-                                 u'Could not open {0} for writing:\n\n{1}'.format(filename, e))
+                                 'Could not open {0} for writing:\n\n{1}'.format(filename, e))
             return
 
         try:
             # FIXME: add progress dialog if content is bigger than some megabytes
-            f.write(content.encode('utf-8'))
+            f.write(content)
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save System Log Error',
-                                 u'Could not write to {0}:\n\n{1}'.format(filename, e))
+                                 'Could not write to {0}:\n\n{1}'.format(filename, e))
 
         f.close()
 

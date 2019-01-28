@@ -24,8 +24,8 @@ Boston, MA 02111-1307, USA.
 
 import datetime
 
-from PyQt4.QtCore import QUrl
-from PyQt4.QtGui import QDesktopServices
+from PyQt5.QtCore import QUrl
+from PyQt5.QtGui import QDesktopServices
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.gps.ui_gps import Ui_GPS
@@ -144,13 +144,13 @@ class GPS(PluginBase, Ui_GPS):
         while len(mmmmm_str) < 5:
             mmmmm_str = '0' + mmmmm_str
 
-        return u'{0}° {1}.{2}’'.format(dd_str, mm_str, mmmmm_str)
+        return '{0}° {1}.{2}’'.format(dd_str, mm_str, mmmmm_str)
 
     def make_dd_dddddd(self, degree, url=False):
         if url:
             return '%2.6f' % (degree / 1000000.0)
         else:
-            return u'%2.6f°' % (degree / 1000000.0)
+            return '%2.6f°' % (degree / 1000000.0)
 
     def make_ddmmss_sss(self, degree):
         dd = degree / 1000000
@@ -172,7 +172,7 @@ class GPS(PluginBase, Ui_GPS):
         while len(sss_str) < 3:
             sss_str = '0' + sss_str
 
-        return u'{0}° {1}’ {2}.{3}’’'.format(dd_str, mm_str, ss_str, sss_str)
+        return '{0}° {1}’ {2}.{3}’’'.format(dd_str, mm_str, ss_str, sss_str)
 
     def cb_coordinates(self, lat, ns, long_, ew, pdop, hdop, vdop, epe):
         if not self.had_fix:
@@ -244,7 +244,7 @@ class GPS(PluginBase, Ui_GPS):
         if not self.had_fix:
             return
 
-        self.course.setText(u'%.2f°' % (course/100.0,))
+        self.course.setText('%.2f°' % (course/100.0,))
         self.speed.setText('%.2f km/h' % (speed/100.0,))
 
     def cb_date_time(self, date, time):

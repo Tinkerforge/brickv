@@ -24,9 +24,10 @@ Boston, MA 02111-1307, USA.
 import posixpath
 import json
 import zlib
+import html
 
-from PyQt4.QtCore import QTimer
-from PyQt4.QtGui import QDialog, QMessageBox
+from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QDialog, QMessageBox
 
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
@@ -134,7 +135,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
+        self.set_formatted_sub_title('Specify how the {language} program [{name}] should be executed.')
 
         self.update_combo_version('java', self.combo_version)
 
@@ -225,14 +226,14 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
                     okay, message = check_script_result(result, decode_stderr=True)
 
                     if not okay:
-                        self.label_main_class_error.setText('<b>Error:</b> ' + Qt.escape(message))
+                        self.label_main_class_error.setText('<b>Error:</b> ' + html.escape(message))
                         self.label_main_class_error.setVisible(True)
                         done()
                         return
 
                     def expand_async(data):
                         try:
-                            main_classes = json.loads(zlib.decompress(buffer(data)).decode('utf-8'))
+                            main_classes = json.loads(zlib.decompress(memoryview(data)).decode('utf-8'))
 
                             if not isinstance(main_classes, dict):
                                 main_classes = {}
@@ -247,7 +248,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
                         for cls in sorted(main_classes.keys()):
                             self.combo_main_class.addItem(cls, main_classes[cls])
 
-                        self.combo_main_class_checker.set_current_text(program.cast_custom_option_value('java.main_class', unicode, ''))
+                        self.combo_main_class_checker.set_current_text(program.cast_custom_option_value('java.main_class', str, ''))
                         done()
 
                     def cb_expand_error():
@@ -315,21 +316,21 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         # if a program exists then this page is used in an edit wizard
         if program != None:
             # start mode
-            start_mode_api_name = program.cast_custom_option_value('java.start_mode', unicode, '<unknown>')
+            start_mode_api_name = program.cast_custom_option_value('java.start_mode', str, '<unknown>')
             start_mode          = Constants.get_java_start_mode(start_mode_api_name)
 
             self.combo_start_mode.setCurrentIndex(start_mode)
 
             # main class
-            self.combo_main_class_checker.set_current_text(program.cast_custom_option_value('java.main_class', unicode, ''))
+            self.combo_main_class_checker.set_current_text(program.cast_custom_option_value('java.main_class', str, ''))
 
             # jar file
-            self.combo_jar_file_selector.set_current_text(program.cast_custom_option_value('java.jar_file', unicode, ''))
+            self.combo_jar_file_selector.set_current_text(program.cast_custom_option_value('java.jar_file', str, ''))
 
             # class path
             self.class_path_list_editor.clear()
 
-            for class_path_entry in program.cast_custom_option_value_list('java.class_path', unicode, []):
+            for class_path_entry in program.cast_custom_option_value_list('java.class_path', str, []):
                 self.class_path_list_editor.add_item(class_path_entry)
 
             # working directory
@@ -338,7 +339,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             # options
             self.option_list_editor.clear()
 
-            for option in program.cast_custom_option_value_list('java.options', unicode, []):
+            for option in program.cast_custom_option_value_list('java.options', str, []):
                 self.option_list_editor.add_item(option)
 
         self.update_ui_state()
@@ -416,19 +417,19 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         class_path        = ':'.join(self.class_path_list_editor.get_items())
         options           = ' '.join(self.option_list_editor.get_items())
 
-        html  = u'Java Version: {0}<br/>'.format(Qt.escape(self.combo_version.itemText(version)))
-        html += u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.java_start_mode_display_names[start_mode]))
+        html_text  = 'Java Version: {0}<br/>'.format(html.escape(self.combo_version.itemText(version)))
+        html_text += 'Start Mode: {0}<br/>'.format(html.escape(Constants.java_start_mode_display_names[start_mode]))
 
         if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS:
-            html += u'Main Class: {0}<br/>'.format(Qt.escape(main_class))
+            html_text += 'Main Class: {0}<br/>'.format(html.escape(main_class))
         elif start_mode == Constants.JAVA_START_MODE_JAR_FILE:
-            html += u'JAR File: {0}<br/>'.format(Qt.escape(jar_file))
+            html_text += 'JAR File: {0}<br/>'.format(html.escape(jar_file))
 
-        html += u'Class Path: {0}<br/>'.format(Qt.escape(class_path))
-        html += u'Working Directory: {0}<br/>'.format(Qt.escape(working_directory))
-        html += u'JVM Options: {0}<br/>'.format(Qt.escape(options))
+        html_text += 'Class Path: {0}<br/>'.format(html.escape(class_path))
+        html_text += 'Working Directory: {0}<br/>'.format(html.escape(working_directory))
+        html_text += 'JVM Options: {0}<br/>'.format(html.escape(options))
 
-        return html
+        return html_text
 
     def get_custom_options(self):
         return {

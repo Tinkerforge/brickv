@@ -24,8 +24,8 @@ Boston, MA 02111-1307, USA.
 
 #### skip here for brick-logger ####
 
-from PyQt4.QtCore import pyqtSignal, Qt
-from PyQt4.QtGui import QDialog, QTreeWidgetItem
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtWidgets import QDialog, QTreeWidgetItem
 
 from brickv.data_logger.loggable_devices import device_specs
 from brickv.data_logger.event_logger import EventLogger
@@ -40,7 +40,7 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
     """
         Function and Event handling class for the Ui_DeviceDialog.
     """
-    qtcb_enumerate = pyqtSignal(str, str, 'char', type((0,)), type((0,)), int, int)
+    qtcb_enumerate = pyqtSignal(str, str, str, type((0,)), type((0,)), int, int)
     qtcb_connected = pyqtSignal(int)
 
     def __init__(self, parent):

@@ -23,9 +23,11 @@ Boston, MA 02111-1307, USA.
 
 import posixpath
 import os
+import html
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QDialog, QFont, QMessageBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QDialog, QMessageBox
+from PyQt5.QtGui import QFont
 
 from brickv.plugin_system.plugins.red.ui_program_info_logs_view import Ui_ProgramInfoLogsView
 from brickv.plugin_system.plugins.red.api import *
@@ -79,14 +81,14 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
                 self.progress_download.setVisible(False)
 
                 if result.error != None:
-                    self.log(u'Error: ' + Qt.escape(unicode(result.error)), bold=True)
+                    self.log('Error: ' + html.escape(str(result.error)), bold=True)
                     return
 
                 try:
                     self.content = result.data.decode('utf-8')
                 except UnicodeDecodeError:
                     # FIXME: maybe add a encoding guesser here or try some common encodings if UTF-8 fails
-                    self.log(u'Error: Log file is not UTF-8 encoded', bold=True)
+                    self.log('Error: Log file is not UTF-8 encoded', bold=True)
                     return
 
                 self.button_save.setEnabled(True)
@@ -110,7 +112,7 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
         def cb_open_error():
             self.label_download.setVisible(False)
             self.progress_download.setVisible(False)
-            self.log(u'Error: Could not open log file', bold=True)
+            self.log('Error: Could not open log file', bold=True)
 
         self.log_file = REDFile(session)
 
@@ -127,18 +129,18 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
         self.last_filename = filename
 
         try:
-            f = open(filename, 'wb')
+            f = open(filename, 'w')
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save Log Error',
-                                 u'Could not open {0} for writing:\n\n{1}'.format(filename, e))
+                                 'Could not open {0} for writing:\n\n{1}'.format(filename, e))
             return
 
         try:
             # FIXME: add progress dialog if content is bigger than some megabytes
-            f.write(self.content.encode('utf-8'))
+            f.write(self.content)
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save Log Error',
-                                 u'Could not write to {0}:\n\n{1}'.format(filename, e))
+                                 'Could not write to {0}:\n\n{1}'.format(filename, e))
 
         f.close()
 
@@ -153,8 +155,8 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
 
     def log(self, message, bold=False, pre=False):
         if bold:
-            self.edit_content.appendHtml(u'<b>{0}</b>'.format(Qt.escape(message)))
+            self.edit_content.appendHtml('<b>{0}</b>'.format(html.escape(message)))
         elif pre:
-            self.edit_content.appendHtml(u'<pre>{0}</pre>'.format(message))
+            self.edit_content.appendHtml('<pre>{0}</pre>'.format(message))
         else:
             self.edit_content.appendPlainText(message)

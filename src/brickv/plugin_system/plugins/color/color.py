@@ -22,9 +22,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QPushButton, QLabel, QHBoxLayout, QComboBox, QPainter, \
-                        QFrame, QBrush, QColor, QCheckBox, QVBoxLayout
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QPushButton, QLabel, QHBoxLayout, QComboBox, QFrame, QCheckBox, QVBoxLayout
+from PyQt5.QtGui import QPainter, QBrush, QColor
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_color import BrickletColor
@@ -134,10 +134,12 @@ class Color(PluginBase):
         layout_h2.addWidget(self.clear_graphs_button)
 
         line1 = QFrame()
+        line1.setObjectName("line1")
         line1.setFrameShape(QFrame.HLine)
         line1.setFrameShadow(QFrame.Sunken)
 
         line2 = QFrame()
+        line2.setObjectName("line2")
         line2.setFrameShape(QFrame.HLine)
         line2.setFrameShadow(QFrame.Sunken)
 

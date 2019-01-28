@@ -26,9 +26,11 @@ import os
 import posixpath
 import stat
 import time
+import html
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWizard, QPixmap
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QWizard
 
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
@@ -43,7 +45,7 @@ class ChunkedUploader(ChunkedUploaderBase):
         self.page = page
 
     def report_error(self, message, *args):
-        self.page.upload_error(u'...error: ' + message, *args)
+        self.page.upload_error('...error: ' + message, *args)
 
     def set_progress_maximum(self, maximum):
         self.page.progress_file.setRange(0, maximum)
@@ -105,7 +107,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Upload the {language} program [{name}].')
+        self.set_formatted_sub_title('Upload the {language} program [{name}].')
 
         self.wizard().rejected.connect(self.cancel_upload)
 
@@ -113,7 +115,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if self.wizard().program != None:
             self.edit_mode = True
 
-            self.set_formatted_sub_title(u'Upload new files for the {language} program [{name}].')
+            self.set_formatted_sub_title('Upload new files for the {language} program [{name}].')
 
         self.update_ui_state()
 
@@ -174,9 +176,9 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
     def log(self, message, bold=False, pre=False):
         if bold:
-            self.edit_log.appendHtml(u'<b>{0}</b>'.format(Qt.escape(message)))
+            self.edit_log.appendHtml('<b>{0}</b>'.format(html.escape(message)))
         elif pre:
-            self.edit_log.appendHtml(u'<pre>{0}</pre>'.format(message))
+            self.edit_log.appendHtml('<pre>{0}</pre>'.format(message))
         else:
             self.edit_log.appendPlainText(message)
 
@@ -195,10 +197,10 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         string_args = []
 
         for arg in args:
-            string_args.append(Qt.escape(unicode(arg)))
+            string_args.append(html.escape(arg))
 
         if len(string_args) > 0:
-            message = unicode(message).format(*tuple(string_args))
+            message = message.format(*tuple(string_args))
 
         self.log(message, bold=True)
 
@@ -206,10 +208,10 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         string_args = []
 
         for arg in args:
-            string_args.append(Qt.escape(unicode(arg)))
+            string_args.append(html.escape(arg))
 
         if len(string_args) > 0:
-            message = unicode(message).format(*tuple(string_args))
+            message = message.format(*tuple(string_args))
 
         self.log(message, bold=True)
 
@@ -322,7 +324,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             # set language specific custom options
             custom_options = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_custom_options()
 
-            for name, value in custom_options.iteritems():
+            for name, value in custom_options.items():
                 try:
                     self.program.set_custom_option_value(name, value) # FIXME: async_call
                 except (Error, REDError) as e:
@@ -356,7 +358,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.remaining_uploads = self.remaining_uploads[1:]
         source_path            = self.upload.source
 
-        self.next_step(u'Uploading {0}...'.format(source_path))
+        self.next_step('Uploading {0}...'.format(source_path))
 
         self.chunked_uploader = ChunkedUploader(self)
 
@@ -418,10 +420,10 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.chunked_uploader.start(self.target_path, self.target_file)
 
     def start_conflict_resolution(self):
-        self.log(u'...target file {0} already exists'.format(self.upload.target))
+        self.log('...target file {0} already exists'.format(self.upload.target))
 
         if self.auto_conflict_resolution == ProgramPageUpload.CONFLICT_RESOLUTION_REPLACE:
-            self.log(u'...replacing {0}'.format(self.upload.target))
+            self.log('...replacing {0}'.format(self.upload.target))
             self.continue_upload_file(True)
         elif self.auto_conflict_resolution == ProgramPageUpload.CONFLICT_RESOLUTION_SKIP:
             self.log('...skipped')
@@ -438,13 +440,13 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
                 target_file.release()
             except (Error, REDError) as e:
-                self.label_existing_stats.setText(u'<b>Error</b>: Could not open target file: {0}', Qt.escape(unicode(e)))
+                self.label_existing_stats.setText('<b>Error</b>: Could not open target file: {0}', html.escape(str(e)))
 
             self.label_new_stats.setText('{0}, last modified on {1}'
                                          .format(self.chunked_uploader.source_display_size,
                                                  timestamp_to_date_at_time(int(self.chunked_uploader.source_stat.st_mtime))))
 
-            self.label_replace_help.setText(self.replace_help_template.replace('<FILE>', Qt.escape(self.upload.target)))
+            self.label_replace_help.setText(self.replace_help_template.replace('<FILE>', html.escape(self.upload.target)))
             self.check_rename_new_file.setChecked(self.auto_conflict_resolution == ProgramPageUpload.CONFLICT_RESOLUTION_RENAME)
             self.edit_new_name.setText('') # force a new-name check
             self.edit_new_name.setText(posixpath.split(self.upload.target)[1])
@@ -456,7 +458,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if not self.conflict_resolution_in_progress or self.check_rename_new_file.isChecked():
             return
 
-        self.log(u'...replacing {0}'.format(self.upload.target))
+        self.log('...replacing {0}'.format(self.upload.target))
 
         if self.check_remember_decision.isChecked():
             self.auto_conflict_resolution = ProgramPageUpload.CONFLICT_RESOLUTION_REPLACE
@@ -480,7 +482,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             return
 
         self.rename_upload_target(self.edit_new_name.text())
-        self.log(u'...uploading as {0}'.format(self.upload.target))
+        self.log('...uploading as {0}'.format(self.upload.target))
 
         if self.check_remember_decision.isChecked():
             self.auto_conflict_resolution = ProgramPageUpload.CONFLICT_RESOLUTION_RENAME

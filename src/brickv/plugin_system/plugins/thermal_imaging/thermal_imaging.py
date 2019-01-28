@@ -24,8 +24,9 @@ Boston, MA 02111-1307, USA.
 import colorsys
 import math
 
-from PyQt4.QtCore import pyqtSignal, Qt, QSize, QPoint, QLine
-from PyQt4.QtGui import QWidget, QImage, QPainter, QPen, QApplication, QColor
+from PyQt5.QtCore import pyqtSignal, Qt, QSize, QPoint, QLineF
+from PyQt5.QtWidgets import QWidget, QApplication
+from PyQt5.QtGui import QImage, QPainter, QPen, QColor
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.thermal_imaging.ui_thermal_imaging import Ui_ThermalImaging
@@ -132,8 +133,8 @@ class ThermalImage(QWidget):
             maximum = max(image)
 
             if self.wait_for_minmax == 0:
-                self.parent.temperature_min.setText(u'min: ' + self.parent.kelvin_to_degstr(minimum) + u' °C')
-                self.parent.temperature_max.setText(u'max: ' + self.parent.kelvin_to_degstr(maximum) + u' °C')
+                self.parent.temperature_min.setText('min: ' + self.parent.kelvin_to_degstr(minimum) + ' °C')
+                self.parent.temperature_max.setText('max: ' + self.parent.kelvin_to_degstr(maximum) + ' °C')
             else:
                 self.wait_for_minmax -= 1
 
@@ -144,7 +145,7 @@ class ThermalImage(QWidget):
 
         for i, value in enumerate(image):
             if is_16bit:
-                value = ((value-minimum)*255)/(maximum-minimum)
+                value = ((value-minimum)*255)//(maximum-minimum)
             r, g, b = self.rgb_lookup[table_index][value]
 
             self.image.setPixel(QPoint(i%80, i//80), (r << 16) | (g << 8) | b)
@@ -190,18 +191,18 @@ class ThermalImage(QWidget):
             cross_y = from_y + (to_y-from_y)/2.0
 
             if to_x-from_x > 5 or to_y - from_y > 5:
-                lines = [QLine(from_x, from_y, from_x+self.crosshair_width, from_y),
-                         QLine(from_x, from_y, from_x, from_y+self.crosshair_width),
-                         QLine(to_x, to_y, to_x, to_y-self.crosshair_width),
-                         QLine(to_x, to_y, to_x-self.crosshair_width, to_y),
-                         QLine(from_x, to_y, from_x, to_y-self.crosshair_width),
-                         QLine(from_x, to_y, from_x+self.crosshair_width, to_y),
-                         QLine(to_x, from_y, to_x, from_y+self.crosshair_width),
-                         QLine(to_x, from_y, to_x-self.crosshair_width, from_y)]
+                lines = [QLineF(from_x, from_y, from_x+self.crosshair_width, from_y),
+                         QLineF(from_x, from_y, from_x, from_y+self.crosshair_width),
+                         QLineF(to_x, to_y, to_x, to_y-self.crosshair_width),
+                         QLineF(to_x, to_y, to_x-self.crosshair_width, to_y),
+                         QLineF(from_x, to_y, from_x, to_y-self.crosshair_width),
+                         QLineF(from_x, to_y, from_x+self.crosshair_width, to_y),
+                         QLineF(to_x, from_y, to_x, from_y+self.crosshair_width),
+                         QLineF(to_x, from_y, to_x-self.crosshair_width, from_y)]
                 painter.drawLines(lines)
 
-            lines = [QLine(cross_x-self.crosshair_width, cross_y, cross_x+self.crosshair_width, cross_y),
-                     QLine(cross_x, cross_y-self.crosshair_width, cross_x, cross_y+self.crosshair_width)]
+            lines = [QLineF(cross_x-self.crosshair_width, cross_y, cross_x+self.crosshair_width, cross_y),
+                     QLineF(cross_x, cross_y-self.crosshair_width, cross_x, cross_y+self.crosshair_width)]
             painter.drawLines(lines)
 
             self.parent.update_spotmeter_roi_label()

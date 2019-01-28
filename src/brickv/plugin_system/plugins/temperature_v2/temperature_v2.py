@@ -21,8 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QCheckBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_temperature_v2 import BrickletTemperatureV2
@@ -41,21 +41,21 @@ class TemperatureV2(COMCUPluginBase):
                                                 self.increase_error_count)
 
         self.current_temperature = None # float, °C
-        
-        plots_temperature = [(u'Temperature', Qt.red, lambda: self.current_temperature, u'{} °C'.format)]
-        self.plot_widget_temperature = PlotWidget(u'Temperature [°C]', plots_temperature)
+
+        plots_temperature = [('Temperature', Qt.red, lambda: self.current_temperature, '{} °C'.format)]
+        self.plot_widget_temperature = PlotWidget('Temperature [°C]', plots_temperature)
 
         self.enable_heater = QCheckBox("Enable Heater")
         self.enable_heater.stateChanged.connect(self.enable_heater_changed)
 
         layout_plot = QHBoxLayout()
         layout_plot.addWidget(self.plot_widget_temperature)
-        
+
         layout_config = QHBoxLayout()
         layout_config.addStretch()
         layout_config.addWidget(self.enable_heater)
         layout_config.addStretch()
-        
+
         layout_main = QVBoxLayout(self)
         layout_main.addLayout(layout_plot)
         layout_main.addLayout(layout_config)
@@ -88,7 +88,7 @@ class TemperatureV2(COMCUPluginBase):
 
     def cb_temperature(self, temperature):
         self.current_temperature = temperature / 100.0
-        
+
     def cb_heater_configuration(self, heater_config):
         if heater_config == 0:
             self.enable_heater.setChecked(False)

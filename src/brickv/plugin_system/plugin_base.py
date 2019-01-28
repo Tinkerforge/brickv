@@ -25,7 +25,8 @@ Boston, MA 02111-1307, USA.
 import sys
 import traceback
 
-from PyQt4.QtGui import QWidget
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import pyqtBoundSignal
 
 from brickv.bindings.ip_connection import IPConnection
 from brickv.bindings.bricklet_gps_v2 import GPSV2
@@ -164,8 +165,7 @@ class PluginBase(QWidget, object):
                 if member.startswith('qtcb_'):
                     obj = getattr(self, member)
 
-                    # FIXME: checking type by display name of type is not so robust
-                    if str(type(obj)) == "<type 'PyQt4.QtCore.pyqtBoundSignal'>":
+                    if isinstance(obj, pyqtBoundSignal):
                         try:
                             obj.disconnect()
                         except:

@@ -26,6 +26,8 @@ from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_vbnet import Ui_ProgramPageVBNET
 
+import html
+
 class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
     def __init__(self, title_prefix=''):
         ProgramPage.__init__(self)
@@ -67,7 +69,7 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
+        self.set_formatted_sub_title('Specify how the {language} program [{name}] should be executed.')
 
         self.update_combo_version('mono', self.combo_version)
 
@@ -82,13 +84,13 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
 
         if program != None:
             # start mode
-            start_mode_api_name = program.cast_custom_option_value('vbnet.start_mode', unicode, '<unknown>')
+            start_mode_api_name = program.cast_custom_option_value('vbnet.start_mode', str, '<unknown>')
             start_mode          = Constants.get_vbnet_start_mode(start_mode_api_name)
 
             self.combo_start_mode.setCurrentIndex(start_mode)
 
             # executable
-            self.combo_executable_selector.set_current_text(program.cast_custom_option_value('vbnet.executable', unicode, ''))
+            self.combo_executable_selector.set_current_text(program.cast_custom_option_value('vbnet.executable', str, ''))
 
             # working directory
             self.combo_working_directory_selector.set_current_text(program.working_directory)
@@ -96,7 +98,7 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
             # options
             self.option_list_editor.clear()
 
-            for option in program.cast_custom_option_value_list('vbnet.options', unicode, []):
+            for option in program.cast_custom_option_value_list('vbnet.options', str, []):
                 self.option_list_editor.add_item(option)
 
         self.update_ui_state()
@@ -138,16 +140,16 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
         working_directory = self.get_field('vbnet.working_directory')
         options           = ' '.join(self.option_list_editor.get_items())
 
-        html  = u'Mono Version: {0}<br/>'.format(Qt.escape(self.combo_version.itemText(version)))
-        html += u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.vbnet_start_mode_display_names[start_mode]))
+        html_text  = 'Mono Version: {0}<br/>'.format(html.escape(self.combo_version.itemText(version)))
+        html_text += 'Start Mode: {0}<br/>'.format(html.escape(Constants.vbnet_start_mode_display_names[start_mode]))
 
         if start_mode == Constants.VBNET_START_MODE_EXECUTABLE:
-            html += u'Executable: {0}<br/>'.format(Qt.escape(executable))
+            html_text += 'Executable: {0}<br/>'.format(html.escape(executable))
 
-        html += u'Working Directory: {0}<br/>'.format(Qt.escape(working_directory))
-        html += u'Mono Options: {0}<br/>'.format(Qt.escape(options))
+        html_text += 'Working Directory: {0}<br/>'.format(html.escape(working_directory))
+        html_text += 'Mono Options: {0}<br/>'.format(html.escape(options))
 
-        return html
+        return html_text
 
     def get_custom_options(self):
         return {

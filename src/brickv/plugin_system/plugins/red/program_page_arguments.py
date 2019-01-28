@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QMessageBox
+from PyQt5.QtWidgets import QMessageBox
 
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
@@ -67,7 +67,7 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
     def initializePage(self):
         language = self.get_field('language')
 
-        self.set_formatted_sub_title(u'Specify the arguments to be passed to the {language} program [{name}] and its environment.')
+        self.set_formatted_sub_title('Specify the arguments to be passed to the {language} program [{name}] and its environment.')
 
         self.label_arguments_help.setText(Constants.arguments_help[language])
         self.argument_list_editor.reset()
@@ -139,7 +139,7 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
         environment = []
 
         for variable in self.environment_list_editor.get_items():
-            environment.append(u'{0}={1}'.format(variable[0], variable[1]))
+            environment.append('{0}={1}'.format(variable[0], variable[1]))
 
         return environment
 
@@ -163,8 +163,8 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
             program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
         except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
-                                 u'Could not update arguments and environment of program [{0}]:\n\n{1}'
-                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>'), e))
+                                 'Could not update arguments and environment of program [{0}]:\n\n{1}'
+                                 .format(program.cast_custom_option_value('name', str, '<unknown>'), e))
             return
 
         self.set_last_edit_timestamp()

@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 import threading
 import logging
 
-from PyQt4.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal
 
 from brickv.bindings.ip_connection import Error
 

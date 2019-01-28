@@ -21,9 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QColor
+from PyQt5.QtGui import QColor
 
-from PyQt4.QtCore import pyqtSignal, QTimer
+from PyQt5.QtCore import pyqtSignal, QTimer
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_motion_detector_v2 import BrickletMotionDetectorV2
 from brickv.plugin_system.plugins.motion_detector_v2.ui_motion_detector_v2 import Ui_MotionDetectorV2

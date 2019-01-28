@@ -23,10 +23,12 @@ Boston, MA 02111-1307, USA.
 
 import posixpath
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QDialog
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QDialog
 
 from brickv.plugin_system.plugins.red.ui_program_info_c_compile import Ui_ProgramInfoCCompile
+
+import html
 
 class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
     def __init__(self, parent, script_manager, program):
@@ -49,9 +51,9 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
 
     def log(self, message, bold=False, pre=False):
         if bold:
-            self.edit_log.appendHtml(u'<b>{0}</b>'.format(Qt.escape(message)))
+            self.edit_log.appendHtml('<b>{0}</b>'.format(html.escape(message)))
         elif pre:
-            self.edit_log.appendHtml(u'<pre>{0}</pre>'.format(message))
+            self.edit_log.appendHtml('<pre>{0}</pre>'.format(message))
         else:
             self.edit_log.appendPlainText(message)
 
@@ -90,7 +92,7 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
         else:
             self.log('Executing make...')
 
-        make_options      = self.program.cast_custom_option_value_list('c.make_options', unicode, [])
+        make_options      = self.program.cast_custom_option_value_list('c.make_options', str, [])
         working_directory = posixpath.join(self.program.root_directory, 'bin', self.program.working_directory)
 
         if target != None:

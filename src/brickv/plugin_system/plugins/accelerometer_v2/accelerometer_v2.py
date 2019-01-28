@@ -23,9 +23,9 @@ Boston, MA 02111-1307, USA.
 
 import math
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QCheckBox, \
-                        QFont, QFrame
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QCheckBox, QFrame
+from PyQt5.QtGui import QFont
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_accelerometer_v2 import BrickletAccelerometerV2
@@ -37,7 +37,7 @@ class PitchLabel(FixedSizeLabel):
     def setText(self, x, y, z):
         try:
             pitch = int(round(math.atan(x/(math.sqrt(y*y + z*z)))*180/math.pi, 0))
-            text = u'Pitch: {}°'.format(pitch)
+            text = 'Pitch: {}°'.format(pitch)
             super(PitchLabel, self).setText(text)
         except:
             # In case of division by 0 or similar we simply don't update the text
@@ -47,7 +47,7 @@ class RollLabel(FixedSizeLabel):
     def setText(self, x, y, z):
         try:
             roll = int(round(math.atan(y/math.sqrt(x*x+z*z))*180/math.pi, 0))
-            text = u'Roll: {}°'.format(roll)
+            text = 'Roll: {}°'.format(roll)
             super(RollLabel, self).setText(text)
         except:
             # In case of division by 0 or similar we simply don't update the text
@@ -128,6 +128,7 @@ class AccelerometerV2(COMCUPluginBase):
 #        hlayout.addWidget(self.enable_led)
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 

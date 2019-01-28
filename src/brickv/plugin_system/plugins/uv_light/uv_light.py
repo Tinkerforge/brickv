@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_uv_light import BrickletUVLight
@@ -49,8 +49,8 @@ class UVLight(PluginBase):
 
         self.current_uv_light = None
 
-        plots = [('UV Light', Qt.red, lambda: self.current_uv_light, u'{} mW/m²'.format)]
-        self.plot_widget = PlotWidget(u'UV Light [mW/m²]', plots, extra_key_widgets=[self.index_label])
+        plots = [('UV Light', Qt.red, lambda: self.current_uv_light, '{} mW/m²'.format)]
+        self.plot_widget = PlotWidget('UV Light [mW/m²]', plots, extra_key_widgets=[self.index_label])
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)
@@ -77,7 +77,7 @@ class UVLight(PluginBase):
         self.current_uv_light = uv_light / 10.0
 
         index = round(uv_light/250.0, 1)
-        self.index_label.setText(unicode(index))
+        self.index_label.setText(str(index))
 
         if index < 2.5:
             background = 'green'

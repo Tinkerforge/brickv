@@ -1,6 +1,7 @@
-from PyQt4.QtCore import pyqtSignature, pyqtProperty, SIGNAL, SLOT, QRect, QPoint
-from PyQt4.QtGui import QColor, QWidget, QAbstractSlider, QSlider, QStyle, QGridLayout, QLabel, QDoubleSpinBox, QGridLayout, QStylePainter, QStyleOption, QStyleOptionSlider, QPen, QPalette, QLinearGradient, QStyleFactory
-import PyQt4.QtCore as QtCore
+from PyQt5.QtCore import pyqtProperty, pyqtSignal, pyqtSlot, QRect, QPoint
+from PyQt5.QtGui import QColor, QPen, QPalette, QLinearGradient
+from PyQt5.QtWidgets import QWidget, QAbstractSlider, QSlider, QStyle, QGridLayout, QLabel, QDoubleSpinBox, QGridLayout, QStylePainter, QStyleOption, QStyleOptionSlider,  QStyleFactory
+import PyQt5.QtCore as QtCore
 
 def clamp(v, lower, upper):
     return min(upper, max(lower, v))

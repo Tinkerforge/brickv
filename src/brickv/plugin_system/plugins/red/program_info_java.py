@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
+from PyQt5.QtCore import Qt
 
 from brickv.plugin_system.plugins.red.program_info import ProgramInfo
 from brickv.plugin_system.plugins.red.program_utils import Constants
@@ -53,7 +53,7 @@ class ProgramInfoJava(ProgramInfo, Ui_ProgramInfoJava):
         self.get_executable_versions('java', cb_java_versions)
 
         # start mode
-        start_mode_api_name   = self.program.cast_custom_option_value('java.start_mode', unicode, '<unknown>')
+        start_mode_api_name   = self.program.cast_custom_option_value('java.start_mode', str, '<unknown>')
         start_mode            = Constants.get_java_start_mode(start_mode_api_name)
         start_mode_main_class = start_mode == Constants.JAVA_START_MODE_MAIN_CLASS
         start_mode_jar_file   = start_mode == Constants.JAVA_START_MODE_JAR_FILE
@@ -63,17 +63,17 @@ class ProgramInfoJava(ProgramInfo, Ui_ProgramInfoJava):
         # main class
         self.label_main_class_title.setVisible(start_mode_main_class)
         self.label_main_class.setVisible(start_mode_main_class)
-        self.label_main_class.setText(self.program.cast_custom_option_value('java.main_class', unicode, '<unknown>'))
+        self.label_main_class.setText(self.program.cast_custom_option_value('java.main_class', str, '<unknown>'))
 
         # jar file
         self.label_jar_file_title.setVisible(start_mode_jar_file)
         self.label_jar_file.setVisible(start_mode_jar_file)
-        self.label_jar_file.setText(self.program.cast_custom_option_value('java.jar_file', unicode, '<unknown>'))
+        self.label_jar_file.setText(self.program.cast_custom_option_value('java.jar_file', str, '<unknown>'))
 
         # class path
         self.label_class_path_title.setVisible(show_class_path)
         self.label_class_path.setVisible(show_class_path)
-        self.label_class_path.setText('\n'.join(self.program.cast_custom_option_value_list('java.class_path', unicode, [])))
+        self.label_class_path.setText('\n'.join(self.program.cast_custom_option_value_list('java.class_path', str, [])))
 
         # working directory
         self.label_working_directory_title.setVisible(show_advanced_options)
@@ -83,4 +83,4 @@ class ProgramInfoJava(ProgramInfo, Ui_ProgramInfoJava):
         # options
         self.label_options_title.setVisible(show_advanced_options)
         self.label_options.setVisible(show_advanced_options)
-        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('java.options', unicode, [])))
+        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('java.options', str, [])))

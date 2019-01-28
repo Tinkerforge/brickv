@@ -30,29 +30,24 @@ from brickv.config import BRICKV_VERSION
 
 BRICKV_DESCRIPTION = 'Small Qt GUI to control and test all Bricks and Bricklets from Tinkerforge'
 
-# Find brickv packages
-if sys.platform == 'darwin':
-    packages = find_packages() # FIXME: setuptools on our macbook doesn't understand 'include'
-else:
-    packages = find_packages(include=['brickv', 'brickv.*'])
+packages = find_packages(include=['brickv', 'brickv.*'])
 
 # Collect non-frozen package_data
 package_data = {}
 
-if sys.platform.startswith('linux'):
-    image_patterns = ['*.bmp', '*.png', '*.jpg']
+image_patterns = ['*.bmp', '*.png', '*.jpg']
 
-    for package in packages:
-        package_path = os.path.join(*package.split('.'))
-        images = []
+for package in packages:
+    package_path = os.path.join(*package.split('.'))
+    images = []
 
-        for pattern in image_patterns:
-            images += glob.glob(os.path.join(package_path, pattern))
+    for pattern in image_patterns:
+        images += glob.glob(os.path.join(package_path, pattern))
 
-        if len(images) > 0:
-            package_data[package] = [os.path.basename(d) for d in images]
+    if len(images) > 0:
+        package_data[package] = [os.path.basename(d) for d in images]
 
-    package_data['brickv'].append('brickv.desktop')
+package_data['brickv'].append('brickv.desktop')
 
 # Collect platform specific data_files
 def collect_data_files(path, excludes=None):
@@ -71,15 +66,8 @@ def collect_data_files(path, excludes=None):
 
     return files
 
-data_files = []
-
-if sys.platform.startswith('linux'):
-    data_files.append(('/usr/share/pixmaps/', ['brickv/brickv-icon.png']))
-    data_files.append(('/usr/share/applications/', ['brickv/brickv.desktop']))
-elif sys.platform == 'win32':
-    data_files += collect_data_files('build_data/windows/', ['brickv-icon.ico'])
-elif sys.platform == 'darwin':
-    data_files += collect_data_files('build_data/macos/')
+data_files = [('/usr/share/pixmaps/', ['brickv/brickv-icon.png']),
+              ('/usr/share/applications/', ['brickv/brickv.desktop'])]
 
 # Run setup
 setup_arguments = {
@@ -92,110 +80,8 @@ setup_arguments = {
     'description':  BRICKV_DESCRIPTION,
     'packages':     packages,
     'package_data': package_data,
-    'data_files':   data_files
+    'data_files':   data_files,
+    'scripts':      ['brickv/brickv']
 }
-
-if sys.platform.startswith('linux'):
-    setup_arguments['scripts'] = ['brickv/brickv']
-elif sys.platform == 'win32':
-    import py2exe
-
-    options = {
-        'py2exe' : {
-            'dll_excludes': ['MSVCP90.dll',
-                             'CRYPT32.dll',
-                             'MSWSOCK.dll'],
-            'includes':     ['sip',
-                             'PyQt4.QtCore',
-                             'PyQt4.QtGui',
-                             'PyQt4.QtOpenGL',
-                             'OpenGL.GL',
-                             'ctypes.util',
-                             'serial',
-                             'colorsys',
-                             'win32com.client',
-                             'win32con',
-                             'winerror',
-                             'pywintypes',
-                             'win32file',
-                             'win32api'],
-            'excludes':     ['config_linux',
-                             'config_macos',
-                             '_gtkagg',
-                             '_tkagg',
-                             'Tkconstants',
-                             'Tkinter',
-                             'tcl',
-                             'pydoc',
-                             'email',
-                             'nose',
-                             'inspect',
-                             'ctypes.macholib',
-                             'win32pdh',
-                             'win32ui']
-        }
-    }
-
-    windows = [{
-        'script':        'brickv/main.py',
-        'dest_base':     'brickv',
-        'icon_resources': [(0, os.path.normcase('build_data/windows/brickv-icon.ico'))]
-    }]
-
-    setup_arguments['options'] = options
-    setup_arguments['windows'] = windows
-    setup_arguments['zipfile'] = None
-elif sys.platform == 'darwin':
-    options = {
-        'py2app': {
-            'argv_emulation': True,
-            'iconfile':       'build_data/macos/brickv-icon.icns',
-            'site_packages':  True,
-            'includes':       ['atexit',
-                               'sip',
-                               'PyQt4.QtCore',
-                               'PyQt4.QtGui',
-                               'PyQt4.QtOpenGL',
-                               'OpenGL.GL',
-                               'ctypes.util',
-                               'serial',
-                               'colorsys'],
-            'excludes':       ['scipy',
-                               'setuptools',
-                               'email',
-                               'matplotlib',
-                               'PyQt4.QtDeclarative',
-                               'PyQt4.QtDesigner',
-                               'PyQt4.QtHelp',
-                               'PyQt4.QtMultimedia',
-                               'PyQt4.QtNetwork',
-                               'PyQt4.QtScript',
-                               'PyQt4.QtScriptTools',
-                               'PyQt4.QtSql',
-                               'PyQt4.QtSvg',
-                               'PyQt4.QtTest',
-                               'PyQt4.QtWebKit',
-                               'PyQt4.QtXml',
-                               'PyQt4.QtXmlPatterns']
-        }
-    }
-
-    app = [{
-        'script': 'brickv/main.py',
-        'plist': {
-            'CFBundleName':               'Brickv',
-            'CFBundleVersion':            BRICKV_VERSION,
-            'CFBundleShortVersionString': BRICKV_VERSION,
-            'CFBundleGetInfoString':      BRICKV_DESCRIPTION,
-            'CFBundleExecutable':         'brickv',
-            'CFBundleIdentifier':         'com.tinkerforge.brickv',
-            'CFBundleIconFile':           'brickv-icon.icns',
-            'NSHumanReadableCopyright':   'Tinkerforge GmbH 2011-2017'
-        }
-    }]
-
-    setup_arguments['options']   = options
-    setup_arguments['scripts']   = ['brickv/main.py']
-    setup_arguments['app']       = app
 
 setup(**setup_arguments)

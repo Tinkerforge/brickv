@@ -22,76 +22,40 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-# Find the best implementation available
-try:
-    from cStringIO import StringIO
-except:
-    from StringIO import StringIO
+from io import StringIO
 
-try:
-    import ConfigParser as configparser
-except:
-    import configparser # Python 3
+import configparser
 
-class NoFakeConfigParser(configparser.ConfigParser):
-    def get(self, section, option, fallback):
-        try:
-            return configparser.ConfigParser.get(self, section, option)
-        except:
-            return fallback
-
-class FakeSectionHeadAndFile(object):
-    def __init__(self, string):
-        self.lines = string.splitlines()
-        self.section_head = '[fake_section]\n'
-
-    def readline(self):
-        if self.section_head:
-            try:
-                return self.section_head
-            finally:
-                self.section_head = None
-        else:
-            while len(self.lines) > 0:
-                line = self.lines[0]
-                self.lines = self.lines[1:]
-                if line.strip().startswith('#') or line.find('=') < 0:
-                    continue
-                
-                return line
-            return ""
 
 def parse(data):
     if isinstance(data, list):
-        string = bytearray(data).decode('utf-8')
+        string = bytes(data).decode('utf-8')
     elif isinstance(data, str):
-        string = data
-    elif isinstance(data, unicode):
         string = data
     else:
         return None
 
     config = configparser.ConfigParser()
-    config.readfp(FakeSectionHeadAndFile(string.encode('utf-8')))
+    config.read_file(['[fake_section]'] + [l for l in string.splitlines() if not l.find('=') < 0])
+
     try:
         config = dict(config.items('fake_section'))
     except:
         return None
-    
+
     return config
 
 def parse_no_fake(data):
     if isinstance(data, list):
-        string = bytearray(data).decode('utf-8')
+        string = bytes(data).decode('utf-8')
     elif isinstance(data, str):
-        string = data
-    elif isinstance(data, unicode):
         string = data
     else:
         return None
-    
-    config = NoFakeConfigParser()
-    config.readfp(StringIO(string.encode('utf-8')))
+
+    config = configparser.ConfigParser()
+    config.read_string(string)
+    #config.readfp(StringIO(string.encode('utf-8')))
 
     return config
 
@@ -100,11 +64,11 @@ def to_string(data):
     config.add_section('fake_section')
     for key, value in data.items():
         config.set('fake_section', key, value)
-        
+
     s = StringIO()
     config.write(s)
     return s.getvalue().replace('[fake_section]\n', '')
-    
+
 def to_string_no_fake(data):
     s = StringIO()
     data.write(s)

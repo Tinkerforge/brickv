@@ -25,16 +25,17 @@ Boston, MA 02111-1307, USA.
 
 import time
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QWidget, QMessageBox
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_datetime import Ui_REDTabSettingsDateTime
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import report_script_result
 from brickv.utils import get_main_window
 
-class REDTabSettingsDateTime(QtGui.QWidget, Ui_REDTabSettingsDateTime):
+class REDTabSettingsDateTime(QWidget, Ui_REDTabSettingsDateTime):
     def __init__(self):
-        QtGui.QWidget.__init__(self)
+        QWidget.__init__(self)
         self.setupUi(self)
 
         self.session        = None # Set from REDTabSettings
@@ -74,7 +75,7 @@ class REDTabSettingsDateTime(QtGui.QWidget, Ui_REDTabSettingsDateTime):
                 return
 
             try:
-                self.time_red_old, tz = map(int, result.stdout.split('\n')[:2])
+                self.time_red_old, tz = list(map(int, result.stdout.split('\n')[:2]))
                 if tz < 0:
                     tz_str_red = 'UTC' + str(tz)
                 else:
@@ -98,7 +99,7 @@ class REDTabSettingsDateTime(QtGui.QWidget, Ui_REDTabSettingsDateTime):
                 else:
                     self.time_sync_button.setEnabled(True)
             except Exception as e:
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Date/Time',
                                            'Error parsing time from RED Brick:\n\n{0}'.format(e))
 
@@ -131,7 +132,7 @@ class REDTabSettingsDateTime(QtGui.QWidget, Ui_REDTabSettingsDateTime):
         def state_changed(process, t, p):
             if p.state == REDProcess.STATE_ERROR:
                 process.release()
-                QtGui.QMessageBox.critical(get_main_window(),
+                QMessageBox.critical(get_main_window(),
                                            'Settings | Date/Time',
                                            'Error syncing time.')
             elif p.state == REDProcess.STATE_EXITED:

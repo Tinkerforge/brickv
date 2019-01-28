@@ -24,18 +24,9 @@ Boston, MA 02111-1307, USA.
 import sys
 
 def unicode_to_ks0066u(string):
-    if sys.hexversion < 0x03000000:
-        byte = chr
-        ks0066u = ''
-
-        if type(string) != unicode:
-            code_points = unicode(string, 'utf-8')
-        else:
-            code_points = string
-    else:
-        byte = lambda x: bytes([x])
-        ks0066u = bytes()
-        code_points = string
+    byte = lambda x: bytes([x])
+    ks0066u = bytes()
+    code_points = string
 
     for code_point in code_points:
         code_point = ord(code_point)

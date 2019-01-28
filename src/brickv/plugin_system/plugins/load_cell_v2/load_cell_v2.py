@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, \
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, \
                         QPushButton, QFrame, QComboBox, QCheckBox, QDialog
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
@@ -142,6 +142,7 @@ class LoadCellV2(COMCUPluginBase):
         hlayout.addWidget(self.cbox_info_led_config)
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 

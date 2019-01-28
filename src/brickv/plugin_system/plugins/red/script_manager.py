@@ -26,8 +26,8 @@ import posixpath
 from collections import namedtuple
 from threading import Lock
 
-from PyQt4.QtCore import QObject, pyqtSignal
-from PyQt4.QtGui import QMessageBox
+from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtWidgets import QMessageBox
 
 from brickv.plugin_system.plugins.red.api import REDFile, REDPipe, REDProcess
 from brickv.async_call import async_call
@@ -278,7 +278,7 @@ class ScriptManager(object):
                     if si.redirect_stderr_to_stdout:
                         exit_code = si.process.exit_code
 
-                        self._report_result_and_cleanup(si, ScriptResult(None, out, u'', exit_code))
+                        self._report_result_and_cleanup(si, ScriptResult(None, out, '', exit_code))
                     else:
                         def cb_stderr_read(result):
                             if result.error != None:
@@ -348,26 +348,26 @@ class ScriptManager(object):
 
 def check_script_result(result, decode_stderr=False):
     if result == None:
-        return (False, u'Script error 1001: Unexpected internal error')
+        return (False, 'Script error 1001: Unexpected internal error')
     elif result.error != None:
-        return (False, u'Script error 100X: {0}'.format(result.error))
+        return (False, 'Script error 100X: {0}'.format(result.error))
     elif result.stdout == None:
-        return (False, u'Script error 1002: Stdout not UTF-8 encoded')
+        return (False, 'Script error 1002: Stdout not UTF-8 encoded')
     elif result.stderr == None:
-        return (False, u'Script error 1003: Stderr not UTF-8 encoded')
+        return (False, 'Script error 1003: Stderr not UTF-8 encoded')
     elif result.exit_code != 0:
         if decode_stderr:
             try:
                 stderr = result.stderr.decode('utf-8').strip()
             except UnicodeDecodeError:
-                stderr = u'<error message not UTF-8 encoded>'
+                stderr = '<error message not UTF-8 encoded>'
         else:
             stderr = result.stderr.strip()
 
         if len(stderr) == 0:
-            stderr = u'<empty error message>'
+            stderr = '<empty error message>'
 
-        return (False, u'Script error {0}: {1}'.format(result.exit_code, stderr))
+        return (False, 'Script error {0}: {1}'.format(result.exit_code, stderr))
     else:
         return (True, None)
 
@@ -380,5 +380,5 @@ def report_script_result(result, title, message_header, decode_stderr=False, bef
     if before_message_box != None:
         before_message_box()
 
-    QMessageBox.critical(get_main_window(), title, message_header + u':\n\n' + message)
+    QMessageBox.critical(get_main_window(), title, message_header + ':\n\n' + message)
     return False

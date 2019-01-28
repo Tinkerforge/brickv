@@ -23,9 +23,11 @@ Boston, MA 02111-1307, USA.
 
 import json
 import posixpath
+import html
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWidget, QDialog, QInputDialog, QPlainTextEdit, QFont, QTextOption, QLabel, QMessageBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QDialog, QInputDialog, QPlainTextEdit, QLabel, QMessageBox
+from PyQt5.QtGui import QFont, QTextOption
 
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
@@ -203,7 +205,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
 
     def log_error(self, message):
         self.edit_errors.show()
-        self.edit_errors.appendHtml(u'<b>{0}</b>'.format(Qt.escape(message)))
+        self.edit_errors.appendHtml('<b>{0}</b>'.format(html.escape(message)))
 
     def refresh_config(self, index, done_callback):
         if index >= len(self.configs):
@@ -236,7 +238,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
                 if result.error != None:
                     if result.error.error_code != REDError.E_OPERATION_ABORTED and \
                        result.error.error_code != REDError.E_DOES_NOT_EXIST:
-                        self.log_error(u'Error while reading {0}: {1}'.format(config.display_name, error))
+                        self.log_error('Error while reading {0}: {1}'.format(config.display_name, error))
                     else:
                         config.set_content('')
                 else:
@@ -244,7 +246,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
                         content = result.data.decode('utf-8')
                     except UnicodeDecodeError:
                         # FIXME: maybe add a encoding guesser here or try some common encodings if UTF-8 fails
-                        self.log_error(u'Error: Config file {0} is not UTF-8 encoded'.format(config.display_name))
+                        self.log_error('Error: Config file {0} is not UTF-8 encoded'.format(config.display_name))
                     else:
                         config.set_content(content)
 
@@ -256,7 +258,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
             if isinstance(error, REDError) and \
                error.error_code != REDError.E_OPERATION_ABORTED and \
                error.error_code != REDError.E_DOES_NOT_EXIST:
-                self.log_error(u'Error while opening {0}: {1}'.format(config.display_name, error))
+                self.log_error('Error while opening {0}: {1}'.format(config.display_name, error))
             else:
                 config.set_content('')
 
@@ -279,17 +281,17 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
                 self.update_ui_state()
 
             if not okay:
-                fatal_error(u'Error while collecting config files: {0}'.format(message))
+                fatal_error('Error while collecting config files: {0}'.format(message))
                 return
 
             try:
                 config_names = json.loads(result.stdout)
             except Exception as e:
-                fatal_error(u'Received invalid config file collection: {0}'.format(e))
+                fatal_error('Received invalid config file collection: {0}'.format(e))
                 return
 
             if not isinstance(config_names, dict):
-                fatal_error(u'Received invalid config file collection: Not a dictionary')
+                fatal_error('Received invalid config file collection: Not a dictionary')
                 return
 
             try:
@@ -332,7 +334,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
                         configs_by_basename.setdefault(name[:-len('.transform')], []).append((name, posixpath.join('/etc/openhab2/transform', name)))
 
             except Exception as e:
-                fatal_error(u'Received invalid config file collection: {0}'.format(e))
+                fatal_error('Received invalid config file collection: {0}'.format(e))
                 return
 
             old_configs = {}
@@ -505,7 +507,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
                     if not okay:
                         QMessageBox.critical(get_main_window(),
                                              'Apply Changes Error',
-                                             u'Error while setting ownership of {0}: {1}'.format(config.display_name, message))
+                                             'Error while setting ownership of {0}: {1}'.format(config.display_name, message))
                     else:
                         config.set_content(content)
 
@@ -517,7 +519,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
                 if error != None:
                     QMessageBox.critical(get_main_window(),
                                         'Apply Changes Error',
-                                         u'Error while writing {0}: {1}'.format(config.display_name, error))
+                                         'Error while writing {0}: {1}'.format(config.display_name, error))
                     return
 
                 self.script_manager.execute_script('openhab_set_configs_ownership', cb_openhab_set_configs_ownership)
@@ -529,7 +531,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
             self.update_ui_state()
 
             QMessageBox.critical(get_main_window(), 'Apply Changes Error',
-                                 u'Error while opening {0}: {1}'.format(config.display_name, error))
+                                 'Error while opening {0}: {1}'.format(config.display_name, error))
 
         async_call(REDFile(self.session).open,
                    (config.absolute_name, REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0o644, 0, 0),

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import time
 
-from PyQt4.QtCore import QRect, Qt, pyqtSignal, pyqtSlot
-from PyQt4.QtGui import QApplication, QClipboard, QWidget, QPainter, QFont, \
-                        QBrush, QColor, QPen, QPixmap,  QContextMenuEvent
+from PyQt5.QtCore import QRect, Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QClipboard, QPainter, QFont, QBrush, QColor, QPen, QPixmap, QContextMenuEvent
+from PyQt5.QtWidgets import QApplication, QWidget
 
 from .backend import SerialSession
 
@@ -263,7 +263,7 @@ class TerminalWidget(QWidget):
             col = 0
             text_line = ""
             for item in line:
-                if isinstance(item, basestring):
+                if isinstance(item, str):
                     x = self._char_width[col]
                     length = len(item)
                     rect = QRect(
@@ -330,13 +330,13 @@ class TerminalWidget(QWidget):
                 self.zoom_out()
         else:
             if text and key != Qt.Key_Backspace:
-                self.send(text.encode("utf-8"))
+                self.send(text)
             else:
                 s = self.keymap.get(key)
                 if s:
                     self.send(s.encode("utf-8"))
                 elif DEBUG:
-                    print("Unkonwn key combination")
+                    print("Unknown key combination")
                     print("Modifiers: " + str(modifiers))
                     print("Key: " + str(key))
                     for name in dir(Qt):

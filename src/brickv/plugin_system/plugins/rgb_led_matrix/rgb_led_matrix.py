@@ -23,8 +23,9 @@ Boston, MA 02111-1307, USA.
 
 import colorsys
 
-from PyQt4.QtCore import pyqtSignal, Qt, QSize, QPoint
-from PyQt4.QtGui import QWidget, QImage, QPainter, QPen, QColor, QPushButton, QColorDialog
+from PyQt5.QtCore import pyqtSignal, Qt, QSize, QPoint
+from PyQt5.QtWidgets import QWidget, QPushButton, QColorDialog
+from PyQt5.QtGui import QImage, QPainter, QPen, QColor
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.rgb_led_matrix.ui_rgb_led_matrix import Ui_RGBLEDMatrix
@@ -44,7 +45,7 @@ class QColorButton(QPushButton):
         self.setStyleSheet("background-color: %s;" % self._color.name())
         self.setMaximumWidth(32)
         self.pressed.connect(self.onColorPicker)
-        
+
     def set_color(self, color):
         if color != self._color:
             self._color = color
@@ -85,16 +86,16 @@ class ScribbleArea(QWidget):
 
         self.last_point = QPoint()
         self.clear_image()
-        
+
     def set_draw_color(self, color):
         self.draw_color = color
-        
+
     def array_draw(self, r, g, b, scale=1):
         for i in range(len(r)):
             self.image.setPixel(QPoint(i%8, i//8), (r[i]*scale << 16) | (g[i]*scale << 8) | b[i]*scale)
 
         self.update()
-        
+
     def fill_image(self, color):
         self.image.fill(color)
         self.update()
@@ -134,7 +135,7 @@ class ScribbleArea(QWidget):
         painter = QPainter(self.image)
         painter.setPen(QPen(self.draw_color if self.scribbling == 1 else Qt.black,
                             self.pen_width, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
-        painter.drawLine(QPoint(self.last_point.x()//self.image_pen_width, self.last_point.y()//self.image_pen_width), 
+        painter.drawLine(QPoint(self.last_point.x()//self.image_pen_width, self.last_point.y()//self.image_pen_width),
                          QPoint(end_point.x()//self.image_pen_width,       end_point.y()//self.image_pen_width))
 
         self.update()
@@ -154,10 +155,10 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
         self.setupUi(self)
 
         self.rgb_led_matrix = self.device
-        
+
         self.scribble_area = ScribbleArea(8, 8, self)
         self.scribble_layout.insertWidget(1, self.scribble_area)
-        
+
         self.color_button = QColorButton()
         self.below_scribble_layout.insertWidget(2, self.color_button)
 
@@ -178,7 +179,7 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
         self.dot_direction = 1
 
         self.voltage = 0
-        
+
         self.cbe_supply_voltage = CallbackEmulator(self.rgb_led_matrix.get_supply_voltage,
                                                    self.cb_supply_voltage,
                                                    self.increase_error_count)
@@ -204,13 +205,13 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
 
     def frame_duration_changed(self, duration):
         async_call(self.rgb_led_matrix.set_frame_duration, duration, None, self.increase_error_count)
-        
+
     def drawing_clicked(self):
         old_state = self.state
         self.state = self.STATE_COLOR_SCRIBBLE
         if old_state == self.STATE_IDLE:
             self.render_color_scribble()
-    
+
     def color_clicked(self):
         old_state = self.state
         self.state = self.STATE_COLOR_SCRIBBLE
@@ -242,7 +243,7 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
                 r.append(color.red())
                 g.append(color.green())
                 b.append(color.blue())
-        
+
         self.set_rgb(r, g, b)
 
     def render_color_gradient(self):
@@ -251,7 +252,7 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
         ga = []
         ba = []
 
-        range_leds = range(NUM_LEDS)
+        range_leds = list(range(NUM_LEDS))
         range_leds = range_leds[int(self.gradient_counter) % NUM_LEDS:] + range_leds[:int(self.gradient_counter) % NUM_LEDS]
         range_leds = reversed(range_leds)
 

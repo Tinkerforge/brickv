@@ -27,11 +27,11 @@ import posixpath
 import json
 import zlib
 import sys
+import html
 
-from PyQt4.QtCore import Qt, QDateTime, QDir
-from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, \
-                        QSortFilterProxyModel, QMessageBox, QInputDialog, \
-                        QApplication, QDialog
+from PyQt5.QtCore import Qt, QDateTime, QDir, QSortFilterProxyModel
+from PyQt5.QtWidgets import QWidget, QDialog, QMessageBox, QInputDialog, QApplication
+from PyQt5.QtGui import QStandardItem, QStandardItemModel, QIcon
 
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import Download, ExpandingProgressDialog, \
@@ -61,7 +61,7 @@ def expand_walk_to_lists(walk):
             if len(root) > 0:
                 directories.add(root)
 
-            for child_name, child_dw in dw['c'].iteritems():
+            for child_name, child_dw in dw['c'].items():
                 expand(posixpath.join(root, child_name), child_dw)
         else:
             files.append(root)
@@ -110,7 +110,7 @@ def expand_walk_to_model(walk, model, folder_icon, file_icon):
 
             size = 0
 
-            for child_name, child_dw in dw['c'].iteritems():
+            for child_name, child_dw in dw['c'].items():
                 size += expand(name_item, child_name, child_dw)
 
             if size_item != None:
@@ -213,7 +213,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             okay, message = check_script_result(result, decode_stderr=True)
 
             if not okay:
-                self.label_error.setText('<b>Error:</b> ' + Qt.escape(message))
+                self.label_error.setText('<b>Error:</b> ' + html.escape(message))
                 self.label_error.setVisible(True)
                 self.refresh_files_done()
                 return
@@ -222,7 +222,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
             def expand_async(data):
                 try:
-                    walk = json.loads(zlib.decompress(buffer(data)).decode('utf-8'))
+                    walk = json.loads(zlib.decompress(memoryview(data)).decode('utf-8'))
                 except:
                     walk = None
 
@@ -393,7 +393,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         absolute_new_name = posixpath.join(posixpath.split(absolute_old_name)[0], new_name)
 
         def cb_rename(result):
-            if not report_script_result(result, title + ' Error', u'Could not rename {0}'.format(type_name)):
+            if not report_script_result(result, title + ' Error', 'Could not rename {0}'.format(type_name)):
                 return
 
             name_item.setText(new_name)
@@ -439,7 +439,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         absolute_name = posixpath.join(self.bin_directory, get_full_item_path(name_item))
 
         def cb_change_permissions(result):
-            if not report_script_result(result, title + ' Error', u'Could change {0} permissions'.format(type_name)):
+            if not report_script_result(result, title + ' Error', 'Could change {0} permissions'.format(type_name)):
                 return
 
             name_item.setData(new_permissions, USER_ROLE_PERMISSIONS)
@@ -455,7 +455,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if not self.is_alive() or button != QMessageBox.Ok:
             return
 
-        selected_name_items = set(self.get_directly_selected_name_items())
+        selected_name_items = self.get_directly_selected_name_items()
 
         if len(selected_name_items) == 0:
             return
@@ -545,7 +545,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
             if aborted:
                 QMessageBox.information(get_main_window(), 'Delete Files',
-                                        u'Delete operation was aborted.')
+                                        'Delete operation was aborted.')
                 return
 
             report_script_result(result, 'Delete Files Error', 'Could not delete selected files/directories:')

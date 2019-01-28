@@ -22,9 +22,10 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import urllib2
-from PyQt4.QtGui import QWidget, QMessageBox, QProgressDialog
-from PyQt4.QtCore import Qt
+import urllib.request
+import urllib.error
+from PyQt5.QtWidgets import QWidget, QMessageBox, QProgressDialog
+from PyQt5.QtCore import Qt
 
 from brickv.plugin_system.plugins.imu.ui_calibrate_import_export import Ui_calibrate_import_export
 from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
@@ -74,7 +75,7 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
 
         try:
             imu_calibration_text = '# This is the factory calibration\n\n'
-            response = urllib2.urlopen(IMU_CALIBRATION_URL + '{0}.txt'.format(uid))
+            response = urllib.request.urlopen(IMU_CALIBRATION_URL + '{0}.txt'.format(uid))
             chunk = response.read(1024)
 
             while len(chunk) > 0:
@@ -82,7 +83,7 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
                 chunk = response.read(1024)
 
             response.close()
-        except urllib2.HTTPError as e:
+        except urllib.error.HTTPError as e:
             if e.code == 404:
                 progress.cancel()
                 self.popup_ok('Factory Calibration', 'No factory calibration available')
@@ -91,7 +92,7 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
                 progress.cancel()
                 self.popup_fail('Factory Calibration', 'Could not download factory calibration')
                 return
-        except urllib2.URLError:
+        except urllib.error.URLError:
             progress.cancel()
             self.popup_fail('Factory Calibration', 'Could not download factory calibration')
             return

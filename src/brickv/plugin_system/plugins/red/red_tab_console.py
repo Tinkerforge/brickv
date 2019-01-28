@@ -23,7 +23,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QMessageBox
 
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_console import Ui_REDTabConsole
@@ -76,7 +77,7 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
                     preferred_index = self.combo_serial_port.count()
 
             if len(port[1]) > 0 and port[0] != port[1]:
-                self.combo_serial_port.addItem(u'{0} - {1}'.format(port[0], port[1]), port[0])
+                self.combo_serial_port.addItem('{0} - {1}'.format(port[0], port[1]), port[0])
             else:
                 self.combo_serial_port.addItem(port[0], port[0])
 
@@ -95,7 +96,7 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
                 self.combo_serial_port.setCurrentIndex(index)
 
     def connect_clicked(self):
-        text = self.connect_button.text()
+        text = self.connect_button.text().replace('&','')
 
         if text == 'Connect':
             def open_console():
@@ -112,8 +113,8 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
                         self.console.setFocus()
                     except Exception as e:
                         self.destroy_session()
-                        QtGui.QMessageBox.critical(get_main_window(), 'Serial Connect Error',
-                                                   u'Could not connect to serial console:\n\n{0}'.format(e))
+                        QMessageBox.critical(get_main_window(), 'Serial Connect Error',
+                                                   'Could not connect to serial console:\n\n{0}'.format(e))
 
             def cb_pkill_ttyGS0(result):
                 if result == None or result.exit_code not in [0, 1]: # 0 == no error, 1 == nothing killed

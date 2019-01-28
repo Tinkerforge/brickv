@@ -17,10 +17,7 @@ import hashlib
 import errno
 import threading
 
-try:
-    import queue # Python 3
-except ImportError:
-    import Queue as queue # Python 2
+import queue
 
 def get_uid_from_data(data):
     return struct.unpack('<I', data[0:4])[0]

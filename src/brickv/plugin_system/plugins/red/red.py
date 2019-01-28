@@ -24,15 +24,16 @@ Boston, MA 02111-1307, USA.
 
 import re
 import json
-import Queue
-import urllib2
+import queue
+import urllib.request
+import urllib.error
 import posixpath
 import functools
 from distutils.version import StrictVersion
 
-from PyQt4 import QtGui
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QLabel, QVBoxLayout, QAction
+from PyQt5.QtWidgets import QDialog, QMessageBox, QLabel, QVBoxLayout, QAction
+from PyQt5.QtGui import QFont
+from PyQt5.QtCore import Qt
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.red.ui_red import Ui_RED
@@ -48,7 +49,7 @@ class ImageVersion(object):
     number = (0, 0)
     flavor = None
 
-class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
+class REDUpdateTinkerforgeSoftware(QDialog,
                                    Ui_REDUpdateTinkerforgeSoftware):
     # States.
     STATE_INIT = 1
@@ -80,12 +81,12 @@ Please make sure that your internet connection is working.'
     URL_LATEST_VERSIONS = 'http://download.tinkerforge.com/latest_versions.txt'
 
     def __init__(self, parent, session, script_manager):
-        QtGui.QDialog.__init__(self, parent)
+        QDialog.__init__(self, parent)
         self.setupUi(self)
 
         self.setAttribute(Qt.WA_DeleteOnClose)
 
-        font = QtGui.QFont()
+        font = QFont()
         self.tedit_main.setFont(font)
 
         self.session = session
@@ -94,7 +95,7 @@ Please make sure that your internet connection is working.'
 
         self.update_info = None
         self.current_state = self.STATE_INIT
-        self.update_install_serialisation_queue = Queue.Queue()
+        self.update_install_serialisation_queue = queue.Queue()
 
         self.pbar.hide()
         self.label_pbar.hide()
@@ -391,7 +392,7 @@ Please make sure that your internet connection is working.'
         if not self.dialog_session:
             return '', ''
 
-        response = urllib2.urlopen(url, timeout=10)
+        response = urllib.request.urlopen(url, timeout=10)
 
         return name, response.read()
 
@@ -705,13 +706,13 @@ Please make sure that your internet connection is working.'
 
                     installed_versions = json.loads(result.stdout)
 
-                    if type(installed_versions) is not dict:
+                    if not isinstance(installed_versions, dict):
                         self.set_current_state(self.STATE_INIT)
                         self.tedit_main.setText(self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + '.')
 
                         return
 
-                    for key, value in installed_versions.iteritems():
+                    for key, value in installed_versions.items():
                         if key == 'brickv':
                             update_info['brickv']['to'] = '0'
                             update_info['brickv']['name'] = '-'
@@ -720,7 +721,7 @@ Please make sure that your internet connection is working.'
                             update_info['brickv']['update'] = False
                             update_info['brickv']['display_name'] = '-'
 
-                            if type(value) is unicode and value != '' and value != '-':
+                            if isinstance(value, str) and value != '' and value != '-':
                                 update_info['brickv']['from'] = value
                                 update_info['brickv']['name'] = 'brickv'
 
@@ -732,8 +733,8 @@ Please make sure that your internet connection is working.'
                                 return
 
                         elif key == 'bindings':
-                            if type(value) is dict and value:
-                                for k, v in value.iteritems():
+                            if isinstance(value, dict) and value:
+                                for k, v in value.items():
                                     d = {}
 
                                     d['to'] = '0'
@@ -743,7 +744,7 @@ Please make sure that your internet connection is working.'
                                     d['update'] = False
                                     d['display_name'] = '-'
 
-                                    if type(v) is unicode and v != '' and v != '-':
+                                    if isinstance(v, str) and v != '' and v != '-':
                                         d['from'] = v
                                         d['name'] = k.strip()
 
@@ -767,9 +768,9 @@ Please make sure that your internet connection is working.'
 
                     # Try to get the latest version numbers.
                     try:
-                        response = urllib2.urlopen(self.URL_LATEST_VERSIONS, timeout=10)
-                        response_data = response.read()
-                    except urllib2.URLError:
+                        response = urllib.request.urlopen(self.URL_LATEST_VERSIONS, timeout=10)
+                        response_data = response.read().decode('utf-8')
+                    except urllib.error.URLError:
                         self.set_current_state(self.STATE_INIT)
                         self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
 
@@ -1165,9 +1166,9 @@ class RED(PluginBase, Ui_RED):
             def cb(result):
                 if result and (result.exit_code == None or result.exit_code != 0):
                     if result.stderr:
-                        QtGui.QMessageBox.critical(get_main_window(), 'Failed to restart Brick Daemon', result.stderr)
+                        QMessageBox.critical(get_main_window(), 'Failed to restart Brick Daemon', result.stderr)
                     else:
-                        QtGui.QMessageBox.critical(get_main_window(), 'Failed to restart Brick Daemon', result.error)
+                        QMessageBox.critical(get_main_window(), 'Failed to restart Brick Daemon', result.error)
 
             self.script_manager.execute_script('restart_brickd', None)
 
@@ -1177,14 +1178,14 @@ class RED(PluginBase, Ui_RED):
                 if result and (result.exit_code == None or result.exit_code != 0):
                     if param == 1:
                         if result.stderr:
-                            QtGui.QMessageBox.critical(get_main_window(), 'Failed to reboot RED Brick', result.stderr)
+                            QMessageBox.critical(get_main_window(), 'Failed to reboot RED Brick', result.stderr)
                         else:
-                            QtGui.QMessageBox.critical(get_main_window(), 'Failed to reboot RED Brick', result.error)
+                            QMessageBox.critical(get_main_window(), 'Failed to reboot RED Brick', result.error)
                     else:
                         if result.stderr:
-                            QtGui.QMessageBox.critical(get_main_window(), 'Failed to shutdown RED Brick', result.stderr)
+                            QMessageBox.critical(get_main_window(), 'Failed to shutdown RED Brick', result.stderr)
                         else:
-                            QtGui.QMessageBox.critical(get_main_window(), 'Failed to shutdown RED Brick', result.error)
+                            QMessageBox.critical(get_main_window(), 'Failed to shutdown RED Brick', result.error)
 
             self.script_manager.execute_script('restart_reboot_shutdown_systemd', cb, [str(param)])
 

@@ -27,10 +27,11 @@ import posixpath
 import json
 import zlib
 import sys
+import html
 
-from PyQt4.QtCore import Qt, QDateTime
-from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, \
-                        QMessageBox, QSortFilterProxyModel, QApplication
+from PyQt5.QtCore import Qt, QDateTime, QSortFilterProxyModel
+from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem
+from PyQt5.QtWidgets import QWidget, QMessageBox, QApplication
 
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import Download, get_file_display_size
@@ -118,14 +119,14 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             okay, message = check_script_result(result, decode_stderr=True)
 
             if not okay:
-                self.label_error.setText('<b>Error:</b> ' + Qt.escape(message))
+                self.label_error.setText('<b>Error:</b> ' + html.escape(message))
                 self.label_error.setVisible(True)
                 self.refresh_logs_done()
                 return
 
             try:
                 # FIXME: do decompress in an async_call
-                program_logs_list = json.loads(zlib.decompress(buffer(result.stdout)).decode('utf-8'))
+                program_logs_list = json.loads(zlib.decompress(memoryview(result.stdout)).decode('utf-8'))
             except:
                 program_logs_list = None
 
@@ -154,7 +155,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             date_rows      = {}
             time_rows      = {}
 
-            for file_name, file_size in program_logs_list.iteritems():
+            for file_name, file_size in program_logs_list.items():
                 QApplication.processEvents()
 
                 file_name_parts = file_name.split('_')

@@ -25,9 +25,10 @@ import os
 import posixpath
 import tarfile
 import contextlib
+import html
 
-from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QWidget, QTreeWidgetItem, QMessageBox
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtWidgets import QWidget, QTreeWidgetItem, QMessageBox
 
 from brickv.async_call import async_call
 from brickv.utils import get_main_window, get_home_path, get_open_file_name
@@ -47,10 +48,10 @@ class ChunkedUploader(ChunkedUploaderBase):
         string_args = []
 
         for arg in args:
-            string_args.append(Qt.escape(unicode(arg)))
+            string_args.append(html.escape(arg))
 
         if len(string_args) > 0:
-            message = unicode(message).format(*tuple(string_args))
+            message = message.format(*tuple(string_args))
 
         self.widget.progress.close()
         QMessageBox.critical(get_main_window(), 'Import Error', message)
@@ -141,19 +142,19 @@ class REDTabImportExportImport(QWidget, Ui_REDTabImportExportImport):
             try:
                 a = tarfile.open(filename, 'r:gz')
             except Exception as e:
-                return [], u'Could not open archive:\n\n{0}'.format(e)
+                return [], 'Could not open archive:\n\n{0}'.format(e)
 
             with contextlib.closing(a):
                 try:
                     v = a.extractfile('tfrba-version')
                 except Exception as e:
-                    return [], u'Could not extract tfrba-version:\n\n{0}'.format(e)
+                    return [], 'Could not extract tfrba-version:\n\n{0}'.format(e)
 
                 version = v.read()
                 v.close()
 
-                if version != '1':
-                    return [], u'Unknown tfrba-version {0}'.format(version)
+                if version != b'1':
+                    return [], 'Unknown tfrba-version {0}'.format(version)
 
                 programs = {}
 
@@ -162,9 +163,9 @@ class REDTabImportExportImport(QWidget, Ui_REDTabImportExportImport):
                         try:
                             c = a.extractfile(member)
                         except Exception as e:
-                            return [], u'Could not extract {0}:\n\n{1}'.format(member, e)
+                            return [], 'Could not extract {0}:\n\n{1}'.format(member, e)
 
-                        conf = c.readlines()
+                        conf = list(map(lambda line: line.decode('utf-8'), c.readlines()))
                         c.close()
 
                         name         = '<unknown>'
@@ -194,7 +195,7 @@ class REDTabImportExportImport(QWidget, Ui_REDTabImportExportImport):
                 try:
                     existing_programs = get_lite_programs(self.session)
                 except Exception as e:
-                    return [], u'Could not get existing program list:\n\n{0}'.format(e)
+                    return [], 'Could not get existing program list:\n\n{0}'.format(e)
 
                 for existing_program in existing_programs:
                     identifier = existing_program.identifier

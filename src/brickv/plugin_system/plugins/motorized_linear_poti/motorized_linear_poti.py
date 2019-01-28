@@ -22,15 +22,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QSlider, QCheckBox, QFrame, QComboBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QSlider, QCheckBox, QFrame, QComboBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
 from brickv.plot_widget import PlotWidget, FixedSizeLabel
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
-from PyQt4.Qt import QComboBox
 
 class MotorPositionLabel(FixedSizeLabel):
     def setText(self, text):
@@ -65,10 +64,10 @@ class MotorizedLinearPoti(COMCUPluginBase):
         self.motor_drive_mode = QComboBox()
         self.motor_drive_mode.addItem('Fast')
         self.motor_drive_mode.addItem('Smooth')
-        
+
         def get_motor_slider_value():
             return self.motor_slider.value()
-        
+
         self.motor_hold_position.stateChanged.connect(lambda x: self.motor_slider_value_changed(get_motor_slider_value()))
         self.motor_drive_mode.currentIndexChanged.connect(lambda x: self.motor_slider_value_changed(get_motor_slider_value()))
 
@@ -81,6 +80,7 @@ class MotorizedLinearPoti(COMCUPluginBase):
         hlayout.addWidget(self.motor_hold_position)
 
         line = QFrame()
+        line.setObjectName("line")
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 
@@ -125,7 +125,7 @@ class MotorizedLinearPoti(COMCUPluginBase):
         self.motor_hold_position.blockSignals(False)
         self.motor_drive_mode.blockSignals(False)
 
-    
+
     def motor_slider_value_changed(self, position):
         self.motor_position_label.setText(str(position))
         self.mp.set_motor_position(self.motor_slider.value(), self.motor_drive_mode.currentIndex(), self.motor_hold_position.isChecked())

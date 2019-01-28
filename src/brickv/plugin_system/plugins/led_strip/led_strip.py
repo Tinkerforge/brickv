@@ -27,7 +27,7 @@ does not have to be correct!
 
 import colorsys
 
-from PyQt4.QtCore import pyqtSignal, QTimer
+from PyQt5.QtCore import pyqtSignal, QTimer
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.led_strip.ui_led_strip import Ui_LEDStrip
@@ -419,7 +419,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         ba = []
 
         range_leds_len = max(num_leds, led_block)
-        range_leds = range(range_leds_len)
+        range_leds = list(range(range_leds_len))
         range_leds = range_leds[int(self.gradient_counter) % range_leds_len:] + range_leds[:int(self.gradient_counter) % range_leds_len]
         range_leds = reversed(range_leds)
 

@@ -28,19 +28,18 @@ Boston, MA 02111-1307, USA.
 #                               Jobs
 #---------------------------------------------------------------------------
 
-import Queue
+import queue
 import threading
 import time
 
 if 'merged_data_logger_modules' not in globals():
-    from PyQt4 import QtCore
+    from PyQt5 import QtCore
     from brickv.data_logger.event_logger import EventLogger
     from brickv.data_logger.utils import CSVWriter
 
 class AbstractJob(threading.Thread):
-    def __init__(self, datalogger=None, group=None, target=None, name=None, args=(), kwargs=None, verbose=None):
-        threading.Thread.__init__(self, group=group, target=target, name=name, args=args, kwargs=kwargs,
-                                  verbose=verbose)
+    def __init__(self, name, target, datalogger=None):
+        threading.Thread.__init__(self, name=name, target=target)
 
         self.daemon = True
         self._exit_flag = False
@@ -48,7 +47,7 @@ class AbstractJob(threading.Thread):
         self._job_name = "[Job:" + self.name + "]"
 
         if self._datalogger is not None:
-            self._datalogger.data_queue[self.name] = Queue.Queue()
+            self._datalogger.data_queue[self.name] = queue.Queue()
 
     def stop(self):
         self._exit_flag = True
@@ -78,10 +77,9 @@ class CSVWriterJob(AbstractJob):
     This class enables the data logger to write logged data to an CSV formatted file
     """
 
-    def __init__(self, datalogger=None, group=None, name="CSVWriterJob", args=(), kwargs=None, verbose=None):
+    def __init__(self, datalogger=None, name="CSVWriterJob"):
         target = self._job
-        AbstractJob.__init__(self, datalogger=datalogger, group=group, target=target, name=name, args=args,
-                             kwargs=kwargs, verbose=verbose)
+        AbstractJob.__init__(self, datalogger=datalogger, name=name, target=target)
 
     def _job(self):
         try:
@@ -122,20 +120,19 @@ class CSVWriterJob(AbstractJob):
 if 'merged_data_logger_modules' not in globals():
     class GuiDataJob(AbstractJob, QtCore.QObject):
         """
-        This class enables the data logger to upload logged data to the Xively platform
+        This class enables the data logger to log to the Gui
         """
+        from brickv.data_logger.utils import LoggerTimer, CSVData
+        signalNewData = QtCore.pyqtSignal(CSVData)
 
-        SIGNAL_NEW_DATA = "signalNewData"
-
-        def __init__(self, datalogger=None, group=None, name="GuiDataJob", args=(), kwargs=None, verbose=None):
+        def __init__(self, datalogger=None, name="GuiDataJob"):
             target = self._job
-            AbstractJob.__init__(self, datalogger=datalogger, group=group, target=target, name=name, args=args,
-                                 kwargs=kwargs, verbose=verbose)
+            AbstractJob.__init__(self, datalogger=datalogger, target=target, name=name)
             QtCore.QObject.__init__(self)
 
         def set_datalogger(self, datalogger):
             self._datalogger = datalogger
-            self._datalogger.data_queue[self.name] = Queue.Queue()
+            self._datalogger.data_queue[self.name] = queue.Queue()
 
         def _job(self):
             try:
@@ -149,7 +146,7 @@ if 'merged_data_logger_modules' not in globals():
                     if not self._datalogger.data_queue[self.name].empty():
                         csv_data = self._get_data_from_queue()
                         #EventLogger.debug(self._job_name + " -> " + str(csv_data))
-                        self.emit(QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), csv_data)
+                        self.signalNewData.emit(csv_data)
 
                     if not self._exit_flag and self._datalogger.data_queue[self.name].empty():
                         time.sleep(self._datalogger.job_sleep)
@@ -161,47 +158,3 @@ if 'merged_data_logger_modules' not in globals():
             except Exception as e:
                 EventLogger.critical(self._job_name + " -.- " + str(e))
                 self.stop()
-
-
-class XivelyJob(AbstractJob):
-    """
-    This class enables the data logger to upload logged data to the Xively platform
-    """
-
-    def __init__(self, datalogger=None, group=None, name="XivelyJob", args=(), kwargs=None, verbose=None):
-        super(XivelyJob, self).__init__()
-        EventLogger.warning(self._job_name + " Is not supported!")
-        raise Exception("XivelyJob not yet implemented!")
-
-
-    def _job(self):
-        EventLogger.warning(self._job_name + " Is not supported!")
-        raise Exception("XivelyJob._job not yet implemented!")
-
-        # TODO: implement xively logger
-        # try:
-        # # check for datalogger object
-        # if AbstractJob._job(self):
-        # return
-        #
-        # EventLogger.debug(self._job_name + " Started")
-        #
-        # while (True):
-        #         if not self._datalogger.data_queue[self.name].empty():
-        #             # write
-        #             csv_data = self._get_data_from_queue()
-        #             EventLogger.debug(self._job_name + " -> " + str(csv_data))
-        #
-        #         if not self._exit_flag and self._datalogger.data_queue[self.name].empty():
-        #             time.sleep(self._datalogger.job_sleep)
-        #
-        #         if self._exit_flag and self._datalogger.data_queue[self.name].empty():
-        #             # close job
-        #             EventLogger.debug(self._job_name + " Finished")
-        #
-        #             self._remove_from_data_queue()
-        #             break
-        #
-        # except Exception as e:
-        #     EventLogger.critical(self._job_name + " " + str(e))
-        #     self.stop()

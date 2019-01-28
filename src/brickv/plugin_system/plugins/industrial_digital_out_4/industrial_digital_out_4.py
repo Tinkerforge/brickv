@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, pyqtSignal, QTimer
+from PyQt5.QtCore import Qt, pyqtSignal, QTimer
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.industrial_digital_out_4.ui_industrial_digital_out_4 import Ui_IndustrialDigitalOut4
@@ -200,7 +200,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
         value = 0
         i = 0
         for b in self.pin_buttons:
-            if 'Low' in b.text():
+            if 'Low' in b.text().replace('&',''):
                 value |= (1 << i)
             i += 1
         return value
@@ -223,7 +223,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
 
     def pin_button_clicked(self, button):
         value = self.get_current_value()
-        if 'High' in self.pin_buttons[button].text():
+        if 'High' in self.pin_buttons[button].text().replace('&',''):
             value |= (1 << button)
             self.pin_buttons[button].setText('Switch Low')
             self.pin_button_icons[button].setPixmap(self.vcc_pixmap)
