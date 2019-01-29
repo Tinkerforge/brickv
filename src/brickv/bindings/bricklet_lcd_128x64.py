@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-11-28.      #
+# This file was automatically generated on 2019-01-29.      #
 #                                                           #
-# Python Bindings Version 2.1.20                            #
+# Python Bindings Version 2.1.21                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -828,6 +828,7 @@ class BrickletLCD128x64(Device):
     def get_gui_tab_selected(self):
         """
         Returns the index of the currently selected tab.
+        If there are not tabs, the returned index is -1.
 
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """

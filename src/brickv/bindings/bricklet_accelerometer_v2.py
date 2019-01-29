@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2018-11-28.      #
+# This file was automatically generated on 2019-01-29.      #
 #                                                           #
-# Python Bindings Version 2.1.20                            #
+# Python Bindings Version 2.1.21                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -233,7 +231,7 @@ class BrickletAccelerometerV2(Device):
         The maximum throughput depends on the exact configuration:
 
         .. csv-table::
-         :header: "Number of axis enabled", "throughput 8 bit", "throughout 16 bit"
+         :header: "Number of axis enabled", "Throughput 8 bit", "Throughout 16 bit"
          :widths: 20, 20, 20
 
          "1", "25600Hz", "25600Hz"
