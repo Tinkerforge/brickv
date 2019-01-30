@@ -41,7 +41,7 @@ from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 from brickv.async_call import async_call
 from brickv.plugin_system.plugins.red.ui_red_update_tinkerforge_software import Ui_REDUpdateTinkerforgeSoftware
 
-MAX_IMAGE_VERSION = (1, 12)
+MAX_IMAGE_VERSION = (1, 13)
 
 class ImageVersion(object):
     string = None
