@@ -39,3 +39,6 @@
 - Add support for Air Quality, Analog Out 3.0, Barometer 2.0, Distance IR 2.0,
   Dual Button 2.0, Industrial Dual 0-20mA 2.0, Industrial Dual Analog In 2.0,
   IO-16 2.0, Temperature 2.0 and UV Light 2.0 Bricklet
+
+2019-01-30: 2.0.9 (<unknown>)
+- Add support for Accelerometer 2.0 and Ambient Light 3.0 Bricklet
