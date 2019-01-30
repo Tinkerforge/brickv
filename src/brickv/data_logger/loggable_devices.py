@@ -48,9 +48,11 @@ if 'merged_data_logger_modules' not in globals():
 
     # Bricklets
     from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer
+    from brickv.bindings.bricklet_accelerometer_v2 import BrickletAccelerometerV2
     from brickv.bindings.bricklet_air_quality import BrickletAirQuality
     from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
     from brickv.bindings.bricklet_ambient_light_v2 import BrickletAmbientLightV2
+    from brickv.bindings.bricklet_ambient_light_v3 import BrickletAmbientLightV3
     from brickv.bindings.bricklet_analog_in import BrickletAnalogIn
     from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2
     from brickv.bindings.bricklet_analog_in_v3 import BrickletAnalogInV3
@@ -152,9 +154,11 @@ else:
 
     # Bricklets
     from tinkerforge.bricklet_accelerometer import BrickletAccelerometer
+    from tinkerforge.bricklet_accelerometer_v2 import BrickletAccelerometerV2
     from tinkerforge.bricklet_air_quality import BrickletAirQuality
     from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
     from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
+    from tinkerforge.bricklet_ambient_light_v3 import BrickletAmbientLightV3
     from tinkerforge.bricklet_analog_in import BrickletAnalogIn
     from tinkerforge.bricklet_analog_in_v2 import BrickletAnalogInV2
     from tinkerforge.bricklet_analog_in_v3 import BrickletAnalogInV3
@@ -516,6 +520,57 @@ device_specs = {
             }
         ]
     },
+    BrickletAccelerometerV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletAccelerometerV2,
+        'values': [
+            {
+                'name': 'Acceleration',
+                'getter': lambda device: device.get_acceleration(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['g/10000', 'g/10000', 'g/10000'],
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': lambda device, data_rate, full_scale: device.set_configuration(data_rate, full_scale),
+        'options': [
+            {
+                'name': 'Data Rate',
+                'type': 'choice',
+                'values': [('0.781Hz', BrickletAccelerometerV2.DATA_RATE_0_781HZ),
+                           ('1.563Hz', BrickletAccelerometerV2.DATA_RATE_1_563HZ),
+                           ('3.125Hz', BrickletAccelerometerV2.DATA_RATE_3_125HZ),
+                           ('6.2512Hz', BrickletAccelerometerV2.DATA_RATE_6_2512HZ),
+                           ('12.5Hz', BrickletAccelerometerV2.DATA_RATE_12_5HZ),
+                           ('25Hz', BrickletAccelerometerV2.DATA_RATE_25HZ),
+                           ('50Hz', BrickletAccelerometerV2.DATA_RATE_50HZ),
+                           ('100Hz', BrickletAccelerometerV2.DATA_RATE_100HZ),
+                           ('200Hz', BrickletAccelerometerV2.DATA_RATE_200HZ),
+                           ('400Hz', BrickletAccelerometerV2.DATA_RATE_400HZ),
+                           ('800Hz', BrickletAccelerometerV2.DATA_RATE_800HZ),
+                           ('1600Hz', BrickletAccelerometerV2.DATA_RATE_1600HZ),
+                           ('3200Hz', BrickletAccelerometerV2.DATA_RATE_3200HZ),
+                           ('6400Hz', BrickletAccelerometerV2.DATA_RATE_6400HZ),
+                           ('12800Hz', BrickletAccelerometerV2.DATA_RATE_12800HZ),
+                           ('25600Hz', BrickletAccelerometerV2.DATA_RATE_25600HZ)],
+                'default': '100Hz'
+            },
+            {
+                'name': 'Full Scale',
+                'type': 'choice',
+                'values': [('2g', BrickletAccelerometerV2.FULL_SCALE_2G),
+                           ('4g', BrickletAccelerometerV2.FULL_SCALE_4G),
+                           ('8g', BrickletAccelerometerV2.FULL_SCALE_8G)],
+                'default': '2g'
+            }
+        ]
+    },
     BrickletAirQuality.DEVICE_DISPLAY_NAME: {
         'class': BrickletAirQuality,
         'values': [
@@ -625,6 +680,46 @@ device_specs = {
                            ('350ms', BrickletAmbientLightV2.INTEGRATION_TIME_350MS),
                            ('400ms', BrickletAmbientLightV2.INTEGRATION_TIME_400MS)],
                 'default': '200ms'
+            }
+        ]
+    },
+    BrickletAmbientLightV3.DEVICE_DISPLAY_NAME: {
+        'class': BrickletAmbientLightV3,
+        'values': [
+            {
+                'name': 'Illuminance',
+                'getter': lambda device: device.get_illuminance(),
+                'subvalues': None,
+                'unit': 'lx/100',
+                'advanced': False
+            }
+        ],
+        'options_setter': lambda device, illuminance_range, integration_time: device.set_configuration(illuminance_range, integration_time),
+        'options': [
+            {
+                'name': 'Illuminance Range',
+                'type': 'choice',
+                'values': [('Unlimited', BrickletAmbientLightV3.ILLUMINANCE_RANGE_UNLIMITED),
+                           ('64000Lux', BrickletAmbientLightV3.ILLUMINANCE_RANGE_64000LUX),
+                           ('32000Lux', BrickletAmbientLightV3.ILLUMINANCE_RANGE_32000LUX),
+                           ('16000Lux', BrickletAmbientLightV3.ILLUMINANCE_RANGE_16000LUX),
+                           ('8000Lux', BrickletAmbientLightV3.ILLUMINANCE_RANGE_8000LUX),
+                           ('1300Lux', BrickletAmbientLightV3.ILLUMINANCE_RANGE_1300LUX),
+                           ('600Lux', BrickletAmbientLightV3.ILLUMINANCE_RANGE_600LUX)],
+                'default': '8000Lux'
+            },
+            {
+                'name': 'Integration Time',
+                'type': 'choice',
+                'values': [('50ms', BrickletAmbientLightV3.INTEGRATION_TIME_50MS),
+                           ('100ms', BrickletAmbientLightV3.INTEGRATION_TIME_100MS),
+                           ('150ms', BrickletAmbientLightV3.INTEGRATION_TIME_150MS),
+                           ('200ms', BrickletAmbientLightV3.INTEGRATION_TIME_200MS),
+                           ('250ms', BrickletAmbientLightV3.INTEGRATION_TIME_350MS),
+                           ('300ms', BrickletAmbientLightV3.INTEGRATION_TIME_300MS),
+                           ('350ms', BrickletAmbientLightV3.INTEGRATION_TIME_350MS),
+                           ('400ms', BrickletAmbientLightV3.INTEGRATION_TIME_400MS)],
+                'default': '150ms'
             }
         ]
     },
