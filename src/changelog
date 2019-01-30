@@ -322,7 +322,7 @@
 
 2016-02-19: 2.3.4 (78c71a2)
 - Add support for Real-Time Clock Bricklet
-- Don't auto-update Thermocouple Bricket with Temperature Bricklet firmware
+- Don't auto-update Thermocouple Bricklet with Temperature Bricklet firmware
 
 2016-06-29: 2.3.5 (71688d3)
 - Add support for WIFI Extension 2.0, CAN Bricklet and RGB LED Bricklet
