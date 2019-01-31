@@ -200,7 +200,7 @@ def build_macos_pkg():
     print('signing brickv binary')
     system('security unlock-keychain /Users/$USER/Library/Keychains/login.keychain')
     # NOTE: codesign_identity contains "Developer ID Application: ..."
-    codesign_command = 'codesign --force --verify --verbose --sign "`cat codesign_identity`" {0}'
+    codesign_command = 'codesign --force --verbose=2 --sign "`cat codesign_identity`" {0}'
     frameworks_path = os.path.join(dist_path, 'Brickv.app', 'Contents', 'Frameworks')
     qtcore_framework = os.path.join(frameworks_path, 'QtCore.framework')
     qtgui_framework = os.path.join(frameworks_path, 'QtGui.framework')
@@ -236,6 +236,8 @@ def build_macos_pkg():
     system(codesign_command.format(os.path.join(frameworks_path, 'libz.1.2.11.dylib')))
     system(codesign_command.format(os.path.join(dist_path, 'Brickv.app', 'Contents', 'MacOS', 'python')))
     system(codesign_command.format(os.path.join(dist_path, 'Brickv.app')))
+
+    system('codesign --verify --deep --verbose=2 {0}'.format(os.path.join(dist_path, 'Brickv.app')))
 
     print('building disk image')
     dmg_name = 'brickv_macos_{0}.dmg'.format(BRICKV_VERSION.replace('.', '_'))
