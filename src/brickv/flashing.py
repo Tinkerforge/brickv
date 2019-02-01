@@ -950,11 +950,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
     def write_bricklet_plugin(self, plugin, brick, port, bricklet, name, progress, has_comcu, popup=True):
         if has_comcu:
-            return self.write_bricklet_plugin_comcu(plugin, brick, port, bricklet, name, progress, popup)
+            return self.write_bricklet_plugin_comcu(plugin, bricklet, name, progress, popup)
         else:
             return self.write_bricklet_plugin_standard(plugin, brick, port, bricklet, name, progress, popup)
 
-    def write_bricklet_plugin_comcu(self, plugin, brick, port, bricklet, name, progress, popup=True):
+    def write_bricklet_plugin_comcu(self, plugin, bricklet, name, progress, popup=True):
         try:
             progress.setLabelText('Starting bootloader mode')
             progress.setMaximum(0)
@@ -1349,7 +1349,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     return
 
                 brick = brick_for_bricklet(device_info)
-                if self.write_bricklet_plugin(plugin, brick.plugin.device, device_info.position, device_info.plugin.device, device_info.name, progress, device_info.plugin.has_comcu):
+                if brick != None and brick.plugin != None:
+                    brick_plugin_device = brick.plugin.device
+                else:
+                    brick_plugin_device = None
+
+                if self.write_bricklet_plugin(plugin, brick_plugin_device, device_info.position, device_info.plugin.device, device_info.name, progress, device_info.plugin.has_comcu):
                     bricks_to_reset.add(brick)
                 else:
                     progress.cancel()
