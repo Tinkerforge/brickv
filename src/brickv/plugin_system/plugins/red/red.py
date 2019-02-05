@@ -235,7 +235,7 @@ Please make sure that your internet connection is working.'
                 self.update_install_serialisation_queue.put({'is_binding': False,
                                                              'name': self.update_info['brickv']['name'],
                                                              'temp_dir': self.update_info['temp_dir'],
-                                                             'temp_dir_abs_path': posixpath.join(self.update_info['temp_dir'], brickv_linux_latest.deb)})
+                                                             'temp_dir_abs_path': posixpath.join(self.update_info['temp_dir'], 'brickv_linux_latest.deb')})
             else:
                 self.update_install_serialisation_queue.put({'is_binding': True,
                                                              'name': d['name'],
