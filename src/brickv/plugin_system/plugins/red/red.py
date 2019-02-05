@@ -62,7 +62,7 @@ class REDUpdateTinkerforgeSoftware(QtGui.QDialog,
     MESSAGE_INFO_START = '''With this utility you can check and update all the \
 Tinkerforge bindings and Tinkerforge Brick Viewer installed in your RED Brick.<br/><br/>
 To check whether you need updates click the <b>"Check for Updates"</b> button below.'''
-    MESSAGE_INFO_STATE_UPDATE_DONE = 'Update successful !'
+    MESSAGE_INFO_STATE_UPDATE_DONE = 'Update successful!'
     MESSAGE_INFO_STATE_NO_UPDATES_AVAILABLE = 'There are no updates available for the RED Brick.'
     MESSAGE_INFO_STATE_UPDATES_AVAILABLE = '<b>The following updates are available:</b>'
     MESSAGE_INFO_STATE_UPDATE_IN_PROGRESS = 'Updating RED Brick Tinkerforge software.\
