@@ -11,7 +11,7 @@ case "$1" in
     $(/usr/bin/which apt-get) remove --purge brickv -y &> /dev/null; \
     $(/usr/bin/which dpkg) -i $3 &> /dev/null
 
-    if [ $? = 0 ]; then
+    if [ $? -eq 0 ]; then
       exit 0
     else
       exit 1
@@ -27,7 +27,7 @@ case "$1" in
     $(/usr/bin/which make) prefix=/usr install &> /dev/null && \
     $(/usr/bin/which make) clean &> /dev/null
 
-    if [ $? = 0 ]; then
+    if [ $? -eq 0 ]; then
       exit 0
     else
       exit 1
@@ -41,7 +41,7 @@ case "$1" in
     $(/usr/bin/which rm) -f /usr/lib/Tinkerforge.dll &> /dev/null; \
     $(/usr/bin/which cp) -f Tinkerforge.dll /usr/lib &> /dev/null
 
-    if [ $? = 0 ]; then
+    if [ $? -eq 0 ]; then
       exit 0
     else
       exit 1
@@ -58,7 +58,7 @@ case "$1" in
     $(/usr/bin/which make) FPCDIR=/usr/lib/fpc/default install &> /dev/null && \
     $(/usr/bin/which make) clean &> /dev/null
 
-    if [ $? = 0 ]; then
+    if [ $? -eq 0 ]; then
       exit 0
     else
       exit 1
@@ -69,7 +69,7 @@ case "$1" in
   "java")
     $(/usr/bin/which unzip) -q -d $2/bindings/java $3 &> /dev/null
 
-    if [ $? = 0 ]; then
+    if [ $? -eq 0 ]; then
       exit 0
     else
       exit 1
@@ -83,7 +83,7 @@ case "$1" in
     $(/usr/bin/which npm) uninstall -g tinkerforge &> /dev/null; \
     $(/usr/bin/which npm) install -g ./tinkerforge.tgz &> /dev/null
 
-    if [ $? = 0 ]; then
+    if [ $? -eq 0 ]; then
       exit 0
     else
       exit 1
@@ -94,7 +94,7 @@ case "$1" in
   "matlab")
     $(/usr/bin/which unzip) -q -d $2/bindings/matlab $3 &> /dev/null
 
-    if [ $? = 0 ]; then
+    if [ $? -eq 0 ]; then
       exit 0
     else
       exit 1
@@ -106,11 +106,17 @@ case "$1" in
     $(/usr/bin/which unzip) -q -d $2/bindings/perl $3 &> /dev/null && \
     cd $2/bindings/perl/source &> /dev/null && \
     $(/usr/bin/which cpanm) -f --uninstall Tinkerforge &> /dev/null; \
+    $(/usr/bin/which find) . -exec $(/usr/bin/which touch) {} \; &> /dev/null && \
     $(/usr/bin/which perl) Makefile.PL &> /dev/null && \
-    $(/usr/bin/which make) all &> /dev/null && \
+    $(/usr/bin/which make) all &> /dev/null
+
+    if [ $? -ne 0 ]; then
+      $(/usr/bin/which make) all &> /dev/null
+    fi
+
     $(/usr/bin/which make) install &> /dev/null
 
-    if [ $? = 0 ]; then
+    if [ $? -eq 0 ]; then
       exit 0
     else
       exit 1
@@ -124,7 +130,7 @@ case "$1" in
     $(/usr/bin/which pear) uninstall __uri/Tinkerforge &> /dev/null; \
     $(/usr/bin/which pear) install ./Tinkerforge.tgz &> /dev/null
 
-    if [ $? = 0 ]; then
+    if [ $? -eq 0 ]; then
       exit 0
     else
       exit 1
@@ -154,7 +160,7 @@ case "$1" in
     $(/usr/bin/which python2) setup.py install &> /dev/null && \
     $(/usr/bin/which python3) setup.py install &> /dev/null
 
-    if [ $? = 0 ]; then
+    if [ $? -eq 0 ]; then
       exit 0
     else
       exit 1
@@ -168,7 +174,7 @@ case "$1" in
     $(/usr/bin/which gem) uninstall tinkerforge &> /dev/null; \
     $(/usr/bin/which gem) install --local --no-document ./tinkerforge.gem &> /dev/null
 
-    if [ $? = 0 ]; then
+    if [ $? -eq 0 ]; then
       exit 0
     else
       exit 1
@@ -184,7 +190,7 @@ case "$1" in
     $(/usr/bin/which cp) -f tinkerforge /usr/local/bin &> /dev/null && \
     $(/usr/bin/which cp) -f tinkerforge-bash-completion.sh /etc/bash_completion.d &> /dev/null
 
-    if [ $? = 0 ]; then
+    if [ $? -eq 0 ]; then
       exit 0
     else
       exit 1
@@ -195,7 +201,7 @@ case "$1" in
   "vbnet")
     $(/usr/bin/which unzip) -q -d $2/bindings/vbnet $3 &> /dev/null
 
-    if [ $? = 0 ]; then
+    if [ $? -eq 0 ]; then
       exit 0
     else
       exit 1
