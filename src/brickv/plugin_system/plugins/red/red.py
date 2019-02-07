@@ -164,11 +164,14 @@ Please make sure that your internet connection is working.'
             self.update_info['error'] = True
             self.update_info['error_messages'] += 'Error while installing ' + display_name + ':\n'
 
-            if result.stdout:
-                self.update_info['error_messages'] += result.stdout + '\n'
-
-            if result.stderr:
+            if (not result.stdout) and (not result.stderr):
+                self.update_info['error_messages'] += 'Unknown error.\n'
+            elif result.stdout and (not result.stderr):
+                self.update_info['error_messages'] += result.stdout
+            elif (not result.stdout) and result.stderr:
                 self.update_info['error_messages'] += result.stderr
+            else:
+                self.update_info['error_messages'] += result.stdout + '\n' + result.stderr
 
             self.update_info['error_messages'] += '\n\n'
 
@@ -185,7 +188,7 @@ Please make sure that your internet connection is working.'
                 '''
                 self.script_manager.execute_script('update_tf_software_copy_bindings',
                                                    self.cb_update_tf_software_copy_bindings,
-                                                   [posixpath.join(self.update_info['temp_dir'], 'bindings')])
+                                                   [posixpath.join(self.update_info['temp_dir'], 'bindings'), name])
             else:
                 self.handle_update_tf_software_install_cb()
 
