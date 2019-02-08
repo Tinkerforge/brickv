@@ -483,7 +483,7 @@ Please make sure that your internet connection is working.'
                    update_info['brickv']['display_name'] == '-' or \
                    update_info['brickv']['from'] == '0' or \
                    update_info['brickv']['to'] == '0':
-                        return False
+                    return False
         else:
             return False
 
@@ -675,7 +675,6 @@ Please make sure that your internet connection is working.'
 
             if self.update_info['brickv']['update']:
                 # Try to get the Brick Viewer update.
-
                 url = 'http://download.tinkerforge.com/tools/brickv/linux/brickv_linux_latest.deb'
 
                 self.do_download_update_async_call(self.update_info['brickv']['name'], url)
