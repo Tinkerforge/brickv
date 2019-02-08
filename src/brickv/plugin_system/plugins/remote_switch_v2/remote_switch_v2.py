@@ -331,7 +331,7 @@ Reapeats = {repeats}
 
         remote_input = '''Remote Type - B:
 Address = {address}
-Unit = {unit}_async
+Unit = {unit}
 Switch to = {switch_to}
 Dim value = {dim_value}
 Repeats = {repeats}
