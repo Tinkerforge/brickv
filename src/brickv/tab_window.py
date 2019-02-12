@@ -111,6 +111,7 @@ class TabWindow(QDialog):
             self.parent_dialog = TabWidget(self, self.name)
             layout = QVBoxLayout(self.parent_dialog)
             layout.addWidget(self)
+            layout.setContentsMargins(0, 0, 0, 0)
 
             self.parent_dialog.show()
             self.show()
