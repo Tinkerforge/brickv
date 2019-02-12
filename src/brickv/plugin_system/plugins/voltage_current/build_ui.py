@@ -6,4 +6,4 @@ def system(command):
     if os.system(command) != 0:
         exit(1)
 
-system("pyuic5 -o ui_voltage_current.py ui/voltage_current.ui")
+system("python3 ../../../../pyuic5-fixed.py -o ui_voltage_current.py ui/voltage_current.ui")

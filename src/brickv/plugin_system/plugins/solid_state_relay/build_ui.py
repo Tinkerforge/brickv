@@ -6,4 +6,4 @@ def system(command):
     if os.system(command) != 0:
         exit(1)
 
-system("pyuic5 -o ui_solid_state_relay.py ui/solid_state_relay.ui")
+system("python3 ../../../../pyuic5-fixed.py -o ui_solid_state_relay.py ui/solid_state_relay.ui")

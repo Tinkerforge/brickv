@@ -6,4 +6,4 @@ def system(command):
     if os.system(command) != 0:
         exit(1)
 
-system("pyuic5 -o ui_rgb_led.py ui/rgb_led.ui")
+system("python3 ../../../../pyuic5-fixed.py -o ui_rgb_led.py ui/rgb_led.ui")
