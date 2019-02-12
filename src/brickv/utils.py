@@ -28,21 +28,12 @@ import sys
 from PyQt5.QtCore import Qt, QDir
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 
-def get_program_path():
-    # from http://www.py2exe.org/index.cgi/WhereAmI
-    if hasattr(sys, 'frozen'):
-        path = sys.executable
-    else:
-        path = __file__
-
-    return os.path.dirname(os.path.realpath(path))
-
 def get_resources_path(relativePath):
     try:
         # PyInstaller stores data files in a tmp folder refered to as _MEIPASS
         basePath = sys._MEIPASS
     except Exception:
-        basePath = ''
+        basePath = os.path.dirname(os.path.realpath(__file__))
 
     path = os.path.join(basePath, relativePath)
 
