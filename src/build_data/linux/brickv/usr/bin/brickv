@@ -1,2 +1,2 @@
 #!/bin/sh
-python /usr/share/brickv/main.py "$@"
+python3 /usr/share/brickv/main.py "$@"
