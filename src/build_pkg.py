@@ -254,7 +254,7 @@ def build_linux_flash_pkg():
         f.write(template)
 
     print('creating DEBIAN/control from template')
-    installed_size = int(check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split('\t')[0])
+    installed_size = int(check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split(b'\t')[0])
     control_path = os.path.join(linux_path, 'DEBIAN', 'control')
     specialize_template(control_path, control_path,
                         {'<<VERSION>>': BRICK_FLASH_VERSION,
@@ -286,7 +286,7 @@ def build_linux_flash_pkg():
         print('skipping lintian check')
 
 
-BRICK_LOGGER_VERSION = '2.0.8'
+BRICK_LOGGER_VERSION = '2.0.9'
 
 def build_logger_zip():
     print('building brick-logger ZIP file')
@@ -330,7 +330,8 @@ def build_logger_zip():
     if os.path.exists(zip_name):
         os.remove(zip_name)
 
-    system(['cd', '{};'.format(dist_path), 'zip', '-q', '../{}'.format(zip_name), 'brick-logger.py'])
+    os.chdir(dist_path)
+    system(['zip', '-q', '../{}'.format(zip_name), 'brick-logger.py'])
 
 # run 'python build_pkg.py' to build the windows/linux/macos package
 if __name__ == '__main__':
