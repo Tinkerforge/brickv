@@ -17,3 +17,5 @@ src/build_data/linux/brick-flash-cmd/usr/bin
 src/MANIFEST.in
 src/codesign_identity
 .vscode
+*.deb
+*.zip

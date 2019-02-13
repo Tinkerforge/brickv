@@ -80,7 +80,7 @@ if IMAGE_VERSION and IMAGE_VERSION >= MIN_VERSION_WITH_NAGIOS4:
 else:
     FILE_PATH_TF_NAGIOS_CONFIGURATION = '/etc/nagios3/conf.d/tinkerforge.cfg'
 
-SCRIPT_TINKERFORGE_CHECK = '''#!/usr/bin/env python
+SCRIPT_TINKERFORGE_CHECK = '''#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 import time
