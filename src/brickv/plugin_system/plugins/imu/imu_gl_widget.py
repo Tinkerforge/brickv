@@ -48,9 +48,10 @@ if sys.platform.startswith('linux'):
 class IMUGLWidget(QOpenGLWidget):
     def __init__(self, parent=None):
         QOpenGLWidget.__init__(self, parent)
-        format = QSurfaceFormat()
-        format.setSamples(16)
-        QOpenGLWidget.setFormat(self, format)
+
+        surface_format = QSurfaceFormat()
+        surface_format.setSamples(16)
+        QOpenGLWidget.setFormat(self, surface_format)
 
         self.profile = QOpenGLVersionProfile()
         self.profile.setVersion(2, 1)
