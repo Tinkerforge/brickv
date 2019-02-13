@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-02-13.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -23,7 +23,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletAmbientLightV3(Device):
     """
-
+    Measures ambient light up to 64000lux
     """
 
     DEVICE_IDENTIFIER = 2131

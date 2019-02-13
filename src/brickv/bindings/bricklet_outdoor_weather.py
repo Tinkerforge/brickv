@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-02-13.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -131,6 +131,9 @@ class BrickletOutdoorWeather(Device):
         that have been seen since the startup of the Bricklet.
 
         Each station gives itself a random identifier on first startup.
+
+        Since firmware version 2.0.2 a station is removed from the list if no data was received for
+        12 hours.
         """
         return GetStationIdentifiersLowLevel(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_IDENTIFIERS_LOW_LEVEL, (), '', 'H H 60B'))
 
@@ -141,6 +144,9 @@ class BrickletOutdoorWeather(Device):
         that have been seen since the startup of the Bricklet.
 
         Each sensor gives itself a random identifier on first startup.
+
+        Since firmware version 2.0.2 a sensor is removed from the list if no data was received for
+        12 hours.
         """
         return GetSensorIdentifiersLowLevel(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_IDENTIFIERS_LOW_LEVEL, (), '', 'H H 60B'))
 
@@ -354,6 +360,9 @@ class BrickletOutdoorWeather(Device):
         that have been seen since the startup of the Bricklet.
 
         Each station gives itself a random identifier on first startup.
+
+        Since firmware version 2.0.2 a station is removed from the list if no data was received for
+        12 hours.
         """
         with self.stream_lock:
             ret = self.get_station_identifiers_low_level()
@@ -383,6 +392,9 @@ class BrickletOutdoorWeather(Device):
         that have been seen since the startup of the Bricklet.
 
         Each sensor gives itself a random identifier on first startup.
+
+        Since firmware version 2.0.2 a sensor is removed from the list if no data was received for
+        12 hours.
         """
         with self.stream_lock:
             ret = self.get_sensor_identifiers_low_level()
