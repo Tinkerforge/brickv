@@ -108,7 +108,7 @@ class TabWindow(QDialog):
 
             self.tab_widget.removeTab(index)
 
-            self.parent_dialog = TabWidget(self, self.name)
+            self.parent_dialog = TabWidget(self, self.name + " - " + "Brick Viewer " + config.BRICKV_VERSION)
             layout = QVBoxLayout(self.parent_dialog)
             layout.addWidget(self)
             layout.setContentsMargins(0, 0, 0, 0)
