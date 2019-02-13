@@ -34,10 +34,6 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
 from brickv.bindings.ip_connection import BASE58
-from brickv.bindings.bricklet_ptc import BrickletPTC
-from brickv.bindings.bricklet_temperature import BrickletTemperature
-from brickv.bindings.bricklet_humidity import BrickletHumidity
-from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
 from brickv.plugin_system.plugins.red.script_manager import report_script_result
 from brickv.plugin_system.plugins.red.widget_spinbox_span_slider import\
      widgetSpinBoxSpanSlider
@@ -82,11 +78,12 @@ COLUMN_EMAIL_NOTIFICATIONS_ITEMS = ['No Notifications',
                                     'Critical',
                                     'Critical/Warning']
 
-SUPPORTED_BRICKLETS = {'PTC (2-/4-wire)' :{'id':'ptc24', 'unit':'°C'.decode('utf-8')},
-                       'PTC (3-wire)'    :{'id':'ptc3', 'unit':'°C'.decode('utf-8')},
-                       'Temperature'     :{'id':'temperature', 'unit':'°C'.decode('utf-8')},
-                       'Humidity'        :{'id':'humidity', 'unit':'%RH'},
-                       'Ambient Light'   :{'id':'ambient_light', 'unit':'Lux'}}
+SUPPORTED_BRICKLETS = {'PTC (2-wire)'  :{'id':'ptc_2_wire', 'unit':'°C'.decode('utf-8')},
+                       'PTC (3-wire)'  :{'id':'ptc_3_wire', 'unit':'°C'.decode('utf-8')},
+                       'PTC (4-wire)'  :{'id':'ptc_4_wire', 'unit':'°C'.decode('utf-8')},
+                       'Temperature'   :{'id':'temperature', 'unit':'°C'.decode('utf-8')},
+                       'Humidity'      :{'id':'humidity', 'unit':'%RH'},
+                       'Ambient Light' :{'id':'ambient_light', 'unit':'Lux'}}
 
 ITEMS_AUTHENTICATION = ['On', 'Off']
 
@@ -497,7 +494,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.tview_sm_rules.setIndexWidget(index, widget_spin_span)
 
     def set_range_widgetSpinBoxSpanSlider(self, bricklet, widget_spin_span):
-        if bricklet == 'ptc24' or bricklet == 'ptc3':
+        if bricklet == 'ptc_2_wire' or bricklet == 'ptc_3_wire' or bricklet == 'ptc_4_wire':
             widget_spin_span.span_slider.setRange(RANGE_MIN_PTC, RANGE_MAX_PTC)
             widget_spin_span.sbox_lower.setRange(RANGE_MIN_PTC, RANGE_MAX_PTC)
             widget_spin_span.sbox_upper.setRange(RANGE_MIN_PTC, RANGE_MAX_PTC)
@@ -621,8 +618,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             if dict_rule['host'] not in self.dict_hosts:
                 continue
 
-            if dict_rule['bricklet'] == 'ptc24' or\
-               dict_rule['bricklet'] == 'ptc3' and\
+            if dict_rule['bricklet'] == 'ptc_2_wire' or\
+               dict_rule['bricklet'] == 'ptc_3_wire' or\
+               dict_rule['bricklet'] == 'ptc_4_wire' and\
                dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['ptc']:
                     self.dict_hosts[dict_rule['host']]['ptc'].insert(0, dict_rule['uid'])
 
@@ -830,8 +828,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             cbox_uid.lineEdit().selectAll()
             return
 
-        if SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'ptc24' or\
-           SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'ptc3':
+        if SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'ptc_2_wire' or\
+           SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'ptc_3_wire' or\
+           SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'ptc_4_wire':
                 populate_and_select('ptc')
 
         elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'temperature':

@@ -15,25 +15,49 @@ from time import sleep
 from pynag import Model
 from distutils.version import StrictVersion
 from tinkerforge.ip_connection import IPConnection
+
 from tinkerforge.bricklet_ptc import BrickletPTC
+try:
+    from tinkerforge.bricklet_ptc_v2 import BrickletPTCV2
+    has_ptc_v2  = True
+except ImportError:
+    has_ptc_v2 = False
+
 from tinkerforge.bricklet_humidity import BrickletHumidity
+try:
+    from tinkerforge.bricklet_humidity_v2 import BrickletHumidityV2
+    has_humidity_v2  = True
+except ImportError:
+    has_humidity_v2 = False
+
 from tinkerforge.bricklet_temperature import BrickletTemperature
+try:
+    from tinkerforge.bricklet_temperature_v2 import BrickletTemperatureV2
+    has_temperature_v2  = True
+except ImportError:
+    has_temperature_v2 = False
+
 from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
-
-IMAGE_VERSION = None
-MIN_VERSION_WITH_NAGIOS4 = StrictVersion('1.10')
-
-with open('/etc/tf_image_version', 'r') as f:
-    IMAGE_VERSION = StrictVersion(f.read().split(' ')[0].strip())
-
 try:
     from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
     has_ambient_light_v2 = True
 except ImportError:
     has_ambient_light_v2 = False
 
+try:
+    from tinkerforge.bricklet_ambient_light_v3 import BrickletAmbientLightV3
+    has_ambient_light_v3 = True
+except ImportError:
+    has_ambient_light_v3 = False
+
 if len(argv) < 2:
     exit(1)
+
+IMAGE_VERSION = None
+MIN_VERSION_WITH_NAGIOS4 = StrictVersion('1.10')
+
+with open('/etc/tf_image_version', 'r') as f:
+    IMAGE_VERSION = StrictVersion(f.read().split(' ')[0].strip())
 
 FILE_PATH_CHECK_SCRIPT = '/usr/local/bin/check_tinkerforge.py'
 
@@ -48,30 +72,52 @@ SCRIPT_TINKERFORGE_CHECK = '''#!/usr/bin/env python
 import time
 import argparse
 from tinkerforge.ip_connection import IPConnection
-from tinkerforge.bricklet_ptc import BrickletPTC
-from tinkerforge.bricklet_temperature import BrickletTemperature
-from tinkerforge.bricklet_humidity import BrickletHumidity
-from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
 
+from tinkerforge.bricklet_ptc import BrickletPTC
+try:
+    from tinkerforge.bricklet_ptc_v2 import BrickletPTCV2
+    has_ptc_v2  = True
+except ImportError:
+    has_ptc_v2 = False
+
+from tinkerforge.bricklet_humidity import BrickletHumidity
+try:
+    from tinkerforge.bricklet_humidity_v2 import BrickletHumidityV2
+    has_humidity_v2  = True
+except ImportError:
+    has_humidity_v2 = False
+
+from tinkerforge.bricklet_temperature import BrickletTemperature
+try:
+    from tinkerforge.bricklet_temperature_v2 import BrickletTemperatureV2
+    has_temperature_v2  = True
+except ImportError:
+    has_temperature_v2 = False
+
+from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
 try:
     from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
     has_ambient_light_v2 = True
 except ImportError:
     has_ambient_light_v2 = False
 
+try:
+    from tinkerforge.bricklet_ambient_light_v3 import BrickletAmbientLightV3
+    has_ambient_light_v3 = True
+except ImportError:
+    has_ambient_light_v3 = False
+
 RETURN_CODE_OK       = 0
 RETURN_CODE_WARNING  = 1
 RETURN_CODE_CRITICAL = 2
 RETURN_CODE_UNKNOWN  = 3
 
-BRICKLET_PTC24         = 'ptc24'
-BRICKLET_PTC3          = 'ptc3'
+BRICKLET_PTC_2_WIRE    = 'ptc_2_wire'
+BRICKLET_PTC_3_WIRE    = 'ptc_3_wire'
+BRICKLET_PTC_4_WIRE    = 'ptc_4_wire'
 BRICKLET_TEMPERATURE   = 'temperature'
 BRICKLET_HUMIDITY      = 'humidity'
 BRICKLET_AMBIENT_LIGHT = 'ambient_light'
-
-WIRE_MODE_PTC24 = 2
-WIRE_MODE_PTC3  = 3
 
 MESSAGE_CRITICAL_ERROR_CONNECTING = 'CRITICAL - Error occured while connecting'
 MESSAGE_CRITICAL_AUTHENTICATION_FAILED = 'CRITICAL - Connection Authentication failed'
@@ -81,11 +127,11 @@ MESSAGE_CRITICAL_ERROR_SETTING_PTC_MODE = 'CRITICAL - Error setting PTC wire mod
 MESSAGE_CRITICAL_ERROR_READING_VALUE = 'CRITICAL - Error reading value'
 MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY = 'CRITICAL - Error getting device identity'
 MESSAGE_CRITICAL_ERROR_SETTING_AMBIENT_LIGHT_CONFIGURATION = 'CRITICAL - Error setting Ambient Light configuration'
-MESSAGE_CRITICAL_READING_TOO_HIGH = 'CRITICAL - Reading too high - %s'
-MESSAGE_CRITICAL_READING_TOO_LOW = 'CRITICAL - Reading too low - %s'
-MESSAGE_WARNING_READING_IS_HIGH = 'WARNING - Reading is high - %s'
-MESSAGE_WARNING_READING_IS_LOW = 'WARNING - Reading is low - %s'
-MESSAGE_OK_READING = 'OK - %s'
+MESSAGE_CRITICAL_READING_TOO_HIGH = 'CRITICAL - Reading too high - %s %s'
+MESSAGE_CRITICAL_READING_TOO_LOW = 'CRITICAL - Reading too low - %s %s'
+MESSAGE_WARNING_READING_IS_HIGH = 'WARNING - Reading is high - %s %s'
+MESSAGE_WARNING_READING_IS_LOW = 'WARNING - Reading is low - %s %s'
+MESSAGE_OK_READING = 'OK - %s %s'
 MESSAGE_UNKNOWN_READING = 'UNKNOWN - Unknown state'
 
 global args
@@ -135,39 +181,81 @@ def connect():
 def read(bricklet, uid, warning, critical, warning2, critical2):
     reading = None
 
-    if bricklet == BRICKLET_PTC24 or bricklet == BRICKLET_PTC3:
-        bricklet_ptc = BrickletPTC(uid, ipcon)
+    if bricklet == BRICKLET_PTC_2_WIRE or\
+       bricklet == BRICKLET_PTC_3_WIRE or\
+       bricklet == BRICKLET_PTC_4_WIRE:
+            unit = '°C'.decode('utf-8')
+            bricklet_ptc = BrickletPTC(uid, ipcon)
 
-        try:
-            if not bricklet_ptc.is_sensor_connected():
-                bricklet_ptc = None
-                handle_result(MESSAGE_CRITICAL_NO_PTC_CONNECTED,
-                              RETURN_CODE_CRITICAL)
-        except:
-            bricklet_ptc = None
-            handle_result(MESSAGE_CRITICAL_ERROR_GETTING_PTC_STATE,
-                          RETURN_CODE_CRITICAL)
+            if has_ptc_v2:
+                device_identifier = None
 
-        if bricklet_ptc != None:
-            try:
-                if bricklet == BRICKLET_PTC24:
-                    bricklet_ptc.set_wire_mode(WIRE_MODE_PTC24)
-                elif bricklet == BRICKLET_PTC3:
-                    bricklet_ptc.set_wire_mode(WIRE_MODE_PTC3)
-            except:
-                bricklet_ptc = None
-                handle_result(MESSAGE_CRITICAL_ERROR_SETTING_PTC_MODE,
-                              RETURN_CODE_CRITICAL)
+                try:
+                    device_identifier = bricklet_ptc.get_identity().device_identifier
+                except:
+                    bricklet_ptc = None
+                    handle_result(MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY,
+                                  RETURN_CODE_CRITICAL)
 
-        if bricklet_ptc != None:
-            try:
-                reading = bricklet_ptc.get_temperature() / 100.0
-            except:
-                handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
-                              RETURN_CODE_CRITICAL)
+                    return
+
+                if device_identifier == BrickletPTCV2.DEVICE_IDENTIFIER:
+                    bricklet_ptc = BrickletPTCV2(uid, ipcon)
+
+            if bricklet_ptc != None:
+                try:
+                    if not bricklet_ptc.is_sensor_connected():
+                        bricklet_ptc = None
+                        handle_result(MESSAGE_CRITICAL_NO_PTC_CONNECTED,
+                                      RETURN_CODE_CRITICAL)
+
+                        return
+                except:
+                    bricklet_ptc = None
+                    handle_result(MESSAGE_CRITICAL_ERROR_GETTING_PTC_STATE,
+                                  RETURN_CODE_CRITICAL)
+
+                    return
+                try:
+                    if bricklet == BRICKLET_PTC_2_WIRE:
+                        bricklet_ptc.set_wire_mode(WIRE_MODE_2)
+                    elif bricklet == BRICKLET_PTC_3_WIRE:
+                        bricklet_ptc.set_wire_mode(WIRE_MODE_3)
+                    elif bricklet == BRICKLET_PTC_4_WIRE:
+                        bricklet_ptc.set_wire_mode(WIRE_MODE_4)
+                except:
+                    bricklet_ptc = None
+                    handle_result(MESSAGE_CRITICAL_ERROR_SETTING_PTC_MODE,
+                                  RETURN_CODE_CRITICAL)
+
+                    return
+
+                try:
+                    reading = bricklet_ptc.get_temperature() / 100.0
+                except:
+                    handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
+                                  RETURN_CODE_CRITICAL)
+
+                    return
 
     elif bricklet == BRICKLET_TEMPERATURE:
+        unit = '°C'.decode('utf-8')
         bricklet_temperature = BrickletTemperature(uid, ipcon)
+
+        if has_temperature_v2:
+            device_identifier = None
+
+            try:
+                device_identifier = bricklet_temperature.get_identity().device_identifier
+            except:
+                bricklet_temperature = None
+                handle_result(MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY,
+                              RETURN_CODE_CRITICAL)
+
+                return
+
+            if device_identifier == BrickletTemperatureV2.DEVICE_IDENTIFIER:
+                bricklet_temperature = BrickletTemperatureV2(uid, ipcon)
 
         try:
             reading = bricklet_temperature.get_temperature() / 100.0
@@ -175,20 +263,44 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
             handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
                           RETURN_CODE_CRITICAL)
 
+            return
+
     elif bricklet == BRICKLET_HUMIDITY:
+        unit = '%RH'
+        divisor = 10.0
         bricklet_humidity = BrickletHumidity(uid, ipcon)
 
+        if has_humidity_v2:
+            divisor = 100.0
+            device_identifier = None
+
+            try:
+                device_identifier = bricklet_humidity.get_identity().device_identifier
+            except:
+                bricklet_humidity = None
+                handle_result(MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY,
+                              RETURN_CODE_CRITICAL)
+
+                return
+
+            if device_identifier == BrickletHumidityV2.DEVICE_IDENTIFIER:
+                bricklet_humidity = BrickletHumidityV2(uid, ipcon)
+
         try:
-            reading = bricklet_humidity.get_humidity() / 10.0
+            reading = bricklet_humidity.get_humidity() / divisor
         except:
             handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
                           RETURN_CODE_CRITICAL)
 
+            return
+
     elif bricklet == BRICKLET_AMBIENT_LIGHT:
-        bricklet_ambient_light = BrickletAmbientLight(uid, ipcon)
+        unit = 'Lux'
         divisor = 10.0
+        bricklet_ambient_light = BrickletAmbientLight(uid, ipcon)
 
         if has_ambient_light_v2:
+            divisor = 100.0
             device_identifier = None
 
             try:
@@ -198,17 +310,46 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
                 handle_result(MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY,
                               RETURN_CODE_CRITICAL)
 
+                return
+
             if device_identifier == BrickletAmbientLightV2.DEVICE_IDENTIFIER:
                 bricklet_ambient_light = BrickletAmbientLightV2(uid, ipcon)
-                divisor = 100.0
 
                 try:
-                    bricklet_ambient_light.set_configuration(BrickletAmbientLightV2.ILLUMINANCE_RANGE_1300LUX,
+                    bricklet_ambient_light.set_configuration(BrickletAmbientLightV2.ILLUMINANCE_RANGE_UNLIMITED,
                                                              BrickletAmbientLightV2.INTEGRATION_TIME_200MS)
                 except:
                     bricklet_ambient_light = None
                     handle_result(MESSAGE_CRITICAL_ERROR_SETTING_AMBIENT_LIGHT_CONFIGURATION,
                                   RETURN_CODE_CRITICAL)
+
+                    return
+
+        elif has_ambient_light_v3:
+            divisor = 100.0
+            device_identifier = None
+
+            try:
+                device_identifier = bricklet_ambient_light.get_identity().device_identifier
+            except:
+                bricklet_ambient_light = None
+                handle_result(MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY,
+                              RETURN_CODE_CRITICAL)
+
+                return
+
+            if device_identifier == BrickletAmbientLightV3.DEVICE_IDENTIFIER:
+                bricklet_ambient_light = BrickletAmbientLightV3(uid, ipcon)
+
+                try:
+                    bricklet_ambient_light.set_configuration(BrickletAmbientLightV3.ILLUMINANCE_RANGE_UNLIMITED,
+                                                             BrickletAmbientLightV3.INTEGRATION_TIME_200MS)
+                except:
+                    bricklet_ambient_light = None
+                    handle_result(MESSAGE_CRITICAL_ERROR_SETTING_AMBIENT_LIGHT_CONFIGURATION,
+                                  RETURN_CODE_CRITICAL)
+
+                    return
 
         if bricklet_ambient_light != None:
             try:
@@ -217,21 +358,23 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
                 handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
                               RETURN_CODE_CRITICAL)
 
+                return
+
     if reading != None:
         if reading >= critical:
-            handle_result(MESSAGE_CRITICAL_READING_TOO_HIGH % reading,
+            handle_result(MESSAGE_CRITICAL_READING_TOO_HIGH % (reading, unit),
                           RETURN_CODE_CRITICAL)
         elif reading >= warning:
-            handle_result(MESSAGE_WARNING_READING_IS_HIGH % reading,
+            handle_result(MESSAGE_WARNING_READING_IS_HIGH % (reading, unit),
                           RETURN_CODE_WARNING)
         elif reading <= critical2:
-            handle_result(MESSAGE_CRITICAL_READING_TOO_LOW % reading,
+            handle_result(MESSAGE_CRITICAL_READING_TOO_LOW % (reading, unit),
                           RETURN_CODE_CRITICAL)
         elif reading <= warning2:
-            handle_result(MESSAGE_WARNING_READING_IS_LOW % reading,
+            handle_result(MESSAGE_WARNING_READING_IS_LOW % (reading, unit),
                           RETURN_CODE_WARNING)
         elif reading > warning2 and reading < warning:
-            handle_result(MESSAGE_OK_READING % reading,
+            handle_result(MESSAGE_OK_READING % (reading, unit),
                           RETURN_CODE_OK)
         else:
             handle_result(MESSAGE_UNKNOWN_READING, RETURN_CODE_UNKNOWN)
@@ -261,7 +404,7 @@ if __name__ == '__main__':
                        '--bricklet',
                        help = 'Type of bricklet',
                        type = str,
-                       choices = ['ptc24', 'ptc3', 'temperature', 'humidity', 'ambient_light'],
+                       choices = ['ptc_2_wire', 'ptc_3_wire', 'ptc_4_wire', 'temperature', 'humidity', 'ambient_light'],
                        required = True)
 
     parse.add_argument('-u',
@@ -436,11 +579,26 @@ def cb_enumerate(uid,
        uid not in dict_enumerate['ptc']:
             dict_enumerate['ptc'].append(uid)
 
+    elif has_ptc_v2 and\
+         device_identifier == BrickletPTCV2.DEVICE_IDENTIFIER and\
+         uid not in dict_enumerate['ptc']:
+            dict_enumerate['ptc'].append(uid)
+
     elif device_identifier == BrickletTemperature.DEVICE_IDENTIFIER and\
          uid not in dict_enumerate['temperature']:
             dict_enumerate['temperature'].append(uid)
 
+    elif has_temperature_v2 and\
+         device_identifier == BrickletTemperatureV2.DEVICE_IDENTIFIER and\
+         uid not in dict_enumerate['temperature']:
+            dict_enumerate['temperature'].append(uid)
+
     elif device_identifier == BrickletHumidity.DEVICE_IDENTIFIER and\
+         uid not in dict_enumerate['humidity']:
+            dict_enumerate['humidity'].append(uid)
+
+    elif has_humidity_v2 and\
+         device_identifier == BrickletHumidityV2.DEVICE_IDENTIFIER and\
          uid not in dict_enumerate['humidity']:
             dict_enumerate['humidity'].append(uid)
 
@@ -450,6 +608,11 @@ def cb_enumerate(uid,
 
     elif has_ambient_light_v2 and\
          device_identifier == BrickletAmbientLightV2.DEVICE_IDENTIFIER and\
+         uid not in dict_enumerate['ambient_light']:
+            dict_enumerate['ambient_light'].append(uid)
+
+    elif has_ambient_light_v3 and\
+         device_identifier == BrickletAmbientLightV3.DEVICE_IDENTIFIER and\
          uid not in dict_enumerate['ambient_light']:
             dict_enumerate['ambient_light'].append(uid)
 
