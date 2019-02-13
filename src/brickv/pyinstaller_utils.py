@@ -63,11 +63,8 @@ def specialize_template(template_filename, destination_filename, replacements):
     destination_file.close()
 
 def system(command, stdout=None):
-    try:
-        if subprocess.call(command, stdout=stdout) != 0:
-            sys.exit(1)
-    except:
-        traceback.print_exc()
+    if subprocess.call(command, stdout=stdout) != 0:
+        sys.exit(1)
 
 def get_unreleased_bindings():
     print("Searching unreleased devices.")

@@ -49,11 +49,8 @@ from brickv.config import BRICKV_VERSION
 
 
 def system(command):
-    try:
-        if subprocess.call(command) != 0:
-            sys.exit(1)
-    except:
-        traceback.print_exc()
+    if subprocess.call(command) != 0:
+        sys.exit(1)
 
 
 def specialize_template(template_filename, destination_filename, replacements):
