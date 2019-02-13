@@ -203,7 +203,7 @@ def build_linux_pkg():
     system(['dpkg', '-b', 'dist/linux', 'brickv-{0}_all.deb'.format(BRICKV_VERSION)])
 
     print('changing owner back to original user')
-    system(['sudo', 'chown', '-R', '${0}:${0}'.format(getpass.getuser()), 'dist/linux'])
+    system(['sudo', 'chown', '-R', '{0}:{0}'.format(getpass.getuser()), 'dist/linux'])
 
     if os.path.exists('/usr/bin/lintian'):
         print('checking Debian package')
