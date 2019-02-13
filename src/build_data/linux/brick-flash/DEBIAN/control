@@ -5,7 +5,7 @@ Maintainer: Matthias Bolte <matthias@tinkerforge.com>
 Architecture: all
 Priority: optional
 Installed-Size: <<INSTALLED_SIZE>>
-Depends: python, python-argparse, python-serial
+Depends: python3, python3-argparse, python3-serial
 Conflicts: brick-flash-cmd
 Replaces: brick-flash-cmd
 Description: Flash firmware onto Bricks from a terminal
