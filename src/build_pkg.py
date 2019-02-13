@@ -197,13 +197,15 @@ def build_linux_pkg():
     system(['find', 'dist/linux', '-type', 'f', '-perm', '775', '-exec', 'chmod', '0755', '{}', ';'])
 
     print('changing owner to root')
+    stat = os.stat('dist/linux')
+    user, group = stat.st_uid, stat.st_gid
     system(['sudo', 'chown', '-R', 'root:root', 'dist/linux'])
 
     print('building Debian package')
     system(['dpkg', '-b', 'dist/linux', 'brickv-{0}_all.deb'.format(BRICKV_VERSION)])
 
     print('changing owner back to original user')
-    system(['sudo', 'chown', '-R', '{0}:{0}'.format(getpass.getuser()), 'dist/linux'])
+    system(['sudo', 'chown', '-R', '{}:{}'.format(user, group), 'dist/linux'])
 
     if os.path.exists('/usr/bin/lintian'):
         print('checking Debian package')
@@ -267,13 +269,15 @@ def build_linux_flash_pkg():
     system(['find', 'dist/linux', '-type', 'f', '-perm', '775', '-exec', 'chmod', '0755', '{}', ';'])
 
     print('changing owner to root')
+    stat = os.stat('dist/linux')
+    user, group = stat.st_uid, stat.st_gid
     system(['sudo', 'chown', '-R', 'root:root', 'dist/linux'])
 
     print('building Debian package')
     system(['dpkg', '-b', 'dist/linux', 'brick-flash-{0}_all.deb'.format(BRICK_FLASH_VERSION)])
 
     print('changing owner back to original user')
-    system(['sudo', 'chown', '-R', '${0}:${0}'.format(getpass.getuser()), 'dist/linux'])
+    system(['sudo', 'chown', '-R', '{}:{}'.format(user, group), 'dist/linux'])
 
     if os.path.exists('/usr/bin/lintian'):
         print('checking Debian package')
