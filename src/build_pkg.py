@@ -133,16 +133,16 @@ def build_linux_pkg():
         shutil.rmtree(egg_info_path)
 
     print('calling build_all_ui.py release')
-    system(['python', 'build_all_ui.py',  'release'])
+    system(['python3', 'build_all_ui.py', 'release'])
 
     print('preparing manifest')
     prepare_manifest(root_path)
 
     print('calling setup.py sdist')
-    system(['python', 'setup.py', 'sdist'])
+    system(['python3', 'setup.py', 'sdist'])
 
     print('calling build_plugin_list.py to undo previous release run')
-    system(['python', 'build_plugin_list.py'])
+    system(['python3', 'build_plugin_list.py'])
 
     if os.path.exists(egg_info_path):
         shutil.rmtree(egg_info_path)

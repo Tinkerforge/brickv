@@ -130,7 +130,7 @@ if os.path.exists(dist_path):
 
 print('Calling build_all_ui.py release')
 os.chdir(os.path.join(root_path, '..'))
-system(['python', 'build_all_ui.py', 'release'], stdout=subprocess.DEVNULL)
+system(['python3', 'build_all_ui.py', 'release'], stdout=subprocess.DEVNULL)
 os.chdir(root_path)
 
 datas = []
@@ -213,7 +213,7 @@ else:
 def post_generate():
     print('calling build_plugin_list.py to undo previous release run')
     os.chdir(os.path.join(root_path, '..'))
-    system(['python', 'build_plugin_list.py'], stdout=subprocess.DEVNULL)
+    system(['python3', 'build_plugin_list.py'], stdout=subprocess.DEVNULL)
 
     os.chdir(root_path)
 
