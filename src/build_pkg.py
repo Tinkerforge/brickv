@@ -190,11 +190,11 @@ def build_linux_pkg():
                          '<<INSTALLED_SIZE>>': str(installed_size)})
 
     print('changing directory modes to 0755')
-    system(['find', 'dist/linux', '-type', 'd', '-exec', 'chmod 0755 {} \;'])
+    system(['find', 'dist/linux', '-type', 'd', '-exec', 'chmod', '0755', '{}', ';'])
 
     print('changing file modes')
-    system(['find', 'dist/linux', '-type', 'f', '-perm', '664', '-exec', 'chmod 0644 {} \;'])
-    system(['find', 'dist/linux', '-type', 'f', '-perm', '775', '-exec', 'chmod 0755 {} \;'])
+    system(['find', 'dist/linux', '-type', 'f', '-perm', '664', '-exec', 'chmod', '0644', '{}', ';'])
+    system(['find', 'dist/linux', '-type', 'f', '-perm', '775', '-exec', 'chmod', '0755', '{}', ';'])
 
     print('changing owner to root')
     system(['sudo', 'chown', '-R', 'root:root', 'dist/linux'])
@@ -260,11 +260,11 @@ def build_linux_flash_pkg():
 
     print('changing binary and directory modes to 0755')
     system(['chmod', '0755', 'dist/linux/usr/bin/brick-flash'])
-    system(['find', 'dist/linux', '-type', 'd', '-exec', 'chmod 0755 {} \;'])
+    system(['find', 'dist/linux', '-type', 'd', '-exec', 'chmod', '0755', '{}', ';'])
 
     print('changing file modes')
-    system(['find', 'dist/linux', '-type', 'f', '-perm', '664', '-exec', 'chmod 0644 {} \;'])
-    system(['find', 'dist/linux', '-type', 'f', '-perm', '775', '-exec', 'chmod 0755 {} \;'])
+    system(['find', 'dist/linux', '-type', 'f', '-perm', '664', '-exec', 'chmod', '0644', '{}', ';'])
+    system(['find', 'dist/linux', '-type', 'f', '-perm', '775', '-exec', 'chmod', '0755', '{}', ';'])
 
     print('changing owner to root')
     system(['sudo', 'chown', '-R', 'root:root', 'dist/linux'])
