@@ -235,7 +235,7 @@ def build_linux_flash_pkg():
         f.write(template)
 
     print('creating DEBIAN/control from template')
-    installed_size = int(subprocess.check_output((['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split(b'\t')[0])
+    installed_size = int(subprocess.check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split(b'\t')[0])
     control_path = os.path.join(linux_path, 'DEBIAN', 'control')
     specialize_template(control_path, control_path,
                         {'<<VERSION>>': BRICK_FLASH_VERSION,
