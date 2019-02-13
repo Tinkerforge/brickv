@@ -45,6 +45,10 @@ if sys.platform.startswith('linux'):
     if libGL_path != None:
         libGL = ctypes.CDLL(libGL_path, mode=ctypes.RTLD_GLOBAL)
 
+import math
+from PyQt5.QtWidgets import QOpenGLWidget
+from PyQt5.QtGui import QOpenGLContext, QOpenGLVersionProfile, QSurfaceFormat
+
 class IMUGLWidget(QOpenGLWidget):
     def __init__(self, parent=None):
         QOpenGLWidget.__init__(self, parent)
