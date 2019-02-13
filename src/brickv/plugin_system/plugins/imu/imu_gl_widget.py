@@ -22,9 +22,28 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import math
-from PyQt5.QtWidgets import QOpenGLWidget
-from PyQt5.QtGui import QOpenGLContext, QOpenGLVersionProfile, QSurfaceFormat
+import sys
+import ctypes
+import ctypes.util
+
+# Workaround a strange OpenGL problem that affects some but not all Qt5 OpenGL
+# versions. For example libqt5opengl5 5.9.1+dfsg-10ubuntu1 in Ubuntu is affected.
+#
+# If the problem occurs then the following messages are printed upon opening the
+# plugin widget that contains the OpenGL widget. The whole Brick Viewer window
+# turns black as a result.
+#
+#  QOpenGLShaderProgram: could not create shader program
+#  QOpenGLShader: could not create shader
+#  Could not link shader program:
+#
+# Manually loading libGL.so here fixes the problem.
+
+if sys.platform.startswith('linux'):
+    libGL_path = ctypes.util.find_library('GL')
+
+    if libGL_path != None:
+        libGL = ctypes.CDLL(libGL_path, mode=ctypes.RTLD_GLOBAL)
 
 class IMUGLWidget(QOpenGLWidget):
     def __init__(self, parent=None):
