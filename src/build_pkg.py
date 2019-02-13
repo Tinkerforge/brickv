@@ -55,24 +55,6 @@ def system(command):
     except:
         traceback.print_exc()
 
-def check_output(*args, **kwargs):
-    if 'stdout' in kwargs:
-        raise ValueError('stdout argument not allowed, it will be overridden')
-
-    process = subprocess.Popen(stdout=subprocess.PIPE, *args, **kwargs)
-    output, error = process.communicate()
-    exit_code = process.poll()
-
-    if exit_code != 0:
-        command = kwargs.get('args')
-
-        if command == None:
-            command = args[0]
-
-        raise subprocess.CalledProcessError(exit_code, command, output=output)
-
-    return output
-
 
 def specialize_template(template_filename, destination_filename, replacements):
     template_file = open(template_filename, 'r')
@@ -182,8 +164,7 @@ def build_linux_pkg():
     shutil.copytree(unpacked_path, linux_share_path)
 
     print('creating DEBIAN/control from template')
-    out = check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux'])
-    installed_size = int(out.split(b'\t')[0])
+    installed_size = int(subprocess.check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split(b'\t')[0])
     control_path = os.path.join(linux_path, 'DEBIAN', 'control')
     specialize_template(control_path, control_path,
                         {'<<VERSION>>': BRICKV_VERSION,
@@ -254,7 +235,7 @@ def build_linux_flash_pkg():
         f.write(template)
 
     print('creating DEBIAN/control from template')
-    installed_size = int(check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split(b'\t')[0])
+    installed_size = int(subprocess.check_output((['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split(b'\t')[0])
     control_path = os.path.join(linux_path, 'DEBIAN', 'control')
     specialize_template(control_path, control_path,
                         {'<<VERSION>>': BRICK_FLASH_VERSION,
