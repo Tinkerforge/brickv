@@ -29,7 +29,6 @@ from PyQt5.QtGui import QPainter, QIcon
 
 from brickv import config
 from brickv.load_pixmap import load_pixmap
-from brickv.utils import get_modeless_dialog_flags
 
 class IconButton(QAbstractButton):
     clicked = pyqtSignal()
@@ -98,6 +97,8 @@ class TabWindow(QDialog):
         self.button_icon_mouse_over = QIcon(load_pixmap('tab-mouse-over-icon.png'))
         self.cb_on_tab = None
         self.cb_on_untab = None
+        self.cb_post_tab = None
+        self.cb_post_untab = None
         self.parent_dialog = None
 
     def untab(self):
@@ -116,8 +117,13 @@ class TabWindow(QDialog):
             self.parent_dialog.show()
             self.show()
 
+            if self.cb_post_untab != None:
+                self.cb_post_untab(index)
+
     def tab(self):
         index = self.tab_widget.addTab(self, self.name)
+        if self.cb_on_tab != None:
+            self.cb_on_tab(index)
 
         # (re-)instantiating button here because the TabBar takes ownership and
         # destroys it when this TabWindow is untabbed
@@ -126,9 +132,17 @@ class TabWindow(QDialog):
         self.tab_widget.tabBar().setTabButton(index, QTabBar.LeftSide, self.button)
         self.button.clicked.connect(lambda:
                                     self.button_handler(self.tab_widget.indexOf(self)))
+        if self.cb_post_tab != None:
+            self.cb_post_tab(index)
 
     def set_callback_on_tab(self, callback):
         self.cb_on_tab = callback
 
     def set_callback_on_untab(self, callback):
         self.cb_on_untab = callback
+
+    def set_callback_post_untab(self, callback):
+        self.cb_post_untab = callback
+
+    def set_callback_post_tab(self, callback):
+        self.cb_post_tab = callback
