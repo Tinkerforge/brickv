@@ -262,7 +262,6 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.set_actions([(0, None, [reset])])
 
     def restart_gl(self):
-        print("Hier")
         state = self.imu_gl.get_state()
         self.imu_gl.hide()
 
@@ -275,10 +274,11 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.imu_gl.set_state(state)
 
     def start(self):
-        self.parent().set_callback_post_untab(lambda x: self.restart_gl())
-        self.parent().set_callback_post_tab(lambda x: self.restart_gl())
         if not self.alive:
             return
+
+        self.parent().set_callback_post_untab(lambda x: self.restart_gl())
+        self.parent().set_callback_post_tab(lambda x: self.restart_gl())
 
         async_call(self.imu.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
         async_call(self.imu.are_leds_on, None, self.checkbox_leds.setChecked, self.increase_error_count)

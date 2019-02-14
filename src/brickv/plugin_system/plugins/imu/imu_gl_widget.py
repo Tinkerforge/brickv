@@ -95,6 +95,13 @@ class IMUGLWidget(QOpenGLWidget):
         self.save_orientation_flag = False
         self.has_save_orientation = False
         self.display_list = None
+        self.initialized = False
+
+    def get_state(self):
+        return self.save_orientation_flag, self.rel_x, self.rel_y, self.rel_z, self.rel_w, self.has_save_orientation, self.initialized
+
+    def set_state(self, tup):
+        self.save_orientation_flag, self.rel_x, self.rel_y, self.rel_z, self.rel_w, self.has_save_orientation, self.initialized = tup
 
     def update(self, x, y, z, w):
         if self.save_orientation_flag:
@@ -104,7 +111,8 @@ class IMUGLWidget(QOpenGLWidget):
             self.rel_w = w
             self.save_orientation_flag = False
             self.has_save_orientation = True
-            self.parent.orientation_label.hide()
+            if self.parent is not None:
+                self.parent.orientation_label.hide()
 
         if not self.has_save_orientation:
             return
@@ -143,9 +151,11 @@ class IMUGLWidget(QOpenGLWidget):
 
     def initializeGL(self):
         self.gl = self.context().versionFunctions(self.profile)
-        gl = self.gl
-        gl.initializeOpenGLFunctions()
+        if not self.initialized:
+            self.gl.initializeOpenGLFunctions()
+            self.initialized = True
 
+        gl = self.gl
         gl.glClearColor(0.85, 0.85, 0.85, 1.0)
         gl.glClearDepth(1.0)
         gl.glDepthFunc(gl.GL_LESS)
@@ -164,6 +174,9 @@ class IMUGLWidget(QOpenGLWidget):
 
         gl.glMatrixMode(gl.GL_MODELVIEW)
         gl.glLoadIdentity()
+
+        if self.display_list is not None:
+            gl.glDeleteLists(self.display_list, 1)
 
         self.display_list = gl.glGenLists(1)
         gl.glNewList(self.display_list, gl.GL_COMPILE)
@@ -376,8 +389,6 @@ class IMUGLWidget(QOpenGLWidget):
 
     # main drawing function.
     def paintGL(self):
-        if self.parent.ipcon == None:
-            return
         gl = self.gl
 
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)

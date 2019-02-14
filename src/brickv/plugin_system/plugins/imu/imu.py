@@ -33,6 +33,11 @@ from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget
 from brickv.callback_emulator import CallbackEmulator
 
+try:
+    from .imu_gl_widget import IMUGLWidget
+except:
+    from imu_gl_widget import IMUGLWidget
+
 class IMU(PluginBase, Ui_IMU):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickIMU, *args)
@@ -77,14 +82,7 @@ class IMU(PluginBase, Ui_IMU):
                                                self.increase_error_count,
                                                use_data_signal=False)
 
-        # Import IMUGLWidget here, not global. If globally included we get
-        # 'No OpenGL_accelerate module loaded: No module named OpenGL_accelerate'
-        # as soon as IMU is set as device_class in __init__.
-        # No idea why this happens, doesn't make sense.
-        try:
-            from .imu_gl_widget import IMUGLWidget
-        except:
-            from imu_gl_widget import IMUGLWidget
+
 
         self.imu_gl = IMUGLWidget(self)
         self.imu_gl.setMinimumSize(150, 150)
@@ -161,9 +159,25 @@ in the image above, then press "Save Orientation".""")
             reset.triggered.connect(lambda: self.imu.reset())
             self.set_actions([(0, None, [reset])])
 
+    def restart_gl(self):
+        state = self.imu_gl.get_state()
+        self.imu_gl.hide()
+
+        self.imu_gl = IMUGLWidget()
+        self.imu_gl.setMinimumSize(150, 150)
+        self.imu_gl.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.gl_layout.addWidget(self.imu_gl)
+        self.imu_gl.show()
+
+        self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
+        self.imu_gl.set_state(state)
+
     def start(self):
         if not self.alive:
             return
+
+        self.parent().set_callback_post_untab(lambda x: self.restart_gl())
+        self.parent().set_callback_post_tab(lambda x: self.restart_gl())
 
         if self.firmware_version >= (2, 3, 1):
             async_call(self.imu.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
