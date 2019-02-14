@@ -298,6 +298,9 @@ class IMUV2(PluginBase, Ui_IMUV2):
 
     def destroy(self):
         self.alive = False
+
+        # Stop callback to fix deadlock with callback emulation thread.
+        self.cbe_all_data.set_period(0)
         if self.calibration:
             self.calibration.close()
         if self.imu_gl_wrapper:
