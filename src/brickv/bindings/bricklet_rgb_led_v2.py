@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-02-14.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -18,6 +18,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
+GetRGBValue = namedtuple('RGBValue', ['r', 'g', 'b'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -32,6 +33,8 @@ class BrickletRGBLEDV2(Device):
 
 
 
+    FUNCTION_SET_RGB_VALUE = 1
+    FUNCTION_GET_RGB_VALUE = 2
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -70,6 +73,8 @@ class BrickletRGBLEDV2(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletRGBLEDV2.FUNCTION_SET_RGB_VALUE] = BrickletRGBLEDV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRGBLEDV2.FUNCTION_GET_RGB_VALUE] = BrickletRGBLEDV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletRGBLEDV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletRGBLEDV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletRGBLEDV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -84,6 +89,22 @@ class BrickletRGBLEDV2(Device):
         self.response_expected[BrickletRGBLEDV2.FUNCTION_GET_IDENTITY] = BrickletRGBLEDV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+
+    def set_rgb_value(self, r, g, b):
+        """
+        Sets the *rgb* value for the LED. The value can be between 0 and 255.
+        """
+        r = int(r)
+        g = int(g)
+        b = int(b)
+
+        self.ipcon.send_request(self, BrickletRGBLEDV2.FUNCTION_SET_RGB_VALUE, (r, g, b), 'B B B', '')
+
+    def get_rgb_value(self):
+        """
+        Returns the *rgb* value of the LED as set by :func:`Set RGB Value`.
+        """
+        return GetRGBValue(*self.ipcon.send_request(self, BrickletRGBLEDV2.FUNCTION_GET_RGB_VALUE, (), '', 'B B B'))
 
     def get_spitfp_error_count(self):
         """

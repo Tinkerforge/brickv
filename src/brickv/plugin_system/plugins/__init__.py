@@ -98,6 +98,7 @@ from brickv.plugin_system.plugins.remote_switch_v2 import device_class as remote
 from brickv.plugin_system.plugins.rgb_led import device_class as rgb_led
 from brickv.plugin_system.plugins.rgb_led_button import device_class as rgb_led_button
 from brickv.plugin_system.plugins.rgb_led_matrix import device_class as rgb_led_matrix
+from brickv.plugin_system.plugins.rgb_led_v2 import device_class as rgb_led_v2
 from brickv.plugin_system.plugins.rotary_encoder import device_class as rotary_encoder
 from brickv.plugin_system.plugins.rotary_encoder_v2 import device_class as rotary_encoder_v2
 from brickv.plugin_system.plugins.rotary_poti import device_class as rotary_poti
@@ -227,6 +228,7 @@ device_classes = [
     rgb_led,
     rgb_led_button,
     rgb_led_matrix,
+    rgb_led_v2,
     rotary_encoder,
     rotary_encoder_v2,
     rotary_poti,
