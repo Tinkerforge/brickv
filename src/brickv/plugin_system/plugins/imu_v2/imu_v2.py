@@ -35,6 +35,10 @@ from brickv.plot_widget import PlotWidget
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_modeless_dialog_flags
 from brickv import config
+try:
+    from .imu_v2_gl_widget import IMUV2GLWidget
+except:
+    from imu_v2_gl_widget import IMUV2GLWidget
 
 class Calibration(QDialog, Ui_Calibration):
     def __init__(self, parent):
@@ -126,16 +130,13 @@ class WrapperWidget(QWidget):
         self.plugin = plugin
 
         self.setLayout(QVBoxLayout())
+        self.glWidget = IMUV2GLWidget()
+        self.layout().addWidget(self.glWidget)
         self.setWindowTitle('Brick Viewer ' + config.BRICKV_VERSION + ' - IMU Brick 2.0 - 3D View')
 
     def closeEvent(self, event):
-        self.plugin.imu_gl.setFixedSize(200, 200)
-        self.plugin.gl_layout.addWidget(self.plugin.imu_gl)
-        self.plugin.button_detach_3d_view.setEnabled(True)
         self.plugin.imu_gl_wrapper = None
-
-        if self.plugin.plugin_state != PluginBase.PLUGIN_STATE_RUNNING:
-            self.plugin.cbe_all_data.set_period(0)
+        self.plugin.button_detach_3d_view.setEnabled(True)
 
     def minimumSizeHint(self):
         return QSize(500, 500)
@@ -154,15 +155,6 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.cbe_all_data = CallbackEmulator(self.imu.get_all_data,
                                              self.all_data_callback,
                                              self.increase_error_count)
-
-        # Import IMUGLWidget here, not global. If globally included we get
-        # 'No OpenGL_accelerate module loaded: No module named OpenGL_accelerate'
-        # as soon as IMU is set as device_class in __init__.
-        # No idea why this happens, doesn't make sense.
-        try:
-            from .imu_v2_gl_widget import IMUV2GLWidget
-        except:
-            from imu_v2_gl_widget import IMUV2GLWidget
 
         self.imu_gl = IMUV2GLWidget(self)
         self.imu_gl.setFixedSize(200, 200)
@@ -269,7 +261,22 @@ class IMUV2(PluginBase, Ui_IMUV2):
         reset.triggered.connect(lambda: self.imu.reset())
         self.set_actions([(0, None, [reset])])
 
+    def restart_gl(self):
+        print("Hier")
+        state = self.imu_gl.get_state()
+        self.imu_gl.hide()
+
+        self.imu_gl = IMUV2GLWidget()
+        self.imu_gl.setFixedSize(200,200)
+        self.gl_layout.addWidget(self.imu_gl)
+        self.imu_gl.show()
+
+        self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
+        self.imu_gl.set_state(state)
+
     def start(self):
+        self.parent().set_callback_post_untab(lambda x: self.restart_gl())
+        self.parent().set_callback_post_tab(lambda x: self.restart_gl())
         if not self.alive:
             return
 
@@ -314,14 +321,9 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.button_detach_3d_view.setEnabled(False)
 
         self.imu_gl_wrapper = WrapperWidget(self)
+        self.imu_gl_wrapper.glWidget.set_state(self.imu_gl.get_state())
+        self.save_orientation.clicked.connect(self.imu_gl_wrapper.glWidget.save_orientation)
 
-        self.gl_layout.removeWidget(self.imu_gl)
-
-        self.imu_gl.setParent(None)
-        self.imu_gl.setMinimumSize(0, 0)
-        self.imu_gl.setMaximumSize(16777215, 16777215)
-
-        self.imu_gl_wrapper.layout().addWidget(self.imu_gl)
         self.imu_gl_wrapper.show()
 
     def all_data_callback(self, data):
@@ -359,6 +361,11 @@ class IMUV2(PluginBase, Ui_IMUV2):
                                self.sensor_data[13],
                                self.sensor_data[14],
                                self.sensor_data[15])
+            if self.imu_gl_wrapper is not None:
+                self.imu_gl_wrapper.glWidget.update(self.sensor_data[12],
+                               self.sensor_data[13],
+                               self.sensor_data[14],
+                               self.sensor_data[15])
 
             cal_mag = data.calibration_status & 3
             cal_acc = (data.calibration_status & (3 << 2)) >> 2
@@ -374,6 +381,11 @@ class IMUV2(PluginBase, Ui_IMUV2):
                 self.calibration.sys_color.set_color(self.calibration_color[cal_sys])
         else:
             self.imu_gl.update(data.quaternion[0]/(float(2**14-1)),
+                               data.quaternion[1]/(float(2**14-1)),
+                               data.quaternion[2]/(float(2**14-1)),
+                               data.quaternion[3]/(float(2**14-1)))
+            if self.imu_gl_wrapper is not None:
+                self.imu_gl_wrapper.glWidget.update(data.quaternion[0]/(float(2**14-1)),
                                data.quaternion[1]/(float(2**14-1)),
                                data.quaternion[2]/(float(2**14-1)),
                                data.quaternion[3]/(float(2**14-1)))
