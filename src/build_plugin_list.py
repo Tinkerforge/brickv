@@ -39,7 +39,7 @@ if len(sys.argv) > 1:
 
 imports = []
 device_classes = []
-root = os.path.dirname(__file__)
+root = os.path.dirname(os.path.realpath(__file__))
 plugins = os.path.join(root, 'brickv', 'plugin_system', 'plugins')
 bindings = os.path.join(root, 'brickv', 'bindings')
 
