@@ -29,7 +29,9 @@ import urllib.request
 import urllib.error
 import posixpath
 import functools
-from distutils.version import StrictVersion
+
+# As a work-around for https://github.com/pyinstaller/pyinstaller/issues/4064 use a local copy of distutils.version.
+from .version import StrictVersion
 
 from PyQt5.QtWidgets import QDialog, QMessageBox, QLabel, QVBoxLayout, QAction
 from PyQt5.QtGui import QFont
