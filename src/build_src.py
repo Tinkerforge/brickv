@@ -34,4 +34,4 @@ for dirpath, dirnames, filenames in os.walk(brickv):
 args = ' '.join(sys.argv[1:])
 print('calling build_plugin_list.py ' + args)
 os.chdir(cwd)
-system(sys.executable + '' build_plugin_list.py ' + args)
+system(sys.executable + ' build_plugin_list.py ' + args)
