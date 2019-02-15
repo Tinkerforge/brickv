@@ -5,7 +5,7 @@ import sys
 sys.path.append('..')
 from brickv.pyinstaller_utils import *
 
-a = Analysis(['main.py'], pathex=[root_path], excludes=excludes, hiddenimports=hiddenimports)
+a = Analysis(['main.py'],pathex=pathex, excludes=excludes, hiddenimports=hiddenimports)
 
 pyz = PYZ(a.pure, a.zipped_data)
 
@@ -22,7 +22,7 @@ exe = EXE(pyz,
           icon=icon)
 
 coll = COLLECT(exe,
-               a.binaries + binaries,
+               a.binaries,
                a.zipfiles,
                a.datas + datas,
                strip=False,

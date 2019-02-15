@@ -196,12 +196,12 @@ excludes = get_unreleased_bindings() + ['wx', 'gtk+', '_gtkagg', 'gtk', 'gdk', '
             'PyQt5.QtXmlPatterns']
 hiddenimports = ['PyQt5._QOpenGLFunctions_2_1']
 
+win_dll_path = 'C:\\Program Files (x86)\\Windows Kits\\10\Redist\\ucrt\\DLLs\\x86'
 
-win_dlls = ['msvcp90.dll', 'msvcr90.dll']
 if windows:
-    binaries = list(map(lambda dll_name: (dll_name, os.path.join(windows_build_data_path, dll_name), 'BINARY'), win_dlls))
+    pathex = [root_path, win_dll_path]    
 else:
-    binaries = []
+    pathex = [root_path]
 
 if windows:
 	icon = os.path.join(windows_build_data_path, 'brickv-icon.ico')
