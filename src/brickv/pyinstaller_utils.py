@@ -128,9 +128,9 @@ print('removing old dist directory')
 if os.path.exists(dist_path):
     shutil.rmtree(dist_path)
 
-print('Calling build_all_ui.py release')
+print('Calling build_src.py release')
 os.chdir(os.path.join(root_path, '..'))
-system(['python3', 'build_all_ui.py', 'release'], stdout=subprocess.DEVNULL)
+system(['python3', 'build_src.py', 'release'], stdout=subprocess.DEVNULL)
 os.chdir(root_path)
 
 datas = []
