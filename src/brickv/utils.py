@@ -28,18 +28,18 @@ import sys
 from PyQt5.QtCore import Qt, QDir
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 
-def get_resources_path(relativePath):
+def get_resources_path(relative_path):
     try:
         # PyInstaller stores data files in a tmp folder refered to as _MEIPASS
-        basePath = sys._MEIPASS
+        base_path = sys._MEIPASS
     except Exception:
-        basePath = os.path.dirname(os.path.realpath(__file__))
+        base_path = os.path.dirname(os.path.realpath(__file__))
 
-    path = os.path.join(basePath, relativePath)
+    path = os.path.join(base_path, relative_path)
 
     # If the path still doesn't exist, this function won't help you
     if not os.path.exists(path):
-        print("Resource not found: " + relativePath)
+        print("Resource not found: " + relative_path)
         return None
 
     return path
