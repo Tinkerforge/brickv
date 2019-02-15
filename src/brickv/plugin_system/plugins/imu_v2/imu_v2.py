@@ -27,6 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout,  QFrame, QDialog, QAction, QWidget
 from PyQt5.QtGui import QColor, QPalette, QPainter, QBrush
 
 from brickv.plugin_system.plugin_base import PluginBase
+from brickv.plugin_system.plugins.imu_v2.imu_v2_gl_widget import IMUV2GLWidget
 from brickv.plugin_system.plugins.imu_v2.ui_imu_v2 import Ui_IMUV2
 from brickv.plugin_system.plugins.imu_v2.ui_calibration import Ui_Calibration
 from brickv.bindings.brick_imu_v2 import BrickIMUV2
@@ -35,10 +36,6 @@ from brickv.plot_widget import PlotWidget
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_modeless_dialog_flags
 from brickv import config
-try:
-    from .imu_v2_gl_widget import IMUV2GLWidget
-except:
-    from imu_v2_gl_widget import IMUV2GLWidget
 
 class Calibration(QDialog, Ui_Calibration):
     def __init__(self, parent):

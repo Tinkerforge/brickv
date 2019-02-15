@@ -26,17 +26,13 @@ from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import QLabel, QVBoxLayout, QSizePolicy, QAction
 
 from brickv.plugin_system.plugin_base import PluginBase
+from brickv.plugin_system.plugins.imu.imu_gl_widget import IMUGLWidget
 from brickv.plugin_system.plugins.imu.ui_imu import Ui_IMU
 from brickv.plugin_system.plugins.imu.calibrate_window import CalibrateWindow
 from brickv.bindings.brick_imu import BrickIMU
 from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget
 from brickv.callback_emulator import CallbackEmulator
-
-try:
-    from .imu_gl_widget import IMUGLWidget
-except:
-    from imu_gl_widget import IMUGLWidget
 
 class IMU(PluginBase, Ui_IMU):
     def __init__(self, *args):
