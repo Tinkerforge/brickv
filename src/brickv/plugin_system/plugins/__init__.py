@@ -16,6 +16,7 @@ from brickv.plugin_system.plugins.barometer_v2 import device_class as barometer_
 from brickv.plugin_system.plugins.can import device_class as can
 from brickv.plugin_system.plugins.can_v2 import device_class as can_v2
 from brickv.plugin_system.plugins.co2 import device_class as co2
+from brickv.plugin_system.plugins.co2_v2 import device_class as co2_v2
 from brickv.plugin_system.plugins.color import device_class as color
 from brickv.plugin_system.plugins.current12 import device_class as current12
 from brickv.plugin_system.plugins.current25 import device_class as current25
@@ -146,6 +147,7 @@ device_classes = [
     can,
     can_v2,
     co2,
+    co2_v2,
     color,
     current12,
     current25,
