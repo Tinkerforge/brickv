@@ -79,7 +79,15 @@ class BrickViewer(QApplication):
 
     def __init__(self, *args, **kwargs):
         QApplication.__init__(self, *args, **kwargs)
-        QErrorMessage.qtHandler()
+        error_message = QErrorMessage.qtHandler()
+
+        # When running as executable created by Pyinstaller, the QErrorMessage layout is messed up.
+        # (At least under macOS and Windows)
+        # Forcing a resize by showing and hiding the widget seems to help.
+        error_message.show()
+        error_message.setMinimumSize(300, 300)
+        error_message.hide()
+
         self.object_creator_signal.connect(self.object_creator_slot)
         self.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
 
