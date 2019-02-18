@@ -132,8 +132,8 @@ def build_linux_pkg():
     if os.path.exists(egg_info_path):
         shutil.rmtree(egg_info_path)
 
-    print('calling build_all_ui.py release')
-    system(['python3', 'build_all_ui.py', 'release'])
+    print('calling build_src.py release')
+    system(['python3', 'build_src.py', 'release'])
 
     print('preparing manifest')
     prepare_manifest(root_path)
