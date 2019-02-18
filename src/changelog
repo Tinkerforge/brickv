@@ -433,3 +433,9 @@
 - Add Data Logger support for Accelerometer 2.0 and Ambient Light 3.0 Bricklet
 - Optimize RED Brick Tinkerforge software update process
 - Increase supported RED Brick image version to 1.13
+
+<UNKNOWN>: <UNKNOWN> (<UNKNOWN>)
+- Fix RED Brick Tinkerforge software update installation for Perl
+- Add new Bricklet support for server room monitoring:
+  Temperature 2.0, Humidity 2.0, Ambient Light 3.0, IO4, IO4 2.0,
+  Industrial Digital In 4 and Industrial Digital In 4 2.0
