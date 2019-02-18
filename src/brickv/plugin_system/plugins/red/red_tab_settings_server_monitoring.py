@@ -78,14 +78,21 @@ COLUMN_EMAIL_NOTIFICATIONS_ITEMS = ['No Notifications',
                                     'Critical',
                                     'Critical/Warning']
 
-SUPPORTED_BRICKLETS = {'PTC (2-wire)'  :{'id':'ptc_2_wire', 'unit':'°C'.decode('utf-8')},
-                       'PTC (3-wire)'  :{'id':'ptc_3_wire', 'unit':'°C'.decode('utf-8')},
-                       'PTC (4-wire)'  :{'id':'ptc_4_wire', 'unit':'°C'.decode('utf-8')},
-                       'Temperature'   :{'id':'temperature', 'unit':'°C'.decode('utf-8')},
-                       'Humidity'      :{'id':'humidity', 'unit':'%RH'},
-                       'Ambient Light' :{'id':'ambient_light', 'unit':'Lux'}}
+SUPPORTED_BRICKLETS = {'PTC (2-wire)'            :{'id':'ptc_2_wire', 'unit':'°C'.decode('utf-8')},
+                       'PTC (3-wire)'            :{'id':'ptc_3_wire', 'unit':'°C'.decode('utf-8')},
+                       'PTC (4-wire)'            :{'id':'ptc_4_wire', 'unit':'°C'.decode('utf-8')},
+                       'Temperature'             :{'id':'temperature', 'unit':'°C'.decode('utf-8')},
+                       'Humidity'                :{'id':'humidity', 'unit':'%RH'},
+                       'Ambient Light'           :{'id':'ambient_light', 'unit':'Lux'},
+                       'IO4'                     :{'id':'io4', 'unit':None},
+                       'Industrial Digital In 4' :{'id':'idi4', 'unit':None}}
 
 ITEMS_AUTHENTICATION = ['On', 'Off']
+
+DEFAULT_WARNING_LOW   = '225'
+DEFAULT_WARNING_HIGH  = '1075'
+DEFAULT_CRITICAL_LOW  = '225'
+DEFAULT_CRITICAL_HIGH = '1075'
 
 RANGE_MIN_PTC           = 0
 RANGE_MAX_PTC           = 100
@@ -304,6 +311,73 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
     def tab_destroy(self):
         pass
 
+    def get_io4_idi4_warning_critical_widgets(self, widget_warning, widget_critical):
+        if widget_warning:
+            hlayout_warning = QtGui.QHBoxLayout(widget_warning)
+
+        if widget_critical:
+            hlayout_critical = QtGui.QHBoxLayout(widget_critical)
+
+        cbox_warning_ch0 = QtGui.QComboBox()
+        cbox_warning_ch1 = QtGui.QComboBox()
+        cbox_warning_ch2 = QtGui.QComboBox()
+        cbox_warning_ch3 = QtGui.QComboBox()
+
+        cbox_critical_ch0 = QtGui.QComboBox()
+        cbox_critical_ch1 = QtGui.QComboBox()
+        cbox_critical_ch2 = QtGui.QComboBox()
+        cbox_critical_ch3 = QtGui.QComboBox()
+
+        cbox_warning_ch0.addItems(['CH 0: LO', 'CH 0: HI', 'CH 0: IGN'])
+        cbox_warning_ch1.addItems(['CH 1: LO', 'CH 1: HI', 'CH 1: IGN'])
+        cbox_warning_ch2.addItems(['CH 2: LO', 'CH 2: HI', 'CH 2: IGN'])
+        cbox_warning_ch3.addItems(['CH 3: LO', 'CH 3: Hi', 'CH 3: IGN'])
+
+        cbox_warning_ch0.setCurrentIndex(0)
+        cbox_warning_ch1.setCurrentIndex(0)
+        cbox_warning_ch2.setCurrentIndex(0)
+        cbox_warning_ch3.setCurrentIndex(0)
+
+        cbox_warning_ch0.activated.connect(self.slot_input_changed)
+        cbox_warning_ch1.activated.connect(self.slot_input_changed)
+        cbox_warning_ch2.activated.connect(self.slot_input_changed)
+        cbox_warning_ch3.activated.connect(self.slot_input_changed)
+
+        cbox_critical_ch0.addItems(['CH 0: LO', 'CH 0: HI', 'CH 0: IGN'])
+        cbox_critical_ch1.addItems(['CH 1: LO', 'CH 1: HI', 'CH 1: IGN'])
+        cbox_critical_ch2.addItems(['CH 2: LO', 'CH 2: HI', 'CH 2: IGN'])
+        cbox_critical_ch3.addItems(['CH 3: LO', 'CH 3: HI', 'CH 3: IGN'])
+
+        cbox_critical_ch0.setCurrentIndex(0)
+        cbox_critical_ch1.setCurrentIndex(0)
+        cbox_critical_ch2.setCurrentIndex(0)
+        cbox_critical_ch3.setCurrentIndex(0)
+
+        cbox_critical_ch0.activated.connect(self.slot_input_changed)
+        cbox_critical_ch1.activated.connect(self.slot_input_changed)
+        cbox_critical_ch2.activated.connect(self.slot_input_changed)
+        cbox_critical_ch3.activated.connect(self.slot_input_changed)
+
+        if widget_warning:
+            hlayout_warning.addWidget(cbox_warning_ch0)
+            hlayout_warning.addWidget(cbox_warning_ch1)
+            hlayout_warning.addWidget(cbox_warning_ch2)
+            hlayout_warning.addWidget(cbox_warning_ch3)
+
+            hlayout_warning.setMargin(0)
+            hlayout_warning.setSpacing(0)
+            widget_warning.setLayout(hlayout_warning)
+
+        if widget_critical:
+            hlayout_critical.addWidget(cbox_critical_ch0)
+            hlayout_critical.addWidget(cbox_critical_ch1)
+            hlayout_critical.addWidget(cbox_critical_ch2)
+            hlayout_critical.addWidget(cbox_critical_ch3)
+
+            hlayout_critical.setMargin(0)
+            hlayout_critical.setSpacing(0)
+            widget_critical.setLayout(hlayout_critical)
+
     def cb_settings_server_monitoring_test_email(self, result):
         self.working = False
 
@@ -357,6 +431,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         temperature   = dict_enumerate['temperature']
         humidity      = dict_enumerate['humidity']
         ambient_light = dict_enumerate['ambient_light']
+        io4           = dict_enumerate['io4']
+        idi4          = dict_enumerate['idi4']
 
         if not host or not port:
             return
@@ -368,6 +444,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.dict_hosts[host]['temperature']   = temperature
         self.dict_hosts[host]['humidity']      = humidity
         self.dict_hosts[host]['ambient_light'] = ambient_light
+        self.dict_hosts[host]['io4']           = io4
+        self.dict_hosts[host]['idi4']          = idi4
 
         row_host = []
 
@@ -481,6 +559,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         cbox_bricklet = self.tview_sm_rules.indexWidget(index_bricklet)
         widget_spin_span = widgetSpinBoxSpanSlider()
+        widget_spin_span.layout().setMargin(0)
+        widget_spin_span.layout().setSpacing(0)
 
         self.set_range_widgetSpinBoxSpanSlider(SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'],
                                                widget_spin_span)
@@ -581,6 +661,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         dict_enumerate['temperature'].append(EMPTY_UID)
         dict_enumerate['humidity'].append(EMPTY_UID)
         dict_enumerate['ambient_light'].append(EMPTY_UID)
+        dict_enumerate['io4'].append(EMPTY_UID)
+        dict_enumerate['idi4'].append(EMPTY_UID)
 
         self.dict_hosts[dict_enumerate['host']] = {}
         self.dict_hosts[dict_enumerate['host']]['port']          = dict_enumerate['port']
@@ -589,6 +671,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.dict_hosts[dict_enumerate['host']]['temperature']   = dict_enumerate['temperature']
         self.dict_hosts[dict_enumerate['host']]['humidity']      = dict_enumerate['humidity']
         self.dict_hosts[dict_enumerate['host']]['ambient_light'] = dict_enumerate['ambient_light']
+        self.dict_hosts[dict_enumerate['host']]['io4']           = dict_enumerate['io4']
+        self.dict_hosts[dict_enumerate['host']]['idi4']          = dict_enumerate['idi4']
 
         # Enumeration was for refresh uids
         if refresh_uids and self.remaining_enumerations < 1:
@@ -636,6 +720,14 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                  dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['ambient_light']:
                     self.dict_hosts[dict_rule['host']]['ambient_light'].insert(0, dict_rule['uid'])
 
+            elif dict_rule['bricklet'] == 'io4' and\
+                 dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['io4']:
+                    self.dict_hosts[dict_rule['host']]['io4'].insert(0, dict_rule['uid'])
+
+            elif dict_rule['bricklet'] == 'idi4' and\
+                 dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['idi4']:
+                    self.dict_hosts[dict_rule['host']]['idi4'].insert(0, dict_rule['uid'])
+
             self.add_new_rule(dict_rule['name'],
                               dict_rule['host'],
                               dict_rule['bricklet'],
@@ -645,7 +737,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                               dict_rule['critical_low'],
                               dict_rule['critical_high'],
                               dict_rule['email_notification_enabled'],
-                              dict_rule['email_notifications'])
+                              dict_rule['email_notifications'],
+                              False)
 
             if dict_rule['email_notification_enabled'] == '1':
                 self.ledit_sm_email_from.setText(self.dict_email['from'])
@@ -842,6 +935,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'ambient_light':
             populate_and_select('ambient_light')
 
+        elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'io4':
+            populate_and_select('io4')
+
+        elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'idi4':
+            populate_and_select('idi4')
+
     def update_hosts_used(self):
         for r_hosts in range(self.model_hosts.rowCount()):
             for c_hosts in range(COUNT_COLUMNS_HOSTS_MODEL):
@@ -1021,7 +1120,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                      critical_low,
                      critical_high,
                      email_notification_enabled,
-                     email_notifications):
+                     email_notifications,
+                     creating_new_rule):
         rule = []
 
         for i in range(COUNT_COLUMNS_RULES_MODEL):
@@ -1066,10 +1166,14 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 cbox.addItems(sorted(SUPPORTED_BRICKLETS.keys()))
 
                 for i in range(cbox.count()):
-                    if bricklet == SUPPORTED_BRICKLETS[cbox.itemText(i)]['id']:
-                        cbox.setItemData(i, uid, QtCore.Qt.UserRole)
-                        cbox.setCurrentIndex(i)
+                    if creating_new_rule:
+                        cbox.setCurrentIndex(0)
                         break
+                    else:
+                        if bricklet == SUPPORTED_BRICKLETS[cbox.itemText(i)]['id']:
+                            cbox.setItemData(i, uid, QtCore.Qt.UserRole)
+                            cbox.setCurrentIndex(i)
+                            break
 
                 cbox.activated.connect(self.slot_cbox_bricklet_activated)
                 self.tview_sm_rules.setIndexWidget(index, cbox)
@@ -1095,19 +1199,101 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
             # Add Warning field widget
             elif c == INDEX_COL_RULES_WARNING:
-                self.add_widget_spin_span(r,
-                                          c,
-                                          COLOR_WARNING,
-                                          int(warning_low),
-                                          int(warning_high))
+                if bricklet != 'io4' and bricklet != 'idi4':
+                    self.add_widget_spin_span(r,
+                                              c,
+                                              COLOR_WARNING,
+                                              int(warning_low),
+                                              int(warning_high))
+                else:
+                    item = self.model_rules.item(r, c)
+                    index = self.model_rules.indexFromItem(item)
+                    widget_warning = QtGui.QWidget(self.tview_sm_rules)
+
+                    self.get_io4_idi4_warning_critical_widgets(widget_warning, None)
+                    self.tview_sm_rules.setIndexWidget(index, widget_warning)
+
+                    for idx, cbox in enumerate(widget_warning.findChildren(QtGui.QComboBox)):
+                        if idx == 0:
+                            if int(warning_low) & 0x03 == 0:
+                                cbox.setCurrentIndex(0)
+                            elif int(warning_low) & 0x03 == 1:
+                                cbox.setCurrentIndex(1)
+                            else:
+                                cbox.setCurrentIndex(2)
+
+                        elif idx == 1:
+                            if ((int(warning_low) & 0x0C) >> 2) == 0:
+                                cbox.setCurrentIndex(0)
+                            elif ((int(warning_low )& 0x0C) >> 2) == 1:
+                                cbox.setCurrentIndex(1)
+                            else:
+                                cbox.setCurrentIndex(2)
+
+                        elif idx == 2:
+                            if ((int(warning_low) & 0x30) >> 4) == 0:
+                                cbox.setCurrentIndex(0)
+                            elif ((int(warning_low) & 0x30) >> 4) == 1:
+                                cbox.setCurrentIndex(1)
+                            else:
+                                cbox.setCurrentIndex(2)
+
+                        elif idx == 3:
+                            if ((int(warning_low) & 0xC0) >> 6) == 0:
+                                cbox.setCurrentIndex(0)
+                            elif ((int(warning_low) & 0xC0) >> 6) == 1:
+                                cbox.setCurrentIndex(1)
+                            else:
+                                cbox.setCurrentIndex(2)
 
             # Add Critical field widget
             elif c == INDEX_COL_RULES_CRITICAL:
-                self.add_widget_spin_span(r,
-                                          c,
-                                          COLOR_CRITICAL,
-                                          int(critical_low),
-                                          int(critical_high))
+                if bricklet != 'io4' and bricklet != 'idi4':
+                    self.add_widget_spin_span(r,
+                                              c,
+                                              COLOR_CRITICAL,
+                                              int(critical_low),
+                                              int(critical_high))
+                else:
+                    item = self.model_rules.item(r, c)
+                    index = self.model_rules.indexFromItem(item)
+                    widget_critical = QtGui.QWidget(self.tview_sm_rules)
+
+                    self.get_io4_idi4_warning_critical_widgets(None, widget_critical)
+                    self.tview_sm_rules.setIndexWidget(index, widget_critical)
+
+                    for idx, cbox in enumerate(widget_critical.findChildren(QtGui.QComboBox)):
+                        if idx == 0:
+                            if int(critical_low) & 0x03 == 0:
+                                cbox.setCurrentIndex(0)
+                            elif int(critical_low) & 0x03 == 1:
+                                cbox.setCurrentIndex(1)
+                            else:
+                                cbox.setCurrentIndex(2)
+
+                        elif idx == 1:
+                            if ((int(critical_low) & 0x0C) >> 2) == 0:
+                                cbox.setCurrentIndex(0)
+                            elif ((int(critical_low) & 0x0C) >> 2) == 1:
+                                cbox.setCurrentIndex(1)
+                            else:
+                                cbox.setCurrentIndex(2)
+
+                        elif idx == 2:
+                            if ((int(critical_low) & 0x30) >> 4) == 0:
+                                cbox.setCurrentIndex(0)
+                            elif ((int(critical_low) & 0x30) >> 4) == 1:
+                                cbox.setCurrentIndex(1)
+                            else:
+                                cbox.setCurrentIndex(2)
+
+                        elif idx == 3:
+                            if ((int(critical_low) & 0xC0) >> 6) == 0:
+                                cbox.setCurrentIndex(0)
+                            elif ((int(critical_low) & 0xC0) >> 6) == 1:
+                                cbox.setCurrentIndex(1)
+                            else:
+                                cbox.setCurrentIndex(2)
 
             # Add Unit field widget
             elif c == INDEX_COL_RULES_UNIT:
@@ -1531,25 +1717,20 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                                        MESSAGE_ERROR_NO_LOCALHOST)
             return
 
-        bricklet = 'ambient_light'
-        uid = ''
-        warning_low = '225'
-        warning_high = '1075'
-        critical_low = '225'
-        critical_high = '1075'
         email_notification_enabled = '0'
         email_notifications = 'c,r'
 
         self.add_new_rule(EMPTY_SERVICE_NAME,
                           self.defaulthost,
-                          bricklet,
-                          uid,
-                          warning_low,
-                          warning_high,
-                          critical_low,
-                          critical_high,
+                          None,
+                          None,
+                          DEFAULT_WARNING_LOW,
+                          DEFAULT_WARNING_HIGH,
+                          DEFAULT_CRITICAL_LOW,
+                          DEFAULT_CRITICAL_HIGH,
                           email_notification_enabled,
-                          email_notifications)
+                          email_notifications,
+                          True)
 
         self.update_hosts_used()
         self.update_gui(EVENT_INPUT_CHANGED)
@@ -1882,6 +2063,116 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 host_name = widget_host.currentText()
                 host_port, host_authentication, host_secret = self.get_host_parameters(host_name)
 
+                if widget_bricklet.currentText() == 'IO4' or widget_bricklet.currentText() == 'Industrial Digital In 4':
+                    io4_idi4_warning_val = 0x00
+                    io4_idi4_critical_val = 0x00
+
+                    for cbox in widget_warning.findChildren(QtGui.QComboBox):
+                        if cbox.currentText().startswith('CH 0:'):
+                            if cbox.currentText().endswith('LO'):
+                                io4_idi4_warning_val &= ~(0x01 << 0)
+                                io4_idi4_warning_val &= ~(0x01 << 1)
+
+                            elif cbox.currentText().endswith('HI'):
+                                io4_idi4_warning_val |= (0x01 << 0)
+                                io4_idi4_warning_val &= ~(0x01 << 1)
+
+                            else:
+                                io4_idi4_warning_val |= (0x01 << 0)
+                                io4_idi4_warning_val |= (0x01 << 1)
+
+                        elif cbox.currentText().startswith('CH 1:'):
+                            if cbox.currentText().endswith('LO'):
+                                io4_idi4_warning_val &= ~(0x01 << 2)
+                                io4_idi4_warning_val &= ~(0x01 << 3)
+
+                            elif cbox.currentText().endswith('HI'):
+                                io4_idi4_warning_val |= (0x01 << 2)
+                                io4_idi4_warning_val &= ~(0x01 << 3)
+
+                            else:
+                                io4_idi4_warning_val |= (0x01 << 2)
+                                io4_idi4_warning_val |= (0x01 << 3)
+
+                        elif cbox.currentText().startswith('CH 2:'):
+                            if cbox.currentText().endswith('LO'):
+                                io4_idi4_warning_val &= ~(0x01 << 4)
+                                io4_idi4_warning_val &= ~(0x01 << 5)
+
+                            elif cbox.currentText().endswith('HI'):
+                                io4_idi4_warning_val |= (0x01 << 4)
+                                io4_idi4_warning_val &= ~(0x01 << 5)
+
+                            else:
+                                io4_idi4_warning_val |= (0x01 << 4)
+                                io4_idi4_warning_val |= (0x01 << 5)
+
+                        elif cbox.currentText().startswith('CH 3:'):
+                            if cbox.currentText().endswith('LO'):
+                                io4_idi4_warning_val &= ~(0x01 << 6)
+                                io4_idi4_warning_val &= ~(0x01 << 7)
+
+                            elif cbox.currentText().endswith('HI'):
+                                io4_idi4_warning_val |= (0x01 << 6)
+                                io4_idi4_warning_val &= ~(0x01 << 7)
+
+                            else:
+                                io4_idi4_warning_val |= (0x01 << 6)
+                                io4_idi4_warning_val |= (0x01 << 7)
+
+                    for cbox in widget_critical.findChildren(QtGui.QComboBox):
+                        if cbox.currentText().startswith('CH 0:'):
+                            if cbox.currentText().endswith('LO'):
+                                io4_idi4_critical_val &= ~(0x01 << 0)
+                                io4_idi4_critical_val &= ~(0x01 << 1)
+
+                            elif cbox.currentText().endswith('HI'):
+                                io4_idi4_critical_val |= (0x01 << 0)
+                                io4_idi4_critical_val &= ~(0x01 << 1)
+
+                            else:
+                                io4_idi4_critical_val |= (0x01 << 0)
+                                io4_idi4_critical_val |= (0x01 << 1)
+
+                        elif cbox.currentText().startswith('CH 1:'):
+                            if cbox.currentText().endswith('LO'):
+                                io4_idi4_critical_val &= ~(0x01 << 2)
+                                io4_idi4_critical_val &= ~(0x01 << 3)
+
+                            elif cbox.currentText().endswith('HI'):
+                                io4_idi4_critical_val |= (0x01 << 2)
+                                io4_idi4_critical_val &= ~(0x01 << 3)
+
+                            else:
+                                io4_idi4_critical_val |= (0x01 << 2)
+                                io4_idi4_critical_val |= (0x01 << 3)
+
+                        elif cbox.currentText().startswith('CH 2:'):
+                            if cbox.currentText().endswith('LO'):
+                                io4_idi4_critical_val &= ~(0x01 << 4)
+                                io4_idi4_critical_val &= ~(0x01 << 5)
+
+                            elif cbox.currentText().endswith('HI'):
+                                io4_idi4_critical_val |= (0x01 << 4)
+                                io4_idi4_critical_val &= ~(0x01 << 5)
+
+                            else:
+                                io4_idi4_critical_val |= (0x01 << 4)
+                                io4_idi4_critical_val |= (0x01 << 5)
+
+                        elif cbox.currentText().startswith('CH 3:'):
+                            if cbox.currentText().endswith('LO'):
+                                io4_idi4_critical_val &= ~(0x01 << 6)
+                                io4_idi4_critical_val &= ~(0x01 << 7)
+
+                            elif cbox.currentText().endswith('HI'):
+                                io4_idi4_critical_val |= (0x01 << 6)
+                                io4_idi4_critical_val &= ~(0x01 << 7)
+
+                            else:
+                                io4_idi4_critical_val |= (0x01 << 6)
+                                io4_idi4_critical_val |= (0x01 << 7)
+
                 if host_authentication == 'Off':
                     command_line = '''/usr/local/bin/check_tinkerforge.py \
 -H {0} \
@@ -1895,10 +2186,10 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                   host_port,
                   SUPPORTED_BRICKLETS[widget_bricklet.currentText()]['id'],
                   widget_uid.currentText(),
-                  str(widget_warning.sbox_upper.value()),
-                  str(widget_critical.sbox_upper.value()),
-                  str(widget_warning.sbox_lower.value()),
-                  str(widget_critical.sbox_lower.value()))
+                  io4_idi4_warning_val if widget_bricklet.currentText() == 'IO4' or widget_bricklet.currentText() == 'Industrial Digital In 4' else str(widget_warning.sbox_upper.value()),
+                  io4_idi4_critical_val if widget_bricklet.currentText() == 'IO4' or widget_bricklet.currentText() == 'Industrial Digital In 4' else str(widget_critical.sbox_upper.value()),
+                  io4_idi4_warning_val if widget_bricklet.currentText() == 'IO4' or widget_bricklet.currentText() == 'Industrial Digital In 4' else str(widget_warning.sbox_lower.value()),
+                  io4_idi4_critical_val if widget_bricklet.currentText() == 'IO4' or widget_bricklet.currentText() == 'Industrial Digital In 4' else str(widget_critical.sbox_lower.value()))
                 else:
                     command_line = '''/usr/local/bin/check_tinkerforge.py \
 -H {0} \
@@ -1914,10 +2205,10 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                   host_secret,
                   SUPPORTED_BRICKLETS[widget_bricklet.currentText()]['id'],
                   widget_uid.currentText(),
-                  str(widget_warning.sbox_upper.value()),
-                  str(widget_critical.sbox_upper.value()),
-                  str(widget_warning.sbox_lower.value()),
-                  str(widget_critical.sbox_lower.value()))
+                  io4_idi4_warning_val if widget_bricklet.currentText() == 'IO4' or widget_bricklet.currentText() == 'Industrial Digital In 4' else str(widget_warning.sbox_upper.value()),
+                  io4_idi4_critical_val if widget_bricklet.currentText() == 'IO4' or widget_bricklet.currentText() == 'Industrial Digital In 4' else str(widget_critical.sbox_upper.value()),
+                  io4_idi4_warning_val if widget_bricklet.currentText() == 'IO4' or widget_bricklet.currentText() == 'Industrial Digital In 4' else str(widget_warning.sbox_lower.value()),
+                  io4_idi4_critical_val if widget_bricklet.currentText() == 'IO4' or widget_bricklet.currentText() == 'Industrial Digital In 4' else str(widget_critical.sbox_lower.value()))
 
                 if widget_email_notifications.currentIndex() == INDEX_EMAIL_NO_NOTIFICATIONS or\
                    not self.chkbox_sm_email_enable.isChecked():
@@ -2100,17 +2391,29 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 if sender == self.tview_sm_rules.indexWidget(index):
                     cbox_bricklet = self.tview_sm_rules.indexWidget(index)
 
-                    item_host      = self.model_rules.item(r, INDEX_COL_RULES_HOST)
-                    index_host     = self.model_rules.indexFromItem(item_host)
-                    cbox_host      = self.tview_sm_rules.indexWidget(index_host)
+                    item_host  = self.model_rules.item(r, INDEX_COL_RULES_HOST)
+                    index_host = self.model_rules.indexFromItem(item_host)
+                    cbox_host  = self.tview_sm_rules.indexWidget(index_host)
 
-                    item_uid       = self.model_rules.item(r, INDEX_COL_RULES_UID)
-                    index_uid      = self.model_rules.indexFromItem(item_uid)
-                    cbox_uid       = self.tview_sm_rules.indexWidget(index_uid)
+                    item_uid  = self.model_rules.item(r, INDEX_COL_RULES_UID)
+                    index_uid = self.model_rules.indexFromItem(item_uid)
+                    cbox_uid  = self.tview_sm_rules.indexWidget(index_uid)
+
+                    self.add_widget_spin_span(r,
+                                              INDEX_COL_RULES_WARNING,
+                                              COLOR_WARNING,
+                                              int(DEFAULT_WARNING_LOW),
+                                              int(DEFAULT_WARNING_HIGH))
 
                     item_warning_widget_spin_span = self.model_rules.item(r, INDEX_COL_RULES_WARNING)
                     index_warning_widget_spin_span = self.model_rules.indexFromItem(item_warning_widget_spin_span)
                     warning_widget_spin_span = self.tview_sm_rules.indexWidget(index_warning_widget_spin_span)
+
+                    self.add_widget_spin_span(r,
+                                              INDEX_COL_RULES_CRITICAL,
+                                              COLOR_CRITICAL,
+                                              int(DEFAULT_CRITICAL_LOW),
+                                              int(DEFAULT_CRITICAL_HIGH))
 
                     item_critical_widget_spin_span = self.model_rules.item(r, INDEX_COL_RULES_CRITICAL)
                     index_critical_widget_spin_span = self.model_rules.indexFromItem(item_critical_widget_spin_span)
@@ -2120,18 +2423,31 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     index_unit = self.model_rules.indexFromItem(item_unit)
                     label_unit = self.tview_sm_rules.indexWidget(index_unit)
 
-                    self.populate_cbox_uids(cbox_host, cbox_bricklet, cbox_uid)
+                    if cbox_bricklet.currentText() != 'IO4' and cbox_bricklet.currentText() != 'Industrial Digital In 4':
+                        self.populate_cbox_uids(cbox_host, cbox_bricklet, cbox_uid)
 
-                    self.set_range_widgetSpinBoxSpanSlider(SUPPORTED_BRICKLETS[sender.currentText()]['id'],
-                                                           warning_widget_spin_span)
-                    self.set_initial_value_widgetSpinBoxSpanSlider(warning_widget_spin_span)
-                    self.set_range_widgetSpinBoxSpanSlider(SUPPORTED_BRICKLETS[sender.currentText()]['id'],
-                                                           critical_widget_spin_span)
-                    self.set_initial_value_widgetSpinBoxSpanSlider(critical_widget_spin_span)
+                        self.set_range_widgetSpinBoxSpanSlider(SUPPORTED_BRICKLETS[sender.currentText()]['id'],
+                                                               warning_widget_spin_span)
+                        self.set_initial_value_widgetSpinBoxSpanSlider(warning_widget_spin_span)
 
-                    label_unit.setText(SUPPORTED_BRICKLETS[sender.currentText()]['unit'])
+                        self.set_range_widgetSpinBoxSpanSlider(SUPPORTED_BRICKLETS[sender.currentText()]['id'],
+                                                               critical_widget_spin_span)
+                        self.set_initial_value_widgetSpinBoxSpanSlider(critical_widget_spin_span)
 
-                    break
+                        label_unit.setText(SUPPORTED_BRICKLETS[sender.currentText()]['unit'])
+
+                        break
+                    else:
+                        self.populate_cbox_uids(cbox_host, cbox_bricklet, cbox_uid)
+
+                        widget_warning = QtGui.QWidget(self.tview_sm_rules)
+                        widget_critical = QtGui.QWidget(self.tview_sm_rules)
+
+                        self.get_io4_idi4_warning_critical_widgets(widget_warning, widget_critical)
+                        self.tview_sm_rules.setIndexWidget(index_warning_widget_spin_span, widget_warning)
+                        self.tview_sm_rules.setIndexWidget(index_critical_widget_spin_span, widget_critical)
+
+                        label_unit.setText(SUPPORTED_BRICKLETS[sender.currentText()]['unit'])
 
         self.update_gui(EVENT_INPUT_CHANGED)
 

@@ -19,36 +19,50 @@ from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_ptc import BrickletPTC
 try:
     from tinkerforge.bricklet_ptc_v2 import BrickletPTCV2
-    has_ptc_v2  = True
+    got_ptc_v2  = True
 except ImportError:
-    has_ptc_v2 = False
+    got_ptc_v2 = False
 
 from tinkerforge.bricklet_humidity import BrickletHumidity
 try:
     from tinkerforge.bricklet_humidity_v2 import BrickletHumidityV2
-    has_humidity_v2  = True
+    got_humidity_v2  = True
 except ImportError:
-    has_humidity_v2 = False
+    got_humidity_v2 = False
 
 from tinkerforge.bricklet_temperature import BrickletTemperature
 try:
     from tinkerforge.bricklet_temperature_v2 import BrickletTemperatureV2
-    has_temperature_v2  = True
+    got_temperature_v2  = True
 except ImportError:
-    has_temperature_v2 = False
+    got_temperature_v2 = False
 
 from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
 try:
     from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
-    has_ambient_light_v2 = True
+    got_ambient_light_v2 = True
 except ImportError:
-    has_ambient_light_v2 = False
+    got_ambient_light_v2 = False
 
 try:
     from tinkerforge.bricklet_ambient_light_v3 import BrickletAmbientLightV3
-    has_ambient_light_v3 = True
+    got_ambient_light_v3 = True
 except ImportError:
-    has_ambient_light_v3 = False
+    got_ambient_light_v3 = False
+
+from tinkerforge.bricklet_io4 import BrickletIO4
+try:
+    from tinkerforge.bricklet_io4_v2 import BrickletIO4V2
+    got_io4_v2 = True
+except ImportError:
+    got_io4_v2 = False
+
+from tinkerforge.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
+try:
+    from tinkerforge.bricklet_industrial_digital_in_4_v2 import BrickletIndustrialDigitalIn4V2
+    got_idi4_v2 = True
+except ImportError:
+    got_idi4_v2 = False
 
 if len(argv) < 2:
     exit(1)
@@ -76,36 +90,50 @@ from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_ptc import BrickletPTC
 try:
     from tinkerforge.bricklet_ptc_v2 import BrickletPTCV2
-    has_ptc_v2  = True
+    got_ptc_v2  = True
 except ImportError:
-    has_ptc_v2 = False
+    got_ptc_v2 = False
 
 from tinkerforge.bricklet_humidity import BrickletHumidity
 try:
     from tinkerforge.bricklet_humidity_v2 import BrickletHumidityV2
-    has_humidity_v2  = True
+    got_humidity_v2  = True
 except ImportError:
-    has_humidity_v2 = False
+    got_humidity_v2 = False
 
 from tinkerforge.bricklet_temperature import BrickletTemperature
 try:
     from tinkerforge.bricklet_temperature_v2 import BrickletTemperatureV2
-    has_temperature_v2  = True
+    got_temperature_v2  = True
 except ImportError:
-    has_temperature_v2 = False
+    got_temperature_v2 = False
 
 from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
 try:
     from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
-    has_ambient_light_v2 = True
+    got_ambient_light_v2 = True
 except ImportError:
-    has_ambient_light_v2 = False
+    got_ambient_light_v2 = False
 
 try:
     from tinkerforge.bricklet_ambient_light_v3 import BrickletAmbientLightV3
-    has_ambient_light_v3 = True
+    got_ambient_light_v3 = True
 except ImportError:
-    has_ambient_light_v3 = False
+    got_ambient_light_v3 = False
+
+from tinkerforge.bricklet_io4 import BrickletIO4
+try:
+    from tinkerforge.bricklet_io4_v2 import BrickletIO4V2
+    got_io4_v2 = True
+except ImportError:
+    got_io4_v2 = False
+
+from tinkerforge.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
+try:
+    from tinkerforge.bricklet_industrial_digital_in_4_v2 import BrickletIndustrialDigitalIn4V2
+    got_idi4_v2 = True
+except ImportError:
+    got_idi4_v2 = False
 
 RETURN_CODE_OK       = 0
 RETURN_CODE_WARNING  = 1
@@ -118,20 +146,28 @@ BRICKLET_PTC_4_WIRE    = 'ptc_4_wire'
 BRICKLET_TEMPERATURE   = 'temperature'
 BRICKLET_HUMIDITY      = 'humidity'
 BRICKLET_AMBIENT_LIGHT = 'ambient_light'
+BRICKLET_IO4           = 'io4'
+BRICKLET_IDI4          = 'idi4'
 
 MESSAGE_CRITICAL_ERROR_CONNECTING = 'CRITICAL - Error occured while connecting'
-MESSAGE_CRITICAL_AUTHENTICATION_FAILED = 'CRITICAL - Connection Authentication failed'
+MESSAGE_CRITICAL_AUTHENTICATION_FAILED = 'CRITICAL - Connection authentication failed'
 MESSAGE_CRITICAL_NO_PTC_CONNECTED = 'CRITICAL - No PTC sensor connected'
 MESSAGE_CRITICAL_ERROR_GETTING_PTC_STATE = 'CRITICAL - Error getting PTC sensor connection state'
 MESSAGE_CRITICAL_ERROR_SETTING_PTC_MODE = 'CRITICAL - Error setting PTC wire mode'
 MESSAGE_CRITICAL_ERROR_READING_VALUE = 'CRITICAL - Error reading value'
 MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY = 'CRITICAL - Error getting device identity'
-MESSAGE_CRITICAL_ERROR_SETTING_AMBIENT_LIGHT_CONFIGURATION = 'CRITICAL - Error setting Ambient Light configuration'
+MESSAGE_CRITICAL_ERROR_SETTING_AMBIENT_LIGHT_CONFIGURATION = 'CRITICAL - Error setting Ambient Light Bricklet configuration'
+MESSAGE_CRITICAL_ERROR_SETTING_IO4_CONFIGURATION = 'CRITICAL - Error setting IO4 Bricklet configuration'
+MESSAGE_CRITICAL_ERROR_SETTING_IDI4_CONFIGURATION = 'CRITICAL - Error setting Industrial Digital In 4 Bricklet configuration'
+
 MESSAGE_CRITICAL_READING_TOO_HIGH = 'CRITICAL - Reading too high - %s %s'
 MESSAGE_CRITICAL_READING_TOO_LOW = 'CRITICAL - Reading too low - %s %s'
 MESSAGE_WARNING_READING_IS_HIGH = 'WARNING - Reading is high - %s %s'
 MESSAGE_WARNING_READING_IS_LOW = 'WARNING - Reading is low - %s %s'
 MESSAGE_OK_READING = 'OK - %s %s'
+MESSAGE_CRITICAL_IO4_IDI4 = 'CRITICAL - CH0 = %s, CH1 = %s, CH2 = %s, CH3 = %s'
+MESSAGE_WARNING_IO4_IDI4  = 'WARNING - CH0 = %s, CH1 = %s, CH2 = %s, CH3 = %s'
+MESSAGE_OK_IO4_IDI4 = 'OK - CH0 = %s, CH1 = %s, CH2 = %s, CH3 = %s'
 MESSAGE_UNKNOWN_READING = 'UNKNOWN - Unknown state'
 
 global args
@@ -187,7 +223,7 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
             unit = '°C'.decode('utf-8')
             bricklet_ptc = BrickletPTC(uid, ipcon)
 
-            if has_ptc_v2:
+            if got_ptc_v2:
                 device_identifier = None
 
                 try:
@@ -216,6 +252,7 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
                                   RETURN_CODE_CRITICAL)
 
                     return
+
                 try:
                     if bricklet == BRICKLET_PTC_2_WIRE:
                         bricklet_ptc.set_wire_mode(WIRE_MODE_2)
@@ -242,7 +279,7 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
         unit = '°C'.decode('utf-8')
         bricklet_temperature = BrickletTemperature(uid, ipcon)
 
-        if has_temperature_v2:
+        if got_temperature_v2:
             device_identifier = None
 
             try:
@@ -257,21 +294,21 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
             if device_identifier == BrickletTemperatureV2.DEVICE_IDENTIFIER:
                 bricklet_temperature = BrickletTemperatureV2(uid, ipcon)
 
-        try:
-            reading = bricklet_temperature.get_temperature() / 100.0
-        except:
-            handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
-                          RETURN_CODE_CRITICAL)
+        if bricklet_temperature != None:
+            try:
+                reading = bricklet_temperature.get_temperature() / 100.0
+            except:
+                handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
+                            RETURN_CODE_CRITICAL)
 
-            return
+                return
 
     elif bricklet == BRICKLET_HUMIDITY:
         unit = '%RH'
         divisor = 10.0
         bricklet_humidity = BrickletHumidity(uid, ipcon)
 
-        if has_humidity_v2:
-            divisor = 100.0
+        if got_humidity_v2:
             device_identifier = None
 
             try:
@@ -284,23 +321,24 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
                 return
 
             if device_identifier == BrickletHumidityV2.DEVICE_IDENTIFIER:
+                divisor = 100.0
                 bricklet_humidity = BrickletHumidityV2(uid, ipcon)
 
-        try:
-            reading = bricklet_humidity.get_humidity() / divisor
-        except:
-            handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
-                          RETURN_CODE_CRITICAL)
+        if bricklet_humidity != None:
+            try:
+                reading = bricklet_humidity.get_humidity() / divisor
+            except:
+                handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
+                            RETURN_CODE_CRITICAL)
 
-            return
+                return
 
     elif bricklet == BRICKLET_AMBIENT_LIGHT:
         unit = 'Lux'
         divisor = 10.0
         bricklet_ambient_light = BrickletAmbientLight(uid, ipcon)
 
-        if has_ambient_light_v2:
-            divisor = 100.0
+        if got_ambient_light_v2:
             device_identifier = None
 
             try:
@@ -313,20 +351,10 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
                 return
 
             if device_identifier == BrickletAmbientLightV2.DEVICE_IDENTIFIER:
+                divisor = 100.0
                 bricklet_ambient_light = BrickletAmbientLightV2(uid, ipcon)
 
-                try:
-                    bricklet_ambient_light.set_configuration(BrickletAmbientLightV2.ILLUMINANCE_RANGE_UNLIMITED,
-                                                             BrickletAmbientLightV2.INTEGRATION_TIME_200MS)
-                except:
-                    bricklet_ambient_light = None
-                    handle_result(MESSAGE_CRITICAL_ERROR_SETTING_AMBIENT_LIGHT_CONFIGURATION,
-                                  RETURN_CODE_CRITICAL)
-
-                    return
-
-        elif has_ambient_light_v3:
-            divisor = 100.0
+        elif got_ambient_light_v3:
             device_identifier = None
 
             try:
@@ -339,19 +367,20 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
                 return
 
             if device_identifier == BrickletAmbientLightV3.DEVICE_IDENTIFIER:
+                divisor = 100.0
                 bricklet_ambient_light = BrickletAmbientLightV3(uid, ipcon)
 
-                try:
-                    bricklet_ambient_light.set_configuration(BrickletAmbientLightV3.ILLUMINANCE_RANGE_UNLIMITED,
-                                                             BrickletAmbientLightV3.INTEGRATION_TIME_200MS)
-                except:
-                    bricklet_ambient_light = None
-                    handle_result(MESSAGE_CRITICAL_ERROR_SETTING_AMBIENT_LIGHT_CONFIGURATION,
-                                  RETURN_CODE_CRITICAL)
-
-                    return
-
         if bricklet_ambient_light != None:
+            try:
+                bricklet_ambient_light.set_configuration(BrickletAmbientLightV3.ILLUMINANCE_RANGE_UNLIMITED,
+                                                        BrickletAmbientLightV3.INTEGRATION_TIME_200MS)
+            except:
+                bricklet_ambient_light = None
+                handle_result(MESSAGE_CRITICAL_ERROR_SETTING_AMBIENT_LIGHT_CONFIGURATION,
+                            RETURN_CODE_CRITICAL)
+
+                return
+
             try:
                 reading = bricklet_ambient_light.get_illuminance() / divisor
             except:
@@ -360,24 +389,379 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
 
                 return
 
+    elif bricklet == BRICKLET_IO4:
+        bricklet_io4_idi4_version = 1
+        bricklet_io4 = BrickletIO4(uid, ipcon)
+
+        if got_io4_v2:
+            device_identifier = None
+
+            try:
+                device_identifier = bricklet_io4.get_identity().device_identifier
+            except:
+                bricklet_io4 = None
+                handle_result(MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY,
+                              RETURN_CODE_CRITICAL)
+
+                return
+
+            if device_identifier == BrickletIO4V2.DEVICE_IDENTIFIER:
+                bricklet_io4_idi4_version = 2
+                bricklet_io4 = BrickletIO4V2(uid, ipcon)
+
+        if bricklet_io4 != None:
+            if bricklet_io4_idi4_version == 1:
+                try:
+                    bricklet_io4.set_configuration(15, BrickletIO4V2.DIRECTION_IN, True)
+                except:
+                    bricklet_io4 = None
+                    handle_result(MESSAGE_CRITICAL_ERROR_SETTING_IO4_CONFIGURATION,
+                                  RETURN_CODE_CRITICAL)
+
+                    return
+
+            elif bricklet_io4_idi4_version == 2:
+                try:
+                    bricklet_io4.set_configuration(0, BrickletIO4V2.DIRECTION_IN, True)
+                    bricklet_io4.set_configuration(1, BrickletIO4V2.DIRECTION_IN, True)
+                    bricklet_io4.set_configuration(2, BrickletIO4V2.DIRECTION_IN, True)
+                    bricklet_io4.set_configuration(3, BrickletIO4V2.DIRECTION_IN, True)
+                except:
+                    bricklet_io4 = None
+                    handle_result(MESSAGE_CRITICAL_ERROR_SETTING_IO4_CONFIGURATION,
+                                  RETURN_CODE_CRITICAL)
+
+                    return
+
+            try:
+                reading = bricklet_io4.get_value()
+            except:
+                handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
+                              RETURN_CODE_CRITICAL)
+
+                return
+
+    elif bricklet == BRICKLET_IDI4:
+        bricklet_io4_idi4_version = 1
+        bricklet_idi4 = BrickletIndustrialDigitalIn4(uid, ipcon)
+
+        if got_idi4_v2:
+            device_identifier = None
+
+            try:
+                device_identifier = bricklet_idi4.get_identity().device_identifier
+            except:
+                bricklet_idi4 = None
+                handle_result(MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY,
+                              RETURN_CODE_CRITICAL)
+
+                return
+
+            if device_identifier == BrickletIndustrialDigitalIn4V2.DEVICE_IDENTIFIER:
+                bricklet_io4_idi4_version = 2
+                bricklet_idi4 = BrickletIndustrialDigitalIn4V2(uid, ipcon)
+
+        try:
+            reading = bricklet_idi4.get_value()
+
+        except:
+            handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
+                          RETURN_CODE_CRITICAL)
+
+            return
+
     if reading != None:
-        if reading >= critical:
-            handle_result(MESSAGE_CRITICAL_READING_TOO_HIGH % (reading, unit),
-                          RETURN_CODE_CRITICAL)
-        elif reading >= warning:
-            handle_result(MESSAGE_WARNING_READING_IS_HIGH % (reading, unit),
-                          RETURN_CODE_WARNING)
-        elif reading <= critical2:
-            handle_result(MESSAGE_CRITICAL_READING_TOO_LOW % (reading, unit),
-                          RETURN_CODE_CRITICAL)
-        elif reading <= warning2:
-            handle_result(MESSAGE_WARNING_READING_IS_LOW % (reading, unit),
-                          RETURN_CODE_WARNING)
-        elif reading > warning2 and reading < warning:
-            handle_result(MESSAGE_OK_READING % (reading, unit),
-                          RETURN_CODE_OK)
+        if bricklet != BRICKLET_IO4 and bricklet != BRICKLET_IDI4:
+            if reading >= critical:
+                handle_result(MESSAGE_CRITICAL_READING_TOO_HIGH % (reading, unit),
+                              RETURN_CODE_CRITICAL)
+            elif reading >= warning:
+                handle_result(MESSAGE_WARNING_READING_IS_HIGH % (reading, unit),
+                              RETURN_CODE_WARNING)
+            elif reading <= critical2:
+                handle_result(MESSAGE_CRITICAL_READING_TOO_LOW % (reading, unit),
+                              RETURN_CODE_CRITICAL)
+            elif reading <= warning2:
+                handle_result(MESSAGE_WARNING_READING_IS_LOW % (reading, unit),
+                              RETURN_CODE_WARNING)
+            elif reading > warning2 and reading < warning:
+                handle_result(MESSAGE_OK_READING % (reading, unit),
+                              RETURN_CODE_OK)
+            else:
+                handle_result(MESSAGE_UNKNOWN_READING, RETURN_CODE_UNKNOWN)
         else:
-            handle_result(MESSAGE_UNKNOWN_READING, RETURN_CODE_UNKNOWN)
+            warnings = []
+            criticals = []
+            warning = int(warning)
+            critical = int(critical)
+            io4_idi4_warning = False
+            io4_idi4_critical = False
+
+            ch0 =\
+                {
+                    'is_warning': False,
+                    'is_critical': False,
+                    'current_state': 0,
+                    'warning':
+                        {
+                            'expected_state': None,
+                        },
+                    'critical':
+                        {
+                            'expected_state': None,
+                        }
+                }
+            ch1 =\
+                {
+                    'is_warning': False,
+                    'is_critical': False,
+                    'current_state': 0,
+                    'warning':
+                        {
+                            'expected_state': None,
+                        },
+                    'critical':
+                        {
+                            'expected_state': None,
+                        }
+                }
+            ch2 =\
+                {
+                    'is_warning': False,
+                    'is_critical': False,
+                    'current_state': 0,
+                    'warning':
+                        {
+                            'expected_state': None,
+                        },
+                    'critical':
+                        {
+                            'expected_state': None,
+                        }
+                }
+            ch3 =\
+                {
+                    'is_warning': False,
+                    'is_critical': False,
+                    'current_state': 0,
+                    'warning':
+                        {
+                            'expected_state': None,
+                        },
+                    'critical':
+                        {
+                            'expected_state': None,
+                        }
+                }
+
+            # Warning
+            if (warning & 0x03) == 0:
+                ch0['warning']['expected_state'] = False
+            elif (warning & 0x03) == 1:
+                ch0['warning']['expected_state']  = True
+            else:
+                ch0['warning']['expected_state']  = 'IGN'
+
+            if ((warning & 0x0C) >> 2) == 0:
+                ch1['warning']['expected_state']  = False
+            elif ((warning & 0x0C) >> 2) == 1:
+                ch1['warning']['expected_state']  = True
+            else:
+                ch1['warning']['expected_state']  = 'IGN'
+
+            if ((warning & 0x30) >> 4) == 0:
+                ch2['warning']['expected_state']  = False
+            elif ((warning & 0x30) >> 4) == 1:
+                ch2['warning']['expected_state']  = True
+            else:
+                ch2['warning']['expected_state']  = 'IGN'
+
+            if ((warning & 0xC0) >> 6) == 0:
+                ch3['warning']['expected_state']  = False
+            elif ((warning & 0xC0) >> 6) == 1:
+                ch3['warning']['expected_state']  = True
+            else:
+                ch3['warning']['expected_state']  = 'IGN'
+
+            # Critical
+            if (critical & 0x03) == 0:
+                ch0['critical']['expected_state'] = False
+            elif ((critical & 0x03) == 1):
+                ch0['critical']['expected_state']= True
+            else:
+                ch0['critical']['expected_state'] = 'IGN'
+
+            if ((critical & 0x0C) >> 2) == 0:
+                ch1['critical']['expected_state'] = False
+            elif ((critical & 0x0C) >> 2) == 1:
+                ch1['critical']['expected_state'] = True
+            else:
+                ch1['critical']['expected_state'] = 'IGN'
+
+            if ((critical & 0x30) >> 4) == 0:
+                ch2['critical']['expected_state'] = False
+            elif ((critical & 0x30) >> 4) == 1:
+                ch2['critical']['expected_state'] = True
+            else:
+                ch2['critical']['expected_state'] = 'IGN'
+
+            if ((critical & 0xC0) >> 6) == 0:
+                ch3['critical']['expected_state'] = False
+            elif ((critical & 0xC0) >> 6) == 1:
+                ch3['critical']['expected_state'] = True
+            else:
+                ch3['critical']['expected_state'] = 'IGN'
+
+            # Current state
+            if bricklet_io4_idi4_version == 1:
+                reading = int(reading)
+
+                if (reading & 0x01):
+                    ch0['current_state'] = 1
+
+                if (reading & 0x02):
+                    ch1['current_state'] = 1
+
+                if (reading & 0x04):
+                    ch2['current_state'] = 1
+
+                if (reading & 0x08):
+                    ch3['current_state'] = 1
+
+            elif bricklet_io4_idi4_version == 2:
+                ch0['current_state'] = int(reading[0])
+                ch1['current_state'] = int(reading[1])
+                ch2['current_state'] = int(reading[2])
+                ch3['current_state'] = int(reading[3])
+
+            # Warning: For channels
+            if ch0['warning']['expected_state'] != 'IGN':
+                if ch0['current_state'] == ch0['warning']['expected_state']:
+                    ch0['is_warning'] = True
+                else:
+                    ch0['is_warning'] = False
+            else:
+                ch0['current_state']= 'IGN'
+                ch0['is_warning'] = None
+
+            if ch0['is_warning'] != None:
+                warnings.append(ch0['is_warning'])
+
+            if ch1['warning']['expected_state'] != 'IGN':
+                if ch1['current_state'] == ch1['warning']['expected_state']:
+                    ch1['is_warning'] = True
+                else:
+                    ch1['is_warning'] = False
+            else:
+                ch1['current_state']= 'IGN'
+                ch1['is_warning'] = None
+
+            if ch1['is_warning'] != None:
+                warnings.append(ch1['is_warning'])
+
+            if ch2['warning']['expected_state'] != 'IGN':
+                if ch2['current_state'] == ch2['warning']['expected_state']:
+                    ch2['is_warning'] = True
+                else:
+                    ch2['is_warning'] = False
+            else:
+                ch2['current_state']= 'IGN'
+                ch2['is_warning'] = None
+
+            if ch2['is_warning'] != None:
+                warnings.append(ch2['is_warning'])
+
+            if ch3['warning']['expected_state'] != 'IGN':
+                if ch3['current_state'] == ch3['warning']['expected_state']:
+                    ch3['is_warning'] = True
+                else:
+                    ch3['is_warning'] = False
+            else:
+                ch3['current_state']= 'IGN'
+                ch3['is_warning'] = None
+
+            if ch3['is_warning'] != None:
+                warnings.append(ch3['is_warning'])
+
+            # Critical: For channels
+            if ch0['critical']['expected_state'] != 'IGN':
+                if ch0['current_state'] == ch0['critical']['expected_state']:
+                    ch0['is_critical'] = True
+                else:
+                    ch0['is_critical'] = False
+            else:
+                ch0['current_state']= 'IGN'
+                ch0['is_critical'] = None
+
+            if ch0['is_critical'] != None:
+                criticals.append(ch0['is_critical'])
+
+            if ch1['critical']['expected_state'] != 'IGN':
+                if ch1['current_state'] == ch1['critical']['expected_state']:
+                    ch1['is_critical'] = True
+                else:
+                    ch01['is_critical'] = False
+            else:
+                ch1['current_state']= 'IGN'
+                ch1['is_critical'] = None
+
+            if ch1['is_critical'] != None:
+                criticals.append(ch1['is_critical'])
+
+            if ch2['critical']['expected_state'] != 'IGN':
+                if ch2['current_state'] == ch2['critical']['expected_state']:
+                    ch2['is_critical'] = True
+                else:
+                    ch2['is_critical'] = False
+            else:
+                ch2['current_state']= 'IGN'
+                ch2['is_critical'] = None
+
+            if ch2['is_critical'] != None:
+                criticals.append(ch2['is_critical'])
+
+            if ch3['critical']['expected_state'] != 'IGN':
+                if ch3['current_state'] == ch3['critical']['expected_state']:
+                    ch3['is_critical'] = True
+                else:
+                    ch3['is_critical'] = False
+            else:
+                ch3['current_state']= 'IGN'
+                ch3['is_critical'] = None
+
+            if ch3['is_critical'] != None:
+                criticals.append(ch3['is_critical'])
+
+        if warnings and all(warnings):
+            io4_idi4_warning = True
+
+        if criticals and all(criticals):
+            io4_idi4_critical = True
+
+        if io4_idi4_warning and io4_idi4_critical:
+            handle_result(MESSAGE_CRITICAL_IO4_IDI4 % (ch0['current_state'],
+                                                       ch1['current_state'],
+                                                       ch2['current_state'],
+                                                       ch3['current_state']),
+                          RETURN_CODE_CRITICAL)
+        elif io4_idi4_warning:
+            handle_result(MESSAGE_WARNING_IO4_IDI4 % (ch0['current_state'],
+                                                      ch1['current_state'],
+                                                      ch2['current_state'],
+                                                      ch3['current_state']),
+                          RETURN_CODE_WARNING)
+        elif io4_idi4_critical:
+            handle_result(MESSAGE_CRITICAL_IO4_IDI4 % (ch0['current_state'],
+                                                       ch1['current_state'],
+                                                       ch2['current_state'],
+                                                       ch3['current_state']),
+                          RETURN_CODE_CRITICAL)
+        else:
+            handle_result(MESSAGE_OK_IO4_IDI4 % (ch0['current_state'],
+                                                 ch1['current_state'],
+                                                 ch2['current_state'],
+                                                 ch3['current_state']),
+                          RETURN_CODE_OK)
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser()
@@ -404,7 +788,7 @@ if __name__ == '__main__':
                        '--bricklet',
                        help = 'Type of bricklet',
                        type = str,
-                       choices = ['ptc_2_wire', 'ptc_3_wire', 'ptc_4_wire', 'temperature', 'humidity', 'ambient_light'],
+                       choices = ['ptc_2_wire', 'ptc_3_wire', 'ptc_4_wire', 'temperature', 'humidity', 'ambient_light', 'io4', 'idi4'],
                        required = True)
 
     parse.add_argument('-u',
@@ -511,7 +895,9 @@ dict_enumerate = {'host'         : None,
                   'ptc'          : [],
                   'temperature'  : [],
                   'humidity'     : [],
-                  'ambient_light': []}
+                  'ambient_light': [],
+                  'io4'          : [],
+                  'idi4'         : []}
 
 _find_unsafe = re.compile(r'[^\w@%+=:,./-]').search
 
@@ -543,6 +929,8 @@ def ignore_enumerate_fail():
     dict_enumerate['temperature']   = []
     dict_enumerate['humidity']      = []
     dict_enumerate['ambient_light'] = []
+    dict_enumerate['io4']           = []
+    dict_enumerate['idi4']          = []
 
     sys.stdout.write(json.dumps(dict_enumerate))
 
@@ -579,7 +967,7 @@ def cb_enumerate(uid,
        uid not in dict_enumerate['ptc']:
             dict_enumerate['ptc'].append(uid)
 
-    elif has_ptc_v2 and\
+    elif got_ptc_v2 and\
          device_identifier == BrickletPTCV2.DEVICE_IDENTIFIER and\
          uid not in dict_enumerate['ptc']:
             dict_enumerate['ptc'].append(uid)
@@ -588,7 +976,7 @@ def cb_enumerate(uid,
          uid not in dict_enumerate['temperature']:
             dict_enumerate['temperature'].append(uid)
 
-    elif has_temperature_v2 and\
+    elif got_temperature_v2 and\
          device_identifier == BrickletTemperatureV2.DEVICE_IDENTIFIER and\
          uid not in dict_enumerate['temperature']:
             dict_enumerate['temperature'].append(uid)
@@ -597,7 +985,7 @@ def cb_enumerate(uid,
          uid not in dict_enumerate['humidity']:
             dict_enumerate['humidity'].append(uid)
 
-    elif has_humidity_v2 and\
+    elif got_humidity_v2 and\
          device_identifier == BrickletHumidityV2.DEVICE_IDENTIFIER and\
          uid not in dict_enumerate['humidity']:
             dict_enumerate['humidity'].append(uid)
@@ -606,15 +994,33 @@ def cb_enumerate(uid,
          uid not in dict_enumerate['ambient_light']:
             dict_enumerate['ambient_light'].append(uid)
 
-    elif has_ambient_light_v2 and\
+    elif got_ambient_light_v2 and\
          device_identifier == BrickletAmbientLightV2.DEVICE_IDENTIFIER and\
          uid not in dict_enumerate['ambient_light']:
             dict_enumerate['ambient_light'].append(uid)
 
-    elif has_ambient_light_v3 and\
+    elif got_ambient_light_v3 and\
          device_identifier == BrickletAmbientLightV3.DEVICE_IDENTIFIER and\
          uid not in dict_enumerate['ambient_light']:
             dict_enumerate['ambient_light'].append(uid)
+
+    elif device_identifier == BrickletIO4.DEVICE_IDENTIFIER and\
+         uid not in dict_enumerate['io4']:
+            dict_enumerate['io4'].append(uid)
+
+    elif got_io4_v2 and\
+         device_identifier == BrickletIO4V2.DEVICE_IDENTIFIER and\
+         uid not in dict_enumerate['io4']:
+            dict_enumerate['io4'].append(uid)
+
+    elif device_identifier == BrickletIndustrialDigitalIn4.DEVICE_IDENTIFIER and\
+         uid not in dict_enumerate['idi4']:
+            dict_enumerate['idi4'].append(uid)
+
+    elif got_idi4_v2 and\
+         device_identifier == BrickletIndustrialDigitalIn4V2.DEVICE_IDENTIFIER and\
+         uid not in dict_enumerate['idi4']:
+            dict_enumerate['idi4'].append(uid)
 
 if ACTION == 'GET':
     try:
