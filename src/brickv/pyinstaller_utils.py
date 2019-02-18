@@ -89,7 +89,7 @@ def get_unreleased_bindings():
 
 def win_sign(exe_path):
     system([
-        "signtool.exe", "sign",
+        "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x86\\signtool.exe", "sign",
         "/v",
         "/tr", "http://rfc3161timestamp.globalsign.com/advanced"
         "/td", "sha256",
@@ -199,7 +199,7 @@ hiddenimports = ['PyQt5._QOpenGLFunctions_2_1']
 win_dll_path = 'C:\\Program Files (x86)\\Windows Kits\\10\Redist\\ucrt\\DLLs\\x86'
 
 if windows:
-    pathex = [root_path, win_dll_path]    
+    pathex = [root_path, win_dll_path]
 else:
     pathex = [root_path]
 
