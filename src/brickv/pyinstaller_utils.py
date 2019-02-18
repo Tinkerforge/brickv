@@ -235,7 +235,7 @@ def post_generate_macos():
 
     system(['bash', '-c', 'security unlock-keychain /Users/$USER/Library/Keychains/login.keychain'])
 
-    system(['bash', '-c', 'codesign --deep --force --verify --verbose=1 --sign "`cat codesign_identity`" ' + os.path.join(dist_path, 'Brickv.app')])
+    system(['bash', '-c', 'codesign --deep --force --verify --verbose=1 --sign "Developer ID Application: Tinkerforge GmbH (K39N76HTZ4)" ' + os.path.join(dist_path, 'Brickv.app')])
 
     system(['codesign', '--verify', '--deep', '--verbose=1', os.path.join(dist_path, 'Brickv.app')])
 
