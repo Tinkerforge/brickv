@@ -95,7 +95,7 @@ def win_sign(exe_path):
         "/td", "sha256",
         "/n", "Tinkerforge GmbH",
         exe_path])
-    system('signtool.exe verify /v /pa ' + exe_path)
+    system(["C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x86\\signtool.exe", "verify", "/v", "/pa", exe_path])
 
 
 def win_build_installer():
