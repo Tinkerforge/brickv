@@ -40,11 +40,11 @@ class CO2V2(COMCUPluginBase):
                                         self.cb_get_all_values,
                                         self.increase_error_count)
 
-        self.current_co2 = None # float
+        self.current_co2 = None # float, ppm
         self.current_temperature = None # float, °C
         self.current_humidity = None # float, %RH
 
-        plots_co2 = [(u'CO2', Qt.red, lambda: self.current_co2, u'{}'.format)]
+        plots_co2 = [(u'CO2', Qt.red, lambda: self.current_co2, u'{} PPM'.format)]
         self.plot_widget_co2 = PlotWidget(u'CO2 [PPM]', plots_co2)
 
         plots_temperature = [(u'Temperature', Qt.red, lambda: self.current_temperature, u'{} °C'.format)]
