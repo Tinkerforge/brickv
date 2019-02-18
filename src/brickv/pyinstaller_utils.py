@@ -196,7 +196,7 @@ excludes = get_unreleased_bindings() + ['wx', 'gtk+', '_gtkagg', 'gtk', 'gdk', '
             'PyQt5.QtXmlPatterns']
 hiddenimports = ['PyQt5._QOpenGLFunctions_2_1']
 
-win_dll_path = 'C:\\Program Files (x86)\\Windows Kits\\10\Redist\\ucrt\\DLLs\\x86'
+win_dll_path = 'C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\\DLLs\\x86'
 
 if windows:
     pathex = [root_path, win_dll_path]
