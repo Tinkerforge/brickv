@@ -79,7 +79,7 @@ class CO2V2(COMCUPluginBase):
         self.plot_widget_humidity.stop = False
 
     def stop(self):
-        self.cbe_air_quality.set_period(0)
+        self.cbe_co2.set_period(0)
 
         self.plot_widget_co2.stop = True
         self.plot_widget_temperature.stop = True
