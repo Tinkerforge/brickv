@@ -135,6 +135,10 @@ class WrapperWidget(QWidget):
         self.plugin.imu_gl_wrapper = None
         self.plugin.button_detach_3d_view.setEnabled(True)
 
+        # Under macOS (and sometimes under Linux) closing this window will cause a segmentation fault.
+        # Somehow this is fixed by deleteLater.
+        self.deleteLater()
+
     def minimumSizeHint(self):
         return QSize(500, 500)
 
