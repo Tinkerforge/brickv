@@ -59,7 +59,7 @@ prepare_package('brickv')
 
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtWidgets import QApplication, QErrorMessage
-from PyQt5.QtCore import QEvent, pyqtSignal, qCritical, qInstallMessageHandler, QSize
+from PyQt5.QtCore import QEvent, pyqtSignal, QSize
 
 from brickv import config
 from brickv.mainwindow import MainWindow
@@ -82,12 +82,10 @@ class ErrorMessage(QErrorMessage):
 class BrickViewer(QApplication):
     object_creator_signal = pyqtSignal(object)
     infos_changed_signal = pyqtSignal(str) # uid
-    error_signal = pyqtSignal(int, object, str)
+    error_signal = pyqtSignal(str)
 
     def __init__(self, *args, **kwargs):
         QApplication.__init__(self, *args, **kwargs)
-
-        qInstallMessageHandler(self.error_signal.emit)
 
         self.error_signal.connect(self.error_slot)
         self.error_message = None
@@ -95,8 +93,12 @@ class BrickViewer(QApplication):
         self.object_creator_signal.connect(self.object_creator_slot)
         self.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
 
+    def exception_hook(self, exctype, value, tb):
+        traceback.print_exception(etype=exctype, value=value, tb=tb)
+        message = "Exception type: {}\nException value:{}\nTraceback:{}".format(str(exctype), str(value), "".join(traceback.format_exception(etype=exctype, value=value, tb=tb)))
+        self.error_signal.emit(message)
 
-    def error_slot(self, message_type, context, message):
+    def error_slot(self, message):
         self.error_message = ErrorMessage()
         header = "Please report this error to info@tinkerforge.com.\n If you know what caused the error and can fix it, please report it anyway. This allows us to improve the error messages.\n\n"
         body = html.escape(message).replace("\n", "<br>")
@@ -111,17 +113,7 @@ class BrickViewer(QApplication):
 
         return QApplication.notify(self, receiver, event)
 
-def exception_hook(exctype, value, tb):
-    traceback.print_exception(etype=exctype, value=value, tb=tb)
-    qCritical("Exception type: {}\nException value:{}\nTraceback:{}".format(str(exctype), str(value), "".join(traceback.format_exception(etype=exctype, value=value, tb=tb))))
-
 def main():
-
-    # Catch all uncaught exceptions and show an error message for them.
-    # PyQt5 does not silence exceptions in slots (as did PyQt4), so there
-    # can be slots which try to (for example) send requests but don't wrap
-    # them in an async call with error handling.
-    sys.excepthook = exception_hook
     try:
         locale.setlocale(locale.LC_ALL, '')
     except locale.Error:
@@ -133,6 +125,12 @@ def main():
         argv += ['-style', 'windowsxp']
 
     brick_viewer = BrickViewer(argv)
+
+    # Catch all uncaught exceptions and show an error message for them.
+    # PyQt5 does not silence exceptions in slots (as did PyQt4), so there
+    # can be slots which try to (for example) send requests but don't wrap
+    # them in an async call with error handling.
+    sys.excepthook = brick_viewer.exception_hook
     main_window = MainWindow()
     main_window.show()
     sys.exit(brick_viewer.exec_())
