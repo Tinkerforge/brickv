@@ -246,4 +246,4 @@ def post_generate_macos():
         os.remove(dmg_name)
     os.mkdir(os.path.join(dist_path, 'dmg'))
     shutil.move(os.path.join(dist_path, 'Brickv.app'), os.path.join(dist_path, 'dmg'))
-    system(['hdiutil', 'create', '-fs', 'HFS+', '-volname', '"Brickv-{}"'.format(BRICKV_VERSION), '-srcfolder', os.path.join(dist_path, 'dmg'), dmg_name])
+    system(['hdiutil', 'create', '-fs', 'HFS+', '-volname', 'Brickv-{}'.format(BRICKV_VERSION), '-srcfolder', os.path.join(dist_path, 'dmg'), dmg_name])
