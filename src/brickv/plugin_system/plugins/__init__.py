@@ -104,6 +104,7 @@ from brickv.plugin_system.plugins.rgb_led_v2 import device_class as rgb_led_v2
 from brickv.plugin_system.plugins.rotary_encoder import device_class as rotary_encoder
 from brickv.plugin_system.plugins.rotary_encoder_v2 import device_class as rotary_encoder_v2
 from brickv.plugin_system.plugins.rotary_poti import device_class as rotary_poti
+from brickv.plugin_system.plugins.rotary_poti_v2 import device_class as rotary_poti_v2
 from brickv.plugin_system.plugins.rs232 import device_class as rs232
 from brickv.plugin_system.plugins.rs232_v2 import device_class as rs232_v2
 from brickv.plugin_system.plugins.rs485 import device_class as rs485
@@ -236,6 +237,7 @@ device_classes = [
     rotary_encoder,
     rotary_encoder_v2,
     rotary_poti,
+    rotary_poti_v2,
     rs232,
     rs232_v2,
     rs485,
