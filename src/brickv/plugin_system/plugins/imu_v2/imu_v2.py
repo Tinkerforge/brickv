@@ -127,6 +127,8 @@ class WrapperWidget(QWidget):
         self.plugin = plugin
 
         self.setLayout(QVBoxLayout())
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.setMinimumSize(200,200)
         self.glWidget = IMUV2GLWidget()
         self.layout().addWidget(self.glWidget)
         self.setWindowTitle('IMU Brick 2.0 - 3D View - Brick Viewer ' + config.BRICKV_VERSION)
