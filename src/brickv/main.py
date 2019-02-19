@@ -59,7 +59,7 @@ prepare_package('brickv')
 
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtWidgets import QApplication, QErrorMessage
-from PyQt5.QtCore import QEvent, pyqtSignal, qCritical
+from PyQt5.QtCore import QEvent, pyqtSignal, qCritical, qInstallMessageHandler, QSize
 
 from brickv import config
 from brickv.mainwindow import MainWindow
@@ -68,28 +68,39 @@ from brickv.load_pixmap import load_pixmap
 
 from brickv.bindings.ip_connection import Error
 import traceback
+import html
 
 logging.basicConfig(level=config.LOGGING_LEVEL,
                     format=config.LOGGING_FORMAT,
                     datefmt=config.LOGGING_DATEFMT)
 
+class ErrorMessage(QErrorMessage):
+    def sizeHint(self):
+        superSize = super().sizeHint()
+        return QSize(max(superSize.width(), 600), max(superSize.height(), 400))
+
 class BrickViewer(QApplication):
     object_creator_signal = pyqtSignal(object)
     infos_changed_signal = pyqtSignal(str) # uid
+    error_signal = pyqtSignal(int, object, str)
 
     def __init__(self, *args, **kwargs):
         QApplication.__init__(self, *args, **kwargs)
-        error_message = QErrorMessage.qtHandler()
 
-        # When running as executable created by Pyinstaller, the QErrorMessage layout is messed up.
-        # (At least under macOS and Windows)
-        # Forcing a resize by showing and hiding the widget seems to help.
-        error_message.show()
-        error_message.setMinimumSize(300, 300)
-        error_message.hide()
+        qInstallMessageHandler(self.error_signal.emit)
+
+        self.error_signal.connect(self.error_slot)
+        self.error_message = None
 
         self.object_creator_signal.connect(self.object_creator_slot)
         self.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
+
+
+    def error_slot(self, message_type, context, message):
+        self.error_message = ErrorMessage()
+        header = "Please report this error to info@tinkerforge.com.\n If you know what caused the error and can fix it, please report it anyway. This allows us to improve the error messages.\n\n"
+        body = html.escape(message).replace("\n", "<br>")
+        self.error_message.showMessage("{}<pre>{}</pre>".format(header, body))
 
     def object_creator_slot(self, object_creator):
         object_creator.create()
@@ -102,7 +113,7 @@ class BrickViewer(QApplication):
 
 def exception_hook(exctype, value, tb):
     traceback.print_exception(etype=exctype, value=value, tb=tb)
-    qCritical("Please report this error to info@tinkerforge.com:\n\nException type: {}\nException value:{}\nTraceback:{}".format(str(exctype), str(value), "".join(traceback.format_exception(etype=exctype, value=value, tb=tb))))
+    qCritical("Exception type: {}\nException value:{}\nTraceback:{}".format(str(exctype), str(value), "".join(traceback.format_exception(etype=exctype, value=value, tb=tb))))
 
 def main():
 
