@@ -251,7 +251,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             self._gui_job = GuiDataJob(name="GuiData-Writer")
 
             self._gui_job.signalNewData.connect(self.table_add_row)
-            #self.connect(self._gui_job, QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), self.table_add_row)
 
             self.data_logger_thread = main.main(None, GuiConfigHandler.create_config(self), self._gui_job, None, None, None)
 
@@ -271,7 +270,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
 
         self._gui_job.signalNewData.disconnect(self.table_add_row)
-        #self.disconnect(self._gui_job, QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), self.table_add_row)
         self.data_logger_thread = None
         self._gui_job = None
 
