@@ -105,6 +105,11 @@ def exception_hook(exctype, value, tb):
     qCritical("Please report this error to info@tinkerforge.com:\n\nException type: {}\nException value:{}\nTraceback:{}".format(str(exctype), str(value), "".join(traceback.format_exception(etype=exctype, value=value, tb=tb))))
 
 def main():
+
+    # Catch all uncaught exceptions and show an error message for them.
+    # PyQt5 does not silence exceptions in slots (as did PyQt4), so there
+    # can be slots which try to (for example) send requests but don't wrap
+    # them in an async call with error handling.
     sys.excepthook = exception_hook
     try:
         locale.setlocale(locale.LC_ALL, '')
