@@ -15,22 +15,20 @@ class QxtSpanSlider(QSlider):
     NoCrossing = 1
     NoOverlapping = 2
 
-    __pyqtSignals__ = ("spanChanged(int, int)",
-                       "lowerValueChanged(int)", "upperValueChanged(int)",
-                       "lowerPositionChanged(int)", "upperPositionChanged(int)",
-                       "sliderPressed(PyQt_PyObject)")
-    __pyqtSlots__ = ("setLowerValue(int)",
-                     "setUpperValue(int)",
-                     "setSpan(int, int)",
-                     "setLowerPosition(int)",
-                     "setUpperPosition(int)",
-                     "setGradientLeftColor(PyQt_PyObject)",
-                     "setGradientRightColor(PyQt_PyObject)")
+    spanChanged = pyqtSignal(int, int)
+    lowerValueChanged = pyqtSignal(int)
+    upperValueChanged = pyqtSignal(int)
+    lowerPositionChanged = pyqtSignal(int)
+    upperPositionChanged = pyqtSignal(int)
+    sliderPressed = pyqtSignal(object)
+
+    rangeChanged = pyqtSignal(int, int)
+    sliderReleased = pyqtSignal()
 
     def __init__(self, parent = None):
         QSlider.__init__(self, QtCore.Qt.Horizontal, parent)
-        self.connect(self, SIGNAL("rangeChanged(int, int)"), self.updateRange)
-        self.connect(self, SIGNAL("sliderReleased()"), self.movePressedHandle)
+        self.rangeChanged.connect(self.updateRange)
+        self.sliderReleased.connect(self.movePressedHandle)
 
         self.setStyle(QStyleFactory.create('Plastique'))
 
@@ -47,8 +45,8 @@ class QxtSpanSlider(QSlider):
         self.mainControl = QxtSpanSlider.LowerHandle
         self.firstMovement = False
         self.blockTracking = False
-        self.gradientLeft = self.palette().color(QPalette.Dark).light(110)
-        self.gradientRight = self.palette().color(QPalette.Dark).light(110)
+        self.gradientLeft = self.palette().color(QPalette.Dark).lighter(110)
+        self.gradientRight = self.palette().color(QPalette.Dark).lighter(110)
         self.colorOutsideRange = QColor(0, 0, 0)
 
     def lowerValue(self):
@@ -82,7 +80,7 @@ class QxtSpanSlider(QSlider):
             self.upperPos = upp
             changed = True
         if changed:
-            self.emit(SIGNAL("spanChanged(int, int)"), self.lower, self.upper)
+            self.spanChanged.emit(self.lower, self.upper)
             self.update()
 
     def lowerPosition(self):
@@ -94,7 +92,7 @@ class QxtSpanSlider(QSlider):
             if not self.hasTracking():
                 self.update()
             if self.isSliderDown():
-                self.emit(SIGNAL("lowerPositionChanged(int)"), lower)
+                self.lowerPositionChanged.emit(lower)
             if self.hasTracking() and not self.blockTracking:
                 main = (self.mainControl == QxtSpanSlider.LowerHandle)
                 self.triggerAction(QxtSpanSlider.SliderMove, main)
@@ -108,7 +106,8 @@ class QxtSpanSlider(QSlider):
             if not self.hasTracking():
                 self.update()
             if self.isSliderDown():
-                self.emit(SIGNAL("upperPositionChanged(int)"), upper)
+                #self.emit(SIGNAL("upperPositionChanged(int)"), upper)
+                self.upperPositionChanged.emit(upper)
             if self.hasTracking() and not self.blockTracking:
                 main = (self.mainControl == QxtSpanSlider.UpperHandle)
                 self.triggerAction(QxtSpanSlider.SliderMove, main)
@@ -278,14 +277,14 @@ class QxtSpanSlider(QSlider):
     def setupPainter(self, painter, orientation, x1, y1, x2, y2):
         highlight = self.palette().color(QPalette.Highlight)
         gradient = QLinearGradient(x1, y1, x2, y2)
-        gradient.setColorAt(0, highlight.dark(120))
-        gradient.setColorAt(1, highlight.light(108))
+        gradient.setColorAt(0, highlight.darker(120))
+        gradient.setColorAt(1, highlight.lighter(108))
         painter.setBrush(gradient)
 
         if orientation == QtCore.Qt.Horizontal:
-            painter.setPen(QPen(highlight.dark(130), 0))
+            painter.setPen(QPen(highlight.darker(130), 0))
         else:
-            painter.setPen(QPen(highlight.dark(150), 0))
+            painter.setPen(QPen(highlight.darker(150), 0))
 
     def drawSpan(self, painter, rect):
         opt = QStyleOptionSlider()
@@ -357,7 +356,7 @@ class QxtSpanSlider(QSlider):
             self.offset = self.pick(pos - sr.topLeft())
             self.lastPressed = handle
             self.setSliderDown(True)
-            self.emit(SIGNAL("sliderPressed(PyQt_PyObject)"), handle)
+            self.sliderPressed.emit(handle)
         if control != oldControl:
             self.update(sr)
         return control
