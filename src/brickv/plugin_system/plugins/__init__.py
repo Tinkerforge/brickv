@@ -68,6 +68,7 @@ from brickv.plugin_system.plugins.led_strip import device_class as led_strip
 from brickv.plugin_system.plugins.led_strip_v2 import device_class as led_strip_v2
 from brickv.plugin_system.plugins.line import device_class as line
 from brickv.plugin_system.plugins.linear_poti import device_class as linear_poti
+from brickv.plugin_system.plugins.linear_poti_v2 import device_class as linear_poti_v2
 from brickv.plugin_system.plugins.load_cell import device_class as load_cell
 from brickv.plugin_system.plugins.load_cell_v2 import device_class as load_cell_v2
 from brickv.plugin_system.plugins.master import device_class as master
@@ -199,6 +200,7 @@ device_classes = [
     led_strip_v2,
     line,
     linear_poti,
+    linear_poti_v2,
     load_cell,
     load_cell_v2,
     master,
