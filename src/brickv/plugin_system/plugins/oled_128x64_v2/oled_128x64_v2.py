@@ -54,7 +54,7 @@ class ScribbleArea(QWidget):
 
         self.last_point = QPoint()
         self.clear_image()
-        
+
     def clear_image(self):
         self.image.fill(Qt.black)
         self.update()
@@ -138,7 +138,7 @@ class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
                 start = "  "
             elif value + j < 100:
                 start = " "
-            self.oled.write_line(j, 8, start + str(value+j) + ": " + chr(value+j) + '\0')
+            async_call(self.oled.write_line, (j, 8, start + str(value+j) + ": " + chr(value+j) + '\0'), None, error_callback=self.increase_error_count)
 
     def clear_display_clicked(self):
         self.oled.clear_display()
