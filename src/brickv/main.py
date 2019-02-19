@@ -100,6 +100,7 @@ class BrickViewer(QApplication):
 
     def error_slot(self, message):
         self.error_message = ErrorMessage()
+        self.error_message.setWindowTitle('Error - Brick Viewer ' + config.BRICKV_VERSION)
         header = "Please report this error to info@tinkerforge.com.\n If you know what caused the error and can fix it, please report it anyway. This allows us to improve the error messages.\n\n"
         body = html.escape(message).replace("\n", "<br>")
         self.error_message.showMessage("{}<pre>{}</pre>".format(header, body))
