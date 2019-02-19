@@ -841,7 +841,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                                                    lambda result: self.cb_settings_server_monitoring_enumerate(True, result),
                                                    ['ENUMERATE',
                                                     host,
-                                                    dict_return['hosts'][host]['port'],
+                                                    str(dict_return['hosts'][host]['port']),
                                                     dict_return['hosts'][host]['secret']])
 
         else:
@@ -1624,7 +1624,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                     ledit_secret = self.tview_sm_hosts.indexWidget(index_secret)
 
                     host = ledit_host.text()
-                    port = sbox_port.value()
+                    port = str(sbox_port.value())
 
                     if not ledit_secret.isEnabled():
                         secret = ''
@@ -1831,7 +1831,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                                                lambda result: self.cb_settings_server_monitoring_enumerate(False, result),
                                                ['ENUMERATE',
                                                 add_host_dialog.host,
-                                                add_host_dialog.port,
+                                                str(add_host_dialog.port),
                                                 add_host_dialog.secret])
             add_host_dialog.done(0)
         else:

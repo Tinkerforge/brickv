@@ -580,7 +580,7 @@ class REDList(REDObject):
         self.attach(object_id, False)
 
         for item in items:
-            if isinstance(item, str) or isinstance(item, unicode):
+            if isinstance(item, str):
                 item = REDString(self._session).allocate(item)
             elif not isinstance(item, REDObject):
                 raise TypeError('Cannot append {0} item to list object {1}'.format(type(item), self.object_id))
