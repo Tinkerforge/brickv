@@ -21,8 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QCheckBox, QLabel
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QLabel
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_co2_v2 import BrickletCO2V2
@@ -44,14 +44,14 @@ class CO2V2(COMCUPluginBase):
         self.current_temperature = None # float, °C
         self.current_humidity = None # float, %RH
 
-        plots_co2 = [(u'CO2', Qt.red, lambda: self.current_co2, u'{} PPM'.format)]
-        self.plot_widget_co2 = PlotWidget(u'CO2 [PPM]', plots_co2)
+        plots_co2 = [('CO2', Qt.red, lambda: self.current_co2, '{} PPM'.format)]
+        self.plot_widget_co2 = PlotWidget('CO2 [PPM]', plots_co2)
 
-        plots_temperature = [(u'Temperature', Qt.red, lambda: self.current_temperature, u'{} °C'.format)]
-        self.plot_widget_temperature = PlotWidget(u'Temperature [°C]', plots_temperature)
+        plots_temperature = [('Temperature', Qt.red, lambda: self.current_temperature, '{} °C'.format)]
+        self.plot_widget_temperature = PlotWidget('Temperature [°C]', plots_temperature)
 
-        plots_humidity = [(u'Relative Humidity', Qt.red, lambda: self.current_humidity, u'{} %RH'.format)]
-        self.plot_widget_humidity = PlotWidget(u'Relative Humidity [%RH]', plots_humidity)
+        plots_humidity = [('Relative Humidity', Qt.red, lambda: self.current_humidity, '{} %RH'.format)]
+        self.plot_widget_humidity = PlotWidget('Relative Humidity [%RH]', plots_humidity)
 
         layout_plot1 = QHBoxLayout()
         layout_plot1.addWidget(self.plot_widget_co2)

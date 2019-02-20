@@ -25,7 +25,7 @@ import re
 import json
 
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QWidget, QMessageBox, QCheckBox, QLineEdit, QSpinBox, QComboBox, QPushButton, QLabel, QDialog
+from PyQt5.QtWidgets import QWidget, QMessageBox, QCheckBox, QLineEdit, QSpinBox, QComboBox, QPushButton, QLabel, QDialog, QHBoxLayout
 from PyQt5.QtGui import QColor, QStandardItem, QStandardItemModel
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_server_monitoring import\
@@ -80,10 +80,10 @@ COLUMN_EMAIL_NOTIFICATIONS_ITEMS = ['No Notifications',
                                     'Critical',
                                     'Critical/Warning']
 
-SUPPORTED_BRICKLETS = {'PTC (2-wire)'            :{'id':'ptc_2_wire', 'unit':'°C'.decode('utf-8')},
-                       'PTC (3-wire)'            :{'id':'ptc_3_wire', 'unit':'°C'.decode('utf-8')},
-                       'PTC (4-wire)'            :{'id':'ptc_4_wire', 'unit':'°C'.decode('utf-8')},
-                       'Temperature'             :{'id':'temperature', 'unit':'°C'.decode('utf-8')},
+SUPPORTED_BRICKLETS = {'PTC (2-wire)'            :{'id':'ptc_2_wire', 'unit':'°C'},
+                       'PTC (3-wire)'            :{'id':'ptc_3_wire', 'unit':'°C'},
+                       'PTC (4-wire)'            :{'id':'ptc_4_wire', 'unit':'°C'},
+                       'Temperature'             :{'id':'temperature', 'unit':'°C'},
                        'Humidity'                :{'id':'humidity', 'unit':'%RH'},
                        'Ambient Light'           :{'id':'ambient_light', 'unit':'Lux'},
                        'IO4'                     :{'id':'io4', 'unit':None},
@@ -317,20 +317,20 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
 
     def get_io4_idi4_warning_critical_widgets(self, widget_warning, widget_critical):
         if widget_warning:
-            hlayout_warning = QtGui.QHBoxLayout(widget_warning)
+            hlayout_warning = QHBoxLayout(widget_warning)
 
         if widget_critical:
-            hlayout_critical = QtGui.QHBoxLayout(widget_critical)
+            hlayout_critical = QHBoxLayout(widget_critical)
 
-        cbox_warning_ch0 = QtGui.QComboBox()
-        cbox_warning_ch1 = QtGui.QComboBox()
-        cbox_warning_ch2 = QtGui.QComboBox()
-        cbox_warning_ch3 = QtGui.QComboBox()
+        cbox_warning_ch0 = QComboBox()
+        cbox_warning_ch1 = QComboBox()
+        cbox_warning_ch2 = QComboBox()
+        cbox_warning_ch3 = QComboBox()
 
-        cbox_critical_ch0 = QtGui.QComboBox()
-        cbox_critical_ch1 = QtGui.QComboBox()
-        cbox_critical_ch2 = QtGui.QComboBox()
-        cbox_critical_ch3 = QtGui.QComboBox()
+        cbox_critical_ch0 = QComboBox()
+        cbox_critical_ch1 = QComboBox()
+        cbox_critical_ch2 = QComboBox()
+        cbox_critical_ch3 = QComboBox()
 
         cbox_warning_ch0.addItems(['CH 0: LO', 'CH 0: HI', 'CH 0: IGN'])
         cbox_warning_ch1.addItems(['CH 1: LO', 'CH 1: HI', 'CH 1: IGN'])
@@ -368,8 +368,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
             hlayout_warning.addWidget(cbox_warning_ch2)
             hlayout_warning.addWidget(cbox_warning_ch3)
 
-            hlayout_warning.setMargin(0)
-            hlayout_warning.setSpacing(0)
+            hlayout_warning.setContentsMargins(0, 0, 0, 0)
             widget_warning.setLayout(hlayout_warning)
 
         if widget_critical:
@@ -378,8 +377,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
             hlayout_critical.addWidget(cbox_critical_ch2)
             hlayout_critical.addWidget(cbox_critical_ch3)
 
-            hlayout_critical.setMargin(0)
-            hlayout_critical.setSpacing(0)
+            hlayout_critical.setContentsMargins(0, 0, 0, 0)
             widget_critical.setLayout(hlayout_critical)
 
     def cb_settings_server_monitoring_test_email(self, result):
@@ -563,8 +561,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
 
         cbox_bricklet = self.tview_sm_rules.indexWidget(index_bricklet)
         widget_spin_span = widgetSpinBoxSpanSlider()
-        widget_spin_span.layout().setMargin(0)
-        widget_spin_span.layout().setSpacing(0)
+        widget_spin_span.layout().setContentsMargins(0, 0, 0, 0)
 
         self.set_range_widgetSpinBoxSpanSlider(SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'],
                                                widget_spin_span)
@@ -1217,12 +1214,12 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                 else:
                     item = self.model_rules.item(r, c)
                     index = self.model_rules.indexFromItem(item)
-                    widget_warning = QtGui.QWidget(self.tview_sm_rules)
+                    widget_warning = QWidget(self.tview_sm_rules)
 
                     self.get_io4_idi4_warning_critical_widgets(widget_warning, None)
                     self.tview_sm_rules.setIndexWidget(index, widget_warning)
 
-                    for idx, cbox in enumerate(widget_warning.findChildren(QtGui.QComboBox)):
+                    for idx, cbox in enumerate(widget_warning.findChildren(QComboBox)):
                         if idx == 0:
                             if int(warning_low) & 0x03 == 0:
                                 cbox.setCurrentIndex(0)
@@ -1266,12 +1263,12 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                 else:
                     item = self.model_rules.item(r, c)
                     index = self.model_rules.indexFromItem(item)
-                    widget_critical = QtGui.QWidget(self.tview_sm_rules)
+                    widget_critical = QWidget(self.tview_sm_rules)
 
                     self.get_io4_idi4_warning_critical_widgets(None, widget_critical)
                     self.tview_sm_rules.setIndexWidget(index, widget_critical)
 
-                    for idx, cbox in enumerate(widget_critical.findChildren(QtGui.QComboBox)):
+                    for idx, cbox in enumerate(widget_critical.findChildren(QComboBox)):
                         if idx == 0:
                             if int(critical_low) & 0x03 == 0:
                                 cbox.setCurrentIndex(0)
@@ -2083,7 +2080,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                     io4_idi4_warning_val = 0x00
                     io4_idi4_critical_val = 0x00
 
-                    for cbox in widget_warning.findChildren(QtGui.QComboBox):
+                    for cbox in widget_warning.findChildren(QComboBox):
                         if cbox.currentText().startswith('CH 0:'):
                             if cbox.currentText().endswith('LO'):
                                 io4_idi4_warning_val &= ~(0x01 << 0)
@@ -2136,7 +2133,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                                 io4_idi4_warning_val |= (0x01 << 6)
                                 io4_idi4_warning_val |= (0x01 << 7)
 
-                    for cbox in widget_critical.findChildren(QtGui.QComboBox):
+                    for cbox in widget_critical.findChildren(QComboBox):
                         if cbox.currentText().startswith('CH 0:'):
                             if cbox.currentText().endswith('LO'):
                                 io4_idi4_critical_val &= ~(0x01 << 0)
@@ -2456,8 +2453,8 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                     else:
                         self.populate_cbox_uids(cbox_host, cbox_bricklet, cbox_uid)
 
-                        widget_warning = QtGui.QWidget(self.tview_sm_rules)
-                        widget_critical = QtGui.QWidget(self.tview_sm_rules)
+                        widget_warning = QWidget(self.tview_sm_rules)
+                        widget_critical = QWidget(self.tview_sm_rules)
 
                         self.get_io4_idi4_warning_critical_widgets(widget_warning, widget_critical)
                         self.tview_sm_rules.setIndexWidget(index_warning_widget_spin_span, widget_warning)
