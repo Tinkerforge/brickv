@@ -39,7 +39,7 @@ from PyQt5.QtGui import QPalette, QStandardItemModel, QStandardItem, QRegExpVali
 from brickv import config
 from brickv.bindings.ip_connection import BASE58
 from brickv.load_pixmap import load_pixmap
-from brickv.utils import get_save_file_name, get_open_file_name, get_main_window, \
+from brickv.utils import get_save_file_name, get_open_file_name, \
                          get_home_path, get_resources_path, get_modeless_dialog_flags
 from brickv.data_logger.event_logger import EventLogger, GUILogger
 from brickv.data_logger.gui_config_handler import GuiConfigHandler
@@ -304,7 +304,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             self.edit_data_time_format_strftime.setFocus()
 
     def btn_save_config_clicked(self):
-        filename = get_save_file_name(get_main_window(), 'Save Config',
+        filename = get_save_file_name(self, 'Save Config',
                                       get_home_path(), 'JSON Files (*.json)')
 
         if len(filename) == 0:
@@ -316,12 +316,12 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         config = GuiConfigHandler.create_config(self)
 
         if not save_config(config, filename):
-            QMessageBox.warning(get_main_window(), 'Save Config',
+            QMessageBox.warning(self, 'Save Config',
                                 'Could not save config to file! See Debug tab for details.',
                                 QMessageBox.Ok)
 
     def btn_load_config_clicked(self):
-        filename = get_open_file_name(get_main_window(), 'Load Config',
+        filename = get_open_file_name(self, 'Load Config',
                                       get_home_path(), 'JSON Files (*.json)')
 
         if len(filename) == 0:
@@ -330,7 +330,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         config = load_and_validate_config(filename)
 
         if config == None:
-            QMessageBox.warning(get_main_window(), 'Load Config',
+            QMessageBox.warning(self, 'Load Config',
                                 'Could not load config from file! See Debug tab for details.',
                                 QMessageBox.Ok)
             return
@@ -344,7 +344,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         else:
             last_dir = get_home_path()
 
-        filename = get_save_file_name(get_main_window(), 'Choose CSV File',
+        filename = get_save_file_name(self, 'Choose CSV File',
                                       last_dir, "CSV Files (*.csv)")
 
         if len(filename) > 0:
@@ -359,7 +359,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         else:
             last_dir = get_home_path()
 
-        filename = get_save_file_name(get_main_window(), 'Choose Log File',
+        filename = get_save_file_name(self, 'Choose Log File',
                                       last_dir, "Log Files (*.log)")
 
         if len(filename) > 0:

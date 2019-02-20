@@ -45,7 +45,7 @@ from brickv.bindings.ip_connection import IPConnection, Error, base58encode, \
 from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
 from brickv.samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_ports
 from brickv.infos import get_version_string
-from brickv.utils import get_main_window, get_home_path, get_open_file_name, \
+from brickv.utils import get_home_path, get_open_file_name, \
                          get_modeless_dialog_flags
 from brickv.esp_flash import ESPFlash
 from brickv import infos
@@ -545,7 +545,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         else:
             last_dir = get_home_path()
 
-        filename = get_open_file_name(get_main_window(), 'Open Firmware', last_dir, '*.bin')
+        filename = get_open_file_name(self, 'Open Firmware', last_dir, '*.bin')
 
         if len(filename) > 0:
             self.edit_custom_firmware.setText(filename)
@@ -1324,7 +1324,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if len(self.edit_custom_plugin.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(self.edit_custom_plugin.text()))
 
-        filename = get_open_file_name(get_main_window(), 'Open Plugin', last_dir, file_ending)
+        filename = get_open_file_name(self, 'Open Plugin', last_dir, file_ending)
 
         if len(filename) > 0:
             self.edit_custom_plugin.setText(filename)
@@ -1709,7 +1709,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         else:
             last_dir = get_home_path()
 
-        filename = get_open_file_name(get_main_window(), 'Open Extension Firmware', last_dir, '*.zbin')
+        filename = get_open_file_name(self, 'Open Extension Firmware', last_dir, '*.zbin')
 
         if len(filename) > 0:
             self.edit_custom_extension_firmware.setText(filename)
