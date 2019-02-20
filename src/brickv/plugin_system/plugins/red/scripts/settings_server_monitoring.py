@@ -220,7 +220,7 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
     if bricklet == BRICKLET_PTC_2_WIRE or\
        bricklet == BRICKLET_PTC_3_WIRE or\
        bricklet == BRICKLET_PTC_4_WIRE:
-            unit = '°C'.decode('utf-8')
+            unit = '°C'
             bricklet_ptc = BrickletPTC(uid, ipcon)
 
             if got_ptc_v2:
@@ -276,7 +276,7 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
                     return
 
     elif bricklet == BRICKLET_TEMPERATURE:
-        unit = '°C'.decode('utf-8')
+        unit = '°C'
         bricklet_temperature = BrickletTemperature(uid, ipcon)
 
         if got_temperature_v2:
@@ -732,36 +732,36 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
             if ch3['is_critical'] != None:
                 criticals.append(ch3['is_critical'])
 
-        if warnings and all(warnings):
-            io4_idi4_warning = True
+            if warnings and all(warnings):
+                io4_idi4_warning = True
 
-        if criticals and all(criticals):
-            io4_idi4_critical = True
+            if criticals and all(criticals):
+                io4_idi4_critical = True
 
-        if io4_idi4_warning and io4_idi4_critical:
-            handle_result(MESSAGE_CRITICAL_IO4_IDI4 % (ch0['current_state'],
-                                                       ch1['current_state'],
-                                                       ch2['current_state'],
-                                                       ch3['current_state']),
-                          RETURN_CODE_CRITICAL)
-        elif io4_idi4_warning:
-            handle_result(MESSAGE_WARNING_IO4_IDI4 % (ch0['current_state'],
-                                                      ch1['current_state'],
-                                                      ch2['current_state'],
-                                                      ch3['current_state']),
-                          RETURN_CODE_WARNING)
-        elif io4_idi4_critical:
-            handle_result(MESSAGE_CRITICAL_IO4_IDI4 % (ch0['current_state'],
-                                                       ch1['current_state'],
-                                                       ch2['current_state'],
-                                                       ch3['current_state']),
-                          RETURN_CODE_CRITICAL)
-        else:
-            handle_result(MESSAGE_OK_IO4_IDI4 % (ch0['current_state'],
-                                                 ch1['current_state'],
-                                                 ch2['current_state'],
-                                                 ch3['current_state']),
-                          RETURN_CODE_OK)
+            if io4_idi4_warning and io4_idi4_critical:
+                handle_result(MESSAGE_CRITICAL_IO4_IDI4 % (ch0['current_state'],
+                                                        ch1['current_state'],
+                                                        ch2['current_state'],
+                                                        ch3['current_state']),
+                            RETURN_CODE_CRITICAL)
+            elif io4_idi4_warning:
+                handle_result(MESSAGE_WARNING_IO4_IDI4 % (ch0['current_state'],
+                                                        ch1['current_state'],
+                                                        ch2['current_state'],
+                                                        ch3['current_state']),
+                            RETURN_CODE_WARNING)
+            elif io4_idi4_critical:
+                handle_result(MESSAGE_CRITICAL_IO4_IDI4 % (ch0['current_state'],
+                                                        ch1['current_state'],
+                                                        ch2['current_state'],
+                                                        ch3['current_state']),
+                            RETURN_CODE_CRITICAL)
+            else:
+                handle_result(MESSAGE_OK_IO4_IDI4 % (ch0['current_state'],
+                                                    ch1['current_state'],
+                                                    ch2['current_state'],
+                                                    ch3['current_state']),
+                            RETURN_CODE_OK)
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser()
