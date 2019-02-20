@@ -335,7 +335,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         cbox_warning_ch0.addItems(['CH 0: LO', 'CH 0: HI', 'CH 0: IGN'])
         cbox_warning_ch1.addItems(['CH 1: LO', 'CH 1: HI', 'CH 1: IGN'])
         cbox_warning_ch2.addItems(['CH 2: LO', 'CH 2: HI', 'CH 2: IGN'])
-        cbox_warning_ch3.addItems(['CH 3: LO', 'CH 3: Hi', 'CH 3: IGN'])
+        cbox_warning_ch3.addItems(['CH 3: LO', 'CH 3: HI', 'CH 3: IGN'])
 
         cbox_warning_ch0.setCurrentIndex(0)
         cbox_warning_ch1.setCurrentIndex(0)
