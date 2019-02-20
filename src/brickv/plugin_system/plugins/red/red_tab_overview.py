@@ -276,7 +276,7 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
             item_name.setToolTip(cmdline)
             self.process_item_model.setItem(i, 0, item_name)
 
-            item_pid = QStandardItem(p['pid'])
+            item_pid = QStandardItem(str(p['pid']))
             self.process_item_model.setItem(i, 1, item_pid)
 
             item_user = QStandardItem(p['user'])
