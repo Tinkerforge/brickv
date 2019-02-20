@@ -79,7 +79,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.async_thread = async_start_thread(self)
 
-        self.setWindowTitle("Brick Viewer " + config.BRICKV_VERSION)
+        self.setWindowTitle('Brick Viewer ' + config.BRICKV_VERSION + '-beta1')
 
         self.tree_view_model_labels = ['Name', 'UID', 'Position', 'FW Version']
         self.tree_view_model = QStandardItemModel(self)
