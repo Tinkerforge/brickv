@@ -21,10 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-try:
-    import winreg
-except:
-    import _winreg as winreg # Python 2 fallback
+import winreg
 
 from brickv.config_common import *
 
