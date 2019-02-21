@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-02-20.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -18,6 +18,9 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
+GetPosition = namedtuple('Position', ['x', 'y'])
+GetPositionCallbackConfiguration = namedtuple('PositionCallbackConfiguration', ['period', 'value_has_to_change'])
+GetPressedCallbackConfiguration = namedtuple('PressedCallbackConfiguration', ['period', 'value_has_to_change'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -30,8 +33,17 @@ class BrickletJoystickV2(Device):
     DEVICE_DISPLAY_NAME = 'Joystick Bricklet 2.0'
     DEVICE_URL_PART = 'joystick_v2' # internal
 
+    CALLBACK_POSITION = 6
+    CALLBACK_PRESSED = 9
 
 
+    FUNCTION_GET_POSITION = 1
+    FUNCTION_IS_PRESSED = 2
+    FUNCTION_CALIBRATE = 3
+    FUNCTION_SET_POSITION_CALLBACK_CONFIGURATION = 4
+    FUNCTION_GET_POSITION_CALLBACK_CONFIGURATION = 5
+    FUNCTION_SET_PRESSED_CALLBACK_CONFIGURATION = 7
+    FUNCTION_GET_PRESSED_CALLBACK_CONFIGURATION = 8
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -70,6 +82,13 @@ class BrickletJoystickV2(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletJoystickV2.FUNCTION_GET_POSITION] = BrickletJoystickV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletJoystickV2.FUNCTION_IS_PRESSED] = BrickletJoystickV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletJoystickV2.FUNCTION_CALIBRATE] = BrickletJoystickV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletJoystickV2.FUNCTION_SET_POSITION_CALLBACK_CONFIGURATION] = BrickletJoystickV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletJoystickV2.FUNCTION_GET_POSITION_CALLBACK_CONFIGURATION] = BrickletJoystickV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletJoystickV2.FUNCTION_SET_PRESSED_CALLBACK_CONFIGURATION] = BrickletJoystickV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletJoystickV2.FUNCTION_GET_PRESSED_CALLBACK_CONFIGURATION] = BrickletJoystickV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletJoystickV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletJoystickV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletJoystickV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletJoystickV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletJoystickV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletJoystickV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -83,7 +102,94 @@ class BrickletJoystickV2(Device):
         self.response_expected[BrickletJoystickV2.FUNCTION_READ_UID] = BrickletJoystickV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletJoystickV2.FUNCTION_GET_IDENTITY] = BrickletJoystickV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletJoystickV2.CALLBACK_POSITION] = 'h h'
+        self.callback_formats[BrickletJoystickV2.CALLBACK_PRESSED] = '!'
 
+
+    def get_position(self):
+        """
+        Returns the position of the Joystick. The value ranges between -100 and
+        100 for both axis. The middle position of the joystick is x=0, y=0. The
+        returned values are averaged and calibrated (see :func:`Calibrate`).
+
+        If you want to get the position periodically, it is recommended to use the
+        :cb:`Position` callback and set the period with
+        :func:`Set Position Callback Configuration`.
+        """
+        return GetPosition(*self.ipcon.send_request(self, BrickletJoystickV2.FUNCTION_GET_POSITION, (), '', 'h h'))
+
+    def is_pressed(self):
+        """
+        Returns *true* if the button is pressed and *false* otherwise.
+
+        If you want to get the press-state periodically, it is recommended to use the
+        :cb:`Pressed` callback and set the period with
+        :func:`Set Pressed Callback Configuration`.
+        """
+        return self.ipcon.send_request(self, BrickletJoystickV2.FUNCTION_IS_PRESSED, (), '', '!')
+
+    def calibrate(self):
+        """
+        Calibrates the middle position of the Joystick. If your Joystick Bricklet
+        does not return x=0 and y=0 in the middle position, call this function
+        while the Joystick is standing still in the middle position.
+
+        The resulting calibration will be saved in non-volatile memory,
+        thus you only have to calibrate it once.
+        """
+        self.ipcon.send_request(self, BrickletJoystickV2.FUNCTION_CALIBRATE, (), '', '')
+
+    def set_position_callback_configuration(self, period, value_has_to_change):
+        """
+        The period in ms is the period with which the :cb:`Position`
+        callback is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after at least one of the values has changed. If the values didn't
+        change within the period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
+        """
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+
+        self.ipcon.send_request(self, BrickletJoystickV2.FUNCTION_SET_POSITION_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+
+    def get_position_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set Position Callback Configuration`.
+        """
+        return GetPositionCallbackConfiguration(*self.ipcon.send_request(self, BrickletJoystickV2.FUNCTION_GET_POSITION_CALLBACK_CONFIGURATION, (), '', 'I !'))
+
+    def set_pressed_callback_configuration(self, period, value_has_to_change):
+        """
+        The period in ms is the period with which the :cb:`Pressed`
+        callback is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after at least one of the values has changed. If the values didn't
+        change within the period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
+        """
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+
+        self.ipcon.send_request(self, BrickletJoystickV2.FUNCTION_SET_PRESSED_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+
+    def get_pressed_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set Pressed Callback Configuration`.
+        """
+        return GetPressedCallbackConfiguration(*self.ipcon.send_request(self, BrickletJoystickV2.FUNCTION_GET_PRESSED_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
     def get_spitfp_error_count(self):
         """
@@ -224,5 +330,14 @@ class BrickletJoystickV2(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletJoystickV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def register_callback(self, callback_id, function):
+        """
+        Registers the given *function* with the given *callback_id*.
+        """
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
+        else:
+            self.registered_callbacks[callback_id] = function
 
 JoystickV2 = BrickletJoystickV2 # for backward compatibility

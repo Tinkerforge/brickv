@@ -60,6 +60,7 @@ from brickv.plugin_system.plugins.io4 import device_class as io4
 from brickv.plugin_system.plugins.io4_v2 import device_class as io4_v2
 from brickv.plugin_system.plugins.isolator import device_class as isolator
 from brickv.plugin_system.plugins.joystick import device_class as joystick
+from brickv.plugin_system.plugins.joystick_v2 import device_class as joystick_v2
 from brickv.plugin_system.plugins.laser_range_finder import device_class as laser_range_finder
 from brickv.plugin_system.plugins.lcd_128x64 import device_class as lcd_128x64
 from brickv.plugin_system.plugins.lcd_16x2 import device_class as lcd_16x2
@@ -194,6 +195,7 @@ device_classes = [
     io4_v2,
     isolator,
     joystick,
+    joystick_v2,
     laser_range_finder,
     lcd_128x64,
     lcd_16x2,
