@@ -120,14 +120,10 @@ def main():
     except locale.Error:
         pass # ignore this as it might fail on macOS, we'll fallback to UTF-8 in that case
 
-    argv = sys.argv
-
     if config.get_use_fusion_gui_style():
-        argv += ['-style', 'fusion']
-    elif sys.platform == 'win32':
-        argv += ['-style', 'windowsxp']
+        sys.argv += ['-style', 'fusion']
 
-    brick_viewer = BrickViewer(argv)
+    brick_viewer = BrickViewer(sys.argv)
 
     # Catch all uncaught exceptions and show an error message for them.
     # PyQt5 does not silence exceptions in slots (as did PyQt4), so there
