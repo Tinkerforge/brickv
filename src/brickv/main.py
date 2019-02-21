@@ -58,8 +58,8 @@ def prepare_package(package_name):
 prepare_package('brickv')
 
 from PyQt5.QtGui import QIcon, QFont
-from PyQt5.QtWidgets import QApplication, QErrorMessage
-from PyQt5.QtCore import QEvent, pyqtSignal, QSize
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTextEdit, QPushButton, QWidget, QLabel, QCheckBox, QHBoxLayout, QMessageBox
+from PyQt5.QtCore import QEvent, pyqtSignal, Qt
 
 from brickv import config
 from brickv.mainwindow import MainWindow
@@ -69,41 +69,48 @@ from brickv.load_pixmap import load_pixmap
 from brickv.bindings.ip_connection import Error
 import traceback
 import html
+import queue
+import threading
+import subprocess
 
 logging.basicConfig(level=config.LOGGING_LEVEL,
                     format=config.LOGGING_FORMAT,
                     datefmt=config.LOGGING_DATEFMT)
 
-class ErrorMessage(QErrorMessage):
-    def sizeHint(self):
-        superSize = super().sizeHint()
-        return QSize(max(superSize.width(), 600), max(superSize.height(), 400))
-
 class BrickViewer(QApplication):
     object_creator_signal = pyqtSignal(object)
     infos_changed_signal = pyqtSignal(str) # uid
-    error_signal = pyqtSignal(str)
 
     def __init__(self, *args, **kwargs):
         QApplication.__init__(self, *args, **kwargs)
 
-        self.error_signal.connect(self.error_slot)
-        self.error_message = None
+        self.error_queue = queue.Queue()
+        self.error_spawn = threading.Thread(target=self.error_spawner, daemon=True)
+        self.error_spawn.start()
 
         self.object_creator_signal.connect(self.object_creator_slot)
         self.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
 
+    def error_spawner(self):
+        ignored = []
+        while True:
+            error = self.error_queue.get()
+
+            hash_ = hash(error)
+            if hash_ in ignored:
+                continue
+
+            # Either sys.executable is /path/to/python, then run calls /path/to/python /path/to/main.py --error-report,
+            # or sys.executable is brickv[.exe], then the --error-report flag ensures, that the path to main.py is ignored.
+            show_again = bool(subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"], input=error, universal_newlines=True).returncode)
+            if not show_again:
+                ignored.append(hash_)
+
     def exception_hook(self, exctype, value, tb):
         traceback.print_exception(etype=exctype, value=value, tb=tb)
-        message = "Exception type: {}\nException value:{}\nTraceback:{}".format(str(exctype), str(value), "".join(traceback.format_exception(etype=exctype, value=value, tb=tb)))
-        self.error_signal.emit(message)
 
-    def error_slot(self, message):
-        self.error_message = ErrorMessage()
-        self.error_message.setWindowTitle('Error - Brick Viewer ' + config.BRICKV_VERSION)
-        header = "Please report this error to info@tinkerforge.com.\n If you know what caused the error and can fix it, please report it anyway. This allows us to improve the error messages.\n\n"
-        body = html.escape(message).replace("\n", "<br>")
-        self.error_message.showMessage("{}<pre>{}</pre>".format(header, body))
+        message = "Exception type: {}\nException value:{}\n{}".format(str(exctype), str(value), "".join(traceback.format_exception(etype=exctype, value=value, tb=tb)))
+        self.error_queue.put(message)
 
     def object_creator_slot(self, object_creator):
         object_creator.create()
@@ -114,7 +121,43 @@ class BrickViewer(QApplication):
 
         return QApplication.notify(self, receiver, event)
 
+def error_report_main():
+    error_message = sys.stdin.read()
+    error_message = "<pre>{}</pre>".format(html.escape(error_message).replace("\n", "<br>"))
+    app = QApplication(sys.argv)
+    window = QMainWindow()
+    window.setWindowTitle('Error - Brick Viewer ' + config.BRICKV_VERSION)
+
+    widget = QWidget()
+    window.setCentralWidget(widget)
+    widget.setLayout(QHBoxLayout())
+    icon = QLabel()
+    icon.setPixmap(QMessageBox.standardIcon(QMessageBox.Critical))
+    icon.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+    widget.layout().addWidget(icon)
+
+    rightWidget = QWidget()
+    rightWidget.setLayout(QVBoxLayout())
+
+    rightWidget.layout().addWidget(QLabel("Please report this error to info@tinkerforge.com.\nIf you know what caused the error and can fix it, please report it anyway. This allows us to improve the error messages."))
+    rightWidget.layout().addWidget(QTextEdit(error_message))
+
+    cbox = QCheckBox("Show this message again")
+    cbox.setChecked(True)
+    rightWidget.layout().addWidget(cbox)
+
+    btn = QPushButton("OK")
+    btn.clicked.connect(lambda event: app.exit())
+    rightWidget.layout().addWidget(btn)
+    widget.layout().addWidget(rightWidget)
+    window.show()
+    app.exec_()
+    return int(cbox.isChecked())
+
 def main():
+    if '--error-report' in sys.argv:
+        sys.exit(error_report_main())
+
     try:
         locale.setlocale(locale.LC_ALL, '')
     except locale.Error:
