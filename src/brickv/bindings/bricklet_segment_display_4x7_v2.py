@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-02-21.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -18,6 +18,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
+GetSegments = namedtuple('Segments', ['digit0', 'digit1', 'digit2', 'digit3', 'colon', 'tick'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -30,8 +31,18 @@ class BrickletSegmentDisplay4x7V2(Device):
     DEVICE_DISPLAY_NAME = 'Segment Display 4x7 Bricklet 2.0'
     DEVICE_URL_PART = 'segment_display_4x7_v2' # internal
 
+    CALLBACK_COUNTER_FINISHED = 10
 
 
+    FUNCTION_SET_SEGMENTS = 1
+    FUNCTION_GET_SEGMENTS = 2
+    FUNCTION_SET_BRIGHTNESS = 3
+    FUNCTION_GET_BRIGHTNESS = 4
+    FUNCTION_SET_NUMERIC_VALUE = 5
+    FUNCTION_SET_SELECTED_SEGMENT = 6
+    FUNCTION_GET_SELECTED_SEGMENTS = 7
+    FUNCTION_START_COUNTER = 8
+    FUNCTION_GET_COUNTER_VALUE = 9
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -70,6 +81,15 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_SET_SEGMENTS] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_GET_SEGMENTS] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_SET_BRIGHTNESS] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_GET_BRIGHTNESS] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_SET_NUMERIC_VALUE] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_SET_SELECTED_SEGMENT] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_GET_SELECTED_SEGMENTS] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_START_COUNTER] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_GET_COUNTER_VALUE] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -83,7 +103,130 @@ class BrickletSegmentDisplay4x7V2(Device):
         self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_READ_UID] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_GET_IDENTITY] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletSegmentDisplay4x7V2.CALLBACK_COUNTER_FINISHED] = ''
 
+
+    def set_segments(self, digit0, digit1, digit2, digit3, colon, tick):
+        """
+        Sets the segments of the Segment Display 4x7 Bricklet 2.0 segment-by-segment.
+
+        The data is split into the four digits, two colon dots and the tick mark.
+
+        The indices of the segments in the digit and colon parameters are as follows:
+
+        .. image:: /Images/Bricklets/bricklet_segment_display_4x7_segment_index.png
+           :scale: 100 %
+           :alt: Indices of segments
+           :align: center
+        """
+        digit0 = list(map(bool, digit0))
+        digit1 = list(map(bool, digit1))
+        digit2 = list(map(bool, digit2))
+        digit3 = list(map(bool, digit3))
+        colon = list(map(bool, colon))
+        tick = bool(tick)
+
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_SEGMENTS, (digit0, digit1, digit2, digit3, colon, tick), '8! 8! 8! 8! 2! !', '')
+
+    def get_segments(self):
+        """
+        Returns the segment data as set by :func:`Set Segments`.
+        """
+        return GetSegments(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SEGMENTS, (), '', '8! 8! 8! 8! 2! !'))
+
+    def set_brightness(self, brightness):
+        """
+        The brightness can be set between 0 (dark) and 7 (bright).
+
+        The default value is 7.
+        """
+        brightness = int(brightness)
+
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_BRIGHTNESS, (brightness,), 'B', '')
+
+    def get_brightness(self):
+        """
+        Returns the brightness as set by :func:`Set Brightness`.
+        """
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_BRIGHTNESS, (), '', 'B')
+
+    def set_numeric_value(self, value):
+        """
+        Sets a numeric value for each of the digits. The values can be between
+        -2 and 15. They represent:
+
+        * -2: minus sign
+        * -1: empty space
+        * 0-9: 0-9
+        * 10: A
+        * 11: b
+        * 12: C
+        * 13: d
+        * 14: E
+        * 15: F
+
+        Example: A call with [-2, -1, 4, 2] will result in a display of "- 42".
+        """
+        value = list(map(int, value))
+
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_NUMERIC_VALUE, (value,), '4b', '')
+
+    def set_selected_segment(self, segment, value):
+        """
+        Turns one specified segment on or off.
+
+        The indices of the segments are as follows:
+
+        .. image:: /Images/Bricklets/bricklet_segment_display_4x7_selected_segment_index.png
+           :scale: 100 %
+           :alt: Indices of selected segments
+           :align: center
+        """
+        segment = int(segment)
+        value = int(value)
+
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_SELECTED_SEGMENT, (segment, value), 'B B', '')
+
+    def get_selected_segments(self, segment):
+        """
+        Returns the value of a single segment.
+        """
+        segment = int(segment)
+
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SELECTED_SEGMENTS, (segment,), 'B', 'B')
+
+    def start_counter(self, value_from, value_to, increment, length):
+        """
+        Starts a counter with the *from* value that counts to the *to*
+        value with the each step incremented by *increment*.
+        The *length* of the increment is given in ms.
+
+        Example: If you set *from* to 0, *to* to 100, *increment* to 1 and
+        *length* to 1000, a counter that goes from 0 to 100 with one second
+        pause between each increment will be started.
+
+        The maximum values for *from*, *to* and *increment* is 9999,
+        the minimum value is -999.
+
+        Using a negative increment allows to count backwards.
+
+        You can stop the counter at every time by calling :func:`Set Segments`
+        or :func:`Set Numeric Value`.
+        """
+        value_from = int(value_from)
+        value_to = int(value_to)
+        increment = int(increment)
+        length = int(length)
+
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_START_COUNTER, (value_from, value_to, increment, length), 'h h h I', '')
+
+    def get_counter_value(self):
+        """
+        Returns the counter value that is currently shown on the display.
+
+        If there is no counter running a 0 will be returned.
+        """
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_COUNTER_VALUE, (), '', 'H')
 
     def get_spitfp_error_count(self):
         """
@@ -224,5 +367,14 @@ class BrickletSegmentDisplay4x7V2(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def register_callback(self, callback_id, function):
+        """
+        Registers the given *function* with the given *callback_id*.
+        """
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
+        else:
+            self.registered_callbacks[callback_id] = function
 
 SegmentDisplay4x7V2 = BrickletSegmentDisplay4x7V2 # for backward compatibility
