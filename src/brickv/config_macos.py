@@ -85,6 +85,12 @@ def set_host_info_strings(strings):
 
     set_plist_value('HostInfoCount', str(i))
 
+def get_use_fusion_gui_style():
+    return set_plist_value('UseFusionGUIStyle', str(DEFAULT_USE_FUSION_GUI_STYLE).lower()) == 'true'
+
+def set_use_fusion_gui_style(value):
+    set_plist_value('UseFusionGUIStyle', str(bool(value)).lower())
+
 def legacy_get_host():
     return get_plist_value('Host', DEFAULT_HOST)
 

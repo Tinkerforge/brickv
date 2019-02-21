@@ -33,7 +33,7 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem, QCursor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, \
                         QPushButton, QHBoxLayout, QVBoxLayout, \
                         QLabel, QFrame, QSpacerItem, QSizePolicy, \
-                         QToolButton, QLineEdit, QMenu, \
+                        QToolButton, QLineEdit, QMenu, \
                         QCheckBox, QComboBox
 
 from brickv.ui_mainwindow import Ui_MainWindow
@@ -170,6 +170,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.label_red_session_losts.hide()
         self.red_session_losts = 0
 
+        # fusion style
+        self.check_fusion_gui_style.setChecked(config.get_use_fusion_gui_style())
+        self.check_fusion_gui_style.stateChanged.connect(self.gui_style_changed)
+
     # override QMainWindow.closeEvent
     def closeEvent(self, event):
         if not self.exit_logger():
@@ -279,6 +283,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.host_infos[i].use_authentication = self.checkbox_authentication.isChecked()
         self.host_infos[i].secret = self.edit_secret.text()
         self.host_infos[i].remember_secret = self.checkbox_remember_secret.isChecked()
+
+    def gui_style_changed(self):
+        config.set_use_fusion_gui_style(self.check_fusion_gui_style.isChecked())
+
+        QMessageBox.information(self, 'GUI Style', 'GUI style change will be applied on next Brick Viewer start.', QMessageBox.Ok)
 
     def remove_all_device_infos(self):
         for device_info in infos.get_device_infos():

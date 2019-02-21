@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 import logging
+import sys
 
 LOGGING_LEVEL = logging.ERROR
 LOGGING_FORMAT = '%(asctime)s <%(levelname)s> <%(filename)s:%(lineno)s> %(message)s'
@@ -40,3 +41,8 @@ DEFAULT_REMEMBER_SECRET = False
 
 # host|port|use_authentication|remember_secret|secret
 DEFAULT_HOST_INFO = 'localhost|4223|0|0|'
+
+if sys.platform == 'darwin':
+    DEFAULT_USE_FUSION_GUI_STYLE = True
+else:
+    DEFAULT_USE_FUSION_GUI_STYLE = False

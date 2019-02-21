@@ -122,7 +122,9 @@ def main():
 
     argv = sys.argv
 
-    if sys.platform == 'win32':
+    if config.get_use_fusion_gui_style():
+        argv += ['-style', 'fusion']
+    elif sys.platform == 'win32':
         argv += ['-style', 'windowsxp']
 
     brick_viewer = BrickViewer(argv)

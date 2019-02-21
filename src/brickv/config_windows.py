@@ -84,6 +84,24 @@ def set_host_info_strings(strings):
 
     set_registry_value('HostInfoCount', winreg.REG_SZ, str(i))
 
+def get_use_fusion_gui_style():
+    if DEFAULT_USE_FUSION_GUI_STYLE:
+        default = 1
+    else:
+        default = 0
+
+    value = get_registry_value('UseFusionGUIStyle', default)
+
+    if value == 1:
+        return True
+    elif value == 0:
+        return False
+    else:
+        return bool(default)
+
+def set_use_fusion_gui_style(value):
+    set_registry_value('UseFusionGUIStyle', winreg.REG_DWORD, int(bool(value)))
+
 def legacy_get_host():
     return get_registry_value('Host', DEFAULT_HOST)
 
@@ -127,7 +145,7 @@ def legacy_get_use_authentication():
     elif value == 0:
         return False
     else:
-        return default
+        return bool(default)
 
 def legacy_set_use_authentication(use):
     set_registry_value('UseAuthentication', winreg.REG_DWORD, int(bool(use)))
