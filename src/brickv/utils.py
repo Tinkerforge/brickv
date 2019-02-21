@@ -94,7 +94,7 @@ def get_main_window():
 
     return None
 
-def get_modeless_dialog_flags(default=Qt.WindowFlags(1)):
+def get_modeless_dialog_flags(default=Qt.WindowFlags()):
     # FIXME: on macOS (at least since 10.10) modeless QDialogs don't work
     # properly anymore. they don't show up if the programs is run from an .app
     # container. Setting the tool window flag for such dialogs works around this
