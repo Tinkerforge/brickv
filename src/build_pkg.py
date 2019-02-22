@@ -325,8 +325,17 @@ if __name__ == '__main__':
         else:
             build_linux_pkg()
     elif sys.platform == 'win32' or sys.platform == 'darwin':
-        print('error: Please build Windows or Mac OSX binaries with pyinstaller and the spec files in the brickv folder.')
-        sys.exit(1)
+        in_virtualenv = not hasattr(sys, 'real_prefix')
+        in_pyvenv = hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix
+
+        if not in_virtualenv and not in_pyvenv:
+            print('error: Please build Windows or macOS binaries in the correct virtualenv.')
+            sys.exit(1)
+            
+        root_path = os.getcwd()
+        os.chdir(os.path.join(root_path, 'brickv'))
+        system(['pyinstaller', 'main_folder.spec'])
+        os.chdir(root_path)
     else:
         print('error: unsupported platform: ' + sys.platform)
         sys.exit(1)
