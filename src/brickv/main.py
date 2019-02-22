@@ -111,7 +111,7 @@ class BrickViewer(QApplication):
     def exception_hook(self, exctype, value, tb):
         traceback.print_exception(etype=exctype, value=value, tb=tb)
 
-        message = "Exception type: {}\nException value:{}\n{}".format(str(exctype), str(value), "".join(traceback.format_exception(etype=exctype, value=value, tb=tb)))
+        message = "".join(traceback.format_exception(etype=exctype, value=value, tb=tb))
         self.error_queue.put(message)
 
     def object_creator_slot(self, object_creator):
