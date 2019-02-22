@@ -72,6 +72,7 @@ import html
 import queue
 import threading
 import subprocess
+from copy import deepcopy
 
 logging.basicConfig(level=config.LOGGING_LEVEL,
                     format=config.LOGGING_FORMAT,
@@ -82,6 +83,7 @@ class BrickViewer(QApplication):
     infos_changed_signal = pyqtSignal(str) # uid
 
     def __init__(self, *args, **kwargs):
+        self.argv = deepcopy(args[0])
         QApplication.__init__(self, *args, **kwargs)
 
         self.error_queue = queue.Queue()
@@ -102,7 +104,7 @@ class BrickViewer(QApplication):
 
             # Either sys.executable is /path/to/python, then run calls /path/to/python /path/to/main.py --error-report,
             # or sys.executable is brickv[.exe], then the --error-report flag ensures, that the path to main.py is ignored.
-            show_again = bool(subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"], input=error, universal_newlines=True).returncode)
+            show_again = bool(subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"] + self.argv, input=error, universal_newlines=True).returncode)
             if not show_again:
                 ignored.append(hash_)
 
@@ -157,9 +159,6 @@ def error_report_main():
     return int(cbox.isChecked())
 
 def main():
-    if '--error-report' in sys.argv:
-        sys.exit(error_report_main())
-
     try:
         locale.setlocale(locale.LC_ALL, '')
     except locale.Error:
@@ -167,6 +166,9 @@ def main():
 
     if config.get_use_fusion_gui_style():
         sys.argv += ['-style', 'fusion']
+
+    if '--error-report' in sys.argv:
+        sys.exit(error_report_main())
 
     brick_viewer = BrickViewer(sys.argv)
 
