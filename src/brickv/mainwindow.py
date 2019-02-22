@@ -677,19 +677,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     continue
 
                 if info.uid != '' and info.uid == device_info.connected_uid:
-                    try:
-                        if info.connections[device_info.position] != device_info:
-                            raise
-                    except:
+                    if info.connections.get(device_info.position) != device_info:
                         info.connections[device_info.position] = device_info
                         device_info.reverse_connection = info
                         something_changed_ref[0] = True
 
                 if info.connected_uid != '' and info.connected_uid == device_info.uid:
-                    try:
-                        if device_info.connections[info.position] != info:
-                            raise
-                    except:
+                    if device_info.connections.get(info.position) != info:
                         device_info.connections[info.position] = info
                         info.reverse_connection = device_info
                         something_changed_ref[0] = True
