@@ -146,10 +146,8 @@ class REDBrick(BrickRED):
                 continue
 
             if callback_target != None and callback_function != None:
-                try:
-                    callback_function(callback_target, *args, **kwargs)
-                except:
-                    traceback.print_exc()
+                # Let any exceptions fall through, they will be cached and reported by the exception hook.
+                callback_function(callback_target, *args, **kwargs)
             else:
                 dead_callbacks.append(cookie)
 

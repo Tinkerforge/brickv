@@ -25,6 +25,8 @@ Boston, MA 02111-1307, USA.
 from brickv.plugin_system.error import Error
 from brickv.plugin_system.unknown import Unknown
 from brickv.plugin_system.plugins import device_classes
+
+import sys
 import traceback
 
 class PluginManager(object):
@@ -37,7 +39,8 @@ class PluginManager(object):
                 try:
                     return plugin(ipcon, device_info)
                 except:
-                    traceback.print_exc()
+                    # Report the exception without unwinding the call stack.
+                    sys.excepthook(*sys.exc_info())
                     return Error(ipcon, device_info)
 
         return Unknown(ipcon, device_info)

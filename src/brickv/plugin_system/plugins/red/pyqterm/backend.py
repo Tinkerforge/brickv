@@ -1132,15 +1132,10 @@ class SerialSession(QObject):
         # Stop supervisor thread
         self.read_loop_stopped = 1
 
-        try:
-            self.serial.close()
-        except:
-            traceback.print_exc()
+        # Let any exceptions fall through, they will be cached and reported by the exception hook.
+        self.serial.close()
 
-        try:
-            self.thread.join()
-        except:
-            traceback.print_exc()
+        self.thread.join()
 
     def dump(self):
         if self.term == None:
@@ -1148,8 +1143,6 @@ class SerialSession(QObject):
         return self.term.dump()
 
     def write(self, data):
-        try:
-            data = self.term.pipe(data)
-            self.serial.write(data.encode('utf-8'))
-        except:
-            traceback.print_exc()
+        # Let any exceptions fall through, they will be cached and reported by the exception hook.
+        data = self.term.pipe(data)
+        self.serial.write(data.encode('utf-8'))
