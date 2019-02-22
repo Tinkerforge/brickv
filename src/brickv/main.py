@@ -58,7 +58,7 @@ def prepare_package(package_name):
 prepare_package('brickv')
 
 from PyQt5.QtGui import QIcon, QFont
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTextEdit, QPushButton, QWidget, QLabel, QCheckBox, QHBoxLayout, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTextBrowser, QPushButton, QWidget, QLabel, QCheckBox, QHBoxLayout, QMessageBox
 from PyQt5.QtCore import QEvent, pyqtSignal, Qt
 
 from brickv import config
@@ -140,7 +140,9 @@ def error_report_main():
     rightWidget.setLayout(QVBoxLayout())
 
     rightWidget.layout().addWidget(QLabel("Please report this error to info@tinkerforge.com.\nIf you know what caused the error and can fix it, please report it anyway. This allows us to improve the error messages."))
-    rightWidget.layout().addWidget(QTextEdit(error_message))
+    tb = QTextBrowser()
+    tb.setHtml(error_message)
+    rightWidget.layout().addWidget(tb)
 
     cbox = QCheckBox("Show this message again")
     cbox.setChecked(True)
