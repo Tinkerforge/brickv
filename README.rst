@@ -32,11 +32,10 @@ Building Packages
 The Python script ``src/build_pkg.py`` can build a Debian package for
 Linux, a ``setup.exe`` for Windows or a Disk Image for macOS.
 
-To build the Windows installer or macOS Disk Image, you need a virtual
-environment (either virtualenv or pyvenv) with the following packages:
+To build the Debian package, you need to install setuptools.
 
-* pyinstaller
-* setuptools
+To build the Windows installer or macOS Disk Image, you need a virtual
+environment (either virtualenv or pyvenv) with pyinstaller.
 
 Under Windows ensure, that python3 is in the PATH, e.g. by creating
 a python3.bat file with the content::
