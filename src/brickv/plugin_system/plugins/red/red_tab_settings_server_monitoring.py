@@ -166,47 +166,49 @@ CHECK_FAILED_EMAIL_USERNAME_WHITESPACE = 19
 CHECK_FAILED_EMAIL_PASSWORD_EMPTY      = 20
 CHECK_FAILED_EMAIL_PASSWORD_NON_ASCII  = 21
 CHECK_FAILED_NON_ASCII                 = 22
+CHECK_FAILED_ILLEGAL_NAGIOS_CHARACTER  = 23
 
-MESSAGEBOX_TITLE                              = 'Settings | Server Monitoring'
-MESSAGE_INFO_SAVE_OK                          = 'Rules saved and applied successfully'
-MESSAGE_INFO_NO_RULES_TO_SAVE                 = 'No rules to save'
-MESSAGE_INFO_TEST_EMAIL_SENT                  = 'Test email sent successfully'
-MESSAGE_ERROR_SAVE_NOT_OK                     = 'Error occured while saving and applying rules'
-MESSAGE_ERROR_GET_FAILED                      = 'Error occured while trying to get existing rules'
-MESSAGE_ERROR_ENUMERATION_FAILED              = 'Error occured while enumerating host'
-MESSAGE_ERROR_CHECK_SERVICE_NAME_EMPTY        = 'Service name empty'
-MESSAGE_ERROR_CHECK_SERVICE_NAME_DUPLICATE    = 'Duplicated service name'
-MESSAGE_ERROR_CHECK_UID_EMPTY                 = 'UID empty'
-MESSAGE_ERROR_CHECK_UID_INVALID               = 'Invalid UID'
-MESSAGE_ERROR_CHECK_EMAIL_FROM_EMPTY          = 'Email from address empty'
-MESSAGE_ERROR_CHECK_EMAIL_FROM_NON_ASCII      = 'Email from address contains non ASCII character'
-MESSAGE_ERROR_CHECK_EMAIL_FROM_WHITESPACE     = 'Email from address contains whitespace'
-MESSAGE_ERROR_CHECK_EMAIL_FROM_MALFORMED      = 'Email from address is malformed'
-MESSAGE_ERROR_CHECK_EMAIL_TO_EMPTY            = 'Email to address empty'
-MESSAGE_ERROR_CHECK_EMAIL_TO_NON_ASCII        = 'Email to address contains non ASCII character'
-MESSAGE_ERROR_CHECK_EMAIL_TO_WHITESPACE       = 'Email to address contains whitespace'
-MESSAGE_ERROR_CHECK_EMAIL_TO_MALFORMED        = 'Email to address is malformed'
-MESSAGE_ERROR_CHECK_EMAIL_SERVER_EMPTY        = 'SMTP server empty'
-MESSAGE_ERROR_CHECK_EMAIL_SERVER_NON_ASCII    = 'SMTP server contains non ASCII character'
-MESSAGE_ERROR_CHECK_EMAIL_SERVER_WHITESPACE   = 'SMTP server contains whitespace'
-MESSAGE_ERROR_CHECK_EMAIL_USERNAME_EMPTY      = 'SMTP username empty'
-MESSAGE_ERROR_CHECK_EMAIL_USERNAME_NON_ASCII  = 'SMTP username contains non ASCII character'
-MESSAGE_ERROR_CHECK_EMAIL_USERNAME_WHITESPACE = 'SMTP username contains whitespace'
-MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY      = 'SMTP password empty'
-MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_NON_ASCII  = 'SMTP password contains non ASCII character'
-MESSAGE_ERROR_TEST_EMAIL_FAILED               = 'Sending test email failed'
-MESSAGE_ERROR_CHECK_NON_ASCII                 = 'Non ASCII character'
-MESSAGE_ERROR_GET_LOCALHOST                   = 'Error occured while getting hostname'
-MESSAGE_ERROR_NO_LOCALHOST                    = 'No localhost found'
-MESSAGE_ERROR_HOST_ALREADY_EXISTS             = 'The host already exists'
-MESSAGE_ERROR_ENUMERATION_ERROR               = 'Enumeration failed'
-MESSAGE_ERROR_SCRIPT_RETURN_DATA              = 'Error occured while processing data returned from script'
-MESSAGE_ERROR_HOSTNAME_EMPTY                  = 'Hostname empty'
-MESSAGE_WARNING_CHECK_UNUSED_HOST             = 'There are unused hosts which will be lost after a save. Continue?'
-MESSAGE_WARNING_REMOVE_ALL_RULES              = 'This will remove all the rules those do not depend on the default host. Continue?'
-MESSAGE_WARNING_REMOVE_ALL_HOSTS              = 'This will remove all the hosts except the default host and the rules those depend on these hosts. Continue?'
-MESSAGE_WARNING_REMOVE_DEPENDENT_RULES        = 'There are rules which depend on this host. Deleting this host will also delete all the dependant rules. Continue?'
-MESSAGE_WARNING_REMOVE_CORRESPONDING_HOST     = 'If this is the only rule that depends on the host then the corresponding host will be also removed. Continue?'
+MESSAGEBOX_TITLE                                          = 'Settings | Server Monitoring'
+MESSAGE_INFO_SAVE_OK                                      = 'Rules saved and applied successfully'
+MESSAGE_INFO_NO_RULES_TO_SAVE                             = 'No rules to save'
+MESSAGE_INFO_TEST_EMAIL_SENT                              = 'Test email sent successfully'
+MESSAGE_ERROR_SAVE_NOT_OK                                 = 'Error occured while saving and applying rules'
+MESSAGE_ERROR_GET_FAILED                                  = 'Error occured while trying to get existing rules'
+MESSAGE_ERROR_ENUMERATION_FAILED                          = 'Error occured while enumerating host'
+MESSAGE_ERROR_CHECK_SERVICE_NAME_EMPTY                    = 'Service name empty'
+MESSAGE_ERROR_CHECK_SERVICE_NAME_DUPLICATE                = 'Duplicated service name'
+MESSAGE_ERROR_CHECK_SERVICE_NAME_ILLEGAL_NAGIOS_CHARACTER = 'Service name contains illegal Nagios character'
+MESSAGE_ERROR_CHECK_UID_EMPTY                             = 'UID empty'
+MESSAGE_ERROR_CHECK_UID_INVALID                           = 'Invalid UID'
+MESSAGE_ERROR_CHECK_EMAIL_FROM_EMPTY                      = 'Email from address empty'
+MESSAGE_ERROR_CHECK_EMAIL_FROM_NON_ASCII                  = 'Email from address contains non ASCII character'
+MESSAGE_ERROR_CHECK_EMAIL_FROM_WHITESPACE                 = 'Email from address contains whitespace'
+MESSAGE_ERROR_CHECK_EMAIL_FROM_MALFORMED                  = 'Email from address is malformed'
+MESSAGE_ERROR_CHECK_EMAIL_TO_EMPTY                        = 'Email to address empty'
+MESSAGE_ERROR_CHECK_EMAIL_TO_NON_ASCII                    = 'Email to address contains non ASCII character'
+MESSAGE_ERROR_CHECK_EMAIL_TO_WHITESPACE                   = 'Email to address contains whitespace'
+MESSAGE_ERROR_CHECK_EMAIL_TO_MALFORMED                    = 'Email to address is malformed'
+MESSAGE_ERROR_CHECK_EMAIL_SERVER_EMPTY                    = 'SMTP server empty'
+MESSAGE_ERROR_CHECK_EMAIL_SERVER_NON_ASCII                = 'SMTP server contains non ASCII character'
+MESSAGE_ERROR_CHECK_EMAIL_SERVER_WHITESPACE               = 'SMTP server contains whitespace'
+MESSAGE_ERROR_CHECK_EMAIL_USERNAME_EMPTY                  = 'SMTP username empty'
+MESSAGE_ERROR_CHECK_EMAIL_USERNAME_NON_ASCII              = 'SMTP username contains non ASCII character'
+MESSAGE_ERROR_CHECK_EMAIL_USERNAME_WHITESPACE             = 'SMTP username contains whitespace'
+MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY                  = 'SMTP password empty'
+MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_NON_ASCII              = 'SMTP password contains non ASCII character'
+MESSAGE_ERROR_TEST_EMAIL_FAILED                           = 'Sending test email failed'
+MESSAGE_ERROR_CHECK_NON_ASCII                             = 'Non ASCII character'
+MESSAGE_ERROR_GET_LOCALHOST                               = 'Error occured while getting hostname'
+MESSAGE_ERROR_NO_LOCALHOST                                = 'No localhost found'
+MESSAGE_ERROR_HOST_ALREADY_EXISTS                         = 'The host already exists'
+MESSAGE_ERROR_ENUMERATION_ERROR                           = 'Enumeration failed'
+MESSAGE_ERROR_SCRIPT_RETURN_DATA                          = 'Error occured while processing data returned from script'
+MESSAGE_ERROR_HOSTNAME_EMPTY                              = 'Hostname empty'
+MESSAGE_WARNING_CHECK_UNUSED_HOST                         = 'There are unused hosts which will be lost after a save. Continue?'
+MESSAGE_WARNING_REMOVE_ALL_RULES                          = 'This will remove all the rules those do not depend on the default host. Continue?'
+MESSAGE_WARNING_REMOVE_ALL_HOSTS                          = 'This will remove all the hosts except the default host and the rules those depend on these hosts. Continue?'
+MESSAGE_WARNING_REMOVE_DEPENDENT_RULES                    = 'There are rules which depend on this host. Deleting this host will also delete all the dependant rules. Continue?'
+MESSAGE_WARNING_REMOVE_CORRESPONDING_HOST                 = 'If this is the only rule that depends on the host then the corresponding host will be also removed. Continue?'
 
 NEW_RULE                 = True
 NOT_NEW_RULE             = False
@@ -1068,9 +1070,14 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     item = self.model_rules.item(r, c)
                     index = self.model_rules.indexFromItem(item)
                     ledit_name_text = self.tview_sm_rules.indexWidget(index).text()
+                    # Defined in nagios.cfg as list of illegal characters
+                    illegal_object_name_chars = \
+                        ['`', '~', '!', '$', '%', '^', '&', '*', '|', '\'', '"', '<', '>', '?', ',', '(', ')', '=']
 
                     if EMPTY_SERVICE_NAME in ledit_name_text or not ledit_name_text:
                         return r, c, CHECK_FAILED_SERVICE_NAME_EMPTY
+                    elif any(ic in ledit_name_text for ic in illegal_object_name_chars):
+                        return r, c,  CHECK_FAILED_ILLEGAL_NAGIOS_CHARACTER
                     elif ledit_name_text in list_service_names:
                         return r, c,  CHECK_FAILED_SERVICE_NAME_DUPLICATE
                     elif not self.is_ascii(ledit_name_text):
@@ -1856,6 +1863,13 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            rule + MESSAGE_ERROR_CHECK_SERVICE_NAME_EMPTY)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
+                return
+
+            elif check_result == CHECK_FAILED_ILLEGAL_NAGIOS_CHARACTER:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           rule + MESSAGE_ERROR_CHECK_SERVICE_NAME_ILLEGAL_NAGIOS_CHARACTER)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
