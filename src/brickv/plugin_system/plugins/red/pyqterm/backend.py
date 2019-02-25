@@ -9,6 +9,7 @@
 import array
 import threading
 import serial
+import sys
 import traceback
 
 from PyQt5.QtCore import pyqtSignal, QObject
@@ -1132,8 +1133,11 @@ class SerialSession(QObject):
         # Stop supervisor thread
         self.read_loop_stopped = 1
 
-        # Let any exceptions fall through, they will be cached and reported by the exception hook.
-        self.serial.close()
+        try:
+            self.serial.close()
+        except:
+            # Report the exception without unwinding the call stack.
+            sys.excepthook(*sys.exc_info())
 
         self.thread.join()
 
@@ -1143,6 +1147,9 @@ class SerialSession(QObject):
         return self.term.dump()
 
     def write(self, data):
-        # Let any exceptions fall through, they will be cached and reported by the exception hook.
-        data = self.term.pipe(data)
-        self.serial.write(data.encode('utf-8'))
+        try:
+            data = self.term.pipe(data)
+            self.serial.write(data.encode('utf-8'))
+        except:
+            # Report the exception without unwinding the call stack.
+            sys.excepthook(*sys.exc_info())

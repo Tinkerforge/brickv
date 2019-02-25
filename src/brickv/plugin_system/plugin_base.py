@@ -90,22 +90,28 @@ class PluginBase(QWidget, object):
                 self.plugin_state = PluginBase.PLUGIN_STATE_PAUSED
             else:
                 # otherwise start now
-                # Let any exceptions fall through, they will be cached and reported by the exception hook.
-                if hasattr(self, 'start_comcu'):
-                    self.start_comcu()
-                else:
-                    self.start()
+                try:
+                    if hasattr(self, 'start_comcu'):
+                        self.start_comcu()
+                    else:
+                        self.start()
+                except:
+                    # Report the exception without unwinding the call stack.
+                    sys.excepthook(*sys.exc_info())
 
                 self.plugin_state = PluginBase.PLUGIN_STATE_RUNNING
 
     def stop_plugin(self):
         # only stop the plugin, if it's running
         if self.plugin_state == PluginBase.PLUGIN_STATE_RUNNING:
-            # Let any exceptions fall through, they will be cached and reported by the exception hook.
-            if hasattr(self, 'stop_comcu'):
-                self.stop_comcu()
-            else:
-                self.stop()
+            try:
+                if hasattr(self, 'stop_comcu'):
+                    self.stop_comcu()
+                else:
+                    self.stop()
+            except:
+                # Report the exception without unwinding the call stack.
+                sys.excepthook(*sys.exc_info())
 
         # set the state to stopped even it the plugin was not actually
         # running. this stops a paused plugin from being restarted after
@@ -114,21 +120,32 @@ class PluginBase(QWidget, object):
 
     def pause_plugin(self):
         if self.plugin_state == PluginBase.PLUGIN_STATE_RUNNING:
-            self.stop() # Let any exceptions fall through, they will be cached and reported by the exception hook.
+            try:
+                self.stop()
+            except:
+                # Report the exception without unwinding the call stack.
+                sys.excepthook(*sys.exc_info())
 
             self.plugin_state = PluginBase.PLUGIN_STATE_PAUSED
 
     def resume_plugin(self):
         if self.plugin_state == PluginBase.PLUGIN_STATE_PAUSED:
-            self.start() # Let any exceptions fall through, they will be cached and reported by the exception hook.
+            try:
+                self.start()
+            except:
+                # Report the exception without unwinding the call stack.
+                sys.excepthook(*sys.exc_info())
 
             self.plugin_state = PluginBase.PLUGIN_STATE_RUNNING
 
     def destroy_plugin(self):
         # destroy plugin first, then cleanup the UI stuff
-        
-        # Let any exceptions fall through, they will be cached and reported by the exception hook.
-        self.destroy()
+
+        try:
+            self.destroy()
+        except:
+            # Report the exception without unwinding the call stack.
+            sys.excepthook(*sys.exc_info())
 
         # before destroying the widgets ensure that all callbacks are
         # unregistered. callbacks a typically bound to Qt slots. the plugin

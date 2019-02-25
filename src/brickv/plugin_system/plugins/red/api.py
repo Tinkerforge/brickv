@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 from collections import namedtuple
 import functools
 import weakref
+import sys
 import threading
 import time
 import traceback
@@ -146,8 +147,11 @@ class REDBrick(BrickRED):
                 continue
 
             if callback_target != None and callback_function != None:
-                # Let any exceptions fall through, they will be cached and reported by the exception hook.
-                callback_function(callback_target, *args, **kwargs)
+                try:
+                    callback_function(callback_target, *args, **kwargs)
+                except:
+                    # Report the exception without unwinding the call stack.
+                    sys.excepthook(*sys.exc_info())
             else:
                 dead_callbacks.append(cookie)
 
