@@ -586,9 +586,8 @@ elif command == 'APPLY':
 
         if apply_dict['servermonitoring']:
             if not apply_dict['webserver']:
-                if is_enabled_web_server != None and not is_enabled_web_server:
-                    if os.system('/bin/systemctl enable apache2') != 0:
-                        exit(16)
+                if os.system('/bin/systemctl enable apache2') != 0:
+                    exit(16)
 
             with open('/etc/tf_server_monitoring_enabled', 'w') as fd_server_monitoring_enabled:
                 pass
