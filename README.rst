@@ -22,8 +22,8 @@ On Debian based Linux distributions try::
  sudo apt-get install python3 python3-pyqt5 python3-pyqt5.qtopengl python3-serial
 
 First you have to build the Qt .ui files (you'll need ``pyuic5`` for that), you
-can do this with ``python build_src.py`` in ``src/``. After that you should
-be able to start brickv from source with ``python main.py`` in the
+can do this with ``python3 build_src.py`` in ``src/``. After that you should
+be able to start brickv from source with ``python3 main.py`` in the
 ``src/brickv/`` directory.
 
 Building Packages
@@ -49,4 +49,4 @@ Remember to activate the virtual environment.
 
 To build the package, installer or disk image, run::
 
- python build_pkg.py
+ python3 build_pkg.py
