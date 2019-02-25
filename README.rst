@@ -43,7 +43,8 @@ a python3.bat file with the content::
     @echo off
     python.exe %*
 
-To build an installer, NSIS is required.
+To build an installer, NSIS and the Universal CRT (available as a part of the
+Windows 10 SDK) is required.
 
 Remember to activate the virtual environment.
 

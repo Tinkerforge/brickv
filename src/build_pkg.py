@@ -26,7 +26,7 @@ Boston, MA 02111-1307, USA.
 
 # Windows:
 #   dependencies:
-#       pythonxy (3.2)
+#       python
 #       pyinstaller
 #       PyQt5
 #       pyserial
