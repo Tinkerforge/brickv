@@ -255,11 +255,11 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
 
                 try:
                     if bricklet == BRICKLET_PTC_2_WIRE:
-                        bricklet_ptc.set_wire_mode(WIRE_MODE_2)
+                        bricklet_ptc.set_wire_mode(bricklet_ptc.WIRE_MODE_2)
                     elif bricklet == BRICKLET_PTC_3_WIRE:
-                        bricklet_ptc.set_wire_mode(WIRE_MODE_3)
+                        bricklet_ptc.set_wire_mode(bricklet_ptc.WIRE_MODE_3)
                     elif bricklet == BRICKLET_PTC_4_WIRE:
-                        bricklet_ptc.set_wire_mode(WIRE_MODE_4)
+                        bricklet_ptc.set_wire_mode(bricklet_ptc.WIRE_MODE_4)
                 except:
                     bricklet_ptc = None
                     handle_result(MESSAGE_CRITICAL_ERROR_SETTING_PTC_MODE,
@@ -1026,7 +1026,16 @@ if ACTION == 'GET':
     try:
         dict_return = {}
         list_rules  = []
-        dict_email  = {}
+        dict_email = \
+            {
+                'from'    : '',
+                'to'      : '',
+                'server'  : '',
+                'port'    : '25',
+                'username': '',
+                'password': '',
+                'tls'     : ''
+            }
 
         dict_return['rules'] = None
         dict_return['email'] = None
