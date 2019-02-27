@@ -31,10 +31,10 @@ import functools
 from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QEvent, QSortFilterProxyModel
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QCursor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, \
-                        QPushButton, QHBoxLayout, QVBoxLayout, \
-                        QLabel, QFrame, QSpacerItem, QSizePolicy, \
-                        QToolButton, QLineEdit, QMenu, \
-                        QCheckBox, QComboBox
+                            QPushButton, QHBoxLayout, QVBoxLayout, \
+                            QLabel, QFrame, QSpacerItem, QSizePolicy, \
+                            QToolButton, QLineEdit, QMenu, \
+                            QCheckBox, QComboBox
 
 from brickv.ui_mainwindow import Ui_MainWindow
 from brickv.plugin_system.plugin_manager import PluginManager
