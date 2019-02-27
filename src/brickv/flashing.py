@@ -23,16 +23,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from io import BytesIO as FileLike
-
-import zipfile
+import sys
 import os
+import zipfile
 import urllib.request
 import urllib.error
 import time
 import struct
 import traceback
-from serial import SerialException
+from io import BytesIO as FileLike
 
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QColor, QStandardItemModel, QStandardItem, QBrush
@@ -43,7 +42,7 @@ from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.ip_connection import IPConnection, Error, base58encode, \
                                           base58decode, BASE58, uid64_to_uid32
 from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
-from brickv.samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_ports
+from brickv.samba import SAMBA, SAMBAException, SAMBANoBrickError, SAMBARebootError, get_serial_ports
 from brickv.infos import get_version_string
 from brickv.utils import get_home_path, get_open_file_name, \
                          get_modeless_dialog_flags
@@ -555,17 +554,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         try:
             samba = SAMBA(port_name)
-        except SAMBAException as e:
+        except SAMBANoBrickError as e:
             self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not connect to Brick: {0}'.format(str(e)))
             return
-        except SerialException as e:
-            self.refresh_serial_ports()
-            self.popup_fail('Brick', str(e)[0].upper() + str(e)[1:])
-            return
         except:
+            exc_info = sys.exc_info()
             self.refresh_serial_ports()
-            self.popup_fail('Brick', 'Could not connect to Brick')
+            # Report the exception without unwinding the call stack
+            sys.excepthook(*exc_info)
             return
 
         progress = ProgressWrapper(self.create_progress_bar('Flashing'))
@@ -648,13 +645,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             try:
                 imu_uid = base58encode(uid64_to_uid32(samba.read_uid64()))
-            except SerialException as e:
+            except SAMBAException as e:
                 progress.cancel()
                 self.popup_fail('Brick', 'Could read UID of IMU Brick: {0}'.format(str(e)))
                 return
             except:
+                exc_info = sys.exc_info()
                 progress.cancel()
-                self.popup_fail('Brick', 'Could read UID of IMU Brick')
+                # Report the exception without unwinding the call stack
+                sys.excepthook(*exc_info)
                 return
 
             result = QMessageBox.question(self, 'IMU Brick',
@@ -760,16 +759,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.cancel()
             self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not flash Brick: {0}'.format(str(e)))
-        except SerialException as e:
-            samba = None
-            progress.cancel()
-            self.refresh_serial_ports()
-            self.popup_fail('Brick', 'Could not flash Brick: {0}'.format(str(e)))
         except:
+            exc_info = sys.exc_info()
             samba = None
             progress.cancel()
             self.refresh_serial_ports()
-            self.popup_fail('Brick', 'Could not flash Brick')
+            # Report the exception without unwinding the call stack
+            sys.excepthook(*exc_info)
 
     def read_current_uid(self):
         if self.current_bricklet_has_comcu():

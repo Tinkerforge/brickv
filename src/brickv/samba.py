@@ -162,6 +162,15 @@ RSTC_MR_ERSTL_OFFSET = 8
 # http://sourceforge.net/p/b-o-s-s-a/code/ci/master/tree/
 
 class SAMBAException(Exception):
+    def __str__(self):
+        message = super().__str__()
+
+        if self.__cause__ != None:
+            return '{0} (cause: {1})'.format(message, self.__cause__)
+
+        return message
+
+class SAMBANoBrickError(SAMBAException):
     pass
 
 class SAMBARebootError(SAMBAException):
@@ -188,8 +197,8 @@ class SAMBA(object):
         try:
             self.change_mode('T')
             self.change_mode('N')
-        except:
-            raise SAMBAException('No Brick in Bootloader found')
+        except Exception as e:
+            raise SAMBANoBrickError('No Brick in Bootloader found') from e
 
         chipid_cidr = self.read_uint32(CHIPID_CIDR)
         chipid_exid = self.read_uint32(CHIPID_EXID)
@@ -258,15 +267,15 @@ class SAMBA(object):
 
         try:
             self.port.write((mode + '#').encode('ascii'))
-        except:
-            raise SAMBAException('Write error during mode change')
+        except Exception as e:
+            raise SAMBAException('Write error during mode change') from e
 
         if mode == 'T':
             while True:
                 try:
                     response = self.port.read(1)
-                except:
-                    raise SAMBAException('Read error during mode change')
+                except Exception as e:
+                    raise SAMBAException('Read error during mode change') from e
 
                 if len(response) == 0:
                     raise SAMBAException('Read timeout during mode change')
@@ -276,8 +285,8 @@ class SAMBA(object):
         else:
             try:
                 response = self.port.read(2)
-            except:
-                raise SAMBAException('Read error during mode change')
+            except Exception as e:
+                raise SAMBAException('Read error during mode change') from e
 
             if len(response) == 0:
                 raise SAMBAException('Read timeout during mode change')
@@ -508,13 +517,13 @@ class SAMBA(object):
 
         try:
             self.port.write(('w%X,4#' % address).encode('ascii'))
-        except:
-            raise SAMBAException('Write error while reading from address 0x%08X' % address)
+        except Exception as e:
+            raise SAMBAException('Write error while reading from address 0x%08X' % address) from e
 
         try:
             response = self.port.read(4)
-        except:
-            raise SAMBAException('Read error while reading from address 0x%08X' % address)
+        except Exception as e:
+            raise SAMBAException('Read error while reading from address 0x%08X' % address) from e
 
         if len(response) == 0:
             raise SAMBAException('Timeout while reading from address 0x%08X' % address)
@@ -535,8 +544,8 @@ class SAMBA(object):
 
         try:
             self.port.write(('W%X,%X#' % (address, value)).encode('ascii'))
-        except:
-            raise SAMBAException('Write error while writing to address 0x%08X' % address)
+        except Exception as e:
+            raise SAMBAException('Write error while writing to address 0x%08X' % address) from e
 
     def read_bytes(self, address, length):
         # according to the BOSSA flash program, SAM-BA can have a bug regarding
@@ -553,13 +562,13 @@ class SAMBA(object):
 
         try:
             self.port.write(('R%X,%X#' % (address, length)).encode('ascii'))
-        except:
-            raise SAMBAException('Write error while reading from address 0x%08X' % address)
+        except Exception as e:
+            raise SAMBAException('Write error while reading from address 0x%08X' % address) from e
 
         try:
             response = self.port.read(length + 3)
-        except:
-            raise SAMBAException('Read error while reading from address 0x%08X' % address)
+        except Exception as e:
+            raise SAMBAException('Read error while reading from address 0x%08X' % address) from e
 
         if len(response) == 0:
             raise SAMBAException('Timeout while reading from address 0x%08X' % address)
@@ -584,13 +593,13 @@ class SAMBA(object):
             self.port.write(('S%X,%X#' % (address, len(bytes_))).encode('ascii'))
             self.port.flush()
             self.port.write(bytes_)
-        except:
-            raise SAMBAException('Write error while writing to address 0x%08X' % address)
+        except Exception as e:
+            raise SAMBAException('Write error while writing to address 0x%08X' % address) from e
 
         try:
             response = self.port.read(3)
-        except:
-            raise SAMBAException('Read error while writing to address 0x%08X' % address)
+        except Exception as e:
+            raise SAMBAException('Read error while writing to address 0x%08X' % address) from e
 
         if len(response) == 0:
             raise SAMBAException('Timeout while writing to address 0x%08X' % address)
@@ -604,8 +613,8 @@ class SAMBA(object):
         try:
             self.write_uint32(RSTC_MR, (RSTC_MR_KEY << RSTC_MR_KEY_OFFSET) | (10 << RSTC_MR_ERSTL_OFFSET) | RSTC_MR_URSTEN)
             self.write_uint32(RSTC_CR, (RSTC_CR_KEY << RSTC_CR_KEY_OFFSET) | RSTC_CR_EXTRST | RSTC_CR_PERRST | RSTC_CR_PROCRST)
-        except:
-            raise SAMBAException('Write error while triggering reset')
+        except Exception as e:
+            raise SAMBAException('Write error while triggering reset') from e
 
     def go(self, address):
         self.change_mode('N')
@@ -616,8 +625,8 @@ class SAMBA(object):
             # command. to work around this, flush the serial port afterwards
             self.port.write(('G%X#' % address).encode('ascii'))
             self.port.flush()
-        except:
-            raise SAMBAException('Write error while executing code at address 0x%08X' % address)
+        except Exception as e:
+            raise SAMBAException('Write error while executing code at address 0x%08X' % address) from e
 
     def wait_for_flash_ready(self, message, timeout=2000, ready=True, update_progress=False, return_on_flerr=False):
         for i in range(timeout):
