@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+
+find /usr/share/brickv -name "*.pyc" | xargs rm
