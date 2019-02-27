@@ -57,12 +57,13 @@ def prepare_package(package_name):
 
 prepare_package('brickv')
 
-from PyQt5.QtGui import QIcon, QFont
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTextBrowser, QPushButton, QWidget, QLabel, QCheckBox, QHBoxLayout, QMessageBox
 from PyQt5.QtCore import QEvent, pyqtSignal, Qt
+from PyQt5.QtGui import QIcon, QFont
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTextBrowser, \
+                            QPushButton, QWidget, QLabel, QCheckBox, QHBoxLayout, \
+                            QMessageBox, QSplashScreen
 
 from brickv import config
-from brickv.mainwindow import MainWindow
 from brickv.async_call import ASYNC_EVENT, async_event_handler
 from brickv.load_pixmap import load_pixmap
 
@@ -176,14 +177,20 @@ def main():
         sys.exit(error_report_main())
 
     brick_viewer = BrickViewer(sys.argv)
+    splash = QSplashScreen(load_pixmap('splash.png'), Qt.WindowStaysOnTopHint)
+    splash.show()
+    splash.showMessage('Starting Brick Viewer ' + config.BRICKV_VERSION, Qt.AlignHCenter | Qt.AlignBottom, Qt.white)
+    brick_viewer.processEvents()
 
     # Catch all uncaught exceptions and show an error message for them.
     # PyQt5 does not silence exceptions in slots (as did PyQt4), so there
     # can be slots which try to (for example) send requests but don't wrap
     # them in an async call with error handling.
     sys.excepthook = brick_viewer.exception_hook
+    from brickv.mainwindow import MainWindow
     main_window = MainWindow()
     main_window.show()
+    splash.finish(main_window)
     sys.exit(brick_viewer.exec_())
 
 if __name__ == "__main__":
