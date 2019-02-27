@@ -1866,9 +1866,9 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                 return
 
             elif check_result == CHECK_FAILED_ILLEGAL_NAGIOS_CHARACTER:
-                QtGui.QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           rule + MESSAGE_ERROR_CHECK_SERVICE_NAME_ILLEGAL_NAGIOS_CHARACTER)
+                QMessageBox.critical(get_main_window(),
+                                     MESSAGEBOX_TITLE,
+                                     rule + MESSAGE_ERROR_CHECK_SERVICE_NAME_ILLEGAL_NAGIOS_CHARACTER)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
