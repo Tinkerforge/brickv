@@ -90,7 +90,7 @@ class DeviceInfo(AbstractInfo):
     enumeration_type = -1
     reverse_connection = None
 
-    def __init__(self, connections = None):
+    def __init__(self, connections=None):
         self.connections = connections or dict()
         self.bricklet_ports = tuple()
 

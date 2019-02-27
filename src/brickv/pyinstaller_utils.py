@@ -80,7 +80,7 @@ def get_unreleased_bindings():
                     if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
                         module_name = get_path_rel_to_root(full_name, os.path.dirname(root_path)).replace("\\", "/").replace("/", ".").replace(".py", "")
                         to_exclude.append(module_name)
-                        to_exclude.append(module_name.replace("bricklet_", "").replace("brick_","").replace(".bindings", ".plugin_system.plugins"))
+                        to_exclude.append(module_name.replace("bricklet_", "").replace("brick_", "").replace(".bindings", ".plugin_system.plugins"))
                         counter += 1
     print("Excluded {} unreleased devices.".format(counter))
     return to_exclude
@@ -204,11 +204,11 @@ else:
     pathex = [root_path]
 
 if windows:
-	icon = os.path.join(windows_build_data_path, 'brickv-icon.ico')
+    icon = os.path.join(windows_build_data_path, 'brickv-icon.ico')
 elif linux:
-	icon = 'brickv-icon.png'
+    icon = 'brickv-icon.png'
 else:
-	icon = os.path.join(mac_build_data_path, 'brickv-icon.icns')
+    icon = os.path.join(mac_build_data_path, 'brickv-icon.icns')
 
 def post_generate():
     print('calling build_plugin_list.py to undo previous release run')
