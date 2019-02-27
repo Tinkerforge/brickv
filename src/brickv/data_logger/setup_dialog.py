@@ -402,7 +402,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         """
             Resets the Warning @ the debug tab.
         """
-        if not self.tab_debug_warning or self.tab_widget.currentWidget().objectName() != self.tab_debug.objectName():
+        if not self.tab_debug_warning or self.tab_widget.currentIndex() != self.tab_widget.indexOf(self.tab_debug):
             return
 
         self.tab_debug_warning = False
@@ -591,7 +591,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             SIGNAL function:
             Highlight the debug tab when an error occurs.
         """
-        if not self.tab_debug_warning and self.tab_widget.currentWidget().objectName() != self.tab_debug.objectName():
+        if not self.tab_debug_warning and self.tab_widget.currentIndex() != self.tab_widget.indexOf(self.tab_debug):
             self.tab_debug_warning = True
             self.tab_set(self.tab_widget.indexOf(self.tab_debug), QColor(255, 0, 0),
                          os.path.join(get_resources_path(), "warning-icon.png"))
