@@ -36,7 +36,9 @@ def get_plist_value(name, default):
 
     try:
         subprocess.call(['plutil', '-convert', 'xml1', CONFIG_FILENAME])
-        return plistlib.readPlist(CONFIG_FILENAME)[name]
+
+        with open(CONFIG_FILENAME, 'rb') as f:
+            return plistlib.load(f)[name]
     except:
         return default
 
@@ -46,7 +48,9 @@ def set_plist_value(name, value):
     if os.path.exists(CONFIG_FILENAME):
         try:
             subprocess.call(['plutil', '-convert', 'xml1', CONFIG_FILENAME])
-            root = plistlib.readPlist(CONFIG_FILENAME)
+
+            with open(CONFIG_FILENAME, 'rb') as f:
+                root = plistlib.load(f)
         except:
             pass
 
@@ -55,7 +59,8 @@ def set_plist_value(name, value):
     if not os.path.exists(CONFIG_DIRNAME):
         os.makedirs(CONFIG_DIRNAME)
 
-    plistlib.writePlist(root, CONFIG_FILENAME)
+    with open(CONFIG_FILENAME, 'wb') as f:
+        plistlib.dump(root, f)
 
 def get_host_info_strings(max_count):
     strings = []
