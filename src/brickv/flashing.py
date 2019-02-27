@@ -666,7 +666,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 progress.reset('Downloading factory calibration for IMU Brick', 0)
 
                 try:
-                    imu_calibration_text = ''
+                    imu_calibration_text = b''
                     response = urllib.request.urlopen(IMU_CALIBRATION_URL + '{0}.txt'.format(imu_uid), timeout=10)
                     chunk = response.read(1024)
 
@@ -681,11 +681,18 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         self.popup_ok('IMU Brick', 'No factory calibration for IMU Brick [{0}] available'.format(imu_uid))
                     else:
                         progress.cancel()
-                        self.popup_fail('IMU Brick', 'Could not download factory calibration for IMU Brick [{0}]'.format(imu_uid))
+                        self.popup_fail('IMU Brick', 'Could not download factory calibration for IMU Brick [{0}]: {1}'.format(imu_uid, e))
                         return
-                except urllib.error.URLError:
+                except urllib.error.URLError as e:
                     progress.cancel()
-                    self.popup_fail('IMU Brick', 'Could not download factory calibration for IMU Brick [{0}]'.format(imu_uid))
+                    self.popup_fail('IMU Brick', 'Could not download factory calibration for IMU Brick [{0}]: {1}'.format(imu_uid, e))
+                    return
+
+                try:
+                    imu_calibration_text = imu_calibration_text.decode('utf-8')
+                except Exception as e:
+                    progress.cancel()
+                    self.popup_fail('IMU Brick', 'Could not decode factory calibration for IMU Brick [{0}]: {1}'.format(imu_uid, e))
                     return
 
                 if imu_calibration_text is not None:
@@ -709,9 +716,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
                                                 imu_calibration_matrix[5][1][:8]
 
                         imu_calibration = struct.pack('<32h', *imu_calibration_array)
-                    except:
+                    except Exception as e:
                         progress.cancel()
-                        self.popup_fail('IMU Brick', 'Could not parse factory calibration for IMU Brick [{0}]'.format(imu_uid))
+                        self.popup_fail('IMU Brick', 'Could not parse factory calibration for IMU Brick [{0}]: {1}'.format(imu_uid, e))
                         return
 
         # Flash firmware

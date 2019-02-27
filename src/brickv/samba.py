@@ -341,7 +341,7 @@ class SAMBA(object):
             ic_relative_address = self.flash_size - 0x1000 * 2 - 12 - 0x400
             ic_prefix_length = ic_relative_address % self.flash_page_size
             ic_prefix_address = self.flash_base + ic_relative_address - ic_prefix_length
-            ic_prefix = ''
+            ic_prefix = b''
             offset = 0
 
             while len(ic_prefix) < ic_prefix_length:

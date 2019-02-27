@@ -74,7 +74,7 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
         progress.show()
 
         try:
-            imu_calibration_text = '# This is the factory calibration\n\n'
+            imu_calibration_text = b'# This is the factory calibration\n\n'
             response = urllib.request.urlopen(IMU_CALIBRATION_URL + '{0}.txt'.format(uid))
             chunk = response.read(1024)
 
@@ -95,6 +95,12 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
         except urllib.error.URLError:
             progress.cancel()
             self.popup_fail('Factory Calibration', 'Could not download factory calibration')
+            return
+
+        try:
+            imu_calibration_text = imu_calibration_text.decode('utf-8')
+        except Exception as e:
+            self.popup_fail('Factory Calibration', 'Factory calibration is malformed, please report to info@tinkerforge.com: {0}'.format(e))
             return
 
         progress.cancel()
