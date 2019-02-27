@@ -151,10 +151,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.combo_host.addItem(host_info.host)
 
         self.last_host = None
+        self.combo_host.installEventFilter(self)
         self.combo_host.currentIndexChanged.connect(self.host_index_changed)
 
         self.spinbox_port.setValue(self.host_infos[0].port)
         self.spinbox_port.valueChanged.connect(self.port_changed)
+        self.spinbox_port.installEventFilter(self)
 
         self.checkbox_authentication.stateChanged.connect(self.authentication_state_changed)
 
@@ -162,6 +164,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.edit_secret.hide()
         self.edit_secret.setEchoMode(QLineEdit.Password)
         self.edit_secret.textEdited.connect(self.secret_changed)
+        self.edit_secret.installEventFilter(self)
 
         self.checkbox_secret_show.hide()
         self.checkbox_secret_show.stateChanged.connect(self.secret_show_state_changed)
@@ -617,9 +620,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         tab._info.plugin.start_plugin()
         self.tab_widget.setCurrentIndex(0)
 
+    def connect_on_return(self, event):
+        if event.type() == QEvent.KeyPress and event.key() == Qt.Key_Return:
+            self.connect_clicked()
+            return True
+        return False
+
     def eventFilter(self, source, event):
         if source is self.tab_widget.tabBar():
             return self.tab_move(event)
+
+        if source is self.combo_host or source is self.spinbox_port or source is self.edit_secret:
+            return self.connect_on_return(event)
 
         return False
 
