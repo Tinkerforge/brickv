@@ -491,7 +491,8 @@ class Wifi(QWidget, Ui_Wifi):
         cert_path = url_edit.text()
         try:
             if os.path.isfile(cert_path):
-                certificate_file = file(cert_path, 'rb').read()
+                with open(cert_path, 'rb') as f:
+                    certificate_file = f.read()
                 certificate_length = len(certificate_file)
                 if certificate_length > 6*1024:
                     QMessageBox.critical(get_main_window(), "Save", "Certificate too big (max size: 6kB).", QMessageBox.Ok)
