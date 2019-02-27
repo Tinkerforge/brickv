@@ -594,7 +594,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         if not self.tab_debug_warning and self.tab_widget.currentIndex() != self.tab_widget.indexOf(self.tab_debug):
             self.tab_debug_warning = True
             self.tab_set(self.tab_widget.indexOf(self.tab_debug), QColor(255, 0, 0),
-                         os.path.join(get_resources_path(), "warning-icon.png"))
+                         get_resources_path("warning-icon.png"))
 
     def table_add_row(self, csv_data):
         """
