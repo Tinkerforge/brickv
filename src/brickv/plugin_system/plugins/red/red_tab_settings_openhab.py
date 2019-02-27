@@ -238,7 +238,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
                 if result.error != None:
                     if result.error.error_code != REDError.E_OPERATION_ABORTED and \
                        result.error.error_code != REDError.E_DOES_NOT_EXIST:
-                        self.log_error('Error while reading {0}: {1}'.format(config.display_name, error))
+                        self.log_error('Error while reading {0}: {1}'.format(config.display_name, result.error))
                     else:
                         config.set_content('')
                 else:
