@@ -42,7 +42,4 @@ DEFAULT_REMEMBER_SECRET = False
 # host|port|use_authentication|remember_secret|secret
 DEFAULT_HOST_INFO = 'localhost|4223|0|0|'
 
-if sys.platform == 'darwin':
-    DEFAULT_USE_FUSION_GUI_STYLE = True
-else:
-    DEFAULT_USE_FUSION_GUI_STYLE = False
+DEFAULT_USE_FUSION_GUI_STYLE = sys.platform == 'darwin'

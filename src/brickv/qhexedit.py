@@ -27,11 +27,11 @@
 # * Remove QBuffer and QIODevice and replace it by str
 # * Remove Font picker
 
+import string
+
 from PyQt5.Qt import Qt
 from PyQt5.QtGui import QFontMetrics, QClipboard, QPen, QPainter
 from PyQt5.QtWidgets import QMenu, QApplication, QAbstractScrollArea, QAction
-
-import string
 
 #where is QtGlobal ?
 def qBound(mini, value, maxi):

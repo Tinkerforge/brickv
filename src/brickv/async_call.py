@@ -26,13 +26,12 @@ from threading import Lock
 from collections import namedtuple
 import logging
 import functools
+from queue import Queue
 
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QThread, QEvent
 
 from brickv.bindings import ip_connection
-
-from queue import Queue
 
 ASYNC_EVENT = 12345
 

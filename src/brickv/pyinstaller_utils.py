@@ -2,7 +2,7 @@ import os
 import shutil
 import sys
 import subprocess
-import traceback
+
 from brickv.config import BRICKV_VERSION
 
 def get_path_rel_to_root(path, root):

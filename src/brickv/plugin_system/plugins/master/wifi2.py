@@ -225,7 +225,8 @@ class Wifi2(QWidget, Ui_Wifi2):
                 self.get_wifi2_mesh_router_ssid_async, self.parent.increase_error_count)
 
     def destroy(self):
-        pass
+        if self.wifi2_status:
+            self.wifi2_status.close()
 
     def check_ap_client_mesh(self):
         if not self.client_enable and not self.ap_enable and not self.mesh_enable:
@@ -854,10 +855,6 @@ class Wifi2(QWidget, Ui_Wifi2):
 
         self.wifi2_status.show()
         self.wifi2_status.update_status()
-
-    def destroy(self):
-        if self.wifi2_status:
-            self.wifi2_status.close()
 
     def update_data(self):
         if self.wifi2_status is not None:
