@@ -133,6 +133,7 @@ def error_report_main():
     widget = QWidget()
     window.setCentralWidget(widget)
     widget.setLayout(QHBoxLayout())
+
     icon = QLabel()
     icon.setPixmap(QMessageBox.standardIcon(QMessageBox.Critical))
     icon.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
@@ -141,7 +142,10 @@ def error_report_main():
     right_widget = QWidget()
     right_widget.setLayout(QVBoxLayout())
 
-    right_widget.layout().addWidget(QLabel("Please report this error to info@tinkerforge.com.\nIf you know what caused the error and can fix it, please report it anyway. This allows us to improve the error messages."))
+    label = QLabel("Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>.\nIf you know what caused the error and can fix it, please report it anyway. This allows us to improve the error messages.")
+    label.setOpenExternalLinks(True)
+    right_widget.layout().addWidget(label)
+
     tb = QTextBrowser()
     tb.setHtml(error_message)
     right_widget.layout().addWidget(tb)
@@ -153,6 +157,7 @@ def error_report_main():
     btn = QPushButton("OK")
     btn.clicked.connect(lambda event: app.exit())
     right_widget.layout().addWidget(btn)
+
     widget.layout().addWidget(right_widget)
     window.show()
     app.exec_()
