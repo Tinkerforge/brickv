@@ -147,6 +147,7 @@ def error_report_main():
     right_widget.setLayout(QVBoxLayout())
 
     label = QLabel("Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>.\nIf you know what caused the error and can fix it, please report it anyway. This allows us to improve the error messages.")
+    label.setWordWrap(True)
     label.setOpenExternalLinks(True)
     right_widget.layout().addWidget(label)
 
@@ -164,6 +165,7 @@ def error_report_main():
 
     widget.layout().addWidget(right_widget)
     window.show()
+    window.setMinimumSize(640, 400)
     app.exec_()
     return int(cbox.isChecked())
 
