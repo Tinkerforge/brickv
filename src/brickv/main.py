@@ -176,6 +176,14 @@ def main():
     if '--error-report' in sys.argv:
         sys.exit(error_report_main())
 
+    # importing the MainWindow after creating the QApplication instance triggers this warning
+    #
+    #  Qt WebEngine seems to be initialized from a plugin. Please set Qt::AA_ShareOpenGLContexts
+    #  using QCoreApplication::setAttribute before constructing QGuiApplication.
+    #
+    # do what the warnings says to avoid it
+    QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
+
     brick_viewer = BrickViewer(sys.argv)
     splash = QSplashScreen(load_pixmap('splash.png'), Qt.WindowStaysOnTopHint)
     splash.show()
@@ -187,10 +195,12 @@ def main():
     # can be slots which try to (for example) send requests but don't wrap
     # them in an async call with error handling.
     sys.excepthook = brick_viewer.exception_hook
+
     from brickv.mainwindow import MainWindow
     main_window = MainWindow()
     main_window.show()
     splash.finish(main_window)
+
     sys.exit(brick_viewer.exec_())
 
 if __name__ == "__main__":
