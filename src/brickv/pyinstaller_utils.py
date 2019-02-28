@@ -4,6 +4,7 @@ import sys
 import subprocess
 
 from brickv.config import BRICKV_VERSION
+import PyInstaller.config
 
 def get_path_rel_to_root(path, root):
     return path.replace('\\', '/').replace(root.replace('\\', '/') + '/', '')
@@ -104,7 +105,7 @@ def win_build_installer():
     specialize_template(nsis_template_path, nsis_path,
                         {'<<BRICKV_DOT_VERSION>>': BRICKV_VERSION,
                          '<<BRICKV_UNDERSCORE_VERSION>>': BRICKV_VERSION.replace('.', '_')})
-    system('"C:\\Program Files (x86)\\NSIS\\makensis.exe" dist\\nsis\\brickv_installer.nsi')
+    system(['"C:\\Program Files (x86)\\NSIS\\makensis.exe"', nsis_path])
     installer = 'brickv_windows_{0}.exe'.format(BRICKV_VERSION.replace('.', '_'))
 
     if os.path.exists(installer):
@@ -115,8 +116,8 @@ def win_build_installer():
 
 
 root_path = os.getcwd()
-build_path = os.path.join(root_path, 'build')
-dist_path = os.path.join(root_path, 'dist')
+build_path = PyInstaller.config.CONF['workpath']
+dist_path = PyInstaller.config.CONF['distpath']
 linux_build_data_path =   os.path.normpath(os.path.join(root_path, '..', 'build_data', 'linux'))
 mac_build_data_path =     os.path.normpath(os.path.join(root_path, '..', 'build_data', 'macos'))
 windows_build_data_path = os.path.normpath(os.path.join(root_path, '..', 'build_data', 'windows'))

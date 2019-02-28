@@ -153,7 +153,7 @@ def build_linux_pkg():
     shutil.copytree(build_data_path, linux_path)
 
     print('unpacking sdist tar file')
-    system(['tar', '-x', '-C', dist_path, '-f' '{0}/brickv-{1}.tar.gz'.format(dist_path, BRICKV_VERSION), 'brickv-{}/brickv'.format(BRICKV_VERSION)])
+    system(['tar', '-x', '-C', dist_path, '-f', '{0}/brickv-{1}.tar.gz'.format(dist_path, BRICKV_VERSION), 'brickv-{}/brickv'.format(BRICKV_VERSION)])
 
     print('copying unpacked brickv source')
     unpacked_path = os.path.join(dist_path, 'brickv-{0}'.format(BRICKV_VERSION), 'brickv')
@@ -319,22 +319,23 @@ if __name__ == '__main__':
 
     if 'logger' in sys.argv:
         build_logger_zip()
-    elif sys.platform.startswith('linux'):
+    elif sys.platform.startswith('linux') and not 'nodeb' in sys.argv:
         if 'flash' in sys.argv:
             build_linux_flash_pkg()
         else:
             build_linux_pkg()
-    elif sys.platform == 'win32' or sys.platform == 'darwin':
-        in_virtualenv = hasattr(sys, 'real_prefix')
-        in_pyvenv = hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix
+    elif sys.platform == 'win32' or sys.platform == 'darwin' or 'nodeb' in sys.argv:
+        if not 'nodeb' in sys.argv:
+            in_virtualenv = hasattr(sys, 'real_prefix')
+            in_pyvenv = hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix
 
-        if not in_virtualenv and not in_pyvenv:
-            print('error: Please build Windows or macOS binaries in the correct virtualenv.')
-            sys.exit(1)
+            if not in_virtualenv and not in_pyvenv:
+                print('error: Please build Windows or macOS binaries in the correct virtualenv.')
+                sys.exit(1)
 
         root_path = os.getcwd()
         os.chdir(os.path.join(root_path, 'brickv'))
-        system(['pyinstaller', 'main_folder.spec'])
+        system(['pyinstaller', '--distpath', '../dist', '--workpath', '../build', 'main_folder.spec'])
         os.chdir(root_path)
     else:
         print('error: unsupported platform: ' + sys.platform)
