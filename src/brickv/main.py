@@ -79,20 +79,13 @@ logging.basicConfig(level=config.LOGGING_LEVEL,
                     format=config.LOGGING_FORMAT,
                     datefmt=config.LOGGING_DATEFMT)
 
-class BrickViewer(QApplication):
-    object_creator_signal = pyqtSignal(object)
-    infos_changed_signal = pyqtSignal(str) # uid
-
-    def __init__(self, *args, **kwargs):
-        self.argv = deepcopy(args[0])
-        QApplication.__init__(self, *args, **kwargs)
-
+class ExceptionReporter:
+    def __init__(self, argv):
+        self.argv = argv
         self.error_queue = queue.Queue()
         self.error_spawn = threading.Thread(target=self.error_spawner, daemon=True)
         self.error_spawn.start()
-
-        self.object_creator_signal.connect(self.object_creator_slot)
-        self.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
+        sys.excepthook = self.exception_hook
 
     def error_spawner(self):
         ignored = []
@@ -114,6 +107,16 @@ class BrickViewer(QApplication):
 
         message = "".join(traceback.format_exception(etype=exctype, value=value, tb=tb))
         self.error_queue.put(message)
+
+class BrickViewer(QApplication):
+    object_creator_signal = pyqtSignal(object)
+    infos_changed_signal = pyqtSignal(str) # uid
+
+    def __init__(self, *args, **kwargs):
+        QApplication.__init__(self, *args, **kwargs)
+
+        self.object_creator_signal.connect(self.object_creator_slot)
+        self.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
 
     def object_creator_slot(self, object_creator):
         object_creator.create()
@@ -176,6 +179,12 @@ def main():
     if '--error-report' in sys.argv:
         sys.exit(error_report_main())
 
+    # Catch all uncaught exceptions and show an error message for them.
+    # PyQt5 does not silence exceptions in slots (as did PyQt4), so there
+    # can be slots which try to (for example) send requests but don't wrap
+    # them in an async call with error handling.
+    ExceptionReporter(deepcopy(sys.argv)) # Deep copy because QApplication (i.e. BrickViewer) constructor parses away Qt args and we want to know the style.
+
     # importing the MainWindow after creating the QApplication instance triggers this warning
     #
     #  Qt WebEngine seems to be initialized from a plugin. Please set Qt::AA_ShareOpenGLContexts
@@ -189,12 +198,6 @@ def main():
     splash.show()
     splash.showMessage('Starting Brick Viewer ' + config.BRICKV_VERSION, Qt.AlignHCenter | Qt.AlignBottom, Qt.white)
     brick_viewer.processEvents()
-
-    # Catch all uncaught exceptions and show an error message for them.
-    # PyQt5 does not silence exceptions in slots (as did PyQt4), so there
-    # can be slots which try to (for example) send requests but don't wrap
-    # them in an async call with error handling.
-    sys.excepthook = brick_viewer.exception_hook
 
     from brickv.mainwindow import MainWindow
     main_window = MainWindow()
