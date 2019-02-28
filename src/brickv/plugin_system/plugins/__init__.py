@@ -33,6 +33,7 @@ from brickv.plugin_system.plugins.gas_detector import device_class as gas_detect
 from brickv.plugin_system.plugins.gps import device_class as gps
 from brickv.plugin_system.plugins.gps_v2 import device_class as gps_v2
 from brickv.plugin_system.plugins.hall_effect import device_class as hall_effect
+from brickv.plugin_system.plugins.hall_effect_v2 import device_class as hall_effect_v2
 from brickv.plugin_system.plugins.hat import device_class as hat
 from brickv.plugin_system.plugins.hat_zero import device_class as hat_zero
 from brickv.plugin_system.plugins.heart_rate import device_class as heart_rate
@@ -168,6 +169,7 @@ device_classes = [
     gps,
     gps_v2,
     hall_effect,
+    hall_effect_v2,
     hat,
     hat_zero,
     heart_rate,

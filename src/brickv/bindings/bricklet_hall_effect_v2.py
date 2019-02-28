@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -18,6 +18,9 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
+GetMagneticFluxDensityCallbackConfiguration = namedtuple('MagneticFluxDensityCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
+GetCounterConfig = namedtuple('CounterConfig', ['high_threshold', 'low_threshold', 'debounce'])
+GetCounterCallbackConfiguration = namedtuple('CounterCallbackConfiguration', ['period', 'value_has_to_change'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -30,8 +33,18 @@ class BrickletHallEffectV2(Device):
     DEVICE_DISPLAY_NAME = 'Hall Effect Bricklet 2.0'
     DEVICE_URL_PART = 'hall_effect_v2' # internal
 
+    CALLBACK_MAGNETIC_FLUX_DENSITY = 4
+    CALLBACK_COUNTER = 10
 
 
+    FUNCTION_GET_MAGNETIC_FLUX_DENSITY = 1
+    FUNCTION_SET_MAGNETIC_FLUX_DENSITY_CALLBACK_CONFIGURATION = 2
+    FUNCTION_GET_MAGNETIC_FLUX_DENSITY_CALLBACK_CONFIGURATION = 3
+    FUNCTION_GET_COUNTER = 5
+    FUNCTION_SET_COUNTER_CONFIG = 6
+    FUNCTION_GET_COUNTER_CONFIG = 7
+    FUNCTION_SET_COUNTER_CALLBACK_CONFIGURATION = 8
+    FUNCTION_GET_COUNTER_CALLBACK_CONFIGURATION = 9
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -45,6 +58,11 @@ class BrickletHallEffectV2(Device):
     FUNCTION_READ_UID = 249
     FUNCTION_GET_IDENTITY = 255
 
+    THRESHOLD_OPTION_OFF = 'x'
+    THRESHOLD_OPTION_OUTSIDE = 'o'
+    THRESHOLD_OPTION_INSIDE = 'i'
+    THRESHOLD_OPTION_SMALLER = '<'
+    THRESHOLD_OPTION_GREATER = '>'
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -70,6 +88,14 @@ class BrickletHallEffectV2(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletHallEffectV2.FUNCTION_GET_MAGNETIC_FLUX_DENSITY] = BrickletHallEffectV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletHallEffectV2.FUNCTION_SET_MAGNETIC_FLUX_DENSITY_CALLBACK_CONFIGURATION] = BrickletHallEffectV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletHallEffectV2.FUNCTION_GET_MAGNETIC_FLUX_DENSITY_CALLBACK_CONFIGURATION] = BrickletHallEffectV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletHallEffectV2.FUNCTION_GET_COUNTER] = BrickletHallEffectV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletHallEffectV2.FUNCTION_SET_COUNTER_CONFIG] = BrickletHallEffectV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletHallEffectV2.FUNCTION_GET_COUNTER_CONFIG] = BrickletHallEffectV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletHallEffectV2.FUNCTION_SET_COUNTER_CALLBACK_CONFIGURATION] = BrickletHallEffectV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletHallEffectV2.FUNCTION_GET_COUNTER_CALLBACK_CONFIGURATION] = BrickletHallEffectV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHallEffectV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletHallEffectV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHallEffectV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletHallEffectV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHallEffectV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletHallEffectV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -83,7 +109,127 @@ class BrickletHallEffectV2(Device):
         self.response_expected[BrickletHallEffectV2.FUNCTION_READ_UID] = BrickletHallEffectV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHallEffectV2.FUNCTION_GET_IDENTITY] = BrickletHallEffectV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletHallEffectV2.CALLBACK_MAGNETIC_FLUX_DENSITY] = 'h'
+        self.callback_formats[BrickletHallEffectV2.CALLBACK_COUNTER] = 'I'
 
+
+    def get_magnetic_flux_density(self):
+        """
+        Returns the magnetic flux density (magnetic induction) in uT (micro Tesla).
+
+        TBD: Range etc?
+
+
+        If you want to get the value periodically, it is recommended to use the
+        :cb:`Magnetic Flux Density` callback. You can set the callback configuration
+        with :func:`Set Magnetic Flux Density Callback Configuration`.
+        """
+        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_MAGNETIC_FLUX_DENSITY, (), '', 'h')
+
+    def set_magnetic_flux_density_callback_configuration(self, period, value_has_to_change, option, min, max):
+        """
+        The period in ms is the period with which the :cb:`Magnetic Flux Density` callback is triggered
+        periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change
+        within the period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        It is furthermore possible to constrain the callback with thresholds.
+
+        The `option`-parameter together with min/max sets a threshold for the :cb:`Magnetic Flux Density` callback.
+
+        The following options are possible:
+
+        .. csv-table::
+         :header: "Option", "Description"
+         :widths: 10, 100
+
+         "'x'",    "Threshold is turned off"
+         "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
+         "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
+         "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
+         "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
+
+        If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
+
+        The default value is (0, false, 'x', 0, 0).
+        """
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+        option = create_char(option)
+        min = int(min)
+        max = int(max)
+
+        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_MAGNETIC_FLUX_DENSITY_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c h h', '')
+
+    def get_magnetic_flux_density_callback_configuration(self):
+        """
+        Returns the callback configuration as set by :func:`Set Magnetic Flux Density Callback Configuration`.
+        """
+        return GetMagneticFluxDensityCallbackConfiguration(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_MAGNETIC_FLUX_DENSITY_CALLBACK_CONFIGURATION, (), '', 'I ! c h h'))
+
+    def get_counter(self, reset_counter):
+        """
+        Returns the current value of the edge counter. You can configure
+        edge type (rising, falling, both) that is counted with
+        :func:`Set Counter Config`.
+
+        If you set the reset counter to *true*, the count is set back to 0
+        directly after it is read.
+
+        If you want to get the count periodically, it is recommended to use the
+        :cb:`Counter` callback. You can set the callback configuration
+        with :func:`Set Counter Callback Configuration`.
+        """
+        reset_counter = bool(reset_counter)
+
+        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_COUNTER, (reset_counter,), '!', 'I')
+
+    def set_counter_config(self, high_threshold, low_threshold, debounce):
+        """
+
+        """
+        high_threshold = int(high_threshold)
+        low_threshold = int(low_threshold)
+        debounce = int(debounce)
+
+        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_COUNTER_CONFIG, (high_threshold, low_threshold, debounce), 'h h I', '')
+
+    def get_counter_config(self):
+        """
+
+        """
+        return GetCounterConfig(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_COUNTER_CONFIG, (), '', 'h h I'))
+
+    def set_counter_callback_configuration(self, period, value_has_to_change):
+        """
+        The period in ms is the period with which the :cb:`Counter`
+        callback is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after at least one of the values has changed. If the values didn't
+        change within the period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
+        """
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+
+        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_COUNTER_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+
+    def get_counter_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set Counter Callback Configuration`.
+        """
+        return GetCounterCallbackConfiguration(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_COUNTER_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
     def get_spitfp_error_count(self):
         """
@@ -224,5 +370,14 @@ class BrickletHallEffectV2(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def register_callback(self, callback_id, function):
+        """
+        Registers the given *function* with the given *callback_id*.
+        """
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
+        else:
+            self.registered_callbacks[callback_id] = function
 
 HallEffectV2 = BrickletHallEffectV2 # for backward compatibility
