@@ -335,7 +335,7 @@ if __name__ == '__main__':
 
         root_path = os.getcwd()
         os.chdir(os.path.join(root_path, 'brickv'))
-        system(['pyinstaller', '--distpath', '../dist', '--workpath', '../build', 'main_folder.spec'])
+        system(['pyinstaller', '--distpath', '../dist', '--workpath', '../build', 'main_folder.spec', '--'] + sys.argv)
         os.chdir(root_path)
     else:
         print('error: unsupported platform: ' + sys.platform)

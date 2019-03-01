@@ -133,9 +133,9 @@ FunctionEnd
 
 
 
-Name "Brick Viewer <<BRICKV_DOT_VERSION>>"
+Name "Brick Viewer <<DOT_VERSION>>"
 
-OutFile "brickv_windows_<<BRICKV_UNDERSCORE_VERSION>>.exe"
+OutFile "brickv_windows_<<UNDERSCORE_VERSION>>.exe"
 
 XPStyle on
 
@@ -151,7 +151,7 @@ RequestExecutionLevel admin
 
 ;--------------------------------
 
-!define BRICKV_VERSION <<BRICKV_DOT_VERSION>>
+!define BRICKV_VERSION <<DOT_VERSION>>
 
 ;--------------------------------
 
