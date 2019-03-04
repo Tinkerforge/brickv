@@ -11,71 +11,47 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Analog In 3.0 Calibration</string>
+   <string>Analog In Bricklet 3.0 Calibration</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QGridLayout" name="grid">
-     <item row="4" column="0" rowspan="2">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>Gain Multiplier:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="14" column="0" colspan="3">
-      <widget class="QLabel" name="label_15">
-       <property name="text">
-        <string>Step 3: To calibrate gain apply a known voltage to VIN. Enter the known correct voltage below and press &quot;Calibrate Gain&quot;.</string>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="17" column="0" colspan="3">
-      <widget class="QPushButton" name="button_cal_gain">
-       <property name="text">
-        <string>Calibrate Gain</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0" colspan="3">
-      <widget class="Line" name="line_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="0" colspan="3">
+     <item row="6" column="0" colspan="3">
       <widget class="QPushButton" name="button_cal_remove">
        <property name="text">
         <string>Remove Old Calibration</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="0" rowspan="2">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Offset:</string>
+     <item row="4" column="0" colspan="3">
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="0" column="0" rowspan="2">
+     <item row="10" column="0" colspan="3">
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="0" colspan="3">
+      <widget class="QPushButton" name="button_cal_gain">
+       <property name="text">
+        <string>Calibrate Gain</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>Voltage:</string>
        </property>
       </widget>
      </item>
-     <item row="15" column="0" rowspan="2">
-      <widget class="QLabel" name="label_16">
-       <property name="text">
-        <string>Voltage:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="0" colspan="3">
+     <item row="8" column="0" colspan="3">
       <widget class="QLabel" name="label_14">
        <property name="text">
         <string>Step 2: To calibrate offset connect VIN to GND and press &quot;Calibrate Offset&quot;.</string>
@@ -91,34 +67,34 @@
        </property>
       </widget>
      </item>
-     <item row="12" column="0" colspan="3">
-      <widget class="QPushButton" name="button_cal_offset">
+     <item row="1" column="1" colspan="2">
+      <widget class="QLabel" name="label_offset">
        <property name="text">
-        <string>Calibrate Offset</string>
+        <string>0</string>
        </property>
       </widget>
      </item>
-     <item row="13" column="0" colspan="3">
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0" colspan="3">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Step 1: To recalibrate the Bricklet you have to remove the old calibration and then calibrate the offset first and gain second. For best result use highest oversampling during calibration.</string>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="0" colspan="3">
+     <item row="7" column="0" colspan="3">
       <widget class="Line" name="line">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="0">
+      <widget class="QLabel" name="label_16">
+       <property name="text">
+        <string>Voltage:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="0" colspan="3">
+      <widget class="QLabel" name="label_15">
+       <property name="text">
+        <string>Step 3: To calibrate gain apply a known voltage to VIN. Enter the known correct voltage below and press &quot;Calibrate Gain&quot;.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -129,41 +105,65 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1" colspan="2">
-      <widget class="QLabel" name="label_offset">
-       <property name="text">
-        <string>0</string>
+     <item row="12" column="1" colspan="2">
+      <widget class="QSpinBox" name="spinbox_voltage">
+       <property name="suffix">
+        <string> mV</string>
+       </property>
+       <property name="maximum">
+        <number>42000</number>
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Gain Divisor:</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="1" colspan="2">
-      <widget class="QLabel" name="label_divisor">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>0</string>
+        <string>Offset:</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="1" colspan="2">
+     <item row="9" column="0" colspan="3">
+      <widget class="QPushButton" name="button_cal_offset">
+       <property name="text">
+        <string>Calibrate Offset</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="3">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Step 1: To recalibrate the Bricklet you have to remove the old calibration and then calibrate the offset first and gain second. For best result use highest oversampling during calibration.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" colspan="2">
       <widget class="QLabel" name="label_multiplier">
        <property name="text">
         <string>0</string>
        </property>
       </widget>
      </item>
-     <item row="16" column="1" colspan="2">
-      <widget class="QSpinBox" name="spinbox_voltage">
-       <property name="suffix">
-        <string>mV</string>
+     <item row="3" column="1" colspan="2">
+      <widget class="QLabel" name="label_divisor">
+       <property name="text">
+        <string>0</string>
        </property>
-       <property name="maximum">
-        <number>42000</number>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Gain Multiplier:</string>
        </property>
       </widget>
      </item>

@@ -88,7 +88,7 @@ class Calibration(QDialog, Ui_Calibration):
 
     def cb_get_voltage(self, value):
         self.current_value = value
-        self.label_voltage.setText(str(value))
+        self.label_voltage.setText(str(value) + " mV")
 
     def closeEvent(self, event):
         self.parent.calibration_button.setEnabled(True)
