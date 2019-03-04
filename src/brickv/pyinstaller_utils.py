@@ -167,7 +167,7 @@ class PyinstallerUtils:
         self.datas = self.collect_data(by_ext(['bmp', 'jpg', 'png', 'svg']))
 
     def strip_binaries(self, binaries, patterns):
-        return [x for x in binaries if all([pattern not in x[0].lower() for pattern in patterns])]
+        return [x for x in binaries if all(pattern not in x[0].lower() for pattern in patterns)]
 
     def post_generate(self, undo_script_working_dir = None, undo_script = None):
 
@@ -220,3 +220,4 @@ class PyinstallerUtils:
 
         shutil.move(os.path.join(self.dist_path, app_name), os.path.join(self.dist_path, 'dmg'))
         system(['hdiutil', 'create', '-fs', 'HFS+', '-volname', '{}-{}'.format(self.UNDERSCORE_NAME, self.VERSION), '-srcfolder', os.path.join(self.dist_path, 'dmg'), dmg_path])
+
