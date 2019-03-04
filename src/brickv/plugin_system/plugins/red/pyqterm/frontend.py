@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import time
 
+import sys
+
 from PyQt5.QtCore import QRect, Qt, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QClipboard, QPainter, QFont, QBrush, QColor, QPen, QPixmap, QContextMenuEvent
 from PyQt5.QtWidgets import QApplication, QWidget
@@ -72,8 +74,7 @@ class TerminalWidget(QWidget):
 
     session_closed = pyqtSignal()
 
-    def __init__(self, parent=None, command="/bin/bash",
-                 font_name="Monospace", font_size=14):
+    def __init__(self, parent=None, command="/bin/bash",font_size=14):
         super(TerminalWidget, self).__init__(parent)
         self._columns = 80
         self._rows = 24
@@ -85,6 +86,9 @@ class TerminalWidget(QWidget):
         self.setAutoFillBackground(False)
         self.setAttribute(Qt.WA_OpaquePaintEvent, True)
         self.setCursor(Qt.IBeamCursor)
+        font_name = "Monospace"
+        if sys.platform == 'darwin':
+            font_name = "Courier"
         font = QFont(font_name)
         font.setStyleHint(QFont.TypeWriter)
         font.setPixelSize(font_size)
