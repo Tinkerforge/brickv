@@ -9,9 +9,9 @@ Usage
 The following libraries are required:
 
 * python (3)
-* python-qt5
-* python-qt5.qtopengl
-* python-serial
+* pyqt5
+* pyqt5.qtopengl
+* pyserial
 
 On Windows you will also need:
 
@@ -21,20 +21,20 @@ On Debian based Linux distributions try::
 
  sudo apt-get install python3 python3-pyqt5 python3-pyqt5.qtopengl python3-serial
 
-First you have to build the Qt .ui files (you'll need ``pyuic5`` for that), you
-can do this with ``python3 build_src.py`` in ``src/``. After that you should
-be able to start brickv from source with ``python3 main.py`` in the
+First you have to build the Qt .ui files with the fixed version of ``pyuic5``,
+you can do this with ``python3 build_src.py`` in ``src/``. After that you
+should be able to start brickv from source with ``python3 main.py`` in the
 ``src/brickv/`` directory.
 
 Building Packages
 -----------------
 
 The Python script ``src/build_pkg.py`` can build a Debian package for
-Linux, a ``setup.exe`` for Windows or a Disk Image for macOS.
+Linux, a ``setup.exe`` for Windows or a disk image for macOS.
 
 To build the Debian package, you need to install setuptools.
 
-To build the Windows installer or macOS Disk Image, you need a virtual
+To build the Windows installer or macOS disk image, you need a virtual
 environment (either virtualenv or pyvenv) with pyinstaller.
 
 Under Windows ensure, that python3 is in the PATH, e.g. by creating
