@@ -29,11 +29,11 @@ import gc
 import functools
 
 from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QEvent, QSortFilterProxyModel
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QCursor
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QCursor, QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, \
                             QPushButton, QHBoxLayout, QVBoxLayout, \
                             QLabel, QFrame, QSpacerItem, QSizePolicy, \
-                            QToolButton, QLineEdit, QMenu, \
+                            QToolButton, QLineEdit, QMenu, QTabBar, \
                             QCheckBox, QComboBox
 
 from brickv.ui_mainwindow import Ui_MainWindow
@@ -47,8 +47,9 @@ from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
 from brickv import config
 from brickv import infos
-from brickv.tab_window import TabWindow
+from brickv.tab_window import TabWindow, IconButton
 from brickv.plugin_system.comcu_bootloader import COMCUBootloader
+from brickv.load_pixmap import load_pixmap
 
 USER_ROLE_POSITION = Qt.UserRole + 1
 
@@ -104,6 +105,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.tab_widget.removeTab(1) # remove dummy tab
         self.tab_widget.setUsesScrollButtons(True) # force scroll buttons, otherwise they will be missing on macOS
+
+        self.update_tab_button = IconButton(self, QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')))
+        self.update_tab_button.setToolTip('Updates available')
+        self.update_tab_button.clicked.connect(self.flashing_clicked)
+
+        #self.tab_widget.tabBar().setTabButton(0, QTabBar.LeftSide, self.update_tab_button)
 
         self.name = '<unknown>'
         self.uid = '<unknown>'

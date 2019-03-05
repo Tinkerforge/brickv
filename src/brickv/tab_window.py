@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtWidgets import QDialog, QAbstractButton, QTabBar, QSizePolicy, QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QDialog, QAbstractButton, QTabBar, QWidget, QVBoxLayout
 from PyQt5.QtGui import QPainter, QIcon
 
 from brickv import config
@@ -33,34 +33,36 @@ from brickv.load_pixmap import load_pixmap
 class IconButton(QAbstractButton):
     clicked = pyqtSignal()
 
-    def __init__(self, tab, default_icon, mouse_over_icon, parent=None):
+    def __init__(self, tab, normal_icon, hover_icon, parent=None):
         super(IconButton, self).__init__(parent)
-        self.default_icon = default_icon
-        self.mouse_over_icon = mouse_over_icon
-        self.setIcon(default_icon)
-        self.sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.normal_icon = normal_icon
+        self.hover_icon = hover_icon
+        self.setIcon(normal_icon)
         self.setMouseTracking(True)
+        self.setFixedSize(16, 16)
 
     def paintEvent(self, event):
-        self.icon().paint(QPainter(self), event.rect())
+        painter = QPainter(self)
+
+        self.icon().paint(painter, event.rect())
 
     def sizeHint(self):
         return self.iconSize()
 
     def enterEvent(self, event):
-        self.set_mouse_over_icon()
+        self.set_hover_icon()
 
     def leaveEvent(self, event):
-        self.set_default_icon()
+        self.set_normal_icon()
 
     def mousePressEvent(self, event):
         self.clicked.emit()
 
-    def set_mouse_over_icon(self):
-        self.setIcon(self.mouse_over_icon)
+    def set_hover_icon(self):
+        self.setIcon(self.hover_icon)
 
-    def set_default_icon(self):
-        self.setIcon(self.default_icon)
+    def set_normal_icon(self):
+        self.setIcon(self.normal_icon)
 
 class TabWidget(QDialog):
     def __init__(self, tab_window, name):
@@ -93,8 +95,8 @@ class TabWindow(QDialog):
         self.name = name
         self.button = None # see tab()
         self.button_handler = button_handler
-        self.button_icon_default = QIcon(load_pixmap('tab-default-icon.png'))
-        self.button_icon_mouse_over = QIcon(load_pixmap('tab-mouse-over-icon.png'))
+        self.button_icon_normal = QIcon(load_pixmap('untab-icon-normal.png'))
+        self.button_icon_hover = QIcon(load_pixmap('untab-icon-hover.png'))
         self.cb_on_tab = None
         self.cb_on_untab = None
         self.cb_post_tab = None
@@ -127,11 +129,12 @@ class TabWindow(QDialog):
 
         # (re-)instantiating button here because the TabBar takes ownership and
         # destroys it when this TabWindow is untabbed
-        self.button = IconButton(self, self.button_icon_default,
-                                 self.button_icon_mouse_over)
+        self.button = IconButton(self, self.button_icon_normal, self.button_icon_hover)
+        self.button.setToolTip('Detach Tab from Brick Viewer')
+        self.button.clicked.connect(lambda: self.button_handler(self.tab_widget.indexOf(self)))
+
         self.tab_widget.tabBar().setTabButton(index, QTabBar.LeftSide, self.button)
-        self.button.clicked.connect(lambda:
-                                    self.button_handler(self.tab_widget.indexOf(self)))
+
         if self.cb_post_tab != None:
             self.cb_post_tab(index)
 
