@@ -170,7 +170,7 @@
          <item row="4" column="1" colspan="2">
           <widget class="QLabel" name="label_update_instructions">
            <property name="text">
-            <string>To update your brick, please follow the instructions &lt;a href=https://www.tinkerforge.com/en/doc/Software/Brickv.html#brick-firmware-flashing&gt;here&lt;/a&gt;.</string>
+            <string>To update your Brick, please follow the instructions &lt;a href=https://www.tinkerforge.com/en/doc/Software/Brickv.html#brick-firmware-flashing&gt;here&lt;/a&gt;.</string>
            </property>
            <property name="openExternalLinks">
             <bool>true</bool>
