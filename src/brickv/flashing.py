@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 """
 
 import sys
+import re
 import os
 import zipfile
 import urllib.request
@@ -48,6 +49,7 @@ from brickv.utils import get_home_path, get_open_file_name, \
                          get_modeless_dialog_flags
 from brickv.esp_flash import ESPFlash
 from brickv import infos
+from brickv.version_fetch import *
 
 LATEST_VERSIONS_URL = 'http://download.tinkerforge.com/latest_versions.txt'
 FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
@@ -162,86 +164,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_bricks()
         self.update_extensions()
 
-    def refresh_latest_version_info(self, progress):
-        self.tool_infos = {}
-        self.firmware_infos = {}
-        self.plugin_infos = {}
-        self.extension_firmware_infos = {}
+    def load_version_info(self, version_info):
+        if version_info is not None:
+            self.tool_infos.update(version_info.tool_infos)
+            self.firmware_infos.update(version_info.firmware_infos)
+            self.plugin_infos.update(version_info.plugin_infos)
+            self.extension_firmware_infos.update(version_info.extension_firmware_infos)
 
-        self.combo_firmware.clear()
-        self.combo_plugin.clear()
-        self.combo_extension_firmware.clear()
-        self.combo_firmware.setEnabled(True)
-        self.combo_plugin.setEnabled(True)
-        self.combo_extension_firmware.setEnabled(True)
-
-        progress.setLabelText('Discovering latest versions on tinkerforge.com')
-        progress.setMaximum(0)
-        progress.setValue(0)
-        progress.show()
-
-        okay = True
-
-        try:
-            response = urllib.request.urlopen(LATEST_VERSIONS_URL, timeout=10)
-            latest_versions_data = response.read().decode('utf-8')
-            response.close()
-        except urllib.error.URLError:
-            okay = False
-            progress.cancel()
-            self.combo_firmware.setEnabled(False)
-            self.combo_plugin.setEnabled(False)
-            self.combo_extension_firmware.setEnabled(False)
-            self.popup_fail('Updates / Flashing', 'Latest version information on tinkerforge.com is not available (error code 1). Please report this to info@tinkerforge.com.\n\nFirmwares and plugins can be flashed from local files only.')
-
-        if okay:
-            def report_malformed(error_code):
-                progress.cancel()
-                self.combo_firmware.setEnabled(False)
-                self.combo_plugin.setEnabled(False)
-                self.combo_extension_firmware.setEnabled(False)
-                self.popup_fail('Updates / Flashing', 'Latest version information on tinkerforge.com is malformed (error code {0}). Please report this to info@tinkerforge.com.\n\nFirmwares and plugins can be flashed from local files only.'.format(error_code))
-
-            for line in latest_versions_data.split('\n'):
-                line = line.strip()
-
-                if len(line) < 1:
-                    continue
-
-                parts = line.split(':')
-
-                if len(parts) != 3:
-                    okay = False
-                    report_malformed(2)
-                    break
-
-                latest_version_parts = parts[2].split('.')
-
-                if len(latest_version_parts) != 3:
-                    okay = False
-                    report_malformed(3)
-                    break
-
-                try:
-                    latest_version = int(latest_version_parts[0]), int(latest_version_parts[1]), int(latest_version_parts[2])
-                except:
-                    okay = False
-                    report_malformed(4)
-                    break
-
-                if parts[0] == 'tools':
-                    tool_info = infos.ToolInfo()
-                    tool_info.firmware_version_latest = latest_version
-
-                    self.tool_infos[parts[1]] = tool_info
-                elif parts[0] == 'bricks':
-                    self.refresh_firmware_info(parts[1], latest_version)
-                elif parts[0] == 'bricklets':
-                    self.refresh_plugin_info(parts[1], latest_version)
-                elif parts[0] == 'extensions':
-                    self.refresh_extension_firmware_info(parts[1], latest_version)
-
-        if okay:
             # update combo_firmware
             if len(self.firmware_infos) > 0:
                 self.combo_firmware.addItem(SELECT)
@@ -288,6 +217,37 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.extension_firmware_changed(0)
 
         self.update_ui_state()
+
+    def refresh_latest_version_info(self, progress):
+        self.tool_infos = {}
+        self.firmware_infos = {}
+        self.plugin_infos = {}
+        self.extension_firmware_infos = {}
+
+        self.combo_firmware.clear()
+        self.combo_plugin.clear()
+        self.combo_extension_firmware.clear()
+        self.combo_firmware.setEnabled(True)
+        self.combo_plugin.setEnabled(True)
+        self.combo_extension_firmware.setEnabled(True)
+
+        progress.setLabelText('Discovering latest versions on tinkerforge.com')
+        progress.setMaximum(0)
+        progress.setValue(0)
+        progress.show()
+
+        def report_malformed(error_code):
+            progress.cancel()
+            self.combo_firmware.setEnabled(False)
+            self.combo_plugin.setEnabled(False)
+            self.combo_extension_firmware.setEnabled(False)
+            if error_code == ERROR_DOWNLOAD:
+                self.popup_fail('Updates / Flashing', 'Latest version information on tinkerforge.com could not be downloaded. Please report this to info@tinkerforge.com.\n\nFirmwares and plugins can be flashed from local files only.')
+            else:
+                self.popup_fail('Updates / Flashing', 'Latest version information on tinkerforge.com is malformed (error code {0}). Please report this to info@tinkerforge.com.\n\nFirmwares and plugins can be flashed from local files only.'.format(error_code))
+
+        self.load_version_info(fetch_latest_versions(report_malformed))
+
 
     def refresh_firmware_info(self, url_part, latest_version):
         name = url_part
@@ -1734,3 +1694,32 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.combo_extension.addItem(NO_EXTENSION)
 
         self.update_ui_state()
+
+    def show_brick_update(self, url_part, version_info):
+        self.load_version_info(version_info)
+        self.tab_widget.setCurrentWidget(self.tab_brick)
+
+    def show_bricklet_update(self, parent_uid, port, version_info):
+        self.load_version_info(version_info)
+        self.tab_widget.setCurrentWidget(self.tab_bricklet)
+
+        uids = [re.search(r'\[(.*)\]', self.combo_parent.itemText(i)).group(1) for i in range(self.combo_parent.count())]
+        idx = uids.index(parent_uid)
+        if idx >= 0:
+            self.combo_parent.setCurrentIndex(idx)
+
+        if port != 'z':
+            idx = ord(port) - ord('a')
+            self.combo_port.setCurrentIndex(idx)
+        else:
+            self.combo_port.setCurrentIndex(0)
+
+
+    def show_extension_update(self, master_uid, version_info):
+        self.load_version_info(version_info)
+        self.tab_widget.setCurrentWidget(self.tab_extension)
+
+        uids = [re.search(r'\[(.*)\]', self.combo_extension.itemText(i)).group(1) for i in range(self.combo_extension.count())]
+        idx = uids.index(master_uid)
+        if idx >= 0:
+            self.combo_extension.setCurrentIndex(idx)

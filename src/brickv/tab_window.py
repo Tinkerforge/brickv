@@ -33,8 +33,8 @@ from brickv.load_pixmap import load_pixmap
 class IconButton(QAbstractButton):
     clicked = pyqtSignal()
 
-    def __init__(self, tab, normal_icon, hover_icon, parent=None):
-        super(IconButton, self).__init__(parent)
+    def __init__(self, normal_icon, hover_icon, parent=None):
+        super().__init__(parent)
         self.normal_icon = normal_icon
         self.hover_icon = hover_icon
         self.setIcon(normal_icon)
@@ -129,7 +129,7 @@ class TabWindow(QDialog):
 
         # (re-)instantiating button here because the TabBar takes ownership and
         # destroys it when this TabWindow is untabbed
-        self.button = IconButton(self, self.button_icon_normal, self.button_icon_hover)
+        self.button = IconButton(self.button_icon_normal, self.button_icon_hover, parent=self)
         self.button.setToolTip('Detach Tab from Brick Viewer')
         self.button.clicked.connect(lambda: self.button_handler(self.tab_widget.indexOf(self)))
 

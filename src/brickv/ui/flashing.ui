@@ -90,26 +90,6 @@
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Serial Port:</string>
-           </property>
-           <property name="buddy">
-            <cstring>combo_serial_port</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="combo_serial_port"/>
-         </item>
-         <item row="0" column="2">
-          <widget class="QPushButton" name="button_serial_port_refresh">
-           <property name="text">
-            <string>Refresh</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_8">
            <property name="text">
@@ -130,15 +110,15 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
-          <widget class="QPushButton" name="button_firmware_save">
-           <property name="text">
-            <string>Save</string>
-           </property>
-          </widget>
-         </item>
          <item row="3" column="1">
           <widget class="QLineEdit" name="edit_custom_firmware"/>
+         </item>
+         <item row="1" column="0" colspan="3">
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
          </item>
          <item row="3" column="2">
           <widget class="QPushButton" name="button_firmware_browse">
@@ -147,7 +127,14 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1" colspan="2">
+         <item row="0" column="2">
+          <widget class="QPushButton" name="button_serial_port_refresh">
+           <property name="text">
+            <string>Refresh</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1" colspan="2">
           <widget class="QLabel" name="label_no_firmware_connection">
            <property name="styleSheet">
             <string notr="true">color:red;</string>
@@ -160,10 +147,33 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0" colspan="3">
-          <widget class="Line" name="line_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Serial Port:</string>
+           </property>
+           <property name="buddy">
+            <cstring>combo_serial_port</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="combo_serial_port"/>
+         </item>
+         <item row="2" column="2">
+          <widget class="QPushButton" name="button_firmware_save">
+           <property name="text">
+            <string>Save</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1" colspan="2">
+          <widget class="QLabel" name="label_update_instructions">
+           <property name="text">
+            <string>To update your brick, please follow the instructions &lt;a href=https://www.tinkerforge.com/en/doc/Software/Brickv.html#brick-firmware-flashing&gt;here&lt;/a&gt;.</string>
+           </property>
+           <property name="openExternalLinks">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -415,6 +425,15 @@
                 </color>
                </brush>
               </colorrole>
+              <colorrole role="PlaceholderText">
+               <brush brushstyle="NoBrush">
+                <color alpha="128">
+                 <red>255</red>
+                 <green>0</green>
+                 <blue>0</blue>
+                </color>
+               </brush>
+              </colorrole>
              </active>
              <inactive>
               <colorrole role="WindowText">
@@ -438,6 +457,15 @@
               <colorrole role="ButtonText">
                <brush brushstyle="SolidPattern">
                 <color alpha="255">
+                 <red>255</red>
+                 <green>0</green>
+                 <blue>0</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="PlaceholderText">
+               <brush brushstyle="NoBrush">
+                <color alpha="128">
                  <red>255</red>
                  <green>0</green>
                  <blue>0</blue>
@@ -470,6 +498,15 @@
                  <red>118</red>
                  <green>118</green>
                  <blue>117</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="PlaceholderText">
+               <brush brushstyle="NoBrush">
+                <color alpha="128">
+                 <red>255</red>
+                 <green>0</green>
+                 <blue>0</blue>
                 </color>
                </brush>
               </colorrole>

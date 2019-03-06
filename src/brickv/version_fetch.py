@@ -1,0 +1,190 @@
+import urllib
+from collections import namedtuple
+import time
+
+from PyQt5.QtCore import QObject, pyqtSignal
+
+from brickv import infos
+
+
+LATEST_VERSIONS_URL = 'http://download.tinkerforge.com/latest_versions.txt'
+
+ERROR_DOWNLOAD = 1
+ERROR_PARSE_SPLIT = 2
+ERROR_PARSE_VERSION_SPLIT = 3
+ERROR_PARSE_VERSION_INTS = 4
+
+latest_versions_result = namedtuple('latest_versions_result', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos'])
+
+def refresh_firmware_info(url_part, latest_version):
+    name = url_part
+
+    if name.endswith('_v2'):
+        name = name.replace('_v2', '_2.0')
+    elif name.endswith('_v3'):
+        name = name.replace('_v3', '_3.0')
+
+    if name in ['dc', 'imu', 'imu_2.0']:
+        name = name.upper()
+
+    words = name.split('_')
+    parts = []
+
+    for word in words:
+        parts.append(word[0].upper() + word[1:])
+
+    name = ' '.join(parts)
+
+    firmware_info = infos.FirmwareInfo()
+    firmware_info.name = name
+    firmware_info.url_part = url_part
+    firmware_info.firmware_version_latest = latest_version
+
+    return firmware_info
+
+def refresh_plugin_info(url_part, latest_version):
+    name = url_part
+
+    if name.endswith('_v2'):
+        name = name.replace('_v2', '_2.0')
+    elif name.endswith('_v3'):
+        name = name.replace('_v3', '_3.0')
+
+    if name in ['gps', 'gps_2.0', 'ptc', 'ptc_2.0', 'rs232', 'rs232_2.0', 'rs485', 'co2', 'can', 'can_2.0', 'rgb_led', 'dmx', 'nfc']:
+        name = name.upper()
+    elif name.startswith('lcd_'):
+        name = name.replace('lcd_', 'LCD_')
+        if url_part.startswith('lcd_20x4_'):
+            name = name.replace('_v11', '_1.1').replace('_v12', '_1.2')
+    elif name.startswith('io'):
+        name = name.replace('io', 'IO-')
+    elif name.endswith('_ir'):
+        name = name.replace('_ir', '_IR')
+    elif name.endswith('_ir_2.0'):
+        name = name.replace('_ir_2.0', '_IR_2.0')
+    elif name.endswith('_us'):
+        name = name.replace('_us', '_US')
+    elif name.endswith('_us_2.0'):
+        name = name.replace('_us_2.0', '_US_2.0')
+    elif name.startswith('led_'):
+        name = name.replace('led_', 'LED_')
+    elif name.startswith('oled_'):
+        name = name.replace('oled_', 'OLED_')
+    elif name.startswith('uv_'):
+        name = name.replace('uv_', 'UV_')
+    elif name.startswith('rgb_led_'):
+        name = name.replace('rgb_led_', 'RGB_LED_')
+    elif name.startswith('rgb_'):
+        name = name.replace('rgb_', 'RGB_')
+    elif name.startswith('midi_'):
+        name = name.replace('midi_', 'MIDI_')
+
+    words = name.split('_')
+    parts = []
+
+    for word in words:
+        parts.append(word[0].upper() + word[1:])
+
+    name = ' '.join(parts)
+    name = name.replace('Voltage Current', 'Voltage/Current')
+    name = name.replace('Nfc Rfid', 'NFC/RFID')
+    name = name.replace('0 20ma', '0-20mA')
+    name = name.replace('Real Time', 'Real-Time')
+
+    plugin_info = infos.PluginInfo()
+    plugin_info.name = name
+    plugin_info.url_part = url_part
+    plugin_info.firmware_version_latest = latest_version
+
+    return plugin_info
+
+def refresh_extension_firmware_info(url_part, latest_version):
+    name = url_part
+
+    if name.endswith('_v2'):
+        name = name.replace('_v2', '_2.0')
+    elif name.endswith('_v3'):
+        name = name.replace('_v3', '_3.0')
+
+    if name in ['wifi_2.0']:
+        name = name.upper()
+
+    words = name.split('_')
+    parts = []
+
+    for word in words:
+        parts.append(word[0].upper() + word[1:])
+
+    name = ' '.join(parts)
+
+    extension_firmware_info = infos.ExtensionFirmwareInfo()
+    extension_firmware_info.name = name
+    extension_firmware_info.url_part = url_part
+    extension_firmware_info.firmware_version_latest = latest_version
+
+    return extension_firmware_info
+
+def fetch_latest_versions(report_error_fn):
+    result = latest_versions_result({}, {}, {}, {})
+    try:
+        response = urllib.request.urlopen(LATEST_VERSIONS_URL, timeout=10)
+        latest_versions_data = response.read().decode('utf-8')
+        response.close()
+    except urllib.error.URLError:
+        report_error_fn(ERROR_DOWNLOAD)
+        return None
+
+    for line in latest_versions_data.split('\n'):
+        line = line.strip()
+
+        if len(line) < 1:
+            continue
+
+        parts = line.split(':')
+
+        if len(parts) != 3:
+            report_error_fn(ERROR_PARSE_SPLIT)
+            return None
+
+        latest_version_parts = parts[2].split('.')
+
+        if len(latest_version_parts) != 3:
+            report_error_fn(ERROR_PARSE_VERSION_SPLIT)
+            return None
+
+        try:
+            latest_version = int(latest_version_parts[0]), int(latest_version_parts[1]), int(latest_version_parts[2])
+        except:
+            report_error_fn(ERROR_PARSE_VERSION_INTS)
+            return None
+
+        if parts[0] == 'tools':
+            tool_info = infos.ToolInfo()
+            tool_info.firmware_version_latest = latest_version
+
+            result.tool_infos[parts[1]] = tool_info
+        elif parts[0] == 'bricks':
+            result.firmware_infos[parts[1]] = refresh_firmware_info(parts[1], latest_version)
+        elif parts[0] == 'bricklets':
+            result.plugin_infos[parts[1]] = refresh_plugin_info(parts[1], latest_version)
+        elif parts[0] == 'extensions':
+            result.extension_firmware_infos[parts[1]] = refresh_extension_firmware_info(parts[1], latest_version)
+    return result
+
+
+class VersionFetcher(QObject):
+    versions_avail = pyqtSignal(object)
+
+    def __init__(self):
+        super().__init__()
+        self._abort = False
+
+    def run(self):
+        while not self._abort:
+            new_data = fetch_latest_versions(self.versions_avail.emit)
+            if new_data is not None:
+                self.versions_avail.emit(new_data)
+            time.sleep(10*60)
+
+    def abort(self):
+        self._abort = True

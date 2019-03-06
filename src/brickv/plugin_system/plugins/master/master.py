@@ -23,7 +23,8 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QAction, QTabBar
+from PyQt5.QtGui import QIcon
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.master.ui_master import Ui_Master
@@ -37,6 +38,8 @@ from brickv.bindings.brick_master import BrickMaster
 from brickv.async_call import async_call
 from brickv import infos
 from brickv.utils import get_main_window, format_current
+from brickv.tab_window import IconButton
+from brickv.load_pixmap import load_pixmap
 
 class Master(PluginBase, Ui_Master):
     def __init__(self, *args):
@@ -58,6 +61,9 @@ class Master(PluginBase, Ui_Master):
         self.num_extensions = 0
         self.wifi2_ext = None
         self.wifi2_firmware_version = None
+        self.wifi_update_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')), self.tab_widget)
+        self.wifi_update_button.setToolTip('Update available')
+        self.wifi_update_button.hide()
 
         self.extension_label.setText("None Present")
         self.tab_widget.removeTab(0)
@@ -163,7 +169,8 @@ class Master(PluginBase, Ui_Master):
             wifi2 = Wifi2(self.wifi2_firmware_version, self)
             wifi2.start()
             self.extensions.append(wifi2)
-            self.tab_widget.addTab(wifi2, 'WIFI 2.0')
+            tab_idx = self.tab_widget.addTab(wifi2, 'WIFI 2.0')
+            self.tab_widget.tabBar().setTabButton(tab_idx, QTabBar.LeftSide, self.wifi_update_button)
             self.tab_widget.show()
             self.num_extensions += 1
             self.extension_label.setText(str(self.num_extensions) + " Present")

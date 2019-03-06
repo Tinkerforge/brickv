@@ -28,8 +28,8 @@ import time
 import gc
 import functools
 
-from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QEvent, QSortFilterProxyModel
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QCursor, QIcon
+from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QEvent, QSortFilterProxyModel, QThread
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QCursor, QIcon, QBrush, QColor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, \
                             QPushButton, QHBoxLayout, QVBoxLayout, \
                             QLabel, QFrame, QSpacerItem, QSizePolicy, \
@@ -50,6 +50,8 @@ from brickv import infos
 from brickv.tab_window import TabWindow, IconButton
 from brickv.plugin_system.comcu_bootloader import COMCUBootloader
 from brickv.load_pixmap import load_pixmap
+
+from brickv.version_fetch import VersionFetcher, latest_versions_result
 
 USER_ROLE_POSITION = Qt.UserRole + 1
 
@@ -106,11 +108,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tab_widget.removeTab(1) # remove dummy tab
         self.tab_widget.setUsesScrollButtons(True) # force scroll buttons, otherwise they will be missing on macOS
 
-        self.update_tab_button = IconButton(self, QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')))
+        self.update_tab_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')), parent=self.tab_setup)
         self.update_tab_button.setToolTip('Updates available')
         self.update_tab_button.clicked.connect(self.flashing_clicked)
-
-        #self.tab_widget.tabBar().setTabButton(0, QTabBar.LeftSide, self.update_tab_button)
+        self.update_tab_button.hide()
 
         self.name = '<unknown>'
         self.uid = '<unknown>'
@@ -139,6 +140,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.delayed_refresh_updates_timer.setInterval(500)
         self.reset_view()
         self.button_advanced.setDisabled(True)
+
+        self.version_fetcher = VersionFetcher()
+        self.version_fetcher.versions_avail.connect(self.versions_fetched)
+        self.version_fetcher_thread = QThread()
+        self.version_fetcher_thread.setObjectName("version_fetcher_thread")
+        self.version_fetcher.moveToThread(self.version_fetcher_thread)
+        self.version_fetcher_thread.started.connect(self.version_fetcher.run)
+        self.version_fetcher_thread.start()
 
         self.tab_widget.currentChanged.connect(self.tab_changed)
         self.tab_widget.setMovable(True)
@@ -196,6 +205,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # fusion style
         self.check_fusion_gui_style.setChecked(config.get_use_fusion_gui_style())
         self.check_fusion_gui_style.stateChanged.connect(self.gui_style_changed)
+
+        self.version_info = 0
 
     # override QMainWindow.closeEvent
     def closeEvent(self, event):
@@ -416,6 +427,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.flashing_window = FlashingWindow(self)
 
         self.flashing_window.show()
+        self.flashing_window.tab_widget.setCurrentWidget(self.flashing_window.tab_updates)
         self.flashing_window.refresh_updates_clicked()
 
     def advanced_clicked(self):
@@ -459,6 +471,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if uid_index.isValid():
             self.show_plugin(uid_index.data())
 
+    def show_brick_update(self, url_part):
+        if self.flashing_window is None:
+            self.flashing_window = FlashingWindow(self)
+
+        self.flashing_window.show()
+        self.flashing_window.show_brick_update(url_part, self.version_info)
+
+    def show_bricklet_update(self, parent_uid, port):
+        if self.flashing_window is None:
+            self.flashing_window = FlashingWindow(self)
+
+        self.flashing_window.show()
+        self.flashing_window.show_bricklet_update(parent_uid, port, self.version_info)
+
+    def show_extension_update(self, master_uid):
+        if self.flashing_window is None:
+            self.flashing_window = FlashingWindow(self)
+
+        self.flashing_window.show()
+        self.flashing_window.show_extension_update(master_uid, self.version_info)
+
     def create_tab_window(self, device_info, ipcon):
         tab_window = TabWindow(self.tab_widget, device_info.name, self.untab)
         tab_window._info = device_info
@@ -483,12 +516,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         label_version_name = QLabel('Version:')
         label_version = QLabel('...')
 
+        button_update = QPushButton(QIcon(load_pixmap('update-icon-normal.png')), 'Update')
+
+        if device_info.type == 'brick':
+            button_update.clicked.connect(lambda: self.show_brick_update(device_info.url_part))
+            if device_info.url_part == 'master':
+                device_info.plugin.wifi_update_button.show()
+                device_info.plugin.wifi_update_button.clicked.connect(lambda: self.show_extension_update(device_info.uid))
+        elif device_info.type == 'bricklet':
+            button_update.clicked.connect(lambda: self.show_bricklet_update(device_info.connected_uid, device_info.position))
+
         if not device_info.plugin.has_custom_version(label_version_name, label_version):
             label_version_name.setText('FW Version:')
             label_version.setText(infos.get_version_string(device_info.plugin.firmware_version))
 
         info_bars[0].addWidget(label_version_name)
         info_bars[0].addWidget(label_version)
+        info_bars[0].addWidget(button_update)
+        button_update.hide()
+        tab_window.button_update = button_update
         info_bars[0].addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Preferred))
 
         # timeouts
@@ -859,6 +905,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tree_view.setColumnWidth(1, 85)
         self.tree_view.setColumnWidth(2, 85)
         self.tree_view.setColumnWidth(3, 90)
+        self.tree_view.setColumnWidth(4, 90)
         self.tree_view.setExpandsOnDoubleClick(False)
         self.tree_view.setSortingEnabled(True)
         self.tree_view.header().setSortIndicator(2, Qt.AscendingOrder)
@@ -914,7 +961,38 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         QApplication.processEvents()
 
+    def update_version_info(self, info):
+        if not isinstance(self.version_info, latest_versions_result):
+            return
+
+        if info.type == 'brick':
+            d = self.version_info.firmware_infos
+        if info.type == 'bricklet':
+            d = self.version_info.plugin_infos
+        if info.type == 'extension':
+            d = self.version_info.extension_firmware_infos
+
+        if info.url_part not in d or info.firmware_version_installed == (0, 0, 0):
+            return False
+
+        info.firmware_version_latest = d[info.url_part].firmware_version_latest
+
+        updateable = info.firmware_version_installed < info.firmware_version_latest
+
+        if updateable:
+            self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels + ['Update'])
+            self.tab_widget.tabBar().setTabButton(0, QTabBar.LeftSide, self.update_tab_button)
+            self.update_tab_button.show()
+            if info.type != 'extension':
+                info.tab_window.button_update.show()
+
+
+        return updateable
+
     def update_tree_view(self):
+        self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels)
+        self.tab_widget.tabBar().setTabButton(0, QTabBar.LeftSide, None)
+
         sis = self.tree_view.header().sortIndicatorSection()
         sio = self.tree_view.header().sortIndicatorOrder()
 
@@ -925,6 +1003,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if info.reverse_connection != None:
                 continue
 
+            info.tab_window.button_update.hide()
+
             if info.position != '0' and info.connected_uid != '0':
                 position_prefix = info.connected_uid
             else:
@@ -933,42 +1013,72 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             position_item = QStandardItem(info.position.upper())
             position_item.setData(position_prefix + ':' + info.position.upper(), USER_ROLE_POSITION)
 
+            updateable = self.update_version_info(info)
+
             parent = [QStandardItem(info.name),
                       QStandardItem(info.uid),
                       position_item,
                       QStandardItem('.'.join(map(str, info.firmware_version_installed)))]
+            if updateable:
+                parent.append(QStandardItem('.'.join(map(str, info.firmware_version_latest))))
 
             for item in parent:
                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                if updateable:
+                    item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
 
             self.tree_view_model.appendRow(parent)
 
             # Search for childs up to a recursion depth of 3 at most.
             for connected_info1 in info.connections.values():
+                connected_info1.tab_window.button_update.hide()
+                updateable = self.update_version_info(connected_info1)
+
                 child1 = [QStandardItem(connected_info1.name),
                           QStandardItem(connected_info1.uid),
                           QStandardItem(connected_info1.position.upper()),
                           QStandardItem('.'.join(map(str, connected_info1.firmware_version_installed)))]
+                if updateable:
+                    child1.append(QStandardItem('.'.join(map(str, connected_info1.firmware_version_latest))))
+
                 for item in child1:
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                    if updateable:
+                        item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
                 parent[0].appendRow(child1)
 
                 for connected_info2 in connected_info1.connections.values():
+                    connected_info2.tab_window.button_update.hide()
+                    updateable = self.update_version_info(connected_info2)
+
                     child2 = [QStandardItem(connected_info2.name),
                               QStandardItem(connected_info2.uid),
                               QStandardItem(connected_info2.position.upper()),
                               QStandardItem('.'.join(map(str, connected_info2.firmware_version_installed)))]
+                    if updateable:
+                        child2.append(QStandardItem('.'.join(map(str, connected_info2.firmware_version_latest))))
+
                     for item in child2:
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                        if updateable:
+                            item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
                     child1[0].appendRow(child2)
 
                     for connected_info3 in connected_info2.connections.values():
+                        connected_info3.tab_window.button_update.hide()
+                        updateable = self.update_version_info(connected_info3)
+
                         child3 = [QStandardItem(connected_info3.name),
                                   QStandardItem(connected_info3.uid),
                                   QStandardItem(connected_info3.position.upper()),
                                   QStandardItem('.'.join(map(str, connected_info3.firmware_version_installed)))]
+                        if updateable:
+                            child3.append(QStandardItem('.'.join(map(str, connected_info3.firmware_version_latest))))
+
                         for item in child3:
                             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                            if updateable:
+                                item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
                         child2[0].appendRow(child3)
 
 
@@ -980,6 +1090,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     extensions.append((info.extensions['ext1'], 'Ext1'))
 
                 for extension in extensions:
+                    updateable = self.update_version_info(extension[0])
                     if extension[0].firmware_version_installed != (0, 0, 0):
                         fw_version = '.'.join(map(str, extension[0].firmware_version_installed))
                     else:
@@ -989,8 +1100,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                              QStandardItem(''),
                              QStandardItem(extension[1]),
                              QStandardItem(fw_version)]
+
+                    if updateable:
+                            child.append(QStandardItem('.'.join(map(str, extension[0].firmware_version_latest))))
+
                     for item in child:
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                        if updateable:
+                            item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
                     parent[0].appendRow(child)
 
         self.set_tree_view_defaults()
@@ -1006,3 +1123,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.flashing_window is not None and self.flashing_window.isVisible():
             self.flashing_window.refresh_updates_clicked()
+
+    def versions_fetched(self, version_info):
+        if isinstance(version_info, int) and version_info > 0:
+            if version_info == 1:
+                self.statusBar().showMessage('Latest version information could not be downloaded.')
+            else:
+                self.statusBar().showMessage('Latest version information on tinkerforge.com is malformed (error code {0}). Please report this to info@tinkerforge.com.'.format(version_info))
+        else:
+            self.setStatusBar(None)
+        self.version_info = version_info
+        self.update_tree_view()
