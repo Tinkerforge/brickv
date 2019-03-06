@@ -1698,6 +1698,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def show_brick_update(self, url_part, version_info):
         self.load_version_info(version_info)
         self.tab_widget.setCurrentWidget(self.tab_brick)
+        self.refresh_serial_ports()
+
+        idx = next((i for i in range(self.combo_firmware.count()) if url_part.replace("_v2", " 2.0").lower() in self.combo_firmware.itemText(i).lower()), 0)
+        self.combo_firmware.setCurrentIndex(idx)
 
     def show_bricklet_update(self, parent_uid, port, version_info):
         self.load_version_info(version_info)
