@@ -997,120 +997,76 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.tree_view_model.clear()
 
+        def get_row(info, parent_info = None, is_parent=False):
+            if info.type != "extension":
+                info.tab_window.button_update.hide()
+
+            # Add prefix info for top-level rows
+            if is_parent:
+                if info.position != '0' and info.connected_uid != '0':
+                    position_prefix = info.connected_uid
+                else:
+                    position_prefix = info.uid
+
+                position_item = QStandardItem(info.position.upper())
+                position_item.setData(position_prefix + ':' + info.position.upper(), USER_ROLE_POSITION)
+
+            # Extensions can be firmware-less
+            if info.firmware_version_installed != (0, 0, 0):
+                fw_version = '.'.join(map(str, info.firmware_version_installed))
+            else:
+                fw_version = ''
+
+            uid = info.uid if info.type != "extension" else ''
+
+            row = [QStandardItem(info.name),
+                   QStandardItem(uid),
+                   QStandardItem(info.position.title()) if not is_parent else position_item,
+                   QStandardItem(fw_version)]
+
+            updateable = self.update_version_info(info)
+
+            if updateable:
+                row.append(QStandardItem('.'.join(map(str, info.firmware_version_latest))))
+
+            for item in row:
+                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                if updateable:
+                    item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
+
+            if parent_info is not None and info.type == "extension":
+                parent_info.plugin.wifi_update_available = updateable
+                parent_info.plugin.update_wifi_update_button()
+
+            return row
+
         for info in infos.get_device_infos():
             # If a device has a reverse connection, it will be handled as a child below.
             if info.reverse_connection != None:
                 continue
 
-            info.tab_window.button_update.hide()
-
-            if info.position != '0' and info.connected_uid != '0':
-                position_prefix = info.connected_uid
-            else:
-                position_prefix = info.uid
-
-            position_item = QStandardItem(info.position.upper())
-            position_item.setData(position_prefix + ':' + info.position.upper(), USER_ROLE_POSITION)
-
-            updateable = self.update_version_info(info)
-
-            parent = [QStandardItem(info.name),
-                      QStandardItem(info.uid),
-                      position_item,
-                      QStandardItem('.'.join(map(str, info.firmware_version_installed)))]
-            if updateable:
-                parent.append(QStandardItem('.'.join(map(str, info.firmware_version_latest))))
-
-            for item in parent:
-                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                if updateable:
-                    item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
-
+            parent = get_row(info, is_parent=True)
             self.tree_view_model.appendRow(parent)
 
             # Search for childs up to a recursion depth of 3 at most.
             for connected_info1 in info.connections.values():
-                connected_info1.tab_window.button_update.hide()
-                updateable = self.update_version_info(connected_info1)
-
-                child1 = [QStandardItem(connected_info1.name),
-                          QStandardItem(connected_info1.uid),
-                          QStandardItem(connected_info1.position.upper()),
-                          QStandardItem('.'.join(map(str, connected_info1.firmware_version_installed)))]
-                if updateable:
-                    child1.append(QStandardItem('.'.join(map(str, connected_info1.firmware_version_latest))))
-
-                for item in child1:
-                    item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                    if updateable:
-                        item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
-                parent[0].appendRow(child1)
+                child1_row = get_row(connected_info1)
+                parent[0].appendRow(child1_row)
 
                 for connected_info2 in connected_info1.connections.values():
-                    connected_info2.tab_window.button_update.hide()
-                    updateable = self.update_version_info(connected_info2)
-
-                    child2 = [QStandardItem(connected_info2.name),
-                              QStandardItem(connected_info2.uid),
-                              QStandardItem(connected_info2.position.upper()),
-                              QStandardItem('.'.join(map(str, connected_info2.firmware_version_installed)))]
-                    if updateable:
-                        child2.append(QStandardItem('.'.join(map(str, connected_info2.firmware_version_latest))))
-
-                    for item in child2:
-                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                        if updateable:
-                            item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
-                    child1[0].appendRow(child2)
+                    child2_row = get_row(connected_info2)
+                    child1_row[0].appendRow(child2_row)
 
                     for connected_info3 in connected_info2.connections.values():
-                        connected_info3.tab_window.button_update.hide()
-                        updateable = self.update_version_info(connected_info3)
-
-                        child3 = [QStandardItem(connected_info3.name),
-                                  QStandardItem(connected_info3.uid),
-                                  QStandardItem(connected_info3.position.upper()),
-                                  QStandardItem('.'.join(map(str, connected_info3.firmware_version_installed)))]
-                        if updateable:
-                            child3.append(QStandardItem('.'.join(map(str, connected_info3.firmware_version_latest))))
-
-                        for item in child3:
-                            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                            if updateable:
-                                item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
-                        child2[0].appendRow(child3)
-
+                        child3_row = get_row(connected_info3)
+                        child2_row[0].appendRow(child3_row)
 
             if info.can_have_extension:
-                extensions = []
-                if info.extensions['ext0'] != None:
-                    extensions.append((info.extensions['ext0'], 'Ext0'))
-                if info.extensions['ext1'] != None:
-                    extensions.append((info.extensions['ext1'], 'Ext1'))
-
-                for extension in extensions:
-                    updateable = self.update_version_info(extension[0])
-                    if extension[0].firmware_version_installed != (0, 0, 0):
-                        fw_version = '.'.join(map(str, extension[0].firmware_version_installed))
-                    else:
-                        fw_version = ''
-
-                    child = [QStandardItem(extension[0].name),
-                             QStandardItem(''),
-                             QStandardItem(extension[1]),
-                             QStandardItem(fw_version)]
-
-                    info.plugin.wifi_update_available = updateable
-                    info.plugin.update_wifi_update_button()
-
-                    if updateable:
-                        child.append(QStandardItem('.'.join(map(str, extension[0].firmware_version_latest))))
-
-                    for item in child:
-                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                        if updateable:
-                            item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
-                    parent[0].appendRow(child)
+                for extension in info.extensions.values():
+                    if extension is None:
+                        continue
+                    ext_row = get_row(extension, parent_info=info)
+                    parent[0].appendRow(ext_row)
 
         self.set_tree_view_defaults()
         self.tree_view.header().setSortIndicator(sis, sio)
