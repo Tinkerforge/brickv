@@ -521,7 +521,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if device_info.type == 'brick':
             button_update.clicked.connect(lambda: self.show_brick_update(device_info.url_part))
             if device_info.url_part == 'master':
-                device_info.plugin.wifi_update_button.show()
                 device_info.plugin.wifi_update_button.clicked.connect(lambda: self.show_extension_update(device_info.uid))
         elif device_info.type == 'bricklet':
             button_update.clicked.connect(lambda: self.show_bricklet_update(device_info.connected_uid, device_info.position))
@@ -1101,8 +1100,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                              QStandardItem(extension[1]),
                              QStandardItem(fw_version)]
 
+                    info.plugin.wifi_update_available = updateable
+                    info.plugin.update_wifi_update_button()
+
                     if updateable:
-                            child.append(QStandardItem('.'.join(map(str, extension[0].firmware_version_latest))))
+                        child.append(QStandardItem('.'.join(map(str, extension[0].firmware_version_latest))))
 
                     for item in child:
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)

@@ -64,6 +64,8 @@ class Master(PluginBase, Ui_Master):
         self.wifi_update_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')), self.tab_widget)
         self.wifi_update_button.setToolTip('Update available')
         self.wifi_update_button.hide()
+        self.wifi_update_available = False
+        self.wifi_tab_idx = None
 
         self.extension_label.setText("None Present")
         self.tab_widget.removeTab(0)
@@ -164,13 +166,24 @@ class Master(PluginBase, Ui_Master):
         self.wifi2_get_firmware_version_timer.stop()
         async_call(self.master.get_wifi2_firmware_version, None, self.get_wifi2_firmware_version_async, self.increase_error_count)
 
+    def update_wifi_update_button(self):
+        if self.wifi_tab_idx is None:
+            return
+
+        if self.wifi_update_available:
+            self.tab_widget.tabBar().setTabButton(self.wifi_tab_idx, QTabBar.LeftSide, self.wifi_update_button)
+            self.wifi_update_button.show()
+        else:
+            self.tab_widget.tabBar().setTabButton(self.wifi_tab_idx, QTabBar.LeftSide, None)
+            self.wifi_update_button.hide()
+
     def wifi2_present(self, present):
         if present and self.wifi2_firmware_version != None and not self.check_extensions:
             wifi2 = Wifi2(self.wifi2_firmware_version, self)
             wifi2.start()
             self.extensions.append(wifi2)
-            tab_idx = self.tab_widget.addTab(wifi2, 'WIFI 2.0')
-            self.tab_widget.tabBar().setTabButton(tab_idx, QTabBar.LeftSide, self.wifi_update_button)
+            self.wifi_tab_idx = self.tab_widget.addTab(wifi2, 'WIFI 2.0')
+            self.update_wifi_update_button()
             self.tab_widget.show()
             self.num_extensions += 1
             self.extension_label.setText(str(self.num_extensions) + " Present")
