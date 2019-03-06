@@ -425,7 +425,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 if preferred_index is None:
                     if 'ttyACM' in port[0] or \
                        'ttyUSB' in port[0] or \
-                       'usbmodemfd' in port[0] or \
+                       'usbmodem' in port[0] or \
                        'AT91 USB to Serial Converter' in port[1] or \
                        'GPS Camera Detect' in port[1] or \
                        'Bossa Program Port' in port[1]:
