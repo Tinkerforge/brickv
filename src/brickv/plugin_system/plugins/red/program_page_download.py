@@ -99,7 +99,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.button_start_download.clicked.connect(self.start_download)
 
         self.label_replace_icon.clear()
-        self.label_replace_icon.setPixmap(load_pixmap('warning-icon.png'))
+        self.label_replace_icon.setPixmap(load_pixmap('warning-icon-44.png'))
 
         self.edit_new_name_checker = MandatoryLineEditChecker(self, self.label_new_name, self.edit_new_name)
 

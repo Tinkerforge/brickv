@@ -1,8 +1,11 @@
 Brick Viewer uses icons from the Tango Icon Theme that is released into
 the Public Domain.
 
-Brick Viewer       | Tango
--------------------+--------------------------------------------------------
-file-icon.png      | mimetypes/text-x-generic
-folder-icon.png    | places/folder
-warning-icon.png   | status/dialog-warning
+Brick Viewer            | Tango
+------------------------+------------------------------------------------------
+file-icon.png           | mimetypes/text-x-generic
+folder-icon.png         | places/folder
+warning-icon-16.png     | status/dialog-warning
+warning-icon-44.png     | status/dialog-warning
+update-icon-normal.png  | status/software-update-available
+update-icon-hover.png   | status/software-update-available
