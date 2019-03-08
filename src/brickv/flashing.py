@@ -1372,18 +1372,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.fw_fetch_progress_bar = self.create_progress_bar('Discovering')
 
-        try:
-            urllib.request.urlopen("http://download.tinkerforge.com", timeout=10).read()
-            self.label_no_update_connection.hide()
-            self.label_no_firmware_connection.hide()
-            self.label_no_plugin_connection.hide()
-        except urllib.error.URLError:
-            self.fw_fetch_progress_bar.cancel()
-            self.label_no_update_connection.show()
-            self.label_no_firmware_connection.show()
-            self.label_no_plugin_connection.show()
-            return
-
         self.refresh_latest_version_info()
 
     def refresh_update_tree_view(self):

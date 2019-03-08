@@ -14,6 +14,7 @@ ERROR_DOWNLOAD = 1
 ERROR_PARSE_SPLIT = 2
 ERROR_PARSE_VERSION_SPLIT = 3
 ERROR_PARSE_VERSION_INTS = 4
+ERROR_SERVER_ERROR = 5
 
 latest_fw_versions_result = namedtuple('latest_fw_versions_result', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos'])
 
@@ -131,6 +132,8 @@ def fetch_latest_fw_versions(report_error_fn):
         response = urllib.request.urlopen(LATEST_VERSIONS_URL, timeout=10)
         latest_versions_data = response.read().decode('utf-8')
         response.close()
+    except urllib.error.HTTPError:
+        report_error_fn(ERROR_SERVER_ERROR)
     except urllib.error.URLError:
         report_error_fn(ERROR_DOWNLOAD)
         return None
