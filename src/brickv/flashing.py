@@ -1699,7 +1699,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.refresh_serial_ports()
 
         idx = next((i for i in range(self.combo_firmware.count()) if url_part.replace("_v2", " 2.0").lower() == self.combo_firmware.itemText(i).lower().split(' (')[0]), 0)
-        self.combo_firmware.setCurrentIndex(idx)
+
+        # refresh_update_tree_view starts a single shot timer to rebuild some of the UI.
+        # This sets the combobox index to a default value.
+        # Using a 1 ms sleep time here ensures, that the refresh...'s timer runs first
+        QTimer.singleShot(1, lambda: self.combo_firmware.setCurrentIndex(idx))
+
 
     def show_bricklet_update(self, parent_uid, port, version_info):
         self.reset_version_info()
@@ -1713,11 +1718,16 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if idx >= 0:
             self.combo_parent.setCurrentIndex(idx)
 
+
         if port != 'z':
             idx = ord(port) - ord('a')
-            self.combo_port.setCurrentIndex(idx)
         else:
-            self.combo_port.setCurrentIndex(0)
+            idx = 0
+
+        # refresh_update_tree_view starts a single shot timer to rebuild some of the UI.
+        # This sets the combobox index to a default value.
+        # Using a 1 ms sleep time here ensures, that the refresh...'s timer runs first
+        QTimer.singleShot(1, lambda: self.combo_port.setCurrentIndex(idx))
 
 
     def show_extension_update(self, master_uid, version_info):
@@ -1729,5 +1739,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         uids = [re.search(r'\[(.*)\]', self.combo_extension.itemText(i)).group(1) for i in range(self.combo_extension.count())]
         idx = uids.index(master_uid)
+
         if idx >= 0:
-            self.combo_extension.setCurrentIndex(idx)
+            # refresh_update_tree_view starts a single shot timer to rebuild some of the UI.
+            # This sets the combobox index to a default value.
+            # Using a 1 ms sleep time here ensures, that the refresh...'s timer runs first
+            QTimer.singleShot(1, lambda: self.combo_extension.setCurrentIndex(idx))
