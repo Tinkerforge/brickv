@@ -25,11 +25,16 @@ Boston, MA 02111-1307, USA.
 import sys
 import traceback
 
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QTabBar
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtBoundSignal
 
 from brickv.bindings.ip_connection import IPConnection
 from brickv.bindings.bricklet_gps_v2 import GPSV2
+from brickv.utils import get_main_window
+from brickv.tab_window import IconButton
+from brickv.load_pixmap import load_pixmap
+import brickv.infos
 
 class PluginBase(QWidget, object):
     PLUGIN_STATE_STOPPED = 0
@@ -80,6 +85,40 @@ class PluginBase(QWidget, object):
         self.device_info.plugin = self
         self.device_info.name = self.name
         self.device_info.url_part = self.get_url_part()
+        brickv.infos.get_infos_changed_signal().connect(self.device_infos_changed)
+
+    def device_infos_changed(self, uid):
+        if uid != self.device_info.uid:
+            return
+
+        if self.device_info.tab_window is None:
+            return
+
+        if self.device_info.firmware_version_installed < self.device_info.firmware_version_latest:
+            self.show_update()
+        else:
+            self.hide_update()
+
+
+    def show_update(self):
+        self.device_info.tab_window.button_update.show()
+
+        self.update_tab_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')))
+        self.update_tab_button.setToolTip('Update available')
+        if self.device_info.type == 'brick':
+            self.update_tab_button.clicked.connect(lambda: get_main_window().show_brick_update(self.device_info.url_part))
+
+        elif self.device_info.type == 'bricklet':
+            self.update_tab_button.clicked.connect(lambda: get_main_window().show_bricklet_update(self.device_info.connected_uid, self.device_info.position))
+
+        tab_idx = get_main_window().tab_widget.indexOf(self.device_info.tab_window)
+        get_main_window().tab_widget.tabBar().setTabButton(tab_idx, QTabBar.RightSide, self.update_tab_button)
+
+    def hide_update(self):
+        self.device_info.tab_window.button_update.hide()
+
+        tab_idx = get_main_window().tab_widget.indexOf(self.device_info.tab_window)
+        get_main_window().tab_widget.tabBar().setTabButton(tab_idx, QTabBar.RightSide, None)
 
     def start_plugin(self):
         # only consider starting the plugin, if it's stopped

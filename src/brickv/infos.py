@@ -22,6 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from collections import namedtuple
+
 from PyQt5.QtWidgets import QApplication
 
 from brickv import config
@@ -157,7 +159,54 @@ if not '_infos' in globals():
     _infos[UID_BRICKV].firmware_version_installed = tuple(map(int, config.BRICKV_VERSION.split('.')))
     _infos[UID_BRICKD].name = 'Brick Daemon'
 
+latest_fw_tup = namedtuple('latest_fw_tup', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos'])
+
+if not '_latest_fws' in globals():
+    _latest_fws = latest_fw_tup({}, {}, {}, {})
+
+
+def add_latest_fw(info):
+    if info.type == 'brick':
+        d = _latest_fws.firmware_infos
+    elif info.type == 'bricklet':
+        d = _latest_fws.plugin_infos
+    elif info.type == 'extension':
+        d = _latest_fws.extension_firmware_infos
+    elif info.type == 'tool':
+        name_to_url_part = {'Brick Viewer': 'brickv', 'Brick Daemon': 'brickd'}
+        if info.name not in name_to_url_part.keys():
+            raise Exception("The name -> url_part mapping was incomplete: " + info.name)
+        info.url_part = name_to_url_part[info.name]
+        d = _latest_fws.plugin_infos
+    else:
+        raise Exception("Unexpected info type " + info.type)
+
+    if info.url_part not in d:
+        latest_fw = (0, 0, 0)
+    else:
+        latest_fw = d[info.url_part].firmware_version_latest
+
+    version_changed = info.firmware_version_latest != latest_fw
+
+    info.firmware_version_latest = latest_fw
+    if info.can_have_extension:
+        d = _latest_fws.extension_firmware_infos
+        for extension in info.extensions.values():
+            if extension is None:
+                continue
+
+            if extension.url_part not in d:
+                latest_fw = (0, 0, 0)
+            else:
+                latest_fw = d[extension.url_part].firmware_version_latest
+            version_changed |= extension.firmware_version_latest != latest_fw
+            extension.firmware_version_latest = latest_fw
+
+    return version_changed
+
 def add_info(info):
+    add_latest_fw(info)
+
     _infos[info.uid] = info
     get_infos_changed_signal().emit(info.uid)
 
@@ -166,6 +215,8 @@ def remove_info(uid):
     get_infos_changed_signal().emit(uid)
 
 def update_info(uid):
+    add_latest_fw(_infos[uid])
+
     get_infos_changed_signal().emit(uid)
 
 def get_info(uid):
@@ -174,8 +225,23 @@ def get_info(uid):
     except KeyError:
         return None
 
+def reset_latest_fws():
+    update_latest_fws(latest_fw_tup({}, {}, {}, {}))
+
+def update_latest_fws(latest_fws):
+    global _latest_fws
+    _latest_fws = latest_fws
+
+    for uid, info in _infos.items():
+        latest_fw_changed = add_latest_fw(info)
+        if latest_fw_changed:
+            get_infos_changed_signal().emit(uid)
+
 def get_infos():
     return sorted(_infos.values(), key=lambda x: x.name)
+
+def get_latest_fws():
+    return _latest_fws
 
 def get_device_infos():
     return sorted([info for info in _infos.values() if info.type == 'brick' or info.type == 'bricklet'], key=lambda x: x.name)

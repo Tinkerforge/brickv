@@ -1,6 +1,7 @@
 import urllib
 from collections import namedtuple
 import time
+import threading
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
@@ -14,7 +15,7 @@ ERROR_PARSE_SPLIT = 2
 ERROR_PARSE_VERSION_SPLIT = 3
 ERROR_PARSE_VERSION_INTS = 4
 
-latest_versions_result = namedtuple('latest_versions_result', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos'])
+latest_fw_versions_result = namedtuple('latest_fw_versions_result', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos'])
 
 def refresh_firmware_info(url_part, latest_version):
     name = url_part
@@ -124,8 +125,8 @@ def refresh_extension_firmware_info(url_part, latest_version):
 
     return extension_firmware_info
 
-def fetch_latest_versions(report_error_fn):
-    result = latest_versions_result({}, {}, {}, {})
+def fetch_latest_fw_versions(report_error_fn):
+    result = latest_fw_versions_result({}, {}, {}, {})
     try:
         response = urllib.request.urlopen(LATEST_VERSIONS_URL, timeout=10)
         latest_versions_data = response.read().decode('utf-8')
@@ -172,19 +173,28 @@ def fetch_latest_versions(report_error_fn):
     return result
 
 
-class VersionFetcher(QObject):
-    versions_avail = pyqtSignal(object)
+class LatestFWVersionFetcher(QObject):
+    fw_versions_avail = pyqtSignal(object)
 
     def __init__(self):
         super().__init__()
         self._abort = False
+        self.sleep_event = threading.Event()
 
     def run(self):
         while not self._abort:
-            new_data = fetch_latest_versions(self.versions_avail.emit)
+            new_data = fetch_latest_fw_versions(self.fw_versions_avail.emit)
             if new_data is not None:
-                self.versions_avail.emit(new_data)
-            time.sleep(10*60)
+                self.fw_versions_avail.emit(new_data)
+
+            self.sleep_event.clear()
+            self.sleep_event.wait(10 * 60)
+            #self.fw_versions_avail.emit(2)
+            #self.sleep_event.clear()
+            #self.sleep_event.wait(10)
+
+    def fetch_now(self):
+        self.sleep_event.set()
 
     def abort(self):
         self._abort = True

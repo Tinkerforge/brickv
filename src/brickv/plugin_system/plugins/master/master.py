@@ -62,8 +62,10 @@ class Master(PluginBase, Ui_Master):
         self.wifi2_ext = None
         self.wifi2_firmware_version = None
         self.wifi_update_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')), self.tab_widget)
-        self.wifi_update_button.setToolTip('Update available')
+        self.wifi_update_button.setToolTip('Extension update available')
+        self.wifi_update_button.clicked.connect(lambda: get_main_window().show_extension_update(self.device_info.uid))
         self.wifi_update_button.hide()
+
         self.wifi_update_available = False
         self.wifi_tab_idx = None
 
@@ -97,7 +99,61 @@ class Master(PluginBase, Ui_Master):
                                       False, # WIFI
                                       False, # Ethernet
                                       False] # WIFI 2.0
+
         self.update_extensions_in_device_info()
+
+    # overrides PluginBase.device_infos_changed
+    def device_infos_changed(self, uid):
+        if uid != self.device_info.uid:
+            return
+
+        if self.extension_type_preset[self.master.EXTENSION_TYPE_WIFI2]:
+            wifi_info = next(ext for ext in self.device_info.extensions.values() if ext.extension_type == self.master.EXTENSION_TYPE_WIFI2)
+            wifi_update_avail = wifi_info.firmware_version_installed != (0,0,0) and wifi_info.firmware_version_installed < wifi_info.firmware_version_latest
+        else:
+            wifi_update_avail = False
+
+        brick_update_avail = self.device_info.firmware_version_installed < self.device_info.firmware_version_latest
+
+        tab_idx = get_main_window().tab_widget.indexOf(self.device_info.tab_window)
+
+        if not brick_update_avail and not wifi_update_avail:
+            if self.device_info.tab_window is not None:
+                self.device_info.tab_window.button_update.hide()
+            get_main_window().tab_widget.tabBar().setTabButton(tab_idx, QTabBar.RightSide, None)
+
+            if self.wifi_tab_idx is not None:
+                self.tab_widget.tabBar().setTabButton(self.wifi_tab_idx, QTabBar.LeftSide, None)
+                if self.wifi_update_button is not None:
+                    self.wifi_update_button.hide()
+            return
+
+        self.update_tab_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')))
+
+        if brick_update_avail:
+            if self.device_info.tab_window is not None:
+                self.device_info.tab_window.button_update.show()
+            self.update_tab_button.setToolTip('Master Brick update available')
+            self.update_tab_button.clicked.connect(lambda: get_main_window().show_brick_update(self.device_info.url_part))
+
+            if self.wifi_tab_idx is not None:
+                self.tab_widget.tabBar().setTabButton(self.wifi_tab_idx, QTabBar.LeftSide, None)
+                if self.wifi_update_button is not None:
+                    self.wifi_update_button.hide()
+
+        # Intentionally override possible Master Brick update notification: The Extension update is easier for users
+        # so they are more likely to update at least the Extension. Also when the Extension is updated, device_infos_changed
+        # will be called again, then notifying the user of the Master Brick update.
+        if wifi_update_avail:
+            self.update_tab_button.setToolTip('WIFI Extension update available')
+            self.update_tab_button.clicked.connect(lambda: get_main_window().show_extension_update(self.device_info.uid))
+
+            if self.wifi_tab_idx is not None:
+                self.tab_widget.tabBar().setTabButton(self.wifi_tab_idx, QTabBar.LeftSide, self.wifi_update_button)
+                self.wifi_update_button.show()
+
+
+        get_main_window().tab_widget.tabBar().setTabButton(tab_idx, QTabBar.RightSide, self.update_tab_button)
 
     def update_extensions_in_device_info(self):
         def is_present_async(present, extension_type, name):
@@ -116,7 +172,6 @@ class Master(PluginBase, Ui_Master):
                 self.device_info.extensions[ext].extension_type = extension_type
                 self.device_info.extensions[ext].position = ext
                 self.device_info.extensions[ext].master_info = self.device_info
-                infos.update_info(self.uid)
 
                 if extension_type == self.master.EXTENSION_TYPE_WIFI2:
                     self.device_info.extensions[ext].url_part = 'wifi_v2'
@@ -129,6 +184,8 @@ class Master(PluginBase, Ui_Master):
                     self.wifi2_ext = ext
                     self.label_no_extension.setText('Waiting for WIFI Extension 2.0 firmware version...')
                     self.wifi2_get_firmware_version_timer.start(2000)
+
+                infos.update_info(self.uid)
 
         def get_connection_type_async(connection_type):
             self.device_info.connection_type = connection_type
@@ -166,16 +223,6 @@ class Master(PluginBase, Ui_Master):
         self.wifi2_get_firmware_version_timer.stop()
         async_call(self.master.get_wifi2_firmware_version, None, self.get_wifi2_firmware_version_async, self.increase_error_count)
 
-    def update_wifi_update_button(self):
-        if self.wifi_tab_idx is None:
-            return
-
-        if self.wifi_update_available:
-            self.tab_widget.tabBar().setTabButton(self.wifi_tab_idx, QTabBar.LeftSide, self.wifi_update_button)
-            self.wifi_update_button.show()
-        else:
-            self.tab_widget.tabBar().setTabButton(self.wifi_tab_idx, QTabBar.LeftSide, None)
-            self.wifi_update_button.hide()
 
     def wifi2_present(self, present):
         if present and self.wifi2_firmware_version != None and not self.check_extensions:
@@ -183,7 +230,7 @@ class Master(PluginBase, Ui_Master):
             wifi2.start()
             self.extensions.append(wifi2)
             self.wifi_tab_idx = self.tab_widget.addTab(wifi2, 'WIFI 2.0')
-            self.update_wifi_update_button()
+            self.device_infos_changed(self.device_info.uid) # Trigger device_infos_changed to show potential wifi updates.
             self.tab_widget.show()
             self.num_extensions += 1
             self.extension_label.setText(str(self.num_extensions) + " Present")

@@ -51,7 +51,7 @@ from brickv.tab_window import TabWindow, IconButton
 from brickv.plugin_system.comcu_bootloader import COMCUBootloader
 from brickv.load_pixmap import load_pixmap
 
-from brickv.version_fetch import VersionFetcher, latest_versions_result
+from brickv.firmware_fetch import LatestFWVersionFetcher, latest_fw_versions_result
 
 USER_ROLE_POSITION = Qt.UserRole + 1
 
@@ -137,17 +137,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.data_logger_window = None
         self.delayed_refresh_updates_timer = QTimer()
         self.delayed_refresh_updates_timer.timeout.connect(self.delayed_refresh_updates)
-        self.delayed_refresh_updates_timer.setInterval(500)
+        self.delayed_refresh_updates_timer.setInterval(100)
         self.reset_view()
         self.button_advanced.setDisabled(True)
 
-        self.version_fetcher = VersionFetcher()
-        self.version_fetcher.versions_avail.connect(self.versions_fetched)
-        self.version_fetcher_thread = QThread()
-        self.version_fetcher_thread.setObjectName("version_fetcher_thread")
-        self.version_fetcher.moveToThread(self.version_fetcher_thread)
-        self.version_fetcher_thread.started.connect(self.version_fetcher.run)
-        self.version_fetcher_thread.start()
+        self.fw_version_fetcher = LatestFWVersionFetcher()
+        self.fw_version_fetcher.fw_versions_avail.connect(self.fw_versions_fetched)
+        self.fw_version_fetcher_thread = QThread()
+        self.fw_version_fetcher_thread.setObjectName("fw_version_fetcher_thread")
+        self.fw_version_fetcher.moveToThread(self.fw_version_fetcher_thread)
+        self.fw_version_fetcher_thread.started.connect(self.fw_version_fetcher.run)
+        self.fw_version_fetcher_thread.start()
 
         self.tab_widget.currentChanged.connect(self.tab_changed)
         self.tab_widget.setMovable(True)
@@ -206,7 +206,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.check_fusion_gui_style.setChecked(config.get_use_fusion_gui_style())
         self.check_fusion_gui_style.stateChanged.connect(self.gui_style_changed)
 
-        self.version_info = 0
+        self.latest_fw_version_info = 0
 
     # override QMainWindow.closeEvent
     def closeEvent(self, event):
@@ -476,21 +476,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.flashing_window = FlashingWindow(self)
 
         self.flashing_window.show()
-        self.flashing_window.show_brick_update(url_part, self.version_info)
+        self.flashing_window.show_brick_update(url_part, self.latest_fw_version_info)
 
     def show_bricklet_update(self, parent_uid, port):
         if self.flashing_window is None:
             self.flashing_window = FlashingWindow(self)
 
         self.flashing_window.show()
-        self.flashing_window.show_bricklet_update(parent_uid, port, self.version_info)
+        self.flashing_window.show_bricklet_update(parent_uid, port, self.latest_fw_version_info)
 
     def show_extension_update(self, master_uid):
         if self.flashing_window is None:
             self.flashing_window = FlashingWindow(self)
 
         self.flashing_window.show()
-        self.flashing_window.show_extension_update(master_uid, self.version_info)
+        self.flashing_window.show_extension_update(master_uid, self.latest_fw_version_info)
 
     def create_tab_window(self, device_info, ipcon):
         tab_window = TabWindow(self.tab_widget, device_info.name, self.untab)
@@ -520,8 +520,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if device_info.type == 'brick':
             button_update.clicked.connect(lambda: self.show_brick_update(device_info.url_part))
-            if device_info.url_part == 'master':
-                device_info.plugin.wifi_update_button.clicked.connect(lambda: self.show_extension_update(device_info.uid))
         elif device_info.type == 'bricklet':
             button_update.clicked.connect(lambda: self.show_bricklet_update(device_info.connected_uid, device_info.position))
 
@@ -960,33 +958,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         QApplication.processEvents()
 
-    def update_version_info(self, info):
-        if not isinstance(self.version_info, latest_versions_result):
-            return
-
-        if info.type == 'brick':
-            d = self.version_info.firmware_infos
-        if info.type == 'bricklet':
-            d = self.version_info.plugin_infos
-        if info.type == 'extension':
-            d = self.version_info.extension_firmware_infos
-
-        if info.url_part not in d or info.firmware_version_installed == (0, 0, 0):
-            return False
-
-        info.firmware_version_latest = d[info.url_part].firmware_version_latest
-
-        updateable = info.firmware_version_installed < info.firmware_version_latest
-
-        if updateable:
-            self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels + ['Update'])
-            self.tab_widget.tabBar().setTabButton(0, QTabBar.LeftSide, self.update_tab_button)
-            self.update_tab_button.show()
-            if info.type != 'extension':
-                info.tab_window.button_update.show()
-
-
-        return updateable
 
     def update_tree_view(self):
         self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels)
@@ -998,8 +969,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tree_view_model.clear()
 
         def get_row(info, parent_info = None, is_parent=False):
-            if info.type != "extension":
-                info.tab_window.button_update.hide()
 
             # Add prefix info for top-level rows
             if is_parent:
@@ -1024,19 +993,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                    QStandardItem(info.position.title()) if not is_parent else position_item,
                    QStandardItem(fw_version)]
 
-            updateable = self.update_version_info(info)
+            updateable = info.firmware_version_installed != (0, 0, 0) and info.firmware_version_installed < info.firmware_version_latest
 
             if updateable:
+                self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels + ['Update'])
                 row.append(QStandardItem('.'.join(map(str, info.firmware_version_latest))))
+
+                self.tab_widget.tabBar().setTabButton(0, QTabBar.LeftSide, self.update_tab_button)
+                self.update_tab_button.show()
 
             for item in row:
                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                 if updateable:
                     item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
-
-            if parent_info is not None and info.type == "extension":
-                parent_info.plugin.wifi_update_available = updateable
-                parent_info.plugin.update_wifi_update_button()
 
             return row
 
@@ -1080,15 +1049,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.delayed_refresh_updates_timer.stop()
 
         if self.flashing_window is not None and self.flashing_window.isVisible():
-            self.flashing_window.refresh_updates_clicked()
+            self.flashing_window.refresh_update_tree_view()
 
-    def versions_fetched(self, version_info):
-        if isinstance(version_info, int) and version_info > 0:
-            if version_info == 1:
-                self.statusBar().showMessage('Latest version information could not be downloaded.')
+    def fw_versions_fetched(self, firmware_info):
+        if isinstance(firmware_info, int) and firmware_info > 0:
+            label_icon = QLabel()
+            label_icon.setPixmap(load_pixmap('warning-icon-16.png'))
+            self.statusBar().addWidget(label_icon)
+            if firmware_info == 1:
+                self.statusBar().addWidget(QLabel('Latest firmware information could not be downloaded.'))
             else:
-                self.statusBar().showMessage('Latest version information on tinkerforge.com is malformed (error code {0}). Please report this to info@tinkerforge.com.'.format(version_info))
+                self.statusBar().addWidget(QLabel('Latest firmware information on tinkerforge.com is malformed (error code {0}). Please report this to info@tinkerforge.com.'.format(firmware_info)))
+            infos.reset_latest_fws()
         else:
             self.setStatusBar(None)
-        self.version_info = version_info
+            infos.update_latest_fws(firmware_info)
+
         self.update_tree_view()
