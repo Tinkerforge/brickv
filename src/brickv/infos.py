@@ -150,7 +150,9 @@ class BrickREDInfo(BrickInfo):
     def __init__(self):
         BrickInfo.__init__(self)
 
-def get_version_string(version_tuple):
+def get_version_string(version_tuple, replace_unknown=None):
+    if replace_unknown is not None and version_tuple == (0, 0, 0):
+        return replace_unknown
     return '.'.join(map(str, version_tuple))
 
 if not '_infos' in globals():
