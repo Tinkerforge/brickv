@@ -206,8 +206,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.check_fusion_gui_style.setChecked(config.get_use_fusion_gui_style())
         self.check_fusion_gui_style.stateChanged.connect(self.gui_style_changed)
 
-        self.latest_fw_version_info = 0
-
     # override QMainWindow.closeEvent
     def closeEvent(self, event):
         if not self.exit_logger():
@@ -476,21 +474,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.flashing_window = FlashingWindow(self)
 
         self.flashing_window.show()
-        self.flashing_window.show_brick_update(url_part, self.latest_fw_version_info)
+        self.flashing_window.update_version_info()
+        self.flashing_window.show_brick_update(url_part)
 
     def show_bricklet_update(self, parent_uid, port):
         if self.flashing_window is None:
             self.flashing_window = FlashingWindow(self)
 
         self.flashing_window.show()
-        self.flashing_window.show_bricklet_update(parent_uid, port, self.latest_fw_version_info)
+        self.flashing_window.update_version_info()
+        self.flashing_window.show_bricklet_update(parent_uid, port)
 
     def show_extension_update(self, master_uid):
         if self.flashing_window is None:
             self.flashing_window = FlashingWindow(self)
 
         self.flashing_window.show()
-        self.flashing_window.show_extension_update(master_uid, self.latest_fw_version_info)
+        self.flashing_window.update_version_info()
+        self.flashing_window.show_extension_update(master_uid)
 
     def create_tab_window(self, device_info, ipcon):
         tab_window = TabWindow(self.tab_widget, device_info.name, self.untab)
@@ -968,7 +969,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.tree_view_model.clear()
 
-        def get_row(info, parent_info = None, is_parent=False):
+        def get_row(info, is_parent=False):
 
             # Add prefix info for top-level rows
             if is_parent:
@@ -1034,7 +1035,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 for extension in info.extensions.values():
                     if extension is None:
                         continue
-                    ext_row = get_row(extension, parent_info=info)
+                    ext_row = get_row(extension)
                     parent[0].appendRow(ext_row)
 
         self.set_tree_view_defaults()

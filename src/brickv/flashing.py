@@ -1678,11 +1678,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.update_ui_state()
 
-    def show_brick_update(self, url_part, version_info):
+    def update_version_info():
         self.reset_version_info()
         self.load_version_info(infos.get_latest_fws())
         self.refresh_update_tree_view()
 
+    def show_brick_update(self, url_part):
         self.tab_widget.setCurrentWidget(self.tab_brick)
         self.refresh_serial_ports()
 
@@ -1694,11 +1695,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         QTimer.singleShot(1, lambda: self.combo_firmware.setCurrentIndex(idx))
 
 
-    def show_bricklet_update(self, parent_uid, port, version_info):
-        self.reset_version_info()
-        self.load_version_info(infos.get_latest_fws())
-        self.refresh_update_tree_view()
-
+    def show_bricklet_update(self, parent_uid, port):
         self.tab_widget.setCurrentWidget(self.tab_bricklet)
 
         uids = [re.search(r'\[(.*)\]', self.combo_parent.itemText(i)).group(1) for i in range(self.combo_parent.count())]
@@ -1718,11 +1715,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         QTimer.singleShot(1, lambda: self.combo_port.setCurrentIndex(idx))
 
 
-    def show_extension_update(self, master_uid, version_info):
-        self.reset_version_info()
-        self.load_version_info(infos.get_latest_fws())
-        self.refresh_update_tree_view()
-
+    def show_extension_update(self, master_uid):
         self.tab_widget.setCurrentWidget(self.tab_extension)
 
         uids = [re.search(r'\[(.*)\]', self.combo_extension.itemText(i)).group(1) for i in range(self.combo_extension.count())]
