@@ -672,7 +672,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tab_widget.setCurrentIndex(0)
 
     def connect_on_return(self, event):
-        if event.type() == QEvent.KeyPress and event.key() == Qt.Key_Return:
+        if event.type() == QEvent.KeyPress and (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter):
             self.connect_clicked()
             return True
         return False
