@@ -157,6 +157,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_tree_view.setModel(self.update_tree_view_model)
         self.update_tree_view.setSortingEnabled(True)
         self.update_tree_view.header().setSortIndicator(0, Qt.AscendingOrder)
+        self.update_tree_view.activated.connect(self.update_tree_view_clicked)
 
         self.update_button_refresh.clicked.connect(self.refresh_updates_clicked)
         self.update_button_bricklets.clicked.connect(self.auto_update_bricklets_clicked)
@@ -167,6 +168,26 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.update_bricks()
         self.update_extensions()
+
+    def update_tree_view_clicked(self, idx):
+        name, uid, current_version, latest_version = [idx.siblingAtColumn(i).data() for i in range(0, 4)]
+
+        if "wifi" in name.lower() and "2.0" in name.lower():
+            uid = idx.parent().siblingAtColumn(1).data()
+            self.show_extension_update(uid)
+            return
+
+        if len(uid) == 0:
+            return # Tools and firmware-less extensions
+
+        device_info = infos.get_info(uid)
+
+        if device_info.type == 'brick':
+            self.show_brick_update(device_info.url_part)
+        elif device_info.type == 'bricklet':
+            self.show_bricklet_update(device_info.connected_uid, device_info.position)
+
+
 
     def fw_versions_fetched(self, firmware_info):
         if isinstance(firmware_info, int):
