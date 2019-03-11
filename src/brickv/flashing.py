@@ -1711,7 +1711,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.update_ui_state()
 
-    def update_version_info():
+    def update_version_info(self):
         self.reset_version_info()
         self.load_version_info(infos.get_latest_fws())
         self.refresh_update_tree_view()
