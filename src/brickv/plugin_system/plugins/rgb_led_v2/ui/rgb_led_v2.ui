@@ -91,7 +91,7 @@
      <item row="4" column="1">
       <widget class="QSlider" name="slider_h">
        <property name="minimum">
-        <number>-1</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>359</number>
