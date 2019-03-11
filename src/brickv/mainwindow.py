@@ -738,6 +738,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if getattr(device_info, name) != value:
                     setattr(device_info, name, value)
                     something_changed_ref[0] = True
+                    infos.get_infos_changed_signal().emit(device_info.uid)
 
             set_device_info_value('uid', uid)
             set_device_info_value('connected_uid', connected_uid)
@@ -757,12 +758,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         info.connections[device_info.position] = device_info
                         device_info.reverse_connection = info
                         something_changed_ref[0] = True
+                        infos.get_infos_changed_signal().emit(info.uid)
 
                 if info.connected_uid != '' and info.connected_uid == device_info.uid:
                     if device_info.connections.get(info.position) != info:
                         device_info.connections[info.position] = info
                         info.reverse_connection = device_info
                         something_changed_ref[0] = True
+                        infos.get_infos_changed_signal().emit(info.uid)
 
             if device_info.plugin == None:
                 self.plugin_manager.create_plugin_instance(device_identifier, self.ipcon, device_info)
