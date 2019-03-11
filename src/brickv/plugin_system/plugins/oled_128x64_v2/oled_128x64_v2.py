@@ -161,7 +161,7 @@ class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
                 else:
                     data.append(False)
 
-        self.oled.write_pixels(0, 0, 127, 63, data)
+        async_call(self.oled.write_pixels, (0, 0, 127, 63, data), None, error_callback=self.increase_error_count)
 
     def cb_display_configuration(self, conf):
         self.contrast_slider.setValue(conf.contrast)
