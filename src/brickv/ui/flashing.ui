@@ -163,7 +163,7 @@
          <item row="2" column="2">
           <widget class="QPushButton" name="button_firmware_save">
            <property name="text">
-            <string>Save</string>
+            <string>Flash</string>
            </property>
           </widget>
          </item>
@@ -264,7 +264,7 @@
          <item row="3" column="2" colspan="2">
           <widget class="QPushButton" name="button_plugin_save">
            <property name="text">
-            <string>Save</string>
+            <string>Flash Plugin</string>
            </property>
           </widget>
          </item>
@@ -314,14 +314,14 @@
          <item row="7" column="2">
           <widget class="QPushButton" name="button_uid_load">
            <property name="text">
-            <string>Load</string>
+            <string>Load UID</string>
            </property>
           </widget>
          </item>
          <item row="7" column="3">
           <widget class="QPushButton" name="button_uid_save">
            <property name="text">
-            <string>Save</string>
+            <string>Save UID</string>
            </property>
           </widget>
          </item>
