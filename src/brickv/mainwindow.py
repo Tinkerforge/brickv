@@ -50,6 +50,7 @@ from brickv import infos
 from brickv.tab_window import TabWindow, IconButton
 from brickv.plugin_system.comcu_bootloader import COMCUBootloader
 from brickv.load_pixmap import load_pixmap
+from brickv.utils import get_resources_path
 
 from brickv.firmware_fetch import LatestFWVersionFetcher, latest_fw_versions_result
 
@@ -205,6 +206,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # fusion style
         self.check_fusion_gui_style.setChecked(config.get_use_fusion_gui_style())
         self.check_fusion_gui_style.stateChanged.connect(self.gui_style_changed)
+
+        self.button_update_pixmap_normal = load_pixmap('update-icon-normal.png')
+        self.button_update_pixmap_hover = load_pixmap('update-icon-hover.png')
 
     # override QMainWindow.closeEvent
     def closeEvent(self, event):
@@ -517,7 +521,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         label_version_name = QLabel('Version:')
         label_version = QLabel('...')
 
-        button_update = QPushButton(QIcon(load_pixmap('update-icon-normal.png')), 'Update')
+        button_update = QPushButton(QIcon(self.button_update_pixmap_normal), 'Update')
+        button_update.installEventFilter(self)
 
         if device_info.type == 'brick':
             button_update.clicked.connect(lambda: self.show_brick_update(device_info.url_part))
@@ -683,6 +688,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if source is self.combo_host or source is self.spinbox_port or source is self.edit_secret:
             return self.connect_on_return(event)
+
+        if isinstance(source, QPushButton) and event.type() == QEvent.Enter:
+            source.setIcon(QIcon(self.button_update_pixmap_hover))
+        elif isinstance(source, QPushButton) and  event.type() == QEvent.Leave:
+            source.setIcon(QIcon(self.button_update_pixmap_normal))
 
         return False
 
