@@ -79,10 +79,12 @@ class RGBLED(PluginBase, Ui_RGBLED):
 
         r, g, b = self.spin_r.value(), self.spin_g.value(), self.spin_b.value()
         rgb = QColor(r, g, b)
-        h, s, l = rgb.hue(), rgb.saturation(), rgb.lightness()
+        h, s, l = rgb.hslHue(), rgb.hslSaturation(), rgb.lightness()
 
         self.changing = True
-        self.spin_h.setValue(h)
+
+        if h != -1: # Qt returns -1 if the color is achromatic (i.e. grey).
+            self.spin_h.setValue(h)
         self.spin_s.setValue(s)
         self.spin_l.setValue(l)
         self.changing = False

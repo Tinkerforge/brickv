@@ -32,7 +32,7 @@ from brickv.async_call import async_call
 
 class RGBLEDButton(COMCUPluginBase, Ui_RGBLEDButton):
     qtcb_button_state_changed = pyqtSignal(int)
-    
+
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletRGBLEDButton, *args)
 
@@ -41,7 +41,7 @@ class RGBLEDButton(COMCUPluginBase, Ui_RGBLEDButton):
         self.changing = False
 
         self.setupUi(self)
-        
+
         self.qtcb_button_state_changed.connect(self.cb_button_state_changed)
         self.rgb_led_button.register_callback(self.rgb_led_button.CALLBACK_BUTTON_STATE_CHANGED,
                                               self.qtcb_button_state_changed.emit)
@@ -77,7 +77,7 @@ class RGBLEDButton(COMCUPluginBase, Ui_RGBLEDButton):
 
     def stop(self):
         pass
-    
+
     def cb_button_state_changed(self, state):
         if state == self.rgb_led_button.BUTTON_STATE_RELEASED:
             self.label_button_state.setText('Released')
@@ -90,10 +90,12 @@ class RGBLEDButton(COMCUPluginBase, Ui_RGBLEDButton):
 
         r, g, b = self.spin_r.value(), self.spin_g.value(), self.spin_b.value()
         rgb = QColor(r, g, b)
-        h, s, l = rgb.hue(), rgb.saturation(), rgb.lightness()
+        h, s, l = rgb.hslHue(), rgb.hslSaturation(), rgb.lightness()
 
         self.changing = True
-        self.spin_h.setValue(h)
+
+        if h != -1: # Qt returns -1 if the color is achromatic (i.e. grey).
+            self.spin_h.setValue(h)
         self.spin_s.setValue(s)
         self.spin_l.setValue(l)
         self.changing = False
