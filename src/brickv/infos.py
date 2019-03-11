@@ -177,7 +177,7 @@ def add_latest_fw(info):
         if info.name not in name_to_url_part.keys():
             raise Exception("The name -> url_part mapping was incomplete: " + info.name)
         info.url_part = name_to_url_part[info.name]
-        d = _latest_fws.plugin_infos
+        d = _latest_fws.tool_infos
     else:
         raise Exception("Unexpected info type " + info.type)
 
