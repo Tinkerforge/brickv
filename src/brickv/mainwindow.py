@@ -996,7 +996,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def update_tree_view(self):
         self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels)
-        self.tab_widget.tabBar().setTabButton(0, QTabBar.LeftSide, None)
+        self.tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, None)
 
         sis = self.tree_view.header().sortIndicatorSection()
         sio = self.tree_view.header().sortIndicatorOrder()
