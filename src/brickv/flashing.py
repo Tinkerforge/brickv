@@ -158,6 +158,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_tree_view.setSortingEnabled(True)
         self.update_tree_view.header().setSortIndicator(0, Qt.AscendingOrder)
         self.update_tree_view.activated.connect(self.update_tree_view_clicked)
+        self.update_tree_view.setExpandsOnDoubleClick(False)
 
         self.update_button_refresh.clicked.connect(self.refresh_updates_clicked)
         self.update_button_bricklets.clicked.connect(self.auto_update_bricklets_clicked)

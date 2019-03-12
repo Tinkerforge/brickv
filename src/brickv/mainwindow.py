@@ -103,7 +103,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tree_view_proxy_model = DevicesProxyModel(self)
         self.tree_view_proxy_model.setSourceModel(self.tree_view_model)
         self.tree_view.setModel(self.tree_view_proxy_model)
-        self.tree_view.doubleClicked.connect(self.item_double_clicked)
+        self.tree_view.activated.connect(self.item_activated)
         self.set_tree_view_defaults()
 
         self.tab_widget.removeTab(1) # remove dummy tab
@@ -482,7 +482,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.do_disconnect()
 
-    def item_double_clicked(self, index):
+    def item_activated(self, index):
         index = self.tree_view_proxy_model.mapToSource(index)
         position_index = index.sibling(index.row(), 2)
 
