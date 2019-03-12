@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt5.QtCore import  Qt
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout
-from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QColor, QPixmap, QIcon, QPainter
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_rgb_led import BrickletRGBLED
@@ -58,14 +58,15 @@ class RGBLED(PluginBase, Ui_RGBLED):
             self.changing = False
             self.rgb_changed()
 
-        self.button_black.clicked.connect(lambda: set_color(0, 0, 0))
-        self.button_white.clicked.connect(lambda: set_color(255, 255, 255))
-        self.button_red.clicked.connect(lambda: set_color(255, 0, 0))
-        self.button_yellow.clicked.connect(lambda: set_color(255, 255, 0))
-        self.button_green.clicked.connect(lambda: set_color(0, 255, 0))
-        self.button_cyan.clicked.connect(lambda: set_color(0, 255, 255))
-        self.button_blue.clicked.connect(lambda: set_color(0, 0, 255))
-        self.button_magenta.clicked.connect(lambda: set_color(255, 0, 255))
+        for color, button in zip([(0, 0, 0), (255, 255, 255), (255, 0, 0), (255, 255, 0),
+                                  (0, 255, 0), (0, 255, 255), (0, 0, 255), (255, 0, 255)],
+                                [self.button_black, self.button_white, self.button_red, self.button_yellow,
+                                 self.button_green, self.button_cyan, self.button_blue, self.button_magenta]):
+            button.clicked.connect(lambda clicked, c = color: set_color(*c))
+            pixmap = QPixmap(32, 32)
+            QPainter(pixmap).fillRect(0, 0, 32, 32, QColor(*color))
+            button.setIcon(QIcon(pixmap))
+            button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
     def start(self):
         # Use response expected for set_rgb_value function, to make sure that the
