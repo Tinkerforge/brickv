@@ -1009,7 +1009,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels + ['Update'])
                 row.append(QStandardItem('.'.join(map(str, info.firmware_version_latest))))
 
-                self.tab_widget.tabBar().setTabButton(0, QTabBar.LeftSide, self.update_tab_button)
+                self.tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, self.update_tab_button)
                 self.update_tab_button.show()
 
             for item in row:
