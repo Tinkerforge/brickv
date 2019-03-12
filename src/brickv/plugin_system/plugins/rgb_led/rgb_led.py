@@ -68,10 +68,15 @@ class RGBLED(PluginBase, Ui_RGBLED):
         self.button_magenta.clicked.connect(lambda: set_color(255, 0, 255))
 
     def start(self):
+        # Use response expected for set_rgb_value function, to make sure that the
+        # data queue can't fill up while you move the slider around.
+        self.set_rgb_value_response_expected = self.rgb_led.get_response_expected(self.rgb_led.FUNCTION_SET_RGB_VALUE)
+        self.rgb_led.set_response_expected(self.rgb_led.FUNCTION_SET_RGB_VALUE, True)
+
         async_call(self.rgb_led.get_rgb_value, None, self.get_rgb_value_async, self.increase_error_count)
 
     def stop(self):
-        pass
+        self.rgb_led.set_response_expected(self.rgb_led.FUNCTION_SET_RGB_VALUE, self.set_rgb_value_response_expected)
 
     def rgb_changed(self, *args):
         if self.changing:

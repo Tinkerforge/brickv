@@ -72,11 +72,16 @@ class RGBLEDButton(COMCUPluginBase, Ui_RGBLEDButton):
         self.button_magenta.clicked.connect(lambda: set_color(255, 0, 255))
 
     def start(self):
+        # Use response expected for set_color function, to make sure that the
+        # data queue can't fill up while you move the slider around.
+        self.set_color_response_expected = self.rgb_led_button.get_response_expected(self.rgb_led_button.FUNCTION_SET_COLOR)
+        self.rgb_led_button.set_response_expected(self.rgb_led_button.FUNCTION_SET_COLOR, True)
+
         async_call(self.rgb_led_button.get_color, None, self.get_color_async, self.increase_error_count)
         async_call(self.rgb_led_button.get_button_state, None, self.cb_button_state_changed, self.increase_error_count)
 
     def stop(self):
-        pass
+        self.rgb_led_button.set_response_expected(self.rgb_led_button.FUNCTION_SET_COLOR, self.set_color_response_expected)
 
     def cb_button_state_changed(self, state):
         if state == self.rgb_led_button.BUTTON_STATE_RELEASED:
