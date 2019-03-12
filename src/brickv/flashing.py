@@ -176,10 +176,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.button_plugin_save.setEnabled(os.path.isfile(text))
 
     def update_tree_view_clicked(self, idx):
-        name, uid, current_version, latest_version = [idx.siblingAtColumn(i).data() for i in range(0, 4)]
+        name, uid, current_version, latest_version = [idx.sibling(idx.row(), i).data() for i in range(0, 4)]
 
         if "wifi" in name.lower() and "2.0" in name.lower():
-            uid = idx.parent().siblingAtColumn(1).data()
+            uid = idx.parent().sibling(idx.row(), i).data()
             self.show_extension_update(uid)
             return
 
