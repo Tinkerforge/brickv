@@ -162,12 +162,17 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_button_refresh.clicked.connect(self.refresh_updates_clicked)
         self.update_button_bricklets.clicked.connect(self.auto_update_bricklets_clicked)
 
+        self.edit_custom_plugin.textChanged.connect(self.edit_custom_plugin_text_changed)
+
         get_main_window().fw_version_fetcher.fw_versions_avail.connect(self.fw_versions_fetched)
 
         self.load_version_info(infos.get_latest_fws())
 
         self.update_bricks()
         self.update_extensions()
+
+    def edit_custom_plugin_text_changed(self, text):
+        self.button_plugin_save.setEnabled(os.path.isfile(text))
 
     def update_tree_view_clicked(self, idx):
         name, uid, current_version, latest_version = [idx.siblingAtColumn(i).data() for i in range(0, 4)]
@@ -506,6 +511,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.combo_parent.setEnabled(not is_no_brick)
         self.button_plugin_save.setEnabled(not is_plugin_select and not is_no_brick)
         self.edit_custom_plugin.setEnabled(is_plugin_custom)
+        if is_plugin_custom:
+            self.button_plugin_save.setEnabled(False)
+            self.edit_custom_plugin_text_changed(self.edit_custom_plugin.text())
         self.button_plugin_browse.setEnabled(is_plugin_custom)
 
         is_extension_firmware_select = self.combo_extension_firmware.currentText() == SELECT
