@@ -62,7 +62,7 @@
          <item row="3" column="1">
           <widget class="QPushButton" name="update_button_bricklets">
            <property name="text">
-            <string>Auto-Update All Bricklets</string>
+            <string>Auto-Update all Bricklets</string>
            </property>
           </widget>
          </item>
