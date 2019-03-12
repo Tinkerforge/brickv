@@ -191,7 +191,7 @@ class LatestFWVersionFetcher(QObject):
                 self.fw_versions_avail.emit(new_data)
 
             self.sleep_event.clear()
-            self.sleep_event.wait(10 * 60)
+            self.sleep_event.wait(60 * 60)
 
     def fetch_now(self):
         self.sleep_event.set()
