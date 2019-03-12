@@ -146,9 +146,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.fw_version_fetcher.fw_versions_avail.connect(self.fw_versions_fetched)
         self.fw_version_fetcher_thread = QThread()
         self.fw_version_fetcher_thread.setObjectName("fw_version_fetcher_thread")
-        self.fw_version_fetcher.moveToThread(self.fw_version_fetcher_thread)
-        self.fw_version_fetcher_thread.started.connect(self.fw_version_fetcher.run)
-        self.fw_version_fetcher_thread.start()
+        if config.get_search_updates():
+            self.enable_search_for_updates()
+        else:
+            self.disable_search_for_updates()
 
         self.tab_widget.currentChanged.connect(self.tab_changed)
         self.tab_widget.setMovable(True)
@@ -207,8 +208,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.check_fusion_gui_style.setChecked(config.get_use_fusion_gui_style())
         self.check_fusion_gui_style.stateChanged.connect(self.gui_style_changed)
 
+        self.checkbox_search_updates.setChecked(config.get_search_updates())
+        self.checkbox_search_updates.stateChanged.connect(self.search_updates_changed)
+
         self.button_update_pixmap_normal = load_pixmap('update-icon-normal.png')
         self.button_update_pixmap_hover = load_pixmap('update-icon-hover.png')
+
+    def disable_search_for_updates(self):
+        self.fw_version_fetcher.abort()
+
+    def enable_search_for_updates(self):
+        self.fw_version_fetcher.reset()
+        self.fw_version_fetcher.moveToThread(self.fw_version_fetcher_thread)
+        self.fw_version_fetcher_thread.started.connect(self.fw_version_fetcher.run)
+        self.fw_version_fetcher.finished.connect(self.fw_version_fetcher_thread.quit)
+        self.fw_version_fetcher_thread.start()
 
     # override QMainWindow.closeEvent
     def closeEvent(self, event):
@@ -325,6 +339,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         QMessageBox.information(self, 'GUI Style', 'GUI style change will be applied on next Brick Viewer start.', QMessageBox.Ok)
 
+    def search_updates_changed(self):
+        config.set_search_updates(self.checkbox_search_updates.isChecked())
+        if self.checkbox_search_updates.isChecked():
+            self.enable_search_for_updates()
+        else:
+            self.disable_search_for_updates()
+
     def remove_all_device_infos(self):
         for device_info in infos.get_device_infos():
             self.remove_device_info(device_info.uid)
@@ -430,7 +451,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.flashing_window.show()
         self.flashing_window.tab_widget.setCurrentWidget(self.flashing_window.tab_updates)
-        self.flashing_window.refresh_updates_clicked()
+        self.flashing_window.update_version_info()
 
     def advanced_clicked(self):
         if self.advanced_window is None:
@@ -1062,14 +1083,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.flashing_window.refresh_update_tree_view()
 
     def fw_versions_fetched(self, firmware_info):
-        if isinstance(firmware_info, int) and firmware_info > 0:
-            label_icon = QLabel()
-            label_icon.setPixmap(load_pixmap('warning-icon-16.png'))
-            self.statusBar().addWidget(label_icon)
-            if firmware_info == 1:
-                self.statusBar().addWidget(QLabel('Latest firmware information could not be downloaded.'))
-            else:
-                self.statusBar().addWidget(QLabel('Latest firmware information on tinkerforge.com is malformed (error code {0}). Please report this to info@tinkerforge.com.'.format(firmware_info)))
+        if isinstance(firmware_info, int):
+            if firmware_info > 0:
+                label_icon = QLabel()
+                label_icon.setPixmap(load_pixmap('warning-icon-16.png'))
+                self.statusBar().addWidget(label_icon)
+                if firmware_info == 1:
+                    self.statusBar().addWidget(QLabel('Latest firmware information could not be downloaded.'))
+                else:
+                    self.statusBar().addWidget(QLabel('Latest firmware information on tinkerforge.com is malformed (error code {0}). Please report this to info@tinkerforge.com.'.format(firmware_info)))
             infos.reset_latest_fws()
         else:
             self.setStatusBar(None)

@@ -55,7 +55,7 @@
          <item row="3" column="0">
           <widget class="QPushButton" name="update_button_refresh">
            <property name="text">
-            <string>Refresh</string>
+            <string>Search for Updates</string>
            </property>
           </widget>
          </item>

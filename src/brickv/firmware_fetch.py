@@ -178,6 +178,7 @@ def fetch_latest_fw_versions(report_error_fn):
 
 class LatestFWVersionFetcher(QObject):
     fw_versions_avail = pyqtSignal(object)
+    finished = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -193,8 +194,20 @@ class LatestFWVersionFetcher(QObject):
             self.sleep_event.clear()
             self.sleep_event.wait(60 * 60)
 
+        self.finished.emit()
+
     def fetch_now(self):
-        self.sleep_event.set()
+        if self._abort:
+            new_data = fetch_latest_fw_versions(self.fw_versions_avail.emit)
+            if new_data is not None:
+                self.fw_versions_avail.emit(new_data)
+        else:
+            self.sleep_event.set()
 
     def abort(self):
         self._abort = True
+        self.sleep_event.set()
+
+    def reset(self):
+        self._abort = False
+        self.sleep_event = threading.Event()
