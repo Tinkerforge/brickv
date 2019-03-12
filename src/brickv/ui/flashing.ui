@@ -264,7 +264,7 @@
          <item row="3" column="2" colspan="2">
           <widget class="QPushButton" name="button_plugin_save">
            <property name="text">
-            <string>Flash Plugin</string>
+            <string>Flash</string>
            </property>
           </widget>
          </item>
@@ -379,7 +379,7 @@
          <item row="2" column="2">
           <widget class="QPushButton" name="button_extension_firmware_save">
            <property name="text">
-            <string>Save</string>
+            <string>Flash</string>
            </property>
           </widget>
          </item>
