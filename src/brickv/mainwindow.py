@@ -1015,7 +1015,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 position_item = QStandardItem(info.position.upper())
                 position_item.setData(position_prefix + ':' + info.position.upper(), USER_ROLE_POSITION)
 
-            fw_version = infos.get_version_string(info.firmware_version_installed, replace_unknown="Querying..." if info.url_part == 'wifi_v2' else None)
+            replacement = '0.0.0'
+            if info.url_part == 'wifi_v2':
+                replacement = "Querying..."
+            elif info.type == "extension":
+                replacement = ""
+
+            fw_version = infos.get_version_string(info.firmware_version_installed, replace_unknown=replacement)
 
             uid = info.uid if info.type != "extension" else ''
 
