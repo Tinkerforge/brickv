@@ -22,7 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, QRegularExpression
+from PyQt5.QtGui import QRegularExpressionValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit
 
 from brickv.plugin_system.plugin_base import PluginBase
@@ -57,6 +58,7 @@ class PiezoBuzzer(PluginBase):
         self.morse_edit = QLineEdit()
         self.morse_edit.setText('- .. -. -.- . .-. ..-. --- .-. --. .')
         self.morse_edit.setMaxLength(60)
+        self.morse_edit.setValidator(QRegularExpressionValidator(QRegularExpression("[\\s|\\-|\\.]*")))
         self.morse_label = QLabel('Morse Code:')
         self.morse_button = QPushButton('Send Morse Code')
         self.morse_layout = QHBoxLayout()
