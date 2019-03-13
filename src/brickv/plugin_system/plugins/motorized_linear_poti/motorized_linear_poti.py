@@ -4,7 +4,7 @@ Motorized LinearPoti Plugin
 Copyright (C) 2015-2017 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2016 Matthias Bolte <matthias@tinkerforge.com>
 
-motorized_poti.py: Motorized Poti Plugin implementation
+motorized_linear_poti.py: Motorized Linear Poti Plugin implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

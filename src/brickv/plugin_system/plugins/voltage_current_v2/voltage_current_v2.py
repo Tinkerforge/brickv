@@ -4,7 +4,7 @@ Voltage/Current 2.0 Plugin
 Copyright (C) 2018 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2018 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
-voltage_current.py: Voltage/Current 2.0 Plugin Implementation
+voltage_current_v2.py: Voltage/Current 2.0 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

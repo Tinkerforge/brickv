@@ -3,7 +3,7 @@
 Industrial Digital In 4 2.0 Plugin
 Copyright (C) 2018 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
-industrial_digital_in_4-v2.py: Industrial Digital In 4 2.0 Plugin Implementation
+industrial_digital_in_4_v2.py: Industrial Digital In 4 2.0 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

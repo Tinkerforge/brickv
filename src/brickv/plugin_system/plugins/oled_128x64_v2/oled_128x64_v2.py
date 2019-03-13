@@ -3,7 +3,7 @@
 OLED128x64 Plugin
 Copyright (C) 2018 Olaf Lüke <olaf@tinkerforge.com>
 
-oled_128x64.py: OLED 128x64 Plugin Implementation
+oled_128x64_v2.py: OLED 128x64 2.0 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

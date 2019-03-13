@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/env python3
-
+# -*- coding: utf-8 -*-
 """
 Copyright (C) 2015 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>

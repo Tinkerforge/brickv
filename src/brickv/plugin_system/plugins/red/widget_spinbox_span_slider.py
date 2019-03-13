@@ -3,7 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
-widget_span_slider.py: Custom span slider with spinbox implementation
+widget_spinbox_span_slider.py: Custom span slider with spinbox implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

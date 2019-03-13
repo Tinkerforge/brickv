@@ -3,7 +3,7 @@
 Solid State Relay V2 Plugin
 Copyright (C) 2017 Olaf Lüke <olaf@tinkerforge.com>
 
-solid_state_relay.py: Solid State Relay Plugin Implementation
+solid_state_relay_v2.py: Solid State Relay 2.0 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

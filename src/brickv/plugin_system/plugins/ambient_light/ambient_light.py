@@ -4,7 +4,7 @@ Ambient Light Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
-ambientlight.py: Ambient Light Bricklet Plugin Implementation
+ambient_light.py: Ambient Light Bricklet Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

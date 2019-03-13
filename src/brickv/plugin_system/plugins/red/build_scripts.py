@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/env python3
-
+# -*- coding: utf-8 -*-
 """
+RED Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
 
-build_script.py: Make _scripts.py from scripts/ folder and minify python code
+build_scripts.py: Make _scripts.py from scripts/ folder and minify python code
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
