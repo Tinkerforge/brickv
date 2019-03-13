@@ -89,10 +89,10 @@ def set_host_info_strings(strings):
     set_config_value('Connection', 'HostInfoCount', str(i))
 
 def get_use_fusion_gui_style():
-    return get_config_value('GUI', 'UseFusionStyle', str(DEFAULT_USE_FUSION_GUI_STYLE).lower()) == 'true'
+    return get_config_value('GUI', 'UseFusionGUIStyle', str(DEFAULT_USE_FUSION_GUI_STYLE).lower()) == 'true'
 
 def set_use_fusion_gui_style(value):
-    set_config_value('GUI', 'UseFusionStyle', str(bool(value)).lower())
+    set_config_value('GUI', 'UseFusionGUIStyle', str(bool(value)).lower())
 
 def get_auto_search_for_updates():
     return get_config_value('GUI', 'AutoSearchForUpdates', str(DEFAULT_AUTO_SEARCH_FOR_UPDATES).lower()) == 'true'
