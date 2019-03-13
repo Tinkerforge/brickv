@@ -40,7 +40,7 @@ def format_distance(distance): # cm
 
 class LaserRangeFinder(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletLaserRangeFinder, *args)
+        super().__init__(BrickletLaserRangeFinder, *args)
 
         self.lrf = self.device
 

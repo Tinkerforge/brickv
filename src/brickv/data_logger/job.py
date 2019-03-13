@@ -39,7 +39,7 @@ if 'merged_data_logger_modules' not in globals():
 
 class AbstractJob(threading.Thread):
     def __init__(self, name, target, datalogger=None):
-        super().__init__(self, name=name, target=target)
+        super().__init__(name=name, target=target)
 
         self.daemon = True
         self._exit_flag = False
@@ -79,7 +79,7 @@ class CSVWriterJob(AbstractJob):
 
     def __init__(self, datalogger=None, name="CSVWriterJob"):
         target = self._job
-        super().__init__(self, datalogger=datalogger, name=name, target=target)
+        super().__init__(datalogger=datalogger, name=name, target=target)
 
     def _job(self):
         try:

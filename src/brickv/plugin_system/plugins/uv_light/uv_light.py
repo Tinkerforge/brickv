@@ -37,7 +37,7 @@ class IndexLabel(FixedSizeLabel):
 
 class UVLight(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletUVLight, *args)
+        super().__init__(BrickletUVLight, *args)
 
         self.uv_light = self.device
 

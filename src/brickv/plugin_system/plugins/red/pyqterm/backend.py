@@ -1097,7 +1097,7 @@ class SerialSession(QObject):
     signal_update_screen = pyqtSignal()
 
     def __init__(self, cmd, parent):
-        super().__init__(self)
+        super().__init__()
         self.parent = parent
         self.cmd = cmd
         self.term = Terminal(80, 24)

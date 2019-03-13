@@ -40,7 +40,7 @@ class ChipTemperatureLabel(QLabel):
 
 class Barometer(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletBarometer, *args)
+        super().__init__(BrickletBarometer, *args)
 
         self.barometer = self.device
 

@@ -36,7 +36,7 @@ class PiezoSpeaker(PluginBase):
     qtcb_morse_finished = pyqtSignal()
 
     def __init__(self, *args):
-        super().__init__(self, BrickletPiezoSpeaker, *args)
+        super().__init__(BrickletPiezoSpeaker, *args)
 
         self.ps = self.device
 

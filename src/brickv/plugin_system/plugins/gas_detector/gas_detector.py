@@ -33,7 +33,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class GasDetector(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletGasDetector, *args)
+        super().__init__(BrickletGasDetector, *args)
 
         self.gas_detector = self.device
 

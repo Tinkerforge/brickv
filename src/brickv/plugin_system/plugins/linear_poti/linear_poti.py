@@ -33,7 +33,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class LinearPoti(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletLinearPoti, *args)
+        super().__init__(BrickletLinearPoti, *args)
 
         self.lp = self.device
 

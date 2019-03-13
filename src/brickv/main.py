@@ -113,7 +113,7 @@ class BrickViewer(QApplication):
     infos_changed_signal = pyqtSignal(str) # uid
 
     def __init__(self, *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.object_creator_signal.connect(self.object_creator_slot)
         self.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))

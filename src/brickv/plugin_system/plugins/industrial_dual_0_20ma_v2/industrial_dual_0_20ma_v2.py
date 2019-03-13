@@ -52,7 +52,7 @@ class FixedSizeLabel(QLabel):
 
 class IndustrialDual020mAV2(COMCUPluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletIndustrialDual020mAV2, *args)
+        super().__init__(BrickletIndustrialDual020mAV2, *args)
 
         self.dual020 = self.device
 

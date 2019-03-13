@@ -489,7 +489,7 @@ class FatalError(RuntimeError):
     ESP8266 responses or input content.
     """
     def __init__(self, message):
-        super().__init__(self, message)
+        super().__init__(message)
 
     @staticmethod
     def WithResult(message, result):

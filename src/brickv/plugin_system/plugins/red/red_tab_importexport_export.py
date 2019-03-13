@@ -38,7 +38,7 @@ from brickv.plugin_system.plugins.red.script_manager import report_script_result
 
 class ChunkedDownloader(ChunkedDownloaderBase):
     def __init__(self, widget):
-        super().__init__(self, widget.session)
+        super().__init__(widget.session)
 
         self.widget = widget
 

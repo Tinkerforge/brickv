@@ -38,7 +38,7 @@ class MotorPositionLabel(FixedSizeLabel):
 
 class MotorizedLinearPoti(COMCUPluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletMotorizedLinearPoti, *args)
+        super().__init__(BrickletMotorizedLinearPoti, *args)
 
         self.mp = self.device
 

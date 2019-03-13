@@ -132,7 +132,7 @@ class Calibration(QDialog, Ui_Calibration):
 
 class IndustrialDualAnalogInV2(COMCUPluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletIndustrialDualAnalogInV2, *args)
+        super().__init__(BrickletIndustrialDualAnalogInV2, *args)
 
         self.analog_in = self.device
 

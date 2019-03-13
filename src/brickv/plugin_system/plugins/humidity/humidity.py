@@ -33,7 +33,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class Humidity(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletHumidity, *args)
+        super().__init__(BrickletHumidity, *args)
 
         self.hum = self.device
 

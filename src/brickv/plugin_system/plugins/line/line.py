@@ -34,7 +34,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class ReflectivityFrame(QFrame):
     def __init__(self, parent=None):
-        super().__init__(self, parent)
+        super().__init__(parent)
         self.reflectivity = 0
         self.setMinimumSize(150, 150)
 
@@ -57,7 +57,7 @@ class ReflectivityFrame(QFrame):
 
 class Line(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletLine, *args)
+        super().__init__(BrickletLine, *args)
 
         self.line = self.device
 

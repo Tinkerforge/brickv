@@ -34,7 +34,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class AmbientLightFrame(QFrame):
     def __init__(self, parent = None):
-        super().__init__(self, parent)
+        super().__init__(parent)
         self.color = QColor(128, 128, 128)
         self.setMinimumSize(25, 25)
         self.setMaximumSize(25, 25)
@@ -54,7 +54,7 @@ class AmbientLightFrame(QFrame):
 
 class AmbientLightV2(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletAmbientLightV2, *args)
+        super().__init__(BrickletAmbientLightV2, *args)
 
         self.al = self.device
 

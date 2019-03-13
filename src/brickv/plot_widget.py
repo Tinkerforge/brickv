@@ -100,7 +100,7 @@ class Scale(object):
 
 class XScale(Scale):
     def __init__(self, tick_text_font, title_text_font, title_text, tick_skip_last):
-        super().__init__(self, tick_text_font, title_text_font)
+        super().__init__(tick_text_font, title_text_font)
 
         self.tick_skip_last = tick_skip_last
 
@@ -220,7 +220,7 @@ class XScale(Scale):
 
 class YScale(Scale):
     def __init__(self, tick_text_font, title_text_font, title_text):
-        super().__init__(self, tick_text_font, title_text_font)
+        super().__init__(tick_text_font, title_text_font)
 
         self.value_min = None # set by update_tick_config
         self.value_max = None # set by update_tick_config
@@ -374,7 +374,7 @@ class YScale(Scale):
 
 class CurveArea(QWidget):
     def __init__(self, plot):
-        super().__init__(self, plot)
+        super().__init__(plot)
 
         self.plot = plot
 
@@ -486,7 +486,7 @@ class Plot(QWidget):
     def __init__(self, parent, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
                  curve_configs, scales_visible, curve_outer_border_visible, curve_motion_granularity,
                  canvas_color, curve_start, x_diff):
-        super().__init__(self, parent)
+        super().__init__(parent)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
@@ -950,7 +950,7 @@ class PlotWidget(QWidget):
                  external_timer=None, key='top-value', extra_key_widgets=None,
                  update_interval=0.1, curve_start='left', moving_average_config=None,
                  x_scale_title_text='Time [s]', x_diff=20, x_scale_skip_last_tick=True):
-        super().__init__(self, parent)
+        super().__init__(parent)
 
         self.setMinimumSize(300, 250)
 

@@ -52,7 +52,7 @@ from brickv.data_logger.ui_setup_dialog import Ui_SetupDialog
 
 class IntervalWidget(QWidget):
     def __init__(self, parent=None):
-        super().__init__(self, parent)
+        super().__init__(parent)
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0,0,0,0)

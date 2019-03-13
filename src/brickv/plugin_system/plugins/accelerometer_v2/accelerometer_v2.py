@@ -56,7 +56,7 @@ class RollLabel(FixedSizeLabel):
 
 class AccelerometerV2(COMCUPluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletAccelerometerV2, *args)
+        super().__init__(BrickletAccelerometerV2, *args)
 
         self.accelerometer = self.device
 

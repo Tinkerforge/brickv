@@ -28,7 +28,7 @@ from PyQt5.QtCore import QRegExp
 
 class HexValidator(QValidator):
     def __init__(self, max_bytes=-1):
-        super().__init__(self)
+        super().__init__()
 
         self.max_bytes = max_bytes
 

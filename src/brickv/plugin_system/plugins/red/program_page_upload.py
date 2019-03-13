@@ -40,7 +40,7 @@ from brickv.load_pixmap import load_pixmap
 
 class ChunkedUploader(ChunkedUploaderBase):
     def __init__(self, page):
-        super().__init__(self, page.wizard().session)
+        super().__init__(page.wizard().session)
 
         self.page = page
 

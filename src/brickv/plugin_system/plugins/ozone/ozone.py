@@ -33,7 +33,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class Ozone(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletOzone, *args)
+        super().__init__(BrickletOzone, *args)
 
         self.ozone = self.device
 

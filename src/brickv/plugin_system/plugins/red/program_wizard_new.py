@@ -46,7 +46,7 @@ from brickv.plugin_system.plugins.red.program_page_upload import ProgramPageUplo
 
 class ProgramWizardNew(ProgramWizard):
     def __init__(self, parent, context):
-        super().__init__(self, parent, context)
+        super().__init__(parent, context)
 
         self.setWindowTitle('New Program')
 

@@ -35,7 +35,7 @@ class PiezoBuzzer(PluginBase):
     qtcb_morse_finished = pyqtSignal()
 
     def __init__(self, *args):
-        super().__init__(self, BrickletPiezoBuzzer, *args)
+        super().__init__(BrickletPiezoBuzzer, *args)
 
         self.pb = self.device
 

@@ -37,7 +37,7 @@ import math
 
 class TuningThermo(QWidget):
     def __init__(self, *args):
-        super().__init__(self, *args)
+        super().__init__(*args)
 
         self.bar_width = 200 # px
         self.bar_height = 10 # px

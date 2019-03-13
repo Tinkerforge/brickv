@@ -43,7 +43,7 @@ class QHexeditWidget(QAbstractScrollArea):
     highlightingAscii=2
 
     def __init__(self, font, parent = None):
-        super().__init__(self, parent)
+        super().__init__(parent)
         self.data = ""
         self.row_width = 16
         self.word_width = 1

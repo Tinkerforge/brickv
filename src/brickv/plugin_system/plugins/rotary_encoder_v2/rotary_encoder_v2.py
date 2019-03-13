@@ -38,7 +38,7 @@ class RotaryEncoderV2(COMCUPluginBase):
     qtcb_released = pyqtSignal()
 
     def __init__(self, *args):
-        super().__init__(self, BrickletRotaryEncoderV2, *args)
+        super().__init__(BrickletRotaryEncoderV2, *args)
 
         self.re = self.device
 

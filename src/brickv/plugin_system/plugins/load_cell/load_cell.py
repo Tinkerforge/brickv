@@ -77,7 +77,7 @@ class Calibration(QDialog, Ui_Calibration):
 
 class LoadCell(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletLoadCell, *args)
+        super().__init__(BrickletLoadCell, *args)
 
         self.lc = self.device
 

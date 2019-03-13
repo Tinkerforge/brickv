@@ -37,7 +37,7 @@ class VoltageLabel(QLabel):
 
 class AnalogOutV2(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletAnalogOutV2, *args)
+        super().__init__(BrickletAnalogOutV2, *args)
 
         self.ao = self.device
 

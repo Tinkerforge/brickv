@@ -31,7 +31,7 @@ from brickv.async_call import async_call
 
 class AnalogOut(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletAnalogOut, *args)
+        super().__init__(BrickletAnalogOut, *args)
 
         self.ao = self.device
 

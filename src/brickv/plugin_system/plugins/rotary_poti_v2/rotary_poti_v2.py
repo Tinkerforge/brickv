@@ -33,7 +33,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class RotaryPotiV2(COMCUPluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletRotaryPotiV2, *args)
+        super().__init__(BrickletRotaryPotiV2, *args)
 
         self.rp = self.device
 

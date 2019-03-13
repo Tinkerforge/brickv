@@ -619,7 +619,7 @@ class ExpandingListWidget(QListWidget):
 
 class ExpandingProgressDialog(QProgressDialog):
     def __init__(self, parent=None):
-        super().__init__(self, parent)
+        super().__init__(parent)
 
         self.progress = QProgressBar(self)
         self.progress.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)

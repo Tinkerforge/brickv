@@ -33,7 +33,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class TemperatureIR(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletTemperatureIR, *args)
+        super().__init__(BrickletTemperatureIR, *args)
 
         self.tir = self.device
 

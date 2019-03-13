@@ -34,7 +34,7 @@ class ThermocoupleV2(COMCUPluginBase):
     qtcb_error_state = pyqtSignal(bool, bool)
 
     def __init__(self, *args):
-        super().__init__(self, BrickletThermocoupleV2, *args)
+        super().__init__(BrickletThermocoupleV2, *args)
 
         self.thermo2 = self.device
 

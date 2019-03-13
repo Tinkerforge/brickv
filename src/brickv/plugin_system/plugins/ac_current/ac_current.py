@@ -34,7 +34,7 @@ from brickv.utils import format_current
 
 class ACCurrent(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletACCurrent, *args)
+        super().__init__(BrickletACCurrent, *args)
 
         self.acc = self.device
 

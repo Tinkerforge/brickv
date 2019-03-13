@@ -116,7 +116,7 @@ class Calibration(QDialog, Ui_Calibration):
 
 class BarometerV2(COMCUPluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletBarometerV2, *args)
+        super().__init__(BrickletBarometerV2, *args)
 
         self.barometer = self.device
 

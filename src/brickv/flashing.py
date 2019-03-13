@@ -174,12 +174,14 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
     def edit_custom_plugin_text_changed(self, text):
         self.button_plugin_save.setEnabled(os.path.isfile(text))
+        if len(text) > 0:
+            QTimer.singleShot(5000, lambda: self.edit_custom_plugin_text_changed(self.edit_custom_plugin.text()))
 
     def update_tree_view_clicked(self, idx):
         name, uid, current_version, latest_version = [idx.sibling(idx.row(), i).data() for i in range(0, 4)]
 
         if "wifi" in name.lower() and "2.0" in name.lower():
-            uid = idx.parent().sibling(idx.row(), i).data()
+            uid = idx.parent().sibling(idx.row(), 1).data()
             self.show_extension_update(uid)
             return
 
@@ -548,7 +550,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
         filename = get_open_file_name(self, 'Open Firmware', last_dir, '*.bin')
 
         if len(filename) > 0:
-            self.edit_custom_firmware.setText(filename)
+            # If the file was already selected, the text_changed signal is not sent.
+            # Call the slot manually to enable the flash button if the file exists.
+            if filename == self.edit_custom_plugin.text():
+                self.edit_custom_plugin_text_changed(filename)
+            else:
+                self.edit_custom_firmware.setText(filename)
+
 
     def firmware_save_clicked(self):
         port_name = self.combo_serial_port.itemData(self.combo_serial_port.currentIndex())

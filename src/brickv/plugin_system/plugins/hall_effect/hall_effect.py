@@ -39,7 +39,7 @@ class CountLabel(FixedSizeLabel):
 
 class HallEffect(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletHallEffect, *args)
+        super().__init__(BrickletHallEffect, *args)
 
         self.hf = self.device
 

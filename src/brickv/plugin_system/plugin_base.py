@@ -42,7 +42,7 @@ class PluginBase(QWidget):
     PLUGIN_STATE_PAUSED = 2
 
     def __init__(self, device_class, ipcon, device_info, override_base_name=None):
-        super().__init__(self)
+        super().__init__()
 
         self.has_comcu = False # Will be overwritten if plugin has comcu
         self.plugin_state = PluginBase.PLUGIN_STATE_STOPPED

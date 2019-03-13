@@ -61,7 +61,7 @@ class TemperatureLabel(FixedSizeLabel):
 
 class Accelerometer(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletAccelerometer, *args)
+        super().__init__(BrickletAccelerometer, *args)
 
         self.accelerometer = self.device
 

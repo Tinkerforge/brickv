@@ -28,7 +28,7 @@ from PyQt5.QtGui import QRegExpValidator
 
 class SpinBoxHex(QSpinBox):
     def __init__(self, parent=None, default_value=0):
-        super().__init__(self, parent)
+        super().__init__(parent)
 
         self.validator = QRegExpValidator(QRegExp('^([ ]*[0-9A-Fa-f][ ]*){1,8}$'), self)
         self.setValue(default_value)

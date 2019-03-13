@@ -34,7 +34,7 @@ from brickv.utils import format_voltage
 
 class AnalogIn(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletAnalogIn, *args)
+        super().__init__(BrickletAnalogIn, *args)
 
         self.ai = self.device
 

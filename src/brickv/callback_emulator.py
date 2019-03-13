@@ -34,7 +34,7 @@ class CallbackEmulator(QObject):
 
     def __init__(self, data_getter, data_callback, error_callback, use_data_signal=True,
                  ignore_last_data=False, log_exception=False):
-        super().__init__(self)
+        super().__init__()
 
         self.period = 0 # milliseconds
         self.timer = None

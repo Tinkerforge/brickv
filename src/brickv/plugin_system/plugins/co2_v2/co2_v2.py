@@ -32,7 +32,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class CO2V2(COMCUPluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletCO2V2, *args)
+        super().__init__(BrickletCO2V2, *args)
 
         self.co2 = self.device
 

@@ -45,7 +45,7 @@ class DistanceIRV2(COMCUPluginBase):
     DIVIDER = 2**12/NUM_VALUES
 
     def __init__(self, *args):
-        super().__init__(self, BrickletDistanceIRV2, *args)
+        super().__init__(BrickletDistanceIRV2, *args)
 
         self.dist = self.device
 

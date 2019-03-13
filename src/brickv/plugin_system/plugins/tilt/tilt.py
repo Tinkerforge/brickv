@@ -31,7 +31,7 @@ from brickv.load_pixmap import load_masked_pixmap
 
 class Tilt(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletTilt, *args)
+        super().__init__(BrickletTilt, *args)
 
         self.tilt = self.device
 

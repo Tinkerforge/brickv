@@ -40,7 +40,7 @@ from brickv.slider_spin_syncer import SliderSpinSyncer
 
 class ColorBar(QWidget):
     def __init__(self, orientation, *args):
-        super().__init__(self, *args)
+        super().__init__(*args)
         self.orientation = orientation
         self.light = QColor(Qt.gray)
         self.dark = QColor(Qt.black)
@@ -102,7 +102,7 @@ class ColorBar(QWidget):
 
 class PositionKnob(KnobWidget):
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
 
         self.set_total_angle(180)
         self.set_range(-90, 90)
@@ -200,7 +200,7 @@ class Servo(PluginBase, Ui_Servo):
 
         class WorkerThread(QThread):
             def __init__(self, parent=None, func=None):
-                super().__init__(self, parent)
+                super().__init__(parent)
                 self.func = func
 
             def run(self):

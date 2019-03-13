@@ -131,7 +131,7 @@ class BrickInfo(DeviceInfo):
     type = 'brick'
 
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
 
         self.bricklet_ports = ('a', 'b')
 
@@ -140,7 +140,7 @@ class BrickMasterInfo(BrickInfo):
     connection_type = None
 
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
 
         self.bricklet_ports = ('a', 'b', 'c', 'd')
         self.extensions = {'ext0': None, 'ext1': None}
@@ -148,7 +148,7 @@ class BrickMasterInfo(BrickInfo):
 
 class BrickREDInfo(BrickInfo):
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
 
 def get_version_string(version_tuple, replace_unknown=None):
     if replace_unknown is not None and version_tuple == (0, 0, 0):

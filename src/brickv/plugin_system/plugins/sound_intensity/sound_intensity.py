@@ -34,7 +34,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class TuningThermo(QWidget):
     def __init__(self, *args):
-        super().__init__(self, *args)
+        super().__init__(*args)
 
         self.bar_width = 200 # px
         self.bar_height = 10 # px
@@ -71,7 +71,7 @@ class TuningThermo(QWidget):
 
 class SoundIntensity(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletSoundIntensity, *args)
+        super().__init__(BrickletSoundIntensity, *args)
 
         self.si = self.device
 

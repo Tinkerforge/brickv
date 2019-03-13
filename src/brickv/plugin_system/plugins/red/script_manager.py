@@ -52,7 +52,7 @@ class ScriptInstance(QObject):
     qtcb_result = pyqtSignal(object)
 
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
 
         self.name                      = None
         self.script                    = None

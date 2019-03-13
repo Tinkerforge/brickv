@@ -143,7 +143,7 @@ class DistanceIR(PluginBase):
     DIVIDER = 2**12//NUM_VALUES
 
     def __init__(self, *args):
-        super().__init__(self, BrickletDistanceIR, *args)
+        super().__init__(BrickletDistanceIR, *args)
 
         self.dist = self.device
 

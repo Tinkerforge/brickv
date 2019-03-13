@@ -34,7 +34,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class ColorFrame(QFrame):
     def __init__(self, parent=None):
-        super().__init__(self, parent)
+        super().__init__(parent)
         self.color = QColor(128, 128, 128)
         self.setMinimumSize(25, 25)
         self.setMaximumSize(25, 25)
@@ -54,7 +54,7 @@ class ColorFrame(QFrame):
 
 class Color(PluginBase):
     def __init__(self, *args):
-        super().__init__(self, BrickletColor, *args)
+        super().__init__(BrickletColor, *args)
 
         self.color = self.device
 

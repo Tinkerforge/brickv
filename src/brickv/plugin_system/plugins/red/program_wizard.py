@@ -29,7 +29,7 @@ ProgramWizardContext = namedtuple('ProgramWizardContext', 'session identifiers s
 
 class ProgramWizard(QWizard):
     def __init__(self, parent, context):
-        super().__init__(self, parent)
+        super().__init__(parent)
 
         self.setModal(True)
 
