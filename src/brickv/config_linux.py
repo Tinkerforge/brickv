@@ -95,10 +95,10 @@ def set_use_fusion_gui_style(value):
     set_config_value('GUI', 'UseFusionGUIStyle', str(bool(value)).lower())
 
 def get_auto_search_for_updates():
-    return get_config_value('GUI', 'AutoSearchForUpdates', str(DEFAULT_AUTO_SEARCH_FOR_UPDATES).lower()) == 'true'
+    return get_config_value('Update', 'AutoSearchForUpdates', str(DEFAULT_AUTO_SEARCH_FOR_UPDATES).lower()) == 'true'
 
 def set_auto_search_for_updates(value):
-    set_config_value('GUI', 'AutoSearchForUpdates', str(bool(value)).lower())
+    set_config_value('Update', 'AutoSearchForUpdates', str(bool(value)).lower())
 
 def legacy_get_host():
     return get_config_value('Connection', 'Host', DEFAULT_HOST)
