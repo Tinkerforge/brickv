@@ -125,9 +125,6 @@ class QxtSpanSlider(QSlider):
         self.gradientRight = color
         self.update()
 
-    def colorOutsideRange(self):
-        return self.colorOutsideRange
-
     def setColorOutsideRange(self, color):
         self.colorOutsideRange = color
 

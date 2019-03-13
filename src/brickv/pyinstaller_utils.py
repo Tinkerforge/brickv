@@ -26,7 +26,6 @@ import os
 import shutil
 import sys
 import subprocess
-import traceback
 
 import PyInstaller.config
 
@@ -162,7 +161,7 @@ class PyinstallerUtils:
         nsis_path = os.path.join(self.dist_path, 'nsis', self.UNDERSCORE_NAME + '.nsi')
         specialize_template(nsis_template_path, nsis_path,
                             {'<<DOT_VERSION>>': self.VERSION,
-                            '<<UNDERSCORE_VERSION>>': self.VERSION.replace('.', '_')})
+                             '<<UNDERSCORE_VERSION>>': self.VERSION.replace('.', '_')})
         system(['C:\\Program Files (x86)\\NSIS\\makensis.exe', nsis_path])
         installer = '{}_windows_{}.exe'.format(self.UNDERSCORE_NAME, self.VERSION.replace('.', '_'))
 
@@ -173,7 +172,7 @@ class PyinstallerUtils:
         shutil.move(os.path.join(self.dist_path, 'nsis', installer), installer_target_path)
         return os.path.join(self.root_path, installer)
 
-    def prepare(self, prepare_script_working_dir = None, prepare_script = None):
+    def prepare(self, prepare_script_working_dir=None, prepare_script=None):
         print('removing old dist directory')
         if os.path.exists(self.dist_path):
             shutil.rmtree(self.dist_path)
@@ -193,7 +192,7 @@ class PyinstallerUtils:
     def strip_binaries(self, binaries, patterns):
         return [x for x in binaries if all(pattern not in x[0].lower() for pattern in patterns)]
 
-    def post_generate(self, undo_script_working_dir = None, undo_script = None):
+    def post_generate(self, undo_script_working_dir=None, undo_script=None):
 
         if undo_script is not None:
             if undo_script_working_dir is not None:
@@ -244,4 +243,3 @@ class PyinstallerUtils:
 
         shutil.move(os.path.join(self.dist_path, app_name), os.path.join(self.dist_path, 'dmg'))
         system(['hdiutil', 'create', '-fs', 'HFS+', '-volname', '{}-{}'.format(self.UNDERSCORE_NAME, self.VERSION), '-srcfolder', os.path.join(self.dist_path, 'dmg'), dmg_path])
-

@@ -138,7 +138,7 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
         async_call(self.can.get_queue_configuration, None, self.get_queue_configuration_async, self.increase_error_count)
 
         def make_get_read_filter_configuration_async_lambda(i):
-            return lambda *args: self.get_read_filter_configuration_async(i, *args)
+            return lambda config: self.get_read_filter_configuration_async(i, config)
 
         for i in range(32):
             async_call(self.can.get_read_filter_configuration, i, make_get_read_filter_configuration_async_lambda(i), self.increase_error_count)
