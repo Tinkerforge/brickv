@@ -193,8 +193,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
         elif device_info.type == 'bricklet':
             self.show_bricklet_update(device_info.connected_uid, device_info.position)
 
-
-
     def fw_versions_fetched(self, firmware_info):
         if isinstance(firmware_info, int):
             if hasattr(self, 'fw_fetch_progress_bar') and self.fw_fetch_progress_bar is not None:
@@ -265,7 +263,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.extension_firmware_changed(0)
 
         self.update_ui_state()
-
 
     def reset_version_info(self):
         self.tool_infos = {}
