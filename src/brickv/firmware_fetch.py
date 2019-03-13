@@ -1,3 +1,26 @@
+# -*- coding: utf-8 -*-
+"""
+brickv (Brick Viewer)
+Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
+
+firmware_fetch.py: General latest_versions.txt handling
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with this program; if not, write to the
+Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA 02111-1307, USA.
+"""
+
 import urllib
 from collections import namedtuple
 import time
@@ -6,7 +29,6 @@ import threading
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from brickv import infos
-
 
 LATEST_VERSIONS_URL = 'http://download.tinkerforge.com/latest_versions.txt'
 
@@ -173,8 +195,8 @@ def fetch_latest_fw_versions(report_error_fn):
             result.plugin_infos[parts[1]] = refresh_plugin_info(parts[1], latest_version)
         elif parts[0] == 'extensions':
             result.extension_firmware_infos[parts[1]] = refresh_extension_firmware_info(parts[1], latest_version)
-    return result
 
+    return result
 
 class LatestFWVersionFetcher(QObject):
     fw_versions_avail = pyqtSignal(object)
