@@ -131,6 +131,8 @@ class PyinstallerUtils:
             for file in files:
                 if "brick" not in file:
                     continue
+                if not file.endswith(".py"):
+                    continue
                 full_name = os.path.join(dirpath, file)
                 with open(full_name, 'r') as f:
                     if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
