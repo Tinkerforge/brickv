@@ -179,7 +179,7 @@
            </spacer>
           </item>
           <item row="11" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkbox_search_updates">
+           <widget class="QCheckBox" name="checkbox_auto_search_for_updates">
             <property name="text">
              <string>Auto-Search for Updates</string>
             </property>

@@ -146,10 +146,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.fw_version_fetcher.fw_versions_avail.connect(self.fw_versions_fetched)
         self.fw_version_fetcher_thread = QThread()
         self.fw_version_fetcher_thread.setObjectName("fw_version_fetcher_thread")
-        if config.get_search_updates():
-            self.enable_search_for_updates()
+        if config.get_auto_search_for_updates():
+            self.enable_auto_search_for_updates()
         else:
-            self.disable_search_for_updates()
+            self.disable_auto_search_for_updates()
 
         self.tab_widget.currentChanged.connect(self.tab_changed)
         self.tab_widget.setMovable(True)
@@ -208,16 +208,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.check_fusion_gui_style.setChecked(config.get_use_fusion_gui_style())
         self.check_fusion_gui_style.stateChanged.connect(self.gui_style_changed)
 
-        self.checkbox_search_updates.setChecked(config.get_search_updates())
-        self.checkbox_search_updates.stateChanged.connect(self.search_updates_changed)
+        self.checkbox_auto_search_for_updates.setChecked(config.get_auto_search_for_updates())
+        self.checkbox_auto_search_for_updates.stateChanged.connect(self.auto_search_for_updates_changed)
 
         self.button_update_pixmap_normal = load_pixmap('update-icon-normal.png')
         self.button_update_pixmap_hover = load_pixmap('update-icon-hover.png')
 
-    def disable_search_for_updates(self):
+    def disable_auto_search_for_updates(self):
         self.fw_version_fetcher.abort()
 
-    def enable_search_for_updates(self):
+    def enable_auto_search_for_updates(self):
         self.fw_version_fetcher.reset()
         self.fw_version_fetcher.moveToThread(self.fw_version_fetcher_thread)
         self.fw_version_fetcher_thread.started.connect(self.fw_version_fetcher.run)
@@ -339,12 +339,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         QMessageBox.information(self, 'GUI Style', 'GUI style change will be applied on next Brick Viewer start.', QMessageBox.Ok)
 
-    def search_updates_changed(self):
-        config.set_search_updates(self.checkbox_search_updates.isChecked())
-        if self.checkbox_search_updates.isChecked():
-            self.enable_search_for_updates()
+    def auto_search_for_updates_changed(self):
+        config.set_auto_search_for_updates(self.checkbox_auto_search_for_updates.isChecked())
+        if self.checkbox_auto_search_for_updates.isChecked():
+            self.enable_auto_search_for_updates()
         else:
-            self.disable_search_for_updates()
+            self.disable_auto_search_for_updates()
 
     def remove_all_device_infos(self):
         for device_info in infos.get_device_infos():

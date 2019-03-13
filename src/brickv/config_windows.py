@@ -99,13 +99,13 @@ def get_use_fusion_gui_style():
 def set_use_fusion_gui_style(value):
     set_registry_value('UseFusionGUIStyle', winreg.REG_DWORD, int(bool(value)))
 
-def get_search_updates():
-    if DEFAULT_SEARCH_UPDATES:
+def get_auto_search_for_updates():
+    if DEFAULT_AUTO_SEARCH_FOR_UPDATES:
         default = 1
     else:
         default = 0
 
-    value = get_registry_value('SearchUpdates', default)
+    value = get_registry_value('AutoSearchForUpdates', default)
 
     if value == 1:
         return True
@@ -114,8 +114,8 @@ def get_search_updates():
     else:
         return bool(default)
 
-def set_search_updates(value):
-    set_registry_value('SearchUpdates', winreg.REG_DWORD, int(bool(value)))
+def set_auto_search_for_updates(value):
+    set_registry_value('AutoSearchForUpdates', winreg.REG_DWORD, int(bool(value)))
 
 def legacy_get_host():
     return get_registry_value('Host', DEFAULT_HOST)

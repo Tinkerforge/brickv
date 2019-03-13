@@ -96,10 +96,10 @@ def get_use_fusion_gui_style():
 def set_use_fusion_gui_style(value):
     set_plist_value('UseFusionGUIStyle', str(bool(value)).lower())
 
-def get_search_updates():
-    return get_plist_value('SearchForUpdates', str(DEFAULT_SEARCH_UPDATES).lower()) == 'true'
+def get_auto_search_for_updates():
+    return get_plist_value('SearchForUpdates', str(DEFAULT_AUTO_SEARCH_FOR_UPDATES).lower()) == 'true'
 
-def set_search_updates(value):
+def set_auto_search_for_updates(value):
     set_plist_value('SearchForUpdates', str(bool(value)).lower())
 
 def legacy_get_host():
