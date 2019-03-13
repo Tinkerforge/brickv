@@ -669,6 +669,9 @@ class NFC(COMCUPluginBase, Ui_NFC):
             self.label_state.setText('P2P: Unknown state')
 
     def cb_state_changed_reader(self, state, idle):
+        def tag_id_as_byte_string(tag_id):
+            tag_bytes_format = ' '.join("{{{}:02X}}".format(i) for i in range(0, len(tag_id)))
+            return tag_bytes_format.format(*tag_id)
         self.current_state['reader'] = state
 
         if self.current_mode != self.nfc.MODE_READER:
@@ -705,42 +708,13 @@ class NFC(COMCUPluginBase, Ui_NFC):
             if tag_id_type > self.nfc.TAG_TYPE_TYPE4:
                 tag = 'Found tag with unsupported ID'
             else:
-                if self.combo_reader_tag_type.currentIndex() == self.nfc.TAG_TYPE_MIFARE_CLASSIC and \
-                   tag_id_type == self.nfc.TAG_TYPE_MIFARE_CLASSIC:
-                        self.current_tag_id['tag_id'] = tag_id
-                        self.current_tag_id['tag_id_type'] = tag_id_type
-                        tag = 'Found MIFARE Classic tag with ID <font color="green"><b>{0:02X} {1:02X} {2:02X} {3:02X}</b></font>'.format(*tag_id)
-                        self.group_box_reader_read_page.setEnabled(True)
-                        self.group_box_reader_write_page.setEnabled(True)
-                elif self.combo_reader_tag_type.currentIndex() == self.nfc.TAG_TYPE_TYPE1 and \
-                     tag_id_type == self.nfc.TAG_TYPE_TYPE1:
-                        self.current_tag_id['tag_id'] = tag_id
-                        self.current_tag_id['tag_id_type'] = tag_id_type
-                        tag = 'Found Type 1 tag with ID <font color="green"><b>{0:02X} {1:02X} {2:02X} {3:02X}</b></font>'.format(*tag_id)
-                        self.group_box_reader_read_page.setEnabled(True)
-                        self.group_box_reader_write_page.setEnabled(True)
-                elif self.combo_reader_tag_type.currentIndex() == self.nfc.TAG_TYPE_TYPE2 and \
-                     tag_id_type == self.nfc.TAG_TYPE_TYPE2:
-                        self.current_tag_id['tag_id'] = tag_id
-                        self.current_tag_id['tag_id_type'] = tag_id_type
-                        tag = 'Found Type 2 tag with ID <font color="green"><b>{0:02X} {1:02X} {2:02X} {3:02X} {4:02X} {5:02X} {6:02X}</b></font>'.format(*tag_id)
-                        self.group_box_reader_read_page.setEnabled(True)
-                        self.group_box_reader_write_page.setEnabled(True)
-                elif self.combo_reader_tag_type.currentIndex() == self.nfc.TAG_TYPE_TYPE3 and \
-                     tag_id_type == self.nfc.TAG_TYPE_TYPE3:
-                        self.current_tag_id['tag_id'] = tag_id
-                        self.current_tag_id['tag_id_type'] = tag_id_type
-                        tag = 'Found Type 3 tag with ID <font color="green"><b>{0:02X} {1:02X} {2:02X} {3:02X} {4:02X} {5:02X} {6:02X}</b></font>'.format(*tag_id)
-                        self.group_box_reader_read_page.setEnabled(True)
-                        self.group_box_reader_write_page.setEnabled(True)
-                elif self.combo_reader_tag_type.currentIndex() == self.nfc.TAG_TYPE_TYPE4 and \
-                     tag_id_type == self.nfc.TAG_TYPE_TYPE4:
-                        self.current_tag_id['tag_id'] = tag_id
-                        self.current_tag_id['tag_id_type'] = tag_id_type
-                        #tag = 'Found Type 4 tag with ID <font color="green"><b>{0:02X} {1:02X} {2:02X} {3:02X} {4:02X} {5:02X} {6:02X}</b></font>'.format(*tag_id)
-                        tag = 'Found Type 4 tag with ID <font color="green"><b>{}</b></font>'.format(tag_id)
-                        self.group_box_reader_read_page.setEnabled(True)
-                        self.group_box_reader_write_page.setEnabled(True)
+                if self.combo_reader_tag_type.currentIndex() == tag_id_type:
+                    self.current_tag_id['tag_id'] = tag_id
+                    self.current_tag_id['tag_id_type'] = tag_id_type
+                    tag_type_name = self.combo_reader_tag_type.currentText().replace("NFC Forum ", "")
+                    tag = 'Found {} tag with ID <font color="green"><b>{}</b></font>'.format(tag_type_name, tag_id_as_byte_string(tag_id))
+                    self.group_box_reader_read_page.setEnabled(True)
+                    self.group_box_reader_write_page.setEnabled(True)
                 else:
                     self.group_box_reader_read_page.setEnabled(False)
                     self.group_box_reader_write_page.setEnabled(False)
