@@ -26,7 +26,7 @@ class QxtSpanSlider(QSlider):
     sliderReleased = pyqtSignal()
 
     def __init__(self, parent = None):
-        QSlider.__init__(self, QtCore.Qt.Horizontal, parent)
+        super().__init__(self, QtCore.Qt.Horizontal, parent)
         self.rangeChanged.connect(self.updateRange)
         self.sliderReleased.connect(self.movePressedHandle)
 

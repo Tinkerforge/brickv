@@ -75,7 +75,7 @@ class TerminalWidget(QWidget):
     session_closed = pyqtSignal()
 
     def __init__(self, parent=None, command="/bin/bash",font_size=14):
-        super(TerminalWidget, self).__init__(parent)
+        super().__init__(parent)
         self._columns = 80
         self._rows = 24
         self._char_width = [0]*(self._columns+1)
@@ -124,7 +124,7 @@ class TerminalWidget(QWidget):
         self._session.close()
 
     def setFont(self, font):
-        super(TerminalWidget, self).setFont(font)
+        super().setFont(font)
         self._update_metrics()
 
     def closeEvent(self, event):

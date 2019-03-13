@@ -35,7 +35,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class JoystickFrame(QFrame):
     def __init__(self, parent=None):
-        QFrame.__init__(self, parent)
+        super().__init__(self, parent)
         self.x = 0
         self.y = 0
         self.pressed = False
@@ -65,7 +65,7 @@ class Joystick(PluginBase):
     qtcb_released = pyqtSignal()
 
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletJoystick, *args)
+        super().__init__(self, BrickletJoystick, *args)
 
         self.js = self.device
 

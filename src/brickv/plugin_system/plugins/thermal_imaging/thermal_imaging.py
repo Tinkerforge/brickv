@@ -36,7 +36,7 @@ from brickv.async_call import async_call
 
 class ThermalImageBar(QWidget):
     def __init__(self, w, h, thermal_image, parent=None):
-        super(ThermalImageBar, self).__init__(parent)
+        super().__init__(parent)
 
         self.setAttribute(Qt.WA_StaticContents)
         self.parent = parent
@@ -66,7 +66,7 @@ class ThermalImageBar(QWidget):
 
 class ThermalImage(QWidget):
     def __init__(self, w, h, parent=None):
-        super(ThermalImage, self).__init__(parent)
+        super().__init__(parent)
 
         self.setAttribute(Qt.WA_StaticContents)
 

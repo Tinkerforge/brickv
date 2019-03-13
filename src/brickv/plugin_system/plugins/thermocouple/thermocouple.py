@@ -35,7 +35,7 @@ class Thermocouple(PluginBase):
     qtcb_error_state = pyqtSignal(bool, bool)
 
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletThermocouple, *args)
+        super().__init__(self, BrickletThermocouple, *args)
 
         self.thermo = self.device
 

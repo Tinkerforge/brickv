@@ -39,7 +39,7 @@ class LCD20x4(PluginBase):
     qtcb_released = pyqtSignal(int)
 
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletLCD20x4, *args)
+        super().__init__(self, BrickletLCD20x4, *args)
 
         self.lcd = self.device
 

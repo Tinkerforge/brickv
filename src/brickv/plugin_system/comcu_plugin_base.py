@@ -30,7 +30,7 @@ from brickv.utils import get_main_window
 
 class COMCUPluginBase(PluginBase):
     def __init__(self, device_class, ipcon, device_info, override_base_name=None):
-        PluginBase.__init__(self, device_class, ipcon, device_info, override_base_name)
+        super().__init__(self, device_class, ipcon, device_info, override_base_name)
 
         self.start_called = False
         self.has_comcu = True

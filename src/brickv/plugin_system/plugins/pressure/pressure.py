@@ -32,7 +32,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class Pressure(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletPressure, *args)
+        super().__init__(self, BrickletPressure, *args)
 
         self.p = self.device
 

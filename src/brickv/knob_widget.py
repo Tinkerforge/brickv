@@ -35,7 +35,7 @@ class KnobWidget(QWidget):
     STYLE_NEEDLE = 2
 
     def __init__(self, parent=None):
-        QWidget.__init__(self, parent)
+        super().__init__(self, parent)
 
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
 

@@ -66,8 +66,8 @@ class IconButton(QAbstractButton):
 
 class TabWidget(QDialog):
     def __init__(self, tab_window, name):
-        super(TabWidget, self).__init__(None)
-        super(TabWidget, self).setWindowTitle(name)
+        super().__init__(None)
+        super().setWindowTitle(name)
         self.tab_window = tab_window
 
      # overrides QDialog.closeEvent
@@ -89,7 +89,7 @@ class TabWindow(QDialog):
     can be registered."""
 
     def __init__(self, tab_widget, name, button_handler, parent=None):
-        super(TabWindow, self).__init__(parent)
+        super().__init__(parent)
 
         self.tab_widget = tab_widget
         self.name = name

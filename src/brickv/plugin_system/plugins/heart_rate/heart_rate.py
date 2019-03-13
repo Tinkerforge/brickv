@@ -36,7 +36,7 @@ class HeartRate(PluginBase):
     qtcb_beat_state_changed = pyqtSignal(int)
 
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletHeartRate, *args)
+        super().__init__(self, BrickletHeartRate, *args)
 
         self.hr = self.device
 

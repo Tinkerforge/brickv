@@ -37,7 +37,7 @@ class ScribbleArea(QWidget):
       this scales the image but it's not good, too many refreshes really mess it up!!!
     """
     def __init__(self, w, h, parent=None):
-        super(ScribbleArea, self).__init__(parent)
+        super().__init__(parent)
 
         self.setAttribute(Qt.WA_StaticContents)
         self.scribbling = 0
@@ -54,26 +54,26 @@ class ScribbleArea(QWidget):
 
         self.last_point = QPoint()
         self.clear_image()
-        
+
         self.touch_x = 0
         self.touch_y = 0
         self.touch_pressure = 0
         self.touch_age = 100000
         self.touch_age_max = 250
-        
+
         self.gesture = 0
         self.gesture_age = 10000
         self.gesture_age_max = 1000
         self.gesture_pressure_max = 0
-        
+
     def touch_position(self, data):
         self.touch_x = data.x
         self.touch_y = data.y
         self.touch_pressure = data.pressure
         self.touch_age = data.age
-        
+
         self.repaint()
-        
+
     def touch_gesture(self, data):
         self.gesture = data.gesture
         self.gesture_pressure_max = data.pressure_max
@@ -109,14 +109,14 @@ class ScribbleArea(QWidget):
         painter = QPainter(self)
         painter.drawImage(event.rect(), self.image.scaledToWidth(self.width*self.image_pen_width))
 
-        if self.touch_age < self.touch_age_max: 
+        if self.touch_age < self.touch_age_max:
             painter.setPen(Qt.red)
             painter.drawEllipse(self.touch_x * self.image_pen_width - self.circle_width/2.0, self.touch_y * self.image_pen_width - self.circle_width/2.0, self.circle_width, self.circle_width)
             if self.touch_pressure > 100:
                 painter.drawEllipse(self.touch_x * self.image_pen_width - self.circle_width/3.0, self.touch_y * self.image_pen_width - self.circle_width/3.0, self.circle_width/1.5, self.circle_width/1.5)
                 if self.touch_pressure > 175:
                     painter.drawEllipse(self.touch_x * self.image_pen_width - self.circle_width/6.0, self.touch_y * self.image_pen_width - self.circle_width/6.0, self.circle_width/3.0, self.circle_width/3.0)
-                    
+
         if self.gesture_age < self.gesture_age_max:
             pen_width = 1
             if self.gesture_pressure_max > 100:
@@ -167,7 +167,7 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
         self.current_char_value = -1
 
         self.write_line_response_expected = False
-        
+
         self.cbe_touch_position = CallbackEmulator(self.lcd.get_touch_position,
                                                    self.scribble_area.touch_position,
                                                    self.increase_error_count)

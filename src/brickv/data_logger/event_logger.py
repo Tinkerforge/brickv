@@ -113,7 +113,7 @@ class ConsoleLogger(logging.Logger):
     """
 
     def __init__(self, name, log_level):
-        logging.Logger.__init__(self, name, log_level)
+        super().__init__(self, name, log_level)
 
         # create console handler and set level
         ch = logging.StreamHandler()
@@ -135,7 +135,7 @@ class FileLogger(logging.Logger):
     """
 
     def __init__(self, name, log_level, filename):
-        logging.Logger.__init__(self, name, log_level)
+        super().__init__(self, name, log_level)
 
         ch = logging.FileHandler(filename, mode="a")
 

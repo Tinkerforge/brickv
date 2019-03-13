@@ -33,11 +33,11 @@ from brickv.callback_emulator import CallbackEmulator
 class VoltageLabel(QLabel):
     def setText(self, voltage):
         text = "Input Voltage: {:.2f} V".format(round(voltage / 1000.0, 2))
-        super(VoltageLabel, self).setText(text)
+        super().setText(text)
 
 class AnalogOutV2(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletAnalogOutV2, *args)
+        super().__init__(self, BrickletAnalogOutV2, *args)
 
         self.ao = self.device
 

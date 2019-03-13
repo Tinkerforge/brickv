@@ -36,13 +36,13 @@ from brickv.tab_window import IconButton
 from brickv.load_pixmap import load_pixmap
 import brickv.infos
 
-class PluginBase(QWidget, object):
+class PluginBase(QWidget):
     PLUGIN_STATE_STOPPED = 0
     PLUGIN_STATE_RUNNING = 1
     PLUGIN_STATE_PAUSED = 2
 
     def __init__(self, device_class, ipcon, device_info, override_base_name=None):
-        QWidget.__init__(self)
+        super().__init__(self)
 
         self.has_comcu = False # Will be overwritten if plugin has comcu
         self.plugin_state = PluginBase.PLUGIN_STATE_STOPPED

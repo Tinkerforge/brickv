@@ -28,7 +28,7 @@ from brickv.plugin_system.plugins.red.qxt_span_slider import QxtSpanSlider
 
 class widgetSpinBoxSpanSlider(QWidget):
     def __init__(self, parent=None):
-        QWidget.__init__(self, parent)
+        super().__init__(self, parent)
 
         self.span_slider = QxtSpanSlider()
         self.sbox_lower = QSpinBox()

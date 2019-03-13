@@ -38,14 +38,14 @@ from brickv.utils import get_main_window, get_home_path, get_open_file_name
 class AnalogLabel(FixedSizeLabel):
     def setText(self, text):
         text = "Analog Value: " + str(text)
-        super(AnalogLabel, self).setText(text)
+        super().setText(text)
 
 class DistanceIRV2(COMCUPluginBase):
     NUM_VALUES = 512
     DIVIDER = 2**12/NUM_VALUES
 
     def __init__(self, *args):
-        COMCUPluginBase.__init__(self, BrickletDistanceIRV2, *args)
+        super().__init__(self, BrickletDistanceIRV2, *args)
 
         self.dist = self.device
 

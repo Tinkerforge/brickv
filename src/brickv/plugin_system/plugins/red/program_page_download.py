@@ -41,7 +41,7 @@ from brickv.load_pixmap import load_pixmap
 
 class ChunkedDownloader(ChunkedDownloaderBase):
     def __init__(self, page):
-        ChunkedDownloaderBase.__init__(self, page.wizard().session)
+        super().__init__(self, page.wizard().session)
 
         self.page = page
 

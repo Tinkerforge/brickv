@@ -32,7 +32,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class AirQuality(COMCUPluginBase):
     def __init__(self, *args):
-        COMCUPluginBase.__init__(self, BrickletAirQuality, *args)
+        super().__init__(self, BrickletAirQuality, *args)
 
         self.air_quality = self.device
 

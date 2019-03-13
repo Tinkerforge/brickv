@@ -38,7 +38,7 @@ class PitchLabel(FixedSizeLabel):
         try:
             pitch = int(round(math.atan(x/(math.sqrt(y*y + z*z)))*180/math.pi, 0))
             text = 'Pitch: {}°'.format(pitch)
-            super(PitchLabel, self).setText(text)
+            super().setText(text)
         except:
             # In case of division by 0 or similar we simply don't update the text
             pass
@@ -48,7 +48,7 @@ class RollLabel(FixedSizeLabel):
         try:
             roll = int(round(math.atan(y/math.sqrt(x*x+z*z))*180/math.pi, 0))
             text = 'Roll: {}°'.format(roll)
-            super(RollLabel, self).setText(text)
+            super().setText(text)
         except:
             # In case of division by 0 or similar we simply don't update the text
             pass
@@ -56,7 +56,7 @@ class RollLabel(FixedSizeLabel):
 
 class AccelerometerV2(COMCUPluginBase):
     def __init__(self, *args):
-        COMCUPluginBase.__init__(self, BrickletAccelerometerV2, *args)
+        super().__init__(self, BrickletAccelerometerV2, *args)
 
         self.accelerometer = self.device
 

@@ -27,7 +27,7 @@ from brickv.plugin_system.plugins.red.program_page_download import ProgramPageDo
 
 class ProgramWizardDownload(ProgramWizard):
     def __init__(self, parent, context, program, download_kind, download_directory, downloads):
-        ProgramWizard.__init__(self, parent, context)
+        super().__init__(self, parent, context)
 
         self.program = program
 

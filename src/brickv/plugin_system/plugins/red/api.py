@@ -102,7 +102,7 @@ class REDError(Exception):
     }
 
     def __init__(self, message, error_code):
-        Exception.__init__(self, message)
+        super().__init__(self, message)
 
         self._message = message
         self._error_code = error_code
@@ -129,7 +129,7 @@ class MethodRef(object):
 
 class REDBrick(BrickRED):
     def __init__(self, uid, *args):
-        BrickRED.__init__(self, uid, *args)
+        super().__init__(self, uid, *args)
 
         self._uid_str               = uid
         self._active_callbacks      = {}
@@ -196,7 +196,7 @@ class REDSession(QtCore.QObject):
     _qtcb_lost = QtCore.pyqtSignal(str)
 
     def __init__(self, brick, increase_error_count):
-        QtCore.QObject.__init__(self)
+        super().__init__(self)
 
         self._qtcb_lost.connect(get_main_window().hack_to_remove_red_brick_tab)
 
@@ -339,7 +339,7 @@ class REDObject(QtCore.QObject):
     _subclasses = {}
 
     def __init__(self, session):
-        QtCore.QObject.__init__(self)
+        super().__init__(self)
 
         self._session    = session
         self._releaser   = None
@@ -518,7 +518,7 @@ class REDList(REDObject):
         return '<REDList object_id: {0}>'.format(self.object_id)
 
     def __init__(self, session, forced_wrapper_class=None):
-        REDObject.__init__(self, session)
+        super().__init__(self, session)
 
         self._forced_wrapper_class = forced_wrapper_class
 
@@ -627,7 +627,7 @@ class REDFileBase(REDObject):
         _qtcb_status = QtCore.pyqtSignal(int, int)
 
         def __init__(self, data, result_callback, status_callback):
-            QtCore.QObject.__init__(self)
+            super().__init__(self)
 
             self.data    = data
             self.length  = len(data)
@@ -645,7 +645,7 @@ class REDFileBase(REDObject):
         _qtcb_status = QtCore.pyqtSignal(int, int)
 
         def __init__(self, max_length, result_callback, status_callback):
-            QtCore.QObject.__init__(self)
+            super().__init__(self)
 
             self.max_length   = max_length
             self.burst_length = 0

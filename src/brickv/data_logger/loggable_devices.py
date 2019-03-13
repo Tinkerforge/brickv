@@ -5029,7 +5029,7 @@ class DeviceImpl(AbstractDevice):
     """
 
     def __init__(self, data, datalogger):
-        AbstractDevice.__init__(self, data, datalogger)
+        super().__init__(self, data, datalogger)
 
         self.device_name = self.data['name']
         self.device_uid = self.data['uid']

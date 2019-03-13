@@ -33,11 +33,11 @@ from brickv.callback_emulator import CallbackEmulator
 
 class IndexLabel(FixedSizeLabel):
     def setText(self, text):
-        super(IndexLabel, self).setText(' UV Index: ' + text + ' ')
+        super().setText(' UV Index: ' + text + ' ')
 
 class UVLight(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletUVLight, *args)
+        super().__init__(self, BrickletUVLight, *args)
 
         self.uv_light = self.device
 

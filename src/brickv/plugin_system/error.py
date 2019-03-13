@@ -28,7 +28,7 @@ from brickv.plugin_system.plugin_base import PluginBase
 
 class Error(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, None, *args, override_base_name='Error')
+        super().__init__(self, None, *args, override_base_name='Error')
 
         layout = QVBoxLayout(self)
         layout.addStretch()

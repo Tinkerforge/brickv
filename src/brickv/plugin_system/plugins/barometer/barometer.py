@@ -36,11 +36,11 @@ from brickv.callback_emulator import CallbackEmulator
 class ChipTemperatureLabel(QLabel):
     def setText(self, text):
         text = "Chip Temperature: " + text + " %cC" % 0xB0
-        super(ChipTemperatureLabel, self).setText(text)
+        super().setText(text)
 
 class Barometer(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletBarometer, *args)
+        super().__init__(self, BrickletBarometer, *args)
 
         self.barometer = self.device
 

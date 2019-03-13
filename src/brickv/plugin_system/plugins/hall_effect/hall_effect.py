@@ -35,11 +35,11 @@ from brickv.callback_emulator import CallbackEmulator
 class CountLabel(FixedSizeLabel):
     def setText(self, text):
         text = 'Count: ' + str(text)
-        super(CountLabel, self).setText(text)
+        super().setText(text)
 
 class HallEffect(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletHallEffect, *args)
+        super().__init__(self, BrickletHallEffect, *args)
 
         self.hf = self.device
 

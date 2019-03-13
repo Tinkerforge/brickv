@@ -33,7 +33,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class PTCV2(COMCUPluginBase):
     def __init__(self, *args):
-        COMCUPluginBase.__init__(self, BrickletPTCV2, *args)
+        super().__init__(self, BrickletPTCV2, *args)
 
         self.ptc = self.device
 

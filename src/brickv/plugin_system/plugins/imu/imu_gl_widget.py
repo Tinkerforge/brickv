@@ -51,7 +51,7 @@ from PyQt5.QtGui import QOpenGLContext, QOpenGLVersionProfile, QSurfaceFormat
 
 class IMUGLWidget(QOpenGLWidget):
     def __init__(self, parent=None):
-        QOpenGLWidget.__init__(self, parent)
+        super().__init__(self, parent)
 
         surface_format = QSurfaceFormat()
         surface_format.setSamples(16)

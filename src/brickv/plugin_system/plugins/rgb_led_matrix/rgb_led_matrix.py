@@ -39,7 +39,7 @@ class QColorButton(QPushButton):
     colorChanged = pyqtSignal()
 
     def __init__(self, *args, **kwargs):
-        super(QColorButton, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self._color = QColor(255, 0, 0)
         self.setStyleSheet("background-color: %s;" % self._color.name())
@@ -62,14 +62,14 @@ class QColorButton(QPushButton):
             self.set_color(dialog.currentColor())
 
     def mousePressEvent(self, e):
-        return super(QColorButton, self).mousePressEvent(e)
+        return super().mousePressEvent(e)
 
 class ScribbleArea(QWidget):
     """
       this scales the image but it's not good, too many refreshes really mess it up!!!
     """
     def __init__(self, w, h, parent=None):
-        super(ScribbleArea, self).__init__(parent)
+        super().__init__(parent)
 
         self.setAttribute(Qt.WA_StaticContents)
         self.scribbling = 0

@@ -32,7 +32,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class HumidityV2(COMCUPluginBase):
     def __init__(self, *args):
-        COMCUPluginBase.__init__(self, BrickletHumidityV2, *args)
+        super().__init__(self, BrickletHumidityV2, *args)
 
         self.hum = self.device
 

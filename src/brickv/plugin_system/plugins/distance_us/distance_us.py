@@ -33,7 +33,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class DistanceUS(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletDistanceUS, *args)
+        super().__init__(self, BrickletDistanceUS, *args)
 
         self.dist = self.device
 

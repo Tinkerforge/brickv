@@ -29,7 +29,7 @@ from brickv.knob_widget import KnobWidget
 
 class SpeedoMeter(QWidget):
     def __init__(self, *args):
-        QWidget.__init__(self, *args)
+        super().__init__(self, *args)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
 

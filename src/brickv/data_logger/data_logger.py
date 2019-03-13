@@ -45,7 +45,7 @@ class DataLogger(threading.Thread):
 
     # constructor and other functions
     def __init__(self, config, gui_job):
-        super(DataLogger, self).__init__()
+        super().__init__()
 
         self.daemon = True
 

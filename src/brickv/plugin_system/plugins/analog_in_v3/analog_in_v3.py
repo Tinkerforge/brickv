@@ -96,7 +96,7 @@ class Calibration(QDialog, Ui_Calibration):
 
 class AnalogInV3(COMCUPluginBase):
     def __init__(self, *args):
-        COMCUPluginBase.__init__(self, BrickletAnalogInV3, *args)
+        super().__init__(self, BrickletAnalogInV3, *args)
 
         self.ai = self.device
 

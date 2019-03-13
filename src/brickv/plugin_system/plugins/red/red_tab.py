@@ -25,7 +25,7 @@ from PyQt5.QtWidgets import QWidget
 
 class REDTab(QWidget):
     def __init__(self, parent=None):
-        QWidget.__init__(self, parent)
+        super().__init__(self, parent)
 
         # will be set from RED after construction
         self.session        = None

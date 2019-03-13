@@ -60,7 +60,7 @@ WEEKDAY_BY_NUMBER = {
 
 class MeasurmentThread(Thread):
     def __init__(self, calibration):
-        Thread.__init__(self, target=self.loop)
+        super().__init__(self, target=self.loop)
 
         self.daemon = True
         self.calibration = calibration

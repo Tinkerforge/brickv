@@ -28,7 +28,7 @@ from brickv import infos
 
 class COMCUBootloader(QWidget):
     def __init__(self, ipcon, info):
-        super(COMCUBootloader, self).__init__()
+        super().__init__()
 
         self.ipcon = ipcon
         self.info = info
@@ -59,14 +59,14 @@ class COMCUBootloader(QWidget):
 
         connected_uid = self.info.connected_uid
 
-        # If the Bricklet is connected to an isolator, 
+        # If the Bricklet is connected to an isolator,
         # we have to find the Brick that the isolator is connected to.
         if self.info.position.startswith('i-'):
             for bricklet_info in infos.get_bricklet_infos():
                 if bricklet_info.uid == connected_uid:
                     connected_uid = bricklet_info.connected_uid
                     break
-        
+
         for i in range(combo_parent.count()):
             if '[' + connected_uid + ']' in combo_parent.itemText(i):
                 combo_parent.setCurrentIndex(i)

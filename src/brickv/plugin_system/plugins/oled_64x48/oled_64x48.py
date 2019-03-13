@@ -36,7 +36,7 @@ class ScribbleArea(QWidget):
       this scales the image but it's not good, too many refreshes really mess it up!!!
     """
     def __init__(self, w, h, parent=None):
-        super(ScribbleArea, self).__init__(parent)
+        super().__init__(parent)
 
         self.setAttribute(Qt.WA_StaticContents)
         self.scribbling = 0

@@ -32,7 +32,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class ParticulateMatter(COMCUPluginBase):
     def __init__(self, *args):
-        COMCUPluginBase.__init__(self, BrickletParticulateMatter, *args)
+        super().__init__(self, BrickletParticulateMatter, *args)
 
         self.pm = self.device
 

@@ -39,7 +39,7 @@ class PitchLabel(FixedSizeLabel):
         try:
             pitch = int(round(math.atan(x/(math.sqrt(y*y + z*z)))*180/math.pi, 0))
             text = 'Pitch: {}°'.format(pitch)
-            super(PitchLabel, self).setText(text)
+            super().setText(text)
         except:
             # In case of division by 0 or similar we simply don't update the text
             pass
@@ -49,7 +49,7 @@ class RollLabel(FixedSizeLabel):
         try:
             roll = int(round(math.atan(y/math.sqrt(x*x+z*z))*180/math.pi, 0))
             text = 'Roll: {}°'.format(roll)
-            super(RollLabel, self).setText(text)
+            super().setText(text)
         except:
             # In case of division by 0 or similar we simply don't update the text
             pass
@@ -57,11 +57,11 @@ class RollLabel(FixedSizeLabel):
 class TemperatureLabel(FixedSizeLabel):
     def setText(self, t):
         text = 'Temperature: {0}°C'.format(t)
-        super(TemperatureLabel, self).setText(text)
+        super().setText(text)
 
 class Accelerometer(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletAccelerometer, *args)
+        super().__init__(self, BrickletAccelerometer, *args)
 
         self.accelerometer = self.device
 

@@ -33,7 +33,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class Moisture(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletMoisture, *args)
+        super().__init__(self, BrickletMoisture, *args)
 
         self.moisture = self.device
 

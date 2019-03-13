@@ -34,7 +34,7 @@ from brickv.utils import format_voltage
 
 class Voltage(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletVoltage, *args)
+        super().__init__(self, BrickletVoltage, *args)
 
         self.vol = self.device
 

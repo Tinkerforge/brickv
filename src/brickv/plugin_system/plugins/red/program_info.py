@@ -30,7 +30,7 @@ ProgramInfoContext = namedtuple('ProgramInfoContext', 'session script_manager ex
 
 class ProgramInfo(QWidget):
     def __init__(self, context):
-        QWidget.__init__(self)
+        super().__init__(self)
 
         self.session             = context.session
         self.script_manager      = context.script_manager

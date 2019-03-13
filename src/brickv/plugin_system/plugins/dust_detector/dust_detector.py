@@ -33,7 +33,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class DustDetector(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletDustDetector, *args)
+        super().__init__(self, BrickletDustDetector, *args)
 
         self.dust_detector = self.device
 

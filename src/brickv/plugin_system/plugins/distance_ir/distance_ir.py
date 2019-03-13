@@ -136,14 +136,14 @@ class NaturalSpline(object):
 class AnalogLabel(FixedSizeLabel):
     def setText(self, text):
         text = "Analog Value: " + str(text)
-        super(AnalogLabel, self).setText(text)
+        super().setText(text)
 
 class DistanceIR(PluginBase):
     NUM_VALUES = 128
     DIVIDER = 2**12//NUM_VALUES
 
     def __init__(self, *args):
-        PluginBase.__init__(self, BrickletDistanceIR, *args)
+        super().__init__(self, BrickletDistanceIR, *args)
 
         self.dist = self.device
 

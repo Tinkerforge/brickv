@@ -32,7 +32,7 @@ from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 
 class DMXOverview(QWidget):
     def __init__(self, parent=None):
-        super(QWidget, self).__init__(parent)
+        super().__init__(parent)
 
         self.setAttribute(Qt.WA_StaticContents)
 
@@ -47,28 +47,28 @@ class DMXOverview(QWidget):
 
         self.last_point = QPoint()
         self.clear_image()
-        
+
         self.white_pen = QPen(Qt.white, 1)
         self.black_pen = QPen(Qt.black, 1)
-        
+
     def draw_frame(self, frame):
         painter = QPainter(self.image)
         for line, value in enumerate(frame):
             self.draw_line(line, value, painter)
         self.update()
-        
+
     def draw_line(self, line, value, painter = None, update = False):
         if painter == None:
             painter = QPainter(self.image)
-            
+
         painter.setPen(Qt.black)
         painter.drawLine(QPoint(line, 31-value//8), QPoint(line, 31))
         painter.setPen(Qt.white)
         painter.drawLine(QPoint(line, 0), QPoint(line, 31-value//8))
-        
+
         if update:
             self.update()
-        
+
     def fill_image(self, color):
         self.image.fill(color)
         self.update()
@@ -97,47 +97,47 @@ class DMX(COMCUPluginBase, Ui_DMX):
         self.setupUi(self)
 
         self.dmx = self.device
-        
+
         self.wait_for_first_read = True
-        
+
         self.dmx_overview = DMXOverview(self)
         self.layout_dmx_overview.insertWidget(1, self.dmx_overview)
-        
+
         self.qtcb_frame_started.connect(self.cb_frame_started)
         self.qtcb_frame.connect(self.cb_frame)
-        
+
         self.mode_combobox.currentIndexChanged.connect(self.mode_changed)
         self.frame_duration_spinbox.valueChanged.connect(self.frame_duration_changed)
-        
+
         self.address_spinboxes = []
         self.address_slider = []
-        
+
         for i in range(512):
             spinbox = QSpinBox()
             spinbox.setMinimum(0)
             spinbox.setMaximum(255)
-            
+
             slider = QSlider(Qt.Horizontal)
             slider.setMinimum(0)
             slider.setMaximum(255)
 
             spinbox.valueChanged.connect(slider.setValue)
             slider.valueChanged.connect(spinbox.setValue)
-            
+
             def get_frame_value_changed_func(i):
                 return lambda x: self.frame_value_changed(i, x)
             slider.valueChanged.connect(get_frame_value_changed_func(i))
-            
+
             self.address_table.setCellWidget(i, 0, spinbox)
             self.address_table.setCellWidget(i, 1, slider)
-            
+
             self.address_spinboxes.append(spinbox)
             self.address_slider.append(slider)
-            
-            
+
+
         self.address_table.horizontalHeader().setStretchLastSection(True)
         self.address_table.show()
-        
+
         self.current_frame = [0]*512
 
         self.com_led_off_action = QAction('Off', self)
@@ -167,18 +167,18 @@ class DMX(COMCUPluginBase, Ui_DMX):
                                                   self.error_led_on_action,
                                                   self.error_led_show_heartbeat_action,
                                                   self.error_led_show_error_action])]
-        
+
     def frame_value_changed(self, line, value):
         self.current_frame[line] = value
         self.dmx_overview.draw_line(line, value, None, True)
-        
+
     def mode_changed(self, index, update=True):
         if index == 0:
             for spinbox in self.address_spinboxes:
                 spinbox.setReadOnly(False)
             for slider in self.address_slider:
                 slider.setEnabled(True)
-                
+
             self.frame_duration_label.setVisible(True)
             self.frame_duration_unit.setVisible(True)
             self.frame_duration_spinbox.setVisible(True)
@@ -187,45 +187,45 @@ class DMX(COMCUPluginBase, Ui_DMX):
                 spinbox.setReadOnly(True)
             for slider in self.address_slider:
                 slider.setEnabled(False)
-                
+
             self.frame_duration_label.setVisible(False)
             self.frame_duration_unit.setVisible(False)
             self.frame_duration_spinbox.setVisible(False)
-            
+
         if update:
             self.dmx.set_dmx_mode(index)
-        
+
     def frame_duration_changed(self, value):
         self.dmx.set_frame_duration(value)
-        
+
     def handle_new_frame(self, frame):
         for i, value in enumerate(frame):
             self.address_spinboxes[i].setValue(value)
             self.frame_value_changed(i, value)
-            
+
         self.wait_for_first_read = False
-        
+
     def cb_get_frame_duration(self, frame_duration):
         self.frame_duration_spinbox.blockSignals(True)
         self.frame_duration_spinbox.setValue(frame_duration)
         self.frame_duration_spinbox.blockSignals(False)
-    
+
     def cb_get_dmx_mode(self, mode):
         self.mode_combobox.blockSignals(True)
         self.mode_combobox.setCurrentIndex(mode)
         self.mode_changed(mode, False)
         self.mode_combobox.blockSignals(False)
-        
+
         if mode == self.dmx.DMX_MODE_MASTER:
             async_call(self.dmx.read_frame, None, self.cb_read_frame, self.increase_error_count)
-        
+
     def cb_read_frame(self, frame):
         self.handle_new_frame(frame.frame)
 
     def cb_frame_started(self):
         if not self.wait_for_first_read:
             async_call(self.dmx.write_frame, self.current_frame, None, self.increase_error_count)
-        
+
     def cb_frame(self, frame, frame_number):
         if frame == None:
             return
@@ -261,7 +261,7 @@ class DMX(COMCUPluginBase, Ui_DMX):
 
         self.dmx.register_callback(self.dmx.CALLBACK_FRAME_STARTED, self.qtcb_frame_started.emit)
         self.dmx.register_callback(self.dmx.CALLBACK_FRAME, self.qtcb_frame.emit)
-        
+
         self.dmx.set_frame_callback_config(True, False, True, False)
 
     def stop(self):

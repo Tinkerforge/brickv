@@ -27,7 +27,7 @@ from brickv.plugin_system.plugin_base import PluginBase
 
 class Unknown(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, None, *args, override_base_name='Unknown')
+        super().__init__(self, None, *args, override_base_name='Unknown')
 
         # All new released Bricklets will have a comcu
         self.has_comcu = True

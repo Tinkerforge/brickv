@@ -39,7 +39,7 @@ from brickv.plugin_system.plugins.red.script_manager import report_script_result
 
 class ChunkedUploader(ChunkedUploaderBase):
     def __init__(self, widget, done_callback):
-        ChunkedUploaderBase.__init__(self, widget.session)
+        super().__init__(self, widget.session)
 
         self.widget        = widget
         self.done_callback = done_callback

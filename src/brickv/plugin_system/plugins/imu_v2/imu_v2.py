@@ -100,7 +100,7 @@ during stabilization.</p>""")
 
 class ColorFrame(QFrame):
     def __init__(self, parent=None):
-        QFrame.__init__(self, parent)
+        super().__init__(self, parent)
         self.color = Qt.red
         self.setMinimumSize(15, 15)
         self.setMaximumSize(15, 15)
@@ -122,7 +122,7 @@ class ColorFrame(QFrame):
 
 class WrapperWidget(QWidget):
     def __init__(self, plugin):
-        QWidget.__init__(self)
+        super().__init__(self)
 
         self.plugin = plugin
 
