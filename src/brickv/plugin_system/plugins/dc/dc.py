@@ -110,13 +110,6 @@ class DC(PluginBase, Ui_DC):
             reset.triggered.connect(lambda: self.dc.reset())
             self.set_actions([(0, None, [reset])])
 
-#        if self.firmware_version >= (2, 0, 1):
-#            self.enable_encoder_checkbox.stateChanged.connect(self.enable_encoder_state_changed)
-#            self.encoder_show()
-#        else:
-#            self.enable_encoder_checkbox.setText('Enable Encoder (FW Version >= 2.0.1 required)')
-#            self.enable_encoder_checkbox.setEnabled(False)
-
     def start(self):
         if self.firmware_version >= (2, 3, 1):
             async_call(self.dc.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
@@ -316,8 +309,6 @@ class DC(PluginBase, Ui_DC):
         async_call(self.dc.get_acceleration, None, self.get_acceleration_async, self.increase_error_count)
         async_call(self.dc.get_pwm_frequency, None, self.get_pwm_frequency_async, self.increase_error_count)
         async_call(self.dc.is_enabled, None, self.is_enabled_async, self.increase_error_count)
-#        if self.firmware_version >= (2, 0, 1):
-#            self.update_encoder()
 
     def update_data(self):
         async_call(self.dc.get_stack_input_voltage, None, self.stack_input_voltage_update, self.increase_error_count)

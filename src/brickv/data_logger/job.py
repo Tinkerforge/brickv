@@ -93,7 +93,6 @@ class CSVWriterJob(AbstractJob):
             while True:
                 if not self._datalogger.data_queue[self.name].empty():
                     csv_data = self._get_data_from_queue()
-                    #EventLogger.debug(self._job_name + " -> " + str(csv_data))
                     if not csv_writer.write_data_row(csv_data):
                         EventLogger.warning(self._job_name + " Could not write csv row!")
 
@@ -145,7 +144,6 @@ if 'merged_data_logger_modules' not in globals():
                 while True:
                     if not self._datalogger.data_queue[self.name].empty():
                         csv_data = self._get_data_from_queue()
-                        #EventLogger.debug(self._job_name + " -> " + str(csv_data))
                         self.signalNewData.emit(csv_data)
 
                     if not self._exit_flag and self._datalogger.data_queue[self.name].empty():

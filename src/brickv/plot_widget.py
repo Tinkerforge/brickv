@@ -450,15 +450,12 @@ class CurveArea(QWidget):
                 for i in range(len(self.plot.curves_x[0])):
                     pen.setColor(self.plot.curve_configs[0].color)
                     painter.setPen(pen)
-                    #painter.setPen(self.plot.curve_configs[0].color)
                     painter.drawLine(QPoint(curve_x[i], 0), QPoint(curve_x[i], curve_y[i]))
                     pen.setColor(Qt.white)
                     painter.setPen(pen)
-                    #painter.setPen(Qt.white)
                     painter.drawLine(QPoint(curve_x[i], curve_y[i]), QPoint(curve_x[i], y_max_scale))
                     pen.setColor(Qt.darkGreen)
                     painter.setPen(pen)
-                    #painter.setPen(Qt.darkGreen)
                     painter.drawPoint(QPoint(curve_x[i], self.max_points[i][1]))
             else:
                 for c in range(len(self.plot.curves_x)):
@@ -481,7 +478,6 @@ class CurveArea(QWidget):
                         lineTo(curve_x[i], curve_y[i])
                     pen.setColor(self.plot.curve_configs[c].color)
                     painter.setPen(pen)
-                    #painter.setPen(self.plot.curve_configs[c].color)
                     painter.drawPath(path)
 
             painter.restore()

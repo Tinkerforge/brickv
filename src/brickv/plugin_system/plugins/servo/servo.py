@@ -71,7 +71,6 @@ class ColorBar(QWidget):
         painter.save()
         painter.setClipRect(rect)
         painter.setClipping(True)
-        #painter.fillRect(rect, QBrush(self.dark))
 
         if self.orientation == Qt.Horizontal:
             num_intervalls = rect.width()
@@ -425,8 +424,6 @@ class Servo(PluginBase, Ui_Servo):
                         self.up_vel[i] = self.servo.get_current_velocity(i)
                         self.up_acc[i] = self.servo.get_acceleration(i)
 
-                #self.update_apply()
-
                 self.update_done_event.set()
                 self.update_event.wait()
                 self.update_done_event.clear()
@@ -525,7 +522,6 @@ class Servo(PluginBase, Ui_Servo):
         async_call(self.servo.get_output_voltage, None, qid.setIntValue, self.increase_error_count)
         qid.intValueSelected.connect(self.output_voltage_selected)
         qid.setLabelText("Choose Output Voltage in mV.")
-#                         "<font color=red>Setting this too high can destroy your servo.</font>")
         qid.open()
 
     def output_voltage_selected(self, value):

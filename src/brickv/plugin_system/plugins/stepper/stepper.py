@@ -219,7 +219,6 @@ class Stepper(PluginBase, Ui_Stepper):
         async_call(self.stepper.get_motor_current, None, qid.setIntValue, self.increase_error_count)
         qid.intValueSelected.connect(self.motor_current_selected)
         qid.setLabelText("Choose motor current in mA.")
-#                         "<font color=red>Setting this too high can destroy your Motor.</font>")
         qid.open()
 
     def minimum_motor_voltage_button_clicked(self):

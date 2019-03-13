@@ -81,7 +81,6 @@ class TerminalWidget(QWidget):
         self._char_width = [0]*(self._columns+1)
         self._char_height = [0]*(self._rows+1)
 
-#        self.parent().setTabOrder(self, self)
         self.setFocusPolicy(Qt.StrongFocus)
         self.setAutoFillBackground(False)
         self.setAttribute(Qt.WA_OpaquePaintEvent, True)
@@ -285,7 +284,6 @@ class TerminalWidget(QWidget):
                     pen = QPen(QColor(foreground_color))
                     brush = QBrush(QColor(background_color))
                     painter_setPen(pen)
-                    # painter.setBrush(brush)
             y += self._char_height[0]
             text_append(text_line)
         self._text = text
@@ -303,7 +301,6 @@ class TerminalWidget(QWidget):
                 width, height = self._pos2pixel(
                     end_col - start_col, end_row - start_row)
                 rect = QRect(x, y, width, height)
-#                painter.drawRect(rect)
                 painter.fillRect(rect, brush)
 
     def zoom_in(self):
@@ -372,10 +369,9 @@ class TerminalWidget(QWidget):
             self._selection = None
             text = self._clipboard.text(QClipboard.Selection)
             self.send(text.encode("utf-8"))
-            # self.update_screen()
 
     def mouseReleaseEvent(self, QMouseEvent):
-        pass  # self.update_screen()
+        pass
 
     def _selection_rects(self, start_pos, end_pos):
         sx, sy = start_pos.x(), start_pos.y()

@@ -55,7 +55,6 @@ def parse_no_fake(data):
 
     config = configparser.ConfigParser()
     config.read_string(string)
-    #config.readfp(StringIO(string.encode('utf-8')))
 
     return config
 

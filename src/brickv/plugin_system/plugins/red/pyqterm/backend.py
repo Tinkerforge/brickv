@@ -230,7 +230,6 @@ class Terminal(object):
     def utf8_decode(self, d):
         o = ''
         for c in d:
-            #char = ord(c)
             char = c
             c = chr(c)
             if self.utf8_units_count != self.utf8_units_received:

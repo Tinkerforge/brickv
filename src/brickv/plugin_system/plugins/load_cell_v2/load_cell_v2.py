@@ -104,9 +104,6 @@ class LoadCellV2(COMCUPluginBase):
         self.cbox_info_led_config.currentIndexChanged.connect(self.cbox_info_led_config_changed)
         self.label_info_led_config = QLabel('Info LED:')
 
-        #self.enable_led = QCheckBox("Enable LED")
-        #self.enable_led.stateChanged.connect(self.enable_led_changed)
-
         self.spin_average = QSpinBox()
         self.spin_average.setMinimum(0)
         self.spin_average.setMaximum(40)

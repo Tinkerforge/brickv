@@ -200,7 +200,6 @@ class Color(PluginBase):
             self.plot_widget_illuminance.get_key_item(0).setStyleSheet('')
             self.plot_widget_color_temperature.get_key_item(0).setStyleSheet('')
 
-        #normalize = r+g+b
         normalize = 0xFFFF
         self.color_frame.set_color(r*255.0/normalize, g*255.0/normalize, b*255.0/normalize)
 

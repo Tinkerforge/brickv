@@ -328,7 +328,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if i < 0:
             return
 
-        #self.host_infos[i].host = self.combo_host.currentText()
         self.host_infos[i].port = self.spinbox_port.value()
         self.host_infos[i].use_authentication = self.checkbox_authentication.isChecked()
         self.host_infos[i].secret = self.edit_secret.text()

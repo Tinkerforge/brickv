@@ -83,12 +83,6 @@ class ConfigValidator(object):
         self._error_count = 0
         self._config = config
 
-        # FIXME: dont access the config before its validated. also this code should not be here
-        # but somewhere else. it has nothing to do with validation
-        #file_count = self._config['data']['csv']['file_count']
-        #file_size = self._config['data']['csv']['file_size']
-        #self._log_space_counter = LogSpaceCounter(file_count, file_size)
-
     def _report_error(self, message):
         self._error_count += 1
         EventLogger.critical(message)
@@ -109,16 +103,6 @@ class ConfigValidator(object):
             EventLogger.critical("Validation found {0} errors".format(self._error_count))
         else:
             EventLogger.info("Validation successful")
-
-        #logging_time = self._log_space_counter.calculate_time()
-        #if self._log_space_counter.file_size != 0:
-        #    EventLogger.info("Logging time until old data will be overwritten.")
-        #    EventLogger.info("Days: " + str(logging_time[0]) +
-        #                     " Hours: " + str(logging_time[1]) +
-        #                     " Minutes: " + str(logging_time[2]) +
-        #                     " Seconds: " + str(logging_time[3]))
-        #EventLogger.info("Will write about " + str(
-        #    int(self._log_space_counter.lines_per_second + 0.5)) + " lines per second into the log-file.")
 
         return self._error_count == 0
 
@@ -461,8 +445,6 @@ class ConfigValidator(object):
                                     self._report_error('Value of option "{0}" of device "{1}" is invalid: {2}'
                                                        .format(option_spec['name'], uid, value))
 
-        #if interval > 0:
-        #    self._log_space_counter.add_lines_per_second(interval * logged_values)
 
 
 """"

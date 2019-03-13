@@ -59,12 +59,6 @@ class EventLogger():
 
         return False
 
-    # Does not really work as expected >_>
-    # def get_logger(logger_name):
-    #     if logger_name in EventLogger.__loggers:
-    #         return EventLogger.__loggers.get(logger_name)
-    #     return None
-
     def debug(msg, logger_name=None):
         level = logging.DEBUG
         EventLogger._send_message(level, msg, logger_name)
@@ -103,7 +97,6 @@ class EventLogger():
     # static methods
     add_logger = staticmethod(add_logger)
     remove_logger = staticmethod(remove_logger)
-    # get_logger = staticmethod(get_logger)
     debug = staticmethod(debug)
     info = staticmethod(info)
     warn = staticmethod(warn)
@@ -168,9 +161,6 @@ if 'merged_data_logger_modules' not in globals():
         _output_format = "{asctime} - <b>{levelname:8}</b> - {message}"
         _output_format_warning = "<font color=\"orange\">{asctime} - <b>{levelname:8}</b> - {message}</font>"
         _output_format_critical = "<font color=\"red\">{asctime} - <b>{levelname:8}</b> - {message}</font>"
-
-        #SIGNAL_NEW_MESSAGE = "newEventMessage"
-        #SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT = "newEventTabHighlight"
 
         newEventMessage = pyqtSignal(str)
         newEventTabHighlight = pyqtSignal()

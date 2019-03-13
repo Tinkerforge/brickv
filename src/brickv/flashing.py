@@ -287,7 +287,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.fw_fetch_progress_bar.setValue(0)
         self.fw_fetch_progress_bar.show()
 
-        #self.load_version_info(fetch_latest_fw_versions(report_malformed))
         get_main_window().fw_version_fetcher.fetch_now()
 
 

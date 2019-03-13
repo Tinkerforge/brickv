@@ -92,9 +92,7 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
             SystemLog('messages', '/var/log/messages'),
             SystemLog('syslog', '/var/log/syslog'),
             SystemLog('kern.log', '/var/log/kern.log'),
-            SystemLog('daemon.log', '/var/log/daemon.log'),
-            #SystemLog('Xorg.0.log', '/var/log/Xorg.0.log'),
-            #SystemLog('openhab.log', '/var/log/openhab/openhab.log')
+            SystemLog('daemon.log', '/var/log/daemon.log')
         ]
 
         while self.stacked_container.count() > 0:
@@ -193,7 +191,6 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
 
                 if '\x00' in content:
                     content = re.sub(r'(\n?)\x00+(\n?)', '\n[REBOOT]\n', content)
-                    #content = content.replace('\n\n[REBOOT]', '\n[REBOOT]')
 
                 log.set_content(content)
 

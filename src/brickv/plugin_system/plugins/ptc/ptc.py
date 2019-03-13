@@ -31,11 +31,6 @@ from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-#class ResistanceLabel(QLabel):
-#    def setText(self, text):
-#        text = "Resistance: " + text + " Ohm"
-#        super(ResistanceLabel, self).setText(text)
-
 class PTC(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletPTC, *args)
@@ -48,12 +43,6 @@ class PTC(PluginBase):
         self.cbe_temperature = CallbackEmulator(self.ptc.get_temperature,
                                                 self.cb_temperature,
                                                 self.increase_error_count)
-
-        #self.cbe_resistance = CallbackEmulator(self.ptc.get_resistance,
-        #                                       self.cb_resistance,
-        #                                       self.increase_error_count)
-
-        #self.resistance_label = ResistanceLabel()
 
         self.wire_label = QLabel('Wire Type:')
         self.wire_combo = QComboBox()
@@ -99,9 +88,7 @@ class PTC(PluginBase):
 
     def start(self):
         async_call(self.ptc.get_temperature, None, self.cb_temperature, self.increase_error_count)
-        #async_call(self.ptc.get_resistance, None, self.cb_resistance, self.increase_error_count)
         self.cbe_temperature.set_period(100)
-        #self.cbe_resistance.set_period(100)
 
         async_call(self.ptc.is_sensor_connected, None, self.is_sensor_connected_async, self.increase_error_count)
         async_call(self.ptc.get_noise_rejection_filter, None, self.get_noise_rejection_filter_async, self.increase_error_count)
@@ -112,7 +99,6 @@ class PTC(PluginBase):
 
     def stop(self):
         self.cbe_temperature.set_period(0)
-        #self.cbe_resistance.set_period(0)
 
         self.connected_timer.stop()
         self.plot_widget.stop = True

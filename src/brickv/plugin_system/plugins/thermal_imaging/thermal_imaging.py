@@ -110,15 +110,6 @@ class ThermalImage(QWidget):
         # Greyscale
         self.rgb_lookup.append([(x, x, x) for x in range(256)])
 
-#        rainbow = []
-#        for i in range(256):
-#            r, g, b = colorsys.hsv_to_rgb(1.0*i/256, 1, 1)
-#            r = int(round(r*255))
-#            g = int(round(g*255))
-#            b = int(round(b*255))
-#
-#            rainbow.append((r, g, b))
-
         # Hot Cold
         self.rgb_lookup.append([(0, 0, 255)]*32 + [(0,0,0)]*(256-2*32) + [(255,0,0)]*32)
 

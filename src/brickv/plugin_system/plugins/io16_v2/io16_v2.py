@@ -423,7 +423,6 @@ class IO16V2(COMCUPluginBase, Ui_IO16V2):
     def update_ch_config_gui(self, index):
         if self.ch_current_config[index]['direction'] == self.io.DIRECTION_IN:
             if self.async_data_store['update_current_channel_info']['config'].value:
-            #if self.ch_current_config[index]['value']:
                 self.cbox_cfg_ch_in_v.setCurrentIndex(1)
             else:
                 self.cbox_cfg_ch_in_v.setCurrentIndex(0)

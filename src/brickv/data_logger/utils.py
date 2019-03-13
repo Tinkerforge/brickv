@@ -440,7 +440,6 @@ class CSVWriter(object):
     def _rolling_file(self):
         f_size = os.path.getsize(self._file_path)
         if f_size > self._file_size:
-            # self.set_file_path(self._create_new_file_name(self._file_path))
             EventLogger.info(
                 "Max Filesize(" + "%.3f" % (self._file_size / 1024.0 / 1024.0) + " MB) reached! Rolling Files...")
             self._roll_files()

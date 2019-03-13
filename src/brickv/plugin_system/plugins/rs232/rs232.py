@@ -174,7 +174,6 @@ class RS232(PluginBase, Ui_RS232):
         if length < 60:
             text += bytes([0] * (60 - length))
 
-        #length = len(text)
         written = 0
         while length != 0:
             written = self.rs232.write(text, length)

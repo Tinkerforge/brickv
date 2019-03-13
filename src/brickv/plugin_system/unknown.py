@@ -28,7 +28,7 @@ from brickv.plugin_system.plugin_base import PluginBase
 class Unknown(PluginBase):
     def __init__(self, *args):
         PluginBase.__init__(self, None, *args, override_base_name='Unknown')
-        
+
         # All new released Bricklets will have a comcu
         self.has_comcu = True
 
@@ -53,7 +53,6 @@ Please update Brick Viewer!""".format(info.device_identifier,
                                       info.firmware_version_installed[2],
                                       'Brick' if str(info.device_identifier).startswith('1') else 'Bricklet'))
 
-        #label.setAlignment(Qt.AlignHCenter)
         layout.addWidget(label)
         layout.addStretch()
 

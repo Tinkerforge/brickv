@@ -190,9 +190,6 @@ class QHexeditWidget(QAbstractScrollArea):
                     if (self.show_ascii) :
                         ss = self.drawAsciiDumpToBuffer(ss, offset, data_size, row_data)
                         ss += "|"
-                    #if (self.show_comments and self.comment_server) :
-                    #    self.drawCommentsToBuffer(ss, offset, data_size)
-                #
                 ss+="\n"
             offset += chars_per_row
         QApplication.clipboard().setText(ss)
@@ -313,12 +310,6 @@ class QHexeditWidget(QAbstractScrollArea):
     def asciiDumpLeft(self) :
         return self.line2() + (self.font_width / 2)
 
-    '''
-    // Name: commentLeft() const
-    // Desc: returns the x coordinate of the comment field left edge
-    '''
-    #def commentLeft(self) :
-    #    return self.line3() + (self.font_width / 2)
 
     '''
     // Name: charsPerWord() const
@@ -400,15 +391,6 @@ class QHexeditWidget(QAbstractScrollArea):
         self.repaint()
         return
 
-    '''
-    // Name: setShowComments(bool show)
-    // Desc: sets if we are to display the comments column
-    '''
-    #def setShowComments(self, show) :
-    #    self.show_comments = show
-    #    self.updateScrollbars()
-    #    self.repaint()
-    #    return
 
     '''
     // Name: setShowAsciiDump(bool show)
@@ -481,7 +463,6 @@ class QHexeditWidget(QAbstractScrollArea):
             #// make x relative to rendering mode of the bytes
             x /= self.word_width
         else:
-            #Q_ASSERT(0)
             pass
 
         #// starting offset in bytes
@@ -623,24 +604,6 @@ class QHexeditWidget(QAbstractScrollArea):
         return ret
 
     '''
-    // Name: drawComments(QPainter &painter, offset, row, int size) const
-    '''
-    #def drawComments(self, painter, offset, row, size) :
-    #    #Q_UNUSED(size)
-    #    painter.setPen(QPen(self.palette().text().color()))
-    #    address = self.address_offset + offset
-    #    comment     = str(self.comment_server.comment(address, self.word_width))
-    #    painter.drawText(
-    #        self.commentLeft(),
-    #        row,
-    #        comment.length() * self.font_width,
-    #        self.font_height,
-    #        Qt.AlignTop,
-    #        comment
-    #        )
-    #    return
-
-    '''
     // Name: drawAsciiDumpToBuffer(QTextStream &stream, offset, int size, const QByteArray &row_data) const
     '''
     def drawAsciiDumpToBuffer(self, stream, offset, size, row_data):
@@ -661,16 +624,6 @@ class QHexeditWidget(QAbstractScrollArea):
             else :
                 break
         return stream
-
-    '''
-    // Name: drawCommentsToBuffer(QTextStream &stream, offset, int size) const
-    '''
-    #def drawCommentsToBuffer(self, stream, offset, size):
-    #    #Q_UNUSED(size)
-    #    address = self.address_offset + offset
-    #    comment     = str(self.comment_server.comment(address, self.word_width))
-    #    stream << comment
-    #    return
 
     '''
     // Name: format_bytes(const C &data_ref, int index) const
@@ -718,7 +671,6 @@ class QHexeditWidget(QAbstractScrollArea):
     // Name: drawHexDumpToBuffer(QTextStream &stream,    offset, int size, const QByteArray &row_data) const
     '''
     def drawHexDumpToBuffer(self, stream, offset, size, row_data) :
-        #Q_UNUSED(size)
         #// i is the word we are currently rendering
         for i in range(0, self.row_width) :
             #// index of first byte of current 'word'
@@ -877,8 +829,6 @@ class QHexeditWidget(QAbstractScrollArea):
                     self.drawHexDump(painter, offset, row, data_size, word_count, row_data)
                 if(self.show_ascii) :
                     self.drawAsciiDump(painter, offset, row, data_size, row_data)
-                #if(self.show_comments and self.comment_server) :
-                #    self.drawComments(painter, offset, row, data_size)
             offset += chars_per_row
             row += self.font_height
 
@@ -953,19 +903,6 @@ class QHexeditWidget(QAbstractScrollArea):
     '''
     def addressOffset(self):
         return self.address_offset
-
-    '''
-    // Name: setCommentServer(const QSharedPointer<CommentServerInterface> &p)
-    '''
-    #def setCommentServer(self, p) :
-    #    self.comment_server = p
-    #    return
-
-    '''
-    // Name: commentServer() const
-    '''
-    #def commentServer(self):
-    #    return self.comment_server
 
     '''
     // Name: showHexDump() const

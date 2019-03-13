@@ -106,7 +106,6 @@ class QxtSpanSlider(QSlider):
             if not self.hasTracking():
                 self.update()
             if self.isSliderDown():
-                #self.emit(SIGNAL("upperPositionChanged(int)"), upper)
                 self.upperPositionChanged.emit(upper)
             if self.hasTracking() and not self.blockTracking:
                 main = (self.mainControl == QxtSpanSlider.UpperHandle)
