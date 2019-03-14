@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-03-14.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -263,6 +263,9 @@ class BrickletTemperatureIRV2(Device):
 
         The default emissivity is 1.0 (value of 65535) and the minimum emissivity the
         sensor can handle is 0.1 (value of 6553).
+
+        The emissivity is stored in non-volatile memory and will still be
+        used after a restart or power cycle of the Bricklet.
         """
         emissivity = int(emissivity)
 

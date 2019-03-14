@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-03-14.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -59,6 +59,9 @@ class BrickletAirQuality(Device):
     FUNCTION_GET_AIR_PRESSURE = 19
     FUNCTION_SET_AIR_PRESSURE_CALLBACK_CONFIGURATION = 20
     FUNCTION_GET_AIR_PRESSURE_CALLBACK_CONFIGURATION = 21
+    FUNCTION_REMOVE_CALIBRATION = 23
+    FUNCTION_SET_BACKGROUND_CALIBRATION_DURATION = 24
+    FUNCTION_GET_BACKGROUND_CALIBRATION_DURATION = 25
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -81,6 +84,8 @@ class BrickletAirQuality(Device):
     THRESHOLD_OPTION_INSIDE = 'i'
     THRESHOLD_OPTION_SMALLER = '<'
     THRESHOLD_OPTION_GREATER = '>'
+    DURATION_4_DAYS = 0
+    DURATION_28_DAYS = 1
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -104,7 +109,7 @@ class BrickletAirQuality(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletAirQuality.FUNCTION_GET_ALL_VALUES] = BrickletAirQuality.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAirQuality.FUNCTION_SET_TEMPERATURE_OFFSET] = BrickletAirQuality.RESPONSE_EXPECTED_FALSE
@@ -123,6 +128,9 @@ class BrickletAirQuality(Device):
         self.response_expected[BrickletAirQuality.FUNCTION_GET_AIR_PRESSURE] = BrickletAirQuality.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAirQuality.FUNCTION_SET_AIR_PRESSURE_CALLBACK_CONFIGURATION] = BrickletAirQuality.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletAirQuality.FUNCTION_GET_AIR_PRESSURE_CALLBACK_CONFIGURATION] = BrickletAirQuality.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAirQuality.FUNCTION_REMOVE_CALIBRATION] = BrickletAirQuality.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAirQuality.FUNCTION_SET_BACKGROUND_CALIBRATION_DURATION] = BrickletAirQuality.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAirQuality.FUNCTION_GET_BACKGROUND_CALIBRATION_DURATION] = BrickletAirQuality.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAirQuality.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletAirQuality.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAirQuality.FUNCTION_SET_BOOTLOADER_MODE] = BrickletAirQuality.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAirQuality.FUNCTION_GET_BOOTLOADER_MODE] = BrickletAirQuality.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -433,6 +441,59 @@ class BrickletAirQuality(Device):
         Returns the callback configuration as set by :func:`Set Air Pressure Callback Configuration`.
         """
         return GetAirPressureCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_AIR_PRESSURE_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
+
+    def remove_calibration(self):
+        """
+        Deletes the calibration from flash. After you call this function,
+        you need to power cycle the Air Quality Bricklet.
+
+        On the next power up the Bricklet will start a new calibration, as
+        if it was started for the very first time.
+
+        The calibration is based on the data of the last four days, so it takes
+        four days until a full calibration is re-established.
+
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_REMOVE_CALIBRATION, (), '', '')
+
+    def set_background_calibration_duration(self, duration):
+        """
+        The Air Quality Bricklet uses an automatic background calibration mechanism to
+        calculate the IAQ Index. This calibration mechanism considers a history of
+        measured data. The duration of this history can be configured to either be
+        4 days or 28 days.
+
+        If you keep the Bricklet mostly at one place and it does not get moved around
+        to different environments, we recommend that you use a duration of 28 days.
+
+        If you change the duration, the current calibration will be discarded and
+        the calibration will start from beginning again. The configuration of the
+        duration is saved in flash, so you should only have to call this function
+        once in the lifetime of the Bricklet.
+
+        The Bricklet has to be power cycled after this function is called
+        for a duration change to take effect.
+
+        Before firmware version 2.0.3 this was not configurable and the duration was
+        4 days.
+
+        The default value (since firmware version 2.0.3) is 28 days.
+
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        duration = int(duration)
+
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_BACKGROUND_CALIBRATION_DURATION, (duration,), 'B', '')
+
+    def get_background_calibration_duration(self):
+        """
+        Returns the background calibration duration as set by
+        :func:`Set Background Calibration Duration`.
+
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_BACKGROUND_CALIBRATION_DURATION, (), '', 'B')
 
     def get_spitfp_error_count(self):
         """

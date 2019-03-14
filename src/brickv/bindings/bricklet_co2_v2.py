@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-02-18.      #
+# This file was automatically generated on 2019-03-14.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -28,7 +28,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletCO2V2(Device):
     """
-    Measures CO2 concentration in ppm
+    Measures CO2 concentration, temperature and humidity
     """
 
     DEVICE_IDENTIFIER = 2147
@@ -137,13 +137,31 @@ class BrickletCO2V2(Device):
 
     def get_all_values(self):
         """
+        Returns all values measured by the CO2 Bricklet 2.0. The values are
+        CO2 concentration (in ppm), Temperature (in 0.01 °C)
+        and Humidity (in 0.01 %RH).
 
+        If you want to get the values periodically, it is recommended to use the
+        :cb:`All Values` callback. You can set the callback configuration
+        with :func:`Set All Values Callback Configuration`.
         """
         return GetAllValues(*self.ipcon.send_request(self, BrickletCO2V2.FUNCTION_GET_ALL_VALUES, (), '', 'H h H'))
 
     def set_air_pressure(self, air_pressure):
         """
+        The CO2 concentration (among other things) depends on the ambient air pressure.
 
+        To increase the accuracy of the CO2 Bricklet 2.0 you can set the current air pressure.
+        You use the :ref:`Barometer Bricklet 2.0 <barometer_v2_bricklet>` or the
+        :ref:`Air Quality Bricklet <air_quality_bricklet>` to get the current air pressure.
+
+        The expected unit of the ambient air pressure value is mbar.
+
+        By default air pressure compensation is disabled. Once you set a value it
+        will be used for compensation. You can turn the compensation off again by
+        setting the value to 0.
+
+        It is sufficient to update the value every few minutes.
         """
         air_pressure = int(air_pressure)
 
@@ -151,7 +169,7 @@ class BrickletCO2V2(Device):
 
     def get_air_pressure(self):
         """
-
+        Returns the ambient air pressure as set by :func:`Set Air Pressure`.
         """
         return self.ipcon.send_request(self, BrickletCO2V2.FUNCTION_GET_AIR_PRESSURE, (), '', 'H')
 
@@ -159,6 +177,22 @@ class BrickletCO2V2(Device):
         """
         Sets a temperature offset with resolution 1/100°C. A offset of 10 will decrease
         the measured temperature by 0.1°C.
+
+        If you install this Bricklet into an enclosure and you want to measure the ambient
+        temperature, you may have to decrease the measured temperature by some value to
+        compensate for the error because of the heating inside of the enclosure.
+
+        We recommend that you leave the parts in the enclosure running for at least
+        24 hours such that a temperature equilibrium can be reached. After that you can measure
+        the temperature directly outside of enclosure and set the difference as offset.
+
+        This temperature offset is used to calculate the relative humidity and
+        CO2 concentration. In case the Bricklet is installed in an enclosure, we
+        recommend to measure and set the temperature offset to imporve the accuracy of
+        the measurements.
+
+        It is sufficient to set the temperature offset once. The offset is saved in
+        non-volatile memory and is applied again after a power loss.
         """
         offset = int(offset)
 

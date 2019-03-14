@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-02-26.      #
+# This file was automatically generated on 2019-03-14.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -26,7 +26,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletHallEffectV2(Device):
     """
-
+    Measures magnetic flux density between -7mT and 7mT
     """
 
     DEVICE_IDENTIFIER = 2132
@@ -115,9 +115,8 @@ class BrickletHallEffectV2(Device):
 
     def get_magnetic_flux_density(self):
         """
-        Returns the magnetic flux density (magnetic induction) in uT (micro Tesla).
-
-        TBD: Range etc?
+        Returns the `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__
+        in `uT (micro Tesla) <https://en.wikipedia.org/wiki/Tesla_(unit)>`__.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -174,11 +173,12 @@ class BrickletHallEffectV2(Device):
 
     def get_counter(self, reset_counter):
         """
-        Returns the current value of the edge counter. You can configure
-        edge type (rising, falling, both) that is counted with
-        :func:`Set Counter Config`.
+        Returns the current value of the counter.
 
-        If you set the reset counter to *true*, the count is set back to 0
+        You can configure the low/high thresholds in uT and the debounce time
+        in us with :func:`Set Counter Config`.
+
+        If you set reset counter to *true*, the count is set back to 0
         directly after it is read.
 
         If you want to get the count periodically, it is recommended to use the
@@ -191,7 +191,18 @@ class BrickletHallEffectV2(Device):
 
     def set_counter_config(self, high_threshold, low_threshold, debounce):
         """
+        Sets a high and a low threshold in uT as well as a debounce time in us.
 
+        If the measured magnetic flux density goes above the high threshold or
+        below the low threshold, the count of the counter is increased by 1.
+
+        The debounce time is the minimum time between two count increments.
+
+        The default values are
+
+        * High Threshold: 2000uT
+        * Low Threshold: -2000uT
+        * Debounce: 100000us (100ms)
         """
         high_threshold = int(high_threshold)
         low_threshold = int(low_threshold)
@@ -201,7 +212,7 @@ class BrickletHallEffectV2(Device):
 
     def get_counter_config(self):
         """
-
+        Returns the counter config as set by :func:`Set Counter Config`.
         """
         return GetCounterConfig(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_COUNTER_CONFIG, (), '', 'h h I'))
 

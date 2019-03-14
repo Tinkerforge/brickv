@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-02-21.      #
+# This file was automatically generated on 2019-03-14.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -114,7 +114,7 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         The indices of the segments in the digit and colon parameters are as follows:
 
-        .. image:: /Images/Bricklets/bricklet_segment_display_4x7_segment_index.png
+        .. image:: /Images/Bricklets/bricklet_segment_display_4x7_v2_segment_index.png
            :scale: 100 %
            :alt: Indices of segments
            :align: center
@@ -177,15 +177,15 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         The indices of the segments are as follows:
 
-        .. image:: /Images/Bricklets/bricklet_segment_display_4x7_selected_segment_index.png
+        .. image:: /Images/Bricklets/bricklet_segment_display_4x7_v2_selected_segment_index.png
            :scale: 100 %
            :alt: Indices of selected segments
            :align: center
         """
         segment = int(segment)
-        value = int(value)
+        value = bool(value)
 
-        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_SELECTED_SEGMENT, (segment, value), 'B B', '')
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_SELECTED_SEGMENT, (segment, value), 'B !', '')
 
     def get_selected_segments(self, segment):
         """
@@ -193,7 +193,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         segment = int(segment)
 
-        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SELECTED_SEGMENTS, (segment,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SELECTED_SEGMENTS, (segment,), 'B', '!')
 
     def start_counter(self, value_from, value_to, increment, length):
         """

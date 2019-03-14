@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-02-13.      #
+# This file was automatically generated on 2019-03-14.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -182,8 +182,8 @@ class BrickletAccelerometerV2(Device):
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
 
-        If this callback is enabled, the :cb:`Continuous Acceleration 16 Bit` and
-        :cb:`Continuous Acceleration 8 Bit` will automatically be disabled.
+        If this callback is enabled, the :cb:`Continuous Acceleration 16 Bit` callback
+        and :cb:`Continuous Acceleration 8 Bit` callback will automatically be disabled.
 
         The default value is (0, false).
         """
@@ -227,6 +227,9 @@ class BrickletAccelerometerV2(Device):
         the :cb:`Continuous Acceleration 8 Bit` callback is activated. If at least
         one of the axis is enabled and the resolution is set to 16 bit,
         the :cb:`Continuous Acceleration 16 Bit` callback is activated.
+
+        If a resolution of 8 bit is used, only the 8 most significant bits will be
+        transferred. This means that the unit changes from g/10000 to g*256/10000.
 
         If no axis is enabled, both callbacks are disabled. If one of the continuous
         callbacks is enabled, the :cb:`Acceleration` callback is disabled.
