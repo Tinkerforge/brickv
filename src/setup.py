@@ -43,7 +43,7 @@ for package in packages:
         images += glob.glob(os.path.join(package_path, pattern))
 
     if len(images) > 0:
-        package_data[package] = [os.path.basename(name) for name in images]
+        package_data[package] = [os.path.basename(image) for image in images]
 
 setup_arguments = {
     'name':         'brickv',
