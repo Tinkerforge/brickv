@@ -181,7 +181,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         name, uid, current_version, latest_version = [idx.sibling(idx.row(), i).data() for i in range(0, 4)]
 
         if "wifi" in name.lower() and "2.0" in name.lower():
-            uid = idx.parent().sibling(idx.row(), 1).data()
+            uid = idx.parent().sibling(idx.parent().row(), 1).data()
             self.show_extension_update(uid)
             return
 
