@@ -26,13 +26,11 @@ import os
 import sys
 import glob
 from setuptools import setup, find_packages
-from brickv.config import BRICKV_VERSION
 
-BRICKV_DESCRIPTION = 'Small Qt GUI to control and test all Bricks and Bricklets from Tinkerforge'
+from brickv.config import BRICKV_VERSION
 
 packages = find_packages(include=['brickv', 'brickv.*'])
 
-# Collect non-frozen package_data
 package_data = {}
 
 image_patterns = ['*.bmp', '*.png', '*.jpg']
@@ -45,31 +43,8 @@ for package in packages:
         images += glob.glob(os.path.join(package_path, pattern))
 
     if len(images) > 0:
-        package_data[package] = [os.path.basename(d) for d in images]
+        package_data[package] = [os.path.basename(name) for name in images]
 
-package_data['brickv'].append('brickv.desktop')
-
-# Collect platform specific data_files
-def collect_data_files(path, excludes=None):
-    path = os.path.normcase(path)
-    files = []
-
-    for root, dirnames, names in os.walk(path):
-        for name in names:
-            if excludes != None and name in excludes:
-                continue
-
-            full_name = os.path.join(root, name)
-
-            if os.path.isfile(full_name):
-                files.append((os.path.join(root.replace(path, '')), [full_name]))
-
-    return files
-
-data_files = [('/usr/share/pixmaps/', ['brickv/brickv-icon.png']),
-              ('/usr/share/applications/', ['brickv/brickv.desktop'])]
-
-# Run setup
 setup_arguments = {
     'name':         'brickv',
     'version':      BRICKV_VERSION,
@@ -77,10 +52,9 @@ setup_arguments = {
     'author_email': 'info@tinkerforge.com',
     'url':          'http://www.tinkerforge.com',
     'license':      'GPL v2',
-    'description':  BRICKV_DESCRIPTION,
+    'description':  'Small Qt GUI to control and test all Bricks and Bricklets from Tinkerforge',
     'packages':     packages,
     'package_data': package_data,
-    'data_files':   data_files,
     'scripts':      ['brickv/brickv']
 }
 
