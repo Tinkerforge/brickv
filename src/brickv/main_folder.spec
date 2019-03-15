@@ -72,8 +72,8 @@ excludes = utils.get_unreleased_bindings() + ['wx', 'gtk+', '_gtkagg', 'gtk', 'g
             'PyQt5.QtXml',
             'PyQt5.QtXmlPatterns']
 patterns = ['qt5qml', 'qt5quick', 'qt5network', 'qt5dbus', 'qt5svg', 'qt5websockets',
-            'qtqml', 'qtquick', 'libcrypto', 'qtnetwork',
-            'libcrypto', 'qwebp', 'qjpeg', 'qwebgl', 'qminimal', 'qoffscreen', 'qwebgl']
+            'qtqml', 'qtquick', 'libcrypto', 'qtnetwork', 'libcrypto', 'qwebp',
+            'qjpeg', 'qminimal', 'qoffscreen', 'qwebgl']
 hiddenimports = ['PyQt5._QOpenGLFunctions_2_1']
 
 a = Analysis(['main.py'], pathex=utils.pathex, excludes=excludes, hiddenimports=hiddenimports)
