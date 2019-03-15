@@ -191,7 +191,7 @@
           <widget class="QComboBox" name="wifi_connection">
            <item>
             <property name="text">
-             <string>Client: DHCP</string>
+             <string>Client: DHCP (Client)</string>
             </property>
            </item>
            <item>
@@ -201,7 +201,7 @@
            </item>
            <item>
             <property name="text">
-             <string>Access Point: DHCP</string>
+             <string>Access Point: DHCP (Client)</string>
             </property>
            </item>
            <item>
@@ -211,7 +211,7 @@
            </item>
            <item>
             <property name="text">
-             <string>Ad Hoc: DHCP</string>
+             <string>Ad Hoc: DHCP (Client)</string>
             </property>
            </item>
            <item>
