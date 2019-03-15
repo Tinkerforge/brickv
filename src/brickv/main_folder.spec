@@ -6,8 +6,6 @@ sys.path.append('..')
 from brickv.pyinstaller_utils import *
 from brickv.config import BRICKV_VERSION
 
-
-PyinstallerUtils
 utils = PyinstallerUtils(['brickv'], BRICKV_VERSION)
 utils.prepare(os.path.join(utils.root_path, '..'), 'build_src.py')
 
