@@ -39,12 +39,8 @@ if (sys.hexversion & 0xFF000000) != 0x03000000:
     sys.exit(1)
 
 import os
-import base64
 import shutil
-import struct
 import subprocess
-import traceback
-import getpass
 from brickv.config import BRICKV_VERSION
 
 
