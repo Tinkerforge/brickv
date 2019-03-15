@@ -43,6 +43,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 from brickv.async_call import async_call
 from brickv.plugin_system.plugins.red.ui_red_update_tinkerforge_software import Ui_REDUpdateTinkerforgeSoftware
+import brickv.infos
 
 MAX_IMAGE_VERSION = (1, 13)
 
@@ -1067,45 +1068,56 @@ class RED(PluginBase, Ui_RED):
         #        all devices connected to a RED Brick properly
         self.ipcon.enumerate()
 
+    # Override PluginBase.show_update
+    def show_update(self):
+        super().show_update()
+        self.update_tab_button.clicked.disconnect()
+        self.update_tab_button.clicked.connect(lambda: get_main_window().show_red_brick_update())
+
+    def get_image_version_async(self):
+        # FIXME: this is should actually be sync to ensure that the image
+        #        version is known before it'll be used
+        def read_image_version_async(red_file):
+            return red_file.open('/etc/tf_image_version',
+                                    REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING,
+                                    0, 0, 0).read(256).decode('utf-8').strip()
+
+        def cb_success(image_version):
+            if self.label_version != None:
+                self.label_version.setText(image_version)
+
+            m = re.match(r'(\d+)\.(\d+)\s+\((.+)\)', image_version)
+
+            if m != None:
+                try:
+                    self.image_version.number = (int(m.group(1)), int(m.group(2)))
+                    self.image_version.flavor = m.group(3)
+                    self.image_version.string = image_version # set this last, because it is used as validity check
+                except:
+                    self.label_discovering.setText('Error: Could not parse Image Version: {0}'.format(image_version))
+                else:
+                    if self.image_version.number > MAX_IMAGE_VERSION:
+                        self.label_discovering.setText('Image Version {0} is not officially supported yet. Please update Brick Viewer!'.format(image_version))
+                        self.button_anyway.show()
+                    else:
+                        self.widget_discovering.hide()
+                        self.tab_widget.show()
+                        self.tab_widget_current_changed(self.tab_widget.currentIndex())
+                    self.device_info.firmware_version_installed = self.image_version.number + (0, )
+                    brickv.infos.update_info(self.device_info.uid)
+            else:
+                self.label_discovering.setText('Error: Could not parse Image Version: {0}'.format(image_version))
+
+        self.label_discovering.setText('Discovering Image Version...')
+        self.widget_discovering.show()
+        async_call(read_image_version_async, REDFile(self.session), cb_success, None)
+
     def start(self):
         if self.session == None:
             return
 
         if self.image_version.string == None:
-            # FIXME: this is should actually be sync to ensure that the image
-            #        version is known before it'll be used
-            def read_image_version_async(red_file):
-                return red_file.open('/etc/tf_image_version',
-                                     REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING,
-                                     0, 0, 0).read(256).decode('utf-8').strip()
-
-            def cb_success(image_version):
-                if self.label_version != None:
-                    self.label_version.setText(image_version)
-
-                m = re.match(r'(\d+)\.(\d+)\s+\((.+)\)', image_version)
-
-                if m != None:
-                    try:
-                        self.image_version.number = (int(m.group(1)), int(m.group(2)))
-                        self.image_version.flavor = m.group(3)
-                        self.image_version.string = image_version # set this last, because it is used as validity check
-                    except:
-                        self.label_discovering.setText('Error: Could not parse Image Version: {0}'.format(image_version))
-                    else:
-                        if self.image_version.number > MAX_IMAGE_VERSION:
-                            self.label_discovering.setText('Image Version {0} is not officially supported yet. Please update Brick Viewer!'.format(image_version))
-                            self.button_anyway.show()
-                        else:
-                            self.widget_discovering.hide()
-                            self.tab_widget.show()
-                            self.tab_widget_current_changed(self.tab_widget.currentIndex())
-                else:
-                    self.label_discovering.setText('Error: Could not parse Image Version: {0}'.format(image_version))
-
-            self.label_discovering.setText('Discovering Image Version...')
-            self.widget_discovering.show()
-            async_call(read_image_version_async, REDFile(self.session), cb_success, None)
+            self.get_image_version_async()
         else:
             self.tab_widget_current_changed(self.tab_widget.currentIndex())
 

@@ -45,6 +45,7 @@ from brickv.data_logger.setup_dialog import SetupDialog as DataLoggerWindow
 from brickv.async_call import async_start_thread, async_next_session, async_call, stop_async_thread
 from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
+from brickv.plugin_system.plugins.red import RED
 from brickv import config
 from brickv import infos
 from brickv.tab_window import TabWindow, IconButton
@@ -213,6 +214,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.button_update_pixmap_normal = load_pixmap('update-icon-normal.png')
         self.button_update_pixmap_hover = load_pixmap('update-icon-hover.png')
+
+        infos.get_infos_changed_signal().connect(self.update_red_brick_version)
+
+    def update_red_brick_version(self, uid):
+        if not isinstance(infos.get_info(uid), infos.BrickREDInfo):
+            return
+        self.update_tree_view()
 
     def disable_auto_search_for_updates(self):
         self.fw_version_fetcher.abort()
@@ -517,6 +525,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.flashing_window.update_version_info()
         self.flashing_window.show_extension_update(master_uid)
 
+    def show_red_brick_update(self):
+        text = """To update the RED Brick Image, please follow the instructions <a href=https://www.tinkerforge.com/en/doc/Hardware/Bricks/RED_Brick.html#red-brick-copy-image>here</a>."""
+        QMessageBox.information(self, "RED Brick Update", text)
+
     def create_tab_window(self, device_info, ipcon):
         tab_window = TabWindow(self.tab_widget, device_info.name, self.untab)
         tab_window._info = device_info
@@ -544,7 +556,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         button_update = QPushButton(QIcon(self.button_update_pixmap_normal), 'Update')
         button_update.installEventFilter(self)
 
-        if device_info.type == 'brick':
+        if isinstance(device_info, infos.BrickREDInfo):
+            button_update.clicked.connect(self.show_red_brick_update)
+        elif device_info.type == 'brick':
             button_update.clicked.connect(lambda: self.show_brick_update(device_info.url_part))
         elif device_info.type == 'bricklet':
             button_update.clicked.connect(lambda: self.show_bricklet_update(device_info.connected_uid, device_info.position))
@@ -774,7 +788,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             set_device_info_value('connected_uid', connected_uid)
             set_device_info_value('position', position)
             set_device_info_value('hardware_version', hardware_version)
-            set_device_info_value('firmware_version_installed', firmware_version)
+            if device_identifier != BrickRED.DEVICE_IDENTIFIER:
+                set_device_info_value('firmware_version_installed', firmware_version)
             set_device_info_value('device_identifier', device_identifier)
             set_device_info_value('enumeration_type', enumeration_type)
 
@@ -798,7 +813,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         infos.get_infos_changed_signal().emit(info.uid)
 
             if device_info.plugin == None:
-                self.plugin_manager.create_plugin_instance(device_identifier, self.ipcon, device_info)
+                plugin = self.plugin_manager.create_plugin_instance(device_identifier, self.ipcon, device_info)
 
                 device_info.tab_window = self.create_tab_window(device_info, self.ipcon)
                 device_info.tab_window.setWindowFlags(Qt.Widget)
@@ -807,6 +822,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 infos.add_info(device_info)
 
                 something_changed_ref[0] = True
+
+                if device_identifier == BrickRED.DEVICE_IDENTIFIER and isinstance(plugin, RED):
+                    plugin.get_image_version_async()
 
             if something_changed_ref[0]:
                 self.update_tree_view()

@@ -38,7 +38,7 @@ ERROR_PARSE_VERSION_SPLIT = 3
 ERROR_PARSE_VERSION_INTS = 4
 ERROR_SERVER_ERROR = 5
 
-latest_fw_versions_result = namedtuple('latest_fw_versions_result', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos'])
+latest_fw_versions_result = namedtuple('latest_fw_versions_result', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos', 'red_image_infos'])
 
 def refresh_firmware_info(url_part, latest_version):
     name = url_part
@@ -148,8 +148,16 @@ def refresh_extension_firmware_info(url_part, latest_version):
 
     return extension_firmware_info
 
+def refresh_red_image_info(url_part, latest_version):
+    extension_firmware_info = infos.BrickREDInfo()
+    extension_firmware_info.name = "RED Brick Image (" + url_part + ")"
+    extension_firmware_info.url_part = url_part
+    extension_firmware_info.firmware_version_latest = latest_version
+
+    return extension_firmware_info
+
 def fetch_latest_fw_versions(report_error_fn):
-    result = latest_fw_versions_result({}, {}, {}, {})
+    result = latest_fw_versions_result({}, {}, {}, {}, {})
     try:
         response = urllib.request.urlopen(LATEST_VERSIONS_URL, timeout=10)
         latest_versions_data = response.read().decode('utf-8')
@@ -195,6 +203,8 @@ def fetch_latest_fw_versions(report_error_fn):
             result.plugin_infos[parts[1]] = refresh_plugin_info(parts[1], latest_version)
         elif parts[0] == 'extensions':
             result.extension_firmware_infos[parts[1]] = refresh_extension_firmware_info(parts[1], latest_version)
+        elif parts[0] == 'red_images':
+            result.red_image_infos[parts[1]] = refresh_red_image_info(parts[1], latest_version)
 
     return result
 

@@ -27,6 +27,7 @@ from collections import namedtuple
 from PyQt5.QtWidgets import QApplication
 
 from brickv import config
+#from brickv.plugin_system.plugins.red import RED
 
 UID_BRICKV = '$BRICKV'
 UID_BRICKD = '$BRICKD'
@@ -161,14 +162,20 @@ if not '_infos' in globals():
     _infos[UID_BRICKV].firmware_version_installed = tuple(map(int, config.BRICKV_VERSION.split('.')))
     _infos[UID_BRICKD].name = 'Brick Daemon'
 
-latest_fw_tup = namedtuple('latest_fw_tup', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos'])
+latest_fw_tup = namedtuple('latest_fw_tup', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos', 'red_image_infos'])
 
 if not '_latest_fws' in globals():
-    _latest_fws = latest_fw_tup({}, {}, {}, {})
+    _latest_fws = latest_fw_tup({}, {}, {}, {}, {})
 
 
-def add_latest_fw(info):
-    if info.type == 'brick':
+def get_latest_fw(info):
+    if isinstance(info, BrickREDInfo):
+        if 'full' not in _latest_fws.red_image_infos:
+            latest_fw = (0, 0, 0)
+        else:
+            latest_fw = _latest_fws.red_image_infos['full'].firmware_version_latest
+        return latest_fw
+    elif info.type == 'brick':
         d = _latest_fws.firmware_infos
     elif info.type == 'bricklet':
         d = _latest_fws.plugin_infos
@@ -184,9 +191,12 @@ def add_latest_fw(info):
         raise Exception("Unexpected info type " + info.type)
 
     if info.url_part not in d:
-        latest_fw = (0, 0, 0)
+        return (0, 0, 0)
     else:
-        latest_fw = d[info.url_part].firmware_version_latest
+        return d[info.url_part].firmware_version_latest
+
+def add_latest_fw(info):
+    latest_fw = get_latest_fw(info)
 
     version_changed = info.firmware_version_latest != latest_fw
 

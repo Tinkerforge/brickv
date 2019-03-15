@@ -190,7 +190,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         device_info = infos.get_info(uid)
 
-        if device_info.type == 'brick':
+        if isinstance(device_info, infos.BrickREDInfo):
+            self.show_red_brick_update()
+        elif device_info.type == 'brick':
             self.show_brick_update(device_info.url_part)
         elif device_info.type == 'bricklet':
             self.show_bricklet_update(device_info.connected_uid, device_info.position)
@@ -1413,10 +1415,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
             if device.firmware_version_installed >= device.firmware_version_latest:
                 return None, False
 
-            if device.firmware_version_installed[0] <= 1:
-                if device.url_part == 'wifi_v2':
-                    return None, False
-                return QBrush(Qt.red), True
+            if device.firmware_version_installed == (0, 0, 0):
+                return None, False
 
             return QBrush(QColor(255, 160, 55)), True
 
@@ -1772,3 +1772,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
             # This sets the combobox index to a default value.
             # Using a 1 ms sleep time here ensures, that the refresh...'s timer runs first
             QTimer.singleShot(1, lambda: self.combo_extension.setCurrentIndex(idx))
+
+    def show_red_brick_update(self):
+        get_main_window().show_red_brick_update()
