@@ -2,7 +2,7 @@
 
 import os
 import sys
-sys.path.append('..')
+sys.path.insert(0, '..') # Ensure to use the brickv source, not an installed version
 from brickv.pyinstaller_utils import *
 from brickv.config import BRICKV_VERSION
 
