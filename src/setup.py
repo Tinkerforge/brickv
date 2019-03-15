@@ -22,8 +22,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import os
 import sys
+if (sys.hexversion & 0xFF000000) != 0x03000000:
+    print('Python 3.x required')
+    sys.exit(1)
+
+import os
 import glob
 from setuptools import setup, find_packages
 
@@ -32,7 +36,6 @@ from brickv.config import BRICKV_VERSION
 packages = find_packages(include=['brickv', 'brickv.*'])
 
 package_data = {}
-
 image_patterns = ['*.bmp', '*.png', '*.jpg']
 
 for package in packages:
