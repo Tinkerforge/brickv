@@ -151,6 +151,7 @@ class BrickREDInfo(BrickInfo):
     def __init__(self):
         super().__init__()
         self.bindings_infos = []
+        self.brickv_info = None
 
 def get_bindings_name(url_part):
     # These are all bindings supported on the red brick.

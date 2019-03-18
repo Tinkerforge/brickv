@@ -180,7 +180,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def update_tree_view_clicked(self, idx):
         name, uid, current_version, latest_version = [idx.sibling(idx.row(), i).data() for i in range(0, 4)]
 
-        if "binding" in name.lower():
+        is_red_brick_brickv = "brick viewer" in name.lower() and idx.parent().data() is not None
+        is_red_brick_binding = "binding" in name.lower()
+
+        if is_red_brick_brickv or is_red_brick_binding:
             parent = idx.parent()
             while parent.parent().data() is not None:
                 parent = parent.parent()
@@ -1532,14 +1535,34 @@ class FlashingWindow(QDialog, Ui_Flashing):
                             parent[0].appendRow(child)
 
                 if isinstance(info, infos.BrickREDInfo):
-                    binding_row = [QStandardItem('Bindings'), QStandardItem(''), QStandardItem(''), QStandardItem('')]
+                    if info.brickv_info is not None:
+                        brickv_row = [QStandardItem(info.brickv_info.name),
+                                    QStandardItem(''),
+                                    QStandardItem(get_version_string(info.brickv_info.firmware_version_installed, replace_unknown="Querying...")),
+                                    QStandardItem(get_version_string(info.brickv_info.firmware_version_latest, replace_unknown="Unknown"))]
+                        color, update = get_color_for_device(info.brickv_info)
+                        if update:
+                            is_update = True
+                    else:
+                        brickv_row = [QStandardItem("Brick Viewer"),
+                                      QStandardItem(''),
+                                      QStandardItem("Querying..."),
+                                      QStandardItem("Unknown")]
+                        is_update = False
+                        color = None
 
+                    for item in brickv_row:
+                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                        item.setData(color, Qt.BackgroundRole)
+                    parent[0].appendRow(brickv_row)
+
+                    binding_row = [QStandardItem('Bindings'), QStandardItem(''), QStandardItem(''), QStandardItem('')]
                     is_update = False
                     for binding in info.bindings_infos:
                         child = [QStandardItem(binding.name),
-                                QStandardItem(''),
-                                QStandardItem(get_version_string(binding.firmware_version_installed, replace_unknown="Querying...")),
-                                QStandardItem(get_version_string(binding.firmware_version_latest, replace_unknown="Unknown"))]
+                                 QStandardItem(''),
+                                 QStandardItem(get_version_string(binding.firmware_version_installed, replace_unknown="Querying...")),
+                                 QStandardItem(get_version_string(binding.firmware_version_latest, replace_unknown="Unknown"))]
 
                         color, update = get_color_for_device(binding)
                         if update:

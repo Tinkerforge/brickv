@@ -1115,10 +1115,56 @@ class RED(PluginBase, Ui_RED):
 
                 brickv.infos.add_latest_fw(info)
                 self.device_info.bindings_infos.append(info)
+
+            red_brickv_info = brickv.infos.ToolInfo()
+            red_brickv_info.name = 'Brick Viewer'
+            red_brickv_info.url_part = 'brickv'
+            red_brickv_info.firmware_version_installed = tuple(int(i) for i in versions['brickv'].split('.'))
+
+            brickv.infos.add_latest_fw(red_brickv_info)
+            self.device_info.brickv_info = red_brickv_info
+
             brickv.infos.get_infos_changed_signal().emit(self.device_info.uid)
 
         self.script_manager.execute_script('update_tf_software_get_installed_versions',
                                            success)
+
+    def show_bindings_update(self, bindings=True, brickv=False):
+        button_text = ""
+        tool_tip_text = ""
+        if bindings and brickv:
+            button_text = "Update Bindings and Brick Viewer"
+            tool_tip_text = "Binding and Brick Viewer Updates available"
+        elif bindings:
+            button_text = "Update Bindings"
+            tool_tip_text = "Binding Updates available"
+        elif brickv:
+            button_text = "Update Brick Viewer"
+            tool_tip_text = "Brick Viewer Update available"
+
+        # Show "normal" update button and customize it
+        self.show_update()
+
+        self.device_info.tab_window.button_update.setText(button_text)
+        self.device_info.tab_window.button_update.clicked.disconnect()
+        self.device_info.tab_window.button_update.clicked.connect(lambda: self.perform_action(3))
+
+        self.update_tab_button.setToolTip(tool_tip_text)
+        self.update_tab_button.clicked.disconnect()
+        self.update_tab_button.clicked.connect(lambda: self.perform_action(3))
+
+    def show_image_update(self):
+        self.show_update()
+
+        # Maybe a bindings update was shown the last time,
+        # revert changes to the update buttons.
+        self.device_info.tab_window.button_update.setText("Update Image")
+        self.device_info.tab_window.button_update.clicked.disconnect()
+        self.device_info.tab_window.button_update.clicked.connect(get_main_window().show_red_brick_update)
+
+        self.update_tab_button.setToolTip('Image Update available')
+        self.update_tab_button.clicked.disconnect()
+        self.update_tab_button.clicked.connect(lambda: get_main_window().show_red_brick_update())
 
     # Overrides PluginBase.device_infos_changed
     def device_infos_changed(self, uid):
@@ -1129,35 +1175,22 @@ class RED(PluginBase, Ui_RED):
             return
 
         # The rationale here is the same as with the Master Brick:
-        # Prioritize bindings over image updates, as they are easier
-        # to install. Also when they are updated, device_infos_changed
-        # is triggered again, so the image update will be shown afterwards.
-        for bindings_info in self.device_info.bindings_infos:
-            if bindings_info.firmware_version_installed < bindings_info.firmware_version_latest:
-                # Show "normal" update button and customize it
-                self.show_update()
+        # Prioritize bindings (and brickv) updates over image updates,
+        # as they are easier to install. Also when they are updated,
+        # device_infos_changed is triggered again, so the image update
+        # will be shown afterwards.
 
-                self.device_info.tab_window.button_update.setText("Update Bindings")
-                self.device_info.tab_window.button_update.clicked.disconnect()
-                self.device_info.tab_window.button_update.clicked.connect(lambda: self.perform_action(3))
+        brickv_update = (self.device_info.brickv_info is not None) \
+                        and (self.device_info.brickv_info.firmware_version_installed < self.device_info.brickv_info.firmware_version_latest)
 
-                self.update_tab_button.setToolTip('Binding Updates available')
-                self.update_tab_button.clicked.disconnect()
-                self.update_tab_button.clicked.connect(lambda: self.perform_action(3))
-                return
+        bindings_update = any(info.firmware_version_installed < info.firmware_version_latest for info in self.device_info.bindings_infos)
 
-        if self.device_info.firmware_version_installed < self.device_info.firmware_version_latest:
-            self.show_update()
+        image_update = self.device_info.firmware_version_installed < self.device_info.firmware_version_latest
 
-            # Maybe a bindings update was shown the last time,
-            # revert changes to the update buttons.
-            self.device_info.tab_window.button_update.setText("Update Image")
-            self.device_info.tab_window.button_update.clicked.disconnect()
-            self.device_info.tab_window.button_update.clicked.connect(get_main_window().show_red_brick_update)
-
-            self.update_tab_button.setToolTip('Image Update available')
-            self.update_tab_button.clicked.disconnect()
-            self.update_tab_button.clicked.connect(lambda: get_main_window().show_red_brick_update())
+        if brickv_update or bindings_update:
+            self.show_bindings_update(bindings=bindings_update, brickv=brickv_update)
+        elif image_update:
+            self.show_image_update()
         else:
             self.hide_update()
 
