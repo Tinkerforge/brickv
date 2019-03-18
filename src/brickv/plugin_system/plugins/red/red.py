@@ -513,8 +513,14 @@ Please make sure that your internet connection is working.'
 
         msg = self.MESSAGE_INFO_STATE_UPDATES_AVAILABLE + '<ul>'
 
+        image_supports_brickv_2_4 = self.red_plugin.device_info.firmware_version_installed >= (1, 14, 0)
+
         if self.update_info['brickv']['update']:
-            msg += self.FMT_LI.format('Brick Viewer', self.update_info['brickv']['from'], self.update_info['brickv']['to'])
+            if image_supports_brickv_2_4:
+                msg += self.FMT_LI.format('Brick Viewer', self.update_info['brickv']['from'], self.update_info['brickv']['to'])
+            else:
+                msg += '<li style="margin-bottom: 5px;">{0} [{1} --> {2}] <font color="red">Will not be installed: Brick Viewer 2.4 requires at least RED Brick Image 1.14</font></li>'.format('Brick Viewer', self.update_info['brickv']['from'], self.update_info['brickv']['to'])
+                self.update_info['brickv']['update'] = False
 
         for d in sorted(self.update_info['bindings'], key=lambda d: d['name']):
             if not d['update']:
@@ -668,6 +674,10 @@ Please make sure that your internet connection is working.'
             for d in self.update_info['bindings']:
                 if d['update']:
                     updates_total = updates_total + 1
+
+            if updates_total == 0:
+                self.set_current_state(self.STATE_UPDATE_DONE)
+                return
 
             self.update_info['processed'] = 0
             self.update_info['updates_total'] = updates_total
