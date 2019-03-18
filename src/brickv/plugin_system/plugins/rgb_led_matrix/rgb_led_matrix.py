@@ -25,7 +25,7 @@ import colorsys
 
 from PyQt5.QtCore import pyqtSignal, Qt, QSize, QPoint
 from PyQt5.QtWidgets import QWidget, QPushButton, QColorDialog
-from PyQt5.QtGui import QImage, QPainter, QPen, QColor
+from PyQt5.QtGui import QImage, QPainter, QPen, QColor, QPixmap, QIcon
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.rgb_led_matrix.ui_rgb_led_matrix import Ui_RGBLEDMatrix
@@ -42,15 +42,21 @@ class QColorButton(QPushButton):
         super().__init__(*args, **kwargs)
 
         self._color = QColor(255, 0, 0)
-        self.setStyleSheet("background-color: %s;" % self._color.name())
-        self.setMaximumWidth(32)
+        self._apply_color()
         self.pressed.connect(self.onColorPicker)
+
+    def _apply_color(self):
+        pixmap = QPixmap(16, 16)
+        QPainter(pixmap).fillRect(0, 0, 16, 16, self._color)
+        self.setIcon(QIcon(pixmap))
+        self.setText(self._color.name())
+
 
     def set_color(self, color):
         if color != self._color:
             self._color = color
             self.colorChanged.emit()
-            self.setStyleSheet("background-color: %s;" % self._color.name())
+            self._apply_color()
 
     def color(self):
         return self._color
