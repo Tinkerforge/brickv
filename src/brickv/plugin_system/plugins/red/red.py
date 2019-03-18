@@ -86,6 +86,7 @@ Please make sure that your internet connection is working.'
     def __init__(self, parent, session, script_manager):
         QDialog.__init__(self, parent)
         self.setupUi(self)
+        self.red_plugin = parent
 
         self.setAttribute(Qt.WA_DeleteOnClose)
 
@@ -110,6 +111,7 @@ Please make sure that your internet connection is working.'
 
     def closeEvent(self, event):
         self.dialog_session = False
+        self.red_plugin.get_bindings_versions_async()
 
     def handle_update_tf_software_install_cb(self):
         if self.update_info['processed'] == self.update_info['updates_total']:
@@ -990,6 +992,8 @@ Please make sure that your internet connection is working.'
 
                     return
 
+                self.red_plugin.bindings_version_success(result)
+
                 _check_update_available = self.check_update_available(update_info)
 
                 if not _check_update_available:
@@ -1104,30 +1108,31 @@ class RED(PluginBase, Ui_RED):
         self.widget_discovering.show()
         async_call(read_image_version_async, REDFile(self.session), cb_success, None)
 
+    def bindings_version_success(self, result):
+        self.device_info.bindings_infos = []
+        versions = json.loads(result.stdout)
+        for url_part, version in versions['bindings'].items():
+            info = brickv.infos.BindingInfo()
+            info.name = brickv.infos.get_bindings_name(url_part)
+            info.url_part = url_part
+            info.firmware_version_installed = tuple(int(i) for i in version.split('.'))
+
+            brickv.infos.add_latest_fw(info)
+            self.device_info.bindings_infos.append(info)
+
+        red_brickv_info = brickv.infos.ToolInfo()
+        red_brickv_info.name = 'Brick Viewer'
+        red_brickv_info.url_part = 'brickv'
+        red_brickv_info.firmware_version_installed = tuple(int(i) for i in versions['brickv'].split('.'))
+
+        brickv.infos.add_latest_fw(red_brickv_info)
+        self.device_info.brickv_info = red_brickv_info
+
+        brickv.infos.get_infos_changed_signal().emit(self.device_info.uid)
+
     def get_bindings_versions_async(self):
-        def success(result):
-            versions = json.loads(result.stdout)
-            for url_part, version in versions['bindings'].items():
-                info = brickv.infos.BindingInfo()
-                info.name = brickv.infos.get_bindings_name(url_part)
-                info.url_part = url_part
-                info.firmware_version_installed = tuple(int(i) for i in version.split('.'))
-
-                brickv.infos.add_latest_fw(info)
-                self.device_info.bindings_infos.append(info)
-
-            red_brickv_info = brickv.infos.ToolInfo()
-            red_brickv_info.name = 'Brick Viewer'
-            red_brickv_info.url_part = 'brickv'
-            red_brickv_info.firmware_version_installed = tuple(int(i) for i in versions['brickv'].split('.'))
-
-            brickv.infos.add_latest_fw(red_brickv_info)
-            self.device_info.brickv_info = red_brickv_info
-
-            brickv.infos.get_infos_changed_signal().emit(self.device_info.uid)
-
         self.script_manager.execute_script('update_tf_software_get_installed_versions',
-                                           success)
+                                           self.bindings_version_success)
 
     def show_bindings_update(self, bindings=True, brickv=False):
         button_text = ""
