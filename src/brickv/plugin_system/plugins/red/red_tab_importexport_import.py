@@ -176,12 +176,12 @@ class REDTabImportExportImport(QWidget, Ui_REDTabImportExportImport):
                         for line in conf:
                             if line.startswith('custom.name ='):
                                 try:
-                                    name = line[len('custom.name ='):].strip().decode('string_escape').decode('utf-8')
+                                    name = line[len('custom.name ='):].strip().encode('ascii').decode('unicode_escape')
                                 except:
                                     pass
                             elif line.startswith('custom.language ='):
                                 try:
-                                    language = Constants.get_language_display_name(line[len('custom.language ='):].strip().decode('string_escape'))
+                                    language = Constants.get_language_display_name(line[len('custom.language ='):].strip().encode('ascii').decode('unicode_escape'))
                                 except:
                                     pass
                             elif line.startswith('custom.first_upload ='):
