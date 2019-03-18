@@ -1196,7 +1196,8 @@ class RED(PluginBase, Ui_RED):
         # will be shown afterwards.
 
         brickv_update = (self.device_info.brickv_info is not None) \
-                        and (self.device_info.brickv_info.firmware_version_installed < self.device_info.brickv_info.firmware_version_latest)
+                        and (self.device_info.brickv_info.firmware_version_installed < self.device_info.brickv_info.firmware_version_latest) \
+                        and not (self.device_info.firmware_version_installed < (1, 14, 0)) # Don't show brickv update if the image is too old
 
         bindings_update = any(info.firmware_version_installed < info.firmware_version_latest for info in self.device_info.bindings_infos)
 
