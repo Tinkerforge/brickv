@@ -38,7 +38,7 @@ ERROR_PARSE_VERSION_SPLIT = 3
 ERROR_PARSE_VERSION_INTS = 4
 ERROR_SERVER_ERROR = 5
 
-latest_fw_versions_result = namedtuple('latest_fw_versions_result', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos', 'red_image_infos'])
+latest_fw_versions_result = namedtuple('latest_fw_versions_result', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos', 'red_image_infos', 'binding_infos'])
 
 def refresh_firmware_info(url_part, latest_version):
     name = url_part
@@ -149,15 +149,28 @@ def refresh_extension_firmware_info(url_part, latest_version):
     return extension_firmware_info
 
 def refresh_red_image_info(url_part, latest_version):
-    extension_firmware_info = infos.BrickREDInfo()
-    extension_firmware_info.name = "RED Brick Image (" + url_part + ")"
-    extension_firmware_info.url_part = url_part
-    extension_firmware_info.firmware_version_latest = latest_version
+    red_image_info = infos.BrickREDInfo()
+    red_image_info.name = "RED Brick Image (" + url_part + ")"
+    red_image_info.url_part = url_part
+    red_image_info.firmware_version_latest = latest_version
 
-    return extension_firmware_info
+    return red_image_info
+
+
+
+# Returns None if the binding is not supported on the red brick
+def refresh_binding_info(url_part, latest_version):
+    red_image_info = infos.BindingInfo()
+    red_image_info.name = infos.get_bindings_name(url_part)
+    if red_image_info.name is None:
+        return None
+    red_image_info.url_part = url_part
+    red_image_info.firmware_version_latest = latest_version
+
+    return red_image_info
 
 def fetch_latest_fw_versions(report_error_fn):
-    result = latest_fw_versions_result({}, {}, {}, {}, {})
+    result = latest_fw_versions_result({}, {}, {}, {}, {}, {})
     try:
         response = urllib.request.urlopen(LATEST_VERSIONS_URL, timeout=10)
         latest_versions_data = response.read().decode('utf-8')
@@ -205,7 +218,10 @@ def fetch_latest_fw_versions(report_error_fn):
             result.extension_firmware_infos[parts[1]] = refresh_extension_firmware_info(parts[1], latest_version)
         elif parts[0] == 'red_images':
             result.red_image_infos[parts[1]] = refresh_red_image_info(parts[1], latest_version)
-
+        elif parts[0] == 'bindings':
+            info = refresh_binding_info(parts[1], latest_version)
+            if info is not None:
+                result.binding_infos[parts[1]] = info
     return result
 
 class LatestFWVersionFetcher(QObject):

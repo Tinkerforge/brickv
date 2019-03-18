@@ -1068,15 +1068,7 @@ class RED(PluginBase, Ui_RED):
         #        all devices connected to a RED Brick properly
         self.ipcon.enumerate()
 
-    # Override PluginBase.show_update
-    def show_update(self):
-        super().show_update()
-        self.update_tab_button.clicked.disconnect()
-        self.update_tab_button.clicked.connect(lambda: get_main_window().show_red_brick_update())
-
     def get_image_version_async(self):
-        # FIXME: this is should actually be sync to ensure that the image
-        #        version is known before it'll be used
         def read_image_version_async(red_file):
             return red_file.open('/etc/tf_image_version',
                                     REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING,
@@ -1112,11 +1104,70 @@ class RED(PluginBase, Ui_RED):
         self.widget_discovering.show()
         async_call(read_image_version_async, REDFile(self.session), cb_success, None)
 
+    def get_bindings_versions_async(self):
+        def success(result):
+            versions = json.loads(result.stdout)
+            for url_part, version in versions['bindings'].items():
+                info = brickv.infos.BindingInfo()
+                info.name = brickv.infos.get_bindings_name(url_part)
+                info.url_part = url_part
+                info.firmware_version_installed = tuple(int(i) for i in version.split('.'))
+
+                brickv.infos.add_latest_fw(info)
+                self.device_info.bindings_infos.append(info)
+            brickv.infos.get_infos_changed_signal().emit(self.device_info.uid)
+
+        self.script_manager.execute_script('update_tf_software_get_installed_versions',
+                                           success)
+
+    # Overrides PluginBase.device_infos_changed
+    def device_infos_changed(self, uid):
+        if uid != self.device_info.uid:
+            return
+
+        if self.device_info.tab_window is None:
+            return
+
+        # The rationale here is the same as with the Master Brick:
+        # Prioritize bindings over image updates, as they are easier
+        # to install. Also when they are updated, device_infos_changed
+        # is triggered again, so the image update will be shown afterwards.
+        for bindings_info in self.device_info.bindings_infos:
+            if bindings_info.firmware_version_installed < bindings_info.firmware_version_latest:
+                # Show "normal" update button and customize it
+                self.show_update()
+
+                self.device_info.tab_window.button_update.setText("Update Bindings")
+                self.device_info.tab_window.button_update.clicked.disconnect()
+                self.device_info.tab_window.button_update.clicked.connect(lambda: self.perform_action(3))
+
+                self.update_tab_button.setToolTip('Binding Updates available')
+                self.update_tab_button.clicked.disconnect()
+                self.update_tab_button.clicked.connect(lambda: self.perform_action(3))
+                return
+
+        if self.device_info.firmware_version_installed < self.device_info.firmware_version_latest:
+            self.show_update()
+
+            # Maybe a bindings update was shown the last time,
+            # revert changes to the update buttons.
+            self.device_info.tab_window.button_update.setText("Update Image")
+            self.device_info.tab_window.button_update.clicked.disconnect()
+            self.device_info.tab_window.button_update.clicked.connect(get_main_window().show_red_brick_update)
+
+            self.update_tab_button.setToolTip('Image Update available')
+            self.update_tab_button.clicked.disconnect()
+            self.update_tab_button.clicked.connect(lambda: get_main_window().show_red_brick_update())
+        else:
+            self.hide_update()
+
     def start(self):
         if self.session == None:
             return
 
         if self.image_version.string == None:
+            # FIXME: this is should actually be sync to ensure that the image
+            #        version is known before it'll be used
             self.get_image_version_async()
         else:
             self.tab_widget_current_changed(self.tab_widget.currentIndex())

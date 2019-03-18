@@ -150,11 +150,40 @@ class BrickMasterInfo(BrickInfo):
 class BrickREDInfo(BrickInfo):
     def __init__(self):
         super().__init__()
+        self.bindings_infos = []
 
-def get_version_string(version_tuple, replace_unknown=None):
+def get_bindings_name(url_part):
+    # These are all bindings supported on the red brick.
+    url_to_name = {'c': 'C/C++ Bindings',
+                   'csharp': 'C#/Mono Bindings',
+                   'delphi': 'Delphi/Lazarus Bindings',
+                   'java': 'Java Bindings',
+                   'javascript': 'JavaScript Bindings',
+                   'matlab': 'Octave Bindings',
+                   'perl': 'Perl Bindings',
+                   'php': 'PHP Bindings',
+                   'python': 'Python Bindings',
+                   'ruby': 'Ruby Bindings',
+                   'shell': 'Shell Bindings',
+                   'vbnet': 'VB.NET Bindings'}
+
+    return url_to_name.get(url_part, None)
+
+class BindingInfo(AbstractInfo):
+    type = 'binding'
+
+    def __repr__(self):
+        return """{0}:
+version installed: {1},
+version latest: {2},
+url_part: {3}
+""".format(self.name, self.firmware_version_installed,
+           self.firmware_version_latest, self.url_part)
+
+def get_version_string(version_tuple, replace_unknown=None, is_red_brick=False):
     if replace_unknown is not None and version_tuple == (0, 0, 0):
         return replace_unknown
-    return '.'.join(map(str, version_tuple))
+    return '.'.join(map(str, version_tuple if not is_red_brick else version_tuple[:-1]))
 
 if not '_infos' in globals():
     _infos = {UID_BRICKV: ToolInfo(), UID_BRICKD: ToolInfo()}
@@ -162,10 +191,10 @@ if not '_infos' in globals():
     _infos[UID_BRICKV].firmware_version_installed = tuple(map(int, config.BRICKV_VERSION.split('.')))
     _infos[UID_BRICKD].name = 'Brick Daemon'
 
-latest_fw_tup = namedtuple('latest_fw_tup', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos', 'red_image_infos'])
+latest_fw_tup = namedtuple('latest_fw_tup', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos', 'red_image_infos', 'binding_infos'])
 
 if not '_latest_fws' in globals():
-    _latest_fws = latest_fw_tup({}, {}, {}, {}, {})
+    _latest_fws = latest_fw_tup({}, {}, {}, {}, {}, {})
 
 
 def get_latest_fw(info):
@@ -187,6 +216,8 @@ def get_latest_fw(info):
             raise Exception("The name -> url_part mapping was incomplete: " + info.name)
         info.url_part = name_to_url_part[info.name]
         d = _latest_fws.tool_infos
+    elif info.type == 'binding':
+        d = _latest_fws.binding_infos
     else:
         raise Exception("Unexpected info type " + info.type)
 

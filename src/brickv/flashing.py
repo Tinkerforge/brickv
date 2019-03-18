@@ -180,6 +180,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def update_tree_view_clicked(self, idx):
         name, uid, current_version, latest_version = [idx.sibling(idx.row(), i).data() for i in range(0, 4)]
 
+        if "binding" in name.lower():
+            parent = idx.parent()
+            while parent.parent().data() is not None:
+                parent = parent.parent()
+            uid = parent.sibling(parent.row(), 1).data()
+            if infos.get_info(uid).plugin is not None:
+                infos.get_info(uid).plugin.perform_action(3)
+            return
+
         if "wifi" in name.lower() and "2.0" in name.lower():
             uid = idx.parent().sibling(idx.parent().row(), 1).data()
             self.show_extension_update(uid)
@@ -1430,7 +1439,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_tree_view_model.setHorizontalHeaderLabels(self.update_tree_view_model_labels)
 
         is_update = False
-        items = []
+
+        to_collapse = []
 
         for info in infos.get_infos():
             if info.type == 'brick' or info.type == 'bricklet':
@@ -1440,8 +1450,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 parent = [QStandardItem(info.name),
                           QStandardItem(info.uid),
-                          QStandardItem(get_version_string(info.firmware_version_installed)),
-                          QStandardItem(get_version_string(info.firmware_version_latest, replace_unknown="Unknown"))]
+                          QStandardItem(get_version_string(info.firmware_version_installed, is_red_brick=isinstance(info, infos.BrickREDInfo))),
+                          QStandardItem(get_version_string(info.firmware_version_latest, replace_unknown="Unknown", is_red_brick=isinstance(info, infos.BrickREDInfo)))]
 
                 color, update = get_color_for_device(info)
                 if update:
@@ -1450,7 +1460,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                     item.setData(color, Qt.BackgroundRole)
                 parent[0].setData(info.uid, Qt.UserRole)
-                items.append(parent)
+                self.update_tree_view_model.appendRow(parent)
 
                 # Search for childs up to a recursion depth of 3 at most.
                 for connected_info1 in info.connections.values():
@@ -1521,6 +1531,32 @@ class FlashingWindow(QDialog, Ui_Flashing):
                                     item.setData(QBrush(QColor(0x80, 0x80, 0x80)), Qt.ForegroundRole)
                             parent[0].appendRow(child)
 
+                if isinstance(info, infos.BrickREDInfo):
+                    binding_row = [QStandardItem('Bindings'), QStandardItem(''), QStandardItem(''), QStandardItem('')]
+
+                    is_update = False
+                    for binding in info.bindings_infos:
+                        child = [QStandardItem(binding.name),
+                                QStandardItem(''),
+                                QStandardItem(get_version_string(binding.firmware_version_installed, replace_unknown="Querying...")),
+                                QStandardItem(get_version_string(binding.firmware_version_latest, replace_unknown="Unknown"))]
+
+                        color, update = get_color_for_device(binding)
+                        if update:
+                            is_update = True
+                        for item in child:
+                            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                            item.setData(color, Qt.BackgroundRole)
+                        binding_row[0].appendRow(child)
+
+                    for item in binding_row:
+                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                        if is_update:
+                            item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
+                    parent[0].appendRow(binding_row)
+
+                    to_collapse.append(binding_row[0].index())
+
             elif info.type == 'tool' and 'Brick Viewer' in info.name:
                 parent = [QStandardItem(info.name),
                           QStandardItem(''),
@@ -1536,15 +1572,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 for item in parent:
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                     item.setData(color, Qt.BackgroundRole)
-                items.append(parent)
+                self.update_tree_view_model.appendRow(parent)
 
-        QTimer.singleShot(0, lambda: self.refresh_updates_clicked_second_step(is_update, items))
-
-    def refresh_updates_clicked_second_step(self, is_update, items):
-        for item in items:
-            self.update_tree_view_model.appendRow(item)
-
+        # Disable collapse animation temporarily, as it would be visible when the user opens the flashing window.
+        self.update_tree_view.setAnimated(False)
         self.update_tree_view.expandAll()
+        for model_idx in to_collapse:
+            self.update_tree_view.collapse(model_idx)
+        self.update_tree_view.setAnimated(True)
+
         self.update_tree_view.setColumnWidth(0, 260)
         self.update_tree_view.setColumnWidth(1, 75)
         self.update_tree_view.setColumnWidth(2, 75)

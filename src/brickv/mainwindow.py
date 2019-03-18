@@ -825,6 +825,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 if device_identifier == BrickRED.DEVICE_IDENTIFIER and isinstance(plugin, RED):
                     plugin.get_image_version_async()
+                    plugin.get_bindings_versions_async()
 
             if something_changed_ref[0]:
                 self.update_tree_view()
@@ -1038,7 +1039,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             elif info.type == "extension":
                 replacement = ""
 
-            fw_version = infos.get_version_string(info.firmware_version_installed, replace_unknown=replacement)
+            fw_version = infos.get_version_string(info.firmware_version_installed, replace_unknown=replacement, is_red_brick=isinstance(info, infos.BrickREDInfo))
 
             uid = info.uid if info.type != "extension" else ''
 
@@ -1049,9 +1050,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             updateable = info.firmware_version_installed != (0, 0, 0) and info.firmware_version_installed < info.firmware_version_latest
 
+            if isinstance(info, infos.BrickREDInfo):
+                for binding in info.bindings_infos:
+                    updateable |= binding.firmware_version_installed != (0, 0, 0) and binding.firmware_version_installed < binding.firmware_version_latest
+
             if updateable:
                 self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels + ['Update'])
-                row.append(QStandardItem('.'.join(map(str, info.firmware_version_latest))))
+                row.append(QStandardItem(infos.get_version_string(info.firmware_version_latest, is_red_brick=isinstance(info, infos.BrickREDInfo))))
 
                 self.tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, self.update_tab_button)
                 self.update_tab_button.show()
