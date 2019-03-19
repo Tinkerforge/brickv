@@ -657,11 +657,13 @@ class Wifi2(QWidget, Ui_Wifi2):
             # Set client configuration.
             self.master.set_wifi2_client_configuration(client_enable, client_ssid, client_ip, client_sub, client_gw, client_mac, client_bssid)
             self.master.set_wifi2_client_hostname(client_hostname)
+
             if self.wifi_client_change_password.isChecked():
                 self.master.set_wifi2_client_password(client_password)
 
             # Set AP configuration.
             self.master.set_wifi2_ap_configuration(ap_enable, ap_ssid, ap_ip, ap_sub, ap_gw, ap_encryption, ap_hide_ssid, ap_channel, ap_mac)
+
             if self.wifi_ap_change_password.isChecked():
                 self.master.set_wifi2_ap_password(ap_password)
 
@@ -810,7 +812,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         else:
             self.wifi_client_password.setEnabled(False)
             self.wifi_client_password_show.setEnabled(False)
-        
+
     def wifi_ap_change_password_changed(self, state):
         if state == Qt.Checked:
             self.wifi_ap_password.setEnabled(True)

@@ -569,6 +569,7 @@ class Wifi(QWidget, Ui_Wifi):
             return
 
         key = '-'
+
         if self.wifi_change_key.isChecked():
             try:
                 key = self.wifi_key.text().encode('ascii')
@@ -596,6 +597,7 @@ class Wifi(QWidget, Ui_Wifi):
                     return
 
             long_key = key
+
             if self.wifi_encryption.currentText() in 'WPA/WPA2':
                 if len(key) < 8:
                     self.popup_fail('WPA/WPA2 key has to be at least 8 chars long')
@@ -616,9 +618,11 @@ class Wifi(QWidget, Ui_Wifi):
         except:
             self.popup_fail('SSID cannot contain non-ASCII characters')
             return
+
         if len(ssid) == 0:
             self.popup_fail('SSID cannot be empty')
             return
+
         if '"' in ssid:
             self.popup_fail('SSID cannot contain quotation mark')
             return
@@ -648,11 +652,14 @@ class Wifi(QWidget, Ui_Wifi):
         self.master.set_wifi_power_mode(power_mode)
         self.master.set_wifi_encryption(encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length)
         self.master.set_wifi_configuration(ssid, connection, ip, sub, gw, port)
+
         if self.parent.firmware_version >= (2, 0, 2):
             if self.wifi_change_key.isChecked():
                 self.master.set_long_wifi_key(long_key)
+
         if self.parent.firmware_version >= (2, 0, 5):
             self.master.set_wifi_hostname(hostname)
+
         if self.parent.firmware_version >= (2, 2, 0):
             self.master.set_wifi_authentication_secret(secret)
 
@@ -661,9 +668,12 @@ class Wifi(QWidget, Ui_Wifi):
         ssid_old, connection_old, ip_old, sub_old, gw_old, port_old = self.master.get_wifi_configuration()
 
         hostname_old = hostname
+
         if self.parent.firmware_version >= (2, 0, 5):
             hostname_old = self.master.get_wifi_hostname()
+
         secret_old = secret
+
         if self.parent.firmware_version >= (2, 2, 0):
             secret_old = self.master.get_wifi_authentication_secret()
 
@@ -698,15 +708,18 @@ class Wifi(QWidget, Ui_Wifi):
 
         if self.parent.firmware_version >= (1, 3, 4) and test_ok:
             self.master.set_wifi_regulatory_domain(self.wifi_domain.currentIndex())
+
             if self.master.get_wifi_regulatory_domain() != self.wifi_domain.currentIndex():
                 test_ok = False
 
         if test_ok:
             if len(ca_cert) > 0:
                 test_ok = self.write_certificate(ca_cert, 0)
+
         if test_ok:
             if len(client_cert) > 0:
                 test_ok = self.write_certificate(client_cert, 1)
+
         if test_ok:
             if len(priv_key) > 0:
                 test_ok = self.write_certificate(priv_key, 2)
@@ -721,6 +734,7 @@ class Wifi(QWidget, Ui_Wifi):
 
     def update_data(self):
         self.update_data_counter += 1
+
         if self.wifi_status is not None:
             if self.wifi_status.isVisible():
                 if self.update_data_counter % 100 == 0:
