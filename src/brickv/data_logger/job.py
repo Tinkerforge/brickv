@@ -33,7 +33,7 @@ import threading
 import time
 
 if 'merged_data_logger_modules' not in globals():
-    from PyQt5 import QtCore
+    from PyQt5.QtCore import pyqtSignal, QObject
     from brickv.data_logger.event_logger import EventLogger
     from brickv.data_logger.utils import CSVWriter
 
@@ -117,17 +117,17 @@ class CSVWriterJob(AbstractJob):
 
 
 if 'merged_data_logger_modules' not in globals():
-    class GuiDataJob(AbstractJob, QtCore.QObject):
+    class GuiDataJob(AbstractJob, QObject):
         """
         This class enables the data logger to log to the Gui
         """
         from brickv.data_logger.utils import LoggerTimer, CSVData
-        signalNewData = QtCore.pyqtSignal(CSVData)
+        signalNewData = pyqtSignal(CSVData)
 
         def __init__(self, datalogger=None, name="GuiDataJob"):
             target = self._job
             AbstractJob.__init__(self, datalogger=datalogger, target=target, name=name)
-            QtCore.QObject.__init__(self)
+            QObject.__init__(self)
 
         def set_datalogger(self, datalogger):
             self._datalogger = datalogger

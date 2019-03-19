@@ -29,8 +29,7 @@ Boston, MA 02111-1307, USA.
 #---------------------------------------------------------------------------
 
 if 'merged_data_logger_modules' not in globals():
-    from PyQt5 import QtCore
-    from PyQt5.QtCore import pyqtSignal
+    from PyQt5.QtCore import pyqtSignal, QObject
 
 import logging
 from datetime import datetime
@@ -153,7 +152,7 @@ class FileLogger(logging.Logger):
         self.info("###### NEW LOGGING SESSION STARTED ######")
 
 if 'merged_data_logger_modules' not in globals():
-    class GUILogger(logging.Logger, QtCore.QObject):
+    class GUILogger(logging.Logger, QObject):
         """
         This class outputs the logged data to the brickv gui
         """
@@ -167,7 +166,7 @@ if 'merged_data_logger_modules' not in globals():
 
         def __init__(self, name, log_level):
             logging.Logger.__init__(self, name, log_level)
-            QtCore.QObject.__init__(self)
+            QObject.__init__(self)
 
         def debug(self, msg):
             self.log(logging.DEBUG, msg)

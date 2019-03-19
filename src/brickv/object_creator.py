@@ -25,14 +25,14 @@ Boston, MA 02111-1307, USA.
 
 import threading
 
-from PyQt5 import QtCore
+from PyQt5.QtCore import QCoreApplication
 
 # Usage:
 # object_instance = create_object_in_qt_main_thread(Class, (data_1, data_2, ..., data_n))
 
 def create_object_in_qt_main_thread(cls, data):
     oc = ObjectCreator(cls, data)
-    QtCore.QCoreApplication.instance().object_creator_signal.emit(oc)
+    QCoreApplication.instance().object_creator_signal.emit(oc)
     oc.semaphore.acquire()
     return oc.obj
 
