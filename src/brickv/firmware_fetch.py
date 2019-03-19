@@ -22,7 +22,6 @@ Boston, MA 02111-1307, USA.
 """
 
 import urllib
-from collections import namedtuple
 import time
 import threading
 
