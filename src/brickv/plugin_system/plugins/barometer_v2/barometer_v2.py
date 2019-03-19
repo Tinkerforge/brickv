@@ -26,7 +26,6 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QGridLayout, \
                             QPushButton, QSpinBox, QFrame, QDoubleSpinBox, QDialog, QComboBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
-from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_barometer_v2 import BrickletBarometerV2
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call

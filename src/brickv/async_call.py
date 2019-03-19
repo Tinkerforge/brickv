@@ -75,9 +75,6 @@ def async_next_session():
 
 def async_start_thread(parent):
     class AsyncThread(QThread):
-        def __init__(self, parent=None):
-            super().__init__(parent)
-
         def run(self):
             while True:
                 ac = async_call_queue.get()

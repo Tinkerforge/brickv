@@ -22,8 +22,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import collections
-
 from PyQt5.QtWidgets import QComboBox, QSpinBox, QCheckBox
 
 from brickv.data_logger.event_logger import EventLogger, GUILogger

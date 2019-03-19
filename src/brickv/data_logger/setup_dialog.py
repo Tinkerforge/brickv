@@ -22,8 +22,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import codecs
-import collections
 import os
 import time
 import functools
@@ -36,7 +34,6 @@ from PyQt5.QtWidgets import QDialog, QMessageBox, QLineEdit, QSpinBox, QCheckBox
                         QHBoxLayout, QWidget
 from PyQt5.QtGui import QPalette, QStandardItemModel, QStandardItem, QRegExpValidator, QIcon, QColor, QTextCursor
 
-from brickv import config
 from brickv.bindings.ip_connection import BASE58
 from brickv.load_pixmap import load_pixmap
 from brickv.utils import get_save_file_name, get_open_file_name, \
@@ -419,8 +416,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         """
             Sets the font Color and an icon, if given, at a specific tab.
         """
-        from PyQt5.QtGui import QIcon
-
         self.tab_widget.tabBar().setTabTextColor(tab_index, color)
         if icon is not None:
             self.tab_widget.setTabIcon(tab_index, QIcon(icon))

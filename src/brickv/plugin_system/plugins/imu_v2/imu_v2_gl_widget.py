@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 import sys
 import ctypes
 import ctypes.util
+import math
 
 # Workaround a strange OpenGL problem that affects some but not all Qt5 OpenGL
 # versions. For example libqt5opengl5 5.9.1+dfsg-10ubuntu1 in Ubuntu is affected.
@@ -45,9 +46,8 @@ if sys.platform.startswith('linux'):
     if libGL_path != None:
         libGL = ctypes.CDLL(libGL_path, mode=ctypes.RTLD_GLOBAL)
 
-import math
 from PyQt5.QtWidgets import QOpenGLWidget
-from PyQt5.QtGui import QOpenGLContext, QOpenGLVersionProfile, QSurfaceFormat
+from PyQt5.QtGui import QOpenGLVersionProfile, QSurfaceFormat
 
 class IMUV2GLWidget(QOpenGLWidget):
     def __init__(self, parent=None):
@@ -61,6 +61,8 @@ class IMUV2GLWidget(QOpenGLWidget):
         self.profile.setVersion(2, 1)
 
         self.parent = parent
+
+        self.gl = None
 
         self.vertices = [
             (-0.5, -0.5, -0.5),
@@ -380,12 +382,13 @@ class IMUV2GLWidget(QOpenGLWidget):
     def resizeGL(self, width, height):
         if height == 0:
             height = 1
+
         gl = self.gl
 
         gl.glViewport(0, 0, width, height)
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
-        self.perspective(45.0, float(width)/float(height), 0.1, 100.0)
+        self.perspective(45.0, width / height, 0.1, 100.0)
         gl.glMatrixMode(gl.GL_MODELVIEW)
 
     # main drawing function.

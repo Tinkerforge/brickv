@@ -21,7 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import colorsys
 import math
 
 from PyQt5.QtCore import pyqtSignal, Qt, QSize, QPoint, QLineF
@@ -31,7 +30,6 @@ from PyQt5.QtGui import QImage, QPainter, QPen, QColor
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.thermal_imaging.ui_thermal_imaging import Ui_ThermalImaging
 from brickv.bindings.bricklet_thermal_imaging import BrickletThermalImaging
-from brickv.callback_emulator import CallbackEmulator
 from brickv.async_call import async_call
 
 class ThermalImageBar(QWidget):

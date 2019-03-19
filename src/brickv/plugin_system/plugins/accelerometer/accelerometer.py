@@ -26,7 +26,6 @@ import math
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QCheckBox, QFrame
-from PyQt5.QtGui import QFont
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer

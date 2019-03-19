@@ -51,7 +51,6 @@ from brickv import infos
 from brickv.tab_window import TabWindow, IconButton
 from brickv.plugin_system.comcu_bootloader import COMCUBootloader
 from brickv.load_pixmap import load_pixmap
-from brickv.utils import get_resources_path
 
 from brickv.firmware_fetch import LatestFWVersionFetcher
 
