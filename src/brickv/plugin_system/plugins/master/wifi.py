@@ -569,7 +569,7 @@ class Wifi(QWidget, Ui_Wifi):
             return
 
         key = '-'
-        if self.wifi_change_key.checkState() == Qt.Checked:
+        if self.wifi_change_key.isChecked():
             try:
                 key = self.wifi_key.text().encode('ascii')
             except:
@@ -649,7 +649,7 @@ class Wifi(QWidget, Ui_Wifi):
         self.master.set_wifi_encryption(encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length)
         self.master.set_wifi_configuration(ssid, connection, ip, sub, gw, port)
         if self.parent.firmware_version >= (2, 0, 2):
-            if self.wifi_change_key.checkState() == Qt.Checked:
+            if self.wifi_change_key.isChecked():
                 self.master.set_long_wifi_key(long_key)
         if self.parent.firmware_version >= (2, 0, 5):
             self.master.set_wifi_hostname(hostname)
