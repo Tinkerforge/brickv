@@ -100,7 +100,7 @@ coll = COLLECT(exe,
                name='')
 if utils.macos:
     app = BUNDLE(coll,
-                    name=utils.UNDERSCORE_NAME + '.app',
+                    name=utils.CAMEL_CASE_NAME + '.app',
                     icon=utils.icon)
 
 utils.post_generate(os.path.join(utils.root_path, '..'), 'build_plugin_list.py')

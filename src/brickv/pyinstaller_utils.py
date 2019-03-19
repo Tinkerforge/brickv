@@ -172,7 +172,7 @@ class PyinstallerUtils:
             os.remove(installer_target_path)
 
         shutil.move(os.path.join(self.dist_path, 'nsis', installer), installer_target_path)
-        return os.path.join(self.root_path, installer)
+        return os.path.join(self.root_path,'..', installer)
 
     def prepare(self, prepare_script_working_dir=None, prepare_script=None):
         print('removing old dist directory')
@@ -212,7 +212,7 @@ class PyinstallerUtils:
             self.post_generate_macos()
 
     def post_generate_windows(self):
-        exe_path = os.path.join(self.root_path, 'dist', self.UNDERSCORE_NAME+'.exe')
+        exe_path = os.path.join(self.dist_path, self.UNDERSCORE_NAME+'.exe')
         if '--no-sign' not in sys.argv:
             win_sign(exe_path)
         else:
@@ -225,13 +225,13 @@ class PyinstallerUtils:
 
     def post_generate_macos(self):
         build_data = os.path.join(self.mac_build_data_path, '*')
-        app_name = self.UNDERSCORE_NAME + '.app'
+        app_name = self.CAMEL_CASE_NAME + '.app'
         resources_path = os.path.join(self.dist_path, app_name, 'Contents', 'Resources')
-        system(['bash', '-c', 'cp -R {} {}'.format(build_data, resources_path)])
+        system(['bash', '-c', 'cp -R {} {}'.format(build_data.replace(" ", "\\ "), resources_path.replace(" ", "\\ "))])
 
         if '--no-sign' not in sys.argv:
             system(['bash', '-c', 'security unlock-keychain /Users/$USER/Library/Keychains/login.keychain'])
-            system(['bash', '-c', 'codesign --deep --force --verify --verbose=1 --sign "Developer ID Application: Tinkerforge GmbH (K39N76HTZ4)" ' + os.path.join(self.dist_path, app_name)])
+            system(['codesign', '--deep', '--force', '--verify', '--verbose=1', '--sign', 'Developer ID Application: Tinkerforge GmbH (K39N76HTZ4)', os.path.join(self.dist_path, app_name)])
             system(['codesign', '--verify', '--deep', '--verbose=1', os.path.join(self.dist_path, app_name)])
         else:
             print("skipping codesign")
@@ -244,4 +244,4 @@ class PyinstallerUtils:
         os.mkdir(os.path.join(self.dist_path, 'dmg'))
 
         shutil.move(os.path.join(self.dist_path, app_name), os.path.join(self.dist_path, 'dmg'))
-        system(['hdiutil', 'create', '-fs', 'HFS+', '-volname', '{}-{}'.format(self.UNDERSCORE_NAME, self.VERSION), '-srcfolder', os.path.join(self.dist_path, 'dmg'), dmg_path])
+        system(['hdiutil', 'create', '-fs', 'HFS+', '-volname', '{}-{}'.format(self.CAMEL_CASE_NAME.replace(" ", "-"), self.VERSION), '-srcfolder', os.path.join(self.dist_path, 'dmg'), dmg_path])
