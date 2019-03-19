@@ -555,15 +555,18 @@ class Wifi(QWidget, Ui_Wifi):
 
     def save_clicked(self):
         encryption = self.wifi_encryption.currentIndex()
+        secret = self.wifi_secret.text()
 
         try:
-            secret = self.wifi_secret.text().encode('ascii')
+            secret.encode('ascii')
         except:
             self.popup_fail('Secret cannot contain non-ASCII characters')
             return
 
+        hostname = self.wifi_hostname.text()
+
         try:
-            hostname = self.wifi_hostname.text().encode('ascii')
+            hostname.encode('ascii')
         except:
             self.popup_fail('Hostname cannot contain non-ASCII characters')
             return
@@ -571,8 +574,10 @@ class Wifi(QWidget, Ui_Wifi):
         key = '-'
 
         if self.wifi_change_key.isChecked():
+            key = self.wifi_key.text()
+
             try:
-                key = self.wifi_key.text().encode('ascii')
+                key.encode('ascii')
             except:
                 self.popup_fail('Key cannot contain non-ASCII characters')
                 return
@@ -581,7 +586,7 @@ class Wifi(QWidget, Ui_Wifi):
                 self.popup_fail('Key cannot contain quotation mark')
                 return
 
-            if self.wifi_encryption.currentText() in 'WEP':
+            if self.wifi_encryption.currentText() == 'WEP':
                 if len(key) == 0:
                     self.popup_fail('WEP key cannot be empty')
                     return
@@ -598,7 +603,7 @@ class Wifi(QWidget, Ui_Wifi):
 
             long_key = key
 
-            if self.wifi_encryption.currentText() in 'WPA/WPA2':
+            if self.wifi_encryption.currentText() == 'WPA/WPA2':
                 if len(key) < 8:
                     self.popup_fail('WPA/WPA2 key has to be at least 8 chars long')
                     return
@@ -613,8 +618,10 @@ class Wifi(QWidget, Ui_Wifi):
 
         eap_options = eap_outer | (eap_inner << 2)
 
+        ssid = self.wifi_ssid.text()
+
         try:
-            ssid = self.wifi_ssid.text().encode('ascii')
+            ssid.encode('ascii')
         except:
             self.popup_fail('SSID cannot contain non-ASCII characters')
             return

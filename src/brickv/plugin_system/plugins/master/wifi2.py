@@ -426,55 +426,55 @@ class Wifi2(QWidget, Ui_Wifi2):
 
     def save_clicked(self):
         try:
-            v = self.wifi_secret.text().encode('ascii')
+            self.wifi_secret.text().encode('ascii')
         except:
             self.popup_fail('Secret cannot contain non-ASCII characters')
             return
 
         try:
-            v = self.wifi_client_hostname.text().encode('ascii')
+            self.wifi_client_hostname.text().encode('ascii')
         except:
             self.popup_fail('Client hostname cannot contain non-ASCII characters')
             return
 
         try:
-            v = self.wifi_client_ssid.text().encode('ascii')
+            self.wifi_client_ssid.text().encode('ascii')
         except:
             self.popup_fail('Client SSID cannot contain non-ASCII characters')
             return
 
         try:
-            secret = self.wifi_client_password.text().encode('ascii')
+            self.wifi_client_password.text().encode('ascii')
         except:
             self.popup_fail('Client password cannot contain non-ASCII characters')
             return
 
         try:
-            v = self.wifi_ap_ssid.text().encode('ascii')
+            self.wifi_ap_ssid.text().encode('ascii')
         except:
             self.popup_fail('Access point SSID cannot contain non-ASCII characters')
             return
 
         try:
-            v = self.wifi_ap_password.text().encode('ascii')
+            self.wifi_ap_password.text().encode('ascii')
         except:
             self.popup_fail('Access point password cannot contain non-ASCII characters')
             return
 
         try:
-            v = self.wifi_mesh_router_ssid.text().encode('ascii')
+            self.wifi_mesh_router_ssid.text().encode('ascii')
         except:
             self.popup_fail('Mesh router SSID cannot contain non-ASCII characters')
             return
 
         try:
-            v = self.wifi_mesh_router_password.text().encode('ascii')
+            self.wifi_mesh_router_password.text().encode('ascii')
         except:
             self.popup_fail('Mesh router password cannot contain non-ASCII characters')
             return
 
         try:
-            v = self.wifi_mesh_group_ssid_prefix.text().encode('ascii')
+            self.wifi_mesh_group_ssid_prefix.text().encode('ascii')
         except:
             self.popup_fail('Mesh SSID prefix cannot contain non-ASCII characters')
             return

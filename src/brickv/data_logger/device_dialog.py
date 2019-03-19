@@ -168,8 +168,9 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
         self.host = self._logger_window.combo_host.currentText()
         self.port = self._logger_window.spin_port.value()
         if self._logger_window.check_authentication.isChecked():
+            self.secret = self._logger_window.edit_secret.text()
+
             try:
-                self.secret = self._logger_window.edit_secret.text()
                 self.secret.encode('ascii')
             except:
                 self.secret = None

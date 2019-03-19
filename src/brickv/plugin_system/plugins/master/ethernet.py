@@ -240,15 +240,18 @@ class Ethernet(QWidget, Ui_Ethernet):
     def save_clicked(self):
         port = self.ethernet_port.value()
         connection = self.ethernet_connection.currentIndex()
+        secret = self.ethernet_secret.text()
 
         try:
-            secret = self.ethernet_secret.text().encode('ascii')
+            secret.encode('ascii')
         except:
             self.popup_fail('Secret cannot contain non-ASCII characters')
             return
 
+        hostname = self.ethernet_hostname.text()
+
         try:
-            hostname = self.ethernet_hostname.text().encode('ascii')
+            hostname.encode('ascii')
         except:
             self.popup_fail('Hostname cannot contain non-ASCII characters')
             return
