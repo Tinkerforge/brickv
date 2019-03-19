@@ -120,7 +120,7 @@ class ScribbleWidget(QWidget):
 
         def mousePressEvent(self, event):
             self.parent.scribbling_started.emit()
-            #self.parent().state = self.parent().STATE_COLOR_SCRIBBLE
+
             if event.button() == Qt.LeftButton:
                 self.last_point = event.pos()
                 self.scribbling = 1
