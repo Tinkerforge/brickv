@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-02-13.      #
+# This file was automatically generated on 2019-03-18.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -207,7 +207,7 @@ class BrickletPiezoSpeakerV2(Device):
 
     def update_volume(self, volume):
         """
-        Updates the volume of an ongoing beep or alarm.
+        Updates the volume of an ongoing beep or alarm. The range of the volume is 0 to 10.
         """
         volume = int(volume)
 
@@ -215,7 +215,7 @@ class BrickletPiezoSpeakerV2(Device):
 
     def update_frequency(self, frequency):
         """
-        Updates the frequency of an ongoing beep.
+        Updates the frequency of an ongoing beep. The range of the frequency is 50Hz to 15000Hz.
         """
         frequency = int(frequency)
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-03-18.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -101,7 +101,7 @@ class BrickletDistanceUSV2(Device):
 
     def get_distance(self):
         """
-        TBD
+        Returns the distance in cm.
 
 
         If you want to get the value periodically, it is recommended to use the
