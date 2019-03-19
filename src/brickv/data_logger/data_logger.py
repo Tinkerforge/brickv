@@ -61,7 +61,7 @@ class DataLogger(threading.Thread):
 
         if self.secret != None:
             try:
-                self.secret = self.secret.encode('ascii')
+                self.secret.encode('ascii')
             except:
                 EventLogger.critical('Authentication secret cannot contain non-ASCII characters')
                 self.secret = None
@@ -90,7 +90,7 @@ class DataLogger(threading.Thread):
     def cb_connected(self, connect_reason):
         if self.secret != None:
             try:
-                secret = self.secret.encode('ascii')
+                self.secret.encode('ascii')
             except:
                 try:
                     self.ipcon.disconnect()
@@ -103,7 +103,7 @@ class DataLogger(threading.Thread):
             self.ipcon.set_auto_reconnect(False) # don't auto-reconnect on authentication error
 
             try:
-                self.ipcon.authenticate(secret)
+                self.ipcon.authenticate(self.secret)
             except:
                 try:
                     self.ipcon.disconnect()
