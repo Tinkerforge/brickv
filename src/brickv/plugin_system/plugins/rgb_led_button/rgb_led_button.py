@@ -39,6 +39,7 @@ class RGBLEDButton(COMCUPluginBase, Ui_RGBLEDButton):
         self.rgb_led_button = self.device
 
         self.changing = False
+        self.set_color_response_expected = None
 
         self.setupUi(self)
 
@@ -83,7 +84,8 @@ class RGBLEDButton(COMCUPluginBase, Ui_RGBLEDButton):
         async_call(self.rgb_led_button.get_button_state, None, self.cb_button_state_changed, self.increase_error_count)
 
     def stop(self):
-        self.rgb_led_button.set_response_expected(self.rgb_led_button.FUNCTION_SET_COLOR, self.set_color_response_expected)
+        if self.set_color_response_expected != None:
+            self.rgb_led_button.set_response_expected(self.rgb_led_button.FUNCTION_SET_COLOR, self.set_color_response_expected)
 
     def cb_button_state_changed(self, state):
         if state == self.rgb_led_button.BUTTON_STATE_RELEASED:

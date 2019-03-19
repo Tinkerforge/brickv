@@ -55,7 +55,7 @@ class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
 
         self.current_char_value = -1
 
-        self.write_line_response_expected = False
+        self.write_line_response_expected = None
 
     def char_slider_changed(self, value):
         if value != self.current_char_value:
@@ -126,7 +126,8 @@ class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
         async_call(self.oled.read_pixels, (0, 0, 127, 63), self.cb_read_pixels, self.increase_error_count)
 
     def stop(self):
-        self.oled.set_response_expected(self.oled.FUNCTION_WRITE_LINE, self.write_line_response_expected)
+        if self.write_line_response_expected != None:
+            self.oled.set_response_expected(self.oled.FUNCTION_WRITE_LINE, self.write_line_response_expected)
 
     def destroy(self):
         pass

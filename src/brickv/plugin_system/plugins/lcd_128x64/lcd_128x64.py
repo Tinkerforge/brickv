@@ -115,8 +115,7 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
         self.invert_checkbox.stateChanged.connect(self.new_configuration)
 
         self.current_char_value = -1
-
-        self.write_line_response_expected = False
+        self.write_line_response_expected = None
 
         self.cbe_touch_position = CallbackEmulator(self.lcd.get_touch_position,
                                                    self.scribble_widget.touch_position,
@@ -202,14 +201,14 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
         self.cbe_touch_gesture.set_period(25)
 
     def stop(self):
-        self.lcd.set_response_expected(self.lcd.FUNCTION_WRITE_LINE, self.write_line_response_expected)
+        if self.write_line_response_expected != None:
+            self.lcd.set_response_expected(self.lcd.FUNCTION_WRITE_LINE, self.write_line_response_expected)
 
         self.cbe_touch_position.set_period(0)
         self.cbe_touch_gesture.set_period(0)
 
     def destroy(self):
         pass
-
 
     @staticmethod
     def has_device_identifier(device_identifier):

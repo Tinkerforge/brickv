@@ -38,6 +38,7 @@ class RGBLED(PluginBase, Ui_RGBLED):
         self.rgb_led = self.device
 
         self.changing = False
+        self.set_rgb_value_response_expected = None
 
         self.setupUi(self)
 
@@ -76,7 +77,8 @@ class RGBLED(PluginBase, Ui_RGBLED):
         async_call(self.rgb_led.get_rgb_value, None, self.get_rgb_value_async, self.increase_error_count)
 
     def stop(self):
-        self.rgb_led.set_response_expected(self.rgb_led.FUNCTION_SET_RGB_VALUE, self.set_rgb_value_response_expected)
+        if self.set_rgb_value_response_expected != None:
+            self.rgb_led.set_response_expected(self.rgb_led.FUNCTION_SET_RGB_VALUE, self.set_rgb_value_response_expected)
 
     def rgb_changed(self, *args):
         if self.changing:
