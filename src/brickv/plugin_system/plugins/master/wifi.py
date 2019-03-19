@@ -269,6 +269,7 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_key.setVisible(True)
             self.wifi_key_label.setVisible(True)
             self.wifi_key_show.setVisible(True)
+            self.wifi_change_key.setVisible(True)
 
             self.wifi_key_index.setVisible(False)
             self.wifi_key_index_label.setVisible(False)
@@ -299,6 +300,7 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_key.setVisible(False)
             self.wifi_key_label.setVisible(False)
             self.wifi_key_show.setVisible(False)
+            self.wifi_change_key.setVisible(False)
 
             self.wifi_key_index.setVisible(False)
             self.wifi_key_index_label.setVisible(False)
@@ -330,6 +332,7 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_key.setVisible(True)
             self.wifi_key_label.setVisible(True)
             self.wifi_key_show.setVisible(True)
+            self.wifi_change_key.setVisible(True)
 
             self.wifi_key_index.setVisible(True)
             self.wifi_key_index_label.setVisible(True)
@@ -360,6 +363,7 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_key.setVisible(False)
             self.wifi_key_label.setVisible(False)
             self.wifi_key_show.setVisible(False)
+            self.wifi_change_key.setVisible(False)
 
             self.wifi_key_index.setVisible(False)
             self.wifi_key_index_label.setVisible(False)
