@@ -420,7 +420,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         try:
             secret = self.edit_secret.text()
-            secret.encode('ascii') # Try to encode the secret, as only ASCII chars are allowed. Don't save the result, as the IP Connection do the same.
+            secret.encode('ascii') # Try to encode the secret, as only ASCII chars are allowed. Don't save the result, as the IP Connection does the same.
         except:
             self.do_disconnect()
 
