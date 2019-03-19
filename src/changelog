@@ -434,8 +434,20 @@
 - Optimize RED Brick Tinkerforge software update process
 - Increase supported RED Brick image version to 1.13
 
-<UNKNOWN>: <UNKNOWN> (<UNKNOWN>)
-- Fix RED Brick Tinkerforge software update installation for Perl
-- Add new Bricklet support for server room monitoring:
-  Temperature 2.0, Humidity 2.0, Ambient Light 3.0, IO4, IO4 2.0,
-  Industrial Digital In 4 and Industrial Digital In 4 2.0
+<unknown>: 2.4.0 (<unknown>)
+- Port to Python 3, PyQt 5 and QtOpenGL
+- Add firmware/software update notifications in setup and device tabs
+- Fix RED Brick Tinkerforge software update for Perl and Brick Viewer
+- Add RED Brick server room monitoring support for Ambient Light 3.0,
+  Humidity 2.0, Industrial Digital In 4, Industrial Digital In 4 2.0, IO-4,
+  IO-4 2.0 and Temperature 2.0 Bricklet
+- Improve flashing error reporting
+- Redesign device tab detach icon
+- Fix serial port auto-selection for Brick flashing on macOS
+- Add splash screen
+- Add checkbox to use Qt Fusion GUI style instead of platform GUI style
+- Fix HSL color handling in RGB LED plugin
+- Precompile Python code when installing Debian package
+- Sort Bricklets connected to Master Brick on setup tab before stacked Bricks
+- Connect when return/enter key is pressed in host, port or secret input fields
+- Fix RED Brick console tab font on macOS
