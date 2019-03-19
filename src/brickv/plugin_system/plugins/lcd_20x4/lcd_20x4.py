@@ -293,7 +293,7 @@ class LCD20x4(PluginBase):
         img = self.scribble_widget.image()
         for j in range(img.height()):
             for i in range(img.width() - 1, -1, -1):
-                if img.pixel(i, j) == self.scribble_widget.foreground_color.rgb():
+                if img.pixel(i, j) == self.scribble_widget.foreground_color().rgb():
                     char[j] |= 1 << (4 - i)
 
         index = int(self.char_index_combo.currentText())
