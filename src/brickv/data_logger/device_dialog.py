@@ -167,13 +167,14 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
         self.connected_uids = []
         self.host = self._logger_window.combo_host.currentText()
         self.port = self._logger_window.spin_port.value()
-
         if self._logger_window.check_authentication.isChecked():
             try:
                 self.secret = self._logger_window.edit_secret.text()
                 self.secret.encode('ascii')
             except:
                 self.secret = None
+                self.available_item.setText(0, 'Authentication secret cannot contain non-ASCII characters')
+                return
         else:
             self.secret = None
 
