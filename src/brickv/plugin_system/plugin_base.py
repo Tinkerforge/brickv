@@ -87,7 +87,6 @@ class PluginBase(QWidget):
         self.device_info.url_part = self.get_url_part()
         brickv.infos.get_infos_changed_signal().connect(self.device_infos_changed)
 
-
     def device_infos_changed(self, uid):
         if uid != self.device_info.uid:
             return

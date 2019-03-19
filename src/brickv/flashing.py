@@ -1799,7 +1799,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
         # Using a 1 ms sleep time here ensures, that the refresh...'s timer runs first
         QTimer.singleShot(1, lambda: self.combo_firmware.setCurrentIndex(idx))
 
-
     def show_bricklet_update(self, parent_uid, port):
         self.tab_widget.setCurrentWidget(self.tab_bricklet)
 
