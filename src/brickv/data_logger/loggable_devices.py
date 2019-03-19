@@ -422,14 +422,14 @@ def special_get_station_data(device):
     for station_id in station_ids:
         station_data = device.get_station_data(station_id)
 
-        keyed_station_data[str(station_id)] = GetStationData(temperature = station_data.temperature,
-                                                             humidity = station_data.humidity,
-                                                             wind_speed = station_data.wind_speed,
-                                                             gust_speed = station_data.gust_speed,
-                                                             rain = station_data.rain,
-                                                             wind_direction = wind_direction_names[station_data.wind_direction],
-                                                             battery_low = station_data.battery_low,
-                                                             last_change = station_data.last_change)
+        keyed_station_data[str(station_id)] = GetStationData(temperature=station_data.temperature,
+                                                             humidity=station_data.humidity,
+                                                             wind_speed=station_data.wind_speed,
+                                                             gust_speed=station_data.gust_speed,
+                                                             rain=station_data.rain,
+                                                             wind_direction=wind_direction_names[station_data.wind_direction],
+                                                             battery_low=station_data.battery_low,
+                                                             last_change=station_data.last_change)
 
     return keyed_station_data
 

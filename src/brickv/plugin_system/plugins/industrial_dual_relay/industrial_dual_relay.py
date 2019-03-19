@@ -157,7 +157,7 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
         if self.ch0_button.minimumWidth() < width:
             self.ch0_button.setMinimumWidth(width)
 
-        if 'On' in self.ch0_button.text().replace('&',''):
+        if 'On' in self.ch0_button.text().replace('&', ''):
             self.ch0_button.setText('Switch Off')
             self.ch0_image.setPixmap(self.a0_pixmap)
         else:
@@ -185,7 +185,7 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
         if self.ch1_button.minimumWidth() < width:
             self.ch1_button.setMinimumWidth(width)
 
-        if 'On' in self.ch1_button.text().replace('&',''):
+        if 'On' in self.ch1_button.text().replace('&', ''):
             self.ch1_button.setText('Switch Off')
             self.ch1_image.setPixmap(self.a1_pixmap)
         else:

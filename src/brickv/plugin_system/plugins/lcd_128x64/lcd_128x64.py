@@ -140,13 +140,16 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
     def write_chars(self, value):
         if value > 248:
             value = 248
+
         for j in range(8):
             start = ""
+
             if value + j < 10:
                 start = "  "
             elif value + j < 100:
                 start = " "
-            self.lcd.write_line(j, 8, start + str(value+j) + ": " + chr(value+j) + '\0')
+
+            self.lcd.write_line(j, 8, start + str(value + j) + ": " + chr(value + j) + '\0')
 
     def clear_display_clicked(self):
         self.lcd.clear_display()
@@ -162,6 +165,7 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
 
     def draw_clicked(self):
         data = []
+
         for i in range(64):
             for j in range(128):
                 if QColor(self.scribble_widget.image().pixel(j, i)) == self.scribble_widget.foreground_color():
@@ -179,7 +183,7 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
     def cb_read_pixels(self, pixels):
         for i in range(64):
             for j in range(128):
-                if pixels[i*128 + j]:
+                if pixels[i * 128 + j]:
                     self.scribble_widget.image().setPixel(j, i, self.scribble_widget.foreground_color().rgb())
                 else:
                     self.scribble_widget.image().setPixel(j, i, self.scribble_widget.background_color().rgb())

@@ -1089,7 +1089,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
     def line_ending_changed(self):
         selected_line_ending = self.rs485_input_line_ending_combobox.currentText()
-        self.rs485_input_line_ending_lineedit.setEnabled( (selected_line_ending == 'Hex:' ))
+        self.rs485_input_line_ending_lineedit.setEnabled(selected_line_ending == 'Hex:')
 
     def get_line_ending(self):
         selected_line_ending = self.rs485_input_line_ending_combobox.currentText()

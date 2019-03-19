@@ -97,12 +97,14 @@ class ThermalImage(QWidget):
         standard = []
         for x in range(256):
             x /= 255.0
-            r = int(round(255*math.sqrt(x)))
-            g = int(round(255*pow(x,3)))
+            r = int(round(255 * math.sqrt(x)))
+            g = int(round(255 * pow(x, 3)))
+
             if math.sin(2 * math.pi * x) >= 0:
                 b = int(round(255*math.sin(2 * math.pi * x)))
             else:
                 b = 0
+
             standard.append((r, g, b))
 
         self.rgb_lookup.append(standard)
@@ -111,8 +113,7 @@ class ThermalImage(QWidget):
         self.rgb_lookup.append([(x, x, x) for x in range(256)])
 
         # Hot Cold
-        self.rgb_lookup.append([(0, 0, 255)]*32 + [(0,0,0)]*(256-2*32) + [(255,0,0)]*32)
-
+        self.rgb_lookup.append([(0, 0, 255)] * 32 + [(0, 0, 0)] * (256 - 2 * 32) + [(255, 0, 0)] * 32)
 
     def new_image(self, image, is_16bit=False):
         self.image_is_16bit = is_16bit
@@ -136,10 +137,11 @@ class ThermalImage(QWidget):
 
         for i, value in enumerate(image):
             if is_16bit:
-                value = ((value-minimum)*255)//(maximum-minimum)
+                value = ((value - minimum) * 255) // (maximum - minimum)
+
             r, g, b = self.rgb_lookup[table_index][value]
 
-            self.image.setPixel(QPoint(i%80, i//80), (r << 16) | (g << 8) | b)
+            self.image.setPixel(QPoint(i % 80, i // 80), (r << 16) | (g << 8) | b)
 
         self.update()
 
@@ -158,10 +160,10 @@ class ThermalImage(QWidget):
             painter.setPen(pen)
 
             roi = self.parent.get_agc_roi()
-            painter.drawRect(roi[0]*self.image_pixel_width + 1,
-                             roi[1]*self.image_pixel_width + 1,
-                             (roi[2] - roi[0])*self.image_pixel_width + 1,
-                             (roi[3] - roi[1])*self.image_pixel_width + 1)
+            painter.drawRect(roi[0] * self.image_pixel_width + 1,
+                             roi[1] * self.image_pixel_width + 1,
+                             (roi[2] - roi[0]) * self.image_pixel_width + 1,
+                             (roi[3] - roi[1]) * self.image_pixel_width + 1)
 
             self.parent.update_agc_roi_label()
 
@@ -173,49 +175,50 @@ class ThermalImage(QWidget):
 
             from_x, from_y, to_x, to_y = self.parent.get_spotmeter_roi()
 
-            from_x = from_x*self.image_pixel_width+1
-            from_y = from_y*self.image_pixel_width+1
-            to_x = to_x*self.image_pixel_width+1
-            to_y = to_y*self.image_pixel_width+1
+            from_x = from_x * self.image_pixel_width + 1
+            from_y = from_y * self.image_pixel_width + 1
+            to_x = to_x * self.image_pixel_width + 1
+            to_y = to_y * self.image_pixel_width + 1
 
-            cross_x = from_x + (to_x-from_x)/2.0
-            cross_y = from_y + (to_y-from_y)/2.0
+            cross_x = from_x + (to_x-from_x) / 2.0
+            cross_y = from_y + (to_y-from_y) / 2.0
 
             if to_x-from_x > 5 or to_y - from_y > 5:
-                lines = [QLineF(from_x, from_y, from_x+self.crosshair_width, from_y),
-                         QLineF(from_x, from_y, from_x, from_y+self.crosshair_width),
-                         QLineF(to_x, to_y, to_x, to_y-self.crosshair_width),
-                         QLineF(to_x, to_y, to_x-self.crosshair_width, to_y),
+                lines = [QLineF(from_x, from_y, from_x + self.crosshair_width, from_y),
+                         QLineF(from_x, from_y, from_x, from_y + self.crosshair_width),
+                         QLineF(to_x, to_y, to_x, to_y - self.crosshair_width),
+                         QLineF(to_x, to_y, to_x - self.crosshair_width, to_y),
                          QLineF(from_x, to_y, from_x, to_y-self.crosshair_width),
-                         QLineF(from_x, to_y, from_x+self.crosshair_width, to_y),
+                         QLineF(from_x, to_y, from_x + self.crosshair_width, to_y),
                          QLineF(to_x, from_y, to_x, from_y+self.crosshair_width),
-                         QLineF(to_x, from_y, to_x-self.crosshair_width, from_y)]
+                         QLineF(to_x, from_y, to_x - self.crosshair_width, from_y)]
                 painter.drawLines(lines)
 
-            lines = [QLineF(cross_x-self.crosshair_width, cross_y, cross_x+self.crosshair_width, cross_y),
-                     QLineF(cross_x, cross_y-self.crosshair_width, cross_x, cross_y+self.crosshair_width)]
+            lines = [QLineF(cross_x - self.crosshair_width, cross_y, cross_x + self.crosshair_width, cross_y),
+                     QLineF(cross_x, cross_y - self.crosshair_width, cross_x, cross_y+self.crosshair_width)]
             painter.drawLines(lines)
 
             self.parent.update_spotmeter_roi_label()
 
     def clip_pos(self, pos, start = None):
-        max_width  = self.width *self.image_pixel_width-1
-        max_height = self.height*self.image_pixel_width-1
+        max_width  = self.width *self.image_pixel_width - 1
+        max_height = self.height*self.image_pixel_width - 1
+
         if pos.x() < 0:
             pos.setX(0)
-        if pos.x() > max_width:
+        elif pos.x() > max_width:
             pos.setX(max_width)
 
         if pos.y() < 0:
             pos.setY(0)
-        if pos.y() > max_height:
+        elif pos.y() > max_height:
             pos.setY(max_height)
 
         if start != None:
-            if pos.x()//5 == start.x()//5:
-                pos.setX(pos.x()+self.image_pixel_width)
-            if pos.y()//5 == start.y()//5:
-                pos.setY(pos.y()+self.image_pixel_width)
+            if pos.x() // 5 == start.x() // 5:
+                pos.setX(pos.x() + self.image_pixel_width)
+            if pos.y() // 5 == start.y() // 5:
+                pos.setY(pos.y() + self.image_pixel_width)
 
         return pos
 
@@ -285,10 +288,10 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
 
     def get_agc_roi(self):
         if self.thermal_image.agc_roi_from != None and self.thermal_image.agc_roi_to != None:
-            from_x = self.thermal_image.agc_roi_from.x()//self.thermal_image.image_pixel_width
-            from_y = self.thermal_image.agc_roi_from.y()//self.thermal_image.image_pixel_width
-            to_x   = self.thermal_image.agc_roi_to.x()//self.thermal_image.image_pixel_width
-            to_y   = self.thermal_image.agc_roi_to.y()//self.thermal_image.image_pixel_width
+            from_x = self.thermal_image.agc_roi_from.x() // self.thermal_image.image_pixel_width
+            from_y = self.thermal_image.agc_roi_from.y() // self.thermal_image.image_pixel_width
+            to_x   = self.thermal_image.agc_roi_to.x() // self.thermal_image.image_pixel_width
+            to_y   = self.thermal_image.agc_roi_to.y() // self.thermal_image.image_pixel_width
         else:
             from_x = 0
             from_y = 0
@@ -373,10 +376,11 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
     def kelvin_to_degstr(self, value, res = None):
         if res == None:
             res = self.valid_resolution
+
         if res == 0:
-            return "{0:.2f}".format(value/10.0 - 273.15)
+            return "{0:.2f}".format(value / 10.0 - 273.15)
         else:
-            return "{0:.2f}".format(value/100.0 - 273.15)
+            return "{0:.2f}".format(value / 100.0 - 273.15)
 
     def cb_statistics(self, data):
         self.valid_resolution = data.resolution

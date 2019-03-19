@@ -78,6 +78,7 @@ class ScribbleWidget(QWidget):
     class ScribbleArea(QWidget):
         def __init__(self, width, height, scaling_factor, foreground_color, background_color, enable_grid, grid_color, parent):
             super().__init__(parent)
+
             self.parent = parent
             self.scribbling = 0
 
@@ -93,6 +94,7 @@ class ScribbleWidget(QWidget):
                 self.grid_color = grid_color
             else:
                 self.grid_color = self.palette().color(QPalette.Window)
+
             self.image = QImage(QSize(width, height), QImage.Format_RGB32)
 
             self.setFixedSize(width*self.scaling_factor, height*self.scaling_factor)
@@ -146,8 +148,10 @@ class ScribbleWidget(QWidget):
 
             if self.grid_enabled:
                 painter.setPen(QPen(self.grid_color))
+
                 for x in range(1, self.width):
                     painter.drawLine(x * self.scaling_factor, 0, x * self.scaling_factor, super().height())
+
                 for y in range(1, self.height):
                     painter.drawLine(0, y * self.scaling_factor, super().width(), y * self.scaling_factor)
 
@@ -159,7 +163,7 @@ class ScribbleWidget(QWidget):
                                 self.pen_width, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
 
             painter.drawLine(QPoint(self.last_point.x()//self.scaling_factor, self.last_point.y()//self.scaling_factor),
-                            QPoint(end_point.x()//self.scaling_factor,       end_point.y()//self.scaling_factor))
+                             QPoint(end_point.x()//self.scaling_factor, end_point.y()//self.scaling_factor))
 
             self.update()
             self.last_point = QPoint(end_point)

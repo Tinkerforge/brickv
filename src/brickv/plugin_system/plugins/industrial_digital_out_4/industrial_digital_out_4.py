@@ -200,7 +200,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
         value = 0
         i = 0
         for b in self.pin_buttons:
-            if 'Low' in b.text().replace('&',''):
+            if 'Low' in b.text().replace('&', ''):
                 value |= (1 << i)
             i += 1
         return value
@@ -223,7 +223,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
 
     def pin_button_clicked(self, button):
         value = self.get_current_value()
-        if 'High' in self.pin_buttons[button].text().replace('&',''):
+        if 'High' in self.pin_buttons[button].text().replace('&', ''):
             value |= (1 << button)
             self.pin_buttons[button].setText('Switch Low')
             self.pin_button_icons[button].setPixmap(self.vcc_pixmap)

@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QLabel, QVBoxLayout, QHBoxLayout, QSpinBox, QCheckBox, \
-                        QFrame, QComboBox
+                            QFrame, QComboBox
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder
@@ -158,6 +158,7 @@ class LaserRangeFinder(PluginBase):
 
         for w in self.widgets_distance:
             w.hide()
+
         for w in self.widgets_velocity:
             w.hide()
 
@@ -174,7 +175,7 @@ class LaserRangeFinder(PluginBase):
         layout.addLayout(layout_h4)
 
         self.has_sensor_hardware_version_api = self.firmware_version >= (2, 0, 3)
-        self.has_configuration_api           = self.firmware_version >= (2, 0, 3)
+        self.has_configuration_api = self.firmware_version >= (2, 0, 3)
 
     def start(self):
         if self.has_sensor_hardware_version_api:

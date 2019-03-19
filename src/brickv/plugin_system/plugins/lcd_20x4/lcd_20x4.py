@@ -232,7 +232,7 @@ class LCD20x4(PluginBase):
 
     def bl_clicked(self):
         try:
-            if self.bl_button.text().replace('&','') == 'Backlight On':
+            if self.bl_button.text().replace('&', '') == 'Backlight On':
                 self.lcd.backlight_on()
                 self.bl_button.setText('Backlight Off')
             else:
@@ -242,8 +242,8 @@ class LCD20x4(PluginBase):
             return
 
     def get_config(self):
-        cursor = self.cursor_button.text().replace('&','') == 'Cursor Off'
-        blink = self.blink_button.text().replace('&','') == 'Blink Off'
+        cursor = self.cursor_button.text().replace('&', '') == 'Cursor Off'
+        blink = self.blink_button.text().replace('&', '') == 'Blink Off'
         return (cursor, blink)
 
     def cursor_clicked(self):

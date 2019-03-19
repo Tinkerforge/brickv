@@ -124,7 +124,7 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
         return device_identifier == BrickletIndustrialQuadRelayV2.DEVICE_IDENTIFIER
 
     def relay_button_clicked(self, button):
-        if 'On' in self.relay_buttons[button].text().replace('&',''):
+        if 'On' in self.relay_buttons[button].text().replace('&', ''):
             value = True
             self.relay_buttons[button].setText('Switch Off')
             self.relay_button_icons[button].setPixmap(self.close_pixmap)

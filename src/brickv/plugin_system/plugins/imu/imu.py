@@ -238,10 +238,10 @@ in the image above, then press "Save Orientation".""")
         self.yaw = yaw
 
     def led_clicked(self):
-        if 'On' in self.led_button.text().replace('&',''):
+        if 'On' in self.led_button.text().replace('&', ''):
             self.led_button.setText('Turn LEDs Off')
             self.imu.leds_on()
-        elif 'Off' in self.led_button.text().replace('&',''):
+        elif 'Off' in self.led_button.text().replace('&', ''):
             self.led_button.setText('Turn LEDs On')
             self.imu.leds_off()
 

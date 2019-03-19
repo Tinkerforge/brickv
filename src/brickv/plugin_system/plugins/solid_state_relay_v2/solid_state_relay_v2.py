@@ -102,14 +102,14 @@ class SolidStateRelayV2(COMCUPluginBase, Ui_SolidStateRelayV2):
         if self.ssr_button.minimumWidth() < width:
             self.ssr_button.setMinimumWidth(width)
 
-        if 'On' in self.ssr_button.text().replace('&',''):
+        if 'On' in self.ssr_button.text().replace('&', ''):
             self.ssr_button.setText('Switch Off')
             self.ssr_image.setPixmap(self.a_pixmap)
         else:
             self.ssr_button.setText('Switch On')
             self.ssr_image.setPixmap(self.b_pixmap)
 
-        state = not 'On' in self.ssr_button.text().replace('&','')
+        state = not 'On' in self.ssr_button.text().replace('&', '')
         try:
             self.ssr.set_state(state)
         except ip_connection.Error:

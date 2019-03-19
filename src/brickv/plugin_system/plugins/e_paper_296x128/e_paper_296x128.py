@@ -44,7 +44,7 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
 
         self.epaper = self.device
 
-        self.scribble_widget = ScribbleWidget(WIDTH, HEIGHT, 2,  QColor(Qt.white), QColor(Qt.black), enable_grid=False)
+        self.scribble_widget = ScribbleWidget(WIDTH, HEIGHT, 2, QColor(Qt.white), QColor(Qt.black), enable_grid=False)
         self.image_button_layout.insertWidget(0, self.scribble_widget)
 
         self.draw_button.clicked.connect(self.draw_clicked)
@@ -89,12 +89,14 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
     def draw_clicked(self):
         bw = [False]*WIDTH*HEIGHT
         red = [False]*WIDTH*HEIGHT
+
         for i in range(HEIGHT):
             for j in range(WIDTH):
                 if QColor(self.scribble_widget.image().pixel(j, i)) == Qt.white:
-                    bw[i*WIDTH +j] = True
+                    bw[i * WIDTH + j] = True
+
                 if QColor(self.scribble_widget.image().pixel(j, i)) in (Qt.red, Qt.darkGray):
-                    red[i*WIDTH +j] = True
+                    red[i * WIDTH + j] = True
 
         self.epaper.write_black_white(0, 0, WIDTH-1, HEIGHT-1, bw)
         self.epaper.write_color(0, 0, WIDTH-1, HEIGHT-1, red)
@@ -108,13 +110,13 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
                 else:
                     self.scribble_widget.image().setPixel(j, i, 0)
 
-        async_call(self.epaper.read_color, (0, 0, WIDTH-1, HEIGHT-1), self.cb_read_color, self.increase_error_count)
+        async_call(self.epaper.read_color, (0, 0, WIDTH - 1, HEIGHT - 1), self.cb_read_color, self.increase_error_count)
 
     def cb_read_color(self, pixels):
         if pixels:
             for i in range(HEIGHT):
                 for j in range(WIDTH):
-                    if pixels[i*WIDTH + j]:
+                    if pixels[i * WIDTH + j]:
                         if self.display == self.epaper.DISPLAY_BLACK_WHITE_RED:
                             self.scribble_widget.image().setPixel(j, i, 0xFF0000)
                         else:
@@ -137,7 +139,7 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
 
     def start(self):
         async_call(self.epaper.get_display, None, self.cb_get_display, self.increase_error_count)
-        async_call(self.epaper.read_black_white, (0, 0, WIDTH-1, HEIGHT-1), self.cb_read_bw, self.increase_error_count)
+        async_call(self.epaper.read_black_white, (0, 0, WIDTH - 1, HEIGHT - 1), self.cb_read_bw, self.increase_error_count)
 
     def stop(self):
         pass

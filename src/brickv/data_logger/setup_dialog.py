@@ -55,7 +55,7 @@ class IntervalWidget(QWidget):
         super().__init__(parent)
 
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(0,0,0,0)
+        layout.setContentsMargins(0, 0, 0, 0)
 
         self.spinbox = QSpinBox(self)
         self.combo = QComboBox(self)

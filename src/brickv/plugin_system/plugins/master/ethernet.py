@@ -278,11 +278,13 @@ class Ethernet(QWidget, Ui_Ethernet):
         secret_old = secret
         websocket_connections_old = websocket_connections
         port_websocket_old = port_websocket
+
         if self.parent.firmware_version >= (2, 2, 0):
             secret_old = self.master.get_ethernet_authentication_secret().encode('ascii')
             websocket_connections, port_websocket = self.master.get_ethernet_websocket_configuration()
 
         saved_conf = self.master.get_ethernet_configuration()
+
         if saved_conf.ip == ip and \
            saved_conf.gateway == gw and \
            saved_conf.subnet_mask == sub and \

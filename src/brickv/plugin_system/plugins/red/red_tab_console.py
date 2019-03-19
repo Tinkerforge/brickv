@@ -96,7 +96,7 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
                 self.combo_serial_port.setCurrentIndex(index)
 
     def connect_clicked(self):
-        text = self.connect_button.text().replace('&','')
+        text = self.connect_button.text().replace('&', '')
 
         if text == 'Connect':
             def open_console():

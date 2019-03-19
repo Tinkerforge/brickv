@@ -249,7 +249,7 @@ class Servo(PluginBase, Ui_Servo):
         self.update_timer.start()
 
     def stop(self):
-        if self.test_button.text().replace('&','') == "Stop Test":
+        if self.test_button.text().replace('&', '') == "Stop Test":
             self.test_button_clicked()
 
         self.update_timer.stop()
@@ -353,12 +353,12 @@ class Servo(PluginBase, Ui_Servo):
         self.acceleration_list[i].set_height(acc*100//0xFFFF)
 
     def deactivate_servo(self, i):
-        if self.enable_list[i].text().replace('&','') != 'Off':
+        if self.enable_list[i].text().replace('&', '') != 'Off':
             self.velocity_list[i].grey()
             self.acceleration_list[i].grey()
 
     def activate_servo(self, i):
-        if self.enable_list[i].text().replace('&','') != 'On':
+        if self.enable_list[i].text().replace('&', '') != 'On':
             self.velocity_list[i].color()
             self.acceleration_list[i].color()
 
@@ -506,7 +506,7 @@ class Servo(PluginBase, Ui_Servo):
             time.sleep(3)
 
     def test_button_clicked(self):
-        if self.test_button.text().replace('&','') == "Start Test":
+        if self.test_button.text().replace('&', '') == "Start Test":
             self.test_button.setText("Stop Test")
             self.test_event.set()
         else:

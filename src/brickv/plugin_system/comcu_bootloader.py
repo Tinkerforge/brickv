@@ -55,8 +55,7 @@ class COMCUBootloader(QWidget):
         main_window.flashing_window.tab_widget.setCurrentPage(2)
         QApplication.processEvents()
         combo_parent = main_window.flashing_window.combo_parent
-        combo_port  = main_window.flashing_window.combo_port
-
+        combo_port = main_window.flashing_window.combo_port
         connected_uid = self.info.connected_uid
 
         # If the Bricklet is connected to an isolator,

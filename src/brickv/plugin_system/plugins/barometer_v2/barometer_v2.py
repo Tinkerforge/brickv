@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QGridLayout, \
-                        QPushButton, QSpinBox, QFrame, QDoubleSpinBox, QDialog, QComboBox
+                            QPushButton, QSpinBox, QFrame, QDoubleSpinBox, QDialog, QComboBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings import ip_connection
@@ -168,14 +168,14 @@ class BarometerV2(COMCUPluginBase):
         self.sbox_moving_avg_len_temperature.editingFinished.connect(self.sbox_moving_avg_len_editing_finished)
 
         plot_config_air_pressure = [('Air Pressure',
-                                    Qt.red,
-                                    lambda: self.current_air_pressure,
-                                    '{:.3f} mbar (QFE)'.format)]
+                                     Qt.red,
+                                     lambda: self.current_air_pressure,
+                                     '{:.3f} mbar (QFE)'.format)]
 
         plot_config_altitude = [('Altitude',
-                                Qt.darkGreen,
-                                lambda: self.current_altitude,
-                                lambda value: '{:.3f} m ({:.3f} ft)'.format(value, value / 0.3048))]
+                                 Qt.darkGreen,
+                                 lambda: self.current_altitude,
+                                 lambda value: '{:.3f} m ({:.3f} ft)'.format(value, value / 0.3048))]
 
         self.plot_widget_air_pressure = PlotWidget('Air Pressure [mbar]',
                                                    plot_config_air_pressure,

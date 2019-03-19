@@ -156,7 +156,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
         if self.dr1_button.minimumWidth() < width:
             self.dr1_button.setMinimumWidth(width)
 
-        if 'On' in self.dr1_button.text().replace('&',''):
+        if 'On' in self.dr1_button.text().replace('&', ''):
             self.dr1_button.setText('Switch Off')
             self.dr1_image.setPixmap(self.a1_pixmap)
         else:
@@ -183,7 +183,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
         if self.dr2_button.minimumWidth() < width:
             self.dr2_button.setMinimumWidth(width)
 
-        if 'On' in self.dr2_button.text().replace('&',''):
+        if 'On' in self.dr2_button.text().replace('&', ''):
             self.dr2_button.setText('Switch Off')
             self.dr2_image.setPixmap(self.a2_pixmap)
         else:

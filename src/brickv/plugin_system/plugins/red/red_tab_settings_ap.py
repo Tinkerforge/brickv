@@ -317,9 +317,7 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
                 self.sarea_ap.show()
                 self.update_button_text_state(BUTTON_STATE_DEFAULT)
 
-                QMessageBox.critical(get_main_window(),
-                                           'Settings | Access Point',
-                                           message)
+                QMessageBox.critical(get_main_window(), 'Settings | Access Point', message)
                 return False
 
         if not check_ascii(self.ledit_ap_ssid.text(),

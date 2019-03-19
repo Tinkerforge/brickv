@@ -208,7 +208,7 @@ class IO16(PluginBase, Ui_IO16):
         port = self.port_box.currentText().lower()
         pin = int(self.pin_box.currentText())
 
-        if self.port_direction[port][pin].text().replace('&','') == 'Output' and \
+        if self.port_direction[port][pin].text().replace('&', '') == 'Output' and \
            self.direction_box.currentText() == 'Output' and \
            self.has_monoflop:
             self.time_spinbox.setEnabled(not self.monoflop_active[port][pin])
@@ -255,7 +255,7 @@ class IO16(PluginBase, Ui_IO16):
     def pin_changed(self, pin):
         port = self.port_box.currentText().lower()
 
-        if self.port_direction[port][pin].text().replace('&','') == 'Input':
+        if self.port_direction[port][pin].text().replace('&', '') == 'Input':
             index = 0
         else:
             index = 1
@@ -274,7 +274,7 @@ class IO16(PluginBase, Ui_IO16):
             self.value_box.addItem('High')
             self.value_box.addItem('Low')
 
-            if self.port_config[port][pin].text().replace('&','') == 'High':
+            if self.port_config[port][pin].text().replace('&', '') == 'High':
                 self.value_box.setCurrentIndex(0)
             else:
                 self.value_box.setCurrentIndex(1)
@@ -282,7 +282,7 @@ class IO16(PluginBase, Ui_IO16):
             self.value_box.addItem('Pull-Up')
             self.value_box.addItem('Default')
 
-            if self.port_config[port][pin].text().replace('&','') == 'Pull-Up':
+            if self.port_config[port][pin].text().replace('&', '') == 'Pull-Up':
                 self.value_box.setCurrentIndex(0)
             else:
                 self.value_box.setCurrentIndex(1)

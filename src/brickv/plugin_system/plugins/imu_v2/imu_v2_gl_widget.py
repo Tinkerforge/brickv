@@ -151,6 +151,7 @@ class IMUV2GLWidget(QOpenGLWidget):
 
     def initializeGL(self):
         self.gl = self.context().versionFunctions(self.profile)
+
         if not self.initialized:
             self.gl.initializeOpenGLFunctions()
             self.initialized = True
@@ -356,15 +357,15 @@ class IMUV2GLWidget(QOpenGLWidget):
         gl.glTranslatef(-2.3, -2.3, -0.38)
         gl.glLineWidth(3.0)
         gl.glBegin(gl.GL_LINES)
-        gl.glColor3f(1,0,0) # x axis is red
-        gl.glVertex3f(0,0,0)
-        gl.glVertex3f(3,0,0)
-        gl.glColor3f(0,0.5,0) # y axis is green
-        gl.glVertex3f(0,0,0)
-        gl.glVertex3f(0,3,0)
-        gl.glColor3f(0,0,1) # z axis is blue
-        gl.glVertex3f(0,0,0)
-        gl.glVertex3f(0,0,3)
+        gl.glColor3f(1, 0, 0) # x axis is red
+        gl.glVertex3f(0, 0, 0)
+        gl.glVertex3f(3, 0, 0)
+        gl.glColor3f(0, 0.5, 0) # y axis is green
+        gl.glVertex3f(0, 0, 0)
+        gl.glVertex3f(0, 3, 0)
+        gl.glColor3f(0, 0, 1) # z axis is blue
+        gl.glVertex3f(0, 0, 0)
+        gl.glVertex3f(0, 0, 3)
         gl.glEnd()
         gl.glLineWidth(1.0)
         gl.glPopMatrix()
@@ -372,7 +373,7 @@ class IMUV2GLWidget(QOpenGLWidget):
         gl.glEndList()
 
     def perspective(self, fov_y, aspect, z_near, z_far):
-        f_height = math.tan(fov_y / 2 * (math.pi/180)) * z_near
+        f_height = math.tan(fov_y / 2 * (math.pi / 180)) * z_near
         f_width = f_height * aspect
         self.gl.glFrustum(-f_width, f_width, -f_height, f_height, z_near, z_far)
 

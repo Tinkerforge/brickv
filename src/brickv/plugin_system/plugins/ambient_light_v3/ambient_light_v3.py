@@ -32,7 +32,7 @@ from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class AmbientLightFrame(QFrame):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.color = QColor(128, 128, 128)
         self.setMinimumSize(25, 25)

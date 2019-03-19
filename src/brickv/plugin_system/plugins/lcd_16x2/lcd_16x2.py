@@ -240,7 +240,7 @@ class LCD16x2(PluginBase):
 
     def bl_clicked(self):
         try:
-            if self.bl_button.text().replace('&','') == 'Backlight On':
+            if self.bl_button.text().replace('&', '') == 'Backlight On':
                 self.lcd.backlight_on()
                 self.bl_button.setText('Backlight Off')
             else:
@@ -250,12 +250,14 @@ class LCD16x2(PluginBase):
             return
 
     def get_config(self):
-        cursor = self.cursor_button.text().replace('&','') == 'Cursor Off'
-        blink = self.blink_button.text().replace('&','') == 'Blink Off'
+        cursor = self.cursor_button.text().replace('&', '') == 'Cursor Off'
+        blink = self.blink_button.text().replace('&', '') == 'Blink Off'
+
         return (cursor, blink)
 
     def cursor_clicked(self):
         cursor, blink = self.get_config()
+
         try:
             self.lcd.set_config(not cursor, blink)
         except ip_connection.Error:

@@ -85,7 +85,7 @@ class NaturalSpline(object):
         s[length - 2] = -s[length - 2] / a[length - 2]
 
         for i in reversed(range(1, length - 2)):
-            s[i] = - ( s[i] + b[i] * s[i+1] ) / a[i]
+            s[i] = -(s[i] + b[i] * s[i+1]) / a[i]
 
         s[length - 1] = s[0] = 0.0
 

@@ -110,7 +110,7 @@ class Master(PluginBase, Ui_Master):
         if self.extension_type_preset[self.master.EXTENSION_TYPE_WIFI2]:
             try:
                 wifi_info = next(ext for ext in self.device_info.extensions.values() if ext.extension_type == self.master.EXTENSION_TYPE_WIFI2)
-                wifi_update_avail = wifi_info.firmware_version_installed != (0,0,0) and wifi_info.firmware_version_installed < wifi_info.firmware_version_latest
+                wifi_update_avail = wifi_info.firmware_version_installed != (0, 0, 0) and wifi_info.firmware_version_installed < wifi_info.firmware_version_latest
             except:
                 wifi_update_avail = False
         else:
@@ -225,7 +225,6 @@ class Master(PluginBase, Ui_Master):
 
         self.wifi2_get_firmware_version_timer.stop()
         async_call(self.master.get_wifi2_firmware_version, None, self.get_wifi2_firmware_version_async, self.increase_error_count)
-
 
     def wifi2_present(self, present):
         if present and self.wifi2_firmware_version != None and not self.check_extensions:

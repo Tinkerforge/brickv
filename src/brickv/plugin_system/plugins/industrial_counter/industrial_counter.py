@@ -36,18 +36,18 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
         self.setupUi(self)
 
         self.counter = self.device
-        
+
         self.cbe_signal = CallbackEmulator(self.counter.get_all_signal_data,
                                            self.cb_signal,
                                            self.increase_error_count)
-        
+
         self.cbe_counter = CallbackEmulator(self.counter.get_all_counter,
                                             self.cb_counter,
                                             self.increase_error_count)
 
         def get_combo_lambda(channel):
             return lambda: self.combo_index_changed(channel)
-        
+
         def get_checkstate_lambda(channel):
             return lambda x: self.checkstate_changed(channel, x)
 
@@ -81,21 +81,21 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
         self.combos_duty_cycle_prescaler = [g.itemAtPosition(pos, 1).widget(), g.itemAtPosition(pos, 2).widget(), g.itemAtPosition(pos, 3).widget(), g.itemAtPosition(pos, 4).widget()]
         for channel, combo in enumerate(self.combos_duty_cycle_prescaler):
             combo.addItem('1')
-            combo.addItem('2') 
-            combo.addItem('4') 
-            combo.addItem('8') 
-            combo.addItem('16') 
-            combo.addItem('32') 
-            combo.addItem('64') 
-            combo.addItem('128') 
-            combo.addItem('256') 
-            combo.addItem('512') 
-            combo.addItem('1024') 
-            combo.addItem('2048') 
-            combo.addItem('4096') 
-            combo.addItem('8192') 
-            combo.addItem('16384') 
-            combo.addItem('32768') 
+            combo.addItem('2')
+            combo.addItem('4')
+            combo.addItem('8')
+            combo.addItem('16')
+            combo.addItem('32')
+            combo.addItem('64')
+            combo.addItem('128')
+            combo.addItem('256')
+            combo.addItem('512')
+            combo.addItem('1024')
+            combo.addItem('2048')
+            combo.addItem('4096')
+            combo.addItem('8192')
+            combo.addItem('16384')
+            combo.addItem('32768')
             combo.currentIndexChanged.connect(get_combo_lambda(channel))
 
         pos += 1
@@ -189,7 +189,7 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
         self.combos_count_direction[channel].blockSignals(False)
         self.combos_duty_cycle_prescaler[channel].blockSignals(False)
         self.combos_frequency_integration[channel].blockSignals(False)
-        
+
     def checkstate_changed(self, channel, value):
         self.counter.set_counter_active(channel, True if value == Qt.Checked else False)
 
@@ -198,14 +198,14 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
         count_direction = self.combos_count_direction[channel].currentIndex()
         duty_cycle_prescaler = self.combos_duty_cycle_prescaler[channel].currentIndex()
         frequency_integration = self.combos_frequency_integration[channel].currentIndex()
-        
+
         if duty_cycle_prescaler == 16:
             duty_cycle_prescaler = 255
         if frequency_integration == 9:
             frequency_integration = 255
-            
+
         self.counter.set_counter_configuration(channel, count_edge, count_direction, duty_cycle_prescaler, frequency_integration)
-        
+
     def get_all_counter_active_cb(self, active):
         for i in range(4):
             self.checkboxess_active[i].blockSignals(True)
@@ -214,7 +214,7 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
             else:
                 self.checkboxess_active[i].setCheckState(Qt.Unchecked)
             self.checkboxess_active[i].blockSignals(False)
-        
+
     def get_counter_configuration_cb(self, channel, configuration):
         self.combo_signals_block(channel)
         self.combos_count_edge[channel].setCurrentIndex(configuration.count_edge)
@@ -222,7 +222,7 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
         self.combos_duty_cycle_prescaler[channel].setCurrentIndex(configuration.duty_cycle_prescaler if configuration.duty_cycle_prescaler != 255 else 16)
         self.combos_frequency_integration[channel].setCurrentIndex(configuration.frequency_integration_time if configuration.frequency_integration_time != 255 else 9)
         self.combo_signals_release(channel)
-        
+
     def start(self):
         async_call(self.counter.get_counter_configuration, 0, lambda x: self.get_counter_configuration_cb(0, x), self.increase_error_count)
         async_call(self.counter.get_counter_configuration, 1, lambda x: self.get_counter_configuration_cb(1, x), self.increase_error_count)
