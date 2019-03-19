@@ -31,68 +31,7 @@ from brickv.slider_spin_syncer import SliderSpinSyncer
 from brickv.plugin_system.plugins.oled_128x64_v2.ui_oled_128x64_v2 import Ui_OLED128x64V2
 from brickv.bindings.bricklet_oled_128x64_v2 import BrickletOLED128x64V2
 from brickv.callback_emulator import CallbackEmulator
-
-class ScribbleArea(QWidget):
-    """
-      this scales the image but it's not good, too many refreshes really mess it up!!!
-    """
-    def __init__(self, w, h, parent=None):
-        super().__init__(parent)
-
-        self.setAttribute(Qt.WA_StaticContents)
-        self.scribbling = 0
-
-        self.width = w
-        self.height = h
-        self.image_pen_width = 5
-        self.pen_width = 1
-        self.circle_width = 30
-        self.image = QImage(QSize(w, h), QImage.Format_RGB32)
-
-        self.setMaximumSize(w*self.image_pen_width, w*self.image_pen_width)
-        self.setMinimumSize(w*self.image_pen_width, h*self.image_pen_width)
-
-        self.last_point = QPoint()
-        self.clear_image()
-
-    def clear_image(self):
-        self.image.fill(Qt.black)
-        self.update()
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.last_point = event.pos()
-            self.scribbling = 1
-        elif event.button() == Qt.RightButton:
-            self.last_point = event.pos()
-            self.scribbling = 2
-
-    def mouseMoveEvent(self, event):
-        if (event.buttons() & Qt.LeftButton) and self.scribbling == 1:
-            self.draw_line_to(event.pos())
-        elif (event.buttons() & Qt.RightButton) and self.scribbling == 2:
-            self.draw_line_to(event.pos())
-
-    def mouseReleaseEvent(self, event):
-        if event.button() == Qt.LeftButton and self.scribbling == 1:
-            self.draw_line_to(event.pos())
-            self.scribbling = 0
-        elif event.button() == Qt.RightButton and self.scribbling == 2:
-            self.draw_line_to(event.pos())
-            self.scribbling = 0
-
-    def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.drawImage(event.rect(), self.image.scaledToWidth(self.width*self.image_pen_width))
-
-    def draw_line_to(self, end_point):
-        painter = QPainter(self.image)
-        painter.setPen(QPen(Qt.white if self.scribbling == 1 else Qt.black,
-                            self.pen_width, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
-        painter.drawLine(self.last_point/5, end_point/5)
-
-        self.update()
-        self.last_point = QPoint(end_point)
+from brickv.scribblewidget import ScribbleWidget
 
 class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
     def __init__(self, *args):
@@ -102,8 +41,8 @@ class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
 
         self.oled = self.device
 
-        self.scribble_area = ScribbleArea(128, 64)
-        self.image_button_layout.insertWidget(0, self.scribble_area)
+        self.scribble_widget = ScribbleWidget(128, 64, 5, QColor(Qt.white), QColor(Qt.black), enable_grid=False)
+        self.image_button_layout.insertWidget(0, self.scribble_widget)
 
         self.contrast_syncer = SliderSpinSyncer(self.contrast_slider, self.contrast_spin, lambda value: self.new_configuration())
         self.char_syncer = SliderSpinSyncer(self.char_slider, self.char_spin, self.char_slider_changed)
@@ -144,7 +83,7 @@ class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
         self.oled.clear_display()
 
     def clear_clicked(self):
-        self.scribble_area.clear_image()
+        self.scribble_widget.clear_image()
 
     def send_clicked(self):
         line = int(self.line_combobox.currentText())
@@ -156,7 +95,7 @@ class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
         data = []
         for i in range(64):
             for j in range(128):
-                if QColor(self.scribble_area.image.pixel(j, i)) == Qt.white:
+                if QColor(self.scribble_widget.image().pixel(j, i)) == Qt.white:
                     data.append(True)
                 else:
                     data.append(False)
@@ -171,11 +110,11 @@ class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
         for i in range(64):
             for j in range(128):
                 if pixels[i*128 + j]:
-                    self.scribble_area.image.setPixel(j, i, 0xFFFFFF)
+                    self.scribble_widget.image().setPixel(j, i, 0xFFFFFF)
                 else:
-                    self.scribble_area.image.setPixel(j, i, 0)
+                    self.scribble_widget.image().setPixel(j, i, 0)
 
-        self.scribble_area.update()
+        self.scribble_widget.update()
 
     def start(self):
         # Use response expected for write_line function, to make sure that the

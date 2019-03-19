@@ -31,73 +31,10 @@ from brickv.slider_spin_syncer import SliderSpinSyncer
 from brickv.plugin_system.plugins.e_paper_296x128.ui_e_paper_296x128 import Ui_EPaper296x128
 from brickv.bindings.bricklet_e_paper_296x128 import BrickletEPaper296x128
 from brickv.callback_emulator import CallbackEmulator
+from brickv.scribblewidget import ScribbleWidget
 
 WIDTH = 296
 HEIGHT = 128
-
-class ScribbleArea(QWidget):
-    """
-      this scales the image but it's not good, too many refreshes really mess it up!!!
-    """
-    def __init__(self, w, h, parent=None):
-        super(ScribbleArea, self).__init__(parent)
-
-        self.setAttribute(Qt.WA_StaticContents)
-        self.scribbling = 0
-
-        self.width = w
-        self.height = h
-        self.image_pen_width = 2
-        self.pen_width = 1
-        self.image = QImage(QSize(w, h), QImage.Format_RGB32)
-        self.draw_color = Qt.white
-
-        self.setMaximumSize(w*self.image_pen_width, w*self.image_pen_width)
-        self.setMinimumSize(w*self.image_pen_width, h*self.image_pen_width)
-
-        self.last_point = QPoint()
-        self.clear_image()
-
-        self.display = 0
-
-    def clear_image(self):
-        self.image.fill(Qt.black)
-        self.update()
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.last_point = event.pos()
-            self.scribbling = 1
-        elif event.button() == Qt.RightButton:
-            self.last_point = event.pos()
-            self.scribbling = 2
-
-    def mouseMoveEvent(self, event):
-        if (event.buttons() & Qt.LeftButton) and self.scribbling == 1:
-            self.draw_line_to(event.pos())
-        elif (event.buttons() & Qt.RightButton) and self.scribbling == 2:
-            self.draw_line_to(event.pos())
-
-    def mouseReleaseEvent(self, event):
-        if event.button() == Qt.LeftButton and self.scribbling == 1:
-            self.draw_line_to(event.pos())
-            self.scribbling = 0
-        elif event.button() == Qt.RightButton and self.scribbling == 2:
-            self.draw_line_to(event.pos())
-            self.scribbling = 0
-
-    def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.drawImage(event.rect(), self.image.scaledToWidth(self.width*self.image_pen_width))
-
-    def draw_line_to(self, end_point):
-        painter = QPainter(self.image)
-        painter.setPen(QPen(self.draw_color if self.scribbling == 1 else Qt.black,
-                            self.pen_width, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
-        painter.drawLine(self.last_point/self.image_pen_width, end_point/self.image_pen_width)
-
-        self.update()
-        self.last_point = QPoint(end_point)
 
 class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
     def __init__(self, *args):
@@ -107,8 +44,8 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
 
         self.epaper = self.device
 
-        self.scribble_area = ScribbleArea(WIDTH, HEIGHT)
-        self.image_button_layout.insertWidget(0, self.scribble_area)
+        self.scribble_widget = ScribbleWidget(WIDTH, HEIGHT, 2,  QColor(Qt.white), QColor(Qt.black), enable_grid=False)
+        self.image_button_layout.insertWidget(0, self.scribble_widget)
 
         self.draw_button.clicked.connect(self.draw_clicked)
         self.send_button.clicked.connect(self.send_clicked)
@@ -120,19 +57,19 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
         self.color_radio_black.toggled.connect(self.radio_toggled)
         self.color_radio_white.toggled.connect(self.radio_toggled)
         self.color_radio_red.toggled.connect(self.radio_toggled)
-        
+
         self.display = self.epaper.DISPLAY_BLACK_WHITE_RED
 
     def radio_toggled(self):
         if self.color_radio_black.isChecked():
-            self.scribble_area.draw_color = Qt.black
+            self.scribble_widget.set_foreground_color(QColor(Qt.black))
         elif self.color_radio_white.isChecked():
-            self.scribble_area.draw_color = Qt.white
+            self.scribble_widget.set_foreground_color(QColor(Qt.white))
         elif self.color_radio_red.isChecked():
             if self.display == self.epaper.DISPLAY_BLACK_WHITE_RED:
-                self.scribble_area.draw_color = Qt.red
+                self.scribble_widget.set_foreground_color(QColor(Qt.red))
             else:
-                self.scribble_area.draw_color = Qt.darkGray
+                self.scribble_widget.set_foreground_color(QColor(Qt.darkGray))
 
     def fill_clicked(self, color):
         self.epaper.fill_display(color)
@@ -145,7 +82,7 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
         color = self.color_combo.currentIndex()
         orien = self.orientation_combo.currentIndex()
         text  = self.text_edit.text()
-        
+
         self.epaper.draw_text(pos_x, pos_y, font, color, orien, text)
         self.start()
 
@@ -154,9 +91,9 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
         red = [False]*WIDTH*HEIGHT
         for i in range(HEIGHT):
             for j in range(WIDTH):
-                if QColor(self.scribble_area.image.pixel(j, i)) == Qt.white:
+                if QColor(self.scribble_widget.image().pixel(j, i)) == Qt.white:
                     bw[i*WIDTH +j] = True
-                if QColor(self.scribble_area.image.pixel(j, i)) in (Qt.red, Qt.darkGray):
+                if QColor(self.scribble_widget.image().pixel(j, i)) in (Qt.red, Qt.darkGray):
                     red[i*WIDTH +j] = True
 
         self.epaper.write_black_white(0, 0, WIDTH-1, HEIGHT-1, bw)
@@ -167,9 +104,9 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
         for i in range(HEIGHT):
             for j in range(WIDTH):
                 if pixels[i*WIDTH + j]:
-                    self.scribble_area.image.setPixel(j, i, 0xFFFFFF)
+                    self.scribble_widget.image().setPixel(j, i, 0xFFFFFF)
                 else:
-                    self.scribble_area.image.setPixel(j, i, 0)
+                    self.scribble_widget.image().setPixel(j, i, 0)
 
         async_call(self.epaper.read_color, (0, 0, WIDTH-1, HEIGHT-1), self.cb_read_color, self.increase_error_count)
 
@@ -179,12 +116,12 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
                 for j in range(WIDTH):
                     if pixels[i*WIDTH + j]:
                         if self.display == self.epaper.DISPLAY_BLACK_WHITE_RED:
-                            self.scribble_area.image.setPixel(j, i, 0xFF0000)
+                            self.scribble_widget.image().setPixel(j, i, 0xFF0000)
                         else:
-                            self.scribble_area.image.setPixel(j, i, 0x808080)
+                            self.scribble_widget.image().setPixel(j, i, 0x808080)
 
-        self.scribble_area.update()
-    
+        self.scribble_widget.update()
+
     def cb_get_display(self, display):
         self.display = display
 

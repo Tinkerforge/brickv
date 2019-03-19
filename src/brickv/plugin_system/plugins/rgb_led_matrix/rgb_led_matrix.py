@@ -32,6 +32,7 @@ from brickv.plugin_system.plugins.rgb_led_matrix.ui_rgb_led_matrix import Ui_RGB
 from brickv.bindings.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
 from brickv.callback_emulator import CallbackEmulator
 from brickv.async_call import async_call
+from brickv.scribblewidget import ScribbleWidget
 
 NUM_LEDS = 64
 
@@ -70,82 +71,6 @@ class QColorButton(QPushButton):
     def mousePressEvent(self, e):
         return super().mousePressEvent(e)
 
-class ScribbleArea(QWidget):
-    """
-      this scales the image but it's not good, too many refreshes really mess it up!!!
-    """
-    def __init__(self, w, h, parent=None):
-        super().__init__(parent)
-
-        self.setAttribute(Qt.WA_StaticContents)
-        self.scribbling = 0
-
-        self.width = w
-        self.height = h
-        self.image_pen_width = 50
-        self.pen_width = 1
-        self.draw_color = Qt.red
-        self.image = QImage(QSize(w, h), QImage.Format_RGB32)
-
-        self.setMaximumSize(w*self.image_pen_width, w*self.image_pen_width)
-        self.setMinimumSize(w*self.image_pen_width, h*self.image_pen_width)
-
-        self.last_point = QPoint()
-        self.clear_image()
-
-    def set_draw_color(self, color):
-        self.draw_color = color
-
-    def array_draw(self, r, g, b, scale=1):
-        for i in range(len(r)):
-            self.image.setPixel(QPoint(i%8, i//8), (r[i]*scale << 16) | (g[i]*scale << 8) | b[i]*scale)
-
-        self.update()
-
-    def fill_image(self, color):
-        self.image.fill(color)
-        self.update()
-
-    def clear_image(self):
-        self.image.fill(Qt.black)
-        self.update()
-
-    def mousePressEvent(self, event):
-        self.parent().state = self.parent().STATE_COLOR_SCRIBBLE
-        if event.button() == Qt.LeftButton:
-            self.last_point = event.pos()
-            self.scribbling = 1
-        elif event.button() == Qt.RightButton:
-            self.last_point = event.pos()
-            self.scribbling = 2
-
-    def mouseMoveEvent(self, event):
-        if (event.buttons() & Qt.LeftButton) and self.scribbling == 1:
-            self.draw_line_to(event.pos())
-        elif (event.buttons() & Qt.RightButton) and self.scribbling == 2:
-            self.draw_line_to(event.pos())
-
-    def mouseReleaseEvent(self, event):
-        if event.button() == Qt.LeftButton and self.scribbling == 1:
-            self.draw_line_to(event.pos())
-            self.scribbling = 0
-        elif event.button() == Qt.RightButton and self.scribbling == 2:
-            self.draw_line_to(event.pos())
-            self.scribbling = 0
-
-    def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.drawImage(event.rect(), self.image.scaledToWidth(self.width*self.image_pen_width))
-
-    def draw_line_to(self, end_point):
-        painter = QPainter(self.image)
-        painter.setPen(QPen(self.draw_color if self.scribbling == 1 else Qt.black,
-                            self.pen_width, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
-        painter.drawLine(QPoint(self.last_point.x()//self.image_pen_width, self.last_point.y()//self.image_pen_width),
-                         QPoint(end_point.x()//self.image_pen_width,       end_point.y()//self.image_pen_width))
-
-        self.update()
-        self.last_point = QPoint(end_point)
 
 class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
     qtcb_frame_started = pyqtSignal(int)
@@ -162,16 +87,19 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
 
         self.rgb_led_matrix = self.device
 
-        self.scribble_area = ScribbleArea(8, 8, self)
-        self.scribble_layout.insertWidget(1, self.scribble_area)
-
         self.color_button = QColorButton()
         self.below_scribble_layout.insertWidget(2, self.color_button)
+
+        self.scribble_widget = ScribbleWidget(8, 8, 35, self.color_button.color(), QColor(Qt.black))
+        def set_state_scribble():
+            self.state = self.STATE_COLOR_SCRIBBLE
+        self.scribble_widget.scribbling_started.connect(set_state_scribble)
+        self.scribble_layout.insertWidget(1, self.scribble_widget)
 
         self.qtcb_frame_started.connect(self.cb_frame_started)
 
         self.color_button.colorChanged.connect(self.color_changed)
-        self.button_clear_drawing.clicked.connect(self.scribble_area.clear_image)
+        self.button_clear_drawing.clicked.connect(self.scribble_widget.clear_image)
         self.button_drawing.clicked.connect(self.drawing_clicked)
         self.button_color.clicked.connect(self.color_clicked)
         self.button_gradient.clicked.connect(self.gradient_clicked)
@@ -207,7 +135,7 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
             self.render_color_scribble()
 
     def color_changed(self):
-        self.scribble_area.set_draw_color(self.color_button.color())
+        self.scribble_widget.set_foreground_color(self.color_button.color())
 
     def frame_duration_changed(self, duration):
         async_call(self.rgb_led_matrix.set_frame_duration, duration, None, self.increase_error_count)
@@ -221,7 +149,7 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
     def color_clicked(self):
         old_state = self.state
         self.state = self.STATE_COLOR_SCRIBBLE
-        self.scribble_area.fill_image(self.color_button.color())
+        self.scribble_widget.fill_image(self.color_button.color())
         if old_state == self.STATE_IDLE:
             self.render_color_scribble()
 
@@ -245,7 +173,7 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
         b = []
         for i in range(8):
             for j in range(8):
-                color = QColor(self.scribble_area.image.pixel(j, i))
+                color = QColor(self.scribble_widget.image().pixel(j, i))
                 r.append(color.red())
                 g.append(color.green())
                 b.append(color.blue())
@@ -268,7 +196,7 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
             ga.append(int(g*255))
             ba.append(int(b*255))
 
-        self.scribble_area.array_draw(ra, ga, ba, 4)
+        self.scribble_widget.array_draw(ra, ga, ba, 4)
         self.set_rgb(ra, ga, ba)
 
     def render_color_dot(self):
@@ -292,7 +220,7 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
         g_val[index] = g
         b_val[index] = b
 
-        self.scribble_area.array_draw(r_val, g_val, b_val)
+        self.scribble_widget.array_draw(r_val, g_val, b_val)
         self.set_rgb(r_val, g_val, b_val)
 
         self.dot_counter += self.dot_direction * self.box_speed.value()

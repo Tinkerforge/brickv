@@ -22,15 +22,18 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt, QSize, QPoint, QRect
+from PyQt5.QtGui import QImage, QPainter, QPen, QColor, QPalette
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
-                        QLineEdit, QComboBox, QFrame, QGridLayout, QToolButton
+                        QLineEdit, QComboBox, QFrame, QGridLayout, QToolButton, QWidget
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_lcd_20x4 import BrickletLCD20x4
 from brickv.bindings.ks0066u import unicode_to_ks0066u
 from brickv.async_call import async_call
+from brickv.scribblewidget import ScribbleWidget
+
 
 class LCD20x4(PluginBase):
     MAX_LINE = 4
@@ -110,29 +113,7 @@ class LCD20x4(PluginBase):
             line.setFrameShape(QFrame.HLine)
             line.setFrameShadow(QFrame.Sunken)
 
-            gridlayout = QGridLayout()
-            gridlayout.setHorizontalSpacing(2)
-            gridlayout.setVerticalSpacing(2)
-
-            self.character_boxes_bool = []
-            self.character_boxes = []
-            for i in range(5):
-                self.character_boxes.append([])
-                self.character_boxes_bool.append([])
-                for j in range(8):
-                    b = QToolButton()
-                    b.setAutoFillBackground(True)
-                    b.setStyleSheet("background-color: rgb(255, 255, 255)")
-                    b.setMaximumSize(25, 25)
-                    b.setMinimumSize(25, 25)
-
-                    def get_lambda(i, j):
-                        return lambda: self.char_button_clicked(i, j)
-                    b.clicked.connect(get_lambda(i, j))
-
-                    self.character_boxes[i].append(b)
-                    self.character_boxes_bool[i].append(True)
-                    gridlayout.addWidget(b, j, i)
+            self.scribble_widget = ScribbleWidget(5, 8, 25, QColor(Qt.white), QColor(Qt.blue))
 
             self.char_index_label = QLabel('Index:')
             self.char_index_combo = QComboBox()
@@ -164,7 +145,7 @@ class LCD20x4(PluginBase):
 
             grid_stretch_layout = QHBoxLayout()
             grid_stretch_layout.addWidget(QLabel('Custom Character:'))
-            grid_stretch_layout.addLayout(gridlayout)
+            grid_stretch_layout.addWidget(self.scribble_widget)
             grid_stretch_layout.addLayout(self.char_save_layout)
             grid_stretch_layout.addStretch()
 
@@ -188,14 +169,6 @@ class LCD20x4(PluginBase):
             layout.addLayout(self.char_main_layout)
 
         layout.addStretch(1)
-
-    def char_button_clicked(self, i, j):
-        if self.character_boxes_bool[i][j]:
-            self.character_boxes_bool[i][j] = False
-            self.character_boxes[i][j].setStyleSheet("background-color: rgb(0, 0, 255)")
-        else:
-            self.character_boxes_bool[i][j] = True
-            self.character_boxes[i][j].setStyleSheet("background-color: rgb(255, 255, 255)")
 
     def is_backlight_on_async(self, on):
         if on:
@@ -317,9 +290,10 @@ class LCD20x4(PluginBase):
 
     def char_index_save_clicked(self):
         char = [0]*8
-        for i in range(len(self.character_boxes)):
-            for j in range(len(self.character_boxes[i])):
-                if self.character_boxes_bool[i][j]:
+        img = self.scribble_widget.image()
+        for j in range(img.height()):
+            for i in range(img.width() - 1, -1, -1):
+                if img.pixel(i, j) == self.scribble_widget.foreground_color.rgb():
                     char[j] |= 1 << (4 - i)
 
         index = int(self.char_index_combo.currentText())
@@ -333,14 +307,20 @@ class LCD20x4(PluginBase):
         self.lcd.write_line(1, 0, line2)
 
     def custom_character_async(self, characters):
-        for i in range(len(self.character_boxes)):
-            for j in range(len(self.character_boxes[i])):
+        r = []
+        g = []
+        b = []
+        for j in range(self.scribble_widget.image().height()):
+            for i in range(self.scribble_widget.image().width() - 1, -1, -1):
                 if characters[j] & (1 << i):
-                    self.character_boxes_bool[4-i][j] = True
-                    self.character_boxes[4-i][j].setStyleSheet("background-color: rgb(255, 255, 255)")
+                    r.append(255)
+                    g.append(255)
+                    b.append(255)
                 else:
-                    self.character_boxes_bool[4-i][j] = False
-                    self.character_boxes[4-i][j].setStyleSheet("background-color: rgb(0, 0, 255)")
+                    r.append(0)
+                    g.append(0)
+                    b.append(255)
+        self.scribble_widget.array_draw(r,g,b)
 
     def char_index_changed(self, index):
         async_call(self.lcd.get_custom_character, (index,), self.custom_character_async, self.increase_error_count)
