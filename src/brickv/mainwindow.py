@@ -53,7 +53,7 @@ from brickv.plugin_system.comcu_bootloader import COMCUBootloader
 from brickv.load_pixmap import load_pixmap
 from brickv.utils import get_resources_path
 
-from brickv.firmware_fetch import LatestFWVersionFetcher, latest_fw_versions_result
+from brickv.firmware_fetch import LatestFWVersionFetcher
 
 USER_ROLE_POSITION = Qt.UserRole + 1
 

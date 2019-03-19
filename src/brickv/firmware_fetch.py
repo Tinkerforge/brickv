@@ -38,8 +38,6 @@ ERROR_PARSE_VERSION_SPLIT = 3
 ERROR_PARSE_VERSION_INTS = 4
 ERROR_SERVER_ERROR = 5
 
-latest_fw_versions_result = namedtuple('latest_fw_versions_result', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos', 'red_image_infos', 'binding_infos'])
-
 def refresh_firmware_info(url_part, latest_version):
     name = url_part
 
@@ -170,7 +168,7 @@ def refresh_binding_info(url_part, latest_version):
     return red_image_info
 
 def fetch_latest_fw_versions(report_error_fn):
-    result = latest_fw_versions_result({}, {}, {}, {}, {}, {})
+    result = infos.LatestFirmwares({}, {}, {}, {}, {}, {})
     try:
         response = urllib.request.urlopen(LATEST_VERSIONS_URL, timeout=10)
         latest_versions_data = response.read().decode('utf-8')
