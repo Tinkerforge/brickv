@@ -1,7 +1,7 @@
 Brick Viewer
 ============
 
-This repository contains the source code of the Brick Viewer.
+This repository contains the source code of Brick Viewer.
 
 Usage
 -----
@@ -40,8 +40,8 @@ environment (either virtualenv or pyvenv) with pyinstaller.
 Under Windows ensure, that python3 is in the PATH, e.g. by creating
 a python3.bat file with the content::
 
-    @echo off
-    python.exe %*
+ @echo off
+ python.exe %*
 
 To build an installer, NSIS and the Universal CRT (available as a part of the
 Windows 10 SDK) is required.
