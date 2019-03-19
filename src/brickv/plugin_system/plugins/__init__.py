@@ -24,6 +24,7 @@ from brickv.plugin_system.plugins.dc import device_class as dc
 from brickv.plugin_system.plugins.distance_ir import device_class as distance_ir
 from brickv.plugin_system.plugins.distance_ir_v2 import device_class as distance_ir_v2
 from brickv.plugin_system.plugins.distance_us import device_class as distance_us
+from brickv.plugin_system.plugins.distance_us_v2 import device_class as distance_us_v2
 from brickv.plugin_system.plugins.dmx import device_class as dmx
 from brickv.plugin_system.plugins.dual_button import device_class as dual_button
 from brickv.plugin_system.plugins.dual_button_v2 import device_class as dual_button_v2
@@ -161,6 +162,7 @@ device_classes = [
     distance_ir,
     distance_ir_v2,
     distance_us,
+    distance_us_v2,
     dmx,
     dual_button,
     dual_button_v2,
