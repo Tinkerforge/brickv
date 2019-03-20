@@ -55,9 +55,9 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.has_chip_type = self.firmware_version >= (2, 0, 2)
         self.has_more_chip_types = self.firmware_version >= (2, 0, 6)
         self.has_channel_mapping = self.firmware_version >= (2, 0, 6)
-        self.has_configurable_rame_rendered_callback = self.firmware_version >= (2, 0, 6)
+        self.has_configurable_frame_rendered_callback = self.firmware_version >= (2, 0, 6)
 
-        self.frame_read_callback_was_enabled = False
+        self.frame_rendered_callback_was_enabled = None
 
         self.qtcb_frame_rendered.connect(self.cb_frame_rendered)
 
@@ -509,8 +509,6 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.led_strip.enable_frame_rendered_callback()
 
     def start(self):
-        self.frame_rendered_callback_was_enabled = False
-
         if self.has_chip_type:
             async_call(self.led_strip.get_chip_type, None, self.get_chip_type_async, self.increase_error_count)
 
@@ -520,7 +518,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         if self.has_channel_mapping:
             async_call(self.led_strip.get_channel_mapping, None, self.get_channel_mapping_async, self.increase_error_count)
 
-        if self.has_configurable_rame_rendered_callback:
+        if self.has_configurable_frame_rendered_callback:
             async_call(self.led_strip.is_frame_rendered_callback_enabled, None, self.is_frame_rendered_callback_enabled_async, self.increase_error_count)
 
         async_call(self.led_strip.get_supply_voltage, None, self.get_supply_voltage_async, self.increase_error_count)
@@ -534,7 +532,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.voltage_timer.stop()
         self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_RENDERED, None)
 
-        if self.has_configurable_rame_rendered_callback and not self.frame_rendered_callback_was_enabled:
+        if self.has_configurable_frame_rendered_callback and self.frame_rendered_callback_was_enabled == False:
             try:
                 self.led_strip.disable_frame_rendered_callback()
             except ip_connection.Error:

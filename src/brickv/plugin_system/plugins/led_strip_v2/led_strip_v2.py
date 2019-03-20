@@ -84,7 +84,7 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
 
         self.voltage = 0
 
-        self.frame_started_callback_was_enabled = False
+        self.frame_started_callback_was_enabled = None
 
         self.voltage_timer = QTimer()
         self.voltage_timer.timeout.connect(self.update_voltage)
@@ -423,8 +423,6 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
         self.led_strip.set_frame_started_callback_configuration(True)
 
     def start(self):
-        self.frame_started_callback_was_enabled = False
-
         async_call(self.led_strip.get_chip_type, None, self.get_chip_type_async, self.increase_error_count)
         async_call(self.led_strip.get_clock_frequency, None, self.get_clock_frequency_async, self.increase_error_count)
         async_call(self.led_strip.get_channel_mapping, None, self.get_channel_mapping_async, self.increase_error_count)
@@ -441,7 +439,7 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
         self.voltage_timer.stop()
         self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_STARTED, None)
 
-        if not self.frame_started_callback_was_enabled:
+        if self.frame_started_callback_was_enabled == False:
             try:
                 self.led_strip.set_frame_started_callback_configuration(False)
             except:
