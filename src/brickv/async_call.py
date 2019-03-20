@@ -56,10 +56,10 @@ def async_call(function, parameter=None, result_callback=None, error_callback=No
 def async_event_handler():
     while not async_event_queue.empty():
         try:
-            func = async_event_queue.get(False, 0)
+            function = async_event_queue.get(False)
 
-            if func:
-                func()
+            if function != None:
+                function()
         except StopIteration:
             pass
         except:
