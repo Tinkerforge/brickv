@@ -5225,8 +5225,11 @@ class DeviceImpl(AbstractDevice):
         In SimpleDevices the get-functions only return one value.
         """
 
-        for value_spec in self.device_spec['values']:
-            if value_spec['name'] == var_name:
+        value_spec = None
+
+        for candidate in self.device_spec['values']:
+            if candidate['name'] == var_name:
+                value_spec = candidate
                 break
 
         getter = value_spec['getter']
