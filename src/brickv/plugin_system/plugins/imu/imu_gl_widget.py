@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 import sys
 import ctypes
 import ctypes.util
+import math
 
 # Workaround a strange OpenGL problem that affects some but not all Qt5 OpenGL
 # versions. For example libqt5opengl5 5.9.1+dfsg-10ubuntu1 in Ubuntu is affected.
@@ -45,9 +46,8 @@ if sys.platform.startswith('linux'):
     if libGL_path != None:
         libGL = ctypes.CDLL(libGL_path, mode=ctypes.RTLD_GLOBAL)
 
-import math
 from PyQt5.QtWidgets import QOpenGLWidget
-from PyQt5.QtGui import QOpenGLContext, QOpenGLVersionProfile, QSurfaceFormat
+from PyQt5.QtGui import QOpenGLVersionProfile, QSurfaceFormat
 
 class IMUGLWidget(QOpenGLWidget):
     def __init__(self, parent=None):
