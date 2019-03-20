@@ -49,37 +49,4 @@ class COMCUBootloader(QWidget):
         hbox.addStretch()
 
     def button_pressed(self):
-        main_window = get_main_window()
-        main_window.flashing_clicked()
-        QApplication.processEvents()
-        main_window.flashing_window.tab_widget.setCurrentPage(2)
-        QApplication.processEvents()
-        combo_parent = main_window.flashing_window.combo_parent
-        combo_port = main_window.flashing_window.combo_port
-        connected_uid = self.info.connected_uid
-
-        # If the Bricklet is connected to an isolator,
-        # we have to find the Brick that the isolator is connected to.
-        if self.info.position.startswith('i-'):
-            for bricklet_info in infos.get_bricklet_infos():
-                if bricklet_info.uid == connected_uid:
-                    connected_uid = bricklet_info.connected_uid
-                    break
-
-        for i in range(combo_parent.count()):
-            if '[' + connected_uid + ']' in combo_parent.itemText(i):
-                combo_parent.setCurrentIndex(i)
-                QApplication.processEvents()
-                break
-
-        port_index = 0
-        try:
-            for i in range(combo_port.count()):
-                if combo_port.itemText(i).startswith(self.info.position.upper()):
-                    port_index = i
-                    break
-        except:
-            port_index = 0
-
-        combo_port.setCurrentIndex(port_index)
-        QApplication.processEvents()
+        get_main_window().show_bricklet_update(self.info.connected_uid, self.info.position)
