@@ -135,6 +135,7 @@ from brickv.plugin_system.plugins.uv_light_v2 import device_class as uv_light_v2
 from brickv.plugin_system.plugins.voltage import device_class as voltage
 from brickv.plugin_system.plugins.voltage_current import device_class as voltage_current
 from brickv.plugin_system.plugins.voltage_current_v2 import device_class as voltage_current_v2
+from brickv.plugin_system.plugins.xmc1400_breakout import device_class as xmc1400_breakout
 
 device_classes = [
     ac_current,
@@ -274,4 +275,5 @@ device_classes = [
     voltage,
     voltage_current,
     voltage_current_v2,
+    xmc1400_breakout,
 ]
