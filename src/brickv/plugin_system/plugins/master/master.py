@@ -52,9 +52,6 @@ class Master(PluginBase, Ui_Master):
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
 
-        self.wifi2_get_firmware_version_timer = QTimer()
-        self.wifi2_get_firmware_version_timer.timeout.connect(self.wifi2_get_firmware_version)
-
         self.extension_type = None
 
         self.extensions = []
@@ -188,7 +185,7 @@ class Master(PluginBase, Ui_Master):
                     # WIFI2 extension present.
                     self.wifi2_ext = ext
                     self.label_no_extension.setText('Waiting for WIFI Extension 2.0 firmware version...')
-                    self.wifi2_get_firmware_version_timer.start(2000)
+                    async_call(self.master.get_wifi2_firmware_version, None, self.get_wifi2_firmware_version_async, self.increase_error_count, delay=2.0)
 
                 infos.update_info(self.uid)
 
@@ -220,13 +217,6 @@ class Master(PluginBase, Ui_Master):
         infos.update_info(self.uid)
         get_main_window().update_tree_view() # FIXME: this is kind of a hack
         self.wifi2_present(True)
-
-    def wifi2_get_firmware_version(self):
-        if self.wifi2_firmware_version != None:
-            return
-
-        self.wifi2_get_firmware_version_timer.stop()
-        async_call(self.master.get_wifi2_firmware_version, None, self.get_wifi2_firmware_version_async, self.increase_error_count)
 
     def wifi2_present(self, present):
         if present and self.wifi2_firmware_version != None and not self.check_extensions:

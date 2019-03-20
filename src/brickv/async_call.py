@@ -30,7 +30,7 @@ import functools
 from queue import Queue
 
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QThread, QEvent
+from PyQt5.QtCore import QThread, QEvent, QTimer
 
 from brickv.bindings import ip_connection
 
@@ -47,11 +47,17 @@ def async_stop_thread():
     async_call_queue.put(None)
 
 def async_call(function, parameter=None, result_callback=None, error_callback=None,
-               pass_exception_to_error_callback=False, debug_exception=False):
+               pass_exception_to_error_callback=False, debug_exception=False, delay=None):
     with async_session_lock:
-        async_call_queue.put(AsyncCall(function, parameter, result_callback,
-                                       error_callback, pass_exception_to_error_callback,
-                                       debug_exception, async_session_id))
+        session_id = async_session_id
+
+    ac = AsyncCall(function, parameter, result_callback, error_callback,
+                   pass_exception_to_error_callback, debug_exception, session_id)
+
+    if delay != None:
+        QTimer.singleShot(delay * 1000, functools.partial(async_call_queue.put, ac))
+    else:
+        async_call_queue.put(ac)
 
 def async_event_handler():
     while not async_event_queue.empty():
@@ -79,11 +85,15 @@ def async_start_thread(parent):
             while True:
                 ac = async_call_queue.get()
 
-                if ac is None:
+                if ac == None:
                     break
 
-                if not ac.function:
+                if ac.function == None:
                     continue
+
+                with async_session_lock:
+                    if ac.session_id != async_session_id:
+                        continue
 
                 result = None
 
@@ -95,11 +105,11 @@ def async_start_thread(parent):
                     else:
                         result = ac.function(ac.parameter)
                 except Exception as e:
-                    with async_session_lock:
-                        if ac.session_id != async_session_id:
-                            continue
-
                     if ac.error_callback != None:
+                        with async_session_lock:
+                            if ac.session_id != async_session_id:
+                                continue
+
                         if ac.debug_exception:
                             logging.exception('Error while doing async call')
 
@@ -124,10 +134,10 @@ def async_start_thread(parent):
                         if ac.session_id != async_session_id:
                             continue
 
-                    if result == None:
-                        async_event_queue.put(ac.result_callback)
-                    else:
+                    if result != None:
                         async_event_queue.put(functools.partial(ac.result_callback, result))
+                    else:
+                        async_event_queue.put(ac.result_callback)
 
                     QApplication.postEvent(self, QEvent(ASYNC_EVENT))
 
