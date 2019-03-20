@@ -21,10 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtWidgets import QLabel, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QApplication
+from PyQt5.QtWidgets import QLabel, QVBoxLayout, QHBoxLayout, QWidget, QPushButton
 
 from brickv.utils import get_main_window
-from brickv import infos
 
 class COMCUBootloader(QWidget):
     def __init__(self, ipcon, info):

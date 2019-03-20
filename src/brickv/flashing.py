@@ -31,7 +31,6 @@ import urllib.request
 import urllib.error
 import time
 import struct
-import traceback
 from io import BytesIO as FileLike
 
 from PyQt5.QtCore import Qt, QTimer
