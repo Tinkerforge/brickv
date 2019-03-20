@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 import sys
 from brickv.config_common import *
 
-class HostInfo(object):
+class HostInfo:
     host = DEFAULT_HOST
     port = DEFAULT_PORT
     use_authentication = DEFAULT_USE_AUTHENTICATION
@@ -45,46 +45,46 @@ class HostInfo(object):
 def get_host_info_strings():
     return [DEFAULT_HOST_INFO]
 
-def set_host_info_strings(host_info_strings):
+def set_host_info_strings(_host_info_strings):
     pass
 
 def legacy_get_host():
     return DEFAULT_HOST
 
-def legacy_set_host(host):
+def legacy_set_host(_host):
     pass
 
-def legacy_get_host_history(size):
+def legacy_get_host_history(_size):
     return []
 
-def legacy_set_host_history(history):
+def legacy_set_host_history(_history):
     pass
 
 def legacy_get_port():
     return DEFAULT_PORT
 
-def legacy_set_port(port):
+def legacy_set_port(_port):
     pass
 
 def legacy_get_use_authentication():
     return DEFAULT_USE_AUTHENTICATION
 
-def legacy_set_use_authentication(use):
+def legacy_set_use_authentication(_use):
     pass
 
 def legacy_get_secret():
     return DEFAULT_SECRET
 
-def legacy_set_secret(secret):
+def legacy_set_secret(_secret):
     pass
 
 def legacy_get_remember_secret():
     return DEFAULT_REMEMBER_SECRET
 
-def legacy_set_remember_secret(remember):
+def legacy_set_remember_secret(_remember):
     pass
 
-if sys.platform.startswith('linux') or sys.platform.startswith('freebsd'):
+if sys.platform.startswith('linux'):
     from brickv.config_linux import *
 elif sys.platform == 'darwin':
     from brickv.config_macos import *
@@ -115,7 +115,7 @@ def get_host_infos(count):
                 host_info.secret = DEFAULT_SECRET
 
             host_infos.append(host_info)
-        except:
+        except (TypeError, ValueError):
             continue
 
         if len(host_infos) == count:

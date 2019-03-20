@@ -176,7 +176,7 @@ class SAMBANoBrickError(SAMBAException):
 class SAMBARebootError(SAMBAException):
     pass
 
-class SAMBA(object):
+class SAMBA:
     def __init__(self, port_name, progress=None, application_name='Brick Viewer'):
         self.r_command_bug = False
         self.sam_series = None

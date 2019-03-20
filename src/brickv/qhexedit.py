@@ -573,7 +573,7 @@ class QHexeditWidget(QAbstractScrollArea):
     '''
     // Name: resizeEvent(QResizeEvent *)
     '''
-    def resizeEvent(self, event):
+    def resizeEvent(self, _event):
         self.updateScrollbars()
         return
 
@@ -592,9 +592,9 @@ class QHexeditWidget(QAbstractScrollArea):
         if index < self.dataSize():
             if self.selection_start != self.selection_end:
                 if self.selection_start < self.selection_end:
-                    ret = (index >= self.selection_start and index < self.selection_end)
+                    ret = (self.selection_start <= index < self.selection_end)
                 else:
-                    ret = (index >= self.selection_end and index < self.selection_start)
+                    ret = (self.selection_end <= index < self.selection_start)
         return ret
 
     '''

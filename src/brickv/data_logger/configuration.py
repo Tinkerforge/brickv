@@ -73,7 +73,7 @@ def save_config(config, filename):
 #                               ConfigValidator
 #---------------------------------------------------------------------------
 
-class ConfigValidator(object):
+class ConfigValidator:
     """
     This class validates the (JSON) config file
     """
@@ -454,7 +454,7 @@ class ConfigValidator(object):
 """
 
 
-class LogSpaceCounter(object):
+class LogSpaceCounter:
     """
     This class provides functions to count the average lines per second
     which will be written into the log file

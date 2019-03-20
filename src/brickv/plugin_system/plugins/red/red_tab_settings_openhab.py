@@ -36,7 +36,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog, ExpandingInputDialog
 from brickv.plugin_system.plugins.red.script_manager import check_script_result, report_script_result
 
-class ConfigFile(object):
+class ConfigFile:
     def __init__(self, display_name, absolute_name, tab, deletable=True):
         self.display_name   = display_name # is unique
         self.absolute_name  = absolute_name # is also unique

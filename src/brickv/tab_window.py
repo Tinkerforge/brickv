@@ -49,13 +49,13 @@ class IconButton(QAbstractButton):
     def sizeHint(self):
         return self.iconSize()
 
-    def enterEvent(self, event):
+    def enterEvent(self, _event):
         self.set_hover_icon()
 
-    def leaveEvent(self, event):
+    def leaveEvent(self, _event):
         self.set_normal_icon()
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, _event):
         self.clicked.emit()
 
     def set_hover_icon(self):

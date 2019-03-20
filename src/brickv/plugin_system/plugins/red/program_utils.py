@@ -45,7 +45,7 @@ Upload = namedtuple('Upload', 'source target')
 Download = namedtuple('Download', 'source target')
 
 
-class Constants(object):
+class Constants:
     PAGE_GENERAL    = 1001
     PAGE_FILES      = 1002
     PAGE_C          = 1003
@@ -653,7 +653,7 @@ class ExpandingInputDialog(QInputDialog):
         return size
 
 
-class ListWidgetEditor(object):
+class ListWidgetEditor:
     def __init__(self, label_items, list_items, label_items_help,
                  button_add_item, button_remove_item, button_edit_item,
                  button_up_item, button_down_item, new_item_text):
@@ -792,7 +792,7 @@ class ListWidgetEditor(object):
         return items
 
 
-class TreeWidgetEditor(object):
+class TreeWidgetEditor:
     def __init__(self, label_items, tree_items, label_items_help,
                  button_add_item, button_remove_item, button_edit_item,
                  button_up_item, button_down_item, new_item_texts):
@@ -955,7 +955,7 @@ class TreeWidgetEditor(object):
         return items
 
 
-class MandatoryLineEditChecker(object):
+class MandatoryLineEditChecker:
     def __init__(self, page, label, edit, regexp=None):
         self.page     = page
         self.label    = label
@@ -987,7 +987,7 @@ class MandatoryLineEditChecker(object):
             self.page.completeChanged.emit()
 
 
-class MandatoryEditableComboBoxChecker(object):
+class MandatoryEditableComboBoxChecker:
     def __init__(self, page, label, combo):
         self.page     = page
         self.label    = label
@@ -1027,7 +1027,7 @@ class MandatoryEditableComboBoxChecker(object):
 
 # expects the combo box to be editable
 # FIXME: ensure that file is relative, non-empty and does not start with ..
-class MandatoryTypedFileSelector(object):
+class MandatoryTypedFileSelector:
     def __init__(self, page, label_file, combo_file, label_type, combo_type, label_help):
         self.page       = page
         self.label_file = label_file
@@ -1072,7 +1072,7 @@ class MandatoryTypedFileSelector(object):
 
 
 # expects the combo box to be editable
-class MandatoryDirectorySelector(object):
+class MandatoryDirectorySelector:
     def __init__(self, page, label, combo):
         self.page  = page
         self.label = label
@@ -1131,9 +1131,9 @@ class MandatoryDirectorySelector(object):
             self.page.completeChanged.emit()
 
 
-class ComboBoxFileEndingChecker(object):
-    class NoEndingCheckRequired(object):
-        class NoIndexChangeRequired(object):
+class ComboBoxFileEndingChecker:
+    class NoEndingCheckRequired:
+        class NoIndexChangeRequired:
             def connect(self, *args, **kwargs):
                 return
         currentIndexChanged = NoIndexChangeRequired()
@@ -1167,7 +1167,7 @@ class ComboBoxFileEndingChecker(object):
             self.combo_file.clearEditText()
 
 
-class ChunkedDownloaderBase(object):
+class ChunkedDownloaderBase:
     def __init__(self, session):
         self.session               = session
         self.source_path           = None # abolsute path on RED Brick in POSIX format
@@ -1314,7 +1314,7 @@ class ChunkedDownloaderBase(object):
         pass
 
 
-class ChunkedUploaderBase(object):
+class ChunkedUploaderBase:
     def __init__(self, session):
         self.session               = session
         self.source_path           = None # abolsute path on host in host format
@@ -1435,7 +1435,7 @@ class ChunkedUploaderBase(object):
         pass
 
 
-class TextFile(object):
+class TextFile:
     ERROR_KIND_OPEN = 1
     ERROR_KIND_READ = 2
     ERROR_KIND_UTF8 = 3

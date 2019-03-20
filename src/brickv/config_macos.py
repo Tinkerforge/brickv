@@ -67,7 +67,7 @@ def get_host_info_strings(max_count):
 
     try:
         count = int(get_plist_value('HostInfoCount', '-1'))
-    except:
+    except (ValueError, TypeError):
         count = max_count
 
     if count < 0 or count > max_count:

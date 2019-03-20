@@ -114,7 +114,7 @@ class DataLoggerException(Exception):
  '''
 
 
-class CSVData(object):
+class CSVData:
     """
     This class is used as a temporary save spot for all csv relevant data.
     """
@@ -153,7 +153,7 @@ class CSVData(object):
  '''
 
 
-class LoggerTimer(object):
+class LoggerTimer:
     """This class provides a timer with a repeat functionality based on a interval"""
 
     def __init__(self, interval, func_name, var_name, device):
@@ -216,7 +216,7 @@ class LoggerTimer(object):
 """
 
 
-class Utilities(object):
+class Utilities:
     """
     This class provides some utility functions for the data logger project
     """
@@ -304,7 +304,7 @@ class Utilities(object):
  '''
 
 
-class CSVWriter(object):
+class CSVWriter:
     """
     This class provides the actual open/write functions, which are used by the CSVWriterJob class to write logged data into
     a CSV formatted file.

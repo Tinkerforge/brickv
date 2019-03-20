@@ -31,7 +31,7 @@ import struct
 import sys
 import time
 
-class ESPROM(object):
+class ESPROM:
     # These are the currently known commands supported by the ROM
     ESP_FLASH_BEGIN = 0x02
     ESP_FLASH_DATA  = 0x03
@@ -295,7 +295,7 @@ class ESPROM(object):
         self.mem_finish(stub['entry'])
 
 
-class CesantaFlasher(object):
+class CesantaFlasher:
     # From stub_flasher.h
     CMD_FLASH_WRITE = 1
     CMD_FLASH_READ = 2
@@ -568,7 +568,7 @@ from io import BytesIO as FileLike
 
 from queue import Queue, Empty
 
-class TFSerial(object):
+class TFSerial:
     def __init__(self, master):
         self.master = master
         self.timeout = 1
@@ -625,7 +625,7 @@ class TFSerial(object):
     def inWaiting(self):
         return len(self.read_buffer)
 
-class ESPFlash(object):
+class ESPFlash:
     def __init__(self, master, progress=None):
         self.master = master
         self.progress = progress

@@ -32,7 +32,7 @@ from brickv import config
 UID_BRICKV = '$BRICKV'
 UID_BRICKD = '$BRICKD'
 
-class AbstractInfo(object):
+class AbstractInfo:
     type = 'abstract'
     url_part = ''
     error = ''

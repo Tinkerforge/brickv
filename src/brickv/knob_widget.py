@@ -80,7 +80,11 @@ class KnobWidget(QWidget):
         self.recalculate_size()
 
     # override QWidget.paintEvent
-    def paintEvent(self, event):
+    # Disable pylint warning for knob_radius (which can not be None, as it is read from
+    # self.dynamic_knob_radius if self.dynamic_resize, which, when set first recalculates
+    # the dynamic_knob_radius, and then calls update
+    #pylint: disable=invalid-unary-operand-type
+    def paintEvent(self, _event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
         width = self.width()

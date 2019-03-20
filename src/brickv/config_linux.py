@@ -65,7 +65,7 @@ def get_host_info_strings(max_count):
 
     try:
         count = int(get_config_value('Connection', 'HostInfoCount', '-1'))
-    except:
+    except (TypeError, ValueError):
         count = max_count
 
     if count < 0 or count > max_count:

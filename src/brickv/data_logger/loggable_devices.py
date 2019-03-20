@@ -5131,7 +5131,7 @@ device_specs = {
  ---------------------------------------------------------------------------*/
  '''
 
-class AbstractDevice(object):
+class AbstractDevice:
     """DEBUG and Inheritance only class"""
 
     def __init__(self, data, datalogger):

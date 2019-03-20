@@ -118,7 +118,7 @@ class REDError(Exception):
     def error_code(self): return self._error_code
 
 
-class MethodRef(object):
+class MethodRef:
     def __init__(self, method):
         self.target_ref   = weakref.ref(method.__self__)
         self.function_ref = weakref.ref(method.__func__)
@@ -308,7 +308,7 @@ def _attach_or_release(session, object_class, object_id, extra_object_ids_to_rel
     return obj
 
 
-class REDObjectReleaser(object):
+class REDObjectReleaser:
     def __init__(self, obj, object_id, session):
         self._object_ref  = weakref.ref(obj, self.release)
         self._object_id   = object_id

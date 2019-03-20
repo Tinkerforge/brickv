@@ -32,7 +32,7 @@ from brickv.data_logger.event_logger import EventLogger, GUILogger
  ---------------------------------------------------------------------------*/
  '''
 
-class GuiConfigHandler(object):
+class GuiConfigHandler:
     def create_config(setup_dialog):
         """
         Creates a config file. Converst all devices from the tree_widget and

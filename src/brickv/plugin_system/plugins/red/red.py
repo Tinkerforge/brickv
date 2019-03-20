@@ -47,7 +47,7 @@ import brickv.infos
 
 MAX_IMAGE_VERSION = (1, 13)
 
-class ImageVersion(object):
+class ImageVersion:
     string = None
     number = (0, 0)
     flavor = None

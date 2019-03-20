@@ -22,14 +22,13 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import sys
+
 from brickv.plugin_system.error import Error
 from brickv.plugin_system.unknown import Unknown
 from brickv.plugin_system.plugins import device_classes
 
-import sys
-import traceback
-
-class PluginManager(object):
+class PluginManager:
     def __init__(self):
         self.plugins = device_classes
 

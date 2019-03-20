@@ -32,6 +32,7 @@ from PyQt5.QtCore import pyqtSignal, QTimer
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.led_strip.ui_led_strip import Ui_LEDStrip
 from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
+from brickv.bindings import ip_connection
 from brickv.async_call import async_call
 
 class LEDStrip(PluginBase, Ui_LEDStrip):
@@ -208,7 +209,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
 
     def get_chip_type_async(self, new_chip_type):
         for index in range(self.chip_type_combobox.count()):
-            chip_type, num_channels = self.chip_type_combobox.itemData(index)
+            chip_type, _num_channels = self.chip_type_combobox.itemData(index)
 
             if chip_type == new_chip_type:
                 self.chip_type_combobox.setCurrentIndex(index)
@@ -536,7 +537,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         if self.has_configurable_rame_rendered_callback and not self.frame_rendered_callback_was_enabled:
             try:
                 self.led_strip.disable_frame_rendered_callback()
-            except:
+            except ip_connection.Error:
                 pass
 
     def destroy(self):

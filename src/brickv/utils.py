@@ -31,8 +31,9 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 def get_resources_path(relative_path):
     try:
         # PyInstaller stores data files in a tmp folder refered to as _MEIPASS
+        #pylint: disable=protected-access
         base_path = sys._MEIPASS
-    except Exception:
+    except AttributeError:
         base_path = os.path.dirname(os.path.realpath(__file__))
 
     path = os.path.join(base_path, relative_path)
@@ -48,7 +49,7 @@ def get_home_path():
     return QDir.toNativeSeparators(QDir.homePath())
 
 def get_open_file_name(*args, **kwargs):
-    filename, selected_filter = QFileDialog.getOpenFileName(*args, **kwargs)
+    filename, _selected_filter = QFileDialog.getOpenFileName(*args, **kwargs)
 
     if len(filename) > 0:
         filename = QDir.toNativeSeparators(filename)
@@ -58,7 +59,7 @@ def get_open_file_name(*args, **kwargs):
 def get_open_file_names(*args, **kwargs):
     filenames = []
 
-    names, selected_filter = QFileDialog.getOpenFileNames(*args, **kwargs)
+    names, _selected_filter = QFileDialog.getOpenFileNames(*args, **kwargs)
 
     for filename in names:
         filenames.append(QDir.toNativeSeparators(filename))
@@ -66,7 +67,7 @@ def get_open_file_names(*args, **kwargs):
     return filenames
 
 def get_save_file_name(*args, **kwargs):
-    filename, selected_filter = QFileDialog.getSaveFileName(*args, **kwargs)
+    filename, _selected_filter = QFileDialog.getSaveFileName(*args, **kwargs)
 
     if len(filename) > 0:
         filename = QDir.toNativeSeparators(filename)

@@ -39,7 +39,7 @@ SCRIPT_FOLDER = '/usr/local/scripts'
 
 script_instances = set()
 
-class Script(object):
+class Script:
     def __init__(self, name, extension, content):
         self.name        = name
         self.extension   = extension
@@ -106,7 +106,7 @@ class ScriptInstance(QObject):
 # stdout and stderr are either strings or None (UTF-8 decode error)
 ScriptResult = namedtuple('ScriptResult', 'error stdout stderr exit_code')
 
-class ScriptManager(object):
+class ScriptManager:
     def __init__(self, session):
         self.session = session
         self.devnull = REDFile(self.session).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0) # FIXME: This is blocking the GUI!

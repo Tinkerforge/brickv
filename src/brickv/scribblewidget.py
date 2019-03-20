@@ -43,7 +43,7 @@ class ScribbleWidget(QWidget):
         self.inner = ScribbleWidget.ScribbleArea(width, height, scaling_factor, foreground_color, background_color, enable_grid, grid_color, self)
         self.inner.move(1, 1)
 
-    def paintEvent(self, event):
+    def paintEvent(self, _event):
         painter = QPainter(self)
         painter.setPen(self._pen)
         painter.drawRect(QRect(0, 0, self.width() - 1, self.height() - 1))

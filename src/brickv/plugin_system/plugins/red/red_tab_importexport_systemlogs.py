@@ -36,7 +36,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.async_call import async_call
 from brickv.utils import get_main_window, get_home_path, get_save_file_name
 
-class SystemLog(object):
+class SystemLog:
     def __init__(self, display_name, source_name):
         self.display_name   = display_name
         self.source_name    = source_name # FIXME: need to handle rotated logs

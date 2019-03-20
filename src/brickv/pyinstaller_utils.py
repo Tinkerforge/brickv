@@ -52,7 +52,7 @@ def specialize_template(template_filename, destination_filename, replacements):
 
     try:
         os.makedirs(os.path.dirname(destination_filename))
-    except:
+    except OSError:
         pass
     destination_file = open(destination_filename, 'w+')
     destination_file.writelines(lines)
@@ -115,6 +115,8 @@ class PyinstallerUtils:
             self.icon = self.UNDERSCORE_NAME+'-icon.png'
         else:
             self.icon = os.path.join(self.mac_build_data_path, self.UNDERSCORE_NAME+'-icon.icns')
+
+        self.datas = []
 
     def get_unreleased_bindings(self):
         print("Searching unreleased devices.")

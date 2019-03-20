@@ -16,7 +16,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 
 __version__ = "0.1"
 
-class Terminal(object):
+class Terminal:
     def __init__(self, w, h):
         self.w = w
         self.h = h

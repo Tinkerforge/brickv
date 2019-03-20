@@ -36,7 +36,7 @@ def create_object_in_qt_main_thread(cls, data):
     oc.semaphore.acquire()
     return oc.obj
 
-class ObjectCreator(object):
+class ObjectCreator:
     def __init__(self, cls, data):
         self.cls = cls
         self.data = data

@@ -27,7 +27,7 @@ from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_settings import Ui_REDTabSettings
 import json
 
-class ServiceState(object):
+class ServiceState:
     fetched          = False
     gpu              = None
     desktopenv       = None

@@ -37,7 +37,7 @@ from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_main_window, get_home_path, get_open_file_name
 
 # this class is directly based on the QwtSpline class from the Qwt library
-class NaturalSpline(object):
+class NaturalSpline:
     def __init__(self):
         self.points = []
         self.a = []
