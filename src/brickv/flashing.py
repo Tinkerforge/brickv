@@ -99,6 +99,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         QDialog.__init__(self, parent, get_modeless_dialog_flags())
 
         self.setupUi(self)
+        self.ignore_tab_changed_event = False
 
         self.tool_infos = {}
         self.firmware_infos = {}
@@ -548,8 +549,16 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.button_extension_firmware_browse.setEnabled(is_extension_firmware_custom)
         self.label_extension_firmware_usb_hint.setVisible(not is_extension_connection_type_usb)
 
+        # setTabEnabled sets the current index to the modified tab if enabled is true.
+        # Restore the old selected tab after enabling.
+        # Also ignore the tab_changed_event here, as it calls update_ui_state (this function)
+        # resulting in endless recursion.
+        self.ignore_tab_changed_event = True
+        idx = self.tab_widget.currentIndex()
         self.tab_widget.setTabEnabled(2, self.combo_parent.count() > 0 and self.combo_parent.itemText(0) != 'No Brick found')
         self.tab_widget.setTabEnabled(3, len(self.extension_infos) > 0)
+        self.tab_widget.setCurrentIndex(idx)
+        self.ignore_tab_changed_event = False
 
     def firmware_changed(self, _index):
         self.update_ui_state()
@@ -1400,6 +1409,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         progress.cancel()
 
     def tab_changed(self, i):
+        if self.ignore_tab_changed_event:
+            return
         if i == 0 and self.refresh_updates_pending:
             self.refresh_updates_clicked()
         elif i == 2:
