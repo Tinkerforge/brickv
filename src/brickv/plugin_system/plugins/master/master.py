@@ -62,7 +62,7 @@ class Master(PluginBase, Ui_Master):
         self.wifi2_ext = None
         self.wifi2_firmware_version = None
         self.wifi_update_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')), self.tab_widget)
-        self.wifi_update_button.setToolTip('Extension update available')
+        self.wifi_update_button.setToolTip('Update available')
         self.wifi_update_button.clicked.connect(lambda: get_main_window().show_extension_update(self.device_info.uid))
         self.wifi_update_button.hide()
 
@@ -136,7 +136,7 @@ class Master(PluginBase, Ui_Master):
         if brick_update_avail:
             if self.device_info.tab_window is not None:
                 self.device_info.tab_window.button_update.show()
-            self.update_tab_button.setToolTip('Master Brick update available')
+            self.update_tab_button.setToolTip('Update available')
             self.update_tab_button.clicked.connect(lambda: get_main_window().show_brick_update(self.device_info.url_part))
 
             if self.wifi_tab_idx is not None:
@@ -148,7 +148,7 @@ class Master(PluginBase, Ui_Master):
         # so they are more likely to update at least the Extension. Also when the Extension is updated, device_infos_changed
         # will be called again, then notifying the user of the Master Brick update.
         if wifi_update_avail:
-            self.update_tab_button.setToolTip('WIFI Extension update available')
+            self.update_tab_button.setToolTip('WIFI Extension 2.0 Update available')
             self.update_tab_button.clicked.connect(lambda: get_main_window().show_extension_update(self.device_info.uid))
 
             if self.wifi_tab_idx is not None:
