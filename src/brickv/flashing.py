@@ -1792,12 +1792,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.tab_widget.setCurrentWidget(self.tab_brick)
         self.refresh_serial_ports()
 
-        idx = next((i for i in range(self.combo_firmware.count()) if url_part.replace("_v2", " 2.0").lower() == self.combo_firmware.itemText(i).lower().split(' (')[0]), 0)
+        url = url_part.replace("_v2", " 2.0").lower()
+        idx = next((i for i in range(self.combo_firmware.count())
+                    if url == self.combo_firmware.itemText(i).lower().split(' (')[0]), 0)
 
-        # refresh_update_tree_view starts a single shot timer to rebuild some of the UI.
-        # This sets the combobox index to a default value.
-        # Using a 1 ms sleep time here ensures, that the refresh...'s timer runs first
-        QTimer.singleShot(1, lambda: self.combo_firmware.setCurrentIndex(idx))
+        self.combo_firmware.setCurrentIndex(idx)
 
     def show_bricklet_update(self, parent_uid, port):
         self.tab_widget.setCurrentWidget(self.tab_bricklet)
@@ -1807,16 +1806,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if idx >= 0:
             self.combo_parent.setCurrentIndex(idx)
 
-
         if port != 'z':
             idx = ord(port) - ord('a')
         else:
             idx = 0
 
-        # refresh_update_tree_view starts a single shot timer to rebuild some of the UI.
-        # This sets the combobox index to a default value.
-        # Using a 1 ms sleep time here ensures, that the refresh...'s timer runs first
-        QTimer.singleShot(1, lambda: self.combo_port.setCurrentIndex(idx))
+        self.combo_port.setCurrentIndex(idx)
 
 
     def show_extension_update(self, master_uid):
@@ -1826,10 +1821,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         idx = uids.index(master_uid)
 
         if idx >= 0:
-            # refresh_update_tree_view starts a single shot timer to rebuild some of the UI.
-            # This sets the combobox index to a default value.
-            # Using a 1 ms sleep time here ensures, that the refresh...'s timer runs first
-            QTimer.singleShot(1, lambda: self.combo_extension.setCurrentIndex(idx))
+            self.combo_extension.setCurrentIndex(idx)
 
     def show_red_brick_update(self):
         get_main_window().show_red_brick_update()
