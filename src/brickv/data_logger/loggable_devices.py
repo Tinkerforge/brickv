@@ -63,6 +63,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
     from brickv.bindings.bricklet_can_v2 import BrickletCANV2 #NYI FIXME: has to use frame_read callback to get all data
     from brickv.bindings.bricklet_co2 import BrickletCO2
+    from brickv.bindings.bricklet_co2_v2 import BrickletCO2V2
     from brickv.bindings.bricklet_color import BrickletColor
     from brickv.bindings.bricklet_current12 import BrickletCurrent12
     from brickv.bindings.bricklet_current25 import BrickletCurrent25
@@ -77,6 +78,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_gps import BrickletGPS
     from brickv.bindings.bricklet_gps_v2 import BrickletGPSV2
     from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
+    from brickv.bindings.bricklet_hall_effect_v2 import BrickletHallEffectV2
     from brickv.bindings.bricklet_humidity import BrickletHumidity
     from brickv.bindings.bricklet_humidity_v2 import BrickletHumidityV2
     from brickv.bindings.bricklet_industrial_counter import BrickletIndustrialCounter
@@ -94,11 +96,13 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_io4 import BrickletIO4
     from brickv.bindings.bricklet_io4_v2 import BrickletIO4V2
     from brickv.bindings.bricklet_joystick import BrickletJoystick
+    from brickv.bindings.bricklet_joystick_v2 import BrickletJoystickV2
     from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
     from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
     from brickv.bindings.bricklet_led_strip_v2 import BrickletLEDStripV2
     from brickv.bindings.bricklet_line import BrickletLine
     from brickv.bindings.bricklet_linear_poti import BrickletLinearPoti
+    from brickv.bindings.bricklet_linear_poti_v2 import BrickletLinearPotiV2
     from brickv.bindings.bricklet_load_cell import BrickletLoadCell
     from brickv.bindings.bricklet_load_cell_v2 import BrickletLoadCellV2
     from brickv.bindings.bricklet_moisture import BrickletMoisture
@@ -125,6 +129,7 @@ if 'merged_data_logger_modules' not in globals():
     #from brickv.bindings.bricklet_rs232_v2 import BrickletRS232V2 #NYI FIXME: has to use read_callback callback to get all data
     from brickv.bindings.bricklet_rs485 import BrickletRS485
     from brickv.bindings.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
+    from brickv.bindings.bricklet_segment_display_4x7_v2 import BrickletSegmentDisplay4x7V2
     from brickv.bindings.bricklet_solid_state_relay import BrickletSolidStateRelay
     from brickv.bindings.bricklet_solid_state_relay_v2 import BrickletSolidStateRelayV2
     from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
@@ -169,6 +174,7 @@ else:
     from tinkerforge.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
     from tinkerforge.bricklet_can_v2 import BrickletCANV2 #NYI FIXME: has to use frame_read callback to get all data
     from tinkerforge.bricklet_co2 import BrickletCO2
+    from tinkerforge.bricklet_co2_v2 import BrickletCO2V2
     from tinkerforge.bricklet_color import BrickletColor
     from tinkerforge.bricklet_current12 import BrickletCurrent12
     from tinkerforge.bricklet_current25 import BrickletCurrent25
@@ -183,6 +189,7 @@ else:
     from tinkerforge.bricklet_gps import BrickletGPS
     from tinkerforge.bricklet_gps_v2 import BrickletGPSV2
     from tinkerforge.bricklet_hall_effect import BrickletHallEffect
+    from tinkerforge.bricklet_hall_effect_v2 import BrickletHallEffectV2
     from tinkerforge.bricklet_humidity import BrickletHumidity
     from tinkerforge.bricklet_humidity_v2 import BrickletHumidityV2
     from tinkerforge.bricklet_industrial_counter import BrickletIndustrialCounter
@@ -200,11 +207,13 @@ else:
     from tinkerforge.bricklet_io4 import BrickletIO4
     from tinkerforge.bricklet_io4_v2 import BrickletIO4V2
     from tinkerforge.bricklet_joystick import BrickletJoystick
+    from tinkerforge.bricklet_joystick_v2 import BrickletJoystickV2
     from tinkerforge.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
     from tinkerforge.bricklet_led_strip import BrickletLEDStrip
     from tinkerforge.bricklet_led_strip_v2 import BrickletLEDStripV2
     from tinkerforge.bricklet_line import BrickletLine
     from tinkerforge.bricklet_linear_poti import BrickletLinearPoti
+    from tinkerforge.bricklet_linear_poti_v2 import BrickletLinearPotiV2
     from tinkerforge.bricklet_load_cell import BrickletLoadCell
     from tinkerforge.bricklet_load_cell_v2 import BrickletLoadCellV2
     from tinkerforge.bricklet_moisture import BrickletMoisture
@@ -231,6 +240,7 @@ else:
     # from tinkerforge.bricklet_rs232_v2 import BrickletRS232V2 #NYI FIXME: has to use read_callback callback to get all data
     from tinkerforge.bricklet_rs485 import BrickletRS485
     from tinkerforge.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
+    from tinkerforge.bricklet_segment_display_4x7_v2 import BrickletSegmentDisplay4x7V2
     from tinkerforge.bricklet_solid_state_relay import BrickletSolidStateRelay
     from tinkerforge.bricklet_solid_state_relay_v2 import BrickletSolidStateRelayV2
     from tinkerforge.bricklet_sound_intensity import BrickletSoundIntensity
@@ -1070,6 +1080,41 @@ device_specs = {
         'options_setter': None,
         'options': None
     },
+    BrickletCO2V2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletCO2V2,
+        'values': [
+            {
+                'name': 'CO2 Concentration',
+                'getter': lambda device: device.get_co2_concentration(),
+                'subvalues': None,
+                'unit': 'ppm',
+                'advanced': False
+            },
+            {
+                'name': 'Temperature',
+                'getter': lambda device: device.get_temperature(),
+                'subvalues': None,
+                'unit': '°C/100',
+                'advanced': False
+            },
+            {
+                'name': 'Humidity',
+                'getter': lambda device: device.get_humidity(),
+                'subvalues': None,
+                'unit': '%RH/100',
+                'advanced': False
+            },
+            {
+                'name': 'All Values',
+                'getter': lambda device: device.get_all_values(),
+                'subvalues': ['CO2 Concentration', 'Temperature', 'Humidity'],
+                'unit': ['ppm', '°C/100', '%RH/100'],
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
     BrickletColor.DEVICE_DISPLAY_NAME: {
         'class': BrickletColor,
         'values': [
@@ -1453,6 +1498,52 @@ device_specs = {
                 'maximum': 255,
                 'suffix': ' ms',
                 'default': 100
+            }
+        ]
+    },
+    BrickletHallEffectV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletHallEffectV2,
+        'values': [
+            {
+                'name': 'Value',
+                'getter': lambda device: device.get_magnetic_flux_density(),
+                'subvalues': None,
+                'unit': 'uT',
+                'advanced': False
+            },
+            {
+                'name': 'Count',
+                'getter': lambda device: device.get_counter(False),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            }
+        ],
+        'options_setter': lambda device, high_threshold, low_threshold, debounce: device.set_counter_config(high_threshold, low_threshold, debounce),
+        'options': [
+            {
+                'name': 'High Threshold',
+                'type': 'int',
+                'minimum': -7000,
+                'maximum': 7000,
+                'suffix': ' uT',
+                'default': 2000
+            },
+            {
+                'name': 'Low Threshold',
+                'type': 'int',
+                'minimum': -7000,
+                'maximum': 7000,
+                'suffix': ' uT',
+                'default': -2000
+            },
+            {
+                'name': ' Debounce',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 2147483647,
+                'suffix': ' us',
+                'default': 100000
             }
         ]
     },
@@ -3200,6 +3291,27 @@ device_specs = {
         'options_setter': None,
         'options': None
     },
+    BrickletJoystickV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletJoystickV2,
+        'values': [
+            {
+                'name': 'Position',
+                'getter': lambda device: device.get_position(),
+                'subvalues': ['X', 'Y'],
+                'unit': [None, None],
+                'advanced': False
+            },
+            {
+                'name': 'Pressed',
+                'getter': lambda device: device.is_pressed(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
     BrickletLEDStrip.DEVICE_DISPLAY_NAME: {
         'class': BrickletLEDStrip,
         'values': [
@@ -3265,6 +3377,20 @@ device_specs = {
                 'subvalues': None,
                 'unit': None,
                 'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletLinearPotiV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletLinearPotiV2,
+        'values': [
+            {
+                'name': 'Position',
+                'getter': lambda device: device.get_position(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
             }
         ],
         'options_setter': None,
@@ -3809,6 +3935,20 @@ device_specs = {
     },
     BrickletSegmentDisplay4x7.DEVICE_DISPLAY_NAME: {
         'class': BrickletSegmentDisplay4x7,
+        'values': [
+            {
+                'name': 'Counter Value',
+                'getter': lambda device: device.get_counter_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletSegmentDisplay4x7V2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletSegmentDisplay4x7V2,
         'values': [
             {
                 'name': 'Counter Value',
