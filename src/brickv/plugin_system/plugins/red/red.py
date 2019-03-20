@@ -348,7 +348,7 @@ Please make sure that your internet connection is working.'
                    0),
                    lambda red_file: self.cb_rfile_open_s(name, red_file),
                    lambda e: self.cb_rfile_open_f(name, e),
-                   report_exception=True)
+                   pass_exception_to_error_callback=True)
 
     def do_install_updates(self):
         if not self.dialog_session:
@@ -473,7 +473,7 @@ Please make sure that your internet connection is working.'
                    (name, url),
                    self.download_update_s_async_cb,
                    lambda e: self.download_update_f_async_cb(name, e),
-                   report_exception=True)
+                   pass_exception_to_error_callback=True)
 
     def check_update_available(self, update_info):
         if not self.dialog_session:

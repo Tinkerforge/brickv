@@ -40,18 +40,18 @@ async_event_queue = Queue()
 async_session_lock = Lock()
 async_session_id = 1
 
-AsyncCall = namedtuple('AsyncCall', 'func_to_call parameter result_callback error_callback report_exception log_exception session_id')
+AsyncCall = namedtuple('AsyncCall', 'function parameter result_callback error_callback pass_exception_to_error_callback debug_exception session_id')
 
 def stop_async_thread():
     with async_session_lock:
         async_call_queue.put(None)
 
-def async_call(func_to_call, parameter=None, result_callback=None,
-               error_callback=None, report_exception=False, log_exception=False):
+def async_call(function, parameter=None, result_callback=None, error_callback=None,
+               pass_exception_to_error_callback=False, debug_exception=False):
     with async_session_lock:
-        async_call_queue.put(AsyncCall(func_to_call, parameter, result_callback,
-                                       error_callback, report_exception,
-                                       log_exception, async_session_id))
+        async_call_queue.put(AsyncCall(function, parameter, result_callback,
+                                       error_callback, pass_exception_to_error_callback,
+                                       debug_exception, async_session_id))
 
 def async_event_handler():
     while not async_event_queue.empty():
@@ -82,28 +82,28 @@ def async_start_thread(parent):
                 if ac is None:
                     break
 
-                if not ac.func_to_call:
+                if not ac.function:
                     continue
 
                 result = None
 
                 try:
                     if ac.parameter == None:
-                        result = ac.func_to_call()
+                        result = ac.function()
                     elif isinstance(ac.parameter, tuple):
-                        result = ac.func_to_call(*ac.parameter)
+                        result = ac.function(*ac.parameter)
                     else:
-                        result = ac.func_to_call(ac.parameter)
+                        result = ac.function(ac.parameter)
                 except Exception as e:
                     with async_session_lock:
                         if ac.session_id != async_session_id:
                             continue
 
                     if ac.error_callback != None:
-                        if ac.log_exception:
+                        if ac.debug_exception:
                             logging.exception('Error while doing async call')
 
-                        if ac.report_exception:
+                        if ac.pass_exception_to_error_callback:
                             async_event_queue.put(functools.partial(ac.error_callback, e))
                         else:
                             async_event_queue.put(ac.error_callback)

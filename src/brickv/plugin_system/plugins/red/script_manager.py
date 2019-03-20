@@ -192,7 +192,7 @@ class ScriptManager:
             si.report_result(ScriptResult('Could not async-initialize script "{0}": {1}'.format(si.name, exception), None, None, None))
             script_instances.remove(si)
 
-        async_call(self._init_script_async, si, cb_success, cb_error, report_exception=True)
+        async_call(self._init_script_async, si, cb_success, cb_error, pass_exception_to_error_callback=True)
 
     def _init_script_async(self, si):
         si.script.upload_lock.acquire()

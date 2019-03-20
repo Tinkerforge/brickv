@@ -206,7 +206,7 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
 
         async_call(self.log_file.open,
                    (log.source_name, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                   cb_open, cb_open_error, report_exception=True)
+                   cb_open, cb_open_error, pass_exception_to_error_callback=True)
 
     def save_log(self):
         log      = self.logs[self.combo_log.currentIndex()]

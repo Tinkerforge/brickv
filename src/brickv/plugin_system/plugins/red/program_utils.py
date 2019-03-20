@@ -1473,7 +1473,7 @@ class TextFile:
 
         async_call(REDFile(session).open,
                    (name, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                   cb_open, cb_open_error, report_exception=True)
+                   cb_open, cb_open_error, pass_exception_to_error_callback=True)
 
 
 def get_key_from_value(dictionary, value):

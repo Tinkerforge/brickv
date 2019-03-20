@@ -156,7 +156,7 @@ class REDTabImportExportExport(QWidget, Ui_REDTabImportExportExport):
         self.update_ui_state()
         self.tree_programs.invisibleRootItem().takeChildren()
 
-        async_call(refresh_async, None, cb_success, cb_error, report_exception=True)
+        async_call(refresh_async, None, cb_success, cb_error, pass_exception_to_error_callback=True)
 
     def export_archive(self):
         timestamp   = QDateTime.fromTime_t(int(time.time())).toString('yyyyMMdd-HHmmss')

@@ -266,7 +266,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
 
         async_call(REDFile(self.session).open,
                    (config.absolute_name, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                   cb_open, cb_open_error, report_exception=True)
+                   cb_open, cb_open_error, pass_exception_to_error_callback=True)
 
     def refresh_all_configs(self, done_callback):
         self.edit_errors.hide()
@@ -461,7 +461,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
 
         async_call(REDFile(self.session).open,
                    (target_path, REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_EXCLUSIVE, 0o644, 0, 0),
-                   cb_open, cb_open_error, report_exception=True)
+                   cb_open, cb_open_error, pass_exception_to_error_callback=True)
 
     def delete_config(self):
         config = self.configs[self.combo_config.currentIndex()]
@@ -535,4 +535,4 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
 
         async_call(REDFile(self.session).open,
                    (config.absolute_name, REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0o644, 0, 0),
-                   cb_open, cb_open_error, report_exception=True)
+                   cb_open, cb_open_error, pass_exception_to_error_callback=True)

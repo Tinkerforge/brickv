@@ -241,7 +241,7 @@ class REDTabImportExportImport(QWidget, Ui_REDTabImportExportImport):
         self.update_ui_state()
         self.tree_programs.invisibleRootItem().takeChildren()
 
-        async_call(refresh_async, None, cb_success, cb_error, report_exception=True)
+        async_call(refresh_async, None, cb_success, cb_error, pass_exception_to_error_callback=True)
 
     def import_archive(self):
         source_path = self.edit_archive.text()
