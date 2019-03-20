@@ -505,8 +505,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
                     okay, message = check_script_result(result, decode_stderr=True)
 
                     if not okay:
-                        QMessageBox.critical(get_main_window(),
-                                             'Apply Changes Error',
+                        QMessageBox.critical(get_main_window(), 'Apply Changes Error',
                                              'Error while setting ownership of {0}: {1}'.format(config.display_name, message))
                     else:
                         config.set_content(content)
@@ -517,8 +516,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
                 self.update_ui_state()
 
                 if error != None:
-                    QMessageBox.critical(get_main_window(),
-                                        'Apply Changes Error',
+                    QMessageBox.critical(get_main_window(), 'Apply Changes Error',
                                          'Error while writing {0}: {1}'.format(config.display_name, error))
                     return
 
