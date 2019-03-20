@@ -1078,8 +1078,23 @@ class FlashingWindow(QDialog, Ui_Flashing):
             for position in index_list:
                 start = position * 64
                 end = (position + 1) * 64
-                bricklet.set_write_firmware_pointer(start)
-                bricklet.write_firmware(plugin[start:end])
+
+                try:
+                    bricklet.set_write_firmware_pointer(start)
+                    bricklet.write_firmware(plugin[start:end])
+                except:
+                    # retry block a second time to recover from Co-MCU bootloader
+                    # bug that results in lost request, especially when used in
+                    # combination with an Isolator Bricklet
+
+                    try:
+                        bricklet.set_write_firmware_pointer(start)
+                        bricklet.write_firmware(plugin[start:end])
+                    except Exception as e:
+                        progress.cancel()
+                        self.popup_fail('Bricklet', 'Could not write plugin: {0}'.format(e))
+                        return False
+
                 progress.setValue(position)
 
             progress.setLabelText('Changing from bootloader mode to firmware mode')
@@ -1143,8 +1158,23 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 for position in index_list:
                     start = position * 64
                     end = (position + 1) * 64
-                    bricklet.set_write_firmware_pointer(start)
-                    bricklet.write_firmware(plugin[start:end])
+
+                    try:
+                        bricklet.set_write_firmware_pointer(start)
+                        bricklet.write_firmware(plugin[start:end])
+                    except:
+                        # retry block a second time to recover from Co-MCU bootloader
+                        # bug that results in lost request, especially when used in
+                        # combination with an Isolator Bricklet
+
+                        try:
+                            bricklet.set_write_firmware_pointer(start)
+                            bricklet.write_firmware(plugin[start:end])
+                        except Exception as e:
+                            progress.cancel()
+                            self.popup_fail('Bricklet', 'Could not write plugin (second try): {0}'.format(e))
+                            return False
+
                     progress.setValue(position)
 
                 progress.setLabelText('Changing from bootloader mode to firmware mode (second try)')
