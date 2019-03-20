@@ -116,7 +116,8 @@ def async_start_thread(parent):
                                 async_call_queue.queue.clear()
 
                         QApplication.postEvent(self, QEvent(ASYNC_EVENT))
-                        continue
+
+                    continue
 
                 if ac.result_callback != None:
                     with async_session_lock:
