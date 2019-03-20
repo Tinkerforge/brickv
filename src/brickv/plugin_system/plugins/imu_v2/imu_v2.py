@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import Qt, QTimer, QSize
-from PyQt5.QtWidgets import QVBoxLayout,  QFrame, QDialog, QAction, QWidget
+from PyQt5.QtWidgets import QVBoxLayout, QFrame, QDialog, QAction, QWidget
 from PyQt5.QtGui import QColor, QPalette, QPainter, QBrush
 
 from brickv.plugin_system.plugin_base import PluginBase
@@ -386,15 +386,16 @@ class IMUV2(PluginBase, Ui_IMUV2):
                 self.calibration.gyr_color.set_color(self.calibration_color[cal_gyr])
                 self.calibration.sys_color.set_color(self.calibration_color[cal_sys])
         else:
-            self.imu_gl.update(data.quaternion[0]/(float(2**14-1)),
-                               data.quaternion[1]/(float(2**14-1)),
-                               data.quaternion[2]/(float(2**14-1)),
-                               data.quaternion[3]/(float(2**14-1)))
+            self.imu_gl.update(data.quaternion[0] / (2 ** 14 - 1),
+                               data.quaternion[1] / (2 ** 14 - 1),
+                               data.quaternion[2] / (2 ** 14 - 1),
+                               data.quaternion[3] / (2 ** 14 - 1))
+
             if self.imu_gl_wrapper is not None:
-                self.imu_gl_wrapper.glWidget.update(data.quaternion[0]/(float(2**14-1)),
-                               data.quaternion[1]/(float(2**14-1)),
-                               data.quaternion[2]/(float(2**14-1)),
-                               data.quaternion[3]/(float(2**14-1)))
+                self.imu_gl_wrapper.glWidget.update(data.quaternion[0] / (2 ** 14 - 1),
+                                                    data.quaternion[1] / (2 ** 14 - 1),
+                                                    data.quaternion[2] / (2 ** 14 - 1),
+                                                    data.quaternion[3] / (2 ** 14 - 1))
 
     def led_clicked(self, state):
         if state == Qt.Checked:
