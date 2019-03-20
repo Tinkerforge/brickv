@@ -944,7 +944,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def plugin_changed(self, _index):
         self.update_ui_state()
 
-    def download_bricklet_plugin(self, progress, url_part, has_comcu, name, version, popup=False):
+    def download_bricklet_plugin(self, progress, url_part, has_comcu, name, version):
         progress.setLabelText('Downloading {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
         progress.setMaximum(0)
         progress.show()
@@ -971,8 +971,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         if response is None:
             progress.cancel()
-            if popup:
-                self.popup_fail('Bricklet', 'Could not download {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
+            self.popup_fail('Bricklet', 'Could not download {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
             return None
 
         try:
@@ -991,19 +990,18 @@ class FlashingWindow(QDialog, Ui_Flashing):
             response.close()
         except urllib.error.URLError:
             progress.cancel()
-            if popup:
-                self.popup_fail('Bricklet', 'Could not download {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
+            self.popup_fail('Bricklet', 'Could not download {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
             return None
 
         return plugin
 
-    def write_bricklet_plugin(self, plugin, brick, port, bricklet, name, progress, has_comcu, popup=True):
+    def write_bricklet_plugin(self, plugin, brick, port, bricklet, name, progress, has_comcu):
         if has_comcu:
-            return self.write_bricklet_plugin_comcu(plugin, bricklet, name, progress, popup)
+            return self.write_bricklet_plugin_comcu(plugin, bricklet, name, progress)
         else:
-            return self.write_bricklet_plugin_standard(plugin, brick, port, bricklet, name, progress, popup)
+            return self.write_bricklet_plugin_standard(plugin, brick, port, bricklet, name, progress)
 
-    def write_bricklet_plugin_comcu(self, plugin, bricklet, name, progress, popup=True):
+    def write_bricklet_plugin_comcu(self, plugin, bricklet, name, progress):
         try:
             progress.setLabelText('Starting bootloader mode')
             progress.setMaximum(0)
@@ -1012,15 +1010,16 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             # Convert plugin back from list of bytes to something we can put in ZipFile
             zip_file = plugin
+
             try:
                 zf = zipfile.ZipFile(FileLike(zip_file), 'r')
-            except:
+            except Exception as e:
                 progress.cancel()
-                if popup:
-                    self.popup_fail('Bricklet', 'Could not open Bricklet plugin:\n\n' + traceback.format_exc())
+                self.popup_fail('Bricklet', 'Could not write firmware: {0}'.format(e))
                 return False
 
             plugin_data = None
+
             for name in zf.namelist():
                 if name.endswith('firmware.bin'):
                     plugin_data = zf.read(name)
@@ -1028,8 +1027,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             if plugin_data == None:
                 progress.cancel()
-                if popup:
-                    self.popup_fail('Bricklet', 'Could not find firmware in zbin')
+                self.popup_fail('Bricklet', 'Could not find firmware in *.zbin file')
                 return False
 
             # Now convert plugin to list of bytes
@@ -1042,8 +1040,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             if regular_plugin_upto == -1:
                 progress.cancel()
-                if popup:
-                    self.popup_fail('Bricklet', 'Could not find magic number in firmware')
+                self.popup_fail('Bricklet', 'Could not find magic number in firmware')
 
             bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_BOOTLOADER)
             counter = 0
@@ -1056,8 +1053,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 if counter == 10:
                     progress.cancel()
-                    if popup:
-                        self.popup_fail('Bricklet', 'Device did not enter bootloader mode in 2.5s')
+                    self.popup_fail('Bricklet', 'Device did not enter bootloader mode in 2.5 seconds')
                     return False
 
                 time.sleep(0.25)
@@ -1091,8 +1087,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.show()
 
             mode_ret = bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_FIRMWARE)
+
             if mode_ret != 0 and mode_ret != 2: # 0 = ok, 2 = no change
                 error_str = ''
+
                 if mode_ret == 1:
                     error_str = 'Invalid mode (Error 1)'
                 elif mode_ret == 3:
@@ -1112,12 +1110,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 # happen according to the specification in the datasheet...
                 if mode_ret != 5:
                     progress.cancel()
-                    if popup:
-                        self.popup_fail('Bricklet', 'Coud not change from bootloader mode to firmware mode: ' + error_str)
+                    self.popup_fail('Bricklet', 'Could not change from bootloader mode to firmware mode: ' + error_str)
                     return False
 
                 bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_BOOTLOADER)
                 counter = 0
+
                 while True:
                     try:
                         if bricklet.get_bootloader_mode() == bricklet.BOOTLOADER_MODE_BOOTLOADER:
@@ -1127,8 +1125,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                     if counter == 10:
                         progress.cancel()
-                        if popup:
-                            self.popup_fail('Bricklet', 'Device did not enter bootloader mode in 2.5s (second try)')
+                        self.popup_fail('Bricklet', 'Device did not enter bootloader mode in 2.5s (second try)')
                         return False
 
                     time.sleep(0.25)
@@ -1155,8 +1152,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 progress.show()
 
                 mode_ret = bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_FIRMWARE)
+
                 if mode_ret != 0 and mode_ret != 2: # 0 = ok, 2 = no change
                     error_str = ''
+
                     if mode_ret == 1:
                         error_str = 'Invalid mode (Error 1, second try)'
                     elif mode_ret == 3:
@@ -1169,11 +1168,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         error_str = 'Error ' + str(mode_ret)
 
                     progress.cancel()
-                    if popup:
-                        self.popup_fail('Bricklet', 'Coud not change from bootloader mode to firmware mode: ' + error_str)
+                    self.popup_fail('Bricklet', 'Coud not change from bootloader mode to firmware mode: ' + error_str)
                     return False
 
             counter = 0
+
             while True:
                 try:
                     if bricklet.get_bootloader_mode() == bricklet.BOOTLOADER_MODE_FIRMWARE:
@@ -1183,8 +1182,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 if counter == 10:
                     progress.cancel()
-                    if popup:
-                        self.popup_fail('Bricklet', 'Device did not enter firmware mode in 2.5s')
+                    self.popup_fail('Bricklet', 'Device did not enter firmware mode in 2.5s')
                     return False
 
                 time.sleep(0.25)
@@ -1193,12 +1191,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.cancel()
             return True
         except:
-            if popup:
-                self.popup_fail('Bricklet', 'Unexpected error:\n\n' + traceback.format_exc())
             progress.cancel()
+            sys.excepthook(*sys.exc_info())
             return False
 
-    def write_bricklet_plugin_standard(self, plugin, brick, port, _bricklet, name, progress, popup=True):
+    def write_bricklet_plugin_standard(self, plugin, brick, port, _bricklet, name, progress):
         # Write
         progress.setLabelText('Writing plugin: ' + name)
         progress.setMaximum(0)
@@ -1226,8 +1223,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 self.parent.ipcon.write_bricklet_plugin(brick, port, position, chunk)
             except Error as e:
                 progress.cancel()
-                if popup:
-                    self.popup_fail('Bricklet', 'Could not write Bricklet plugin: ' + error_to_name(e))
+                self.popup_fail('Bricklet', 'Could not write Bricklet plugin: ' + error_to_name(e))
                 return False
 
             position += 1
@@ -1252,14 +1248,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 read_chunk = bytes(self.parent.ipcon.read_bricklet_plugin(brick, port, position))
             except Error as e:
                 progress.cancel()
-                if popup:
-                    self.popup_fail('Bricklet', 'Could not read Bricklet plugin back for verification: ' + error_to_name(e))
+                self.popup_fail('Bricklet', 'Could not read Bricklet plugin back for verification: ' + error_to_name(e))
                 return False
 
             if read_chunk != chunk:
                 progress.cancel()
-                if popup:
-                    self.popup_fail('Bricklet', 'Could not flash Bricklet plugin: Verification error')
+                self.popup_fail('Bricklet', 'Could not flash Bricklet plugin: Verification error')
                 return False
 
             position += 1
@@ -1292,9 +1286,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
             plugin_info = self.plugin_infos[url_part]
             name = plugin_info.name
             version = plugin_info.firmware_version_latest
-            plugin = self.download_bricklet_plugin(progress, url_part, self.current_bricklet_has_comcu(), name, version, popup=True)
+            plugin = self.download_bricklet_plugin(progress, url_part, self.current_bricklet_has_comcu(), name, version)
 
-            if not plugin:
+            if plugin == None:
                 return
 
         # Flash plugin
@@ -1392,12 +1386,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
             if device_info.firmware_version_installed < device_info.firmware_version_latest:
                 plugin = self.download_bricklet_plugin(progress, device_info.url_part, device_info.plugin.has_comcu, device_info.name, device_info.firmware_version_latest)
 
-                if not plugin:
+                if plugin == None:
                     progress.cancel()
                     self.refresh_updates_clicked()
                     return
 
                 brick = brick_for_bricklet(device_info)
+
                 if brick != None and brick.plugin != None:
                     brick_plugin_device = brick.plugin.device
                 else:
@@ -1406,7 +1401,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 if self.write_bricklet_plugin(plugin, brick_plugin_device, device_info.position, device_info.plugin.device, device_info.name, progress, device_info.plugin.has_comcu):
                     bricks_to_reset.add(brick)
                 else:
-                    progress.cancel()
                     self.refresh_updates_clicked()
                     return
 
@@ -1671,7 +1665,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def extension_firmware_changed(self, _index):
         self.update_ui_state()
 
-    def download_extension_firmware(self, progress, url_part, name, version, popup=False):
+    def download_extension_firmware(self, progress, url_part, name, version):
         progress.reset('Downloading {0} Extension firmware {1}.{2}.{3}'.format(name, *version), 0)
 
         response = None
@@ -1691,8 +1685,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         if response is None:
             progress.cancel()
-            if popup:
-                self.popup_fail('Extension', 'Could not download {0} Extension firmware {1}.{2}.{3}'.format(name, *version))
+            self.popup_fail('Extension', 'Could not download {0} Extension firmware {1}.{2}.{3}'.format(name, *version))
             return None
 
         try:
@@ -1710,8 +1703,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             response.close()
         except urllib.error.URLError:
             progress.cancel()
-            if popup:
-                self.popup_fail('Extension', 'Could not download {0} Extension firmware {1}.{2}.{3}'.format(name, *version))
+            self.popup_fail('Extension', 'Could not download {0} Extension firmware {1}.{2}.{3}'.format(name, *version))
             return None
 
         return firmware
@@ -1771,7 +1763,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             ESPFlash(master, progress).flash(firmware)
         except:
             progress.cancel()
-            self.popup_fail('Extension Firmware', 'Error during Extension flashing: ' + traceback.format_exc())
+            sys.excepthook(*sys.exc_info())
             return
 
         progress.cancel()
