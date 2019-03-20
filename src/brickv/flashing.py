@@ -1059,7 +1059,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 time.sleep(0.25)
                 counter += 1
 
-            num_packets = len(plugin)//64
+            num_packets = len(plugin) // 64
+
             # If the magic number is in in the last page of the
             # flash, we write the whole thing
             if regular_plugin_upto >= (len(plugin) - 64 * 4):
@@ -1131,7 +1132,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     time.sleep(0.25)
                     counter += 1
 
-                num_packets = len(plugin)/64
+                num_packets = len(plugin) // 64
                 index_list = list(range(num_packets))
 
                 progress.setLabelText('Writing plugin (second try): ' + name)
