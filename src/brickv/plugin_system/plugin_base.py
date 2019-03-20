@@ -194,6 +194,10 @@ class PluginBase(QWidget):
         if self.device is not None:
             self.device.registered_callbacks = {}
 
+        # Disconnect from infos_changed before destroying the widgets, because
+        # self.device_infos_changed accesses the widgets.
+        brickv.infos.get_infos_changed_signal().disconnect(self.device_infos_changed)
+
         # disconnect all signals to ensure that callbacks that already emitted
         # a signal don't get delivered anymore after this point
         try:
