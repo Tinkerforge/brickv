@@ -512,19 +512,19 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.frame_rendered_callback_was_enabled = False
 
         if self.has_chip_type:
-            async_call(self.led_strip.get_chip_type, None, self.get_chip_type_async, self.increase_error_count, log_exception=True)
+            async_call(self.led_strip.get_chip_type, None, self.get_chip_type_async, self.increase_error_count)
 
         if self.has_clock_frequency:
-            async_call(self.led_strip.get_clock_frequency, None, self.get_clock_frequency_async, self.increase_error_count, log_exception=True)
+            async_call(self.led_strip.get_clock_frequency, None, self.get_clock_frequency_async, self.increase_error_count)
 
         if self.has_channel_mapping:
-            async_call(self.led_strip.get_channel_mapping, None, self.get_channel_mapping_async, self.increase_error_count, log_exception=True)
+            async_call(self.led_strip.get_channel_mapping, None, self.get_channel_mapping_async, self.increase_error_count)
 
         if self.has_configurable_rame_rendered_callback:
             async_call(self.led_strip.is_frame_rendered_callback_enabled, None, self.is_frame_rendered_callback_enabled_async, self.increase_error_count)
 
-        async_call(self.led_strip.get_supply_voltage, None, self.get_supply_voltage_async, self.increase_error_count, log_exception=True)
-        async_call(self.led_strip.get_frame_duration, None, self.get_frame_duration_async, self.increase_error_count, log_exception=True)
+        async_call(self.led_strip.get_supply_voltage, None, self.get_supply_voltage_async, self.increase_error_count)
+        async_call(self.led_strip.get_frame_duration, None, self.get_frame_duration_async, self.increase_error_count)
 
         self.voltage_timer.start()
         self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_RENDERED,
