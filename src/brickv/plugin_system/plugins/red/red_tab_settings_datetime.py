@@ -100,8 +100,8 @@ class REDTabSettingsDateTime(QWidget, Ui_REDTabSettingsDateTime):
                     self.time_sync_button.setEnabled(True)
             except Exception as e:
                 QMessageBox.critical(get_main_window(),
-                                           'Settings | Date/Time',
-                                           'Error parsing time from RED Brick:\n\n{0}'.format(e))
+                                     'Settings | Date/Time',
+                                     'Error parsing time from RED Brick:\n\n{0}'.format(e))
 
             self.time_sync_button.setEnabled(True)
 
@@ -133,8 +133,8 @@ class REDTabSettingsDateTime(QWidget, Ui_REDTabSettingsDateTime):
             if p.state == REDProcess.STATE_ERROR:
                 process.release()
                 QMessageBox.critical(get_main_window(),
-                                           'Settings | Date/Time',
-                                           'Error syncing time.')
+                                     'Settings | Date/Time',
+                                     'Error syncing time.')
             elif p.state == REDProcess.STATE_EXITED:
                 if t == 0: #timezone
                     self.time_timezone_red.setText(self.time_timezone_local.text())

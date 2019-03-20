@@ -2124,10 +2124,11 @@ device_specs = {
                 'advanced': True
             }
         ],
-        'options_setter': lambda device, pinA0, pinA1, pinA2, pinA3, pinA4, pinA5, pinA6, pinA7,
-                                         pinB0, pinB1, pinB2, pinB3, pinB4, pinB5, pinB6, pinB7,
-                                         edge_count_type_pinA0, edge_count_debounce_pinA0, \
-                                         edge_count_type_pinA1, edge_count_debounce_pinA1: \
+        'options_setter': lambda device,
+                                 pinA0, pinA1, pinA2, pinA3, pinA4, pinA5, pinA6, pinA7,
+                                 pinB0, pinB1, pinB2, pinB3, pinB4, pinB5, pinB6, pinB7,
+                                 edge_count_type_pinA0, edge_count_debounce_pinA0, \
+                                 edge_count_type_pinA1, edge_count_debounce_pinA1: \
                           [device.set_port_configuration(*pinA0),
                            device.set_port_configuration(*pinA1),
                            device.set_port_configuration(*pinA2),
@@ -2978,11 +2979,12 @@ device_specs = {
                 'advanced': True
             }
         ],
-        'options_setter': lambda device, pin0, pin1, pin2, pin3,
-                                         edge_count_type_pin0, edge_count_debounce_pin0, \
-                                         edge_count_type_pin1, edge_count_debounce_pin1, \
-                                         edge_count_type_pin2, edge_count_debounce_pin2, \
-                                         edge_count_type_pin3, edge_count_debounce_pin3: \
+        'options_setter': lambda device,
+                                 pin0, pin1, pin2, pin3,
+                                 edge_count_type_pin0, edge_count_debounce_pin0, \
+                                 edge_count_type_pin1, edge_count_debounce_pin1, \
+                                 edge_count_type_pin2, edge_count_debounce_pin2, \
+                                 edge_count_type_pin3, edge_count_debounce_pin3: \
                           [device.set_configuration(0b0001, *pin0),
                            device.set_configuration(0b0010, *pin1),
                            device.set_configuration(0b0100, *pin2),

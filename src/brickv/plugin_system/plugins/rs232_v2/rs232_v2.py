@@ -144,7 +144,7 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
 
     def line_ending_changed(self):
         selected_line_ending = self.line_ending_combobox.currentText()
-        self.line_ending_lineedit.setEnabled(selected_line_ending == 'Hex:' )
+        self.line_ending_lineedit.setEnabled(selected_line_ending == 'Hex:')
 
     def get_line_ending(self):
         selected_line_ending = self.line_ending_combobox.currentText()

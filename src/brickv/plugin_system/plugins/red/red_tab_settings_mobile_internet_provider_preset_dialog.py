@@ -115,7 +115,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QDialog, Ui_REDTabSetting
 
     def validate_fields(self, data):
         if 'name' not in data:
-            name =  'Default'
+            name = 'Default'
         elif isinstance(data['name'], list):
             name = data['name'][0]
         else:
@@ -124,12 +124,12 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QDialog, Ui_REDTabSetting
         apn = data['@value']
 
         if 'username' not in data:
-            username =  'none'
+            username = 'none'
         else:
             username = data['username']
 
         if 'password' not in data:
-            password =  'none'
+            password = 'none'
         else:
             password = data['password']
 
@@ -362,8 +362,8 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QDialog, Ui_REDTabSetting
             list_countries.append(dict_country_code)
 
         list_countries_sorted = sorted(list_countries,
-                                       key = itemgetter('country'),
-                                       reverse = False)
+                                       key=itemgetter('country'),
+                                       reverse=False)
 
         self.cbox_mi_presets_provider.blockSignals(True)
 

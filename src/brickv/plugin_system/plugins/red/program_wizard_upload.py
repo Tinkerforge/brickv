@@ -34,7 +34,7 @@ class ProgramWizardUpload(ProgramWizard):
 
         self.setWindowTitle('Upload Files')
 
-        self.setPage(Constants.PAGE_FILES,  ProgramPageFiles(title_prefix='Step 1 of 2: ', last_directory=last_directory))
+        self.setPage(Constants.PAGE_FILES, ProgramPageFiles(title_prefix='Step 1 of 2: ', last_directory=last_directory))
         self.setPage(Constants.PAGE_UPLOAD, ProgramPageUpload(title_prefix='Step 2 of 2: '))
 
     # overrides QWizard.nextId

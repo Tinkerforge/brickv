@@ -218,8 +218,8 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
                    ap_mode_status['ap_hardware_or_config_problem'] is None:
                     self.label_ap_status.setText('-')
                     QMessageBox.critical(get_main_window(),
-                                               'Settings | Access Point',
-                                               'Error checking access point mode.')
+                                         'Settings | Access Point',
+                                         'Error checking access point mode.')
                 elif not ap_mode_status['ap_incomplete_config'] and \
                      not ap_mode_status['ap_hardware_or_config_problem']:
                         self.label_ap_status.setText('Active')
@@ -235,8 +235,8 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
             else:
                 self.label_ap_status.setText('-')
                 QMessageBox.critical(get_main_window(),
-                                           'Settings | Access Point',
-                                           'Error checking access point mode:\n\n' + result.stderr)
+                                     'Settings | Access Point',
+                                     'Error checking access point mode:\n\n' + result.stderr)
 
         self.update_button_text_state(BUTTON_STATE_REFRESH)
         self.label_working_wait.show()
@@ -258,12 +258,12 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
                 self.slot_pbutton_ap_refresh_clicked()
 
                 QMessageBox.information(get_main_window(),
-                                              'Settings | Access Point',
-                                              'Access point settings saved.')
+                                        'Settings | Access Point',
+                                        'Access point settings saved.')
             else:
                 QMessageBox.critical(get_main_window(),
-                                           'Settings | Access Point',
-                                           'Error saving access point settings:\n\n' + result.stderr)
+                                     'Settings | Access Point',
+                                     'Error saving access point settings:\n\n' + result.stderr)
 
         def cb_settings_ap_apply_2(result):
             gui_after_apply(result)
@@ -330,8 +330,8 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
 
         if len(self.ledit_ap_wpa_key.text()) < 8 or len(self.ledit_ap_wpa_key.text()) > 63:
             QMessageBox.critical(get_main_window(),
-                                           'Settings | Access Point',
-                                           'Error saving access point settings:\n\nWPA key has to have a length between (inclusive) 8 and 63 characters.')
+                                 'Settings | Access Point',
+                                 'Error saving access point settings:\n\nWPA key has to have a length between (inclusive) 8 and 63 characters.')
             return
 
         if not check_ascii(self.ledit_ap_domain.text(),
@@ -385,26 +385,26 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
 
             if not interface:
                 QMessageBox.critical(get_main_window(),
-                                           'Settings | Access Point',
-                                           'Interface empty.')
+                                     'Settings | Access Point',
+                                     'Interface empty.')
                 return
 
             elif not ssid:
                 QMessageBox.critical(get_main_window(),
-                                           'Settings | Access Point',
-                                           'SSID empty.')
+                                     'Settings | Access Point',
+                                     'SSID empty.')
                 return
 
             elif not wpa_key:
                 QMessageBox.critical(get_main_window(),
-                                           'Settings | Access Point',
-                                           'WPA key empty.')
+                                     'Settings | Access Point',
+                                     'WPA key empty.')
                 return
 
             elif not domain:
                 QMessageBox.critical(get_main_window(),
-                                           'Settings | Access Point',
-                                           'DNS Domain empty.')
+                                     'Settings | Access Point',
+                                     'DNS Domain empty.')
                 return
 
             apply_dict['interface']        = interface
@@ -440,8 +440,8 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
             self.update_button_text_state(BUTTON_STATE_DEFAULT)
 
             QMessageBox.critical(get_main_window(),
-                                       'Settings | Access Point',
-                                       'Error occured while processing input data:\n\n{0}'.format(e))
+                                 'Settings | Access Point',
+                                 'Error occured while processing input data:\n\n{0}'.format(e))
 
     def slot_pbutton_ap_show_dhcp_leases_clicked(self):
         leases_dialog = REDTabSettingsAPDhcpLeasesDialog(self, self.session)
@@ -514,8 +514,8 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
                             self.cbox_ap_interface.setCurrentIndex(0)
                 else:
                     QMessageBox.critical(get_main_window(),
-                                               'Settings | Access Point',
-                                               'Error getting access point interfaces:\n\n' + result.stderr)
+                                         'Settings | Access Point',
+                                         'Error getting access point interfaces:\n\n' + result.stderr)
 
                 self.update_ui_state()
 
@@ -557,8 +557,8 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
                 self.ledit_ap_wpa_key.setText(wpa_key)
             except Exception as e:
                 QMessageBox.critical(get_main_window(),
-                                           'Settings | Access Point',
-                                           'Error parsing hostapd.conf file:\n\n{0}'.format(e))
+                                     'Settings | Access Point',
+                                     'Error parsing hostapd.conf file:\n\n{0}'.format(e))
 
             self.update_ui_state()
 
@@ -624,8 +624,8 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
                 self.sbox_ap_pool_mask4.setValue(int(dhcp_option_netmask_list[3]))
             except Exception as e:
                 QMessageBox.critical(get_main_window(),
-                                           'Settings | Access Point',
-                                           'Error parsing dnsmasq.conf file:\n\n{0}'.format(e))
+                                     'Settings | Access Point',
+                                     'Error parsing dnsmasq.conf file:\n\n{0}'.format(e))
 
             self.update_ui_state()
 
@@ -639,8 +639,8 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
             }
 
             QMessageBox.critical(get_main_window(),
-                                       'Settings | Access Point',
-                                       'Error {0} {1} file:\n\n{2}'.format(kind_text[kind], title, error))
+                                 'Settings | Access Point',
+                                 'Error {0} {1} file:\n\n{2}'.format(kind_text[kind], title, error))
 
         TextFile.read_async(self.session, HOSTAPD_CONF_PATH,
                             cb_hostapd_conf_content,

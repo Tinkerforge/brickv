@@ -269,7 +269,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.imu_gl.hide()
 
         self.imu_gl = IMUV2GLWidget()
-        self.imu_gl.setFixedSize(200,200)
+        self.imu_gl.setFixedSize(200, 200)
         self.gl_layout.addWidget(self.imu_gl)
         self.imu_gl.show()
 
@@ -336,28 +336,28 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.callback_counter += 1
 
         if self.callback_counter % 2 == 0:
-            self.sensor_data[0]  = data.acceleration[0]/100.0
-            self.sensor_data[1]  = data.acceleration[1]/100.0
-            self.sensor_data[2]  = data.acceleration[2]/100.0
-            self.sensor_data[3]  = data.magnetic_field[0]/16.0
-            self.sensor_data[4]  = data.magnetic_field[1]/16.0
-            self.sensor_data[5]  = data.magnetic_field[2]/16.0
-            self.sensor_data[6]  = data.angular_velocity[0]/16.0
-            self.sensor_data[7]  = data.angular_velocity[1]/16.0
-            self.sensor_data[8]  = data.angular_velocity[2]/16.0
-            self.sensor_data[9]  = data.euler_angle[0]/16.0
-            self.sensor_data[10] = data.euler_angle[1]/16.0
-            self.sensor_data[11] = data.euler_angle[2]/16.0
-            self.sensor_data[12] = data.quaternion[0]/(float(2**14-1))
-            self.sensor_data[13] = data.quaternion[1]/(float(2**14-1))
-            self.sensor_data[14] = data.quaternion[2]/(float(2**14-1))
-            self.sensor_data[15] = data.quaternion[3]/(float(2**14-1))
-            self.sensor_data[16] = data.linear_acceleration[0]/100.0
-            self.sensor_data[17] = data.linear_acceleration[1]/100.0
-            self.sensor_data[18] = data.linear_acceleration[2]/100.0
-            self.sensor_data[19] = data.gravity_vector[0]/100.0
-            self.sensor_data[20] = data.gravity_vector[1]/100.0
-            self.sensor_data[21] = data.gravity_vector[2]/100.0
+            self.sensor_data[0]  = data.acceleration[0] / 100.0
+            self.sensor_data[1]  = data.acceleration[1] / 100.0
+            self.sensor_data[2]  = data.acceleration[2] / 100.0
+            self.sensor_data[3]  = data.magnetic_field[0] / 16.0
+            self.sensor_data[4]  = data.magnetic_field[1] / 16.0
+            self.sensor_data[5]  = data.magnetic_field[2] / 16.0
+            self.sensor_data[6]  = data.angular_velocity[0] / 16.0
+            self.sensor_data[7]  = data.angular_velocity[1] / 16.0
+            self.sensor_data[8]  = data.angular_velocity[2] / 16.0
+            self.sensor_data[9]  = data.euler_angle[0] / 16.0
+            self.sensor_data[10] = data.euler_angle[1] / 16.0
+            self.sensor_data[11] = data.euler_angle[2] / 16.0
+            self.sensor_data[12] = data.quaternion[0] / (2 ** 14 - 1)
+            self.sensor_data[13] = data.quaternion[1] / (2 ** 14 - 1)
+            self.sensor_data[14] = data.quaternion[2] / (2 ** 14 - 1)
+            self.sensor_data[15] = data.quaternion[3] / (2 ** 14 - 1)
+            self.sensor_data[16] = data.linear_acceleration[0] / 100.0
+            self.sensor_data[17] = data.linear_acceleration[1] / 100.0
+            self.sensor_data[18] = data.linear_acceleration[2] / 100.0
+            self.sensor_data[19] = data.gravity_vector[0] / 100.0
+            self.sensor_data[20] = data.gravity_vector[1] / 100.0
+            self.sensor_data[21] = data.gravity_vector[2] / 100.0
             self.sensor_data[22] = data.temperature
 
             for i in range(23):
