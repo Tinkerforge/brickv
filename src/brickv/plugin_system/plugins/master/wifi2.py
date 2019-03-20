@@ -78,7 +78,7 @@ class Wifi2(QWidget, Ui_Wifi2):
                                  self.wifi_client_mac3, self.wifi_client_mac2, self.wifi_client_mac1,
                                  self.wifi_client_mac_dot1, self.wifi_client_mac_dot2, self.wifi_client_mac_dot3,
                                  self.wifi_client_mac_dot4, self.wifi_client_mac_dot5]
-        self.client_enc_group = [self.wifi_client_password_label, self.wifi_client_password, self.wifi_client_password_show]
+        self.client_enc_group = [self.wifi_client_password_label, self.wifi_client_change_password, self.wifi_client_password, self.wifi_client_password_show]
 
         self.ap_ip_group = [self.wifi_ap_ip_label, self.wifi_ap_sub_label, self.wifi_ap_gw_label,
                             self.wifi_ap_ip4, self.wifi_ap_ip3, self.wifi_ap_ip2, self.wifi_ap_ip1,
@@ -321,10 +321,12 @@ class Wifi2(QWidget, Ui_Wifi2):
     def get_wifi2_ap_configuration_async(self, data):
         self.ap_enable = data.enable
         self.wifi_ap_ssid.setText(data.ssid)
+
         if data.ip == (0, 0, 0, 0):
             self.wifi_ap_ip_configuration.setCurrentIndex(0)
         else:
             self.wifi_ap_ip_configuration.setCurrentIndex(1)
+
         self.wifi_ap_ip1.setValue(data.ip[3])
         self.wifi_ap_ip2.setValue(data.ip[2])
         self.wifi_ap_ip3.setValue(data.ip[1])
@@ -344,6 +346,7 @@ class Wifi2(QWidget, Ui_Wifi2):
             self.wifi_ap_encryption.setCurrentIndex(3)
         else:
             self.wifi_ap_encryption.setCurrentIndex(data.encryption - 1)
+
         self.wifi_ap_hide_ssid.setChecked(data.hidden)
         self.wifi_ap_channel.setValue(data.channel)
 
