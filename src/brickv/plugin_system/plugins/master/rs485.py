@@ -43,6 +43,7 @@ class RS485(QWidget, Ui_RS485):
         self.master = parent.master
         self.update_address = 0
         self.update_address_slave = 0
+        self.update_generator = None
 
     def start(self):
         if self.parent.firmware_version >= (1, 2, 0):

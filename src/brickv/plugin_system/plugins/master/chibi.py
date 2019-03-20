@@ -43,6 +43,7 @@ class Chibi(QWidget, Ui_Chibi):
         self.update_chibi_master_address = 0
         self.update_chibi_frequency = 0
         self.update_chibi_channel = 0
+        self.update_generator = None
 
     def start(self):
         if self.parent.firmware_version >= (1, 1, 0):
