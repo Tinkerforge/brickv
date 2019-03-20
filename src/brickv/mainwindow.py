@@ -42,7 +42,7 @@ from brickv.bindings.ip_connection import IPConnection
 from brickv.flashing import FlashingWindow
 from brickv.advanced import AdvancedWindow
 from brickv.data_logger.setup_dialog import SetupDialog as DataLoggerWindow
-from brickv.async_call import async_start_thread, async_next_session, async_call, stop_async_thread
+from brickv.async_call import async_start_thread, async_next_session, async_call, async_stop_thread
 from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
 from brickv.plugin_system.plugins.red import RED
@@ -241,7 +241,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.exit_brickv()
         event.accept()
-        stop_async_thread()
+        async_stop_thread()
 
         # Without this, the quit event seems to not reach the main loop under OSX.
         QApplication.quit()

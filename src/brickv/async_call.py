@@ -42,9 +42,8 @@ async_session_id = 1
 
 AsyncCall = namedtuple('AsyncCall', 'function parameter result_callback error_callback pass_exception_to_error_callback debug_exception session_id')
 
-def stop_async_thread():
-    with async_session_lock:
-        async_call_queue.put(None)
+def async_stop_thread():
+    async_call_queue.put(None)
 
 def async_call(function, parameter=None, result_callback=None, error_callback=None,
                pass_exception_to_error_callback=False, debug_exception=False):
