@@ -109,7 +109,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tab_widget.removeTab(1) # remove dummy tab
         self.tab_widget.setUsesScrollButtons(True) # force scroll buttons, otherwise they will be missing on macOS
 
-        self.update_tab_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')), parent=self.tab_setup)
+        self.update_tab_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')),
+                                            QIcon(load_pixmap('update-icon-hover.png')),
+                                            parent=self.tab_setup)
         self.update_tab_button.setToolTip('Updates available')
         self.update_tab_button.clicked.connect(self.flashing_clicked)
         self.update_tab_button.hide()
@@ -286,7 +288,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.host_index_changing = False
 
-    def port_changed(self, value):
+    def port_changed(self, _value):
         self.update_current_host_info()
 
     def authentication_state_changed(self, state):
@@ -310,7 +312,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.update_current_host_info()
 
-    def remember_secret_state_changed(self, state):
+    def remember_secret_state_changed(self, _state):
         self.update_current_host_info()
 
     def tab_changed(self, i):
@@ -420,7 +422,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         try:
             secret = self.edit_secret.text()
-            secret.encode('ascii') # Try to encode the secret, as only ASCII chars are allowed. Don't save the result, as the IP Connection does the same.
+            # Try to encode the secret, as only ASCII chars are allowed. Don't save the result, as the IP Connection does the same.
+            secret.encode('ascii')
         except:
             self.do_disconnect()
 
@@ -525,7 +528,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.flashing_window.show_extension_update(master_uid)
 
     def show_red_brick_update(self):
-        text = """To update the RED Brick Image, please follow the instructions <a href=https://www.tinkerforge.com/en/doc/Hardware/Bricks/RED_Brick.html#red-brick-copy-image>here</a>."""
+        text = "To update the RED Brick Image, please follow the instructions " \
+            + "<a href=https://www.tinkerforge.com/en/doc/Hardware/Bricks/RED_Brick.html#red-brick-copy-image>here</a>."
         QMessageBox.information(self, "RED Brick Update", text)
 
     def create_tab_window(self, device_info, ipcon):
@@ -609,24 +613,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             combobox.itemData(i).trigger()
 
         if len(configs) > 0:
-            for config in configs:
-                if config[1] != None:
+            for cfg in configs:
+                if cfg[1] != None:
                     combobox = QComboBox()
 
-                    for i, item in enumerate(config[2]):
+                    for i, item in enumerate(cfg[2]):
                         combobox.addItem(item.text(), item)
                         item.triggered.connect(functools.partial(combobox.setCurrentIndex, i))
 
                     combobox.currentIndexChanged.connect(functools.partial(config_changed, combobox))
 
-                    info_bars[config[0]].addWidget(QLabel(config[1]))
-                    info_bars[config[0]].addWidget(combobox)
-                elif len(config[2]) > 0:
-                    checkbox = QCheckBox(config[2][0].text())
-                    config[2][0].toggled.connect(checkbox.setChecked)
-                    checkbox.toggled.connect(config[2][0].setChecked)
+                    info_bars[cfg[0]].addWidget(QLabel(cfg[1]))
+                    info_bars[cfg[0]].addWidget(combobox)
+                elif len(cfg[2]) > 0:
+                    checkbox = QCheckBox(cfg[2][0].text())
+                    cfg[2][0].toggled.connect(checkbox.setChecked)
+                    checkbox.toggled.connect(cfg[2][0].setChecked)
 
-                    info_bars[config[0]].addWidget(checkbox)
+                    info_bars[cfg[0]].addWidget(checkbox)
 
         # actions
         actions = device_info.plugin.get_actions()
@@ -1038,7 +1042,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             elif info.type == "extension":
                 replacement = ""
 
-            fw_version = infos.get_version_string(info.firmware_version_installed, replace_unknown=replacement, is_red_brick=isinstance(info, infos.BrickREDInfo))
+            fw_version = infos.get_version_string(info.firmware_version_installed,
+                                                  replace_unknown=replacement,
+                                                  is_red_brick=isinstance(info, infos.BrickREDInfo))
 
             uid = info.uid if info.type != "extension" else ''
 
@@ -1051,11 +1057,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             if isinstance(info, infos.BrickREDInfo):
                 for binding in info.bindings_infos:
-                    updateable |= binding.firmware_version_installed != (0, 0, 0) and binding.firmware_version_installed < binding.firmware_version_latest
+                    updateable |= binding.firmware_version_installed != (0, 0, 0) \
+                                  and binding.firmware_version_installed < binding.firmware_version_latest
 
             if updateable:
                 self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels + ['Update'])
-                row.append(QStandardItem(infos.get_version_string(info.firmware_version_latest, is_red_brick=isinstance(info, infos.BrickREDInfo))))
+                row.append(QStandardItem(
+                    infos.get_version_string(info.firmware_version_latest, is_red_brick=isinstance(info, infos.BrickREDInfo))))
 
                 self.tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, self.update_tab_button)
                 self.update_tab_button.show()
@@ -1118,7 +1126,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if firmware_info == 1:
                     self.statusBar().addWidget(QLabel('Latest firmware information could not be downloaded.'))
                 else:
-                    self.statusBar().addWidget(QLabel('Latest firmware information on tinkerforge.com is malformed (error code {0}). Please report this to info@tinkerforge.com.'.format(firmware_info)))
+                    self.statusBar().addWidget(QLabel('Latest firmware information on tinkerforge.com is malformed'\
+                        + '(error code {0}). Please report this to info@tinkerforge.com.'.format(firmware_info)))
             infos.reset_latest_fws()
         else:
             self.setStatusBar(None)

@@ -21,9 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import Qt, QSize, QPoint
-from PyQt5.QtGui import QImage, QPainter, QPen, QColor, QBrush
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPen, QColor, QBrush
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.async_call import async_call

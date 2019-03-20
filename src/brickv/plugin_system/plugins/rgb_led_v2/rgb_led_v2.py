@@ -22,7 +22,6 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import  Qt
-from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout
 from PyQt5.QtGui import QColor, QPixmap, QIcon, QPainter
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
@@ -60,9 +59,9 @@ class RGBLEDV2(COMCUPluginBase, Ui_RGBLEDV2):
 
         for color, button in zip([(0, 0, 0), (255, 255, 255), (255, 0, 0), (255, 255, 0),
                                   (0, 255, 0), (0, 255, 255), (0, 0, 255), (255, 0, 255)],
-                                [self.button_black, self.button_white, self.button_red, self.button_yellow,
-                                 self.button_green, self.button_cyan, self.button_blue, self.button_magenta]):
-            button.clicked.connect(lambda clicked, c = color: set_color(*c))
+                                 [self.button_black, self.button_white, self.button_red, self.button_yellow,
+                                  self.button_green, self.button_cyan, self.button_blue, self.button_magenta]):
+            button.clicked.connect(lambda clicked, c=color: set_color(*c))
             pixmap = QPixmap(16, 16)
             QPainter(pixmap).fillRect(0, 0, 16, 16, QColor(*color))
             button.setIcon(QIcon(pixmap))
@@ -80,7 +79,7 @@ class RGBLEDV2(COMCUPluginBase, Ui_RGBLEDV2):
         if self.set_rgb_value_response_expected != None:
             self.rgb_led.set_response_expected(self.rgb_led.FUNCTION_SET_RGB_VALUE, self.set_rgb_value_response_expected)
 
-    def rgb_changed(self, *args):
+    def rgb_changed(self, *_args):
         if self.changing:
             return
 
@@ -99,7 +98,7 @@ class RGBLEDV2(COMCUPluginBase, Ui_RGBLEDV2):
         self.rgb_led.set_rgb_value(r, g, b)
         self.label_color.setStyleSheet('QLabel {{ background: #{:02x}{:02x}{:02x} }}'.format(r, g, b))
 
-    def hsl_changed(self, *args):
+    def hsl_changed(self, *_args):
         if self.changing:
             return
 

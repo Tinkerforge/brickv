@@ -23,7 +23,6 @@ Boston, MA 02111-1307, USA.
 """
 
 import sys
-import traceback
 
 from PyQt5.QtWidgets import QWidget, QTabBar
 from PyQt5.QtGui import QIcon
@@ -85,6 +84,9 @@ class PluginBase(QWidget):
         self.device_info.plugin = self
         self.device_info.name = self.name
         self.device_info.url_part = self.get_url_part()
+
+        self.update_tab_button = None
+
         brickv.infos.get_infos_changed_signal().connect(self.device_infos_changed)
 
     def device_infos_changed(self, uid):
@@ -261,7 +263,7 @@ class PluginBase(QWidget):
     def destroy(self):
         pass
 
-    def has_custom_version(self, label_version_name, label_version):
+    def has_custom_version(self, _label_version_name, _label_version):
         return False
 
     def is_hardware_version_relevant(self):
@@ -274,5 +276,5 @@ class PluginBase(QWidget):
             return 'unknown'
 
     @staticmethod
-    def has_device_identifier(device_identifier):
+    def has_device_identifier(_device_identifier):
         return False

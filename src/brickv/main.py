@@ -31,6 +31,12 @@ if (sys.hexversion & 0xFF000000) != 0x03000000:
 import os
 import logging
 import locale
+import traceback
+import html
+import queue
+import threading
+import subprocess
+from copy import deepcopy
 
 def prepare_package(package_name):
     # from http://www.py2exe.org/index.cgi/WhereAmI
@@ -58,7 +64,7 @@ def prepare_package(package_name):
 prepare_package('brickv')
 
 from PyQt5.QtCore import QEvent, pyqtSignal, Qt
-from PyQt5.QtGui import QIcon, QFont
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTextBrowser, \
                             QPushButton, QWidget, QLabel, QCheckBox, QHBoxLayout, \
                             QMessageBox, QSplashScreen
@@ -66,14 +72,6 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTextBrowser
 from brickv import config
 from brickv.async_call import ASYNC_EVENT, async_event_handler
 from brickv.load_pixmap import load_pixmap
-
-from brickv.bindings.ip_connection import Error
-import traceback
-import html
-import queue
-import threading
-import subprocess
-from copy import deepcopy
 
 logging.basicConfig(level=config.LOGGING_LEVEL,
                     format=config.LOGGING_FORMAT,

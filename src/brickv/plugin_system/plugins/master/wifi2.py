@@ -257,7 +257,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         self.wifi_websocket_port.setValue(data.websocket_port)
 
         if self.wifi2_firmware_version >= (2, 1, 0):
-            if(data.website == 1):
+            if data.website == 1:
                 self.wifi_website_port.setValue(data.website_port)
                 self.wifi_disable_web_interface.setChecked(False)
             else:
@@ -614,7 +614,7 @@ class Wifi2(QWidget, Ui_Wifi2):
             else:
                 mesh_router_password = '\0'
 
-            if self.wifi_mesh_root_ip_configuration.currentIndex() == 1 :
+            if self.wifi_mesh_root_ip_configuration.currentIndex() == 1:
                 mesh_root_ip  = [self.wifi_mesh_root_ip1.value(),
                                  self.wifi_mesh_root_ip2.value(),
                                  self.wifi_mesh_root_ip3.value(),
@@ -680,8 +680,8 @@ class Wifi2(QWidget, Ui_Wifi2):
             if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 1, 0):
                 # Set mesh configuration.
                 self.master.set_wifi2_mesh_configuration(mesh_enable, mesh_root_ip,
-                    mesh_root_sub, mesh_root_gw, mesh_router_bssid, mesh_group_id,
-                    mesh_group_ssid_prefix, mesh_gateway_ip, mesh_gateway_port)
+                                                         mesh_root_sub, mesh_root_gw, mesh_router_bssid, mesh_group_id,
+                                                         mesh_group_ssid_prefix, mesh_gateway_ip, mesh_gateway_port)
 
                 # Set mesh router password.
                 self.master.set_wifi2_mesh_router_password(mesh_router_password)

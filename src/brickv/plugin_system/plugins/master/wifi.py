@@ -166,7 +166,7 @@ class Wifi(QWidget, Ui_Wifi):
         self.wifi_key.setText(key)
 
     def get_wifi_encryption_async(self, enc):
-        encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length = enc
+        encryption, _key, key_index, eap_options, _ca_certificate_length, _client_certificate_length, _private_key_length = enc
 
         if self.connection in (2, 3, 4, 5):
             encryption -= 2
@@ -259,7 +259,7 @@ class Wifi(QWidget, Ui_Wifi):
         if len(filename) > 0:
             self.wifi_private_key_url.setText(filename)
 
-    def encryption_changed(self, index):
+    def encryption_changed(self, _index):
         if self.wifi_encryption.currentText() in 'WPA/WPA2':
             if self.parent.firmware_version >= (2, 0, 2):
                 self.wifi_key.setMaxLength(63)
@@ -675,7 +675,7 @@ class Wifi(QWidget, Ui_Wifi):
             self.master.set_wifi_authentication_secret(secret)
 
         power_mode_old = self.master.get_wifi_power_mode()
-        encryption_old, key_old, key_index_old, eap_options_old, ca_certificate_length_old, client_certificate_length_old, private_key_length_old = self.master.get_wifi_encryption()
+        encryption_old, _key_old, key_index_old, eap_options_old, ca_certificate_length_old, client_certificate_length_old, private_key_length_old = self.master.get_wifi_encryption()
         ssid_old, connection_old, ip_old, sub_old, gw_old, port_old = self.master.get_wifi_configuration()
 
         hostname_old = hostname

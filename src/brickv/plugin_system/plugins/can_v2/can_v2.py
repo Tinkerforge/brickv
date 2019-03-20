@@ -190,7 +190,6 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
         length = len(data)
         parts = []
         max_length = 0
-        extended = False
 
         if frame_type == self.can.FRAME_TYPE_STANDARD_DATA:
             parts.append('Standard Data')
@@ -200,10 +199,8 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
         elif frame_type == self.can.FRAME_TYPE_EXTENDED_DATA:
             parts.append('Extended Data')
             max_length = 8
-            extended = True
         elif frame_type == self.can.FRAME_TYPE_EXTENDED_REMOTE:
             parts.append('Extended Remote')
-            extended = True
         else:
             parts.append('Unknown')
 

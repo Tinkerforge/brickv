@@ -23,9 +23,9 @@ Boston, MA 02111-1307, USA.
 
 import colorsys
 
-from PyQt5.QtCore import pyqtSignal, Qt, QSize, QPoint
-from PyQt5.QtWidgets import QWidget, QPushButton, QColorDialog
-from PyQt5.QtGui import QImage, QPainter, QPen, QColor, QPixmap, QIcon
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtWidgets import QPushButton, QColorDialog
+from PyQt5.QtGui import QPainter, QColor, QPixmap, QIcon
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.rgb_led_matrix.ui_rgb_led_matrix import Ui_RGBLEDMatrix
@@ -67,9 +67,6 @@ class QColorButton(QPushButton):
         dialog.setCurrentColor(self._color)
         if dialog.exec_():
             self.set_color(dialog.currentColor())
-
-    def mousePressEvent(self, e):
-        return super().mousePressEvent(e)
 
 
 class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):

@@ -21,16 +21,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import Qt, QSize, QPoint
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QImage, QPainter, QPen, QColor
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.async_call import async_call
 from brickv.slider_spin_syncer import SliderSpinSyncer
 from brickv.plugin_system.plugins.oled_128x64_v2.ui_oled_128x64_v2 import Ui_OLED128x64V2
 from brickv.bindings.bricklet_oled_128x64_v2 import BrickletOLED128x64V2
-from brickv.callback_emulator import CallbackEmulator
 from brickv.scribblewidget import ScribbleWidget
 
 class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):

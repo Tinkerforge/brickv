@@ -192,7 +192,8 @@ if not '_infos' in globals():
     _infos[UID_BRICKV].firmware_version_installed = tuple(map(int, config.BRICKV_VERSION.split('.')))
     _infos[UID_BRICKD].name = 'Brick Daemon'
 
-LatestFirmwares = namedtuple('LatestFirmwares', ['tool_infos', 'firmware_infos', 'plugin_infos', 'extension_firmware_infos', 'red_image_infos', 'binding_infos'])
+LatestFirmwares = namedtuple('LatestFirmwares', ['tool_infos', 'firmware_infos', 'plugin_infos',
+                                                 'extension_firmware_infos', 'red_image_infos', 'binding_infos'])
 
 if not '_latest_fws' in globals():
     _latest_fws = LatestFirmwares({}, {}, {}, {}, {}, {})

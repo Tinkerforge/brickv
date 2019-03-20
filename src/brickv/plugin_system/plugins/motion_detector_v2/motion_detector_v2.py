@@ -21,8 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtGui import QColor
-
 from PyQt5.QtCore import pyqtSignal, QTimer
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_motion_detector_v2 import BrickletMotionDetectorV2
@@ -33,7 +31,7 @@ from brickv.async_call import async_call
 class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
     qtcb_motion_detected = pyqtSignal()
     qtcb_detection_cylce_ended = pyqtSignal()
-    
+
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletMotionDetectorV2, *args)
 
@@ -42,7 +40,7 @@ class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
         self.changing = False
 
         self.setupUi(self)
-        
+
         self.qtcb_motion_detected.connect(self.cb_motion_detected)
         self.motion_detector_v2.register_callback(self.motion_detector_v2.CALLBACK_MOTION_DETECTED,
                                                   self.qtcb_motion_detected.emit)
@@ -72,17 +70,17 @@ class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
         self.button_left.clicked.connect(lambda: set_indicator(255, 0, 0))
         self.button_right.clicked.connect(lambda: set_indicator(0, 255, 0))
         self.button_bottom.clicked.connect(lambda: set_indicator(0, 0, 255))
-        
+
         self.indicator_update = False
         self.indicator_value = [0, 0, 0]
         self.sensitivity_update = False
         self.sensitivity_value = 50
-        
+
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update)
         self.update_timer.setInterval(50)
         self.update_timer.start()
-        
+
     def start(self):
         async_call(self.motion_detector_v2.get_indicator, None, self.get_indicator_async, self.increase_error_count)
         async_call(self.motion_detector_v2.get_motion_detected, None, self.get_motion_detected_async, self.increase_error_count)
@@ -90,7 +88,7 @@ class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
 
     def stop(self):
         pass
-    
+
     # Make sure that we update values with at most a 50ms interval
     def update(self):
         if self.indicator_update:
@@ -99,27 +97,27 @@ class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
         if self.sensitivity_update:
             self.sensitivity_update = False
             self.motion_detector_v2.set_sensitivity(self.sensitivity_value)
-    
+
     def sensitivity_changed(self, value):
         self.sensitivity_value = value
         self.sensitivity_update = True
-    
+
     def get_sensitivity_async(self, sensitivity):
         self.spin_sensitivity.setValue(sensitivity)
-    
+
     def get_motion_detected_async(self, motion):
         if motion == self.motion_detector_v2.MOTION_DETECTED:
             self.cb_motion_detected()
         elif motion == self.motion_detector_v2.MOTION_NOT_DETECTED:
             self.cb_detection_cycle_ended()
-            
+
     def cb_motion_detected(self):
         self.label_motion.setText("<font color='red'>Motion Detected</font>")
 
     def cb_detection_cycle_ended(self):
         self.label_motion.setText("No Motion Detected")
 
-    def indicator_changed(self, *args):
+    def indicator_changed(self, *_args):
         if self.changing:
             return
 
@@ -135,7 +133,7 @@ class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
         self.label_color_right.setStyleSheet('QLabel {{ background: #{:02x}{:02x}{:02x} }}'.format(0, 0, right))
         self.label_color_bottom.setStyleSheet('QLabel {{ background: #{:02x}{:02x}{:02x} }}'.format(0, 0, bottom))
 
-    def all_changed(self, *args):
+    def all_changed(self, *_args):
         if self.changing:
             return
 

@@ -109,7 +109,7 @@ Please make sure that your internet connection is working.'
         self.pbutton_n.clicked.connect(self.pbutton_n_clicked)
         self.pbutton_p.clicked.connect(self.pbutton_p_clicked)
 
-    def closeEvent(self, event):
+    def closeEvent(self, _event):
         self.dialog_session = False
         self.red_plugin.get_bindings_versions_async()
 
@@ -126,7 +126,7 @@ Please make sure that your internet connection is working.'
                 self.set_current_state(self.STATE_UPDATE_DONE)
                 self.tedit_main.setText(self.MESSAGE_INFO_STATE_UPDATE_DONE)
         else:
-            self.pbar.setValue(75 + int(( float(self.update_info['processed']) / float(self.update_info['updates_total'])) * 25.0))
+            self.pbar.setValue(75 + int((float(self.update_info['processed']) / float(self.update_info['updates_total'])) * 25.0))
             # Go for the next update to be installed.
             self.do_next_update_install()
 
@@ -1197,7 +1197,7 @@ class RED(PluginBase, Ui_RED):
 
         brickv_update = (self.device_info.brickv_info is not None) \
                         and (self.device_info.brickv_info.firmware_version_installed < self.device_info.brickv_info.firmware_version_latest) \
-                        and not (self.device_info.firmware_version_installed < (1, 14, 0)) # Don't show brickv update if the image is too old
+                        and self.device_info.firmware_version_installed >= (1, 14, 0) # Don't show brickv update if the image does not contain Qt5
 
         bindings_update = any(info.firmware_version_installed < info.firmware_version_latest for info in self.device_info.bindings_infos)
 

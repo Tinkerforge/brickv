@@ -29,6 +29,7 @@ from PyQt5.QtWidgets import QDialog
 from brickv.ui_advanced import Ui_Advanced
 from brickv.utils import get_modeless_dialog_flags
 from brickv import infos
+from brickv.bindings import ip_connection
 
 NO_BRICK = 'No Brick found'
 
@@ -76,7 +77,7 @@ class AdvancedWindow(QDialog, Ui_Advanced):
     def current_device(self):
         try:
             return self.brick_infos[self.combo_brick.currentIndex()].plugin.device
-        except:
+        except IndexError:
             return None
 
     def update_calibration(self):
@@ -89,7 +90,7 @@ class AdvancedWindow(QDialog, Ui_Advanced):
             def slot():
                 try:
                     offset, gain = self.parent.ipcon.get_adc_calibration(device)
-                except:
+                except ip_connection.Error:
                     return
 
                 self.label_offset.setText(str(offset))

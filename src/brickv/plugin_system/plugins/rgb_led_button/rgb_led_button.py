@@ -93,7 +93,7 @@ class RGBLEDButton(COMCUPluginBase, Ui_RGBLEDButton):
         else:
             self.label_button_state.setText('Pressed')
 
-    def rgb_changed(self, *args):
+    def rgb_changed(self, *_args):
         if self.changing:
             return
 
@@ -112,7 +112,7 @@ class RGBLEDButton(COMCUPluginBase, Ui_RGBLEDButton):
         self.rgb_led_button.set_color(r, g, b)
         self.label_color.setStyleSheet('QLabel {{ background: #{:02x}{:02x}{:02x} }}'.format(r, g, b))
 
-    def hsl_changed(self, *args):
+    def hsl_changed(self, *_args):
         if self.changing:
             return
 

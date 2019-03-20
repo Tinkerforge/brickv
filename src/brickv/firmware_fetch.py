@@ -197,7 +197,7 @@ def fetch_latest_fw_versions(report_error_fn):
 
         try:
             latest_version = int(latest_version_parts[0]), int(latest_version_parts[1]), int(latest_version_parts[2])
-        except:
+        except ValueError:
             report_error_fn(ERROR_PARSE_VERSION_INTS)
             return None
 

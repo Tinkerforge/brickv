@@ -22,7 +22,6 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QColor
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase

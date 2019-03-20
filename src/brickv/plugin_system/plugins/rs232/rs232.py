@@ -125,20 +125,20 @@ class RS232(PluginBase, Ui_RS232):
         # QTextEdit breaks lines at \r and \n
         s = s.replace('\n\r', '\n').replace('\r\n', '\n')
 
-        ascii = ''
+        ascii_chars = ''
         for c in s:
-            if (ord(c) < 32 or ord(c) > 126) and not (ord(c) in (10, 13)):
-                ascii += '.'
+            if (ord(c) < 32 or ord(c) > 126) and not ord(c) in (10, 13):
+                ascii_chars += '.'
             else:
-                ascii += c
+                ascii_chars += c
 
         self.text.moveCursor(QTextCursor.End)
-        self.text.insertPlainText(ascii)
+        self.text.insertPlainText(ascii_chars)
         self.text.moveCursor(QTextCursor.End)
 
     def line_ending_changed(self):
         selected_line_ending = self.line_ending_combobox.currentText()
-        self.line_ending_lineedit.setEnabled( (selected_line_ending == 'Hex:' ))
+        self.line_ending_lineedit.setEnabled((selected_line_ending == 'Hex:'))
 
     def get_line_ending(self):
         selected_line_ending = self.line_ending_combobox.currentText()
@@ -168,7 +168,8 @@ class RS232(PluginBase, Ui_RS232):
         length = len(text)
         if length > 60:
             QMessageBox.critical(self, 'RS 232',
-                                 'Input length was too long. Maybe you tried to send to many non-ASCII characters?\n(Got {} bytes, but only 60 are allowed)'.format(length),
+                                 'Input length was too long. Maybe you tried to send to many non-ASCII characters?\n'\
+                                  + '(Got {} bytes, but only 60 are allowed)'.format(length),
                                  QMessageBox.Ok)
             return
         if length < 60:

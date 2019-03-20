@@ -49,7 +49,7 @@ from brickv.utils import get_home_path, get_open_file_name, \
                          get_modeless_dialog_flags
 from brickv.esp_flash import ESPFlash
 from brickv import infos
-from brickv.firmware_fetch import *
+from brickv.firmware_fetch import ERROR_DOWNLOAD
 from brickv.utils import get_main_window
 
 LATEST_VERSIONS_URL = 'http://download.tinkerforge.com/latest_versions.txt'
@@ -106,6 +106,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.extension_firmware_infos = {}
         self.extension_infos = []
         self.refresh_updates_pending = False
+
+        self.fw_fetch_progress_bar = None
 
         self.parent = parent
         self.tab_widget.currentChanged.connect(self.tab_changed)
@@ -178,7 +180,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             QTimer.singleShot(5000, lambda: self.edit_custom_plugin_text_changed(self.edit_custom_plugin.text()))
 
     def update_tree_view_clicked(self, idx):
-        name, uid, current_version, latest_version = [idx.sibling(idx.row(), i).data() for i in range(0, 4)]
+        name, uid, _current_version, _latest_version = [idx.sibling(idx.row(), i).data() for i in range(0, 4)]
 
         is_red_brick_brickv = "brick viewer" in name.lower() and idx.parent().data() is not None
         is_red_brick_binding = "binding" in name.lower()
@@ -211,7 +213,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
     def fw_versions_fetched(self, firmware_info):
         if isinstance(firmware_info, int):
-            if hasattr(self, 'fw_fetch_progress_bar') and self.fw_fetch_progress_bar is not None:
+            if self.fw_fetch_progress_bar is not None:
                 self.fw_fetch_progress_bar.cancel()
                 self.fw_fetch_progress_bar = None
 
@@ -294,7 +296,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.combo_extension_firmware.setEnabled(True)
 
     def refresh_latest_version_info(self):
-        self.progress_bar_active = True
         self.fw_fetch_progress_bar.setLabelText('Discovering latest versions on tinkerforge.com')
         self.fw_fetch_progress_bar.setMaximum(0)
         self.fw_fetch_progress_bar.setValue(0)
@@ -413,7 +414,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
     def update_bricks(self):
         self.combo_parent.clear()
-        items = {}
 
         for info in infos.get_device_infos():
             if len(info.connections) > 0 or info.type == 'brick':
@@ -428,7 +428,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
             no_parent_info = infos.DeviceInfo()
             no_parent_info.name = 'No Parent'
 
-            count = 0
             for info in infos.get_device_infos():
                 if info.reverse_connection == None and info.type != 'brick':
                     no_parent_info.connections[info.position] = info
@@ -535,7 +534,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         try:
             extension_connection_type = self.extension_infos[self.combo_extension.currentIndex()].master_info.connection_type
-        except:
+        except IndexError:
             extension_connection_type = None
 
         if extension_connection_type == None:
@@ -552,7 +551,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.tab_widget.setTabEnabled(2, self.combo_parent.count() > 0 and self.combo_parent.itemText(0) != 'No Brick found')
         self.tab_widget.setTabEnabled(3, len(self.extension_infos) > 0)
 
-    def firmware_changed(self, index):
+    def firmware_changed(self, _index):
         self.update_ui_state()
 
     def firmware_browse_clicked(self):
@@ -712,7 +711,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 try:
                     imu_calibration_text = imu_calibration_text.decode('utf-8')
-                except Exception as e:
+                except UnicodeError as e:
                     progress.cancel()
                     self.popup_fail('IMU Brick', 'Could not decode factory calibration for IMU Brick [{0}]: {1}'.format(imu_uid, e))
                     return
@@ -915,7 +914,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.edit_uid.setText(port_info.uid)
 
-    def plugin_changed(self, index):
+    def plugin_changed(self, _index):
         self.update_ui_state()
 
     def download_bricklet_plugin(self, progress, url_part, has_comcu, name, version, popup=False):
@@ -1172,7 +1171,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.cancel()
             return False
 
-    def write_bricklet_plugin_standard(self, plugin, brick, port, bricklet, name, progress, popup=True):
+    def write_bricklet_plugin_standard(self, plugin, brick, port, _bricklet, name, progress, popup=True):
         # Write
         progress.setLabelText('Writing plugin: ' + name)
         progress.setMaximum(0)
@@ -1434,7 +1433,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.load_version_info(infos.get_latest_fws())
 
-        if hasattr(self, 'fw_fetch_progress_bar') and self.fw_fetch_progress_bar is not None:
+        if self.fw_fetch_progress_bar is not None:
             self.fw_fetch_progress_bar.cancel()
             self.fw_fetch_progress_bar = None
 
@@ -1640,7 +1639,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.update_ui_state()
 
-    def extension_firmware_changed(self, index):
+    def extension_firmware_changed(self, _index):
         self.update_ui_state()
 
     def download_extension_firmware(self, progress, url_part, name, version, popup=False):

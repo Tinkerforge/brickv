@@ -61,7 +61,9 @@ class Master(PluginBase, Ui_Master):
         self.num_extensions = 0
         self.wifi2_ext = None
         self.wifi2_firmware_version = None
-        self.wifi_update_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')), self.tab_widget)
+        self.wifi_update_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')),
+                                             QIcon(load_pixmap('update-icon-hover.png')),
+                                             self.tab_widget)
         self.wifi_update_button.setToolTip('Update available')
         self.wifi_update_button.clicked.connect(lambda: get_main_window().show_extension_update(self.device_info.uid))
         self.wifi_update_button.hide()
@@ -90,7 +92,7 @@ class Master(PluginBase, Ui_Master):
 
         if self.firmware_version >= (1, 2, 1):
             reset = QAction('Reset', self)
-            reset.triggered.connect(lambda: self.master.reset())
+            reset.triggered.connect(self.master.reset)
             self.set_actions([(0, None, [reset])])
 
         self.extension_type_preset = [None,  # None
@@ -111,7 +113,7 @@ class Master(PluginBase, Ui_Master):
             try:
                 wifi_info = next(ext for ext in self.device_info.extensions.values() if ext.extension_type == self.master.EXTENSION_TYPE_WIFI2)
                 wifi_update_avail = wifi_info.firmware_version_installed != (0, 0, 0) and wifi_info.firmware_version_installed < wifi_info.firmware_version_latest
-            except:
+            except StopIteration:
                 wifi_update_avail = False
         else:
             wifi_update_avail = False
