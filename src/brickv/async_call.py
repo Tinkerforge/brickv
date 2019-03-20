@@ -22,6 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import sys
 from threading import Lock
 from collections import namedtuple
 import logging
@@ -62,7 +63,7 @@ def async_event_handler():
         except StopIteration:
             pass
         except:
-            logging.exception('Error while delivering async call result')
+            sys.excepthook(*sys.exc_info())
 
 def async_next_session():
     with async_session_lock:
