@@ -313,8 +313,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
     def modbus_master_param2_changed(self, value):
         if self.mode_combobox.currentIndex() == self.rs485.MODE_MODBUS_MASTER_RTU and \
            self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_SINGLE_COIL:
-                if value > 0:
-                    self.modbus_master_param2_spinbox.setValue(65280)
+            if value > 0:
+                self.modbus_master_param2_spinbox.setValue(65280)
 
     def master_send_clicked(self):
         if self.rs485.get_mode() != self.rs485.MODE_MODBUS_MASTER_RTU:

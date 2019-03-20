@@ -170,14 +170,17 @@ class PyinstallerUtils:
         installer = '{}_windows_{}.exe'.format(self.UNDERSCORE_NAME, self.VERSION.replace('.', '_'))
 
         installer_target_path = os.path.join(self.root_path, '..', installer)
+
         if os.path.exists(installer_target_path):
             os.remove(installer_target_path)
 
         shutil.move(os.path.join(self.dist_path, 'nsis', installer), installer_target_path)
-        return os.path.join(self.root_path,'..', installer)
+
+        return os.path.join(self.root_path, '..', installer)
 
     def prepare(self, prepare_script_working_dir=None, prepare_script=None):
         print('removing old dist directory')
+
         if os.path.exists(self.dist_path):
             shutil.rmtree(self.dist_path)
 
@@ -197,7 +200,6 @@ class PyinstallerUtils:
         return [x for x in binaries if all(pattern not in x[0].lower() for pattern in patterns)]
 
     def post_generate(self, undo_script_working_dir=None, undo_script=None):
-
         if undo_script is not None:
             if undo_script_working_dir is not None:
                 os.chdir(undo_script_working_dir)
@@ -215,11 +217,14 @@ class PyinstallerUtils:
 
     def post_generate_windows(self):
         exe_path = os.path.join(self.dist_path, self.UNDERSCORE_NAME+'.exe')
+
         if '--no-sign' not in sys.argv:
             win_sign(exe_path)
         else:
             print("skipping win_sign")
+
         installer_exe_path = self.win_build_installer()
+
         if '--no-sign' not in sys.argv:
             win_sign(installer_exe_path)
         else:
@@ -239,10 +244,12 @@ class PyinstallerUtils:
             print("skipping codesign")
 
         print('building disk image')
+
         dmg_path = os.path.join(self.dist_path, '..', '{}_macos_{}.dmg'.format(self.UNDERSCORE_NAME, self.VERSION.replace('.', '_')))
 
         if os.path.exists(dmg_path):
             os.remove(dmg_path)
+
         os.mkdir(os.path.join(self.dist_path, 'dmg'))
 
         shutil.move(os.path.join(self.dist_path, app_name), os.path.join(self.dist_path, 'dmg'))

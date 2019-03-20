@@ -76,8 +76,8 @@ class ThermalImage(QWidget):
         self.crosshair_width = 5
         self.image = QImage(QSize(w, h), QImage.Format_RGB32)
 
-        self.setMaximumSize(w*self.image_pixel_width, h*self.image_pixel_width)
-        self.setMinimumSize(w*self.image_pixel_width, h*self.image_pixel_width)
+        self.setMaximumSize(w*self.image_pixel_width, h * self.image_pixel_width)
+        self.setMinimumSize(w*self.image_pixel_width, h * self.image_pixel_width)
 
         self.create_rgb_lookup()
         self.clear_image()
@@ -93,6 +93,7 @@ class ThermalImage(QWidget):
 
         # Standard
         standard = []
+
         for x in range(256):
             x /= 255.0
             r = int(round(255 * math.sqrt(x)))
@@ -198,9 +199,9 @@ class ThermalImage(QWidget):
 
             self.parent.update_spotmeter_roi_label()
 
-    def clip_pos(self, pos, start = None):
-        max_width  = self.width *self.image_pixel_width - 1
-        max_height = self.height*self.image_pixel_width - 1
+    def clip_pos(self, pos, start=None):
+        max_width  = self.width * self.image_pixel_width - 1
+        max_height = self.height * self.image_pixel_width - 1
 
         if pos.x() < 0:
             pos.setX(0)
@@ -371,7 +372,7 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
             self.thermal_image.new_image(image, is_16bit=True)
             async_call(self.thermal_imaging.get_statistics, None, self.cb_statistics, self.increase_error_count)
 
-    def kelvin_to_degstr(self, value, res = None):
+    def kelvin_to_degstr(self, value, res=None):
         if res == None:
             res = self.valid_resolution
 

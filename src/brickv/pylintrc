@@ -139,13 +139,13 @@ disable=print-statement,
         deprecated-sys-function,
         exception-escape,
         comprehension-escape,
-	no-name-in-module,
-	len-as-condition,
-	missing-docstring,
-	singleton-comparison,
-	too-many-lines,
-	global-statement,
-	pointless-string-statement
+        no-name-in-module,
+        len-as-condition,
+        missing-docstring,
+        singleton-comparison,
+        too-many-lines,
+        global-statement,
+        pointless-string-statement
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

@@ -785,11 +785,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
             if current_text == CUSTOM:
                 self.popup_ok('Brick', 'Successfully flashed firmware.\n' + message)
             elif imu_calibration is not None:
-                self.popup_ok('Brick', 'Successfully flashed {0} Brick firmware {1}.{2}.{3}.\n'.format(name, *version) +
-                                       'Successfully restored factory calibration.\n' + message)
+                self.popup_ok('Brick',
+                              'Successfully flashed {0} Brick firmware {1}.{2}.{3}.\n'.format(name, *version) +
+                              'Successfully restored factory calibration.\n' + message)
             else:
-                self.popup_ok('Brick', 'Successfully flashed {0} Brick firmware {1}.{2}.{3}.\n'.format(name, *version) +
-                                       message)
+                self.popup_ok('Brick',
+                              'Successfully flashed {0} Brick firmware {1}.{2}.{3}.\n'.format(name, *version) +
+                              message)
 
         try:
             samba.flash(firmware, imu_calibration, lock_imu_calibration_pages)
@@ -1568,32 +1570,37 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                             if has_firmware:
                                 child = [QStandardItem(ext.capitalize() + ': ' + info.extensions[ext].name),
-                                        QStandardItem(''),
-                                        QStandardItem(get_version_string(info.extensions[ext].firmware_version_installed, replace_unknown="Querying...")),
-                                        QStandardItem(get_version_string(info.extensions[ext].firmware_version_latest, replace_unknown="Unknown"))]
+                                         QStandardItem(''),
+                                         QStandardItem(get_version_string(info.extensions[ext].firmware_version_installed, replace_unknown="Querying...")),
+                                         QStandardItem(get_version_string(info.extensions[ext].firmware_version_latest, replace_unknown="Unknown"))]
                             else:
                                 child = [QStandardItem(ext.capitalize() + ': ' + info.extensions[ext].name),
-                                        QStandardItem(''),
-                                        QStandardItem(get_version_string(info.extensions[ext].firmware_version_installed, replace_unknown="")),
-                                        QStandardItem(get_version_string(info.extensions[ext].firmware_version_latest, replace_unknown=""))]
+                                         QStandardItem(''),
+                                         QStandardItem(get_version_string(info.extensions[ext].firmware_version_installed, replace_unknown="")),
+                                         QStandardItem(get_version_string(info.extensions[ext].firmware_version_latest, replace_unknown=""))]
 
                             color, update = get_color_for_device(info.extensions[ext])
+
                             if update:
                                 is_update = True
+
                             for item in child:
                                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                                 item.setData(color, Qt.BackgroundRole)
+
                                 if not has_firmware:
                                     item.setData(QBrush(QColor(0x80, 0x80, 0x80)), Qt.ForegroundRole)
+
                             parent[0].appendRow(child)
 
                 if isinstance(info, infos.BrickREDInfo):
                     if info.brickv_info is not None:
                         brickv_row = [QStandardItem(info.brickv_info.name),
-                                    QStandardItem(''),
-                                    QStandardItem(get_version_string(info.brickv_info.firmware_version_installed, replace_unknown="Querying...")),
-                                    QStandardItem(get_version_string(info.brickv_info.firmware_version_latest, replace_unknown="Unknown"))]
+                                      QStandardItem(''),
+                                      QStandardItem(get_version_string(info.brickv_info.firmware_version_installed, replace_unknown="Querying...")),
+                                      QStandardItem(get_version_string(info.brickv_info.firmware_version_latest, replace_unknown="Unknown"))]
                         color, update = get_color_for_device(info.brickv_info)
+
                         if update:
                             is_update = True
                     else:
@@ -1607,10 +1614,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     for item in brickv_row:
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                         item.setData(color, Qt.BackgroundRole)
+
                     parent[0].appendRow(brickv_row)
 
                     binding_row = [QStandardItem('Bindings'), QStandardItem(''), QStandardItem(''), QStandardItem('')]
                     is_update = False
+
                     for binding in info.bindings_infos:
                         child = [QStandardItem(binding.name),
                                  QStandardItem(''),
@@ -1618,17 +1627,22 @@ class FlashingWindow(QDialog, Ui_Flashing):
                                  QStandardItem(get_version_string(binding.firmware_version_latest, replace_unknown="Unknown"))]
 
                         color, update = get_color_for_device(binding)
+
                         if update:
                             is_update = True
+
                         for item in child:
                             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                             item.setData(color, Qt.BackgroundRole)
+
                         binding_row[0].appendRow(child)
 
                     for item in binding_row:
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+
                         if is_update:
                             item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
+
                     parent[0].appendRow(binding_row)
 
                     to_collapse.append(binding_row[0].index())
@@ -1640,6 +1654,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                           QStandardItem(get_version_string(info.firmware_version_latest, replace_unknown="Unknown"))]
 
                 color, update = get_color_for_device(info)
+
                 if update:
                     self.label_update_tool.show()
                 else:
@@ -1648,15 +1663,17 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 for item in parent:
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                     item.setData(color, Qt.BackgroundRole)
+
                 self.update_tree_view_model.appendRow(parent)
 
         # Disable collapse animation temporarily, as it would be visible when the user opens the flashing window.
         self.update_tree_view.setAnimated(False)
         self.update_tree_view.expandAll()
+
         for model_idx in to_collapse:
             self.update_tree_view.collapse(model_idx)
-        self.update_tree_view.setAnimated(True)
 
+        self.update_tree_view.setAnimated(True)
         self.update_tree_view.setColumnWidth(0, 260)
         self.update_tree_view.setColumnWidth(1, 75)
         self.update_tree_view.setColumnWidth(2, 75)

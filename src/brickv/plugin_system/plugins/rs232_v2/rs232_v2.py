@@ -33,7 +33,7 @@ from brickv.hex_validator import HexValidator
 from brickv.qhexedit import QHexeditWidget
 
 CBOX_IDX_FC_HW = 2
-BAUDRATE_MAX_RS232  = 250000
+BAUDRATE_MAX_RS232 = 250000
 
 class RS232V2(COMCUPluginBase, Ui_RS232_V2):
     qtcb_read = pyqtSignal(object)
@@ -144,7 +144,7 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
 
     def line_ending_changed(self):
         selected_line_ending = self.line_ending_combobox.currentText()
-        self.line_ending_lineedit.setEnabled( (selected_line_ending == 'Hex:' ))
+        self.line_ending_lineedit.setEnabled(selected_line_ending == 'Hex:' )
 
     def get_line_ending(self):
         selected_line_ending = self.line_ending_combobox.currentText()

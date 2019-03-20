@@ -82,7 +82,7 @@ class IndustrialDual020mAV2(COMCUPluginBase):
 
         self.plot_widget = PlotWidget('Current [mA]',
                                       plots,
-                                      extra_key_widgets = self.connected_labels)
+                                      extra_key_widgets=self.connected_labels)
 
         h_sp = QSizePolicy()
         h_sp.setHorizontalPolicy(QSizePolicy.Expanding)

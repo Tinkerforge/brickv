@@ -74,20 +74,23 @@ class TerminalWidget(QWidget):
 
     session_closed = pyqtSignal()
 
-    def __init__(self, parent=None, command="/bin/bash",font_size=14):
+    def __init__(self, parent=None, command="/bin/bash", font_size=14):
         super().__init__(parent)
+
         self._columns = 80
         self._rows = 24
-        self._char_width = [0]*(self._columns+1)
-        self._char_height = [0]*(self._rows+1)
+        self._char_width = [0] * (self._columns + 1)
+        self._char_height = [0] * (self._rows + 1)
 
         self.setFocusPolicy(Qt.StrongFocus)
         self.setAutoFillBackground(False)
         self.setAttribute(Qt.WA_OpaquePaintEvent, True)
         self.setCursor(Qt.IBeamCursor)
         font_name = "Monospace"
+
         if sys.platform == 'darwin':
             font_name = "Courier"
+
         font = QFont(font_name)
         font.setStyleHint(QFont.TypeWriter)
         font.setPixelSize(font_size)
@@ -111,6 +114,7 @@ class TerminalWidget(QWidget):
         self._session = SerialSession(command, self)
         self._session.start()
         self._timer_id = None
+
         # start timer either with high or low priority
         if self.hasFocus():
             self.focusInEvent(None)
@@ -130,16 +134,19 @@ class TerminalWidget(QWidget):
     def closeEvent(self, event):
         if self._session == None:
             return
+
         self._session.close()
 
     def focusNextPrevChild(self, next):
         if self._session == None:
             return True
+
         return False
 
     def timerEvent(self, event):
         if self.hasFocus():
             self._blink = not self._blink
+
         self.update_screen()
 
     def _update_metrics(self):
@@ -147,6 +154,7 @@ class TerminalWidget(QWidget):
 
         for i in range(self._columns+1):
             self._char_width[i] = fm.width(' '*i)
+
         for i in range(self._rows+1):
             self._char_height[i] = fm.height()*(i+1)
 
@@ -180,6 +188,7 @@ class TerminalWidget(QWidget):
 
         # max 25 fps
         new_update = time.time()
+
         if (new_update - self._last_update) < 0.040:
             return
 
@@ -188,6 +197,7 @@ class TerminalWidget(QWidget):
         old_screen = self._screen
         (self._cursor_col, self._cursor_row), self._screen = self._session.dump()
         self._update_cursor_rect()
+
         if old_screen != self._screen:
             self._dirty = True
 
@@ -224,14 +234,17 @@ class TerminalWidget(QWidget):
     def _pixel2pos(self, x, y):
         col = int(round(x / (self._char_width[self._columns]/float(self._columns))))
         row = int(round(y / (self._char_height[self._rows]/float(self._rows))))
+
         return col, row
 
     def _pos2pixel(self, col, row):
         x = self._char_width[col]
+
         if row == 0:
             y = 0
         else:
             y = self._char_height[row-1]
+
         return x, y
 
     def _paint_cursor(self, painter):
@@ -239,6 +252,7 @@ class TerminalWidget(QWidget):
             color = "#aaa"
         else:
             color = "#fff"
+
         painter.setPen(QPen(QColor(color)))
         painter.drawRect(self._cursor_rect)
         self._cursor_rect = None
@@ -262,30 +276,31 @@ class TerminalWidget(QWidget):
         y = 0
         text = []
         text_append = text.append
+
         for row, line in enumerate(self._screen):
             col = 0
             text_line = ""
+
             for item in line:
                 if isinstance(item, str):
                     x = self._char_width[col]
                     length = len(item)
-                    rect = QRect(
-                        x, y, x + self._char_width[length], y + self._char_height[0])
+                    rect = QRect(x, y, x + self._char_width[length], y + self._char_height[0])
                     painter_fillRect(rect, brush)
                     painter_drawText(rect, align, item)
                     col += length
                     text_line += item
                 else:
                     foreground_color_idx, background_color_idx, underline_flag = item
-                    foreground_color = foreground_color_map[
-                        foreground_color_idx]
-                    background_color = background_color_map[
-                        background_color_idx]
+                    foreground_color = foreground_color_map[foreground_color_idx]
+                    background_color = background_color_map[background_color_idx]
                     pen = QPen(QColor(foreground_color))
                     brush = QBrush(QColor(background_color))
                     painter_setPen(pen)
+
             y += self._char_height[0]
             text_append(text_line)
+
         self._text = text
 
     def _paint_selection(self, painter):
@@ -295,11 +310,11 @@ class TerminalWidget(QWidget):
         brush = QBrush(bcol)
         painter.setPen(pen)
         painter.setBrush(brush)
+
         if self._selection != None:
             for (start_col, start_row, end_col, end_row) in self._selection:
                 x, y = self._pos2pixel(start_col, start_row)
-                width, height = self._pos2pixel(
-                    end_col - start_col, end_row - start_row)
+                width, height = self._pos2pixel(end_col - start_col, end_row - start_row)
                 rect = QRect(x, y, width, height)
                 painter.fillRect(rect, brush)
 
@@ -325,29 +340,37 @@ class TerminalWidget(QWidget):
         key = event.key()
         modifiers = event.modifiers()
         ctrl = modifiers == Qt.ControlModifier
+
         if ctrl and key == Qt.Key_Plus:
             self.zoom_in()
         elif ctrl and key == Qt.Key_Minus:
-                self.zoom_out()
+            self.zoom_out()
         else:
             if text and key != Qt.Key_Backspace:
                 self.send(text)
             else:
                 s = self.keymap.get(key)
+
                 if s:
                     self.send(s.encode("utf-8"))
                 elif DEBUG:
                     print("Unknown key combination")
                     print("Modifiers: " + str(modifiers))
                     print("Key: " + str(key))
+
                     for name in dir(Qt):
                         if not name.startswith("Key_"):
                             continue
+
                         value = getattr(Qt, name)
+
                         if value == key:
                             print("Symbol: Qt.%s" % name)
+
                     print("Text: %r" % text)
+
         event.accept()
+
         if key in (Qt.Key_Enter, Qt.Key_Return):
             self.return_pressed.emit()
 
@@ -356,6 +379,7 @@ class TerminalWidget(QWidget):
             return
 
         button = event.button()
+
         if button == Qt.RightButton:
             ctx_event = QContextMenuEvent(QContextMenuEvent.Mouse, event.pos())
             self.contextMenuEvent(ctx_event)
@@ -378,11 +402,13 @@ class TerminalWidget(QWidget):
         start_col, start_row = self._pixel2pos(sx, sy)
         ex, ey = end_pos.x(), end_pos.y()
         end_col, end_row = self._pixel2pos(ex, ey)
+
         if start_row == end_row:
             if ey > sy or end_row == 0:
                 end_row += 1
             else:
                 end_row -= 1
+
         if start_col == end_col:
             if ex > sx or end_col == 0:
                 end_col += 1
@@ -390,24 +416,31 @@ class TerminalWidget(QWidget):
                 end_col -= 1
         if start_row > end_row:
             start_row, end_row = end_row, start_row
+
         if start_col > end_col:
             start_col, end_col = end_col, start_col
 
         if start_col > 80:
             start_col = 80
+
         if end_col > 80:
             end_col = 80
+
         if start_col < 0:
             start_col = 0
+
         if end_col < 0:
             end_col = 0
 
         if start_row > 24:
             start_row = 24
+
         if end_row > 24:
             end_row = 24
+
         if start_row < 0:
             start_row = 0
+
         if end_row < 0:
             end_row = 0
 
@@ -419,16 +452,20 @@ class TerminalWidget(QWidget):
         else:
             text = []
             (start_col, start_row, end_col, end_row) = rect
+
             for row in range(start_row, end_row):
                 text.append(self._text[row][start_col:end_col])
+
             return text
 
     def text_selection(self):
         text = []
+
         if self._selection != None:
             for (start_col, start_row, end_col, end_row) in self._selection:
                 for row in range(start_row, end_row):
                     text.append(self._text[row][start_col:end_col])
+
         return "\n".join(text)
 
     def column_count(self):
@@ -450,8 +487,10 @@ class TerminalWidget(QWidget):
             self._selection = self._selection_rects(self._press_pos, move_pos)
 
             sel = self.text_selection()
+
             if DEBUG:
                 print("%r copied to xselection" % sel)
+
             self._clipboard.setText(sel, QClipboard.Selection)
 
             self.update_screen()
@@ -469,27 +508,36 @@ class TerminalWidget(QWidget):
         # find start of word
         start_col = col
         found_left = 0
+
         while start_col > 0:
             char = line[start_col]
+
             if not char.isalnum() and char not in ("_",):
                 found_left = 1
                 break
+
             start_col -= 1
+
         # find end of word
         end_col = col
         found_right = 0
+
         while end_col < self._columns:
             char = line[end_col]
+
             if not char.isalnum() and char not in ("_",):
                 found_right = 1
                 break
+
             end_col += 1
-        self._selection = [
-            (start_col + found_left, row, end_col - found_right + 1, row + 1)]
+
+        self._selection = [(start_col + found_left, row, end_col - found_right + 1, row + 1)]
 
         sel = self.text_selection()
+
         if DEBUG:
             print("%r copied to xselection" % sel)
+
         self._clipboard.setText(sel, QClipboard.Selection)
 
         self.update_screen()

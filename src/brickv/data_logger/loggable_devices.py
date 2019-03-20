@@ -958,11 +958,12 @@ device_specs = {
                 'advanced': True
             }
         ],
-        'options_setter': lambda device, reference_air_pressure, \
-                                         moving_average_length_air_pressure, \
-                                         moving_average_length_temperature,
-                                         data_rate,
-                                         air_pressure_low_pass_filter: \
+        'options_setter': lambda device,
+                                 reference_air_pressure, \
+                                 moving_average_length_air_pressure, \
+                                 moving_average_length_temperature,
+                                 data_rate,
+                                 air_pressure_low_pass_filter: \
                           [device.set_reference_air_pressure(reference_air_pressure),
                            device.set_moving_average_configuration(moving_average_length_air_pressure,
                                                                    moving_average_length_temperature),
@@ -3713,7 +3714,7 @@ device_specs = {
                 'name': 'Station Data',
                 'getter': special_get_station_data,
                 'subvalues': ['Temperature', 'Humidity', 'Wind Speed', 'Gust Speed', 'Rain', 'Wind Direction', 'Battery Low', 'Last Change'],
-                'unit': ['°C/10', '%RH', 'm/10s', 'm/10s', 'mm/10', None , None, 's'],
+                'unit': ['°C/10', '%RH', 'm/10s', 'm/10s', 'mm/10', None, None, 's'],
                 'advanced': False
             },
             {

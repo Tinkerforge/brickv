@@ -183,7 +183,7 @@ class VoltageCurrentV2(COMCUPluginBase, Ui_VoltageCurrentV2):
         self.plot_widget_power = PlotWidget('Power [W]', plots_power, clear_button=self.button_clear_graphs)
 
         self.save_conf_button.clicked.connect(self.save_conf_clicked)
-        
+
         self.calibration = None
         self.button_calibration.clicked.connect(self.calibration_clicked)
 

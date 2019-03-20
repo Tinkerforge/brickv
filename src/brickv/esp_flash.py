@@ -256,7 +256,7 @@ class ESPROM:
         self.flash_begin(0, 0)
         # Reset the chip rather than call flash_finish(), which would have
         # write protected the chip again (why oh why does it do that?!)
-        self.mem_begin(0,0,0,0x40100000)
+        self.mem_begin(0, 0, 0, 0x40100000)
         self.mem_finish(0x40000080)
 
     """ Perform a chip erase of SPI flash """
@@ -267,7 +267,7 @@ class ESPROM:
         # This is hacky: we don't have a custom stub, instead we trick
         # the bootloader to jump to the SPIEraseChip() routine and then halt/crash
         # when it tries to boot an unconfigured system.
-        self.mem_begin(0,0,0,0x40100000)
+        self.mem_begin(0, 0, 0, 0x40100000)
         self.mem_finish(0x40004984)
 
         # Yup - there's no good way to detect if we succeeded.

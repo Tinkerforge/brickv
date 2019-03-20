@@ -43,23 +43,23 @@ class IndustrialDigitalOut4V2(COMCUPluginBase, Ui_IndustrialDigitalOut4V2):
         self.pixmap_high = load_masked_pixmap('plugin_system/plugins/industrial_digital_out_4_v2/ido4_high.bmp')
 
         self.btn_v_c = [
-                            {
-                                'btn': self.btn_v_c0,
-                                'state': False
-                            },
-                            {
-                                'btn': self.btn_v_c1,
-                                'state': False
-                            },
-                            {
-                                'btn': self.btn_v_c2,
-                                'state': False
-                            },
-                            {
-                                'btn': self.btn_v_c3,
-                                'state': False
-                            }
-                       ]
+            {
+                'btn': self.btn_v_c0,
+                'state': False
+            },
+            {
+                'btn': self.btn_v_c1,
+                'state': False
+            },
+            {
+                'btn': self.btn_v_c2,
+                'state': False
+            },
+            {
+                'btn': self.btn_v_c3,
+                'state': False
+            }
+        ]
 
         self.lbl_s_i_c = [self.lbl_s_i_c0, self.lbl_s_i_c1, self.lbl_s_i_c2, self.lbl_s_i_c3]
         self.cbox_clc_c = [self.cbox_clc_c0, self.cbox_clc_c1, self.cbox_clc_c2, self.cbox_clc_c3]

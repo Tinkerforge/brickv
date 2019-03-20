@@ -180,17 +180,17 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
             self.wifi_mesh_status_group.setVisible(True)
 
             async_call(self.master.get_wifi2_mesh_common_status, None,
-                self.get_wifi2_mesh_common_status_async,
-                self.parent.parent.increase_error_count)
+                       self.get_wifi2_mesh_common_status_async,
+                       self.parent.parent.increase_error_count)
 
             async_call(self.master.get_wifi2_mesh_client_status, None,
-                self.get_wifi2_mesh_client_status_async,
-                self.parent.parent.increase_error_count)
+                       self.get_wifi2_mesh_client_status_async,
+                       self.parent.parent.increase_error_count)
 
             async_call(self.master.get_wifi2_mesh_ap_status, None,
-                self.get_wifi2_mesh_ap_status_async,
-                self.parent.parent.increase_error_count)
+                       self.get_wifi2_mesh_ap_status_async,
+                       self.parent.parent.increase_error_count)
         else:
             async_call(self.master.get_wifi2_status, None,
-                self.update_status_async,
-                self.parent.parent.increase_error_count)
+                       self.update_status_async,
+                       self.parent.parent.increase_error_count)

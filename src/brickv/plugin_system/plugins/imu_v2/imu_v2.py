@@ -128,7 +128,7 @@ class WrapperWidget(QWidget):
 
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
-        self.setMinimumSize(200,200)
+        self.setMinimumSize(200, 200)
         self.glWidget = IMUV2GLWidget()
         self.layout().addWidget(self.glWidget)
         self.setWindowTitle('IMU Brick 2.0 - 3D View - Brick Viewer ' + config.BRICKV_VERSION)
@@ -369,9 +369,9 @@ class IMUV2(PluginBase, Ui_IMUV2):
                                self.sensor_data[15])
             if self.imu_gl_wrapper is not None:
                 self.imu_gl_wrapper.glWidget.update(self.sensor_data[12],
-                               self.sensor_data[13],
-                               self.sensor_data[14],
-                               self.sensor_data[15])
+                                                    self.sensor_data[13],
+                                                    self.sensor_data[14],
+                                                    self.sensor_data[15])
 
             cal_mag = data.calibration_status & 3
             cal_acc = (data.calibration_status & (3 << 2)) >> 2
