@@ -247,10 +247,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QApplication.quit()
 
     def exit_brickv(self, signl=None, frme=None):
-        if self.current_device_info is not None:
-            self.current_device_info.plugin.stop_plugin()
-            self.current_device_info.plugin.destroy_plugin()
-
         self.update_current_host_info()
         config.set_host_infos(self.host_infos)
 
