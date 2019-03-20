@@ -229,6 +229,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.load_version_info(firmware_info)
 
     def load_version_info(self, version_info):
+        # Save combobox state by url_part
+        selected_firmware = self.combo_firmware.currentData()
+        selected_plugin = self.combo_plugin.currentData()
+        selected_extension_firmware = self.combo_extension_firmware.currentData()
+
         self.reset_version_info()
         if version_info is not None:
             self.tool_infos.update(version_info.tool_infos)
@@ -272,14 +277,27 @@ class FlashingWindow(QDialog, Ui_Flashing):
             if self.combo_extension_firmware.count() > 0:
                 self.combo_extension_firmware.insertSeparator(self.combo_extension_firmware.count())
 
+        # Restore combobox state. If the former selected firmware is not found, set combobox to SELECT.
         self.combo_firmware.addItem(CUSTOM)
-        self.firmware_changed(0)
+        firmware_idx = self.combo_firmware.findData(selected_firmware)
+        if firmware_idx < 0:
+            firmware_idx = 0
+        self.combo_firmware.setCurrentIndex(firmware_idx)
+        self.firmware_changed(firmware_idx)
 
         self.combo_plugin.addItem(CUSTOM)
-        self.plugin_changed(0)
+        plugin_idx = self.combo_plugin.findData(selected_plugin)
+        if plugin_idx < 0:
+            plugin_idx = 0
+        self.combo_plugin.setCurrentIndex(plugin_idx)
+        self.plugin_changed(plugin_idx)
 
         self.combo_extension_firmware.addItem(CUSTOM)
-        self.extension_firmware_changed(0)
+        extension_firmware_idx = self.combo_extension_firmware.findData(selected_extension_firmware)
+        if extension_firmware_idx < 0:
+            extension_firmware_idx = 0
+        self.combo_extension_firmware.setCurrentIndex(extension_firmware_idx)
+        self.extension_firmware_changed(extension_firmware_idx)
 
         self.update_ui_state()
 
