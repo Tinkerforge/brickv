@@ -259,7 +259,9 @@ def remove_info(uid):
     get_infos_changed_signal().emit(uid)
 
 def update_info(uid):
-    add_latest_fw(_infos[uid])
+    info = _infos.get(uid)
+    if info is not None:
+        add_latest_fw(info)
 
     get_infos_changed_signal().emit(uid)
 
