@@ -130,7 +130,7 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
         ascii = ''
 
         for c in s:
-            if (ord(c) < 32 or ord(c) > 126) and not (ord(c) in (10, 13)):
+            if (ord(c) < 32 or ord(c) > 126) and ord(c) not in (10, 13):
                 ascii += '.'
             else:
                 ascii += c
