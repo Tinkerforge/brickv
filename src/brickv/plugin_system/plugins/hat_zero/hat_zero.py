@@ -56,11 +56,13 @@ class HATZero(COMCUPluginBase, Ui_HATZero):
     def update_bricklets(self):
         try:
             bricklets = infos.get_info(self.uid).connections
+
             for i in range(4):
                 port = chr(ord('a') + i)
+
                 try:
                     bricklet = bricklets[port]
-                    text ='{0} ({1})'.format(bricklet.name, bricklet.uid) 
+                    text = '{0} ({1})'.format(bricklet.name, bricklet.uid)
                     if text != self.ports[i].text():
                         self.ports[i].setText(text)
                         self.ports[i].mousePressEvent = self.get_port_label_clicked_lambda(bricklet.uid)

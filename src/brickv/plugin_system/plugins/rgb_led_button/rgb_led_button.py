@@ -65,9 +65,9 @@ class RGBLEDButton(COMCUPluginBase, Ui_RGBLEDButton):
 
         for color, button in zip([(0, 0, 0), (255, 255, 255), (255, 0, 0), (255, 255, 0),
                                   (0, 255, 0), (0, 255, 255), (0, 0, 255), (255, 0, 255)],
-                                [self.button_black, self.button_white, self.button_red, self.button_yellow,
-                                 self.button_green, self.button_cyan, self.button_blue, self.button_magenta]):
-            button.clicked.connect(lambda clicked, c = color: set_color(*c))
+                                 [self.button_black, self.button_white, self.button_red, self.button_yellow,
+                                  self.button_green, self.button_cyan, self.button_blue, self.button_magenta]):
+            button.clicked.connect(lambda clicked, c=color: set_color(*c))
             pixmap = QPixmap(16, 16)
             QPainter(pixmap).fillRect(0, 0, 16, 16, QColor(*color))
             button.setIcon(QIcon(pixmap))

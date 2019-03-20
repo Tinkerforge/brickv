@@ -280,9 +280,11 @@ class LCD20x4(PluginBase):
         line = int(self.line_combo.currentText())
         position = int(self.pos_combo.currentText())
         text = self.text_edit.text()
+
         if self.firmware_version >= (2, 0, 1):
             for i in range(8):
                 text = text.replace('\\' + str(i), chr(i+8))
+
         try:
             self.lcd.write_line(line, position, unicode_to_ks0066u(text))
         except ip_connection.Error:
@@ -291,6 +293,7 @@ class LCD20x4(PluginBase):
     def char_index_save_clicked(self):
         char = [0]*8
         img = self.scribble_widget.image()
+
         for j in range(img.height()):
             for i in range(img.width() - 1, -1, -1):
                 if img.pixel(i, j) == self.scribble_widget.foreground_color().rgb():
@@ -310,6 +313,7 @@ class LCD20x4(PluginBase):
         r = []
         g = []
         b = []
+
         for j in range(self.scribble_widget.image().height()):
             for i in range(self.scribble_widget.image().width() - 1, -1, -1):
                 if characters[j] & (1 << i):
@@ -320,7 +324,8 @@ class LCD20x4(PluginBase):
                     r.append(0)
                     g.append(0)
                     b.append(255)
-        self.scribble_widget.array_draw(r,g,b)
+
+        self.scribble_widget.array_draw(r, g, b)
 
     def char_index_changed(self, index):
         async_call(self.lcd.get_custom_character, (index,), self.custom_character_async, self.increase_error_count)

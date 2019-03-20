@@ -40,7 +40,7 @@ class ThermocoupleV2(COMCUPluginBase):
 
         self.qtcb_error_state.connect(self.cb_error_state)
         self.thermo2.register_callback(self.thermo2.CALLBACK_ERROR_STATE,
-                                      self.qtcb_error_state.emit)
+                                       self.qtcb_error_state.emit)
 
         self.cbe_temperature = CallbackEmulator(self.thermo2.get_temperature,
                                                 self.cb_temperature,

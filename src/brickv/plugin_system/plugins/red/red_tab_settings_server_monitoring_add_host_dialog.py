@@ -34,8 +34,8 @@ class REDTabSettingsServerMonitoringAddHostDialog(QDialog, Ui_REDTabSettingsServ
         QDialog.__init__(self, parent)
         self.setupUi(self)
 
-        self.host   = ''
-        self.port   = ''
+        self.host = ''
+        self.port = ''
         self.secret = ''
         self.chkbox_sm_add_host_authentication.stateChanged.connect(self.slot_chkbox_sm_add_host_authentication_state_changed)
         self.pbutton_sm_add_host_add.clicked.connect(self.slot_pbutton_sm_add_host_add_clicked)
@@ -55,23 +55,23 @@ class REDTabSettingsServerMonitoringAddHostDialog(QDialog, Ui_REDTabSettingsServ
     def slot_pbutton_sm_add_host_add_clicked(self):
         if not self.ledit_sm_add_host_host.text():
             QMessageBox.critical(get_main_window(),
-                                       'Settings | Server Monitoring',
-                                       'Host name is empty.')
+                                 'Settings | Server Monitoring',
+                                 'Host name is empty.')
             return
 
         try:
             self.ledit_sm_add_host_host.text().encode('ascii')
         except:
             QMessageBox.critical(get_main_window(),
-                                       'Settings | Server Monitoring',
-                                       'Host name contains non ASCII characters.')
+                                 'Settings | Server Monitoring',
+                                 'Host name contains non ASCII characters.')
             return
 
         if self.chkbox_sm_add_host_authentication.isChecked() and \
            not self.ledit_sm_add_host_secret.text():
                 QMessageBox.critical(get_main_window(),
-                                           'Settings | Server Monitoring',
-                                           'No secrets specified.')
+                                     'Settings | Server Monitoring',
+                                     'No secrets specified.')
                 return
 
         self.host = self.ledit_sm_add_host_host.text()

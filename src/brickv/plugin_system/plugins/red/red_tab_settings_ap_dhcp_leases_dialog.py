@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QMessageBox,  QDialog
+from PyQt5.QtWidgets import QMessageBox, QDialog
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_ap_dhcp_leases_dialog import Ui_REDTabSettingsAPDhcpLeasesDialog
@@ -95,14 +95,14 @@ class REDTabSettingsAPDhcpLeasesDialog(QDialog, Ui_REDTabSettingsAPDhcpLeasesDia
             self.pbutton_ap_leases_refresh.setEnabled(True)
 
             kind_text = {
-            TextFile.ERROR_KIND_OPEN: 'opening',
-            TextFile.ERROR_KIND_READ: 'reading',
-            TextFile.ERROR_KIND_UTF8: 'decoding'
+                TextFile.ERROR_KIND_OPEN: 'opening',
+                TextFile.ERROR_KIND_READ: 'reading',
+                TextFile.ERROR_KIND_UTF8: 'decoding'
             }
 
             QMessageBox.critical(get_main_window(),
-                                       'Settings | Access Point',
-                                       'Error {0} dnsmasq leases file:\n\n{1}'.format(kind_text[kind], error))
+                                 'Settings | Access Point',
+                                 'Error {0} dnsmasq leases file:\n\n{1}'.format(kind_text[kind], error))
 
         self.pbutton_ap_leases_refresh.setText('Refreshing...')
         self.pbutton_ap_leases_refresh.setEnabled(False)

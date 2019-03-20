@@ -1458,102 +1458,102 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         if self.working:
             return
 
-        rule_number, field_number, check_result = self.check_rules(check_only_email_fields = True)
+        rule_number, field_number, check_result = self.check_rules(check_only_email_fields=True)
 
         if check_result == CHECK_FAILED_EMAIL_FROM_EMPTY:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_FROM_EMPTY)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_FROM_EMPTY)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_FROM_NON_ASCII:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_FROM_NON_ASCII)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_FROM_NON_ASCII)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_FROM_WHITESPACE:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_FROM_WHITESPACE)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_FROM_WHITESPACE)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_FROM_MALFORMED:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_FROM_MALFORMED)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_FROM_MALFORMED)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_TO_EMPTY:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_TO_EMPTY)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_TO_EMPTY)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_TO_NON_ASCII:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_TO_NON_ASCII)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_TO_NON_ASCII)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_TO_WHITESPACE:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_TO_WHITESPACE)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_TO_WHITESPACE)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_TO_MALFORMED:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_TO_MALFORMED)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_TO_MALFORMED)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_SERVER_EMPTY:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_SERVER_EMPTY)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_SERVER_EMPTY)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_SERVER_NON_ASCII:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_SERVER_NON_ASCII)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_SERVER_NON_ASCII)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_SERVER_WHITESPACE:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_SERVER_WHITESPACE)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_SERVER_WHITESPACE)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_USERNAME_EMPTY:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_USERNAME_EMPTY)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_USERNAME_EMPTY)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_USERNAME_NON_ASCII:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_USERNAME_NON_ASCII)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_USERNAME_NON_ASCII)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_USERNAME_WHITESPACE:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_USERNAME_WHITESPACE)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_USERNAME_WHITESPACE)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_PASSWORD_EMPTY:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY)
             return
 
         elif check_result == CHECK_FAILED_EMAIL_PASSWORD_NON_ASCII:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_NON_ASCII)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_NON_ASCII)
             return
 
         test_email_dict = {'test_email_from'    : self.ledit_sm_email_from.text(),
@@ -1661,19 +1661,19 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
 
                     if chkbox_used.isChecked():
                         reply = QMessageBox.question(get_main_window(),
-                                                           MESSAGEBOX_TITLE,
-                                                           MESSAGE_WARNING_REMOVE_DEPENDENT_RULES,
-                                                           QMessageBox.Yes,
-                                                           QMessageBox.No)
+                                                     MESSAGEBOX_TITLE,
+                                                     MESSAGE_WARNING_REMOVE_DEPENDENT_RULES,
+                                                     QMessageBox.Yes,
+                                                     QMessageBox.No)
 
                         if reply != QMessageBox.Yes:
                             return
 
                         # Remove rules those depend on the host that is being removed
                         for r_rules in reversed(range(self.model_rules.rowCount())):
-                            item_rules_host   = self.model_rules.item(r_rules, INDEX_COL_RULES_HOST)
-                            index_rules_host  = self.model_rules.indexFromItem(item_rules_host)
-                            cbox_rules_host   = self.tview_sm_rules.indexWidget(index_rules_host)
+                            item_rules_host = self.model_rules.item(r_rules, INDEX_COL_RULES_HOST)
+                            index_rules_host = self.model_rules.indexFromItem(item_rules_host)
+                            cbox_rules_host = self.tview_sm_rules.indexWidget(index_rules_host)
 
                             if host == cbox_rules_host.currentText():
                                 self.model_rules.removeRows(r_rules, 1)
@@ -1709,6 +1709,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
             for c in range(COUNT_COLUMNS_RULES_MODEL):
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
+
                 if sender == self.tview_sm_rules.indexWidget(index):
                     self.model_rules.removeRows(r, 1)
                     break
@@ -1719,8 +1720,8 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
     def slot_pbutton_sm_add_rule_clicked(self):
         if not self.defaulthost:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_NO_LOCALHOST)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_NO_LOCALHOST)
             return
 
         email_notification_enabled = '0'
@@ -1743,10 +1744,10 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
 
     def slot_pbutton_sm_remove_all_rules_clicked(self):
         reply = QMessageBox.question(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_WARNING_REMOVE_ALL_RULES,
-                                           QMessageBox.Yes,
-                                           QMessageBox.No)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_WARNING_REMOVE_ALL_RULES,
+                                     QMessageBox.Yes,
+                                     QMessageBox.No)
 
         if reply != QMessageBox.Yes:
             return
@@ -1760,10 +1761,10 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
 
     def slot_pbutton_sm_remove_all_hosts_clicked(self):
         reply = QMessageBox.question(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_WARNING_REMOVE_ALL_HOSTS,
-                                           QMessageBox.Yes,
-                                           QMessageBox.No)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_WARNING_REMOVE_ALL_HOSTS,
+                                     QMessageBox.Yes,
+                                     QMessageBox.No)
 
         if reply != QMessageBox.Yes:
             return
@@ -1817,8 +1818,8 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
 
                         if ledit_host.text() == add_host_dialog.host:
                             QMessageBox.critical(get_main_window(),
-                                                       MESSAGEBOX_TITLE,
-                                                       MESSAGE_ERROR_HOST_ALREADY_EXISTS)
+                                                 MESSAGEBOX_TITLE,
+                                                 MESSAGE_ERROR_HOST_ALREADY_EXISTS)
                             return
 
             self.working = True
@@ -1860,8 +1861,8 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
 
             if check_result == CHECK_FAILED_SERVICE_NAME_EMPTY:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           rule + MESSAGE_ERROR_CHECK_SERVICE_NAME_EMPTY)
+                                     MESSAGEBOX_TITLE,
+                                     rule + MESSAGE_ERROR_CHECK_SERVICE_NAME_EMPTY)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
@@ -1874,141 +1875,141 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
 
             elif check_result == CHECK_FAILED_SERVICE_NAME_DUPLICATE:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           rule + MESSAGE_ERROR_CHECK_SERVICE_NAME_DUPLICATE)
+                                     MESSAGEBOX_TITLE,
+                                     rule + MESSAGE_ERROR_CHECK_SERVICE_NAME_DUPLICATE)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_UID_EMPTY:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           rule + MESSAGE_ERROR_CHECK_UID_EMPTY)
+                                     MESSAGEBOX_TITLE,
+                                     rule + MESSAGE_ERROR_CHECK_UID_EMPTY)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_UID_INVALID:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           rule + MESSAGE_ERROR_CHECK_UID_INVALID)
+                                     MESSAGEBOX_TITLE,
+                                     rule + MESSAGE_ERROR_CHECK_UID_INVALID)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_NON_ASCII:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           rule + MESSAGE_ERROR_CHECK_NON_ASCII)
+                                     MESSAGEBOX_TITLE,
+                                     rule + MESSAGE_ERROR_CHECK_NON_ASCII)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_FROM_EMPTY:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_FROM_EMPTY)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_FROM_EMPTY)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_FROM_NON_ASCII:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_FROM_NON_ASCII)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_FROM_NON_ASCII)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_FROM_WHITESPACE:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_FROM_WHITESPACE)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_FROM_WHITESPACE)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_FROM_MALFORMED:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_FROM_MALFORMED)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_FROM_MALFORMED)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_TO_EMPTY:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_TO_EMPTY)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_TO_EMPTY)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_TO_NON_ASCII:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_TO_NON_ASCII)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_TO_NON_ASCII)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_TO_WHITESPACE:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_TO_WHITESPACE)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_TO_WHITESPACE)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_TO_MALFORMED:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_TO_MALFORMED)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_TO_MALFORMED)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_SERVER_EMPTY:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_SERVER_EMPTY)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_SERVER_EMPTY)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_SERVER_NON_ASCII:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_SERVER_NON_ASCII)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_SERVER_NON_ASCII)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_SERVER_WHITESPACE:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_SERVER_WHITESPACE)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_SERVER_WHITESPACE)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_USERNAME_EMPTY:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_USERNAME_EMPTY)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_USERNAME_EMPTY)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_USERNAME_NON_ASCII:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_USERNAME_NON_ASCII)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_USERNAME_NON_ASCII)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_USERNAME_WHITESPACE:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_USERNAME_WHITESPACE)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_USERNAME_WHITESPACE)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_PASSWORD_EMPTY:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_PASSWORD_NON_ASCII:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_NON_ASCII)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_NON_ASCII)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
@@ -2016,10 +2017,10 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
 
         if not result:
             reply = QMessageBox.question(get_main_window(),
-                                               MESSAGEBOX_TITLE,
-                                               MESSAGE_WARNING_CHECK_UNUSED_HOST,
-                                               QMessageBox.Yes,
-                                               QMessageBox.No)
+                                         MESSAGEBOX_TITLE,
+                                         MESSAGE_WARNING_CHECK_UNUSED_HOST,
+                                         QMessageBox.Yes,
+                                         QMessageBox.No)
             if reply != QMessageBox.Yes:
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return

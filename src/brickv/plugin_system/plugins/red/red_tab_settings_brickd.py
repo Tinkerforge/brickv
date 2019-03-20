@@ -201,8 +201,8 @@ class REDTabSettingsBrickd(QWidget, Ui_REDTabSettingsBrickd):
                     self.update_brickd_widget_data()
                 else:
                     QMessageBox.critical(get_main_window(),
-                                               'Settings | Brickd',
-                                               'Error reading brickd config file.')
+                                         'Settings | Brick Daemon',
+                                         'Error reading brickd config file.')
 
                 self.brickd_button_refresh_enabled(True)
                 self.brickd_button_save_enabled(False)
@@ -212,8 +212,8 @@ class REDTabSettingsBrickd(QWidget, Ui_REDTabSettingsBrickd):
         def cb_open_error():
             self.brickd_button_refresh_enabled(True)
             QMessageBox.critical(get_main_window(),
-                                       'Settings | Brickd',
-                                       'Error opening brickd config file.')
+                                 'Settings | Brick Daemon',
+                                 'Error opening brickd config file.')
 
         async_call(self.brickd_conf_rfile.open,
                    (BRICKD_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
@@ -280,13 +280,13 @@ class REDTabSettingsBrickd(QWidget, Ui_REDTabSettingsBrickd):
 
                 if result is not None:
                     QMessageBox.critical(get_main_window(),
-                                               'Settings | Brickd',
-                                               'Error writing brickd config file.')
+                                         'Settings | Brick Daemon',
+                                         'Error writing brickd config file.')
                     return
 
                 QMessageBox.information(get_main_window(),
-                                              'Settings | Brick Daemon',
-                                              'Saved configuration successfully, will now restart Brick Daemon.')
+                                        'Settings | Brick Daemon',
+                                        'Saved configuration successfully, will now restart Brick Daemon.')
 
                 self.script_manager.execute_script('restart_brickd', None)
 
@@ -295,8 +295,8 @@ class REDTabSettingsBrickd(QWidget, Ui_REDTabSettingsBrickd):
         def cb_open_error():
             get_main_window().setEnabled(True)
             QMessageBox.critical(get_main_window(),
-                                       'Settings | Brickd',
-                                       'Error opening brickd config file.')
+                                 'Settings | Brick Daemon',
+                                 'Error opening brickd config file.')
 
         get_main_window().setEnabled(False)
 

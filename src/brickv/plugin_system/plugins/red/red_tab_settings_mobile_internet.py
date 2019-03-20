@@ -201,8 +201,8 @@ class REDTabSettingsMobileInternet(QWidget, Ui_REDTabSettingsMobileInternet):
 
         if not result:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       message)
+                                 MESSAGEBOX_TITLE,
+                                 message)
             return
 
         self.update_gui(EVENT_GUI_CONNECT_CLICKED)
@@ -266,8 +266,8 @@ class REDTabSettingsMobileInternet(QWidget, Ui_REDTabSettingsMobileInternet):
             dict_status = json.loads(result.stdout)
         except Exception as e:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_STATUS_DECODE + ':\n\n' +str(e))
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_STATUS_DECODE + ':\n\n' +str(e))
 
             self.status_refresh_timer.start(INTERVAL_REFRESH_STATUS)
             return
@@ -315,48 +315,48 @@ class REDTabSettingsMobileInternet(QWidget, Ui_REDTabSettingsMobileInternet):
 
         if result.exit_code == 2:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CONNECT_TEST)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CONNECT_TEST)
             return
 
         if result.exit_code == 3:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CONNECT_SERVICE_CREATION)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CONNECT_SERVICE_CREATION)
             return
 
         if result.exit_code == 4:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CONNECT_SERVICE_EXECUTION)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CONNECT_SERVICE_EXECUTION)
             return
 
         if result.exit_code == 7 or \
            result.exit_code == 8:
                 QMessageBox.critical(get_main_window(),
-                                           MESSAGEBOX_TITLE,
-                                           MESSAGE_ERROR_CONNECT_TEST_DEVICE_UNAVAILABLE)
+                                     MESSAGEBOX_TITLE,
+                                     MESSAGE_ERROR_CONNECT_TEST_DEVICE_UNAVAILABLE)
                 return
 
         if result.exit_code == 12:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CONNECT_TEST_PIN)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CONNECT_TEST_PIN)
             return
 
         if result.exit_code == 13 or \
            result.exit_code == 98:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_CONNECT_TEST_REGISTER_NETWORK)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CONNECT_TEST_REGISTER_NETWORK)
             return
 
         if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_CONNECT):
             return
 
         QMessageBox.information(get_main_window(),
-                                      MESSAGEBOX_TITLE,
-                                      MESSAGE_INFORMATION_CONNECT_OK)
+                                MESSAGEBOX_TITLE,
+                                MESSAGE_INFORMATION_CONNECT_OK)
 
         self.pbutton_mi_refresh_clicked()
 
@@ -370,8 +370,8 @@ class REDTabSettingsMobileInternet(QWidget, Ui_REDTabSettingsMobileInternet):
             dict_configuration = json.loads(result.stdout)
         except Exception as e:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_REFERSH_DECODE + ':\n\n' +str(e))
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_REFERSH_DECODE + ':\n\n' +str(e))
             return
 
         if not dict_configuration['modem_list']:

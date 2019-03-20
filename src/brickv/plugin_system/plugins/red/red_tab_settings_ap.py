@@ -633,9 +633,9 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
             self.update_ui_state()
 
             kind_text = {
-            TextFile.ERROR_KIND_OPEN: 'opening',
-            TextFile.ERROR_KIND_READ: 'reading',
-            TextFile.ERROR_KIND_UTF8: 'decoding'
+                TextFile.ERROR_KIND_OPEN: 'opening',
+                TextFile.ERROR_KIND_READ: 'reading',
+                TextFile.ERROR_KIND_UTF8: 'decoding'
             }
 
             QMessageBox.critical(get_main_window(),

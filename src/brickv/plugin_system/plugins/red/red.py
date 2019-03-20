@@ -339,13 +339,13 @@ Please make sure that your internet connection is working.'
 
         async_call(red_file.open,
                    (path,
-                   REDFile.FLAG_WRITE_ONLY |
-                   REDFile.FLAG_CREATE |
-                   REDFile.FLAG_NON_BLOCKING |
-                   REDFile.FLAG_TRUNCATE,
-                   0o755,
-                   0,
-                   0),
+                    REDFile.FLAG_WRITE_ONLY |
+                    REDFile.FLAG_CREATE |
+                    REDFile.FLAG_NON_BLOCKING |
+                    REDFile.FLAG_TRUNCATE,
+                    0o755,
+                    0,
+                    0),
                    lambda red_file: self.cb_rfile_open_s(name, red_file),
                    lambda e: self.cb_rfile_open_f(name, e),
                    pass_exception_to_error_callback=True)
@@ -827,7 +827,7 @@ Please make sure that your internet connection is working.'
                                     found, updates_available = self.update_latest_version_info(update_info,
                                                                                                l_split[1],
                                                                                                l_split[2],
-                                                                                              'C/C++ Bindings')
+                                                                                               'C/C++ Bindings')
 
                                     if not found:
                                         self.set_current_state(self.STATE_INIT)

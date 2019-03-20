@@ -114,7 +114,7 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
                     except Exception as e:
                         self.destroy_session()
                         QMessageBox.critical(get_main_window(), 'Serial Connect Error',
-                                                   'Could not connect to serial console:\n\n{0}'.format(e))
+                                             'Could not connect to serial console:\n\n{0}'.format(e))
 
             def cb_pkill_ttyGS0(result):
                 if result == None or result.exit_code not in [0, 1]: # 0 == no error, 1 == nothing killed

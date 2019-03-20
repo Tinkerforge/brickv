@@ -53,18 +53,20 @@ class DMXOverview(QWidget):
 
     def draw_frame(self, frame):
         painter = QPainter(self.image)
+
         for line, value in enumerate(frame):
             self.draw_line(line, value, painter)
+
         self.update()
 
-    def draw_line(self, line, value, painter = None, update = False):
+    def draw_line(self, line, value, painter=None, update=False):
         if painter == None:
             painter = QPainter(self.image)
 
         painter.setPen(Qt.black)
-        painter.drawLine(QPoint(line, 31-value//8), QPoint(line, 31))
+        painter.drawLine(QPoint(line, 31 - value // 8), QPoint(line, 31))
         painter.setPen(Qt.white)
-        painter.drawLine(QPoint(line, 0), QPoint(line, 31-value//8))
+        painter.drawLine(QPoint(line, 0), QPoint(line, 31 - value // 8))
 
         if update:
             self.update()
