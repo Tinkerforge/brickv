@@ -128,7 +128,7 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
         try:
             wind_direction = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'][data.wind_direction]
         except:
-            wind_direction = 'Unknown (error occurred)'
+            wind_direction = "<font color='red'>Unknown (Station Error)</font>"
 
         self.label_wind_direction_station.setText(wind_direction)
 

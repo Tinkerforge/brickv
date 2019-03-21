@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>624</width>
-    <height>240</height>
+    <width>679</width>
+    <height>256</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,35 +44,266 @@
      </item>
      <item>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="2" column="2">
+       <item row="1" column="2">
         <widget class="QLabel" name="label_18">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>°C</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="2">
+       <item row="3" column="2">
         <widget class="QLabel" name="label_20">
          <property name="text">
           <string>m/s</string>
          </property>
         </widget>
        </item>
-       <item row="8" column="0">
+       <item row="7" column="0">
         <widget class="QLabel" name="label_8">
          <property name="text">
           <string>Battery Level:</string>
          </property>
         </widget>
        </item>
-       <item row="9" column="0">
+       <item row="8" column="0">
         <widget class="QLabel" name="label_9">
          <property name="text">
           <string>Last Change:</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1" colspan="3">
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Rain:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Wind Direction:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1" colspan="2">
+        <widget class="QLabel" name="label_battery_level_station">
+         <property name="text">
+          <string>TBD</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QLabel" name="label_last_change_station">
+         <property name="text">
+          <string>TBD</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLabel" name="label_wind_speed_station">
+         <property name="text">
+          <string>TBD</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1" colspan="2">
+        <widget class="QLabel" name="label_wind_direction_station">
+         <property name="text">
+          <string>TBD</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLabel" name="label_gust_speed_station">
+         <property name="text">
+          <string>TBD</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLabel" name="label_rain_level_station">
+         <property name="text">
+          <string>TBD</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Station Identifier:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QLabel" name="label_22">
+         <property name="text">
+          <string>mm</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLabel" name="label_19">
+         <property name="text">
+          <string>%RH</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="2">
+        <widget class="QLabel" name="label_25">
+         <property name="text">
+          <string>seconds ago</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2">
+        <widget class="QLabel" name="label_21">
+         <property name="text">
+          <string>m/s</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="label_temperature_station">
+         <property name="text">
+          <string>TBD</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLabel" name="label_humidity_station">
+         <property name="text">
+          <string>TBD</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Gust Speed:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Wind Speed:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Humidity:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Temperature:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="6">
+        <widget class="QLabel" name="label_14">
+         <property name="text">
+          <string>%RH</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4">
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>Humidity:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5" colspan="2">
+        <widget class="QComboBox" name="combo_identifier_sensor">
+         <item>
+          <property name="text">
+           <string>No Sensor found yet</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Temperature:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="5">
+        <widget class="QLabel" name="label_last_change_sensor">
+         <property name="text">
+          <string>TBD</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="6">
+        <widget class="QLabel" name="label_15">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>°C</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="5">
+        <widget class="QLabel" name="label_temperature_sensor">
+         <property name="text">
+          <string>TBD</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="6">
+        <widget class="QLabel" name="label_16">
+         <property name="text">
+          <string>seconds ago</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="5">
+        <widget class="QLabel" name="label_humidity_sensor">
+         <property name="text">
+          <string>TBD</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Sensor Identifier:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="4">
+        <widget class="QLabel" name="label_13">
+         <property name="text">
+          <string>Last Change:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3" rowspan="9">
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="2">
         <widget class="QComboBox" name="combo_identifier_station">
          <property name="maximumSize">
           <size>
@@ -85,265 +316,6 @@
            <string>No Station found yet</string>
           </property>
          </item>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Rain:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Wind Direction:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QLabel" name="label_battery_level_station">
-         <property name="text">
-          <string>TBD</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="1">
-        <widget class="QLabel" name="label_last_change_station">
-         <property name="text">
-          <string>TBD</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QLabel" name="label_wind_speed_station">
-         <property name="text">
-          <string>TBD</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <widget class="QLabel" name="label_wind_direction_station">
-         <property name="text">
-          <string>TBD</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QLabel" name="label_gust_speed_station">
-         <property name="text">
-          <string>TBD</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QLabel" name="label_rain_level_station">
-         <property name="text">
-          <string>TBD</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Station Identifier:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="2">
-        <widget class="QLabel" name="label_22">
-         <property name="text">
-          <string>mm</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="2">
-        <widget class="QLabel" name="label_19">
-         <property name="text">
-          <string>%RH</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="2">
-        <widget class="QLabel" name="label_24">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="2">
-        <widget class="QLabel" name="label_25">
-         <property name="text">
-          <string>seconds ago</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="2">
-        <widget class="QLabel" name="label_21">
-         <property name="text">
-          <string>m/s</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="label_temperature_station">
-         <property name="text">
-          <string>TBD</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLabel" name="label_humidity_station">
-         <property name="text">
-          <string>TBD</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Gust Speed:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Wind Speed:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="2">
-        <widget class="QLabel" name="label_23">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Humidity:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Temperature:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="7">
-        <widget class="QLabel" name="label_14">
-         <property name="text">
-          <string>%RH</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="5">
-        <widget class="QLabel" name="label_12">
-         <property name="text">
-          <string>Humidity:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="6" colspan="3">
-        <widget class="QComboBox" name="combo_identifier_sensor">
-         <item>
-          <property name="text">
-           <string>No Sensor found yet</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="2" column="5">
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>Temperature:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="6">
-        <widget class="QLabel" name="label_last_change_sensor">
-         <property name="text">
-          <string>TBD</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="7">
-        <widget class="QLabel" name="label_15">
-         <property name="text">
-          <string>°C</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="6">
-        <widget class="QLabel" name="label_temperature_sensor">
-         <property name="text">
-          <string>TBD</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="7">
-        <widget class="QLabel" name="label_16">
-         <property name="text">
-          <string>seconds ago</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="3">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="3" column="6">
-        <widget class="QLabel" name="label_humidity_sensor">
-         <property name="text">
-          <string>TBD</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="8">
-        <spacer name="horizontalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="5">
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>Sensor Identifier:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="5">
-        <widget class="QLabel" name="label_13">
-         <property name="text">
-          <string>Last Change:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="4" rowspan="9">
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
         </widget>
        </item>
       </layout>
