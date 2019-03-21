@@ -46,7 +46,7 @@ from brickv.samba import SAMBA, SAMBAException, SAMBANoBrickError, SAMBARebootEr
 from brickv.infos import get_version_string
 from brickv.utils import get_home_path, get_open_file_name, \
                          get_modeless_dialog_flags
-from brickv.esp_flash import ESPFlash
+from brickv.esp_flash import ESPFlash, FatalError
 from brickv import infos
 from brickv.firmware_fetch import ERROR_DOWNLOAD
 from brickv.utils import get_main_window
@@ -1813,6 +1813,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         try:
             ESPFlash(master, progress).flash(firmware)
+        except FatalError as e:
+            progress.cancel()
+            self.popup_fail('Extension Firmware', 'Error during Extension flashing: {0}'.format(e))
+            return
         except:
             progress.cancel()
             sys.excepthook(*sys.exc_info())
