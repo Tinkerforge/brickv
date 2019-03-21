@@ -445,6 +445,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if has_no_parent_devices:
             no_parent_info = infos.DeviceInfo()
             no_parent_info.name = 'No Parent'
+            no_parent_info.uid = '0'
 
             for info in infos.get_device_infos():
                 if info.reverse_connection == None and info.type != 'brick':
@@ -1694,7 +1695,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.combo_extension.setCurrentIndex(0)
             return
 
-        url_part = self.combo_extension.itemData(index)
+        itemData = self.combo_extension.itemData(index)
+        if itemData == None:
+            url_part = None
+        else:
+            url_part = itemData[0]
 
         if url_part == None or len(url_part) == 0:
             self.combo_extension_firmware.setCurrentIndex(0)
@@ -1843,10 +1848,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         for item in sorted(items.keys()):
             self.extension_infos.append(items[item])
-            self.combo_extension.addItem(item, items[item].url_part)
+            self.combo_extension.addItem(item, (items[item].url_part, items[item].master_info.uid))
 
         if self.combo_extension.count() == 0:
-            self.combo_extension.addItem(NO_EXTENSION)
+            self.combo_extension.addItem(NO_EXTENSION, ('', '0'))
 
         self.update_ui_state()
 
@@ -1859,36 +1864,47 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.tab_widget.setCurrentWidget(self.tab_brick)
         self.refresh_serial_ports()
 
-        url = url_part.replace("_v2", " 2.0").lower()
-        idx = next((i for i in range(self.combo_firmware.count())
-                    if url == self.combo_firmware.itemText(i).lower().split(' (')[0]), 0)
+        try:
+            idx = [self.combo_firmware.itemData(i) for i in range(self.combo_firmware.count())].index(url_part)
+        except ValueError:
+            idx = -1
 
-        self.combo_firmware.setCurrentIndex(idx)
+        if idx >= 0:
+            self.combo_firmware.setCurrentIndex(idx)
 
     def show_bricklet_update(self, parent_uid, port):
         self.tab_widget.setCurrentWidget(self.tab_bricklet)
 
-        uids = [re.search(r'\[(.*)\]', self.combo_parent.itemText(i)).group(1) for i in range(self.combo_parent.count())]
-        idx = uids.index(parent_uid)
+        try:
+            idx = [self.combo_parent.itemData(i).uid for i in range(self.combo_parent.count())].index(parent_uid)
+        except ValueError:
+            idx = -1
+
         if idx >= 0:
             self.combo_parent.setCurrentIndex(idx)
+            self.brick_changed(idx)
 
-        if port != 'z':
-            idx = ord(port) - ord('a')
-        else:
-            idx = 0
+        try:
+            idx = [self.combo_port.itemData(i)[0] for i in range(self.combo_port.count())].index(port)
+        except ValueError:
+            idx = -1
 
-        self.combo_port.setCurrentIndex(idx)
+        if idx >= 0:
+            self.combo_port.setCurrentIndex(idx)
+            self.port_changed(idx)
 
 
     def show_extension_update(self, master_uid):
         self.tab_widget.setCurrentWidget(self.tab_extension)
 
-        uids = [re.search(r'\[(.*)\]', self.combo_extension.itemText(i)).group(1) for i in range(self.combo_extension.count())]
-        idx = uids.index(master_uid)
+        try:
+            idx = [self.combo_extension.itemData(i)[1] for i in range(self.combo_extension.count())].index(master_uid)
+        except ValueError:
+            idx = -1
 
         if idx >= 0:
             self.combo_extension.setCurrentIndex(idx)
+            self.extension_changed(idx)
 
     def show_red_brick_update(self):
         get_main_window().show_red_brick_update()
