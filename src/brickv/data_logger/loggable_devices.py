@@ -38,226 +38,1070 @@ if 'merged_data_logger_modules' not in globals():
                                          timestamp_to_strftime
 
     # Bricks
-    from brickv.bindings.brick_dc import BrickDC
-    from brickv.bindings.brick_imu import BrickIMU
-    from brickv.bindings.brick_imu_v2 import BrickIMUV2
-    from brickv.bindings.brick_master import BrickMaster
-    from brickv.bindings.brick_servo import BrickServo
-    from brickv.bindings.brick_silent_stepper import BrickSilentStepper
-    from brickv.bindings.brick_stepper import BrickStepper
+    try:
+        from brickv.bindings.brick_dc import BrickDC
+        BrickDC_found = True
+    except ImportError:
+        BrickDC_found = False
+    try:
+        from brickv.bindings.brick_imu import BrickIMU
+        BrickIMU_found = True
+    except ImportError:
+        BrickIMU_found = False
+    try:
+        from brickv.bindings.brick_imu_v2 import BrickIMUV2
+        BrickIMUV2_found = True
+    except ImportError:
+        BrickIMUV2_found = False
+    try:
+        try:
+            from brickv.bindings.brick_master import BrickMaster
+            BrickMaster_found = True
+        except ImportError:
+            BrickMaster_found = False
+        BrickMaster_found = True
+    except ImportError:
+        BrickMaster_found = False
+    try:
+        from brickv.bindings.brick_servo import BrickServo
+        BrickServo_found = True
+    except ImportError:
+        BrickServo_found = False
+    try:
+        from brickv.bindings.brick_silent_stepper import BrickSilentStepper
+        BrickSilentStepper_found = True
+    except ImportError:
+        BrickSilentStepper_found = False
+    try:
+        from brickv.bindings.brick_stepper import BrickStepper
+        BrickStepper_found = True
+    except ImportError:
+        BrickStepper_found = False
 
     # Bricklets
-    from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer
-    from brickv.bindings.bricklet_accelerometer_v2 import BrickletAccelerometerV2
-    from brickv.bindings.bricklet_air_quality import BrickletAirQuality
-    from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
-    from brickv.bindings.bricklet_ambient_light_v2 import BrickletAmbientLightV2
-    from brickv.bindings.bricklet_ambient_light_v3 import BrickletAmbientLightV3
-    from brickv.bindings.bricklet_analog_in import BrickletAnalogIn
-    from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2
-    from brickv.bindings.bricklet_analog_in_v3 import BrickletAnalogInV3
-    from brickv.bindings.bricklet_analog_out_v2 import BrickletAnalogOutV2
-    from brickv.bindings.bricklet_analog_out_v3 import BrickletAnalogOutV3
-    from brickv.bindings.bricklet_barometer import BrickletBarometer
-    from brickv.bindings.bricklet_barometer_v2 import BrickletBarometerV2
-    from brickv.bindings.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
-    from brickv.bindings.bricklet_can_v2 import BrickletCANV2 #NYI FIXME: has to use frame_read callback to get all data
-    from brickv.bindings.bricklet_co2 import BrickletCO2
-    from brickv.bindings.bricklet_co2_v2 import BrickletCO2V2
-    from brickv.bindings.bricklet_color import BrickletColor
-    from brickv.bindings.bricklet_current12 import BrickletCurrent12
-    from brickv.bindings.bricklet_current25 import BrickletCurrent25
-    from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
-    from brickv.bindings.bricklet_distance_ir_v2 import BrickletDistanceIRV2
-    from brickv.bindings.bricklet_distance_us import BrickletDistanceUS
-    from brickv.bindings.bricklet_dmx import BrickletDMX
-    from brickv.bindings.bricklet_dual_button import BrickletDualButton
-    from brickv.bindings.bricklet_dual_button_v2 import BrickletDualButtonV2
-    from brickv.bindings.bricklet_dual_relay import BrickletDualRelay
-    from brickv.bindings.bricklet_dust_detector import BrickletDustDetector
-    from brickv.bindings.bricklet_gps import BrickletGPS
-    from brickv.bindings.bricklet_gps_v2 import BrickletGPSV2
-    from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
-    from brickv.bindings.bricklet_hall_effect_v2 import BrickletHallEffectV2
-    from brickv.bindings.bricklet_humidity import BrickletHumidity
-    from brickv.bindings.bricklet_humidity_v2 import BrickletHumidityV2
-    from brickv.bindings.bricklet_industrial_counter import BrickletIndustrialCounter
-    from brickv.bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
-    from brickv.bindings.bricklet_industrial_digital_in_4_v2 import BrickletIndustrialDigitalIn4V2
-    from brickv.bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
-    from brickv.bindings.bricklet_industrial_dual_0_20ma_v2 import BrickletIndustrialDual020mAV2
-    from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
-    from brickv.bindings.bricklet_industrial_dual_analog_in_v2 import BrickletIndustrialDualAnalogInV2
-    from brickv.bindings.bricklet_industrial_dual_relay import BrickletIndustrialDualRelay
-    from brickv.bindings.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
-    from brickv.bindings.bricklet_industrial_quad_relay_v2 import BrickletIndustrialQuadRelayV2
-    from brickv.bindings.bricklet_io16 import BrickletIO16
-    from brickv.bindings.bricklet_io16_v2 import BrickletIO16V2
-    from brickv.bindings.bricklet_io4 import BrickletIO4
-    from brickv.bindings.bricklet_io4_v2 import BrickletIO4V2
-    from brickv.bindings.bricklet_joystick import BrickletJoystick
-    from brickv.bindings.bricklet_joystick_v2 import BrickletJoystickV2
-    from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
-    from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
-    from brickv.bindings.bricklet_led_strip_v2 import BrickletLEDStripV2
-    from brickv.bindings.bricklet_line import BrickletLine
-    from brickv.bindings.bricklet_linear_poti import BrickletLinearPoti
-    from brickv.bindings.bricklet_linear_poti_v2 import BrickletLinearPotiV2
-    from brickv.bindings.bricklet_load_cell import BrickletLoadCell
-    from brickv.bindings.bricklet_load_cell_v2 import BrickletLoadCellV2
-    from brickv.bindings.bricklet_moisture import BrickletMoisture
-    from brickv.bindings.bricklet_motion_detector import BrickletMotionDetector
-    from brickv.bindings.bricklet_motion_detector_v2 import BrickletMotionDetectorV2
-    from brickv.bindings.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
-    from brickv.bindings.bricklet_multi_touch import BrickletMultiTouch
-    from brickv.bindings.bricklet_nfc import BrickletNFC
-    from brickv.bindings.bricklet_nfc_rfid import BrickletNFCRFID
-    from brickv.bindings.bricklet_outdoor_weather import BrickletOutdoorWeather
-    from brickv.bindings.bricklet_particulate_matter import BrickletParticulateMatter
-    from brickv.bindings.bricklet_ptc import BrickletPTC
-    from brickv.bindings.bricklet_ptc_v2 import BrickletPTCV2
-    from brickv.bindings.bricklet_real_time_clock import BrickletRealTimeClock
-    from brickv.bindings.bricklet_real_time_clock_v2 import BrickletRealTimeClockV2
-    from brickv.bindings.bricklet_remote_switch import BrickletRemoteSwitch
-    from brickv.bindings.bricklet_remote_switch_v2 import BrickletRemoteSwitchV2
-    from brickv.bindings.bricklet_rgb_led_button import BrickletRGBLEDButton
-    from brickv.bindings.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
-    from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
-    from brickv.bindings.bricklet_rotary_encoder_v2 import BrickletRotaryEncoderV2
-    from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
+    try:
+        from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer
+        BrickletAccelerometer_found = True
+    except ImportError:
+        BrickletAccelerometer_found = False
+    try:
+        from brickv.bindings.bricklet_accelerometer_v2 import BrickletAccelerometerV2
+        BrickletAccelerometerV2_found = True
+    except ImportError:
+        BrickletAccelerometerV2_found = False
+    try:
+        from brickv.bindings.bricklet_air_quality import BrickletAirQuality
+        BrickletAirQuality_found = True
+    except ImportError:
+        BrickletAirQuality_found = False
+    try:
+        from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
+        BrickletAmbientLight_found = True
+    except ImportError:
+        BrickletAmbientLight_found = False
+    try:
+        from brickv.bindings.bricklet_ambient_light_v2 import BrickletAmbientLightV2
+        BrickletAmbientLightV2_found = True
+    except ImportError:
+        BrickletAmbientLightV2_found = False
+    try:
+        from brickv.bindings.bricklet_ambient_light_v3 import BrickletAmbientLightV3
+        BrickletAmbientLightV3_found = True
+    except ImportError:
+        BrickletAmbientLightV3_found = False
+    try:
+        from brickv.bindings.bricklet_analog_in import BrickletAnalogIn
+        BrickletAnalogIn_found = True
+    except ImportError:
+        BrickletAnalogIn_found = False
+    try:
+        from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2
+        BrickletAnalogInV2_found = True
+    except ImportError:
+        BrickletAnalogInV2_found = False
+    try:
+        from brickv.bindings.bricklet_analog_in_v3 import BrickletAnalogInV3
+        BrickletAnalogInV3_found = True
+    except ImportError:
+        BrickletAnalogInV3_found = False
+    try:
+        from brickv.bindings.bricklet_analog_out_v2 import BrickletAnalogOutV2
+        BrickletAnalogOutV2_found = True
+    except ImportError:
+        BrickletAnalogOutV2_found = False
+    try:
+        from brickv.bindings.bricklet_analog_out_v3 import BrickletAnalogOutV3
+        BrickletAnalogOutV3_found = True
+    except ImportError:
+        BrickletAnalogOutV3_found = False
+    try:
+        from brickv.bindings.bricklet_barometer import BrickletBarometer
+        BrickletBarometer_found = True
+    except ImportError:
+        BrickletBarometer_found = False
+    try:
+        from brickv.bindings.bricklet_barometer_v2 import BrickletBarometerV2
+        BrickletBarometerV2_found = True
+    except ImportError:
+        BrickletBarometerV2_found = False
+    try:
+        from brickv.bindings.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
+        BrickletCAN_found = True
+    except ImportError:
+        BrickletCAN_found = False
+    try:
+        from brickv.bindings.bricklet_can_v2 import BrickletCANV2 #NYI FIXME: has to use frame_read callback to get all data
+        BrickletCANV2_found = True
+    except ImportError:
+        BrickletCANV2_found = False
+    try:
+        from brickv.bindings.bricklet_co2 import BrickletCO2
+        BrickletCO2_found = True
+    except ImportError:
+        BrickletCO2_found = False
+    try:
+        from brickv.bindings.bricklet_co2_v2 import BrickletCO2V2
+        BrickletCO2V2_found = True
+    except ImportError:
+        BrickletCO2V2_found = False
+    try:
+        from brickv.bindings.bricklet_color import BrickletColor
+        BrickletColor_found = True
+    except ImportError:
+        BrickletColor_found = False
+    try:
+        from brickv.bindings.bricklet_current12 import BrickletCurrent12
+        BrickletCurrent12_found = True
+    except ImportError:
+        BrickletCurrent12_found = False
+    try:
+        from brickv.bindings.bricklet_current25 import BrickletCurrent25
+        BrickletCurrent25_found = True
+    except ImportError:
+        BrickletCurrent25_found = False
+    try:
+        from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
+        BrickletDistanceIR_found = True
+    except ImportError:
+        BrickletDistanceIR_found = False
+    try:
+        from brickv.bindings.bricklet_distance_ir_v2 import BrickletDistanceIRV2
+        BrickletDistanceIRV2_found = True
+    except ImportError:
+        BrickletDistanceIRV2_found = False
+    try:
+        from brickv.bindings.bricklet_distance_us import BrickletDistanceUS
+        BrickletDistanceUS_found = True
+    except ImportError:
+        BrickletDistanceUS_found = False
+    try:
+        from brickv.bindings.bricklet_dmx import BrickletDMX
+        BrickletDMX_found = True
+    except ImportError:
+        BrickletDMX_found = False
+    try:
+        from brickv.bindings.bricklet_dual_button import BrickletDualButton
+        BrickletDualButton_found = True
+    except ImportError:
+        BrickletDualButton_found = False
+    try:
+        from brickv.bindings.bricklet_dual_button_v2 import BrickletDualButtonV2
+        BrickletDualButtonV2_found = True
+    except ImportError:
+        BrickletDualButtonV2_found = False
+    try:
+        from brickv.bindings.bricklet_dual_relay import BrickletDualRelay
+        BrickletDualRelay_found = True
+    except ImportError:
+        BrickletDualRelay_found = False
+    try:
+        from brickv.bindings.bricklet_dust_detector import BrickletDustDetector
+        BrickletDustDetector_found = True
+    except ImportError:
+        BrickletDustDetector_found = False
+    try:
+        from brickv.bindings.bricklet_gps import BrickletGPS
+        BrickletGPS_found = True
+    except ImportError:
+        BrickletGPS_found = False
+    try:
+        from brickv.bindings.bricklet_gps_v2 import BrickletGPSV2
+        BrickletGPSV2_found = True
+    except ImportError:
+        BrickletGPSV2_found = False
+    try:
+        from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
+        BrickletHallEffect_found = True
+    except ImportError:
+        BrickletHallEffect_found = False
+    try:
+        from brickv.bindings.bricklet_hall_effect_v2 import BrickletHallEffectV2
+        BrickletHallEffectV2_found = True
+    except ImportError:
+        BrickletHallEffectV2_found = False
+    try:
+        from brickv.bindings.bricklet_humidity import BrickletHumidity
+        BrickletHumidity_found = True
+    except ImportError:
+        BrickletHumidity_found = False
+    try:
+        from brickv.bindings.bricklet_humidity_v2 import BrickletHumidityV2
+        BrickletHumidityV2_found = True
+    except ImportError:
+        BrickletHumidityV2_found = False
+    try:
+        from brickv.bindings.bricklet_industrial_counter import BrickletIndustrialCounter
+        BrickletIndustrialCounter_found = True
+    except ImportError:
+        BrickletIndustrialCounter_found = False
+    try:
+        from brickv.bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
+        BrickletIndustrialDigitalIn4_found = True
+    except ImportError:
+        BrickletIndustrialDigitalIn4_found = False
+    try:
+        from brickv.bindings.bricklet_industrial_digital_in_4_v2 import BrickletIndustrialDigitalIn4V2
+        BrickletIndustrialDigitalIn4V2_found = True
+    except ImportError:
+        BrickletIndustrialDigitalIn4V2_found = False
+    try:
+        from brickv.bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
+        BrickletIndustrialDual020mA_found = True
+    except ImportError:
+        BrickletIndustrialDual020mA_found = False
+    try:
+        from brickv.bindings.bricklet_industrial_dual_0_20ma_v2 import BrickletIndustrialDual020mAV2
+        BrickletIndustrialDual020mAV2_found = True
+    except ImportError:
+        BrickletIndustrialDual020mAV2_found = False
+    try:
+        from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
+        BrickletIndustrialDualAnalogIn_found = True
+    except ImportError:
+        BrickletIndustrialDualAnalogIn_found = False
+    try:
+        from brickv.bindings.bricklet_industrial_dual_analog_in_v2 import BrickletIndustrialDualAnalogInV2
+        BrickletIndustrialDualAnalogInV2_found = True
+    except ImportError:
+        BrickletIndustrialDualAnalogInV2_found = False
+    try:
+        from brickv.bindings.bricklet_industrial_dual_relay import BrickletIndustrialDualRelay
+        BrickletIndustrialDualRelay_found = True
+    except ImportError:
+        BrickletIndustrialDualRelay_found = False
+    try:
+        from brickv.bindings.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
+        BrickletIndustrialQuadRelay_found = True
+    except ImportError:
+        BrickletIndustrialQuadRelay_found = False
+    try:
+        from brickv.bindings.bricklet_industrial_quad_relay_v2 import BrickletIndustrialQuadRelayV2
+        BrickletIndustrialQuadRelayV2_found = True
+    except ImportError:
+        BrickletIndustrialQuadRelayV2_found = False
+    try:
+        from brickv.bindings.bricklet_io16 import BrickletIO16
+        BrickletIO16_found = True
+    except ImportError:
+        BrickletIO16_found = False
+    try:
+        from brickv.bindings.bricklet_io16_v2 import BrickletIO16V2
+        BrickletIO16V2_found = True
+    except ImportError:
+        BrickletIO16V2_found = False
+    try:
+        from brickv.bindings.bricklet_io4 import BrickletIO4
+        BrickletIO4_found = True
+    except ImportError:
+        BrickletIO4_found = False
+    try:
+        from brickv.bindings.bricklet_io4_v2 import BrickletIO4V2
+        BrickletIO4V2_found = True
+    except ImportError:
+        BrickletIO4V2_found = False
+    try:
+        from brickv.bindings.bricklet_joystick import BrickletJoystick
+        BrickletJoystick_found = True
+    except ImportError:
+        BrickletJoystick_found = False
+    try:
+        from brickv.bindings.bricklet_joystick_v2 import BrickletJoystickV2
+        BrickletJoystickV2_found = True
+    except ImportError:
+        BrickletJoystickV2_found = False
+    try:
+        from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
+        BrickletLaserRangeFinder_found = True
+    except ImportError:
+        BrickletLaserRangeFinder_found = False
+    try:
+        from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
+        BrickletLEDStrip_found = True
+    except ImportError:
+        BrickletLEDStrip_found = False
+    try:
+        from brickv.bindings.bricklet_led_strip_v2 import BrickletLEDStripV2
+        BrickletLEDStripV2_found = True
+    except ImportError:
+        BrickletLEDStripV2_found = False
+    try:
+        from brickv.bindings.bricklet_line import BrickletLine
+        BrickletLine_found = True
+    except ImportError:
+        BrickletLine_found = False
+    try:
+        from brickv.bindings.bricklet_linear_poti import BrickletLinearPoti
+        BrickletLinearPoti_found = True
+    except ImportError:
+        BrickletLinearPoti_found = False
+    try:
+        from brickv.bindings.bricklet_linear_poti_v2 import BrickletLinearPotiV2
+        BrickletLinearPotiV2_found = True
+    except ImportError:
+        BrickletLinearPotiV2_found = False
+    try:
+        from brickv.bindings.bricklet_load_cell import BrickletLoadCell
+        BrickletLoadCell_found = True
+    except ImportError:
+        BrickletLoadCell_found = False
+    try:
+        from brickv.bindings.bricklet_load_cell_v2 import BrickletLoadCellV2
+        BrickletLoadCellV2_found = True
+    except ImportError:
+        BrickletLoadCellV2_found = False
+    try:
+        from brickv.bindings.bricklet_moisture import BrickletMoisture
+        BrickletMoisture_found = True
+    except ImportError:
+        BrickletMoisture_found = False
+    try:
+        from brickv.bindings.bricklet_motion_detector import BrickletMotionDetector
+        BrickletMotionDetector_found = True
+    except ImportError:
+        BrickletMotionDetector_found = False
+    try:
+        from brickv.bindings.bricklet_motion_detector_v2 import BrickletMotionDetectorV2
+        BrickletMotionDetectorV2_found = True
+    except ImportError:
+        BrickletMotionDetectorV2_found = False
+    try:
+        from brickv.bindings.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
+        BrickletMotorizedLinearPoti_found = True
+    except ImportError:
+        BrickletMotorizedLinearPoti_found = False
+    try:
+        from brickv.bindings.bricklet_multi_touch import BrickletMultiTouch
+        BrickletMultiTouch_found = True
+    except ImportError:
+        BrickletMultiTouch_found = False
+    try:
+        from brickv.bindings.bricklet_nfc import BrickletNFC
+        BrickletNFC_found = True
+    except ImportError:
+        BrickletNFC_found = False
+    try:
+        from brickv.bindings.bricklet_nfc_rfid import BrickletNFCRFID
+        BrickletNFCRFID_found = True
+    except ImportError:
+        BrickletNFCRFID_found = False
+    try:
+        from brickv.bindings.bricklet_outdoor_weather import BrickletOutdoorWeather
+        BrickletOutdoorWeather_found = True
+    except ImportError:
+        BrickletOutdoorWeather_found = False
+    try:
+        from brickv.bindings.bricklet_particulate_matter import BrickletParticulateMatter
+        BrickletParticulateMatter_found = True
+    except ImportError:
+        BrickletParticulateMatter_found = False
+    try:
+        from brickv.bindings.bricklet_ptc import BrickletPTC
+        BrickletPTC_found = True
+    except ImportError:
+        BrickletPTC_found = False
+    try:
+        from brickv.bindings.bricklet_ptc_v2 import BrickletPTCV2
+        BrickletPTCV2_found = True
+    except ImportError:
+        BrickletPTCV2_found = False
+    try:
+        from brickv.bindings.bricklet_real_time_clock import BrickletRealTimeClock
+        BrickletRealTimeClock_found = True
+    except ImportError:
+        BrickletRealTimeClock_found = False
+    try:
+        from brickv.bindings.bricklet_real_time_clock_v2 import BrickletRealTimeClockV2
+        BrickletRealTimeClockV2_found = True
+    except ImportError:
+        BrickletRealTimeClockV2_found = False
+    try:
+        from brickv.bindings.bricklet_remote_switch import BrickletRemoteSwitch
+        BrickletRemoteSwitch_found = True
+    except ImportError:
+        BrickletRemoteSwitch_found = False
+    try:
+        from brickv.bindings.bricklet_remote_switch_v2 import BrickletRemoteSwitchV2
+        BrickletRemoteSwitchV2_found = True
+    except ImportError:
+        BrickletRemoteSwitchV2_found = False
+    try:
+        from brickv.bindings.bricklet_rgb_led_button import BrickletRGBLEDButton
+        BrickletRGBLEDButton_found = True
+    except ImportError:
+        BrickletRGBLEDButton_found = False
+    try:
+        from brickv.bindings.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
+        BrickletRGBLEDMatrix_found = True
+    except ImportError:
+        BrickletRGBLEDMatrix_found = False
+    try:
+        from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
+        BrickletRotaryEncoder_found = True
+    except ImportError:
+        BrickletRotaryEncoder_found = False
+    try:
+        from brickv.bindings.bricklet_rotary_encoder_v2 import BrickletRotaryEncoderV2
+        BrickletRotaryEncoderV2_found = True
+    except ImportError:
+        BrickletRotaryEncoderV2_found = False
+    try:
+        from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
+        BrickletRotaryPoti_found = True
+    except ImportError:
+        BrickletRotaryPoti_found = False
     #from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
     #from brickv.bindings.bricklet_rs232_v2 import BrickletRS232V2 #NYI FIXME: has to use read_callback callback to get all data
-    from brickv.bindings.bricklet_rs485 import BrickletRS485
-    from brickv.bindings.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
-    from brickv.bindings.bricklet_segment_display_4x7_v2 import BrickletSegmentDisplay4x7V2
-    from brickv.bindings.bricklet_solid_state_relay import BrickletSolidStateRelay
-    from brickv.bindings.bricklet_solid_state_relay_v2 import BrickletSolidStateRelayV2
-    from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
-    from brickv.bindings.bricklet_sound_pressure_level import BrickletSoundPressureLevel
-    from brickv.bindings.bricklet_temperature import BrickletTemperature
-    from brickv.bindings.bricklet_temperature_v2 import BrickletTemperatureV2
-    from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
-    from brickv.bindings.bricklet_temperature_ir_v2 import BrickletTemperatureIRV2
-    from brickv.bindings.bricklet_thermal_imaging import BrickletThermalImaging
-    from brickv.bindings.bricklet_thermocouple import BrickletThermocouple
-    from brickv.bindings.bricklet_thermocouple_v2 import BrickletThermocoupleV2
-    from brickv.bindings.bricklet_tilt import BrickletTilt
-    from brickv.bindings.bricklet_uv_light import BrickletUVLight
-    from brickv.bindings.bricklet_uv_light_v2 import BrickletUVLightV2
-    from brickv.bindings.bricklet_voltage import BrickletVoltage
-    from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent
-    from brickv.bindings.bricklet_voltage_current_v2 import BrickletVoltageCurrentV2
+    try:
+        from brickv.bindings.bricklet_rs485 import BrickletRS485
+        BrickletRS485_found = True
+    except ImportError:
+        BrickletRS485_found = False
+    try:
+        from brickv.bindings.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
+        BrickletSegmentDisplay4x7_found = True
+    except ImportError:
+        BrickletSegmentDisplay4x7_found = False
+    try:
+        from brickv.bindings.bricklet_segment_display_4x7_v2 import BrickletSegmentDisplay4x7V2
+        BrickletSegmentDisplay4x7V2_found = True
+    except ImportError:
+        BrickletSegmentDisplay4x7V2_found = False
+    try:
+        from brickv.bindings.bricklet_solid_state_relay import BrickletSolidStateRelay
+        BrickletSolidStateRelay_found = True
+    except ImportError:
+        BrickletSolidStateRelay_found = False
+    try:
+        from brickv.bindings.bricklet_solid_state_relay_v2 import BrickletSolidStateRelayV2
+        BrickletSolidStateRelayV2_found = True
+    except ImportError:
+        BrickletSolidStateRelayV2_found = False
+    try:
+        from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
+        BrickletSoundIntensity_found = True
+    except ImportError:
+        BrickletSoundIntensity_found = False
+    try:
+        from brickv.bindings.bricklet_sound_pressure_level import BrickletSoundPressureLevel
+        BrickletSoundPressureLevel_found = True
+    except ImportError:
+        BrickletSoundPressureLevel_found = False
+    try:
+        from brickv.bindings.bricklet_temperature import BrickletTemperature
+        BrickletTemperature_found = True
+    except ImportError:
+        BrickletTemperature_found = False
+    try:
+        from brickv.bindings.bricklet_temperature_v2 import BrickletTemperatureV2
+        BrickletTemperatureV2_found = True
+    except ImportError:
+        BrickletTemperatureV2_found = False
+    try:
+        from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
+        BrickletTemperatureIR_found = True
+    except ImportError:
+        BrickletTemperatureIR_found = False
+    try:
+        from brickv.bindings.bricklet_temperature_ir_v2 import BrickletTemperatureIRV2
+        BrickletTemperatureIRV2_found = True
+    except ImportError:
+        BrickletTemperatureIRV2_found = False
+    try:
+        from brickv.bindings.bricklet_thermal_imaging import BrickletThermalImaging
+        BrickletThermalImaging_found = True
+    except ImportError:
+        BrickletThermalImaging_found = False
+    try:
+        from brickv.bindings.bricklet_thermocouple import BrickletThermocouple
+        BrickletThermocouple_found = True
+    except ImportError:
+        BrickletThermocouple_found = False
+    try:
+        from brickv.bindings.bricklet_thermocouple_v2 import BrickletThermocoupleV2
+        BrickletThermocoupleV2_found = True
+    except ImportError:
+        BrickletThermocoupleV2_found = False
+    try:
+        from brickv.bindings.bricklet_tilt import BrickletTilt
+        BrickletTilt_found = True
+    except ImportError:
+        BrickletTilt_found = False
+    try:
+        from brickv.bindings.bricklet_uv_light import BrickletUVLight
+        BrickletUVLight_found = True
+    except ImportError:
+        BrickletUVLight_found = False
+    try:
+        from brickv.bindings.bricklet_uv_light_v2 import BrickletUVLightV2
+        BrickletUVLightV2_found = True
+    except ImportError:
+        BrickletUVLightV2_found = False
+    try:
+        from brickv.bindings.bricklet_voltage import BrickletVoltage
+        BrickletVoltage_found = True
+    except ImportError:
+        BrickletVoltage_found = False
+    try:
+        from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent
+        BrickletVoltageCurrent_found = True
+    except ImportError:
+        BrickletVoltageCurrent_found = False
+    try:
+        from brickv.bindings.bricklet_voltage_current_v2 import BrickletVoltageCurrentV2
+        BrickletVoltageCurrentV2_found = True
+    except ImportError:
+        BrickletVoltageCurrentV2_found = False
 else:
     # Bricks
-    from tinkerforge.brick_dc import BrickDC
-    from tinkerforge.brick_imu import BrickIMU
-    from tinkerforge.brick_imu_v2 import BrickIMUV2
-    from tinkerforge.brick_master import BrickMaster
-    from tinkerforge.brick_servo import BrickServo
-    from tinkerforge.brick_silent_stepper import BrickSilentStepper
-    from tinkerforge.brick_stepper import BrickStepper
+    try:
+        from tinkerforge.brick_dc import BrickDC
+        BrickDC_found = True
+    except ImportError:
+        BrickDC_found = False
+    try:
+        from tinkerforge.brick_imu import BrickIMU
+        BrickIMU_found = True
+    except ImportError:
+        BrickIMU_found = False
+    try:
+        from tinkerforge.brick_imu_v2 import BrickIMUV2
+        BrickIMUV2_found = True
+    except ImportError:
+        BrickIMUV2_found = False
+    try:
+        from tinkerforge.brick_master import BrickMaster
+        BrickMaster_found = True
+    except ImportError:
+        BrickMaster_found = False
+    try:
+        from tinkerforge.brick_servo import BrickServo
+        BrickServo_found = True
+    except ImportError:
+        BrickServo_found = False
+    try:
+        from tinkerforge.brick_silent_stepper import BrickSilentStepper
+        BrickSilentStepper_found = True
+    except ImportError:
+        BrickSilentStepper_found = False
+    try:
+        from tinkerforge.brick_stepper import BrickStepper
+        BrickStepper_found = True
+    except ImportError:
+        BrickStepper_found = False
 
     # Bricklets
-    from tinkerforge.bricklet_accelerometer import BrickletAccelerometer
-    from tinkerforge.bricklet_accelerometer_v2 import BrickletAccelerometerV2
-    from tinkerforge.bricklet_air_quality import BrickletAirQuality
-    from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
-    from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
-    from tinkerforge.bricklet_ambient_light_v3 import BrickletAmbientLightV3
-    from tinkerforge.bricklet_analog_in import BrickletAnalogIn
-    from tinkerforge.bricklet_analog_in_v2 import BrickletAnalogInV2
-    from tinkerforge.bricklet_analog_in_v3 import BrickletAnalogInV3
-    from tinkerforge.bricklet_analog_out_v2 import BrickletAnalogOutV2
-    from tinkerforge.bricklet_analog_out_v3 import BrickletAnalogOutV3
-    from tinkerforge.bricklet_barometer import BrickletBarometer
-    from tinkerforge.bricklet_barometer_v2 import BrickletBarometerV2
-    from tinkerforge.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
-    from tinkerforge.bricklet_can_v2 import BrickletCANV2 #NYI FIXME: has to use frame_read callback to get all data
-    from tinkerforge.bricklet_co2 import BrickletCO2
-    from tinkerforge.bricklet_co2_v2 import BrickletCO2V2
-    from tinkerforge.bricklet_color import BrickletColor
-    from tinkerforge.bricklet_current12 import BrickletCurrent12
-    from tinkerforge.bricklet_current25 import BrickletCurrent25
-    from tinkerforge.bricklet_distance_ir import BrickletDistanceIR
-    from tinkerforge.bricklet_distance_ir_v2 import BrickletDistanceIRV2
-    from tinkerforge.bricklet_distance_us import BrickletDistanceUS
-    from tinkerforge.bricklet_dmx import BrickletDMX
-    from tinkerforge.bricklet_dual_button import BrickletDualButton
-    from tinkerforge.bricklet_dual_button_v2 import BrickletDualButtonV2
-    from tinkerforge.bricklet_dual_relay import BrickletDualRelay
-    from tinkerforge.bricklet_dust_detector import BrickletDustDetector
-    from tinkerforge.bricklet_gps import BrickletGPS
-    from tinkerforge.bricklet_gps_v2 import BrickletGPSV2
-    from tinkerforge.bricklet_hall_effect import BrickletHallEffect
-    from tinkerforge.bricklet_hall_effect_v2 import BrickletHallEffectV2
-    from tinkerforge.bricklet_humidity import BrickletHumidity
-    from tinkerforge.bricklet_humidity_v2 import BrickletHumidityV2
-    from tinkerforge.bricklet_industrial_counter import BrickletIndustrialCounter
-    from tinkerforge.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
-    from tinkerforge.bricklet_industrial_digital_in_4_v2 import BrickletIndustrialDigitalIn4V2
-    from tinkerforge.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
-    from tinkerforge.bricklet_industrial_dual_0_20ma_v2 import BrickletIndustrialDual020mAV2
-    from tinkerforge.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
-    from tinkerforge.bricklet_industrial_dual_analog_in_v2 import BrickletIndustrialDualAnalogInV2
-    from tinkerforge.bricklet_industrial_dual_relay import BrickletIndustrialDualRelay
-    from tinkerforge.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
-    from tinkerforge.bricklet_industrial_quad_relay_v2 import BrickletIndustrialQuadRelayV2
-    from tinkerforge.bricklet_io16 import BrickletIO16
-    from tinkerforge.bricklet_io16_v2 import BrickletIO16V2
-    from tinkerforge.bricklet_io4 import BrickletIO4
-    from tinkerforge.bricklet_io4_v2 import BrickletIO4V2
-    from tinkerforge.bricklet_joystick import BrickletJoystick
-    from tinkerforge.bricklet_joystick_v2 import BrickletJoystickV2
-    from tinkerforge.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
-    from tinkerforge.bricklet_led_strip import BrickletLEDStrip
-    from tinkerforge.bricklet_led_strip_v2 import BrickletLEDStripV2
-    from tinkerforge.bricklet_line import BrickletLine
-    from tinkerforge.bricklet_linear_poti import BrickletLinearPoti
-    from tinkerforge.bricklet_linear_poti_v2 import BrickletLinearPotiV2
-    from tinkerforge.bricklet_load_cell import BrickletLoadCell
-    from tinkerforge.bricklet_load_cell_v2 import BrickletLoadCellV2
-    from tinkerforge.bricklet_moisture import BrickletMoisture
-    from tinkerforge.bricklet_motion_detector import BrickletMotionDetector
-    from tinkerforge.bricklet_motion_detector_v2 import BrickletMotionDetectorV2
-    from tinkerforge.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
-    from tinkerforge.bricklet_multi_touch import BrickletMultiTouch
-    from tinkerforge.bricklet_nfc import BrickletNFC
-    from tinkerforge.bricklet_nfc_rfid import BrickletNFCRFID
-    from tinkerforge.bricklet_outdoor_weather import BrickletOutdoorWeather
-    from tinkerforge.bricklet_particulate_matter import BrickletParticulateMatter
-    from tinkerforge.bricklet_ptc import BrickletPTC
-    from tinkerforge.bricklet_ptc_v2 import BrickletPTCV2
-    from tinkerforge.bricklet_real_time_clock import BrickletRealTimeClock
-    from tinkerforge.bricklet_real_time_clock_v2 import BrickletRealTimeClockV2
-    from tinkerforge.bricklet_remote_switch import BrickletRemoteSwitch
-    from tinkerforge.bricklet_remote_switch_v2 import BrickletRemoteSwitchV2
-    from tinkerforge.bricklet_rgb_led_button import BrickletRGBLEDButton
-    from tinkerforge.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
-    from tinkerforge.bricklet_rotary_encoder import BrickletRotaryEncoder
-    from tinkerforge.bricklet_rotary_encoder_v2 import BrickletRotaryEncoderV2
-    from tinkerforge.bricklet_rotary_poti import BrickletRotaryPoti
+    try:
+        from tinkerforge.bricklet_accelerometer import BrickletAccelerometer
+        BrickletAccelerometer_found = True
+    except ImportError:
+        BrickletAccelerometer_found = False
+    try:
+        from tinkerforge.bricklet_accelerometer_v2 import BrickletAccelerometerV2
+        BrickletAccelerometerV2_found = True
+    except ImportError:
+        BrickletAccelerometerV2_found = False
+    try:
+        from tinkerforge.bricklet_air_quality import BrickletAirQuality
+        BrickletAirQuality_found = True
+    except ImportError:
+        BrickletAirQuality_found = False
+    try:
+        from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
+        BrickletAmbientLight_found = True
+    except ImportError:
+        BrickletAmbientLight_found = False
+    try:
+        from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
+        BrickletAmbientLightV2_found = True
+    except ImportError:
+        BrickletAmbientLightV2_found = False
+    try:
+        from tinkerforge.bricklet_ambient_light_v3 import BrickletAmbientLightV3
+        BrickletAmbientLightV3_found = True
+    except ImportError:
+        BrickletAmbientLightV3_found = False
+    try:
+        from tinkerforge.bricklet_analog_in import BrickletAnalogIn
+        BrickletAnalogIn_found = True
+    except ImportError:
+        BrickletAnalogIn_found = False
+    try:
+        from tinkerforge.bricklet_analog_in_v2 import BrickletAnalogInV2
+        BrickletAnalogInV2_found = True
+    except ImportError:
+        BrickletAnalogInV2_found = False
+    try:
+        from tinkerforge.bricklet_analog_in_v3 import BrickletAnalogInV3
+        BrickletAnalogInV3_found = True
+    except ImportError:
+        BrickletAnalogInV3_found = False
+    try:
+        from tinkerforge.bricklet_analog_out_v2 import BrickletAnalogOutV2
+        BrickletAnalogOutV2_found = True
+    except ImportError:
+        BrickletAnalogOutV2_found = False
+    try:
+        from tinkerforge.bricklet_analog_out_v3 import BrickletAnalogOutV3
+        BrickletAnalogOutV3_found = True
+    except ImportError:
+        BrickletAnalogOutV3_found = False
+    try:
+        from tinkerforge.bricklet_barometer import BrickletBarometer
+        BrickletBarometer_found = True
+    except ImportError:
+        BrickletBarometer_found = False
+    try:
+        from tinkerforge.bricklet_barometer_v2 import BrickletBarometerV2
+        BrickletBarometerV2_found = True
+    except ImportError:
+        BrickletBarometerV2_found = False
+    try:
+        from tinkerforge.bricklet_can import BrickletCAN #NYI FIXME: has to use frame_read callback to get all data
+        BrickletCAN_found = True
+    except ImportError:
+        BrickletCAN_found = False
+    try:
+        from tinkerforge.bricklet_can_v2 import BrickletCANV2 #NYI FIXME: has to use frame_read callback to get all data
+        BrickletCANV2_found = True
+    except ImportError:
+        BrickletCANV2_found = False
+    try:
+        from tinkerforge.bricklet_co2 import BrickletCO2
+        BrickletCO2_found = True
+    except ImportError:
+        BrickletCO2_found = False
+    try:
+        from tinkerforge.bricklet_co2_v2 import BrickletCO2V2
+        BrickletCO2V2_found = True
+    except ImportError:
+        BrickletCO2V2_found = False
+    try:
+        from tinkerforge.bricklet_color import BrickletColor
+        BrickletColor_found = True
+    except ImportError:
+        BrickletColor_found = False
+    try:
+        from tinkerforge.bricklet_current12 import BrickletCurrent12
+        BrickletCurrent12_found = True
+    except ImportError:
+        BrickletCurrent12_found = False
+    try:
+        from tinkerforge.bricklet_current25 import BrickletCurrent25
+        BrickletCurrent25_found = True
+    except ImportError:
+        BrickletCurrent25_found = False
+    try:
+        from tinkerforge.bricklet_distance_ir import BrickletDistanceIR
+        BrickletDistanceIR_found = True
+    except ImportError:
+        BrickletDistanceIR_found = False
+    try:
+        from tinkerforge.bricklet_distance_ir_v2 import BrickletDistanceIRV2
+        BrickletDistanceIRV2_found = True
+    except ImportError:
+        BrickletDistanceIRV2_found = False
+    try:
+        from tinkerforge.bricklet_distance_us import BrickletDistanceUS
+        BrickletDistanceUS_found = True
+    except ImportError:
+        BrickletDistanceUS_found = False
+    try:
+        from tinkerforge.bricklet_dmx import BrickletDMX
+        BrickletDMX_found = True
+    except ImportError:
+        BrickletDMX_found = False
+    try:
+        from tinkerforge.bricklet_dual_button import BrickletDualButton
+        BrickletDualButton_found = True
+    except ImportError:
+        BrickletDualButton_found = False
+    try:
+        from tinkerforge.bricklet_dual_button_v2 import BrickletDualButtonV2
+        BrickletDualButtonV2_found = True
+    except ImportError:
+        BrickletDualButtonV2_found = False
+    try:
+        from tinkerforge.bricklet_dual_relay import BrickletDualRelay
+        BrickletDualRelay_found = True
+    except ImportError:
+        BrickletDualRelay_found = False
+    try:
+        from tinkerforge.bricklet_dust_detector import BrickletDustDetector
+        BrickletDustDetector_found = True
+    except ImportError:
+        BrickletDustDetector_found = False
+    try:
+        from tinkerforge.bricklet_gps import BrickletGPS
+        BrickletGPS_found = True
+    except ImportError:
+        BrickletGPS_found = False
+    try:
+        from tinkerforge.bricklet_gps_v2 import BrickletGPSV2
+        BrickletGPSV2_found = True
+    except ImportError:
+        BrickletGPSV2_found = False
+    try:
+        from tinkerforge.bricklet_hall_effect import BrickletHallEffect
+        BrickletHallEffect_found = True
+    except ImportError:
+        BrickletHallEffect_found = False
+    try:
+        from tinkerforge.bricklet_hall_effect_v2 import BrickletHallEffectV2
+        BrickletHallEffectV2_found = True
+    except ImportError:
+        BrickletHallEffectV2_found = False
+    try:
+        from tinkerforge.bricklet_humidity import BrickletHumidity
+        BrickletHumidity_found = True
+    except ImportError:
+        BrickletHumidity_found = False
+    try:
+        from tinkerforge.bricklet_humidity_v2 import BrickletHumidityV2
+        BrickletHumidityV2_found = True
+    except ImportError:
+        BrickletHumidityV2_found = False
+    try:
+        from tinkerforge.bricklet_industrial_counter import BrickletIndustrialCounter
+        BrickletIndustrialCounter_found = True
+    except ImportError:
+        BrickletIndustrialCounter_found = False
+    try:
+        from tinkerforge.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
+        BrickletIndustrialDigitalIn4_found = True
+    except ImportError:
+        BrickletIndustrialDigitalIn4_found = False
+    try:
+        from tinkerforge.bricklet_industrial_digital_in_4_v2 import BrickletIndustrialDigitalIn4V2
+        BrickletIndustrialDigitalIn4V2_found = True
+    except ImportError:
+        BrickletIndustrialDigitalIn4V2_found = False
+    try:
+        from tinkerforge.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
+        BrickletIndustrialDual020mA_found = True
+    except ImportError:
+        BrickletIndustrialDual020mA_found = False
+    try:
+        from tinkerforge.bricklet_industrial_dual_0_20ma_v2 import BrickletIndustrialDual020mAV2
+        BrickletIndustrialDual020mAV2_found = True
+    except ImportError:
+        BrickletIndustrialDual020mAV2_found = False
+    try:
+        from tinkerforge.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
+        BrickletIndustrialDualAnalogIn_found = True
+    except ImportError:
+        BrickletIndustrialDualAnalogIn_found = False
+    try:
+        from tinkerforge.bricklet_industrial_dual_analog_in_v2 import BrickletIndustrialDualAnalogInV2
+        BrickletIndustrialDualAnalogInV2_found = True
+    except ImportError:
+        BrickletIndustrialDualAnalogInV2_found = False
+    try:
+        from tinkerforge.bricklet_industrial_dual_relay import BrickletIndustrialDualRelay
+        BrickletIndustrialDualRelay_found = True
+    except ImportError:
+        BrickletIndustrialDualRelay_found = False
+    try:
+        from tinkerforge.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
+        BrickletIndustrialQuadRelay_found = True
+    except ImportError:
+        BrickletIndustrialQuadRelay_found = False
+    try:
+        from tinkerforge.bricklet_industrial_quad_relay_v2 import BrickletIndustrialQuadRelayV2
+        BrickletIndustrialQuadRelayV2_found = True
+    except ImportError:
+        BrickletIndustrialQuadRelayV2_found = False
+    try:
+        from tinkerforge.bricklet_io16 import BrickletIO16
+        BrickletIO16_found = True
+    except ImportError:
+        BrickletIO16_found = False
+    try:
+        from tinkerforge.bricklet_io16_v2 import BrickletIO16V2
+        BrickletIO16V2_found = True
+    except ImportError:
+        BrickletIO16V2_found = False
+    try:
+        from tinkerforge.bricklet_io4 import BrickletIO4
+        BrickletIO4_found = True
+    except ImportError:
+        BrickletIO4_found = False
+    try:
+        from tinkerforge.bricklet_io4_v2 import BrickletIO4V2
+        BrickletIO4V2_found = True
+    except ImportError:
+        BrickletIO4V2_found = False
+    try:
+        from tinkerforge.bricklet_joystick import BrickletJoystick
+        BrickletJoystick_found = True
+    except ImportError:
+        BrickletJoystick_found = False
+    try:
+        from tinkerforge.bricklet_joystick_v2 import BrickletJoystickV2
+        BrickletJoystickV2_found = True
+    except ImportError:
+        BrickletJoystickV2_found = False
+    try:
+        from tinkerforge.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
+        BrickletLaserRangeFinder_found = True
+    except ImportError:
+        BrickletLaserRangeFinder_found = False
+    try:
+        from tinkerforge.bricklet_led_strip import BrickletLEDStrip
+        BrickletLEDStrip_found = True
+    except ImportError:
+        BrickletLEDStrip_found = False
+    try:
+        from tinkerforge.bricklet_led_strip_v2 import BrickletLEDStripV2
+        BrickletLEDStripV2_found = True
+    except ImportError:
+        BrickletLEDStripV2_found = False
+    try:
+        from tinkerforge.bricklet_line import BrickletLine
+        BrickletLine_found = True
+    except ImportError:
+        BrickletLine_found = False
+    try:
+        from tinkerforge.bricklet_linear_poti import BrickletLinearPoti
+        BrickletLinearPoti_found = True
+    except ImportError:
+        BrickletLinearPoti_found = False
+    try:
+        from tinkerforge.bricklet_linear_poti_v2 import BrickletLinearPotiV2
+        BrickletLinearPotiV2_found = True
+    except ImportError:
+        BrickletLinearPotiV2_found = False
+    try:
+        from tinkerforge.bricklet_load_cell import BrickletLoadCell
+        BrickletLoadCell_found = True
+    except ImportError:
+        BrickletLoadCell_found = False
+    try:
+        from tinkerforge.bricklet_load_cell_v2 import BrickletLoadCellV2
+        BrickletLoadCellV2_found = True
+    except ImportError:
+        BrickletLoadCellV2_found = False
+    try:
+        from tinkerforge.bricklet_moisture import BrickletMoisture
+        BrickletMoisture_found = True
+    except ImportError:
+        BrickletMoisture_found = False
+    try:
+        from tinkerforge.bricklet_motion_detector import BrickletMotionDetector
+        BrickletMotionDetector_found = True
+    except ImportError:
+        BrickletMotionDetector_found = False
+    try:
+        from tinkerforge.bricklet_motion_detector_v2 import BrickletMotionDetectorV2
+        BrickletMotionDetectorV2_found = True
+    except ImportError:
+        BrickletMotionDetectorV2_found = False
+    try:
+        from tinkerforge.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
+        BrickletMotorizedLinearPoti_found = True
+    except ImportError:
+        BrickletMotorizedLinearPoti_found = False
+    try:
+        from tinkerforge.bricklet_multi_touch import BrickletMultiTouch
+        BrickletMultiTouch_found = True
+    except ImportError:
+        BrickletMultiTouch_found = False
+    try:
+        from tinkerforge.bricklet_nfc import BrickletNFC
+        BrickletNFC_found = True
+    except ImportError:
+        BrickletNFC_found = False
+    try:
+        from tinkerforge.bricklet_nfc_rfid import BrickletNFCRFID
+        BrickletNFCRFID_found = True
+    except ImportError:
+        BrickletNFCRFID_found = False
+    try:
+        from tinkerforge.bricklet_outdoor_weather import BrickletOutdoorWeather
+        BrickletOutdoorWeather_found = True
+    except ImportError:
+        BrickletOutdoorWeather_found = False
+    try:
+        from tinkerforge.bricklet_particulate_matter import BrickletParticulateMatter
+        BrickletParticulateMatter_found = True
+    except ImportError:
+        BrickletParticulateMatter_found = False
+    try:
+        from tinkerforge.bricklet_ptc import BrickletPTC
+        BrickletPTC_found = True
+    except ImportError:
+        BrickletPTC_found = False
+    try:
+        from tinkerforge.bricklet_ptc_v2 import BrickletPTCV2
+        BrickletPTCV2_found = True
+    except ImportError:
+        BrickletPTCV2_found = False
+    try:
+        from tinkerforge.bricklet_real_time_clock import BrickletRealTimeClock
+        BrickletRealTimeClock_found = True
+    except ImportError:
+        BrickletRealTimeClock_found = False
+    try:
+        from tinkerforge.bricklet_real_time_clock_v2 import BrickletRealTimeClockV2
+        BrickletRealTimeClockV2_found = True
+    except ImportError:
+        BrickletRealTimeClockV2_found = False
+    try:
+        from tinkerforge.bricklet_remote_switch import BrickletRemoteSwitch
+        BrickletRemoteSwitch_found = True
+    except ImportError:
+        BrickletRemoteSwitch_found = False
+    try:
+        from tinkerforge.bricklet_remote_switch_v2 import BrickletRemoteSwitchV2
+        BrickletRemoteSwitchV2_found = True
+    except ImportError:
+        BrickletRemoteSwitchV2_found = False
+    try:
+        from tinkerforge.bricklet_rgb_led_button import BrickletRGBLEDButton
+        BrickletRGBLEDButton_found = True
+    except ImportError:
+        BrickletRGBLEDButton_found = False
+    try:
+        from tinkerforge.bricklet_rgb_led_matrix import BrickletRGBLEDMatrix
+        BrickletRGBLEDMatrix_found = True
+    except ImportError:
+        BrickletRGBLEDMatrix_found = False
+    try:
+        from tinkerforge.bricklet_rotary_encoder import BrickletRotaryEncoder
+        BrickletRotaryEncoder_found = True
+    except ImportError:
+        BrickletRotaryEncoder_found = False
+    try:
+        from tinkerforge.bricklet_rotary_encoder_v2 import BrickletRotaryEncoderV2
+        BrickletRotaryEncoderV2_found = True
+    except ImportError:
+        BrickletRotaryEncoderV2_found = False
+    try:
+        from tinkerforge.bricklet_rotary_poti import BrickletRotaryPoti
+        BrickletRotaryPoti_found = True
+    except ImportError:
+        BrickletRotaryPoti_found = False
     # from tinkerforge.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
     # from tinkerforge.bricklet_rs232_v2 import BrickletRS232V2 #NYI FIXME: has to use read_callback callback to get all data
-    from tinkerforge.bricklet_rs485 import BrickletRS485
-    from tinkerforge.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
-    from tinkerforge.bricklet_segment_display_4x7_v2 import BrickletSegmentDisplay4x7V2
-    from tinkerforge.bricklet_solid_state_relay import BrickletSolidStateRelay
-    from tinkerforge.bricklet_solid_state_relay_v2 import BrickletSolidStateRelayV2
-    from tinkerforge.bricklet_sound_intensity import BrickletSoundIntensity
-    from tinkerforge.bricklet_sound_pressure_level import BrickletSoundPressureLevel
-    from tinkerforge.bricklet_temperature import BrickletTemperature
-    from tinkerforge.bricklet_temperature_v2 import BrickletTemperatureV2
-    from tinkerforge.bricklet_temperature_ir import BrickletTemperatureIR
-    from tinkerforge.bricklet_temperature_ir_v2 import BrickletTemperatureIRV2
-    from tinkerforge.bricklet_thermal_imaging import BrickletThermalImaging
-    from tinkerforge.bricklet_thermocouple import BrickletThermocouple
-    from tinkerforge.bricklet_thermocouple_v2 import BrickletThermocoupleV2
-    from tinkerforge.bricklet_tilt import BrickletTilt
-    from tinkerforge.bricklet_uv_light import BrickletUVLight
-    from tinkerforge.bricklet_uv_light_v2 import BrickletUVLightV2
-    from tinkerforge.bricklet_voltage import BrickletVoltage
-    from tinkerforge.bricklet_voltage_current import BrickletVoltageCurrent
-    from tinkerforge.bricklet_voltage_current_v2 import BrickletVoltageCurrentV2
+    try:
+        from tinkerforge.bricklet_rs485 import BrickletRS485
+        BrickletRS485_found = True
+    except ImportError:
+        BrickletRS485_found = False
+    try:
+        from tinkerforge.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
+        BrickletSegmentDisplay4x7_found = True
+    except ImportError:
+        BrickletSegmentDisplay4x7_found = False
+    try:
+        from tinkerforge.bricklet_segment_display_4x7_v2 import BrickletSegmentDisplay4x7V2
+        BrickletSegmentDisplay4x7V2_found = True
+    except ImportError:
+        BrickletSegmentDisplay4x7V2_found = False
+    try:
+        from tinkerforge.bricklet_solid_state_relay import BrickletSolidStateRelay
+        BrickletSolidStateRelay_found = True
+    except ImportError:
+        BrickletSolidStateRelay_found = False
+    try:
+        from tinkerforge.bricklet_solid_state_relay_v2 import BrickletSolidStateRelayV2
+        BrickletSolidStateRelayV2_found = True
+    except ImportError:
+        BrickletSolidStateRelayV2_found = False
+    try:
+        from tinkerforge.bricklet_sound_intensity import BrickletSoundIntensity
+        BrickletSoundIntensity_found = True
+    except ImportError:
+        BrickletSoundIntensity_found = False
+    try:
+        from tinkerforge.bricklet_sound_pressure_level import BrickletSoundPressureLevel
+        BrickletSoundPressureLevel_found = True
+    except ImportError:
+        BrickletSoundPressureLevel_found = False
+    try:
+        from tinkerforge.bricklet_temperature import BrickletTemperature
+        BrickletTemperature_found = True
+    except ImportError:
+        BrickletTemperature_found = False
+    try:
+        from tinkerforge.bricklet_temperature_v2 import BrickletTemperatureV2
+        BrickletTemperatureV2_found = True
+    except ImportError:
+        BrickletTemperatureV2_found = False
+    try:
+        from tinkerforge.bricklet_temperature_ir import BrickletTemperatureIR
+        BrickletTemperatureIR_found = True
+    except ImportError:
+        BrickletTemperatureIR_found = False
+    try:
+        from tinkerforge.bricklet_temperature_ir_v2 import BrickletTemperatureIRV2
+        BrickletTemperatureIRV2_found = True
+    except ImportError:
+        BrickletTemperatureIRV2_found = False
+    try:
+        from tinkerforge.bricklet_thermal_imaging import BrickletThermalImaging
+        BrickletThermalImaging_found = True
+    except ImportError:
+        BrickletThermalImaging_found = False
+    try:
+        from tinkerforge.bricklet_thermocouple import BrickletThermocouple
+        BrickletThermocouple_found = True
+    except ImportError:
+        BrickletThermocouple_found = False
+    try:
+        from tinkerforge.bricklet_thermocouple_v2 import BrickletThermocoupleV2
+        BrickletThermocoupleV2_found = True
+    except ImportError:
+        BrickletThermocoupleV2_found = False
+    try:
+        from tinkerforge.bricklet_tilt import BrickletTilt
+        BrickletTilt_found = True
+    except ImportError:
+        BrickletTilt_found = False
+    try:
+        from tinkerforge.bricklet_uv_light import BrickletUVLight
+        BrickletUVLight_found = True
+    except ImportError:
+        BrickletUVLight_found = False
+    try:
+        from tinkerforge.bricklet_uv_light_v2 import BrickletUVLightV2
+        BrickletUVLightV2_found = True
+    except ImportError:
+        BrickletUVLightV2_found = False
+    try:
+        from tinkerforge.bricklet_voltage import BrickletVoltage
+        BrickletVoltage_found = True
+    except ImportError:
+        BrickletVoltage_found = False
+    try:
+        from tinkerforge.bricklet_voltage_current import BrickletVoltageCurrent
+        BrickletVoltageCurrent_found = True
+    except ImportError:
+        BrickletVoltageCurrent_found = False
+    try:
+        from tinkerforge.bricklet_voltage_current_v2 import BrickletVoltageCurrentV2
+        BrickletVoltageCurrentV2_found = True
+    except ImportError:
+        BrickletVoltageCurrentV2_found = False
 
 def value_to_bits(value, length):
     bits = []
@@ -275,206 +1119,215 @@ def value_to_bits(value, length):
 # If the GPS Bricklet does not have a fix, then the function will return an Error
 # instead of the specified return values.
 
-# BrickletColor
-def special_get_get_illuminance(device):
-    gain, integration_time = device.get_config()
+if BrickletColor_found:
+    # BrickletColor
+    def special_get_get_illuminance(device):
+        gain, integration_time = device.get_config()
 
-    if gain == BrickletColor.GAIN_1X:
-        gain_factor = 1
-    elif gain == BrickletColor.GAIN_4X:
-        gain_factor = 4
-    elif gain == BrickletColor.GAIN_16X:
-        gain_factor = 16
-    elif gain == BrickletColor.GAIN_60X:
-        gain_factor = 60
+        if gain == BrickletColor.GAIN_1X:
+            gain_factor = 1
+        elif gain == BrickletColor.GAIN_4X:
+            gain_factor = 4
+        elif gain == BrickletColor.GAIN_16X:
+            gain_factor = 16
+        elif gain == BrickletColor.GAIN_60X:
+            gain_factor = 60
 
-    if integration_time == BrickletColor.INTEGRATION_TIME_2MS:
-        integration_time_factor = 2.4
-    elif integration_time == BrickletColor.INTEGRATION_TIME_24MS:
-        integration_time_factor = 24
-    elif integration_time == BrickletColor.INTEGRATION_TIME_101MS:
-        integration_time_factor = 101
-    elif integration_time == BrickletColor.INTEGRATION_TIME_154MS:
-        integration_time_factor = 154
-    elif integration_time == BrickletColor.INTEGRATION_TIME_700MS:
-        integration_time_factor = 700
+        if integration_time == BrickletColor.INTEGRATION_TIME_2MS:
+            integration_time_factor = 2.4
+        elif integration_time == BrickletColor.INTEGRATION_TIME_24MS:
+            integration_time_factor = 24
+        elif integration_time == BrickletColor.INTEGRATION_TIME_101MS:
+            integration_time_factor = 101
+        elif integration_time == BrickletColor.INTEGRATION_TIME_154MS:
+            integration_time_factor = 154
+        elif integration_time == BrickletColor.INTEGRATION_TIME_700MS:
+            integration_time_factor = 700
 
-    illuminance = device.get_illuminance()
+        illuminance = device.get_illuminance()
 
-    return int(round(illuminance * 700.0 / float(gain_factor) / float(integration_time_factor), 1) * 10)
+        return int(round(illuminance * 700.0 / float(gain_factor) / float(integration_time_factor), 1) * 10)
 
-# BrickletGPS
-def special_get_gps_coordinates(device):
-    if device.get_status()[0] == BrickletGPS.FIX_NO_FIX:
-        raise Exception('No fix')
-    else:
-        return device.get_coordinates()
+if BrickletGPS_found:
+    # BrickletGPS
+    def special_get_gps_coordinates(device):
+        if device.get_status()[0] == BrickletGPS.FIX_NO_FIX:
+            raise Exception('No fix')
+        else:
+            return device.get_coordinates()
 
-def special_get_gps_altitude(device):
-    if device.get_status()[0] != BrickletGPS.FIX_3D_FIX:
-        raise Exception('No 3D fix')
-    else:
-        return device.get_altitude()
+    def special_get_gps_altitude(device):
+        if device.get_status()[0] != BrickletGPS.FIX_3D_FIX:
+            raise Exception('No 3D fix')
+        else:
+            return device.get_altitude()
 
-def special_get_gps_motion(device):
-    if device.get_status()[0] == BrickletGPS.FIX_NO_FIX:
-        raise Exception('No fix')
-    else:
-        return device.get_motion()
+    def special_get_gps_motion(device):
+        if device.get_status()[0] == BrickletGPS.FIX_NO_FIX:
+            raise Exception('No fix')
+        else:
+            return device.get_motion()
 
-# BrickletGPSV2
-def special_get_gps_v2_coordinates(device):
-    if device.get_satellite_system_status(BrickletGPSV2.SATELLITE_SYSTEM_GPS).fix == BrickletGPSV2.FIX_NO_FIX:
-        raise Exception('No fix')
-    else:
-        return device.get_coordinates()
+if BrickletGPSV2_found:
+    # BrickletGPSV2
+    def special_get_gps_v2_coordinates(device):
+        if device.get_satellite_system_status(BrickletGPSV2.SATELLITE_SYSTEM_GPS).fix == BrickletGPSV2.FIX_NO_FIX:
+            raise Exception('No fix')
+        else:
+            return device.get_coordinates()
 
-def special_get_gps_v2_altitude(device):
-    if device.get_satellite_system_status(BrickletGPSV2.SATELLITE_SYSTEM_GPS).fix != BrickletGPSV2.FIX_3D_FIX:
-        raise Exception('No 3D fix')
-    else:
-        return device.get_altitude()
+    def special_get_gps_v2_altitude(device):
+        if device.get_satellite_system_status(BrickletGPSV2.SATELLITE_SYSTEM_GPS).fix != BrickletGPSV2.FIX_3D_FIX:
+            raise Exception('No 3D fix')
+        else:
+            return device.get_altitude()
 
-def special_get_gps_v2_motion(device):
-    if device.get_satellite_system_status(BrickletGPSV2.SATELLITE_SYSTEM_GPS).fix == BrickletGPSV2.FIX_NO_FIX:
-        raise Exception('No fix')
-    else:
-        return device.get_motion()
+    def special_get_gps_v2_motion(device):
+        if device.get_satellite_system_status(BrickletGPSV2.SATELLITE_SYSTEM_GPS).fix == BrickletGPSV2.FIX_NO_FIX:
+            raise Exception('No fix')
+        else:
+            return device.get_motion()
 
-# BrickletMultiTouch
-def special_set_multi_touch_options(device, electrode0, electrode1, electrode2, electrode3,
-                                    electrode4, electrode5, electrode6, electrode7,
-                                    electrode8, electrode9, electrode10, electrode11,
-                                    proximity, electrode_sensitivity):
-    electrode_config = 0
+if BrickletMultiTouch_found:
+    # BrickletMultiTouch
+    def special_set_multi_touch_options(device, electrode0, electrode1, electrode2, electrode3,
+                                        electrode4, electrode5, electrode6, electrode7,
+                                        electrode8, electrode9, electrode10, electrode11,
+                                        proximity, electrode_sensitivity):
+        electrode_config = 0
 
-    if electrode0:
-        electrode_config |= 1 << 0
+        if electrode0:
+            electrode_config |= 1 << 0
 
-    if electrode1:
-        electrode_config |= 1 << 1
+        if electrode1:
+            electrode_config |= 1 << 1
 
-    if electrode2:
-        electrode_config |= 1 << 2
+        if electrode2:
+            electrode_config |= 1 << 2
 
-    if electrode3:
-        electrode_config |= 1 << 3
+        if electrode3:
+            electrode_config |= 1 << 3
 
-    if electrode4:
-        electrode_config |= 1 << 4
+        if electrode4:
+            electrode_config |= 1 << 4
 
-    if electrode5:
-        electrode_config |= 1 << 5
+        if electrode5:
+            electrode_config |= 1 << 5
 
-    if electrode6:
-        electrode_config |= 1 << 6
+        if electrode6:
+            electrode_config |= 1 << 6
 
-    if electrode7:
-        electrode_config |= 1 << 7
+        if electrode7:
+            electrode_config |= 1 << 7
 
-    if electrode8:
-        electrode_config |= 1 << 8
+        if electrode8:
+            electrode_config |= 1 << 8
 
-    if electrode9:
-        electrode_config |= 1 << 9
+        if electrode9:
+            electrode_config |= 1 << 9
 
-    if electrode10:
-        electrode_config |= 1 << 10
+        if electrode10:
+            electrode_config |= 1 << 10
 
-    if electrode11:
-        electrode_config |= 1 << 11
+        if electrode11:
+            electrode_config |= 1 << 11
 
-    if proximity:
-        electrode_config |= 1 << 12
+        if proximity:
+            electrode_config |= 1 << 12
 
-    device.set_electrode_config(electrode_config)
-    device.set_electrode_sensitivity(electrode_sensitivity)
+        device.set_electrode_config(electrode_config)
+        device.set_electrode_sensitivity(electrode_sensitivity)
 
-# BrickletOutdoorWeather
-wind_direction_names = {
-    BrickletOutdoorWeather.WIND_DIRECTION_N: 'N',
-    BrickletOutdoorWeather.WIND_DIRECTION_NNE: 'NNE',
-    BrickletOutdoorWeather.WIND_DIRECTION_NE: 'NE',
-    BrickletOutdoorWeather.WIND_DIRECTION_ENE: 'ENE',
-    BrickletOutdoorWeather.WIND_DIRECTION_E: 'E',
-    BrickletOutdoorWeather.WIND_DIRECTION_ESE: 'ESE',
-    BrickletOutdoorWeather.WIND_DIRECTION_SE: 'SE',
-    BrickletOutdoorWeather.WIND_DIRECTION_SSE: 'SSE',
-    BrickletOutdoorWeather.WIND_DIRECTION_S: 'S',
-    BrickletOutdoorWeather.WIND_DIRECTION_SSW: 'SSW',
-    BrickletOutdoorWeather.WIND_DIRECTION_SW: 'SW',
-    BrickletOutdoorWeather.WIND_DIRECTION_WSW: 'WSW',
-    BrickletOutdoorWeather.WIND_DIRECTION_W: 'W',
-    BrickletOutdoorWeather.WIND_DIRECTION_WNW: 'WNW',
-    BrickletOutdoorWeather.WIND_DIRECTION_NW: 'NW',
-    BrickletOutdoorWeather.WIND_DIRECTION_NNW: 'NNW',
-    BrickletOutdoorWeather.WIND_DIRECTION_ERROR: 'Wind Direction Error',
-}
+if BrickletOutdoorWeather_found:
+    # BrickletOutdoorWeather
+    wind_direction_names = {
+        BrickletOutdoorWeather.WIND_DIRECTION_N: 'N',
+        BrickletOutdoorWeather.WIND_DIRECTION_NNE: 'NNE',
+        BrickletOutdoorWeather.WIND_DIRECTION_NE: 'NE',
+        BrickletOutdoorWeather.WIND_DIRECTION_ENE: 'ENE',
+        BrickletOutdoorWeather.WIND_DIRECTION_E: 'E',
+        BrickletOutdoorWeather.WIND_DIRECTION_ESE: 'ESE',
+        BrickletOutdoorWeather.WIND_DIRECTION_SE: 'SE',
+        BrickletOutdoorWeather.WIND_DIRECTION_SSE: 'SSE',
+        BrickletOutdoorWeather.WIND_DIRECTION_S: 'S',
+        BrickletOutdoorWeather.WIND_DIRECTION_SSW: 'SSW',
+        BrickletOutdoorWeather.WIND_DIRECTION_SW: 'SW',
+        BrickletOutdoorWeather.WIND_DIRECTION_WSW: 'WSW',
+        BrickletOutdoorWeather.WIND_DIRECTION_W: 'W',
+        BrickletOutdoorWeather.WIND_DIRECTION_WNW: 'WNW',
+        BrickletOutdoorWeather.WIND_DIRECTION_NW: 'NW',
+        BrickletOutdoorWeather.WIND_DIRECTION_NNW: 'NNW',
+        BrickletOutdoorWeather.WIND_DIRECTION_ERROR: 'Wind Direction Error',
+    }
 
-GetStationData = namedtuple('StationData',
-                            ['temperature',
-                             'humidity',
-                             'wind_speed',
-                             'gust_speed',
-                             'rain',
-                             'wind_direction',
-                             'battery_low',
-                             'last_change'])
+    GetStationData = namedtuple('StationData',
+                                ['temperature',
+                                'humidity',
+                                'wind_speed',
+                                'gust_speed',
+                                'rain',
+                                'wind_direction',
+                                'battery_low',
+                                'last_change'])
 
-def special_get_station_data(device):
-    station_ids = device.get_station_identifiers()
+    def special_get_station_data(device):
+        station_ids = device.get_station_identifiers()
 
-    if len(station_ids) < 1:
-        raise Exception('No stations found')
+        if len(station_ids) < 1:
+            raise Exception('No stations found')
 
-    keyed_station_data = {}
+        keyed_station_data = {}
 
-    for station_id in station_ids:
-        station_data = device.get_station_data(station_id)
+        for station_id in station_ids:
+            station_data = device.get_station_data(station_id)
 
-        keyed_station_data[str(station_id)] = GetStationData(temperature=station_data.temperature,
-                                                             humidity=station_data.humidity,
-                                                             wind_speed=station_data.wind_speed,
-                                                             gust_speed=station_data.gust_speed,
-                                                             rain=station_data.rain,
-                                                             wind_direction=wind_direction_names[station_data.wind_direction],
-                                                             battery_low=station_data.battery_low,
-                                                             last_change=station_data.last_change)
+            keyed_station_data[str(station_id)] = GetStationData(temperature=station_data.temperature,
+                                                                humidity=station_data.humidity,
+                                                                wind_speed=station_data.wind_speed,
+                                                                gust_speed=station_data.gust_speed,
+                                                                rain=station_data.rain,
+                                                                wind_direction=wind_direction_names[station_data.wind_direction],
+                                                                battery_low=station_data.battery_low,
+                                                                last_change=station_data.last_change)
 
-    return keyed_station_data
+        return keyed_station_data
 
-def special_get_sensor_data(device):
-    sensor_ids = device.get_sensor_identifiers()
+    def special_get_sensor_data(device):
+        sensor_ids = device.get_sensor_identifiers()
 
-    if len(sensor_ids) < 1:
-        raise Exception('No sensors found')
+        if len(sensor_ids) < 1:
+            raise Exception('No sensors found')
 
-    keyed_sensor_data = {}
+        keyed_sensor_data = {}
 
-    for sensor_id in sensor_ids:
-        keyed_sensor_data[str(sensor_id)] = device.get_sensor_data(sensor_id)
+        for sensor_id in sensor_ids:
+            keyed_sensor_data[str(sensor_id)] = device.get_sensor_data(sensor_id)
 
-    return keyed_sensor_data
+        return keyed_sensor_data
 
-# BrickletPTC
-def special_get_ptc_resistance(device):
-    if not device.is_sensor_connected():
-        raise Exception('No sensor')
-    else:
-        return device.get_resistance()
+if BrickletPTC_found:
+    # BrickletPTC
+    def special_get_ptc_resistance(device):
+        if not device.is_sensor_connected():
+            raise Exception('No sensor')
+        else:
+            return device.get_resistance()
 
-def special_get_ptc_temperature(device):
-    if not device.is_sensor_connected():
-        raise Exception('No sensor')
-    else:
-        return device.get_temperature()
+    def special_get_ptc_temperature(device):
+        if not device.is_sensor_connected():
+            raise Exception('No sensor')
+        else:
+            return device.get_temperature()
 
-# BrickSilentStepper
-def special_get_silent_stepper_current_consumption(device):
-    return device.get_all_data().current_consumption
+if BrickSilentStepper_found:
+    # BrickSilentStepper
+    def special_get_silent_stepper_current_consumption(device):
+        return device.get_all_data().current_consumption
 
-device_specs = {
-    BrickletAccelerometer.DEVICE_DISPLAY_NAME: {
+device_specs = {}
+
+if BrickletAccelerometer_found:
+    device_specs[BrickletAccelerometer.DEVICE_DISPLAY_NAME] = {
         'class': BrickletAccelerometer,
         'values': [
             {
@@ -529,8 +1382,9 @@ device_specs = {
                 'default': '200Hz'
             }
         ]
-    },
-    BrickletAccelerometerV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletAccelerometerV2_found:
+    device_specs[BrickletAccelerometerV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletAccelerometerV2,
         'values': [
             {
@@ -580,8 +1434,9 @@ device_specs = {
                 'default': '2g'
             }
         ]
-    },
-    BrickletAirQuality.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletAirQuality_found:
+    device_specs[BrickletAirQuality.DEVICE_DISPLAY_NAME] = {
         'class': BrickletAirQuality,
         'values': [
             {
@@ -631,8 +1486,9 @@ device_specs = {
                 'default': 0
             }
         ]
-    },
-    BrickletAmbientLight.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletAmbientLight_found:
+    device_specs[BrickletAmbientLight.DEVICE_DISPLAY_NAME] = {
         'class': BrickletAmbientLight,
         'values': [
             {
@@ -652,8 +1508,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletAmbientLightV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletAmbientLightV2_found:
+    device_specs[BrickletAmbientLightV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletAmbientLightV2,
         'values': [
             {
@@ -692,8 +1549,9 @@ device_specs = {
                 'default': '200ms'
             }
         ]
-    },
-    BrickletAmbientLightV3.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletAmbientLightV3_found:
+    device_specs[BrickletAmbientLightV3.DEVICE_DISPLAY_NAME] = {
         'class': BrickletAmbientLightV3,
         'values': [
             {
@@ -732,8 +1590,9 @@ device_specs = {
                 'default': '150ms'
             }
         ]
-    },
-    BrickletAnalogIn.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletAnalogIn_found:
+    device_specs[BrickletAnalogIn.DEVICE_DISPLAY_NAME] = {
         'class': BrickletAnalogIn,
         'values': [
             {
@@ -773,8 +1632,9 @@ device_specs = {
                 'default': 50
             }
         ]
-    },
-    BrickletAnalogInV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletAnalogInV2_found:
+    device_specs[BrickletAnalogInV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletAnalogInV2,
         'values': [
             {
@@ -803,8 +1663,9 @@ device_specs = {
                 'default': 50
             }
         ]
-    },
-    BrickletAnalogInV3.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletAnalogInV3_found:
+    device_specs[BrickletAnalogInV3.DEVICE_DISPLAY_NAME] = {
         'class': BrickletAnalogInV3,
         'values': [
             {
@@ -824,8 +1685,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletAnalogOutV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletAnalogOutV2_found:
+    device_specs[BrickletAnalogOutV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletAnalogOutV2,
         'values': [
             {
@@ -838,8 +1700,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletAnalogOutV3.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletAnalogOutV3_found:
+    device_specs[BrickletAnalogOutV3.DEVICE_DISPLAY_NAME] = {
         'class': BrickletAnalogOutV3,
         'values': [
             {
@@ -859,8 +1722,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletBarometer.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletBarometer_found:
+    device_specs[BrickletBarometer.DEVICE_DISPLAY_NAME] = {
         'class': BrickletBarometer,
         'values': [
             {
@@ -925,8 +1789,9 @@ device_specs = {
                 'default': 10
             }
         ]
-    },
-    BrickletBarometerV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletBarometerV2_found:
+    device_specs[BrickletBarometerV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletBarometerV2,
         'values': [
             {
@@ -1013,8 +1878,9 @@ device_specs = {
                 'default': '1/9th'
             }
         ]
-    },
-    BrickletCAN.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletCAN_found:
+    device_specs[BrickletCAN.DEVICE_DISPLAY_NAME] = {
         'class': BrickletCAN,
         'values': [
             {
@@ -1032,8 +1898,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletCANV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletCANV2_found:
+    device_specs[BrickletCANV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletCANV2,
         'values': [
             {
@@ -1066,8 +1933,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletCO2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletCO2_found:
+    device_specs[BrickletCO2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletCO2,
         'values': [
             {
@@ -1080,8 +1948,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletCO2V2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletCO2V2_found:
+    device_specs[BrickletCO2V2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletCO2V2,
         'values': [
             {
@@ -1115,8 +1984,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletColor.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletColor_found:
+    device_specs[BrickletColor.DEVICE_DISPLAY_NAME] = {
         'class': BrickletColor,
         'values': [
             {
@@ -1163,8 +2033,9 @@ device_specs = {
                 'default': '154ms'
             }
         ]
-    },
-    BrickletCurrent12.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletCurrent12_found:
+    device_specs[BrickletCurrent12.DEVICE_DISPLAY_NAME] = {
         'class': BrickletCurrent12,
         'values': [
             {
@@ -1184,8 +2055,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletCurrent25.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletCurrent25_found:
+    device_specs[BrickletCurrent25.DEVICE_DISPLAY_NAME] = {
         'class': BrickletCurrent25,
         'values': [
             {
@@ -1205,8 +2077,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletDistanceIR.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletDistanceIR_found:
+    device_specs[BrickletDistanceIR.DEVICE_DISPLAY_NAME] = {
         'class': BrickletDistanceIR,
         'values': [
             {
@@ -1226,8 +2099,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletDistanceIRV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletDistanceIRV2_found:
+    device_specs[BrickletDistanceIRV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletDistanceIRV2,
         'values': [
             {
@@ -1263,8 +2137,9 @@ device_specs = {
                 'default': 25
             }
         ]
-    },
-    BrickletDistanceUS.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletDistanceUS_found:
+    device_specs[BrickletDistanceUS.DEVICE_DISPLAY_NAME] = {
         'class': BrickletDistanceUS,
         'values': [
             {
@@ -1286,8 +2161,9 @@ device_specs = {
                 'default': 20
             }
         ]
-    },
-    BrickletDualButton.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletDualButton_found:
+    device_specs[BrickletDualButton.DEVICE_DISPLAY_NAME] = {
         'class': BrickletDualButton,
         'values': [
             {
@@ -1307,8 +2183,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletDualButtonV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletDualButtonV2_found:
+    device_specs[BrickletDualButtonV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletDualButtonV2,
         'values': [
             {
@@ -1335,8 +2212,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletDualRelay.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletDualRelay_found:
+    device_specs[BrickletDualRelay.DEVICE_DISPLAY_NAME] = {
         'class': BrickletDualRelay,
         'values': [
             {
@@ -1349,8 +2227,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletDustDetector.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletDustDetector_found:
+    device_specs[BrickletDustDetector.DEVICE_DISPLAY_NAME] = {
         'class': BrickletDustDetector,
         'values': [
             {
@@ -1372,8 +2251,9 @@ device_specs = {
                 'default': 100
             }
         ]
-    },
-    BrickletGPS.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletGPS_found:
+    device_specs[BrickletGPS.DEVICE_DISPLAY_NAME] = {
         'class': BrickletGPS,
         'values': [
             {
@@ -1414,8 +2294,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletGPSV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletGPSV2_found:
+    device_specs[BrickletGPSV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletGPSV2,
         'values': [
             {
@@ -1463,8 +2344,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletHallEffect.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletHallEffect_found:
+    device_specs[BrickletHallEffect.DEVICE_DISPLAY_NAME] = {
         'class': BrickletHallEffect,
         'values': [
             {
@@ -1501,8 +2383,9 @@ device_specs = {
                 'default': 100
             }
         ]
-    },
-    BrickletHallEffectV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletHallEffectV2_found:
+    device_specs[BrickletHallEffectV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletHallEffectV2,
         'values': [
             {
@@ -1547,8 +2430,9 @@ device_specs = {
                 'default': 100000
             }
         ]
-    },
-    BrickletHumidity.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletHumidity_found:
+    device_specs[BrickletHumidity.DEVICE_DISPLAY_NAME] = {
         'class': BrickletHumidity,
         'values': [
             {
@@ -1568,8 +2452,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletHumidityV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletHumidityV2_found:
+    device_specs[BrickletHumidityV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletHumidityV2,
         'values': [
             {
@@ -1596,8 +2481,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletIndustrialCounter.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletIndustrialCounter_found:
+    device_specs[BrickletIndustrialCounter.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIndustrialCounter,
         'values': [
             {
@@ -1645,8 +2531,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletIndustrialDigitalIn4.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletIndustrialDigitalIn4_found:
+    device_specs[BrickletIndustrialDigitalIn4.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIndustrialDigitalIn4,
         'values': [
             {
@@ -1759,8 +2646,9 @@ device_specs = {
                 'default': 100
             }
         ]
-    },
-    BrickletIndustrialDigitalIn4V2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletIndustrialDigitalIn4V2_found:
+    device_specs[BrickletIndustrialDigitalIn4V2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIndustrialDigitalIn4V2,
         'values': [
             {
@@ -1880,8 +2768,9 @@ device_specs = {
                 'default': 100
             }
         ]
-    },
-    BrickletIndustrialDual020mA.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletIndustrialDual020mA_found:
+    device_specs[BrickletIndustrialDual020mA.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIndustrialDual020mA,
         'values': [
             {
@@ -1911,8 +2800,9 @@ device_specs = {
                 'default': '4 SPS'
             }
         ]
-    },
-    BrickletIndustrialDual020mAV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletIndustrialDual020mAV2_found:
+    device_specs[BrickletIndustrialDual020mAV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIndustrialDual020mAV2,
         'values': [
             {
@@ -1951,8 +2841,9 @@ device_specs = {
                 'default': '1x'
             }
         ]
-    },
-    BrickletIndustrialDualAnalogInV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletIndustrialDualAnalogInV2_found:
+    device_specs[BrickletIndustrialDualAnalogInV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIndustrialDualAnalogInV2,
         'values': [
             {
@@ -1993,8 +2884,9 @@ device_specs = {
                 'default': '2 SPS'
             }
         ]
-    },
-    BrickletIndustrialDualAnalogIn.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletIndustrialDualAnalogIn_found:
+    device_specs[BrickletIndustrialDualAnalogIn.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIndustrialDualAnalogIn,
         'values': [
             {
@@ -2035,8 +2927,9 @@ device_specs = {
                 'default': '2 SPS'
             }
         ]
-    },
-    BrickletIndustrialDualRelay.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletIndustrialDualRelay_found:
+    device_specs[BrickletIndustrialDualRelay.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIndustrialDualRelay,
         'values': [
             {
@@ -2056,8 +2949,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletIndustrialQuadRelay.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletIndustrialQuadRelay_found:
+    device_specs[BrickletIndustrialQuadRelay.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIndustrialQuadRelay,
         'values': [
             {
@@ -2070,8 +2964,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletIndustrialQuadRelayV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletIndustrialQuadRelayV2_found:
+    device_specs[BrickletIndustrialQuadRelayV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIndustrialQuadRelayV2,
         'values': [
             {
@@ -2091,8 +2986,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletIO16.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletIO16_found:
+    device_specs[BrickletIO16.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIO16,
         'values': [
             {
@@ -2325,8 +3221,9 @@ device_specs = {
                 'default': 100
             }
         ]
-    },
-    BrickletIO16V2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletIO16V2_found:
+    device_specs[BrickletIO16V2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIO16V2,
         'values': [
             {
@@ -2939,8 +3836,9 @@ device_specs = {
                 'default': 100
             }
         ]
-    },
-    BrickletIO4.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletIO4_found:
+    device_specs[BrickletIO4.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIO4,
         'values': [
             {
@@ -3095,8 +3993,9 @@ device_specs = {
                 'default': 100
             }
         ]
-    },
-    BrickletIO4V2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletIO4V2_found:
+    device_specs[BrickletIO4V2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIO4V2,
         'values': [
             {
@@ -3265,8 +4164,9 @@ device_specs = {
                 'default': 100
             }
         ]
-    },
-    BrickletJoystick.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletJoystick_found:
+    device_specs[BrickletJoystick.DEVICE_DISPLAY_NAME] = {
         'class': BrickletJoystick,
         'values': [
             {
@@ -3293,8 +4193,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletJoystickV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletJoystickV2_found:
+    device_specs[BrickletJoystickV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletJoystickV2,
         'values': [
             {
@@ -3314,8 +4215,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletLEDStrip.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletLEDStrip_found:
+    device_specs[BrickletLEDStrip.DEVICE_DISPLAY_NAME] = {
         'class': BrickletLEDStrip,
         'values': [
             {
@@ -3328,8 +4230,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletLEDStripV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletLEDStripV2_found:
+    device_specs[BrickletLEDStripV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletLEDStripV2,
         'values': [
             {
@@ -3349,8 +4252,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletLine.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletLine_found:
+    device_specs[BrickletLine.DEVICE_DISPLAY_NAME] = {
         'class': BrickletLine,
         'values': [
             {
@@ -3363,8 +4267,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletLinearPoti.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletLinearPoti_found:
+    device_specs[BrickletLinearPoti.DEVICE_DISPLAY_NAME] = {
         'class': BrickletLinearPoti,
         'values': [
             {
@@ -3384,8 +4289,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletLinearPotiV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletLinearPotiV2_found:
+    device_specs[BrickletLinearPotiV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletLinearPotiV2,
         'values': [
             {
@@ -3398,8 +4304,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletMotorizedLinearPoti.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletMotorizedLinearPoti_found:
+    device_specs[BrickletMotorizedLinearPoti.DEVICE_DISPLAY_NAME] = {
         'class': BrickletMotorizedLinearPoti,
         'values': [
             {
@@ -3419,8 +4326,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletLoadCell.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletLoadCell_found:
+    device_specs[BrickletLoadCell.DEVICE_DISPLAY_NAME] = {
         'class': BrickletLoadCell,
         'values': [
             {
@@ -3458,8 +4366,9 @@ device_specs = {
                 'default': '128x'
             }
         ]
-    },
-    BrickletLoadCellV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletLoadCellV2_found:
+    device_specs[BrickletLoadCellV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletLoadCellV2,
         'values': [
             {
@@ -3505,8 +4414,9 @@ device_specs = {
                 'default': '128x'
             }
         ]
-    },
-    BrickletMoisture.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletMoisture_found:
+    device_specs[BrickletMoisture.DEVICE_DISPLAY_NAME] = {
         'class': BrickletMoisture,
         'values': [
             {
@@ -3528,8 +4438,9 @@ device_specs = {
                 'default': 100
             }
         ]
-    },
-    BrickletMotionDetector.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletMotionDetector_found:
+    device_specs[BrickletMotionDetector.DEVICE_DISPLAY_NAME] = {
         'class': BrickletMotionDetector,
         'values': [
             {
@@ -3542,8 +4453,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletMotionDetectorV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletMotionDetectorV2_found:
+    device_specs[BrickletMotionDetectorV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletMotionDetectorV2,
         'values': [
             {
@@ -3563,8 +4475,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletMultiTouch.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletMultiTouch_found:
+    device_specs[BrickletMultiTouch.DEVICE_DISPLAY_NAME] = {
         'class': BrickletMultiTouch,
         'values': [
             {
@@ -3652,8 +4565,9 @@ device_specs = {
                 'default': 181
             }
         ]
-    },
-    BrickletNFC.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletNFC_found:
+    device_specs[BrickletNFC.DEVICE_DISPLAY_NAME] = {
         'class': BrickletNFC,
         'values': [
             {
@@ -3694,8 +4608,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletNFCRFID.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletNFCRFID_found:
+    device_specs[BrickletNFCRFID.DEVICE_DISPLAY_NAME] = {
         'class': BrickletNFCRFID,
         'values': [
             {
@@ -3708,8 +4623,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletOutdoorWeather.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletOutdoorWeather_found:
+    device_specs[BrickletOutdoorWeather.DEVICE_DISPLAY_NAME] = {
         'class': BrickletOutdoorWeather,
         'values': [
             {
@@ -3736,8 +4652,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletParticulateMatter.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletParticulateMatter_found:
+    device_specs[BrickletParticulateMatter.DEVICE_DISPLAY_NAME] = {
         'class': BrickletParticulateMatter,
         'values': [
             {
@@ -3764,8 +4681,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletPTC.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletPTC_found:
+    device_specs[BrickletPTC.DEVICE_DISPLAY_NAME] = {
         'class': BrickletPTC,
         'values': [
             {
@@ -3794,8 +4712,9 @@ device_specs = {
                 'default': '2-Wire'
             }
         ]
-    },
-    BrickletPTCV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletPTCV2_found:
+    device_specs[BrickletPTCV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletPTCV2,
         'values': [
             {
@@ -3831,8 +4750,9 @@ device_specs = {
                 'default': '2-Wire'
             }
         ]
-    },
-    BrickletRotaryEncoder.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletRotaryEncoder_found:
+    device_specs[BrickletRotaryEncoder.DEVICE_DISPLAY_NAME] = {
         'class': BrickletRotaryEncoder,
         'values': [
             {
@@ -3852,8 +4772,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletRotaryEncoderV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletRotaryEncoderV2_found:
+    device_specs[BrickletRotaryEncoderV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletRotaryEncoderV2,
         'values': [
             {
@@ -3880,8 +4801,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletRotaryPoti.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletRotaryPoti_found:
+    device_specs[BrickletRotaryPoti.DEVICE_DISPLAY_NAME] = {
         'class': BrickletRotaryPoti,
         'values': [
             {
@@ -3901,8 +4823,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletRS485.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletRS485_found:
+    device_specs[BrickletRS485.DEVICE_DISPLAY_NAME] = {
         'class': BrickletRS485,
         'values': [
             {
@@ -3935,8 +4858,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletSegmentDisplay4x7.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletSegmentDisplay4x7_found:
+    device_specs[BrickletSegmentDisplay4x7.DEVICE_DISPLAY_NAME] = {
         'class': BrickletSegmentDisplay4x7,
         'values': [
             {
@@ -3949,8 +4873,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletSegmentDisplay4x7V2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletSegmentDisplay4x7V2_found:
+    device_specs[BrickletSegmentDisplay4x7V2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletSegmentDisplay4x7V2,
         'values': [
             {
@@ -3963,8 +4888,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletSolidStateRelay.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletSolidStateRelay_found:
+    device_specs[BrickletSolidStateRelay.DEVICE_DISPLAY_NAME] = {
         'class': BrickletSolidStateRelay,
         'values': [
             {
@@ -3977,8 +4903,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletSolidStateRelayV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletSolidStateRelayV2_found:
+    device_specs[BrickletSolidStateRelayV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletSolidStateRelayV2,
         'values': [
             {
@@ -3998,8 +4925,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletSoundIntensity.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletSoundIntensity_found:
+    device_specs[BrickletSoundIntensity.DEVICE_DISPLAY_NAME] = {
         'class': BrickletSoundIntensity,
         'values': [
             {
@@ -4012,8 +4940,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletSoundPressureLevel.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletSoundPressureLevel_found:
+    device_specs[BrickletSoundPressureLevel.DEVICE_DISPLAY_NAME] = {
         'class': BrickletSoundPressureLevel,
         'values': [
             {
@@ -4054,8 +4983,9 @@ device_specs = {
                 'default': 'A'
             }
         ]
-    },
-    BrickletTemperature.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletTemperature_found:
+    device_specs[BrickletTemperature.DEVICE_DISPLAY_NAME] = {
         'class': BrickletTemperature,
         'values': [
             {
@@ -4076,8 +5006,9 @@ device_specs = {
                 'default': '400kHz'
             }
         ]
-    },
-    BrickletTemperatureV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletTemperatureV2_found:
+    device_specs[BrickletTemperatureV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletTemperatureV2,
         'values': [
             {
@@ -4097,8 +5028,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletThermalImaging.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletThermalImaging_found:
+    device_specs[BrickletThermalImaging.DEVICE_DISPLAY_NAME] = {
         'class': BrickletThermalImaging,
         'values': [
             {
@@ -4111,8 +5043,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletThermocouple.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletThermocouple_found:
+    device_specs[BrickletThermocouple.DEVICE_DISPLAY_NAME] = {
         'class': BrickletThermocouple,
         'values': [
             {
@@ -4166,8 +5099,9 @@ device_specs = {
                 'default': '50Hz'
             }
         ]
-    },
-    BrickletThermocoupleV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletThermocoupleV2_found:
+    device_specs[BrickletThermocoupleV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletThermocoupleV2,
         'values': [
             {
@@ -4229,8 +5163,9 @@ device_specs = {
                 'default': '50Hz'
             }
         ]
-    },
-    BrickletTemperatureIR.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletTemperatureIR_found:
+    device_specs[BrickletTemperatureIR.DEVICE_DISPLAY_NAME] = {
         'class': BrickletTemperatureIR,
         'values': [
             {
@@ -4259,8 +5194,9 @@ device_specs = {
                 'default': 65535
             }
         ]
-    },
-    BrickletTemperatureIRV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletTemperatureIRV2_found:
+    device_specs[BrickletTemperatureIRV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletTemperatureIRV2,
         'values': [
             {
@@ -4296,8 +5232,9 @@ device_specs = {
                 'default': 65535
             }
         ]
-    },
-    BrickletTilt.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletTilt_found:
+    device_specs[BrickletTilt.DEVICE_DISPLAY_NAME] = {
         'class': BrickletTilt,
         'values': [
             {
@@ -4310,8 +5247,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletUVLight.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletUVLight_found:
+    device_specs[BrickletUVLight.DEVICE_DISPLAY_NAME] = {
         'class': BrickletUVLight,
         'values': [
             {
@@ -4324,8 +5262,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletUVLightV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletUVLightV2_found:
+    device_specs[BrickletUVLightV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletUVLightV2,
         'values': [
             {
@@ -4370,8 +5309,9 @@ device_specs = {
                 'default': '400ms'
             }
         ]
-    },
-    BrickletVoltage.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletVoltage_found:
+    device_specs[BrickletVoltage.DEVICE_DISPLAY_NAME] = {
         'class': BrickletVoltage,
         'values': [
             {
@@ -4391,8 +5331,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletVoltageCurrent.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletVoltageCurrent_found:
+    device_specs[BrickletVoltageCurrent.DEVICE_DISPLAY_NAME] = {
         'class': BrickletVoltageCurrent,
         'values': [
             {
@@ -4460,8 +5401,9 @@ device_specs = {
                 'default': '1.1ms'
             }
         ]
-    },
-    BrickletVoltageCurrentV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletVoltageCurrentV2_found:
+    device_specs[BrickletVoltageCurrentV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletVoltageCurrentV2,
         'values': [
             {
@@ -4536,8 +5478,9 @@ device_specs = {
                 'default': '1.1ms'
             }
         ]
-    },
-    BrickDC.DEVICE_DISPLAY_NAME: {
+    }
+if BrickDC_found:
+    device_specs[BrickDC.DEVICE_DISPLAY_NAME] = {
         'class': BrickDC,
         'values': [
             {
@@ -4571,8 +5514,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickIMU.DEVICE_DISPLAY_NAME: {
+    }
+if BrickIMU_found:
+    device_specs[BrickIMU.DEVICE_DISPLAY_NAME] = {
         'class': BrickIMU,
         'values': [
             {
@@ -4635,8 +5579,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None # FIXME: ranges
-    },
-    BrickIMUV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickIMUV2_found:
+    device_specs[BrickIMUV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickIMUV2,
         'values': [
             {
@@ -4712,8 +5657,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None # FIXME: ranges
-    },
-    BrickMaster.DEVICE_DISPLAY_NAME: {
+    }
+if BrickMaster_found:
+    device_specs[BrickMaster.DEVICE_DISPLAY_NAME] = {
         'class': BrickMaster,
         'values': [
             {
@@ -4740,8 +5686,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickServo.DEVICE_DISPLAY_NAME: {
+    }
+if BrickServo_found:
+    device_specs[BrickServo.DEVICE_DISPLAY_NAME] = {
         'class': BrickServo,
         'values': [
             {
@@ -4824,8 +5771,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickStepper.DEVICE_DISPLAY_NAME: {
+    }
+if BrickStepper_found:
+    device_specs[BrickStepper.DEVICE_DISPLAY_NAME] = {
         'class': BrickStepper,
         'values': [
             {
@@ -4873,8 +5821,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickSilentStepper.DEVICE_DISPLAY_NAME: {
+    }
+if BrickSilentStepper_found:
+    device_specs[BrickSilentStepper.DEVICE_DISPLAY_NAME] = {
         'class': BrickSilentStepper,
         'values': [
             {
@@ -4922,8 +5871,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletRGBLEDButton.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletRGBLEDButton_found:
+    device_specs[BrickletRGBLEDButton.DEVICE_DISPLAY_NAME] = {
         'class': BrickletRGBLEDButton,
         'values': [
             {
@@ -4943,8 +5893,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletRGBLEDMatrix.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletRGBLEDMatrix_found:
+    device_specs[BrickletRGBLEDMatrix.DEVICE_DISPLAY_NAME] = {
         'class': BrickletRGBLEDMatrix,
         'values': [
             {
@@ -4964,8 +5915,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletRealTimeClock.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletRealTimeClock_found:
+    device_specs[BrickletRealTimeClock.DEVICE_DISPLAY_NAME] = {
         'class': BrickletRealTimeClock,
         'values': [
             {
@@ -4992,8 +5944,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletRealTimeClockV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletRealTimeClockV2_found:
+    device_specs[BrickletRealTimeClockV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletRealTimeClockV2,
         'values': [
             {
@@ -5027,8 +5980,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletRemoteSwitch.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletRemoteSwitch_found:
+    device_specs[BrickletRemoteSwitch.DEVICE_DISPLAY_NAME] = {
         'class': BrickletRemoteSwitch,
         'values': [
             {
@@ -5041,8 +5995,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletRemoteSwitchV2.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletRemoteSwitchV2_found:
+    device_specs[BrickletRemoteSwitchV2.DEVICE_DISPLAY_NAME] = {
         'class': BrickletRemoteSwitchV2,
         'values': [
             {
@@ -5083,8 +6038,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletLaserRangeFinder.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletLaserRangeFinder_found:
+    device_specs[BrickletLaserRangeFinder.DEVICE_DISPLAY_NAME] = {
         'class': BrickletLaserRangeFinder,
         'values': [
             {
@@ -5104,8 +6060,9 @@ device_specs = {
         ],
         'options_setter': None,
         'options': None
-    },
-    BrickletDMX.DEVICE_DISPLAY_NAME: {
+    }
+if BrickletDMX_found:
+    device_specs[BrickletDMX.DEVICE_DISPLAY_NAME] = {
         'class': BrickletDMX,
         'values': [
             {
@@ -5126,7 +6083,6 @@ device_specs = {
         'options_setter': None,
         'options': None
     }
-}
 
 '''
 /*---------------------------------------------------------------------------
