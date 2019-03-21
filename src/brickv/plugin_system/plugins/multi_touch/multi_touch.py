@@ -88,7 +88,7 @@ class MultiTouch(PluginBase, Ui_MultiTouch):
         self.mt.set_electrode_sensitivity(value)
         self.mt.recalibrate()
 
-    def state_changed(self, state):
+    def state_changed(self, _state):
         enabled_electrodes = 0
         for i in range(13):
             if self.cbs[i].isChecked():

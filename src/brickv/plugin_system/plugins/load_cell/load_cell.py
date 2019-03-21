@@ -71,7 +71,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.label_step2.setStyleSheet('')
         self.label_status.setText('The new calibration is now saved in the EEPROM.')
 
-    def closeEvent(self, event):
+    def closeEvent(self, _event):
         self.parent.button_calibration.setEnabled(True)
         self.parent.calibration = None
 
@@ -186,7 +186,7 @@ class LoadCell(PluginBase):
         else:
             self.lc.led_off()
 
-    def new_config(self, value):
+    def new_config(self, _value):
         rate = self.rate_combo.currentIndex()
         self.lc.set_configuration(rate, self.gain)
 

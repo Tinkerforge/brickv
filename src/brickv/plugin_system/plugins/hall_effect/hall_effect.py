@@ -93,7 +93,7 @@ class HallEffect(PluginBase):
     def debounce_changed(self):
         self.hf.set_edge_count_config(self.combo_edge_type.currentIndex(), self.spin_debounce.value())
 
-    def edge_changed(self, value):
+    def edge_changed(self, _value):
         self.hf.set_edge_count_config(self.combo_edge_type.currentIndex(), self.spin_debounce.value())
 
     def get_edge_count(self):

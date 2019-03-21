@@ -872,6 +872,7 @@ class REDFileBase(REDObject):
         events_occurred_callback = self.events_occurred_callback
 
         if events_occurred_callback != None:
+            #pylint: disable=not-callable
             events_occurred_callback(events)
 
     def update(self):
@@ -1297,6 +1298,7 @@ class REDProcessBase(REDObject):
         state_changed_callback = self.state_changed_callback
 
         if state_changed_callback is not None:
+            #pylint: disable=not-callable
             state_changed_callback(self)
 
     def _fake_state_change_callback(self):
@@ -1822,6 +1824,7 @@ class REDProgram(REDProgramBase):
         scheduler_state_changed_callback = self.scheduler_state_changed_callback
 
         if scheduler_state_changed_callback != None:
+            #pylint: disable=not-callable
             scheduler_state_changed_callback(self)
 
     def _cb_lite_scheduler_state_changed_emit(self, program_id):
@@ -1854,6 +1857,7 @@ class REDProgram(REDProgramBase):
         lite_scheduler_state_changed_callback = self.lite_scheduler_state_changed_callback
 
         if lite_scheduler_state_changed_callback != None:
+            #pylint: disable=not-callable
             lite_scheduler_state_changed_callback(self)
 
     def _cb_process_spawned_emit(self, program_id):
@@ -1889,6 +1893,7 @@ class REDProgram(REDProgramBase):
         process_spawned_callback = self.process_spawned_callback
 
         if process_spawned_callback != None:
+            #pylint: disable=not-callable
             process_spawned_callback(self)
 
         # if the process was attached in a non-running state then the critical
@@ -1931,6 +1936,7 @@ class REDProgram(REDProgramBase):
         lite_process_spawned_callback = self.lite_process_spawned_callback
 
         if lite_process_spawned_callback != None:
+            #pylint: disable=not-callable
             lite_process_spawned_callback(self)
 
         if self._last_spawned_lite_process.state != REDProcess.STATE_RUNNING:

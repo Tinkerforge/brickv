@@ -129,7 +129,7 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
 
         self.page_changed(self.spinbox_read_page.value())
 
-    def page_changed(self, page):
+    def page_changed(self, _page):
         text_read = 'Read Page ' + self.get_current_page_range()
         text_write = 'Write Page ' + self.get_current_page_range()
 

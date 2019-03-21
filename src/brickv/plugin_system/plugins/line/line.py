@@ -42,7 +42,7 @@ class ReflectivityFrame(QFrame):
         self.reflectivity = reflectivity
         self.update()
 
-    def paintEvent(self, event):
+    def paintEvent(self, _event):
         qp = QPainter(self)
 
         g = QLinearGradient(0.0, 0.0, 0.0, self.height())

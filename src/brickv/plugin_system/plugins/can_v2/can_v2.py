@@ -27,6 +27,7 @@ from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMessageBox, QTreeWidgetItem, QAction
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
+from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_can_v2 import BrickletCANV2, GetReadFilterConfiguration
 from brickv.plugin_system.plugins.can_v2.ui_can_v2 import Ui_CANV2
 from brickv.async_call import async_call
@@ -154,7 +155,7 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
                 self.can.set_response_expected(self.can.FUNCTION_SET_FRAME_READ_CALLBACK_CONFIGURATION, False)
                 self.can.set_frame_read_callback_configuration(False)
                 self.can.set_response_expected(self.can.FUNCTION_SET_FRAME_READ_CALLBACK_CONFIGURATION, True)
-            except:
+            except ip_connection.Error:
                 pass
 
     def destroy(self):
@@ -356,7 +357,7 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
 
         try:
             f = open(filename, 'w')
-        except Exception as e:
+        except OSError as e:
             QMessageBox.critical(get_main_window(), 'Save History Error',
                                  'Could not open {0} for writing:\n\n{1}'.format(filename, e))
             return

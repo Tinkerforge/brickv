@@ -101,7 +101,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialQuadRelay.DEVICE_IDENTIFIER
 
-    def reconfigure_everything_async3(self, pin, value, time, time_remaining):
+    def reconfigure_everything_async3(self, pin, _value, time, time_remaining):
         index = self.monoflop_pin.findText('Pin {0}'.format(pin))
         if index >= 0:
             if time_remaining > 0:
@@ -304,7 +304,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
 
         self.update_timer.start()
 
-    def update_async(self, pin, value, time, time_remaining):
+    def update_async(self, pin, _value, _time, time_remaining):
         if self.monoflop_pending[pin]:
             self.monoflop_time.setValue(time_remaining)
 

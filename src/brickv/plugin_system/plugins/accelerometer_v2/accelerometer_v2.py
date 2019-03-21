@@ -24,8 +24,7 @@ Boston, MA 02111-1307, USA.
 import math
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QCheckBox, QFrame
-from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QFrame
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_accelerometer_v2 import BrickletAccelerometerV2
@@ -39,7 +38,7 @@ class PitchLabel(FixedSizeLabel):
             pitch = int(round(math.atan(x/(math.sqrt(y*y + z*z)))*180/math.pi, 0))
             text = 'Pitch: {}°'.format(pitch)
             super().setText(text)
-        except:
+        except (ZeroDivisionError, ValueError):
             # In case of division by 0 or similar we simply don't update the text
             pass
 
@@ -49,7 +48,7 @@ class RollLabel(FixedSizeLabel):
             roll = int(round(math.atan(y/math.sqrt(x*x+z*z))*180/math.pi, 0))
             text = 'Roll: {}°'.format(roll)
             super().setText(text)
-        except:
+        except (ZeroDivisionError, ValueError):
             # In case of division by 0 or similar we simply don't update the text
             pass
 
@@ -103,17 +102,6 @@ class AccelerometerV2(COMCUPluginBase):
 
         self.dr_combo.currentIndexChanged.connect(self.new_config)
 
-#        self.fb_label = QLabel('Filter Bandwidth:')
-#        self.fb_combo = QComboBox()
-#        self.fb_combo.addItem("800 Hz")
-#        self.fb_combo.addItem("400 Hz")
-#        self.fb_combo.addItem("200 Hz")
-#        self.fb_combo.addItem("50 Hz")
-#        self.fb_combo.currentIndexChanged.connect(self.new_config)
-
-#        self.enable_led = QCheckBox("Enable LED")
-#        self.enable_led.stateChanged.connect(self.enable_led_changed)
-
         hlayout = QHBoxLayout()
         hlayout.addStretch()
         hlayout.addWidget(self.fs_label)
@@ -122,10 +110,6 @@ class AccelerometerV2(COMCUPluginBase):
         hlayout.addWidget(self.dr_label)
         hlayout.addWidget(self.dr_combo)
         hlayout.addStretch()
-#        hlayout.addWidget(self.fb_label)
-#        hlayout.addWidget(self.fb_combo)
-#        hlayout.addStretch()
-#        hlayout.addWidget(self.enable_led)
 
         line = QFrame()
         line.setObjectName("line")
@@ -136,15 +120,6 @@ class AccelerometerV2(COMCUPluginBase):
         layout.addWidget(self.plot_widget)
         layout.addWidget(line)
         layout.addLayout(hlayout)
-
-#    def enable_led_changed(self, state):
-#        if state == Qt.Checked:
-#            self.accelerometer.led_on()
-#        else:
- #           self.accelerometer.led_off()
-
-#    def is_led_on_async(self, on):
-#        self.enable_led.setChecked(on)
 
     def new_config(self):
         dr = self.dr_combo.currentIndex()

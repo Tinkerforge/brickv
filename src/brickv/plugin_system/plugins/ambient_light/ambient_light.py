@@ -43,7 +43,7 @@ class AmbientLightFrame(QFrame):
         self.color = QColor(r, g, b)
         self.repaint()
 
-    def paintEvent(self, event):
+    def paintEvent(self, _event):
         qp = QPainter(self)
         qp.setBrush(QBrush(self.color))
         qp.setPen(self.color)

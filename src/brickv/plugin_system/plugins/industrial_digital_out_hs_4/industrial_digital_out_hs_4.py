@@ -251,7 +251,7 @@ class IndustrialDigitalOutHS4(COMCUPluginBase, Ui_IndustrialDigitalOutHS4):
 
         self.update_timer.start()
 
-    def update_async(self, channel, value, time, time_remaining):
+    def update_async(self, channel, _value, _time, time_remaining):
         if self.monoflop_pending[channel]:
             self.sbox_m_t.setValue(time_remaining)
 

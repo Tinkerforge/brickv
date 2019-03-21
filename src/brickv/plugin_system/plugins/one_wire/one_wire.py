@@ -21,17 +21,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import time
+
 from PyQt5.QtWidgets import QTreeWidgetItem
-from PyQt5.QtGui import QTextCursor
-from PyQt5.QtCore import pyqtSignal
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_one_wire import BrickletOneWire
 from brickv.plugin_system.plugins.one_wire.ui_one_wire import Ui_OneWire
 from brickv.async_call import async_call
-from brickv.hex_validator import HexValidator
-
-import time
 
 class OneWire(COMCUPluginBase, Ui_OneWire):
     def __init__(self, *args):

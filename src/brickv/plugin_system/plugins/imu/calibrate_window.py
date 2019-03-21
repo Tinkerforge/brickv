@@ -22,7 +22,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QTabWidget
 
 from brickv.plugin_system.plugins.imu.ui_calibrate import Ui_Calibrate
@@ -30,7 +29,6 @@ from brickv.plugin_system.plugins.imu.calibrate_accelerometer import CalibrateAc
 from brickv.plugin_system.plugins.imu.calibrate_magnetometer import CalibrateMagnetometer
 from brickv.plugin_system.plugins.imu.calibrate_gyroscope_bias import CalibrateGyroscopeBias
 from brickv.plugin_system.plugins.imu.calibrate_gyroscope_gain import CalibrateGyroscopeGain
-from brickv.plugin_system.plugins.imu.calibrate_temperature import CalibrateTemperature
 from brickv.plugin_system.plugins.imu.calibrate_import_export import CalibrateImportExport
 from brickv.utils import get_modeless_dialog_flags
 

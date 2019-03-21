@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.industrial_analog_out.ui_industrial_analog_out import Ui_IndustrialAnalogOut
+from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_industrial_analog_out import BrickletIndustrialAnalogOut
 from brickv.async_call import async_call
 from brickv.slider_spin_syncer import SliderSpinSyncer
@@ -83,20 +84,14 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
             self.ao.disable()
 
     def new_voltage(self, voltage):
-        try:
-            self.last_voltage = voltage
-            self.spin_voltage.setValue(voltage)
-            self.slider_voltage.setValue(voltage)
-        except:
-            pass
+        self.last_voltage = voltage
+        self.spin_voltage.setValue(voltage)
+        self.slider_voltage.setValue(voltage)
 
     def new_current(self, current):
-        try:
-            self.last_current = current
-            self.spin_current.setValue(current)
-            self.slider_current.setValue(current)
-        except:
-            pass
+        self.last_current = current
+        self.spin_current.setValue(current)
+        self.slider_current.setValue(current)
 
     def mode_voltage(self):
         self.widget_voltage.show()
@@ -146,7 +141,7 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
             self.slider_current.setMaximum(24000)
             self.spin_current.setMaximum(24000)
 
-    def config_changed(self, value):
+    def config_changed(self, _value):
         voltage_range = self.box_voltage_range.currentIndex()
         current_range = self.box_current_range.currentIndex()
         try:
@@ -156,7 +151,7 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
             self.last_voltage_range = voltage_range
             self.last_current_range = current_range
             self.new_configuration()
-        except:
+        except ip_connection.Error:
             pass
 
     def cb_get_configuration(self, conf):

@@ -152,7 +152,7 @@ in the image above, then press "Save Orientation".""")
 
         if self.firmware_version >= (1, 0, 7):
             reset = QAction('Reset', self)
-            reset.triggered.connect(lambda: self.imu.reset())
+            reset.triggered.connect(self.imu.reset)
             self.set_actions([(0, None, [reset])])
 
     def restart_gl(self):

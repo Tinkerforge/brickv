@@ -110,7 +110,7 @@ class ESPROM:
     """ Perform a connection test """
     def sync(self):
         self.command(ESPROM.ESP_SYNC, b'\x07\x07\x12\x20' + 32 * b'\x55')
-        for i in range(7):
+        for _i in range(7):
             self.command()
 
     """ Try connecting repeatedly until successful, or giving up """
@@ -192,11 +192,11 @@ class ESPROM:
         else:
             erase_size = (num_sectors - head_sectors) * sector_size
 
-        t = time.time()
         self._port.timeout = 30
         result = self.command(ESPROM.ESP_FLASH_BEGIN,
                               struct.pack('<IIII', erase_size, num_blocks, ESPROM.ESP_FLASH_BLOCK, offset))[1]
         if result != b"\0\0":
+            #pylint: disable=raising-format-tuple
             raise FatalError.WithResult('Failed to enter Flash download mode (result "%s")', result)
         self._port.timeout = old_tmo
 
@@ -488,9 +488,6 @@ class FatalError(RuntimeError):
     Wrapper class for runtime errors that aren't caused by internal bugs, but by
     ESP8266 responses or input content.
     """
-    def __init__(self, message):
-        super().__init__(message)
-
     @staticmethod
     def WithResult(message, result):
         """

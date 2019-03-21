@@ -29,6 +29,7 @@ from PyQt5.QtCore import Qt
 
 from brickv.plugin_system.plugins.imu.ui_calibrate_import_export import Ui_calibrate_import_export
 from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
+from brickv.bindings import ip_connection
 from brickv.utils import get_main_window
 
 class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
@@ -99,7 +100,7 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
 
         try:
             imu_calibration_text = imu_calibration_text.decode('utf-8')
-        except Exception as e:
+        except UnicodeDecodeError as e:
             self.popup_fail('Factory Calibration', 'Factory calibration is malformed, please report to info@tinkerforge.com: {0}'.format(e))
             return
 
@@ -109,15 +110,15 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
 
         try:
             parsed = parse_imu_calibration(imu_calibration_text)
-        except:
+        except (ValueError, TypeError):
             self.popup_fail('Factory Calibration', 'Factory calibration is malformed, please report to info@tinkerforge.com')
             return
 
         try:
             for value in parsed:
                 self.imu.set_calibration(value[0], value[1])
-        except:
-            self.popup_fail('Factory Calibration', 'Could not apply calibration')
+        except ip_connection.Error as e:
+            self.popup_fail('Factory Calibration', 'Could not apply calibration: ' + e.description)
             return
 
         self.parent.refresh_values()
@@ -130,12 +131,15 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
         try:
             for value in parse_imu_calibration(text):
                 self.imu.set_calibration(value[0], value[1])
-        except:
+        except UnicodeDecodeError:
             message = """Could not parse data, please check the syntax:
 Each line starts with "calibration type:"
 followed by the x, y and z calibration, separated by a comma.
 Multiplier and Divider are written as "mul/div" """
             self.popup_fail('Calibration Import', message)
+            return
+        except ip_connection.Error as e:
+            self.popup_fail('Calibration Import', 'Could not import calibration: ' + e.description)
             return
 
         self.parent.refresh_values()
@@ -152,8 +156,8 @@ Multiplier and Divider are written as "mul/div" """
         try:
             for i in range(6):
                 c.append(self.imu.get_calibration(i))
-        except:
-            self.popup_fail('Calibration Export', 'Could not read calibartion from IMU Brick')
+        except ip_connection.Error as e:
+            self.popup_fail('Calibration Export', 'Could not read calibration from IMU Brick: ' + e.description)
             return
 
         text += '0: ' + str(c[0][0]) + '/' + str(c[0][3]) + ', ' + str(c[0][1]) + '/' + str(c[0][4]) + ', ' + str(c[0][2]) + '/' + str(c[0][5])

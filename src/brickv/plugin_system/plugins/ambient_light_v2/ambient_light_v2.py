@@ -28,6 +28,7 @@ from PyQt5.QtGui import QPainter, QColor, QBrush
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_ambient_light_v2 import BrickletAmbientLightV2
+from brickv.bindings import ip_connection
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
@@ -43,7 +44,7 @@ class AmbientLightFrame(QFrame):
         self.color = QColor(r, g, b)
         self.repaint()
 
-    def paintEvent(self, event):
+    def paintEvent(self, _event):
         qp = QPainter(self)
         qp.setBrush(QBrush(self.color))
         qp.setPen(self.color)
@@ -142,11 +143,11 @@ class AmbientLightV2(PluginBase):
         self.range_combo.setCurrentIndex(self.range_combo.findData(conf.illuminance_range))
         self.time_combo.setCurrentIndex(self.time_combo.findData(conf.integration_time))
 
-    def new_config(self, value):
+    def new_config(self, _value):
         try:
             self.al.set_configuration(self.range_combo.itemData(self.range_combo.currentIndex()),
                                       self.time_combo.itemData(self.time_combo.currentIndex()))
-        except:
+        except ip_connection.Error:
             pass
 
     def cb_illuminance(self, illuminance):

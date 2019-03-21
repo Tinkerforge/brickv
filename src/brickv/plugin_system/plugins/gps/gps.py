@@ -81,7 +81,7 @@ class GPS(PluginBase, Ui_GPS):
         else:
             QDesktopServices.openUrl(QUrl('http://www.google.com/moon/')) # :-)
 
-    def format_changed(self, index):
+    def format_changed(self, _index):
         self.cb_coordinates(self.last_lat, self.last_ns, self.last_long, self.last_ew, self.last_pdop, self.last_hdop, self.last_vdop, self.last_epe)
 
     def restart_clicked(self, restart_type):

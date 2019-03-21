@@ -22,7 +22,6 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QVBoxLayout, QSlider
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_hall_effect_v2 import BrickletHallEffectV2
@@ -49,7 +48,7 @@ class HallEffectV2(COMCUPluginBase, Ui_HallEffectV2):
         self.current_magnetic_flux_density = None
         plots = [('Magnetic Flux Density', Qt.red, lambda: self.current_magnetic_flux_density, u'{} uT'.format)]
         self.plot_widget = PlotWidget('Magnetic Flux Density [uT]', plots)
-        
+
         self.button_reset.clicked.connect(self.button_reset_clicked)
         self.spinbox_low.editingFinished.connect(self.new_config)
         self.spinbox_high.editingFinished.connect(self.new_config)

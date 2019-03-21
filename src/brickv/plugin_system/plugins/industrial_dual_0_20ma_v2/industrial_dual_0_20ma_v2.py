@@ -313,7 +313,7 @@ class IndustrialDual020mAV2(COMCUPluginBase):
                    None,
                    self.increase_error_count)
 
-    def led_status_config_ch0_min_sbox_changed(self, value):
+    def led_status_config_ch0_min_sbox_changed(self, _value):
         QObject.sender(self).blockSignals(True)
 
         self.dual020.set_channel_led_status_config(CH_0,
@@ -323,7 +323,7 @@ class IndustrialDual020mAV2(COMCUPluginBase):
 
         QObject.sender(self).blockSignals(False)
 
-    def led_status_config_ch0_max_sbox_changed(self, value):
+    def led_status_config_ch0_max_sbox_changed(self, _value):
         QObject.sender(self).blockSignals(True)
 
         self.dual020.set_channel_led_status_config(CH_0,
@@ -333,7 +333,7 @@ class IndustrialDual020mAV2(COMCUPluginBase):
 
         QObject.sender(self).blockSignals(False)
 
-    def led_status_config_ch1_min_sbox_changed(self, value):
+    def led_status_config_ch1_min_sbox_changed(self, _value):
         QObject.sender(self).blockSignals(True)
 
 
@@ -344,7 +344,7 @@ class IndustrialDual020mAV2(COMCUPluginBase):
 
         QObject.sender(self).blockSignals(False)
 
-    def led_status_config_ch1_max_sbox_changed(self, value):
+    def led_status_config_ch1_max_sbox_changed(self, _value):
         QObject.sender(self).blockSignals(True)
 
         self.dual020.set_channel_led_status_config(CH_1,

@@ -50,7 +50,7 @@ class TuningThermo(QWidget):
         self.gradient.setColorAt(0, Qt.green)
         self.gradient.setColorAt(1, Qt.red)
 
-    def paintEvent(self, event):
+    def paintEvent(self, _event):
         painter = QPainter(self)
         width = self.width()
         height = self.height()

@@ -107,7 +107,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.t = temperature/100.0
         self.lbl_t.setText('{:.2f} °C'.format(self.t))
 
-    def closeEvent(self, event):
+    def closeEvent(self, _event):
         self.cbe_p.set_period(0)
         self.cbe_a.set_period(0)
         self.cbe_t.set_period(0)

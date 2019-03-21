@@ -22,11 +22,8 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import pyqtSignal, QTimer
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
-                        QLineEdit, QSpinBox, QApplication, QSizePolicy
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
-from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_piezo_speaker_v2 import BrickletPiezoSpeakerV2
 from brickv.plugin_system.plugins.piezo_speaker_v2.ui_piezo_speaker_v2 import Ui_PiezoSpeakerV2
 from brickv.slider_spin_syncer import SliderSpinSyncer

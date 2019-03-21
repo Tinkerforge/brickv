@@ -94,7 +94,7 @@ during stabilization.</p>""")
         if calibration_done:
             self.save_calibration.setText('Save Calibration Again')
 
-    def closeEvent(self, event):
+    def closeEvent(self, _event):
         self.parent.button_calibration.setEnabled(True)
         self.parent.calibration = None
 
@@ -109,7 +109,7 @@ class ColorFrame(QFrame):
         self.color = color
         self.repaint()
 
-    def paintEvent(self, event):
+    def paintEvent(self, _event):
         qp = QPainter()
         qp.begin(self)
         qp.setBrush(QBrush(self.color))
@@ -133,7 +133,7 @@ class WrapperWidget(QWidget):
         self.layout().addWidget(self.glWidget)
         self.setWindowTitle('IMU Brick 2.0 - 3D View - Brick Viewer ' + config.BRICKV_VERSION)
 
-    def closeEvent(self, event):
+    def closeEvent(self, _event):
         self.plugin.imu_gl_wrapper = None
         self.plugin.button_detach_3d_view.setEnabled(True)
 
@@ -261,7 +261,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.set_configs([(0, None, [self.status_led_action])])
 
         reset = QAction('Reset', self)
-        reset.triggered.connect(lambda: self.imu.reset())
+        reset.triggered.connect(self.imu.reset)
         self.set_actions([(0, None, [reset])])
 
     def restart_gl(self):
