@@ -1,3 +1,4 @@
 recursive-exclude brickv build_ui.py
 recursive-exclude brickv build_scripts.py
+recursive-exclude brickv build_extra.py
 <<EXCLUDES>>

@@ -79,42 +79,43 @@ def specialize_template(template_filename, destination_filename, replacements):
     destination_file.close()
 
 
-def prepare_manifest(root_path):
+def prepare_manifest(root_path, no_release=False):
     bindings_path = os.path.join(root_path, 'brickv', 'bindings')
     plugins_path = os.path.join(root_path, 'brickv', 'plugin_system', 'plugins')
     excluded_patterns = []
 
-    for plugin_name in sorted(os.listdir(plugins_path)):
-        if '__pycache__' in plugin_name:
-            continue
-        plugin_path = os.path.join(plugins_path, plugin_name)
+    if not no_release:
+        for plugin_name in sorted(os.listdir(plugins_path)):
+            if '__pycache__' in plugin_name:
+                continue
+            plugin_path = os.path.join(plugins_path, plugin_name)
 
-        if not os.path.isdir(plugin_path):
-            continue
+            if not os.path.isdir(plugin_path):
+                continue
 
-        brick_binding = os.path.join(bindings_path, 'brick_{0}.py'.format(plugin_name))
-        bricklet_binding = os.path.join(bindings_path, 'bricklet_{0}.py'.format(plugin_name))
+            brick_binding = os.path.join(bindings_path, 'brick_{0}.py'.format(plugin_name))
+            bricklet_binding = os.path.join(bindings_path, 'bricklet_{0}.py'.format(plugin_name))
 
-        if os.path.isfile(brick_binding):
-            with open(brick_binding, 'r') as f:
-                if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
-                    print('excluding unreleased plugin and binding: ' + plugin_name)
-                    excluded_patterns.append('prune brickv/plugin_system/plugins/{0}'.format(plugin_name))
-                    excluded_patterns.append('recursive-exclude brickv/bindings brick_{0}.py'.format(plugin_name))
-        elif os.path.isfile(bricklet_binding):
-            with open(bricklet_binding, 'r') as f:
-                if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
-                    print('excluding unreleased plugin and binding: ' + plugin_name)
-                    excluded_patterns.append('prune brickv/plugin_system/plugins/{0}'.format(plugin_name))
-                    excluded_patterns.append('recursive-exclude brickv/bindings bricklet_{0}.py'.format(plugin_name))
-        else:
-            raise Exception('No bindings found corresponding to plugin {0}'.format(plugin_name))
+            if os.path.isfile(brick_binding):
+                with open(brick_binding, 'r') as f:
+                    if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
+                        print('excluding unreleased plugin and binding: ' + plugin_name)
+                        excluded_patterns.append('prune brickv/plugin_system/plugins/{0}'.format(plugin_name))
+                        excluded_patterns.append('recursive-exclude brickv/bindings brick_{0}.py'.format(plugin_name))
+            elif os.path.isfile(bricklet_binding):
+                with open(bricklet_binding, 'r') as f:
+                    if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
+                        print('excluding unreleased plugin and binding: ' + plugin_name)
+                        excluded_patterns.append('prune brickv/plugin_system/plugins/{0}'.format(plugin_name))
+                        excluded_patterns.append('recursive-exclude brickv/bindings bricklet_{0}.py'.format(plugin_name))
+            else:
+                raise Exception('No bindings found corresponding to plugin {0}'.format(plugin_name))
 
     specialize_template(os.path.join(root_path, 'MANIFEST.in.template'), os.path.join(root_path, 'MANIFEST.in'),
                         {'<<EXCLUDES>>': '\n'.join(excluded_patterns)})
 
 
-def build_linux_pkg():
+def build_linux_pkg(no_release=False):
     print('building brickv Debian package')
     root_path = os.getcwd()
 
@@ -128,17 +129,22 @@ def build_linux_pkg():
     if os.path.exists(egg_info_path):
         shutil.rmtree(egg_info_path)
 
-    print('calling build_src.py release')
-    system(['python3', 'build_src.py', 'release'])
+    if no_release:
+        print('calling build_src.py')
+        system(['python3', 'build_src.py'])
+    else:
+        print('calling build_src.py release')
+        system(['python3', 'build_src.py', 'release'])
 
     print('preparing manifest')
-    prepare_manifest(root_path)
+    prepare_manifest(root_path, no_release)
 
     print('calling setup.py sdist')
     system(['python3', 'setup.py', 'sdist'])
 
-    print('calling build_plugin_list.py to undo previous release run')
-    system(['python3', 'build_plugin_list.py'])
+    if not no_release:
+        print('calling build_plugin_list.py to undo previous release run')
+        system(['python3', 'build_plugin_list.py'])
 
     if os.path.exists(egg_info_path):
         shutil.rmtree(egg_info_path)
@@ -176,7 +182,7 @@ def build_linux_pkg():
     system(['sudo', 'chown', '-R', 'root:root', 'dist/linux'])
 
     print('building Debian package')
-    system(['dpkg', '-b', 'dist/linux', 'brickv-{0}_all.deb'.format(BRICKV_VERSION)])
+    system(['dpkg', '-b', 'dist/linux', 'brickv-{0}_all{1}.deb'.format(BRICKV_VERSION, '_DO_NOT_RELEASE' if no_release else '')])
 
     print('changing owner back to original user')
     system(['sudo', 'chown', '-R', '{}:{}'.format(user, group), 'dist/linux'])
@@ -315,13 +321,13 @@ if __name__ == '__main__':
 
     if 'logger' in sys.argv:
         build_logger_zip()
-    elif sys.platform.startswith('linux') and not 'nodeb' in sys.argv:
+    elif sys.platform.startswith('linux') and '--no-deb' not in sys.argv:
         if 'flash' in sys.argv:
             build_linux_flash_pkg()
         else:
-            build_linux_pkg()
-    elif sys.platform == 'win32' or sys.platform == 'darwin' or 'nodeb' in sys.argv:
-        if not 'nodeb' in sys.argv:
+            build_linux_pkg(no_release='--no-release' in sys.argv)
+    elif sys.platform == 'win32' or sys.platform == 'darwin' or '--no-deb' in sys.argv:
+        if '--no-deb' not in sys.argv:
             in_virtualenv = hasattr(sys, 'real_prefix')
             in_pyvenv = hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix
 
