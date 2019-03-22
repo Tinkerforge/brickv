@@ -2,6 +2,6 @@
 - Initial version
 
 2015-10-12: 1.0.1 (be1922e)
-- Add support for Python 3
+- Port to Python 3
 - Add --version argument
 - Rename to brick-flash

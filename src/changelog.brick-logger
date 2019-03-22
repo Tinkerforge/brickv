@@ -42,3 +42,6 @@
 
 2019-01-30: 2.0.9 (6c5b23b)
 - Add support for Accelerometer 2.0 and Ambient Light 3.0 Bricklet
+
+2019-03-22: 2.1.0 (<unknown>)
+- Port to Python 3
