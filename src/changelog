@@ -451,7 +451,7 @@
 - Sort Bricklets connected to Master Brick on setup tab before stacked Bricks
 - Connect when return/enter key is pressed in host, port or secret input fields
 - Fix RED Brick console tab font on macOS
-- Fix race condtion between connection and WIFI Extension 2.0 version logic that
+- Fix race condition between connection and WIFI Extension 2.0 version logic that
   could result in Brick Viewer hanging in the connecting state
 - Stop overemphasizing sensor noise in plots by limiting the minimum y-axis size
   relative to the sensor resolution
