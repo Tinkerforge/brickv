@@ -46,7 +46,7 @@ class HallEffectV2(COMCUPluginBase, Ui_HallEffectV2):
                                             self.increase_error_count)
 
         self.current_magnetic_flux_density = None
-        plots = [('Magnetic Flux Density', Qt.red, lambda: self.current_magnetic_flux_density, u'{} uT'.format)]
+        plots = [('Magnetic Flux Density', Qt.red, lambda: self.current_magnetic_flux_density, '{} µT'.format)]
         self.plot_widget = PlotWidget('Magnetic Flux Density [uT]', plots)
 
         self.button_reset.clicked.connect(self.button_reset_clicked)

@@ -104,13 +104,13 @@ class IMU(PluginBase, Ui_IMU):
                                            ("Z", Qt.blue, lambda: self.acc_z, str)],
                                           clear_button=self.clear_graphs,
                                           key='right')
-        self.gyr_plot_widget = PlotWidget(u"Angular Velocity [°/s]",
+        self.gyr_plot_widget = PlotWidget("Angular Velocity [°/s]",
                                           [("X", Qt.red, lambda: self.gyr_x / 14.375, str),
                                            ("Y", Qt.darkGreen, lambda: self.gyr_y / 14.375, str),
                                            ("Z", Qt.blue, lambda: self.gyr_z / 14.375, str)],
                                           clear_button=self.clear_graphs,
                                           key='right')
-        self.temp_plot_widget = PlotWidget(u"Temperature [°C]",
+        self.temp_plot_widget = PlotWidget("Temperature [°C]",
                                            [("t", Qt.red, lambda: self.temp / 100.0, str)],
                                            clear_button=self.clear_graphs,
                                            key=None)
