@@ -60,8 +60,6 @@ class IMU(PluginBase, Ui_IMU):
         self.qua_z = 0
         self.qua_w = 0
 
-        self.old_time = 0
-
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
 
@@ -83,12 +81,6 @@ class IMU(PluginBase, Ui_IMU):
         self.imu_gl = IMUGLWidget(self)
         self.imu_gl.setMinimumSize(150, 150)
         self.imu_gl.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.min_x = 0
-        self.min_y = 0
-        self.min_z = 0
-        self.max_x = 0
-        self.max_y = 0
-        self.max_z = 0
 
         self.update_counter = 0
 
