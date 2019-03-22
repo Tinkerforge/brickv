@@ -44,7 +44,7 @@ class DistanceUS(PluginBase):
         self.current_distance = None
 
         plots = [('Distance Value', Qt.red, lambda: self.current_distance, str)]
-        self.plot_widget = PlotWidget('Distance Value', plots)
+        self.plot_widget = PlotWidget('Distance Value', plots, y_resolution=1.0)
 
         self.spin_average = QSpinBox()
         self.spin_average.setMinimum(0)

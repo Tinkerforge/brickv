@@ -77,7 +77,9 @@ class AmbientLightV2(PluginBase):
         self.current_illuminance = None # float, lx
 
         plots = [('Illuminance', Qt.red, lambda: self.current_illuminance, '{:.2f} lx (Lux)'.format)]
-        self.plot_widget = PlotWidget('Illuminance [lx]', plots, extra_key_widgets=[self.out_of_range_label, self.saturated_label, self.alf])
+        self.plot_widget = PlotWidget('Illuminance [lx]', plots,
+                                      extra_key_widgets=[self.out_of_range_label, self.saturated_label, self.alf],
+                                      y_resolution=0.01)
 
         self.range_label = QLabel('Illuminance Range:')
         self.range_combo = QComboBox()

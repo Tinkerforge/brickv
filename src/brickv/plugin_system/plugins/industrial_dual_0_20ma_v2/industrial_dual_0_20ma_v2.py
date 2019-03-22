@@ -80,9 +80,8 @@ class IndustrialDual020mAV2(COMCUPluginBase):
                   lambda: self.current_current[CH_1],
                   lambda value: '{:.03f} mA'.format(round(value, 3)))]
 
-        self.plot_widget = PlotWidget('Current [mA]',
-                                      plots,
-                                      extra_key_widgets=self.connected_labels)
+        self.plot_widget = PlotWidget('Current [mA]', plots,
+                                      extra_key_widgets=self.connected_labels, y_resolution=0.001)
 
         h_sp = QSizePolicy()
         h_sp.setHorizontalPolicy(QSizePolicy.Expanding)

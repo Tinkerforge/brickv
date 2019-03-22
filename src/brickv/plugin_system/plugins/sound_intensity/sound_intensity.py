@@ -84,7 +84,8 @@ class SoundIntensity(PluginBase):
 
         plots = [('Intensity Value', Qt.red, lambda: self.current_intensity, str)]
         self.plot_widget = PlotWidget('Intensity Value', plots, curve_motion_granularity=40,
-                                      update_interval=0.025, extra_key_widgets=[self.thermo])
+                                      update_interval=0.025, extra_key_widgets=[self.thermo],
+                                      y_resolution=1.0)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)

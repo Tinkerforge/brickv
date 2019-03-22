@@ -70,7 +70,7 @@ class Line(PluginBase):
         self.current_reflectivity = None
 
         plots = [('Reflectivity', Qt.red, lambda: self.current_reflectivity, str)]
-        self.plot_widget = PlotWidget('Reflectivity', plots)
+        self.plot_widget = PlotWidget('Reflectivity', plots, y_resolution=1.0)
 
         layout = QHBoxLayout(self)
         layout.addWidget(self.plot_widget)

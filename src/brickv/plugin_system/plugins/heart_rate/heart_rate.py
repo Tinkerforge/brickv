@@ -57,7 +57,7 @@ class HeartRate(PluginBase):
         self.current_heart_rate = None
 
         plots = [('Heart Rate', Qt.red, lambda: self.current_heart_rate, '{} BPM'.format)]
-        self.plot_widget = PlotWidget('Heart Rate [BPM]', plots, extra_key_widgets=[self.heart_icon])
+        self.plot_widget = PlotWidget('Heart Rate [BPM]', plots, extra_key_widgets=[self.heart_icon], y_resolution=1.0)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)

@@ -63,7 +63,7 @@ class PTCV2(COMCUPluginBase):
         self.noise_combo.currentIndexChanged.connect(self.noise_combo_index_changed)
 
         plots = [('Temperature', Qt.red, lambda: self.current_temperature, '{} °C'.format)]
-        self.plot_widget = PlotWidget('Temperature [°C]', plots, extra_key_widgets=[self.connected_label])
+        self.plot_widget = PlotWidget('Temperature [°C]', plots, extra_key_widgets=[self.connected_label], y_resolution=0.01)
 
         hlayout = QHBoxLayout()
         hlayout.addWidget(self.wire_label)

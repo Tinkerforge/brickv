@@ -67,7 +67,7 @@ class AmbientLight(PluginBase):
         self.current_illuminance = None # float, lx
 
         plots = [('Illuminance', Qt.red, lambda: self.current_illuminance, '{} lx (Lux)'.format)]
-        self.plot_widget = PlotWidget('Illuminance [lx]', plots, extra_key_widgets=[self.alf])
+        self.plot_widget = PlotWidget('Illuminance [lx]', plots, extra_key_widgets=[self.alf], y_resolution=0.1)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)

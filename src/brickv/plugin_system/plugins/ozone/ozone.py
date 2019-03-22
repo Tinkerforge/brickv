@@ -44,7 +44,7 @@ class Ozone(PluginBase):
         self.current_ozone_concentration = None
 
         plots = [('Ozone Concentration', Qt.red, lambda: self.current_ozone_concentration, '{} ppb'.format)]
-        self.plot_widget = PlotWidget('Ozone Concentration [ppb]', plots)
+        self.plot_widget = PlotWidget('Ozone Concentration [ppb]', plots, y_resolution=1.0)
 
         self.spin_average = QSpinBox()
         self.spin_average.setMinimum(1)

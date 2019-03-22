@@ -178,11 +178,13 @@ class BarometerV2(COMCUPluginBase):
 
         self.plot_widget_air_pressure = PlotWidget('Air Pressure [mbar]',
                                                    plot_config_air_pressure,
-                                                   self.btn_clear_graphs)
+                                                   self.btn_clear_graphs,
+                                                   y_resolution=0.001)
 
         self.plot_widget_altitude = PlotWidget('Altitude [m]',
                                                plot_config_altitude,
-                                               self.btn_clear_graphs)
+                                               self.btn_clear_graphs,
+                                               y_resolution=0.001)
 
         self.combo_data_rate = QComboBox()
         self.combo_data_rate.addItem('Off', BrickletBarometerV2.DATA_RATE_OFF)

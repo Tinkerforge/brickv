@@ -45,7 +45,7 @@ class AnalogIn(PluginBase):
         self.current_voltage = None # float, V
 
         plots = [('Voltage', Qt.red, lambda: self.current_voltage, format_voltage)]
-        self.plot_widget = PlotWidget('Voltage [V]', plots)
+        self.plot_widget = PlotWidget('Voltage [V]', plots, y_resolution=0.001)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)

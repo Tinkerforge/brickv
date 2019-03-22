@@ -44,7 +44,7 @@ class DustDetector(PluginBase):
         self.current_dust_density = None
 
         plots = [('Dust Density', Qt.red, lambda: self.current_dust_density, '{} µg/m³'.format)]
-        self.plot_widget = PlotWidget('Dust Density [µg/m³]', plots)
+        self.plot_widget = PlotWidget('Dust Density [µg/m³]', plots, y_resolution=1.0)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)

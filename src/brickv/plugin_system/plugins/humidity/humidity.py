@@ -44,7 +44,7 @@ class Humidity(PluginBase):
         self.current_humidity = None # float, %RH
 
         plots = [('Relative Humidity', Qt.red, lambda: self.current_humidity, '{} %RH'.format)]
-        self.plot_widget = PlotWidget('Relative Humidity [%RH]', plots)
+        self.plot_widget = PlotWidget('Relative Humidity [%RH]', plots, y_resolution=0.1)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)

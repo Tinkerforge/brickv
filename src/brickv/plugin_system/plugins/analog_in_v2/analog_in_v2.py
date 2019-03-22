@@ -45,7 +45,7 @@ class AnalogInV2(PluginBase):
         self.current_voltage = None # float, V
 
         plots = [('Voltage', Qt.red, lambda: self.current_voltage, format_voltage)]
-        self.plot_widget = PlotWidget('Voltage [V]', plots)
+        self.plot_widget = PlotWidget('Voltage [V]', plots, y_resolution=0.001)
 
         self.spin_average = QSpinBox()
         self.spin_average.setMinimum(1)

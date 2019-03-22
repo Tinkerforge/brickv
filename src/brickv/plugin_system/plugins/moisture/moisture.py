@@ -44,7 +44,7 @@ class Moisture(PluginBase):
         self.current_moisture = None
 
         plots = [('Moisture Value', Qt.red, lambda: self.current_moisture, str)]
-        self.plot_widget = PlotWidget('Moisture Value', plots)
+        self.plot_widget = PlotWidget('Moisture Value', plots, y_resolution=1.0)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)

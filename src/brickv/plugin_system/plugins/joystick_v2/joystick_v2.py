@@ -86,7 +86,8 @@ class JoystickV2(COMCUPluginBase):
 
         plots = [('X', Qt.darkGreen, lambda: self.current_x, str),
                  ('Y', Qt.blue, lambda: self.current_y, str)]
-        self.plot_widget = PlotWidget('Position', plots, curve_motion_granularity=40, update_interval=0.025)
+        self.plot_widget = PlotWidget('Position', plots, curve_motion_granularity=40,
+                                      update_interval=0.025, y_resolution=1.0)
 
         vlayout = QVBoxLayout()
         vlayout.addStretch()

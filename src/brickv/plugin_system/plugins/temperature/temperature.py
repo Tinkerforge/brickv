@@ -44,7 +44,7 @@ class Temperature(PluginBase):
         self.current_temperature = None # float, °C
 
         plots = [('Temperature', Qt.red, lambda: self.current_temperature, '{:.2f} °C'.format)]
-        self.plot_widget = PlotWidget('Temperature [°C]', plots)
+        self.plot_widget = PlotWidget('Temperature [°C]', plots, y_resolution=0.01)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)

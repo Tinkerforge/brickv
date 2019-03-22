@@ -107,7 +107,7 @@ class AnalogInV3(COMCUPluginBase):
         self.current_voltage = None # float, V
 
         plots = [('Voltage', Qt.red, lambda: self.current_voltage, format_voltage)]
-        self.plot_widget = PlotWidget('Voltage [V]', plots)
+        self.plot_widget = PlotWidget('Voltage [V]', plots, y_resolution=0.001)
 
         self.oversampling_combo = QComboBox()
         self.oversampling_combo.addItem('32x (0.56ms)')

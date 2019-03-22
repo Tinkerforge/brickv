@@ -228,7 +228,8 @@ class IMUV2(PluginBase, Ui_IMUV2):
                                                     canvas_color=self.data_color[i][1],
                                                     external_timer=self.plot_timer,
                                                     curve_start='right',
-                                                    key=None))
+                                                    key=None,
+                                                    y_resolution=0.01))
 
         for w in self.data_plot_widget:
             w.setMinimumHeight(15)

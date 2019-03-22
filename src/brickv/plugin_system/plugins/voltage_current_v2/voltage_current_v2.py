@@ -178,9 +178,9 @@ class VoltageCurrentV2(COMCUPluginBase, Ui_VoltageCurrentV2):
         plots_voltage = [('Voltage', Qt.red, lambda: self.current_voltage, format_voltage)]
         plots_current = [('Current', Qt.blue, lambda: self.current_current, format_current)]
         plots_power = [('Power', Qt.darkGreen, lambda: self.current_power, format_power)]
-        self.plot_widget_voltage = PlotWidget('Voltage [V]', plots_voltage, clear_button=self.button_clear_graphs)
-        self.plot_widget_current = PlotWidget('Current [A]', plots_current, clear_button=self.button_clear_graphs)
-        self.plot_widget_power = PlotWidget('Power [W]', plots_power, clear_button=self.button_clear_graphs)
+        self.plot_widget_voltage = PlotWidget('Voltage [V]', plots_voltage, clear_button=self.button_clear_graphs, y_resolution=0.001)
+        self.plot_widget_current = PlotWidget('Current [A]', plots_current, clear_button=self.button_clear_graphs, y_resolution=0.001)
+        self.plot_widget_power = PlotWidget('Power [W]', plots_power, clear_button=self.button_clear_graphs, y_resolution=0.001)
 
         self.save_conf_button.clicked.connect(self.save_conf_clicked)
 

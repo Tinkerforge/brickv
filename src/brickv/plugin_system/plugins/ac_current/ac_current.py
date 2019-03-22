@@ -45,7 +45,7 @@ class ACCurrent(PluginBase):
         self.current_current = None # float, A
 
         plots = [('Current', Qt.red, lambda: self.current_current, format_current)]
-        self.plot_widget = PlotWidget('Current [A]', plots)
+        self.plot_widget = PlotWidget('Current [A]', plots, y_resolution=0.001)
 
         self.label_average = QLabel('Moving Average Length:')
         self.spin_average = QSpinBox()

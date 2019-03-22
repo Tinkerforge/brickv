@@ -62,7 +62,7 @@ class UVLightV2(COMCUPluginBase):
         plots = [('UVA', Qt.red, lambda: self.current_uva, '{} mW/m²'.format),
                  ('UVB', Qt.darkGreen, lambda: self.current_uvb, '{} mW/m²'.format)]
 
-        self.plot_widget = PlotWidget('UV [mW/m²]', plots, extra_key_widgets=[self.index_label])
+        self.plot_widget = PlotWidget('UV [mW/m²]', plots, extra_key_widgets=[self.index_label], y_resolution=0.1)
 
         self.time_label = QLabel('Integration Time:')
         self.time_combo = QComboBox()

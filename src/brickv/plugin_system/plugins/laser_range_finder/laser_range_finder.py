@@ -56,8 +56,8 @@ class LaserRangeFinder(PluginBase):
 
         plots_distance = [('Distance', Qt.red, lambda: self.current_distance, format_distance)]
         plots_velocity = [('Velocity', Qt.red, lambda: self.current_velocity, '{:.2f} m/s'.format)]
-        self.plot_widget_distance = PlotWidget('Distance [cm]', plots_distance)
-        self.plot_widget_velocity = PlotWidget('Velocity [m/s]', plots_velocity)
+        self.plot_widget_distance = PlotWidget('Distance [cm]', plots_distance, y_resolution=1.0)
+        self.plot_widget_velocity = PlotWidget('Velocity [m/s]', plots_velocity, y_resolution=0.01)
 
         self.mode_label = QLabel('Mode:')
         self.mode_combo = QComboBox()

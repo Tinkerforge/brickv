@@ -43,7 +43,7 @@ class TemperatureV2(COMCUPluginBase):
         self.current_temperature = None # float, °C
 
         plots_temperature = [('Temperature', Qt.red, lambda: self.current_temperature, '{} °C'.format)]
-        self.plot_widget_temperature = PlotWidget('Temperature [°C]', plots_temperature)
+        self.plot_widget_temperature = PlotWidget('Temperature [°C]', plots_temperature, y_resolution=0.01)
 
         self.enable_heater = QCheckBox("Enable Heater")
         self.enable_heater.stateChanged.connect(self.enable_heater_changed)

@@ -43,7 +43,7 @@ class Pressure(PluginBase):
         self.current_pressure = None # float, kPa
 
         plots = [('Pressure', Qt.red, lambda: self.current_pressure, '{:.3f} kPa'.format)]
-        self.plot_widget = PlotWidget('Pressure [kPa]', plots)
+        self.plot_widget = PlotWidget('Pressure [kPa]', plots, y_resolution=0.001)
 
         self.combo_sensor = QComboBox()
         self.combo_sensor.addItem('MPX5500')

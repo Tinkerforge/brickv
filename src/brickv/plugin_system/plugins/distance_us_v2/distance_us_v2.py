@@ -43,7 +43,7 @@ class DistanceUSV2(COMCUPluginBase):
         self.current_distance = None
 
         plots = [('Distance', Qt.red, lambda: self.current_distance, '{} cm'.format)]
-        self.plot_widget = PlotWidget('Distance [cm]', plots)
+        self.plot_widget = PlotWidget('Distance [cm]', plots, y_resolution=1.0)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)

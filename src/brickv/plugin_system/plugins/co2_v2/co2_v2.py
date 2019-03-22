@@ -45,13 +45,13 @@ class CO2V2(COMCUPluginBase):
         self.current_humidity = None # float, %RH
 
         plots_co2 = [('CO2', Qt.red, lambda: self.current_co2, '{} PPM'.format)]
-        self.plot_widget_co2 = PlotWidget('CO2 [PPM]', plots_co2)
+        self.plot_widget_co2 = PlotWidget('CO2 [PPM]', plots_co2, y_resolution=1.0)
 
         plots_temperature = [('Temperature', Qt.red, lambda: self.current_temperature, '{} °C'.format)]
-        self.plot_widget_temperature = PlotWidget('Temperature [°C]', plots_temperature)
+        self.plot_widget_temperature = PlotWidget('Temperature [°C]', plots_temperature, y_resolution=0.01)
 
         plots_humidity = [('Relative Humidity', Qt.red, lambda: self.current_humidity, '{} %RH'.format)]
-        self.plot_widget_humidity = PlotWidget('Relative Humidity [%RH]', plots_humidity)
+        self.plot_widget_humidity = PlotWidget('Relative Humidity [%RH]', plots_humidity, y_resolution=0.01)
 
         layout_plot1 = QHBoxLayout()
         layout_plot1.addWidget(self.plot_widget_co2)

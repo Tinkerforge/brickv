@@ -68,9 +68,9 @@ class IndustrialDual020mA(PluginBase):
 
         self.current_current = [None, None] # float, mA
 
-        plots = [('Sensor 0', Qt.red, lambda: self.current_current[0], lambda value: '{:.02f} mA'.format(round(value, 2))),
-                 ('Sensor 1', Qt.blue, lambda: self.current_current[1], lambda value: '{:.02f} mA'.format(round(value, 2)))]
-        self.plot_widget = PlotWidget('Current [mA]', plots, extra_key_widgets=self.connected_labels)
+        plots = [('Sensor 0', Qt.red, lambda: self.current_current[0], lambda value: '{:.03f} mA'.format(round(value, 3))),
+                 ('Sensor 1', Qt.blue, lambda: self.current_current[1], lambda value: '{:.03f} mA'.format(round(value, 3)))]
+        self.plot_widget = PlotWidget('Current [mA]', plots, extra_key_widgets=self.connected_labels, y_resolution=0.001)
 
         self.sample_rate_label = QLabel('Sample Rate:')
         self.sample_rate_combo = QComboBox()

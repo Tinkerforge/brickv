@@ -97,23 +97,23 @@ class IMU(PluginBase, Ui_IMU):
                                            ("Y", Qt.darkGreen, lambda: self.mag_y, str),
                                            ("Z", Qt.blue, lambda: self.mag_z, str)],
                                           clear_button=self.clear_graphs,
-                                          key='right')
+                                          key='right', y_resolution=0.001)
         self.acc_plot_widget = PlotWidget("Acceleration [mG]",
                                           [("X", Qt.red, lambda: self.acc_x, str),
                                            ("Y", Qt.darkGreen, lambda: self.acc_y, str),
                                            ("Z", Qt.blue, lambda: self.acc_z, str)],
                                           clear_button=self.clear_graphs,
-                                          key='right')
+                                          key='right', y_resolution=0.001)
         self.gyr_plot_widget = PlotWidget("Angular Velocity [°/s]",
                                           [("X", Qt.red, lambda: self.gyr_x / 14.375, str),
                                            ("Y", Qt.darkGreen, lambda: self.gyr_y / 14.375, str),
                                            ("Z", Qt.blue, lambda: self.gyr_z / 14.375, str)],
                                           clear_button=self.clear_graphs,
-                                          key='right')
+                                          key='right', y_resolution=0.05)
         self.temp_plot_widget = PlotWidget("Temperature [°C]",
                                            [("t", Qt.red, lambda: self.temp / 100.0, str)],
                                            clear_button=self.clear_graphs,
-                                           key=None)
+                                           key=None, y_resolution=0.01)
 
         self.mag_plot_widget.setMinimumSize(250, 200)
         self.acc_plot_widget.setMinimumSize(250, 200)

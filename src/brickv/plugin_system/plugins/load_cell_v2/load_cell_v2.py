@@ -89,7 +89,7 @@ class LoadCellV2(COMCUPluginBase):
         self.calibration = None
 
         plots = [('Weight', Qt.red, lambda: self.current_weight, format_weight)]
-        self.plot_widget = PlotWidget('Weight [g]', plots)
+        self.plot_widget = PlotWidget('Weight [g]', plots, y_resolution=1.0)
 
         self.button_calibration = QPushButton("Calibration...")
         self.button_calibration.clicked.connect(self.button_calibration_clicked)

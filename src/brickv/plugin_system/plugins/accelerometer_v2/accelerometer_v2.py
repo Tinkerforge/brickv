@@ -68,11 +68,11 @@ class AccelerometerV2(COMCUPluginBase):
         self.pitch_label = PitchLabel()
         self.roll_label = RollLabel()
 
-        plots = [('X', Qt.red, lambda: self.current_acceleration[0], '{:.3f} g'.format),
-                 ('Y', Qt.darkGreen, lambda: self.current_acceleration[1], '{:.3f} g'.format),
-                 ('Z', Qt.blue, lambda: self.current_acceleration[2], '{:.3f} g'.format)]
+        plots = [('X', Qt.red, lambda: self.current_acceleration[0], '{:.4f} g'.format),
+                 ('Y', Qt.darkGreen, lambda: self.current_acceleration[1], '{:.4f} g'.format),
+                 ('Z', Qt.blue, lambda: self.current_acceleration[2], '{:.4f} g'.format)]
         self.plot_widget = PlotWidget('Acceleration [g]', plots, extra_key_widgets=[self.pitch_label, self.roll_label],
-                                      curve_motion_granularity=20, update_interval=0.05)
+                                      curve_motion_granularity=20, update_interval=0.05, y_resolution=0.0001)
 
         self.fs_label = QLabel('Full Scale:')
         self.fs_combo = QComboBox()

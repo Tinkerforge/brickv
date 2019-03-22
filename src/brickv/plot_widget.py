@@ -485,7 +485,7 @@ class CurveArea(QWidget):
 class Plot(QWidget):
     def __init__(self, parent, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
                  curve_configs, scales_visible, curve_outer_border_visible, curve_motion_granularity,
-                 canvas_color, curve_start, x_diff):
+                 canvas_color, curve_start, x_diff, y_diff_min):
         super().__init__(parent)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -510,6 +510,7 @@ class Plot(QWidget):
         self.canvas_color = canvas_color
         self.curve_start = curve_start
         self.x_diff = x_diff
+        self.y_diff_min = y_diff_min
         self.partial_update_width = 50 # px, initial value, calculated in update
         self.partial_update_enabled = False
 
@@ -804,22 +805,29 @@ class Plot(QWidget):
             return
 
         if self.y_min == None or self.y_max == None:
-            y_min = -1.0
-            y_max = 1.0
+            y_min = 0.0
+            y_max = 0.0
         else:
             y_min = self.y_min
             y_max = self.y_max
 
-        delta_y = abs(y_max - y_min)
+        y_diff = abs(y_max - y_min)
 
-        # if there is no delta then force some to get a y-axis with some ticks
-        if delta_y < EPSILON:
-            delta_y = 2.0
-            y_min -= 1.0
-            y_max += 1.0
+        # if y-diff if below minimum then force some to avoid over-emphasizing
+        # minimal noise
+        if self.y_diff_min == None and y_diff < EPSILON:
+            y_min -= 0.5
+            y_max += 0.5
+            y_diff = abs(y_max - y_min)
+        elif self.y_diff_min != None and y_diff < self.y_diff_min:
+            y_avg = (y_min + y_max) / 2.0
+            y_diff_min_half = self.y_diff_min / 2.0
+            y_min = y_avg - y_diff_min_half
+            y_max = y_avg + (self.y_diff_min - y_diff_min_half)
+            y_diff = abs(y_max - y_min)
 
-        # start with the biggest power of 10 that is smaller than delta-y
-        step_size = 10.0 ** math.floor(math.log(delta_y, 10.0))
+        # start with the biggest power of 10 that is smaller than y-diff
+        step_size = 10.0 ** math.floor(math.log(y_diff, 10.0))
         step_subdivision_count = 5
 
         # the divisors are chosen in way to produce the sequence
@@ -835,7 +843,7 @@ class Plot(QWidget):
 
         # decrease y-axis step-size until it divides delta-y in 4 or more parts
         while fuzzy_geq(step_size / divisors[d % len(divisors)], step_size_min) \
-              and delta_y / step_size < 4.0:
+              and y_diff / step_size < 4.0:
             step_size /= divisors[d % len(divisors)]
             step_subdivision_count = subdivisions[d % len(subdivisions)]
             d += 1
@@ -845,8 +853,8 @@ class Plot(QWidget):
             # to d to counter the d -= 1 in the next while loop
             d += 1
 
-        # increase y-axis step-size until it divides delta-y in 8 or less parts
-        while delta_y / step_size > 8.0:
+        # increase y-axis step-size until it divides y-diff in 8 or less parts
+        while y_diff / step_size > 8.0:
             step_subdivision_count = subdivisions[d % len(subdivisions)]
             d -= 1
             step_size *= divisors[d % len(divisors)]
@@ -944,21 +952,38 @@ class FixedSizeLabel(QLabel):
         return hint
 
 class PlotWidget(QWidget):
-    def __init__(self, y_scale_title_text, curve_configs, clear_button='default', parent=None,
-                 scales_visible=True, curve_outer_border_visible=True,
-                 curve_motion_granularity=10, canvas_color=QColor(245, 245, 245),
-                 external_timer=None, key='top-value', extra_key_widgets=None,
-                 update_interval=0.1, curve_start='left', moving_average_config=None,
-                 x_scale_title_text='Time [s]', x_diff=20, x_scale_skip_last_tick=True):
+    def __init__(self,
+                 y_scale_title_text,
+                 curve_configs,
+                 clear_button='default',
+                 parent=None,
+                 scales_visible=True,
+                 curve_outer_border_visible=True,
+                 curve_motion_granularity=10,
+                 canvas_color=QColor(245, 245, 245),
+                 external_timer=None,
+                 key='top-value',
+                 extra_key_widgets=None,
+                 update_interval=0.1, curve_start='left',
+                 moving_average_config=None,
+                 x_scale_title_text='Time [s]',
+                 x_diff=20,
+                 x_scale_skip_last_tick=True,
+                 y_resolution=None):
         super().__init__(parent)
 
         self.setMinimumSize(300, 250)
+
+        if y_resolution != None:
+            y_diff_min = y_resolution * 20
+        else:
+            y_diff_min = None
 
         self.stop = True
         self.curve_configs = [CurveConfig(*curve_config) for curve_config in curve_configs]
         self.plot = Plot(self, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
                          self.curve_configs, scales_visible, curve_outer_border_visible,
-                         curve_motion_granularity, canvas_color, curve_start, x_diff)
+                         curve_motion_granularity, canvas_color, curve_start, x_diff, y_diff_min)
         self.set_x_scale = self.plot.set_x_scale
         self.set_fixed_y_scale = self.plot.set_fixed_y_scale
         self.key = key

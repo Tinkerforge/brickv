@@ -163,7 +163,7 @@ class IndustrialDualAnalogIn(PluginBase):
 
         plots = [('Channel 0', Qt.red, lambda: self.current_voltage[0], format_voltage),
                  ('Channel 1', Qt.blue, lambda: self.current_voltage[1], format_voltage)]
-        self.plot_widget = PlotWidget('Voltage [V]', plots)
+        self.plot_widget = PlotWidget('Voltage [V]', plots, y_resolution=0.001)
 
         hlayout = QHBoxLayout()
         hlayout.addWidget(self.sample_rate_label)

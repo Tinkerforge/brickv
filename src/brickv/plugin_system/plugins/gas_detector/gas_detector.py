@@ -44,7 +44,7 @@ class GasDetector(PluginBase):
         self.current_value = None
 
         plots = [('Value', Qt.red, lambda: self.current_value, str)]
-        self.plot_widget = PlotWidget('Value', plots)
+        self.plot_widget = PlotWidget('Value', plots, y_resolution=1.0)
 
         self.heater_checkbox = QCheckBox()
         self.heater_checkbox.setText('Heater')

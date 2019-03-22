@@ -50,7 +50,7 @@ class UVLight(PluginBase):
         self.current_uv_light = None
 
         plots = [('UV Light', Qt.red, lambda: self.current_uv_light, '{} mW/m²'.format)]
-        self.plot_widget = PlotWidget('UV Light [mW/m²]', plots, extra_key_widgets=[self.index_label])
+        self.plot_widget = PlotWidget('UV Light [mW/m²]', plots, extra_key_widgets=[self.index_label], y_resolution=0.1)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)

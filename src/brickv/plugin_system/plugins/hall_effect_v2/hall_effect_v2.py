@@ -47,7 +47,7 @@ class HallEffectV2(COMCUPluginBase, Ui_HallEffectV2):
 
         self.current_magnetic_flux_density = None
         plots = [('Magnetic Flux Density', Qt.red, lambda: self.current_magnetic_flux_density, '{} µT'.format)]
-        self.plot_widget = PlotWidget('Magnetic Flux Density [uT]', plots)
+        self.plot_widget = PlotWidget('Magnetic Flux Density [µT]', plots, y_resolution=1.0)
 
         self.button_reset.clicked.connect(self.button_reset_clicked)
         self.spinbox_low.editingFinished.connect(self.new_config)

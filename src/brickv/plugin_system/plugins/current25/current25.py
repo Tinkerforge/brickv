@@ -56,7 +56,7 @@ class Current25(PluginBase):
         self.current_current = None # float, A
 
         plots = [('Current', Qt.red, lambda: self.current_current, format_current)]
-        self.plot_widget = PlotWidget('Current [A]', plots, extra_key_widgets=[self.over_label])
+        self.plot_widget = PlotWidget('Current [A]', plots, extra_key_widgets=[self.over_label], y_resolution=0.001)
 
         line = QFrame()
         line.setObjectName("line")

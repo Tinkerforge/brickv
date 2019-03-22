@@ -44,7 +44,7 @@ class CO2(PluginBase):
         self.current_co2_concentration = None # int, ppm
 
         plots = [('CO2 Concentration', Qt.red, lambda: self.current_co2_concentration, '{} ppm'.format)]
-        self.plot_widget = PlotWidget('CO2 Concentration [ppm]', plots)
+        self.plot_widget = PlotWidget('CO2 Concentration [ppm]', plots, y_resolution=1.0)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)

@@ -49,7 +49,7 @@ class TemperatureIR(PluginBase):
 
         plots = [('Ambient', Qt.blue, lambda: self.current_ambient, '{} °C'.format),
                  ('Object', Qt.red, lambda: self.current_object, '{} °C'.format)]
-        self.plot_widget = PlotWidget('Temperature [°C]', plots)
+        self.plot_widget = PlotWidget('Temperature [°C]', plots, y_resolution=0.1)
 
         self.spin_emissivity = QSpinBox()
         self.spin_emissivity.setMinimum(6553)

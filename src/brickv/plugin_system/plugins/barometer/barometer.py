@@ -66,10 +66,10 @@ class Barometer(PluginBase):
         self.clear_graphs_button = QPushButton('Clear Graphs')
 
         plots = [('Air Pressure', Qt.red, lambda: self.current_air_pressure, '{:.3f} mbar (QFE)'.format)]
-        self.air_pressure_plot_widget = PlotWidget('Air Pressure [mbar]', plots, self.clear_graphs_button)
+        self.air_pressure_plot_widget = PlotWidget('Air Pressure [mbar]', plots, self.clear_graphs_button, y_resolution=0.001)
 
         plots = [('Altitude', Qt.darkGreen, lambda: self.current_altitude, lambda value: '{:.2f} m ({:.2f} ft)'.format(value, value / 0.3048))]
-        self.altitude_plot_widget = PlotWidget('Altitude [m]', plots, self.clear_graphs_button)
+        self.altitude_plot_widget = PlotWidget('Altitude [m]', plots, self.clear_graphs_button, y_resolution=0.01)
 
         if self.has_calibrate:
             self.calibrate_button = QPushButton('Calibrate Altitude')

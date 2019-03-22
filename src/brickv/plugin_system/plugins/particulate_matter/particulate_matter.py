@@ -51,7 +51,7 @@ class ParticulateMatter(COMCUPluginBase):
         plots = [('PM1.0', Qt.red, lambda: self.current_pm_concentration_pm10, '{} µg/m³'.format),
                  ('PM2.5', Qt.darkGreen, lambda: self.current_pm_concentration_pm25, '{} µg/m³'.format),
                  ('PM10.0', Qt.blue, lambda: self.current_pm_concentration_pm100, '{} µg/m³'.format)]
-        self.plot_widget = PlotWidget('PM Concentration [µg/m³]', plots)
+        self.plot_widget = PlotWidget('PM Concentration [µg/m³]', plots, y_resolution=1.0)
 
         self.label_count = QLabel('PM Count > 0.3, 0.5, 1.0, 2.5, 5.0, 10.0 µm:')
         self.label_count_value = QLabel('0, 0, 0, 0, 0, 0')

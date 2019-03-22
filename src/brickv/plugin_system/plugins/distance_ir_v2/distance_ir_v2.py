@@ -82,7 +82,7 @@ class DistanceIRV2(COMCUPluginBase):
         self.current_distance = None # float, cm
 
         plots = [('Distance', Qt.red, lambda: self.current_distance, '{} cm'.format)]
-        self.plot_widget = PlotWidget('Distance [cm]', plots, extra_key_widgets=[self.analog_label])
+        self.plot_widget = PlotWidget('Distance [cm]', plots, extra_key_widgets=[self.analog_label], y_resolution=0.1)
 
         line = QFrame()
         line.setObjectName("line")

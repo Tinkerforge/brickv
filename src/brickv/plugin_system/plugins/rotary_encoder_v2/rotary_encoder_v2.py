@@ -70,7 +70,8 @@ class RotaryEncoderV2(COMCUPluginBase):
         self.current_count = None
 
         plots = [('Count', Qt.red, lambda: self.current_count, str)]
-        self.plot_widget = PlotWidget('Count', plots, curve_motion_granularity=40, update_interval=0.025)
+        self.plot_widget = PlotWidget('Count', plots, curve_motion_granularity=40,
+                                      update_interval=0.025, y_resolution=1.0)
 
         vlayout = QVBoxLayout()
         vlayout.addStretch()

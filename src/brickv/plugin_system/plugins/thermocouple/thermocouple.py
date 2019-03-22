@@ -53,7 +53,7 @@ class Thermocouple(PluginBase):
         self.error_label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
 
         plots = [('Temperature', Qt.red, lambda: self.current_temperature, '{:.2f} °C'.format)]
-        self.plot_widget = PlotWidget('Temperature [°C]', plots, extra_key_widgets=[self.error_label])
+        self.plot_widget = PlotWidget('Temperature [°C]', plots, extra_key_widgets=[self.error_label], y_resolution=0.01)
 
         self.averaging_label = QLabel('Averaging:')
         self.averaging_combo = QComboBox()
