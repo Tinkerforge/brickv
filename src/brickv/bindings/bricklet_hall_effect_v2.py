@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-03-14.      #
+# This file was automatically generated on 2019-03-22.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -175,7 +175,7 @@ class BrickletHallEffectV2(Device):
         """
         Returns the current value of the counter.
 
-        You can configure the low/high thresholds in uT and the debounce time
+        You can configure the low/high thresholds in µT and the debounce time
         in us with :func:`Set Counter Config`.
 
         If you set reset counter to *true*, the count is set back to 0
@@ -191,7 +191,7 @@ class BrickletHallEffectV2(Device):
 
     def set_counter_config(self, high_threshold, low_threshold, debounce):
         """
-        Sets a high and a low threshold in uT as well as a debounce time in us.
+        Sets a high and a low threshold in µT as well as a debounce time in µs.
 
         If the measured magnetic flux density goes above the high threshold or
         below the low threshold, the count of the counter is increased by 1.
@@ -200,8 +200,8 @@ class BrickletHallEffectV2(Device):
 
         The default values are
 
-        * High Threshold: 2000uT
-        * Low Threshold: -2000uT
+        * High Threshold: 2000µT
+        * Low Threshold: -2000µT
         * Debounce: 100000us (100ms)
         """
         high_threshold = int(high_threshold)

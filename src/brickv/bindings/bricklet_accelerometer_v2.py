@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-03-14.      #
+# This file was automatically generated on 2019-03-22.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -148,7 +148,7 @@ class BrickletAccelerometerV2(Device):
 
     def set_configuration(self, data_rate, full_scale):
         """
-        Configures the data rate, full scale range and filter bandwidth.
+        Configures the data rate and full scale range.
         Possible values are:
 
         * Data rate of 0.781Hz to 25600Hz.
