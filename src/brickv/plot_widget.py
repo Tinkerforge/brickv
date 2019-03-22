@@ -29,12 +29,11 @@ import bisect
 from collections import namedtuple
 import time
 
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
-                        QSizePolicy, QLabel, QSpinBox
-
-from PyQt5.QtGui import QPainter, QFontMetrics, QPixmap, QIcon, QColor, QPainterPath, QTransform, QPen
-
 from PyQt5.QtCore import QTimer, Qt, QSize, QRectF, QLineF, QPoint
+from PyQt5.QtGui import QPainter, QFontMetrics, QPixmap, QIcon, QColor, \
+                        QPainterPath, QTransform, QPen
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
+                            QSizePolicy, QLabel, QSpinBox
 
 CurveConfig = namedtuple('CurveConfig', 'title color value_getter value_formatter')
 MovingAverageConfig = namedtuple('MovingAverageConfig', 'min_length max_length callback')
@@ -962,7 +961,7 @@ class PlotWidget(QWidget):
                  curve_motion_granularity=10,
                  canvas_color=QColor(245, 245, 245),
                  external_timer=None,
-                 key='top-value',
+                 key='top-value', # top-value, right-no-icon
                  extra_key_widgets=None,
                  update_interval=0.1, curve_start='left',
                  moving_average_config=None,
@@ -1020,12 +1019,18 @@ class PlotWidget(QWidget):
                 self.key_items.append(label)
             else:
                 for i, curve_config in enumerate(self.curve_configs):
-                    pixmap = QPixmap(10, 2)
-                    QPainter(pixmap).fillRect(0, 0, 10, 2, curve_config.color)
 
                     button = FixedSizeToolButton(self)
                     button.setText(curve_config.title)
-                    button.setIcon(QIcon(pixmap))
+
+                    if self.key.endswith('-no-icon'):
+                        button.setStyleSheet('color: ' + QColor(curve_config.color).name())
+                    else:
+                        pixmap = QPixmap(10, 2)
+                        QPainter(pixmap).fillRect(0, 0, 10, 2, curve_config.color)
+
+                        button.setIcon(QIcon(pixmap))
+
                     button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
                     button.setCheckable(True)
                     button.setChecked(True)
@@ -1033,11 +1038,11 @@ class PlotWidget(QWidget):
 
                     self.key_items.append(button)
 
-            if self.key.startswith('top'):
+            if self.key.startswith('top-'):
                 for key_item in self.key_items:
                     h1layout.addWidget(key_item)
                     h1layout_empty = False
-            elif self.key.startswith('right'):
+            elif self.key.startswith('right-'):
                 v1layout = QVBoxLayout()
                 v1layout.setContentsMargins(0, 0, 0, 0)
                 v1layout.addSpacing(self.plot.get_legend_offset_y())
@@ -1046,6 +1051,8 @@ class PlotWidget(QWidget):
                     v1layout.addWidget(key_item)
 
                 v1layout.addStretch(1)
+            else:
+                assert False, 'unknown key: ' + self.key
 
         if not h1layout_empty:
             h1layout.addStretch(1)
