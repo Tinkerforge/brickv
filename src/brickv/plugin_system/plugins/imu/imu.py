@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtWidgets import QLabel, QVBoxLayout, QSizePolicy, QAction
 
 from brickv.plugin_system.plugin_base import PluginBase
@@ -42,23 +43,27 @@ class IMU(PluginBase, Ui_IMU):
 
         self.imu = self.device
 
-        self.acc_x = 0
-        self.acc_y = 0
-        self.acc_z = 0
-        self.mag_x = 0
-        self.mag_y = 0
-        self.mag_z = 0
-        self.gyr_x = 0
-        self.gyr_y = 0
-        self.gyr_z = 0
-        self.temp  = 0
-        self.roll  = 0
-        self.pitch = 0
-        self.yaw   = 0
-        self.qua_x = 0
-        self.qua_y = 0
-        self.qua_z = 0
-        self.qua_w = 0
+        self.acc_x = None
+        self.acc_y = None
+        self.acc_z = None
+        self.mag_x = None
+        self.mag_y = None
+        self.mag_z = None
+        self.gyr_x = None
+        self.gyr_y = None
+        self.gyr_z = None
+        self.temp  = None
+        self.roll  = None
+        self.pitch = None
+        self.yaw   = None
+        self.qua_x = None
+        self.qua_y = None
+        self.qua_z = None
+        self.qua_w = None
+
+        self.all_data_valid = False
+        self.quaternion_valid = False
+        self.orientation_valid = False
 
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
@@ -89,31 +94,30 @@ class IMU(PluginBase, Ui_IMU):
                                            ("Y", Qt.darkGreen, lambda: self.mag_y, str),
                                            ("Z", Qt.blue, lambda: self.mag_z, str)],
                                           clear_button=self.clear_graphs,
-                                          key='right', y_resolution=0.001)
-        self.acc_plot_widget = PlotWidget("Acceleration [mG]",
+                                          key='right', y_resolution=5)
+        self.acc_plot_widget = PlotWidget("Acceleration [mg]",
                                           [("X", Qt.red, lambda: self.acc_x, str),
                                            ("Y", Qt.darkGreen, lambda: self.acc_y, str),
                                            ("Z", Qt.blue, lambda: self.acc_z, str)],
                                           clear_button=self.clear_graphs,
-                                          key='right', y_resolution=0.001)
+                                          key='right', y_resolution=5)
         self.gyr_plot_widget = PlotWidget("Angular Velocity [°/s]",
-                                          [("X", Qt.red, lambda: self.gyr_x / 14.375, str),
-                                           ("Y", Qt.darkGreen, lambda: self.gyr_y / 14.375, str),
-                                           ("Z", Qt.blue, lambda: self.gyr_z / 14.375, str)],
+                                          [("X", Qt.red, lambda: self.gyr_x, str),
+                                           ("Y", Qt.darkGreen, lambda: self.gyr_y, str),
+                                           ("Z", Qt.blue, lambda: self.gyr_z, str)],
                                           clear_button=self.clear_graphs,
                                           key='right', y_resolution=0.05)
         self.temp_plot_widget = PlotWidget("Temperature [°C]",
-                                           [("t", Qt.red, lambda: self.temp / 100.0, str)],
+                                           [("t", Qt.red, lambda: self.temp, str)],
                                            clear_button=self.clear_graphs,
                                            key=None, y_resolution=0.01)
 
-        self.mag_plot_widget.setMinimumSize(250, 200)
-        self.acc_plot_widget.setMinimumSize(250, 200)
-        self.gyr_plot_widget.setMinimumSize(250, 200)
-        self.temp_plot_widget.setMinimumSize(250, 200)
+        self.mag_plot_widget.setMinimumSize(250, 250)
+        self.acc_plot_widget.setMinimumSize(250, 250)
+        self.gyr_plot_widget.setMinimumSize(250, 250)
+        self.temp_plot_widget.setMinimumSize(250, 250)
 
-        self.orientation_label = QLabel("""Position your IMU Brick as shown \
-in the image above, then press "Save Orientation".""")
+        self.orientation_label = QLabel('Position your IMU Brick as shown in the image above, then press "Save Orientation".')
         self.orientation_label.setWordWrap(True)
         self.orientation_label.setAlignment(Qt.AlignHCenter)
         self.gl_layout = QVBoxLayout()
@@ -130,6 +134,12 @@ in the image above, then press "Save Orientation".""")
         self.calibrate.clicked.connect(self.calibrate_clicked)
         self.led_button.clicked.connect(self.led_clicked)
         self.speed_spinbox.editingFinished.connect(self.speed_finished)
+
+        width = QFontMetrics(self.gyr_x_label.font()).boundingRect('-XXXX.X').width()
+
+        self.gyr_x_label.setMinimumWidth(width)
+        self.gyr_y_label.setMinimumWidth(width)
+        self.gyr_z_label.setMinimumWidth(width)
 
         self.calibrate = None
         self.alive = True
@@ -205,29 +215,38 @@ in the image above, then press "Save Orientation".""")
 
     def all_data_callback(self, data):
         acc_x, acc_y, acc_z, mag_x, mag_y, mag_z, gyr_x, gyr_y, gyr_z, temp = data
+
         self.acc_x = acc_x
         self.acc_y = acc_y
         self.acc_z = acc_z
         self.mag_x = mag_x
         self.mag_y = mag_y
         self.mag_z = mag_z
-        self.gyr_x = gyr_x
-        self.gyr_y = gyr_y
-        self.gyr_z = gyr_z
-        self.temp = temp
+        self.gyr_x = gyr_x / 14.375
+        self.gyr_y = gyr_y / 14.375
+        self.gyr_z = gyr_z / 14.375
+        self.temp = temp / 100.0
+
+        self.all_data_valid = True
 
     def quaternion_callback(self, data):
         qua_x, qua_y, qua_z, qua_w = data
+
         self.qua_x = qua_x
         self.qua_y = qua_y
         self.qua_z = qua_z
         self.qua_w = qua_w
 
+        self.quaternion_valid = True
+
     def orientation_callback(self, data):
         roll, pitch, yaw = data
-        self.roll = roll
-        self.pitch = pitch
-        self.yaw = yaw
+
+        self.roll = roll / 100.0
+        self.pitch = pitch / 100.0
+        self.yaw = yaw / 100.0
+
+        self.orientation_valid = True
 
     def led_clicked(self):
         if 'On' in self.led_button.text().replace('&', ''):
@@ -240,58 +259,46 @@ in the image above, then press "Save Orientation".""")
     def update_data(self):
         self.update_counter += 1
 
-        self.imu_gl.update(self.qua_x, self.qua_y, self.qua_z, self.qua_w)
+        if self.quaternion_valid:
+            self.imu_gl.update(self.qua_x, self.qua_y, self.qua_z, self.qua_w)
 
-        if self.update_counter % 2:
-            gyr_x = self.gyr_x/14.375
-            gyr_y = self.gyr_y/14.375
-            gyr_z = self.gyr_z/14.375
+        if self.update_counter == 2:
+            self.update_counter = 0
 
-            self.acceleration_update(self.acc_x, self.acc_y, self.acc_z)
-            self.magnetometer_update(self.mag_x, self.mag_y, self.mag_z)
-            self.gyroscope_update(gyr_x, gyr_y, gyr_z)
-            self.orientation_update(self.roll, self.pitch, self.yaw)
-            self.temperature_update(self.temp)
+            if self.all_data_valid and self.orientation_valid:
+                self.acceleration_update(self.acc_x, self.acc_y, self.acc_z)
+                self.magnetometer_update(self.mag_x, self.mag_y, self.mag_z)
+                self.gyroscope_update(self.gyr_x,self. gyr_y, self.gyr_z)
+                self.orientation_update(self.roll, self.pitch, self.yaw)
+                self.temperature_update(self.temp)
 
     def acceleration_update(self, x, y, z):
-        x_str = "%g" % x
-        y_str = "%g" % y
-        z_str = "%g" % z
-        self.acc_y_label.setText(y_str)
-        self.acc_x_label.setText(x_str)
-        self.acc_z_label.setText(z_str)
+        self.acc_y_label.setText(format(x, '.1f'))
+        self.acc_x_label.setText(format(y, '.1f'))
+        self.acc_z_label.setText(format(z, '.1f'))
 
     def magnetometer_update(self, x, y, z):
-        # Earth magnetic field. 0.5 Gauss
-        x_str = "%g" % x
-        y_str = "%g" % y
-        z_str = "%g" % z
-        self.mag_x_label.setText(x_str)
-        self.mag_y_label.setText(y_str)
-        self.mag_z_label.setText(z_str)
+        # Earth magnetic field: 0.5 Gauss
+        self.mag_x_label.setText(format(x, '.1f'))
+        self.mag_y_label.setText(format(y, '.1f'))
+        self.mag_z_label.setText(format(z, '.1f'))
 
     def gyroscope_update(self, x, y, z):
-        x_str = "%g" % int(x)
-        y_str = "%g" % int(y)
-        z_str = "%g" % int(z)
-        self.gyr_x_label.setText(x_str)
-        self.gyr_y_label.setText(y_str)
-        self.gyr_z_label.setText(z_str)
+        self.gyr_x_label.setText(format(x, '.1f'))
+        self.gyr_y_label.setText(format(y, '.1f'))
+        self.gyr_z_label.setText(format(z, '.1f'))
 
     def orientation_update(self, r, p, y):
-        r_str = "%g" % (r/100)
-        p_str = "%g" % (p/100)
-        y_str = "%g" % (y/100)
-        self.roll_label.setText(r_str)
-        self.pitch_label.setText(p_str)
-        self.yaw_label.setText(y_str)
+        self.roll_label.setText(format(r, '.1f'))
+        self.pitch_label.setText(format(p, '.1f'))
+        self.yaw_label.setText(format(y, '.1f'))
 
     def temperature_update(self, t):
-        t_str = "%.2f" % (t/100.0)
-        self.tem_label.setText(t_str)
+        self.tem_label.setText(format(t, '.1f'))
 
     def calibrate_clicked(self):
         self.stop()
+
         if self.calibrate is None:
             self.calibrate = CalibrateWindow(self)
 
