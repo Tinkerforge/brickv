@@ -165,7 +165,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.imu_gl_wrapper = None
 
         self.data_plot_widget = []
-        self.sensor_data = [0]*23
+        self.sensor_data = [None]*23
 
         self.data_labels = [self.label_acceleration_x, self.label_acceleration_y, self.label_acceleration_z,
                             self.label_magnetic_field_x, self.label_magnetic_field_y, self.label_magnetic_field_z,
@@ -336,7 +336,9 @@ class IMUV2(PluginBase, Ui_IMUV2):
     def all_data_callback(self, data):
         self.callback_counter += 1
 
-        if self.callback_counter % 2 == 0:
+        if self.callback_counter == 2:
+            self.callback_counter = 0
+
             self.sensor_data[0]  = data.acceleration[0] / 100.0
             self.sensor_data[1]  = data.acceleration[1] / 100.0
             self.sensor_data[2]  = data.acceleration[2] / 100.0
@@ -368,6 +370,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
                                self.sensor_data[13],
                                self.sensor_data[14],
                                self.sensor_data[15])
+
             if self.imu_gl_wrapper is not None:
                 self.imu_gl_wrapper.glWidget.update(self.sensor_data[12],
                                                     self.sensor_data[13],
