@@ -190,14 +190,6 @@ class LoadCellV2(COMCUPluginBase):
     def button_tare_clicked(self):
         self.lc.tare()
 
-    '''
-    def enable_led_changed(self, state):
-        if state == Qt.Checked:
-            self.lc.set_led_configuration(True)
-        else:
-            self.lc.set_led_configuration(False)
-    '''
-
     def cbox_info_led_config_changed(self, index):
         self.lc.set_info_led_config(index)
 
