@@ -279,22 +279,28 @@ class FlashingWindow(QDialog, Ui_Flashing):
         # Restore combobox state. If the former selected firmware is not found, set combobox to SELECT.
         self.combo_firmware.addItem(CUSTOM)
         firmware_idx = self.combo_firmware.findData(selected_firmware)
+
         if firmware_idx < 0:
             firmware_idx = 0
+
         self.combo_firmware.setCurrentIndex(firmware_idx)
         self.firmware_changed(firmware_idx)
 
         self.combo_plugin.addItem(CUSTOM)
         plugin_idx = self.combo_plugin.findData(selected_plugin)
+
         if plugin_idx < 0:
             plugin_idx = 0
+
         self.combo_plugin.setCurrentIndex(plugin_idx)
         self.plugin_changed(plugin_idx)
 
         self.combo_extension_firmware.addItem(CUSTOM)
         extension_firmware_idx = self.combo_extension_firmware.findData(selected_extension_firmware)
+
         if extension_firmware_idx < 0:
             extension_firmware_idx = 0
+
         self.combo_extension_firmware.setCurrentIndex(extension_firmware_idx)
         self.extension_firmware_changed(extension_firmware_idx)
 
@@ -320,7 +326,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.fw_fetch_progress_bar.show()
 
         get_main_window().fw_version_fetcher.fetch_now()
-
 
     def refresh_firmware_info(self, url_part, latest_version):
         name = url_part
@@ -453,7 +458,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             self.combo_parent.addItem('No Parent', no_parent_info)
 
-
         if self.combo_parent.count() == 0:
             self.combo_parent.addItem(NO_BRICK, None)
 
@@ -542,9 +546,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.combo_parent.setEnabled(not is_no_brick)
         self.button_plugin_save.setEnabled(not is_plugin_select and not is_no_brick)
         self.edit_custom_plugin.setEnabled(is_plugin_custom)
+
         if is_plugin_custom:
             self.button_plugin_save.setEnabled(False)
             self.edit_custom_plugin_text_changed(self.edit_custom_plugin.text())
+
         self.button_plugin_browse.setEnabled(is_plugin_custom)
 
         is_extension_firmware_select = self.combo_extension_firmware.currentText() == SELECT
@@ -596,7 +602,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 self.edit_custom_plugin_text_changed(filename)
             else:
                 self.edit_custom_firmware.setText(filename)
-
 
     def firmware_save_clicked(self):
         port_name = self.combo_serial_port.itemData(self.combo_serial_port.currentIndex())
@@ -893,6 +898,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         for port in brick_info.bricklet_ports:
             if port in brick_info.connections:
                 bricklet_info = brick_info.connections[port]
+
                 if bricklet_info.type == 'bricklet':
                     if first_index == None:
                         first_index = self.combo_port.count()
@@ -1035,6 +1041,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             # Now convert plugin to list of bytes
             plugin = plugin_data
             regular_plugin_upto = -1
+
             for i in reversed(range(4, len(plugin)-12)):
                 if plugin[i] == 0x12 and plugin[i-1] == 0x34 and plugin[i-2] == 0x56 and plugin[i-3] == 0x78:
                     regular_plugin_upto = i
@@ -1046,6 +1053,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_BOOTLOADER)
             counter = 0
+
             while True:
                 try:
                     if bricklet.get_bootloader_mode() == bricklet.BOOTLOADER_MODE_BOOTLOADER:
@@ -1456,6 +1464,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def tab_changed(self, i):
         if self.ignore_tab_changed_event:
             return
+
         if i == 0 and self.refresh_updates_pending:
             self.refresh_updates_clicked()
         elif i == 2:
@@ -1472,7 +1481,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_button_refresh.setDisabled(True)
 
         self.refresh_updates_pending = False
-
         self.fw_fetch_progress_bar = self.create_progress_bar('Discovering')
 
         self.refresh_latest_version_info()
@@ -1512,11 +1520,14 @@ class FlashingWindow(QDialog, Ui_Flashing):
                           QStandardItem(get_version_string(info.firmware_version_latest, replace_unknown="Unknown", is_red_brick=isinstance(info, infos.BrickREDInfo)))]
 
                 color, update = get_color_for_device(info)
+
                 if update:
                     is_update = True
+
                 for item in parent:
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                     item.setData(color, Qt.BackgroundRole)
+
                 parent[0].setData(info.uid, Qt.UserRole)
                 self.update_tree_view_model.appendRow(parent)
 
@@ -1528,11 +1539,14 @@ class FlashingWindow(QDialog, Ui_Flashing):
                               QStandardItem(get_version_string(connected_info1.firmware_version_latest, replace_unknown="Unknown"))]
 
                     color, update = get_color_for_device(connected_info1)
+
                     if update:
                         is_update = True
+
                     for item in child1:
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                         item.setData(color, Qt.BackgroundRole)
+
                     parent[0].appendRow(child1)
 
                     for connected_info2 in connected_info1.connections.values():
@@ -1542,11 +1556,14 @@ class FlashingWindow(QDialog, Ui_Flashing):
                                   QStandardItem(get_version_string(connected_info2.firmware_version_latest, replace_unknown="Unknown"))]
 
                         color, update = get_color_for_device(connected_info2)
+
                         if update:
                             is_update = True
+
                         for item in child2:
                             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                             item.setData(color, Qt.BackgroundRole)
+
                         child1[0].appendRow(child2)
 
                         for connected_info3 in connected_info2.connections.values():
@@ -1556,11 +1573,14 @@ class FlashingWindow(QDialog, Ui_Flashing):
                                       QStandardItem(get_version_string(connected_info3.firmware_version_latest, replace_unknown="Unknown"))]
 
                             color, update = get_color_for_device(connected_info3)
+
                             if update:
                                 is_update = True
+
                             for item in child3:
                                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                                 item.setData(color, Qt.BackgroundRole)
+
                             child2[0].appendRow(child3)
 
                 if info.can_have_extension:
@@ -1696,6 +1716,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             return
 
         itemData = self.combo_extension.itemData(index)
+
         if itemData == None:
             url_part = None
         else:
@@ -1896,7 +1917,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if idx >= 0:
             self.combo_port.setCurrentIndex(idx)
             self.port_changed(idx)
-
 
     def show_extension_update(self, master_uid):
         self.tab_widget.setCurrentWidget(self.tab_extension)

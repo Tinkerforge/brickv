@@ -1262,13 +1262,13 @@ if BrickletOutdoorWeather_found:
 
     GetStationData = namedtuple('StationData',
                                 ['temperature',
-                                'humidity',
-                                'wind_speed',
-                                'gust_speed',
-                                'rain',
-                                'wind_direction',
-                                'battery_low',
-                                'last_change'])
+                                 'humidity',
+                                 'wind_speed',
+                                 'gust_speed',
+                                 'rain',
+                                 'wind_direction',
+                                 'battery_low',
+                                 'last_change'])
 
     def special_get_station_data(device):
         station_ids = device.get_station_identifiers()
@@ -1282,13 +1282,13 @@ if BrickletOutdoorWeather_found:
             station_data = device.get_station_data(station_id)
 
             keyed_station_data[str(station_id)] = GetStationData(temperature=station_data.temperature,
-                                                                humidity=station_data.humidity,
-                                                                wind_speed=station_data.wind_speed,
-                                                                gust_speed=station_data.gust_speed,
-                                                                rain=station_data.rain,
-                                                                wind_direction=wind_direction_names[station_data.wind_direction],
-                                                                battery_low=station_data.battery_low,
-                                                                last_change=station_data.last_change)
+                                                                 humidity=station_data.humidity,
+                                                                 wind_speed=station_data.wind_speed,
+                                                                 gust_speed=station_data.gust_speed,
+                                                                 rain=station_data.rain,
+                                                                 wind_direction=wind_direction_names[station_data.wind_direction],
+                                                                 battery_low=station_data.battery_low,
+                                                                 last_change=station_data.last_change)
 
         return keyed_station_data
 
