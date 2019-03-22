@@ -24,7 +24,6 @@ Boston, MA 02111-1307, USA.
 """
 
 import sys
-import re
 import os
 import zipfile
 import urllib.request
