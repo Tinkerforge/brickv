@@ -472,7 +472,7 @@ class CurveArea(QWidget):
 class Plot(QWidget):
     def __init__(self, parent, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
                  curve_configs, scales_visible, curve_outer_border_visible, curve_motion_granularity,
-                 canvas_color, curve_start, x_diff, y_diff_min):
+                 canvas_color, curve_start, x_diff, y_diff_min, y_scale_shrinkable):
         super().__init__(parent)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -511,6 +511,7 @@ class Plot(QWidget):
 
         self.y_scale = YScale(self.tick_text_font, self.title_text_font, y_scale_title_text)
         self.y_scale_fixed = False
+        self.y_scale_shrinkable = y_scale_shrinkable
         self.y_scale_height_offset = max(self.curve_outer_border, self.y_scale.tick_text_height_half) # px, from top
 
         self.curve_area = CurveArea(self)
@@ -738,23 +739,6 @@ class Plot(QWidget):
         last_y_min = self.y_min
         last_y_max = self.y_max
 
-        if self.x_min == None:
-            self.x_min = x_min
-
-        if self.x_max == None:
-            self.x_max = x_max
-
-        if self.curves_visible[c]:
-            if self.y_min == None:
-                self.y_min = y_min
-            else:
-                self.y_min = min(self.y_min, y_min)
-
-            if self.y_max == None:
-                self.y_max = y_max
-            else:
-                self.y_max = max(self.y_max, y_max)
-
         self.curves_x[c] = x
         self.curves_y[c] = y
 
@@ -764,7 +748,7 @@ class Plot(QWidget):
         self.curves_y_min[c] = y_min
         self.curves_y_max[c] = y_max
 
-        self.x_max = min(self.curves_x_max)
+        self.update_x_min_max_y_min_max()
 
         if self.curves_visible[c] and (last_y_min != self.y_min or last_y_max != self.y_max):
             self.update_y_min_max_scale()
@@ -790,12 +774,18 @@ class Plot(QWidget):
         curves_y_max = [curve_y_max for c, curve_y_max in enumerate(self.curves_y_max) if self.curves_visible[c] and curve_y_max != None]
 
         if len(curves_y_min) > 0:
-            self.y_min = min(curves_y_min)
+            if self.y_scale_shrinkable or self.y_min == None:
+                self.y_min = min(curves_y_min)
+            else:
+                self.y_min = min(min(curves_y_min), self.y_min)
         else:
             self.y_min = None
 
         if len(curves_y_max) > 0:
-            self.y_max = max(curves_y_max)
+            if self.y_scale_shrinkable or self.y_max == None:
+                self.y_max = max(curves_y_max)
+            else:
+                self.y_max = max(max(curves_y_max), self.y_max)
         else:
             self.y_max = None
 
@@ -967,12 +957,14 @@ class PlotWidget(QWidget):
                  external_timer=None,
                  key='top-value', # top-value, right-no-icon
                  extra_key_widgets=None,
-                 update_interval=0.1, curve_start='left',
+                 update_interval=0.1,
+                 curve_start='left',
                  moving_average_config=None,
                  x_scale_title_text='Time [s]',
                  x_diff=20,
                  x_scale_skip_last_tick=True,
-                 y_resolution=None):
+                 y_resolution=None,
+                 y_scale_shrinkable=True):
         super().__init__(parent)
 
         self.setMinimumSize(300, 250)
@@ -986,7 +978,8 @@ class PlotWidget(QWidget):
         self.curve_configs = [CurveConfig(*curve_config) for curve_config in curve_configs]
         self.plot = Plot(self, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
                          self.curve_configs, scales_visible, curve_outer_border_visible,
-                         curve_motion_granularity, canvas_color, curve_start, x_diff, y_diff_min)
+                         curve_motion_granularity, canvas_color, curve_start, x_diff, y_diff_min,
+                         y_scale_shrinkable)
         self.set_x_scale = self.plot.set_x_scale
         self.set_fixed_y_scale = self.plot.set_fixed_y_scale
         self.key = key
