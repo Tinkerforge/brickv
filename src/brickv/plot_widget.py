@@ -1178,4 +1178,4 @@ class PlotWidget(QWidget):
     # internal
     def clear_clicked(self):
         self.plot.clear_graph()
-        self.counter = 0
+        self.timestamp = 0
