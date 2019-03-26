@@ -455,6 +455,9 @@ class CurveArea(QWidget):
                     else:
                         start = 0
 
+                    if start >= len(curve_x):
+                        continue
+
                     path.moveTo(curve_x[start], curve_y[start])
 
                     for i in range(start + 1, len(curve_x)):
