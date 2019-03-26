@@ -29,7 +29,7 @@ import threading
 import time
 import traceback
 
-from PyQt5 import QtCore
+from PyQt5.QtCore import pyqtSignal, Qt, QObject
 
 from brickv.bindings.ip_connection import Error
 from brickv.bindings.brick_red import BrickRED
@@ -189,11 +189,11 @@ class REDBrick(BrickRED):
             self._active_callbacks = {}
 
 
-class REDSession(QtCore.QObject):
+class REDSession(QObject):
     KEEP_ALIVE_INTERVAL = 5 # seconds
     LIFETIME            = 60 # seconds
 
-    _qtcb_lost = QtCore.pyqtSignal(str)
+    _qtcb_lost = pyqtSignal(str)
 
     def __init__(self, brick, increase_error_count):
         super().__init__()
@@ -328,7 +328,7 @@ class REDObjectReleaser:
                 self._session.increase_error_count()
 
 
-class REDObject(QtCore.QObject):
+class REDObject(QObject):
     TYPE_STRING    = BrickRED.OBJECT_TYPE_STRING
     TYPE_LIST      = BrickRED.OBJECT_TYPE_LIST
     TYPE_FILE      = BrickRED.OBJECT_TYPE_FILE
@@ -622,9 +622,9 @@ def _get_zero_padded_chunk(data, max_chunk_length, start = 0):
 
 
 class REDFileBase(REDObject):
-    class WriteAsyncData(QtCore.QObject):
-        _qtcb_result = QtCore.pyqtSignal(object)
-        _qtcb_status = QtCore.pyqtSignal(int, int)
+    class WriteAsyncData(QObject):
+        _qtcb_result = pyqtSignal(object)
+        _qtcb_status = pyqtSignal(int, int)
 
         def __init__(self, data, result_callback, status_callback):
             super().__init__()
@@ -635,14 +635,14 @@ class REDFileBase(REDObject):
             self.abort   = False
 
             if result_callback != None:
-                self._qtcb_result.connect(result_callback, QtCore.Qt.QueuedConnection)
+                self._qtcb_result.connect(result_callback, Qt.QueuedConnection)
 
             if status_callback != None:
-                self._qtcb_status.connect(status_callback, QtCore.Qt.QueuedConnection)
+                self._qtcb_status.connect(status_callback, Qt.QueuedConnection)
 
-    class ReadAsyncData(QtCore.QObject):
-        _qtcb_result = QtCore.pyqtSignal(object)
-        _qtcb_status = QtCore.pyqtSignal(int, int)
+    class ReadAsyncData(QObject):
+        _qtcb_result = pyqtSignal(object)
+        _qtcb_status = pyqtSignal(int, int)
 
         def __init__(self, max_length, result_callback, status_callback):
             super().__init__()
@@ -654,10 +654,10 @@ class REDFileBase(REDObject):
             self.abort        = False
 
             if result_callback != None:
-                self._qtcb_result.connect(result_callback, QtCore.Qt.QueuedConnection)
+                self._qtcb_result.connect(result_callback, Qt.QueuedConnection)
 
             if status_callback != None:
-                self._qtcb_status.connect(status_callback, QtCore.Qt.QueuedConnection)
+                self._qtcb_status.connect(status_callback, Qt.QueuedConnection)
 
     MAX_READ_BUFFER_LENGTH            = 62
     MAX_READ_ASYNC_BUFFER_LENGTH      = 60
@@ -686,7 +686,7 @@ class REDFileBase(REDObject):
     ASYNC_BURST_CHUNKS      = 50
     ASYNC_READ_BURST_LENGTH = ASYNC_BURST_CHUNKS * MAX_READ_ASYNC_BUFFER_LENGTH
 
-    _qtcb_events_occurred = QtCore.pyqtSignal(int)
+    _qtcb_events_occurred = pyqtSignal(int)
 
     def _initialize(self):
         self._type               = None
@@ -710,7 +710,7 @@ class REDFileBase(REDObject):
         self._read_async_data  = None
 
     def _attach_callbacks(self):
-        self._qtcb_events_occurred.connect(self._cb_events_occurred, QtCore.Qt.QueuedConnection)
+        self._qtcb_events_occurred.connect(self._cb_events_occurred, Qt.QueuedConnection)
 
         self._cb_async_write_cookie     = self._session._brick.add_callback(REDBrick.CALLBACK_ASYNC_FILE_WRITE,
                                                                             self._cb_async_write)
@@ -1255,7 +1255,7 @@ def create_directory(session, name, flags, permissions, uid, gid):
 
 
 class REDProcessBase(REDObject):
-    _qtcb_state_changed = QtCore.pyqtSignal(int, int, int)
+    _qtcb_state_changed = pyqtSignal(int, int, int)
 
     def _initialize(self):
         self._state     = None
@@ -1267,7 +1267,7 @@ class REDProcessBase(REDObject):
         self._cb_state_changed_emit_cookie = None
 
     def _attach_callbacks(self):
-        self._qtcb_state_changed.connect(self._cb_state_changed, QtCore.Qt.QueuedConnection)
+        self._qtcb_state_changed.connect(self._cb_state_changed, Qt.QueuedConnection)
         self._cb_state_changed_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROCESS_STATE_CHANGED,
                                                                                self._cb_state_changed_emit)
 
@@ -1706,10 +1706,10 @@ class REDProgram(REDProgramBase):
     SCHEDULER_STATE_STOPPED = BrickRED.PROGRAM_SCHEDULER_STATE_STOPPED
     SCHEDULER_STATE_RUNNING = BrickRED.PROGRAM_SCHEDULER_STATE_RUNNING
 
-    _qtcb_scheduler_state_changed = QtCore.pyqtSignal()
-    _qtcb_lite_scheduler_state_changed = QtCore.pyqtSignal()
-    _qtcb_process_spawned = QtCore.pyqtSignal()
-    _qtcb_lite_process_spawned = QtCore.pyqtSignal()
+    _qtcb_scheduler_state_changed = pyqtSignal()
+    _qtcb_lite_scheduler_state_changed = pyqtSignal()
+    _qtcb_process_spawned = pyqtSignal()
+    _qtcb_lite_process_spawned = pyqtSignal()
 
     def __repr__(self):
         return '<REDProgram object_id: {0}, identifier: {1}>'.format(self.object_id, self._identifier)
@@ -1752,19 +1752,19 @@ class REDProgram(REDProgramBase):
         self._cb_lite_process_spawned_emit_cookie         = None
 
     def _attach_callbacks(self):
-        self._qtcb_scheduler_state_changed.connect(self._cb_scheduler_state_changed, QtCore.Qt.QueuedConnection)
+        self._qtcb_scheduler_state_changed.connect(self._cb_scheduler_state_changed, Qt.QueuedConnection)
         self._cb_scheduler_state_changed_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED,
                                                                                           self._cb_scheduler_state_changed_emit)
 
-        self._qtcb_lite_scheduler_state_changed.connect(self._cb_lite_scheduler_state_changed, QtCore.Qt.QueuedConnection)
+        self._qtcb_lite_scheduler_state_changed.connect(self._cb_lite_scheduler_state_changed, Qt.QueuedConnection)
         self._cb_lite_scheduler_state_changed_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED,
                                                                                               self._cb_lite_scheduler_state_changed_emit)
 
-        self._qtcb_process_spawned.connect(self._cb_process_spawned, QtCore.Qt.QueuedConnection)
+        self._qtcb_process_spawned.connect(self._cb_process_spawned, Qt.QueuedConnection)
         self._cb_process_spawned_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
                                                                                  self._cb_process_spawned_emit)
 
-        self._qtcb_lite_process_spawned.connect(self._cb_lite_process_spawned, QtCore.Qt.QueuedConnection)
+        self._qtcb_lite_process_spawned.connect(self._cb_lite_process_spawned, Qt.QueuedConnection)
         self._cb_lite_process_spawned_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
                                                                                       self._cb_lite_process_spawned_emit)
 

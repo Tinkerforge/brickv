@@ -23,7 +23,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5 import QtCore
+from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QMessageBox
 
 from brickv.plugin_system.plugins.red.red_tab import REDTab
@@ -34,7 +34,7 @@ from brickv.samba import get_serial_ports
 from brickv.utils import get_main_window
 
 class REDTabConsole(REDTab, Ui_REDTabConsole):
-    append_text_signal = QtCore.pyqtSignal(str)
+    append_text_signal = pyqtSignal(str)
 
     def __init__(self):
         REDTab.__init__(self)
@@ -50,11 +50,11 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
 
         # make all elements on this tab non-focusable so the focus has
         # to stay on the console widget
-        self.combo_serial_port.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.connect_button.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.refresh_button.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.copy_button.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.combo_serial_port.setFocusPolicy(Qt.NoFocus)
+        self.connect_button.setFocusPolicy(Qt.NoFocus)
+        self.refresh_button.setFocusPolicy(Qt.NoFocus)
+        self.copy_button.setFocusPolicy(Qt.NoFocus)
+        self.setFocusPolicy(Qt.NoFocus)
 
         self.refresh_ports()
 

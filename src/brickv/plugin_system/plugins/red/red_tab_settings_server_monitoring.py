@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 import re
 import json
 
-from PyQt5 import QtCore
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QMessageBox, QCheckBox, QLineEdit, QSpinBox, QComboBox, QPushButton, QLabel, QDialog, QHBoxLayout
 from PyQt5.QtGui import QColor, QStandardItem, QStandardItemModel
 
@@ -894,7 +894,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         def populate_and_select(bricklet):
             cbox_uid.clear()
             cbox_uid.addItems(self.dict_hosts[cbox_host.currentText()][bricklet])
-            uid_from_rule = cbox_bricklet.itemData(cbox_bricklet.currentIndex(), QtCore.Qt.UserRole)
+            uid_from_rule = cbox_bricklet.itemData(cbox_bricklet.currentIndex(), Qt.UserRole)
 
             if uid_from_rule:
                 if uid_from_rule not in self.dict_hosts[cbox_host.currentText()][bricklet]:
@@ -1177,7 +1177,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                         break
                     else:
                         if bricklet == SUPPORTED_BRICKLETS[cbox.itemText(i)]['id']:
-                            cbox.setItemData(i, uid, QtCore.Qt.UserRole)
+                            cbox.setItemData(i, uid, Qt.UserRole)
                             cbox.setCurrentIndex(i)
                             break
 
@@ -2288,7 +2288,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                                                ['APPLY_EMPTY'])
 
     def slot_chkbox_sm_email_enable_state_changed(self, state):
-        if state == QtCore.Qt.Checked:
+        if state == Qt.Checked:
             for r in range(self.model_rules.rowCount()):
                 item = self.model_rules.item(r, INDEX_COL_RULES_EMAIL_NOTIFICATIONS)
                 index = self.model_rules.indexFromItem(item)
@@ -2342,7 +2342,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_chkbox_sm_email_password_show_state_changed(self, state):
-        if state == QtCore.Qt.Checked:
+        if state == Qt.Checked:
             self.ledit_sm_email_password.setEchoMode(QLineEdit.Normal)
         else:
             self.ledit_sm_email_password.setEchoMode(QLineEdit.Password)

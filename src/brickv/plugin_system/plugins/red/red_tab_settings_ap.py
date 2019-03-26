@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 
 import json
 
-from PyQt5 import QtCore
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QLineEdit, QMessageBox
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_ap import Ui_REDTabSettingsAP
@@ -38,8 +38,8 @@ BUTTON_STATE_DEFAULT = 1
 BUTTON_STATE_REFRESH = 2
 BUTTON_STATE_SAVE    = 3
 
-AP_INTERFACE_IP_USER_ROLE = QtCore.Qt.UserRole + 1
-AP_INTERFACE_MASK_USER_ROLE = QtCore.Qt.UserRole + 2
+AP_INTERFACE_IP_USER_ROLE = Qt.UserRole + 1
+AP_INTERFACE_MASK_USER_ROLE = Qt.UserRole + 2
 
 HOSTAPD_CONF_PATH = '/etc/hostapd/hostapd.conf'
 DNSMASQ_CONF_PATH = '/etc/dnsmasq.conf'
@@ -194,7 +194,7 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
             self.sbox_ap_intf_mask4.setValue(int(mask4))
 
     def slot_chkbox_ap_wpa_key_show_state_changed(self, state):
-        if state == QtCore.Qt.Checked:
+        if state == Qt.Checked:
             self.ledit_ap_wpa_key.setEchoMode(QLineEdit.Normal)
         else:
             self.ledit_ap_wpa_key.setEchoMode(QLineEdit.Password)

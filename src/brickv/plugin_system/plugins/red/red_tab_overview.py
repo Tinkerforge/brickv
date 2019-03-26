@@ -27,11 +27,9 @@ import time
 import sys
 import zlib
 from operator import itemgetter
-
 import html
 
-from PyQt5 import QtCore
-from PyQt5.QtCore import QSortFilterProxyModel
+from PyQt5.QtCore import Qt, QSortFilterProxyModel, QTimer
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 
 from brickv.plugin_system.plugins.red.red_tab import REDTab
@@ -51,9 +49,9 @@ class ProcessesProxyModel(QSortFilterProxyModel):
     def lessThan(self, left, right):
         # cpu and mem
         if left.column() in [3, 4]:
-            if right.data(QtCore.Qt.UserRole + 1) is None:
+            if right.data(Qt.UserRole + 1) is None:
                 return QSortFilterProxyModel.lessThan(self, left, right)
-            return left.data(QtCore.Qt.UserRole + 1) < right.data(QtCore.Qt.UserRole + 1)
+            return left.data(Qt.UserRole + 1) < right.data(Qt.UserRole + 1)
 
         return QSortFilterProxyModel.lessThan(self, left, right)
 
@@ -68,7 +66,7 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
         self.setup_tview_nic()
         self.setup_tview_process()
 
-        self.refresh_timer = QtCore.QTimer(self)
+        self.refresh_timer = QTimer(self)
         self.refresh_counter = 0
         self.nic_time = 0
 
@@ -109,9 +107,9 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
 
     def change_process_sort_order(self):
         if self.cbox_based_on.currentIndex() == 0:
-            self.tview_process.header().setSortIndicator(3, QtCore.Qt.DescendingOrder)
+            self.tview_process.header().setSortIndicator(3, Qt.DescendingOrder)
         elif self.cbox_based_on.currentIndex() == 1:
-            self.tview_process.header().setSortIndicator(4, QtCore.Qt.DescendingOrder)
+            self.tview_process.header().setSortIndicator(4, Qt.DescendingOrder)
 
     # the callbacks
     def cb_refresh(self):
@@ -325,8 +323,8 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
         self.tview_nic.setColumnWidth(0, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(1, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(2, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
-        self.tview_nic.header().setSortIndicator(1, QtCore.Qt.DescendingOrder)
-        self.tview_nic_previous_sort = {'column_index': 1, 'order': QtCore.Qt.DescendingOrder}
+        self.tview_nic.header().setSortIndicator(1, Qt.DescendingOrder)
+        self.tview_nic_previous_sort = {'column_index': 1, 'order': Qt.DescendingOrder}
         self.nic_item_model.sort(self.tview_nic_previous_sort['column_index'],
                                  self.tview_nic_previous_sort['order'])
         self.tview_nic_previous_sort = {'column_index': self.tview_nic_previous_sort['column_index'],\
@@ -349,8 +347,8 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
         self.tview_process.setColumnWidth(2, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER)
         self.tview_process.setColumnWidth(3, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER)
         self.tview_process.setColumnWidth(4, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER)
-        self.tview_process.header().setSortIndicator(3, QtCore.Qt.DescendingOrder)
-        self.tview_process_previous_sort = {'column_index': 3, 'order': QtCore.Qt.DescendingOrder}
+        self.tview_process.header().setSortIndicator(3, Qt.DescendingOrder)
+        self.tview_process_previous_sort = {'column_index': 3, 'order': Qt.DescendingOrder}
         self.process_item_model.sort(self.tview_process_previous_sort['column_index'],
                                      self.tview_process_previous_sort['order'])
         self.tview_process_previous_sort = {'column_index': self.tview_process_previous_sort['column_index'],\

@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5 import QtCore
+from PyQt5.QtCore import QDateTime
 from PyQt5.QtWidgets import QMessageBox, QDialog
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
@@ -77,7 +77,7 @@ class REDTabSettingsAPDhcpLeasesDialog(QDialog, Ui_REDTabSettingsAPDhcpLeasesDia
                         continue
 
                     if j == 0:
-                        leases_model.setItem(i, 3, QStandardItem(QtCore.QDateTime.fromTime_t(int(l_split[j])).toString('yyyy-MM-dd HH:mm:ss')))
+                        leases_model.setItem(i, 3, QStandardItem(QDateTime.fromTime_t(int(l_split[j])).toString('yyyy-MM-dd HH:mm:ss')))
                     elif j == 3:
                         leases_model.setItem(i, 0, QStandardItem(l_split[j]))
                     else:

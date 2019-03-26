@@ -26,7 +26,7 @@ import json
 import socket
 import struct
 
-from PyQt5 import Qt, QtCore
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import QDialog, QMessageBox, QLineEdit, QWidget, QInputDialog
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
@@ -65,30 +65,30 @@ AP_ENC_METHOD_WPA2 = 2
 AP_ENC_METHOD_UNSUPPORTED = 3
 AP_COL = 4
 
-INTERFACE_NAME_USER_ROLE = QtCore.Qt.UserRole + 1
-INTERFACE_TYPE_USER_ROLE = QtCore.Qt.UserRole + 2
-INTERFACE_STATE_USER_ROLE = QtCore.Qt.UserRole + 3
-INTERFACE_TYPE_WIRED_ADDRESS_CONF_USER_ROLE = QtCore.Qt.UserRole + 4
-INTERFACE_TYPE_WIRED_IP_USER_ROLE = QtCore.Qt.UserRole + 5
-INTERFACE_TYPE_WIRED_MASK_USER_ROLE = QtCore.Qt.UserRole + 6
-INTERFACE_TYPE_WIRED_GATEWAY_USER_ROLE = QtCore.Qt.UserRole + 7
-INTERFACE_TYPE_WIRED_DNS_USER_ROLE = QtCore.Qt.UserRole + 8
+INTERFACE_NAME_USER_ROLE = Qt.UserRole + 1
+INTERFACE_TYPE_USER_ROLE = Qt.UserRole + 2
+INTERFACE_STATE_USER_ROLE = Qt.UserRole + 3
+INTERFACE_TYPE_WIRED_ADDRESS_CONF_USER_ROLE = Qt.UserRole + 4
+INTERFACE_TYPE_WIRED_IP_USER_ROLE = Qt.UserRole + 5
+INTERFACE_TYPE_WIRED_MASK_USER_ROLE = Qt.UserRole + 6
+INTERFACE_TYPE_WIRED_GATEWAY_USER_ROLE = Qt.UserRole + 7
+INTERFACE_TYPE_WIRED_DNS_USER_ROLE = Qt.UserRole + 8
 
-AP_NAME_USER_ROLE = QtCore.Qt.UserRole + 1
-AP_STATUS_USER_ROLE = QtCore.Qt.UserRole + 2
-AP_NETWORK_INDEX_USER_ROLE = QtCore.Qt.UserRole + 3
-AP_CHANNEL_USER_ROLE = QtCore.Qt.UserRole + 4
-AP_ENCRYPTION_USER_ROLE = QtCore.Qt.UserRole + 5
-AP_ENCRYPTION_METHOD_USER_ROLE = QtCore.Qt.UserRole + 6
-AP_KEY_USER_ROLE = QtCore.Qt.UserRole + 7
-AP_BSSID_USER_ROLE = QtCore.Qt.UserRole + 8
-AP_ADDRESS_CONF_USER_ROLE = QtCore.Qt.UserRole + 9
-AP_IP_USER_ROLE = QtCore.Qt.UserRole + 10
-AP_MASK_USER_ROLE = QtCore.Qt.UserRole + 11
-AP_GATEWAY_USER_ROLE = QtCore.Qt.UserRole + 12
-AP_DNS_USER_ROLE = QtCore.Qt.UserRole + 13
-AP_COL_USER_ROLE = QtCore.Qt.UserRole + 14
-AP_QUALITY_USER_ROLE = QtCore.Qt.UserRole + 15
+AP_NAME_USER_ROLE = Qt.UserRole + 1
+AP_STATUS_USER_ROLE = Qt.UserRole + 2
+AP_NETWORK_INDEX_USER_ROLE = Qt.UserRole + 3
+AP_CHANNEL_USER_ROLE = Qt.UserRole + 4
+AP_ENCRYPTION_USER_ROLE = Qt.UserRole + 5
+AP_ENCRYPTION_METHOD_USER_ROLE = Qt.UserRole + 6
+AP_KEY_USER_ROLE = Qt.UserRole + 7
+AP_BSSID_USER_ROLE = Qt.UserRole + 8
+AP_ADDRESS_CONF_USER_ROLE = Qt.UserRole + 9
+AP_IP_USER_ROLE = Qt.UserRole + 10
+AP_MASK_USER_ROLE = Qt.UserRole + 11
+AP_GATEWAY_USER_ROLE = Qt.UserRole + 12
+AP_DNS_USER_ROLE = Qt.UserRole + 13
+AP_COL_USER_ROLE = Qt.UserRole + 14
+AP_QUALITY_USER_ROLE = Qt.UserRole + 15
 
 WORKING_STATE_REFRESH = 1
 WORKING_STATE_SCAN = 2
@@ -245,7 +245,7 @@ class REDTabSettingsNetworkWirelessConnectHidden(QDialog,
             self.ui_group_toggle(self.ui_group_static_ip, False)
 
     def slot_chkbox_wpa_key_show_state_changed(self, state):
-        if state == QtCore.Qt.Checked:
+        if state == Qt.Checked:
             self.ledit_wpa_key.setEchoMode(QLineEdit.Normal)
         else:
             self.ledit_wpa_key.setEchoMode(QLineEdit.Password)
@@ -304,7 +304,7 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
 
         self.image_version_lt_1_10 = True
 
-        self.network_stat_refresh_timer = Qt.QTimer(self)
+        self.network_stat_refresh_timer = QTimer(self)
 
         self.network_refresh_tasks_remaining = -1
         self.network_refresh_tasks_error_occured = False
@@ -1087,7 +1087,7 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
                 self.ap_tree_model.appendRow([ap_item, channel_item, encryption_method_item, quality_item])
 
                 self.ap_tree_model.setSortRole(AP_QUALITY_USER_ROLE)
-                self.ap_tree_model.sort(0, QtCore.Qt.DescendingOrder)
+                self.ap_tree_model.sort(0, Qt.DescendingOrder)
 
             if self.ap_tree_model.rowCount() <= 0:
                 self.no_ap_found()
@@ -2067,7 +2067,7 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
                 continue
 
     def slot_net_wireless_key_show_state_changed(self, state):
-        if state == QtCore.Qt.Checked:
+        if state == Qt.Checked:
             self.ledit_net_wireless_key.setEchoMode(QLineEdit.Normal)
         else:
             self.ledit_net_wireless_key.setEchoMode(QLineEdit.Password)

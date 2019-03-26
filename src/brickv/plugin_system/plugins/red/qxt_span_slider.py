@@ -1,9 +1,8 @@
-from PyQt5.QtCore import pyqtProperty, pyqtSignal, pyqtSlot, QRect, QPoint
+from PyQt5.QtCore import pyqtProperty, pyqtSignal, pyqtSlot, Qt, QRect, QRectF, QPoint
 from PyQt5.QtGui import QColor, QPen, QPalette, QLinearGradient
 from PyQt5.QtWidgets import QWidget, QAbstractSlider, QSlider, QStyle, QGridLayout, \
                             QLabel, QDoubleSpinBox, QStylePainter, QStyleOption, QStyleOptionSlider, \
                             QStyleFactory
-import PyQt5.QtCore as QtCore
 
 def clamp(v, lower, upper):
     return min(upper, max(lower, v))
@@ -28,7 +27,7 @@ class QxtSpanSlider(QSlider):
     sliderReleased = pyqtSignal()
 
     def __init__(self, parent=None):
-        super().__init__(QtCore.Qt.Horizontal, parent)
+        super().__init__(Qt.Horizontal, parent)
 
         self.rangeChanged.connect(self.updateRange)
         self.sliderReleased.connect(self.movePressedHandle)
@@ -151,7 +150,7 @@ class QxtSpanSlider(QSlider):
                 self.triggerAction(QAbstractSlider.SliderMove, main)
 
     def pick(self, p):
-        if self.orientation() == QtCore.Qt.Horizontal:
+        if self.orientation() == Qt.Horizontal:
             return p.x()
         else:
             return p.y()
@@ -275,7 +274,7 @@ class QxtSpanSlider(QSlider):
         c = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderGroove, self).center()
         spanRect = QRect(QPoint(c.x() - 2, minv), QPoint(c.x() + 1, maxv))
 
-        if self.orientation() == QtCore.Qt.Horizontal:
+        if self.orientation() == Qt.Horizontal:
             spanRect = QRect(QPoint(minv, c.y() - 2), QPoint(maxv, c.y() + 1))
 
         self.drawSpan(painter, spanRect)
@@ -295,7 +294,7 @@ class QxtSpanSlider(QSlider):
         gradient.setColorAt(1, highlight.lighter(108))
         painter.setBrush(gradient)
 
-        if orientation == QtCore.Qt.Horizontal:
+        if orientation == Qt.Horizontal:
             painter.setPen(QPen(highlight.darker(130), 0))
         else:
             painter.setPen(QPen(highlight.darker(150), 0))
@@ -307,7 +306,7 @@ class QxtSpanSlider(QSlider):
         # area
         groove = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderGroove, self)
 
-        if opt.orientation == QtCore.Qt.Horizontal:
+        if opt.orientation == Qt.Horizontal:
             groove.adjust(0, 0, -1, 0);
         else:
             groove.adjust(0, 0, 0, -1);
@@ -315,7 +314,7 @@ class QxtSpanSlider(QSlider):
         # pen & brush
         painter.setPen(QPen(self.gradientLeftColor, 0))
 
-        if opt.orientation == QtCore.Qt.Horizontal:
+        if opt.orientation == Qt.Horizontal:
             self.setupPainter(painter, opt.orientation, groove.center().x(), groove.top(), groove.center().x(), groove.bottom())
         else:
             self.setupPainter(painter, opt.orientation, groove.left(), groove.center().y(), groove.right(), groove.center().y())
@@ -325,10 +324,10 @@ class QxtSpanSlider(QSlider):
         pointBottomRightOutsideLeft = rect.bottomLeft()
         pointTopLeftOutsideRight = rect.topLeft()
         pointBottomRightOutsideRight = QPoint(groove.bottomRight().x(), rect.bottomRight().y())
-        rectOutsideRangeLeft = QtCore.QRect(pointTopLeftOutsideLeft, pointBottomRightOutsideLeft)
-        rectOutsideRangeRight = QtCore.QRect(pointTopLeftOutsideRight, pointBottomRightOutsideRight)
+        rectOutsideRangeLeft = QRect(pointTopLeftOutsideLeft, pointBottomRightOutsideLeft)
+        rectOutsideRangeRight = QRect(pointTopLeftOutsideRight, pointBottomRightOutsideRight)
 
-        intersected = QtCore.QRectF(rect.intersected(groove))
+        intersected = QRectF(rect.intersected(groove))
         gradient = QLinearGradient(intersected.topLeft(), intersected.topRight())
         gradient.setColorAt(0, self.gradientLeft)
         gradient.setColorAt(1, self.gradientRight)
@@ -462,7 +461,7 @@ class QxtSpanSlider(QSlider):
         gr = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderGroove, self)
         sr = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderHandle, self)
 
-        if self.orientation() == QtCore.Qt.Horizontal:
+        if self.orientation() == Qt.Horizontal:
             sliderLength = sr.width()
             sliderMin = gr.x()
             sliderMax = gr.right() - sliderLength + 1

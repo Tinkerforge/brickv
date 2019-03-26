@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from operator import itemgetter
 
-from PyQt5 import QtCore
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_mobile_internet_provider_preset_dialog import \
@@ -35,10 +35,10 @@ from brickv.utils import get_main_window
 from brickv.plugin_system.plugins.red.serviceprovider_data import dict_provider
 from brickv.plugin_system.plugins.red.serviceprovider_data import dict_country
 
-USER_ROLE_APN      = QtCore.Qt.UserRole
-USER_ROLE_USERNAME = QtCore.Qt.UserRole + 1
-USER_ROLE_PASSWORD = QtCore.Qt.UserRole + 2
-USER_ROLE_DIAL     = QtCore.Qt.UserRole + 3
+USER_ROLE_APN      = Qt.UserRole
+USER_ROLE_USERNAME = Qt.UserRole + 1
+USER_ROLE_PASSWORD = Qt.UserRole + 2
+USER_ROLE_DIAL     = Qt.UserRole + 3
 
 class REDTabSettingsMobileInternetProviderPresetDialog(QDialog, Ui_REDTabSettingsMobileInternetProviderPresetDialog):
     def __init__(self, parent, session, dict_provider, dict_country):

@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 import json
 
-from PyQt5 import Qt, QtCore
+from PyQt5.QtCore import Qt, QRegExp, QTimer
 from PyQt5.QtWidgets import QMessageBox, QWidget, QLineEdit, QDialog
 from PyQt5.QtGui import QRegExpValidator
 
@@ -86,15 +86,15 @@ class REDTabSettingsMobileInternet(QWidget, Ui_REDTabSettingsMobileInternet):
 
         self.sarea_mi.hide()
 
-        regex_sim_card_pin = QtCore.QRegExp('\\d+')
+        regex_sim_card_pin = QRegExp('\\d+')
         validator_sim_card_pin = QRegExpValidator(regex_sim_card_pin)
         self.ledit_mi_sim_card_pin.setValidator(validator_sim_card_pin)
 
-        regex_dial = QtCore.QRegExp('[\\d*#]+')
+        regex_dial = QRegExp('[\\d*#]+')
         validator_dial = QRegExpValidator(regex_dial)
         self.ledit_mi_dial.setValidator(validator_dial)
 
-        self.status_refresh_timer = Qt.QTimer(self)
+        self.status_refresh_timer = QTimer(self)
 
         self.pbutton_mi_provider_presets.clicked.connect(self.pbutton_mi_provider_presets_clicked)
         self.pbutton_mi_refresh.clicked.connect(self.pbutton_mi_refresh_clicked)
@@ -140,13 +140,13 @@ class REDTabSettingsMobileInternet(QWidget, Ui_REDTabSettingsMobileInternet):
         pass
 
     def chkbox_mi_password_state_changed(self, state):
-        if state == QtCore.Qt.Checked:
+        if state == Qt.Checked:
             self.ledit_mi_password.setEchoMode(QLineEdit.Normal)
         else:
             self.ledit_mi_password.setEchoMode(QLineEdit.Password)
 
     def chkbox_mi_sim_card_pin_state_changed(self, state):
-        if state == QtCore.Qt.Checked:
+        if state == Qt.Checked:
             self.ledit_mi_sim_card_pin.setEchoMode(QLineEdit.Normal)
         else:
             self.ledit_mi_sim_card_pin.setEchoMode(QLineEdit.Password)

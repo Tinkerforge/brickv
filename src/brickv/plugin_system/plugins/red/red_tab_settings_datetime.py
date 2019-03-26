@@ -25,7 +25,7 @@ Boston, MA 02111-1307, USA.
 
 import time
 
-from PyQt5 import QtCore
+from PyQt5.QtCore import QDateTime, QTimer
 from PyQt5.QtWidgets import QWidget, QMessageBox
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_datetime import Ui_REDTabSettingsDateTime
@@ -43,7 +43,7 @@ class REDTabSettingsDateTime(QWidget, Ui_REDTabSettingsDateTime):
         self.image_version  = None # Set from REDTabSettings
         self.service_state  = None # Set from REDTabSettings
 
-        self.time_refresh_timer = QtCore.QTimer()
+        self.time_refresh_timer = QTimer()
         self.time_refresh_timer.setInterval(1000)
         self.time_refresh_timer.timeout.connect(self.time_refresh)
         self.time_local_old = 0
@@ -120,11 +120,11 @@ class REDTabSettingsDateTime(QWidget, Ui_REDTabSettingsDateTime):
         self.time_update_gui()
 
     def time_update_gui(self):
-        t = QtCore.QDateTime.fromTime_t(self.time_local_old)
+        t = QDateTime.fromTime_t(self.time_local_old)
         self.time_date_local.setDateTime(t)
         self.time_time_local.setDateTime(t)
 
-        t = QtCore.QDateTime.fromTime_t(self.time_red_old)
+        t = QDateTime.fromTime_t(self.time_red_old)
         self.time_date_red.setDateTime(t)
         self.time_time_red.setDateTime(t)
 

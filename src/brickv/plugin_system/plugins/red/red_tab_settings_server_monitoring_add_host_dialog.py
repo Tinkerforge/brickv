@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5 import QtCore
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QMessageBox
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_server_monitoring_add_host_dialog \
@@ -81,7 +81,7 @@ class REDTabSettingsServerMonitoringAddHostDialog(QDialog, Ui_REDTabSettingsServ
         self.accept()
 
     def slot_chkbox_sm_add_host_authentication_state_changed(self, state):
-        if state == QtCore.Qt.Checked:
+        if state == Qt.Checked:
             self.label_sm_add_host_secret.show()
             self.ledit_sm_add_host_secret.show()
         else:
