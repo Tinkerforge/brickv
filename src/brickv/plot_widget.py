@@ -869,7 +869,7 @@ class Plot(QWidget):
         else:
             step_size_min = EPSILON
 
-        # decrease y-axis step-size until it divides delta-y in 4 or more parts
+        # decrease y-axis step-size until it divides y-diff in 4 or more parts
         while fuzzy_geq(step_size / divisors[d % len(divisors)], step_size_min) \
               and y_diff / step_size < 4.0:
             step_size /= divisors[d % len(divisors)]
