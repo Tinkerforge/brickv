@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBo
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_ac_current import BrickletACCurrent
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import format_current
@@ -42,9 +42,9 @@ class ACCurrent(PluginBase):
                                             self.cb_current,
                                             self.increase_error_count)
 
-        self.current_current = None # float, A
+        self.current_current = CurveValueWrapper() # float, A
 
-        plots = [('Current', Qt.red, lambda: self.current_current, format_current)]
+        plots = [('Current', Qt.red, self.current_current, format_current)]
         self.plot_widget = PlotWidget('Current [A]', plots, y_resolution=0.001)
 
         self.label_average = QLabel('Moving Average Length:')
@@ -111,7 +111,7 @@ class ACCurrent(PluginBase):
         return device_identifier == BrickletACCurrent.DEVICE_IDENTIFIER
 
     def cb_current(self, current):
-        self.current_current = current / 1000.0
+        self.current_current.value = current / 1000.0
 
     def spin_average_finished(self):
         self.acc.set_moving_average(self.spin_average.value())

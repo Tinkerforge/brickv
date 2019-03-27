@@ -28,7 +28,7 @@ from PyQt5.QtGui import QPainter, QBrush, QColor
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_color import BrickletColor
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -72,28 +72,31 @@ class Color(PluginBase):
         self.illuminance_frame = ColorFrame()
         self.color_temperature_frame = ColorFrame()
 
-        self.current_color = (0, 0, 0, 0)
-        self.current_illuminance = 0 # float, lx
-        self.current_color_temperature = 0 # int, K
+        self.current_color_r = CurveValueWrapper() # int
+        self.current_color_g = CurveValueWrapper() # int
+        self.current_color_b = CurveValueWrapper() # int
+        self.current_color_c = CurveValueWrapper() # int
+        self.current_illuminance = CurveValueWrapper() # float, lx
+        self.current_color_temperature = CurveValueWrapper() # int, K
 
         self.clear_graphs_button = QPushButton("Clear Graphs")
 
-        plots = [('R', Qt.red, lambda: self.current_color[0], lambda value: self.format_color(0, value)),
-                 ('G', Qt.darkGreen, lambda: self.current_color[1], lambda value: self.format_color(1, value)),
-                 ('B', Qt.blue, lambda: self.current_color[2], lambda value: self.format_color(2, value)),
-                 ('C', Qt.black, lambda: self.current_color[3], str)]
+        plots = [('R', Qt.red, self.current_color_r, lambda value: self.format_color(0, value)),
+                 ('G', Qt.darkGreen, self.current_color_g, lambda value: self.format_color(1, value)),
+                 ('B', Qt.blue, self.current_color_b, lambda value: self.format_color(2, value)),
+                 ('C', Qt.black, self.current_color_c, str)]
         self.plot_widget = PlotWidget('Color', plots, clear_button=self.clear_graphs_button,
                                       extra_key_widgets=[self.color_frame], y_resolution=1.0)
         self.plot_widget.setMinimumSize(250, 200)
 
-        plots_illuminance = [('Illuminance', Qt.red, lambda: self.current_illuminance, '{} lx (Lux)'.format)]
+        plots_illuminance = [('Illuminance', Qt.red, self.current_illuminance, '{} lx (Lux)'.format)]
         self.plot_widget_illuminance = PlotWidget('Illuminance [lx]', plots_illuminance,
                                                   clear_button=self.clear_graphs_button,
                                                   extra_key_widgets=[self.illuminance_frame],
                                                   y_resolution=0.1)
         self.plot_widget_illuminance.setMinimumSize(250, 200)
 
-        plots_color_temperature = [('Color Temperature', Qt.red, lambda: self.current_color_temperature, '{} K'.format)]
+        plots_color_temperature = [('Color Temperature', Qt.red, self.current_color_temperature, '{} K'.format)]
         self.plot_widget_color_temperature = PlotWidget('Color Temperature [K]', plots_color_temperature,
                                                         clear_button=self.clear_graphs_button,
                                                         extra_key_widgets=[self.color_temperature_frame],
@@ -198,7 +201,10 @@ class Color(PluginBase):
         return str(value)
 
     def cb_color(self, r, g, b, c):
-        self.current_color = (r, g, b, c)
+        self.current_color_r.value = r
+        self.current_color_g.value = b
+        self.current_color_b.value = b
+        self.current_color_c.value = c
 
         if r >= 65535 or g >= 65535 or b >= 65535:
             self.plot_widget_illuminance.get_key_item(0).setStyleSheet('QLabel { color: red }')
@@ -208,27 +214,30 @@ class Color(PluginBase):
             self.plot_widget_color_temperature.get_key_item(0).setStyleSheet('')
 
         normalize = 0xFFFF
-        self.color_frame.set_color(r*255.0/normalize, g*255.0/normalize, b*255.0/normalize)
+        self.color_frame.set_color(r * 255.0 / normalize, g * 255.0 / normalize, b * 255.0 / normalize)
 
     def cb_illuminance(self, illuminance):
-        self.current_illuminance = round(illuminance * 700.0 / float(self.current_gain_factor) / float(self.current_conversion_time), 1)
+        self.current_illuminance.value = round(illuminance * 700.0 / float(self.current_gain_factor) / float(self.current_conversion_time), 1)
 
-        i = self.current_illuminance*255/20000
+        i = self.current_illuminance.value * 255 / 20000
+
         if i > 255:
             i = 255
 
         self.illuminance_frame.set_color(i, i, i)
 
     def cb_color_temperature(self, color_temperature):
-        self.current_color_temperature = color_temperature
+        self.current_color_temperature.value = color_temperature
 
         m = color_temperature % 100
         color_temperature -= m
+
         if m > 50:
             color_temperature += 100
 
         if color_temperature < 1000:
             color_temperature = 1000
+
         if color_temperature > 40000:
             color_temperature = 40000
 

@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_moisture import BrickletMoisture
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -41,16 +41,16 @@ class Moisture(PluginBase):
                                              self.cb_moisture,
                                              self.increase_error_count)
 
-        self.current_moisture = None
+        self.current_moisture = CurveValueWrapper()
 
-        plots = [('Moisture Value', Qt.red, lambda: self.current_moisture, str)]
+        plots = [('Moisture Value', Qt.red, self.current_moisture, str)]
         self.plot_widget = PlotWidget('Moisture Value', plots, y_resolution=1.0)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)
 
     def cb_moisture(self, moisture):
-        self.current_moisture = moisture
+        self.current_moisture.value = moisture
 
     def start(self):
         async_call(self.moisture.get_moisture_value, None, self.cb_moisture, self.increase_error_count)

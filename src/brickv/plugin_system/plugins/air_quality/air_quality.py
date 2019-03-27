@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QLabel
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_air_quality import BrickletAirQuality
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -40,24 +40,23 @@ class AirQuality(COMCUPluginBase):
                                                 self.cb_get_all_values,
                                                 self.increase_error_count)
 
-        self.current_iaq_index = None # float
-        self.current_temperature = None # float, °C
-        self.current_humidity = None # float, %RH
-        self.current_air_pressure = None # float, mbar
-        self.current_iaq_index_accuracy = None
+        self.current_iaq_index = CurveValueWrapper() # float
+        self.current_temperature = CurveValueWrapper() # float, °C
+        self.current_humidity = CurveValueWrapper() # float, %RH
+        self.current_air_pressure = CurveValueWrapper() # float, mbar
 
         self.iaq_accuracy_label = QLabel("(Accuracy: TBD)")
 
-        plots_iaq_index = [('IAQ Index', Qt.red, lambda: self.current_iaq_index, '{}'.format)]
+        plots_iaq_index = [('IAQ Index', Qt.red, self.current_iaq_index, '{}'.format)]
         self.plot_widget_iaq_index = PlotWidget('IAQ Index', plots_iaq_index, extra_key_widgets=(self.iaq_accuracy_label,), y_resolution=1.0)
 
-        plots_temperature = [('Temperature', Qt.red, lambda: self.current_temperature, '{} °C'.format)]
+        plots_temperature = [('Temperature', Qt.red, self.current_temperature, '{} °C'.format)]
         self.plot_widget_temperature = PlotWidget('Temperature [°C]', plots_temperature, y_resolution=0.01)
 
-        plots_humidity = [('Relative Humidity', Qt.red, lambda: self.current_humidity, '{} %RH'.format)]
+        plots_humidity = [('Relative Humidity', Qt.red, self.current_humidity, '{} %RH'.format)]
         self.plot_widget_humidity = PlotWidget('Relative Humidity [%RH]', plots_humidity, y_resolution=0.01)
 
-        plots_air_pressure = [('Air Pressure', Qt.red, lambda: self.current_air_pressure, '{} mbar (QFE)'.format)]
+        plots_air_pressure = [('Air Pressure', Qt.red, self.current_air_pressure, '{} mbar (QFE)'.format)]
         self.plot_widget_air_pressure = PlotWidget('Air Pressure [mbar]', plots_air_pressure, y_resolution=0.01)
 
         layout_plot1 = QHBoxLayout()
@@ -73,17 +72,16 @@ class AirQuality(COMCUPluginBase):
         layout_main.addLayout(layout_plot2)
 
     def cb_get_all_values(self, values):
-        self.current_iaq_index = values.iaq_index
-        self.current_iaq_index_accuracy = values.iaq_index_accuracy
-        self.current_temperature = values.temperature / 100.0
-        self.current_humidity = values.humidity / 100.0
-        self.current_air_pressure = values.air_pressure / 100.0
+        self.current_iaq_index.value = values.iaq_index
+        self.current_temperature.value = values.temperature / 100.0
+        self.current_humidity.value = values.humidity / 100.0
+        self.current_air_pressure.value = values.air_pressure / 100.0
 
-        if self.current_iaq_index_accuracy == 0:
+        if values.iaq_index_accuracy == 0:
             self.iaq_accuracy_label.setText('(Accuracy: Unreliable)')
-        elif self.current_iaq_index_accuracy == 1:
+        elif values.iaq_index_accuracy == 1:
             self.iaq_accuracy_label.setText('(Accuracy: Low)')
-        elif self.current_iaq_index_accuracy == 2:
+        elif values.iaq_index_accuracy == 2:
             self.iaq_accuracy_label.setText('(Accuracy: Medium)')
         else:
             self.iaq_accuracy_label.setText('(Accuracy: High)')

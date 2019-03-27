@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QSlider, QCheckBox, QFrame
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_motorized_linear_poti import BrickletMotorizedLinearPoti
-from brickv.plot_widget import PlotWidget, FixedSizeLabel
+from brickv.plot_widget import PlotWidget, CurveValueWrapper, FixedSizeLabel
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -46,14 +46,14 @@ class MotorizedLinearPoti(COMCUPluginBase):
                                              self.cb_position,
                                              self.increase_error_count)
 
-        self.current_position = None
+        self.current_position = CurveValueWrapper()
 
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(0, 100)
         self.slider.setMinimumWidth(200)
         self.slider.setEnabled(False)
 
-        plots = [('Potentiometer Position', Qt.red, lambda: self.current_position, str)]
+        plots = [('Potentiometer Position', Qt.red, self.current_position, str)]
         self.plot_widget = PlotWidget('Position', plots, extra_key_widgets=[self.slider],
                                       curve_motion_granularity=40, update_interval=0.025, y_resolution=1.0)
 
@@ -108,7 +108,7 @@ class MotorizedLinearPoti(COMCUPluginBase):
         return device_identifier == BrickletMotorizedLinearPoti.DEVICE_IDENTIFIER
 
     def cb_position(self, position):
-        self.current_position = position
+        self.current_position.value = position
         self.slider.setValue(position)
 
     def cb_motor_position(self, motor):

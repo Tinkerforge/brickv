@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QSpinBox, QVBoxLayout, QHBoxLayout, QFrame, QLabel
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_distance_us import BrickletDistanceUS
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -41,9 +41,9 @@ class DistanceUS(PluginBase):
                                              self.cb_distance,
                                              self.increase_error_count)
 
-        self.current_distance = None
+        self.current_distance = CurveValueWrapper()
 
-        plots = [('Distance Value', Qt.red, lambda: self.current_distance, str)]
+        plots = [('Distance Value', Qt.red, self.current_distance, str)]
         self.plot_widget = PlotWidget('Distance Value', plots, y_resolution=1.0)
 
         self.spin_average = QSpinBox()
@@ -91,7 +91,7 @@ class DistanceUS(PluginBase):
         self.spin_average.setValue(average)
 
     def cb_distance(self, distance):
-        self.current_distance = distance
+        self.current_distance.value = distance
 
     def spin_average_finished(self):
         self.dist.set_moving_average(self.spin_average.value())

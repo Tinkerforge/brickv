@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, \
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_barometer_v2 import BrickletBarometerV2
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_modeless_dialog_flags
@@ -131,9 +131,8 @@ class BarometerV2(COMCUPluginBase):
                                                 self.cb_get_temperature,
                                                 self.increase_error_count)
 
-        self.current_altitude = None
-        self.current_temperature = None
-        self.current_air_pressure = None
+        self.current_altitude = CurveValueWrapper()
+        self.current_air_pressure = CurveValueWrapper()
 
         self.calibration = None
         self.btn_clear_graphs = QPushButton('Clear Graphs')
@@ -168,12 +167,12 @@ class BarometerV2(COMCUPluginBase):
 
         plot_config_air_pressure = [('Air Pressure',
                                      Qt.red,
-                                     lambda: self.current_air_pressure,
+                                     self.current_air_pressure,
                                      '{:.3f} mbar (QFE)'.format)]
 
         plot_config_altitude = [('Altitude',
                                  Qt.darkGreen,
-                                 lambda: self.current_altitude,
+                                 self.current_altitude,
                                  lambda value: '{:.3f} m ({:.3f} ft)'.format(value, value / 0.3048))]
 
         self.plot_widget_air_pressure = PlotWidget('Air Pressure [mbar]',
@@ -303,14 +302,13 @@ class BarometerV2(COMCUPluginBase):
         return device_identifier == BrickletBarometerV2.DEVICE_IDENTIFIER
 
     def cb_get_air_pressure(self, air_pressure):
-        self.current_air_pressure = air_pressure / 1000.0
+        self.current_air_pressure.value = air_pressure / 1000.0
 
     def cb_get_altitude(self, altitude):
-        self.current_altitude = altitude / 1000.0
+        self.current_altitude.value = altitude / 1000.0
 
     def cb_get_temperature(self, temperature):
-        self.current_temperature = temperature / 100.0
-        self.lbl_temperature_value.setText('{:.2f} °C'.format(self.current_temperature))
+        self.lbl_temperature_value.setText('{:.2f} °C'.format(temperature / 100.0))
 
     def get_reference_air_pressure_async(self, air_pressure):
         self.sbox_reference_air_pressure.setValue(air_pressure / 1000.0)

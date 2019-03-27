@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_humidity import BrickletHumidity
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -41,9 +41,9 @@ class Humidity(PluginBase):
                                              self.cb_humidity,
                                              self.increase_error_count)
 
-        self.current_humidity = None # float, %RH
+        self.current_humidity = CurveValueWrapper() # float, %RH
 
-        plots = [('Relative Humidity', Qt.red, lambda: self.current_humidity, '{} %RH'.format)]
+        plots = [('Relative Humidity', Qt.red, self.current_humidity, '{} %RH'.format)]
         self.plot_widget = PlotWidget('Relative Humidity [%RH]', plots, y_resolution=0.1)
 
         layout = QVBoxLayout(self)
@@ -68,4 +68,4 @@ class Humidity(PluginBase):
         return device_identifier == BrickletHumidity.DEVICE_IDENTIFIER
 
     def cb_humidity(self, humidity):
-        self.current_humidity = humidity / 10.0
+        self.current_humidity.value = humidity / 10.0

@@ -32,7 +32,7 @@ from brickv.plugin_system.plugins.imu_v2.ui_imu_v2 import Ui_IMUV2
 from brickv.plugin_system.plugins.imu_v2.ui_calibration import Ui_Calibration
 from brickv.bindings.brick_imu_v2 import BrickIMUV2
 from brickv.async_call import async_call
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_modeless_dialog_flags
 from brickv import config
@@ -165,7 +165,8 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.imu_gl_wrapper = None
 
         self.data_plot_widget = []
-        self.sensor_data = [None]*23
+
+        self.sensor_data = [CurveValueWrapper() for i in range(23)]
 
         self.data_labels = [self.label_acceleration_x, self.label_acceleration_y, self.label_acceleration_z,
                             self.label_magnetic_field_x, self.label_magnetic_field_y, self.label_magnetic_field_z,
@@ -212,15 +213,12 @@ class IMUV2(PluginBase, Ui_IMUV2):
 
                 label.setAutoFillBackground(True)
 
-        def get_lambda_data_getter(i):
-            return lambda: self.sensor_data[i]
-
         self.plot_timer = QTimer(self)
         self.plot_timer.start(100)
 
         for i in range(23):
             self.data_plot_widget.append(PlotWidget("",
-                                                    [("", self.data_color[i][0], get_lambda_data_getter(i), str)],
+                                                    [("", self.data_color[i][0], self.sensor_data[i], str)],
                                                     clear_button=self.clear_graphs,
                                                     scales_visible=False,
                                                     curve_outer_border_visible=False,
@@ -339,43 +337,43 @@ class IMUV2(PluginBase, Ui_IMUV2):
         if self.callback_counter == 2:
             self.callback_counter = 0
 
-            self.sensor_data[0]  = data.acceleration[0] / 100.0
-            self.sensor_data[1]  = data.acceleration[1] / 100.0
-            self.sensor_data[2]  = data.acceleration[2] / 100.0
-            self.sensor_data[3]  = data.magnetic_field[0] / 16.0
-            self.sensor_data[4]  = data.magnetic_field[1] / 16.0
-            self.sensor_data[5]  = data.magnetic_field[2] / 16.0
-            self.sensor_data[6]  = data.angular_velocity[0] / 16.0
-            self.sensor_data[7]  = data.angular_velocity[1] / 16.0
-            self.sensor_data[8]  = data.angular_velocity[2] / 16.0
-            self.sensor_data[9]  = data.euler_angle[0] / 16.0
-            self.sensor_data[10] = data.euler_angle[1] / 16.0
-            self.sensor_data[11] = data.euler_angle[2] / 16.0
-            self.sensor_data[12] = data.quaternion[0] / (2 ** 14 - 1)
-            self.sensor_data[13] = data.quaternion[1] / (2 ** 14 - 1)
-            self.sensor_data[14] = data.quaternion[2] / (2 ** 14 - 1)
-            self.sensor_data[15] = data.quaternion[3] / (2 ** 14 - 1)
-            self.sensor_data[16] = data.linear_acceleration[0] / 100.0
-            self.sensor_data[17] = data.linear_acceleration[1] / 100.0
-            self.sensor_data[18] = data.linear_acceleration[2] / 100.0
-            self.sensor_data[19] = data.gravity_vector[0] / 100.0
-            self.sensor_data[20] = data.gravity_vector[1] / 100.0
-            self.sensor_data[21] = data.gravity_vector[2] / 100.0
-            self.sensor_data[22] = data.temperature
+            self.sensor_data[0].value  = data.acceleration[0] / 100.0
+            self.sensor_data[1].value  = data.acceleration[1] / 100.0
+            self.sensor_data[2].value  = data.acceleration[2] / 100.0
+            self.sensor_data[3].value  = data.magnetic_field[0] / 16.0
+            self.sensor_data[4].value  = data.magnetic_field[1] / 16.0
+            self.sensor_data[5].value  = data.magnetic_field[2] / 16.0
+            self.sensor_data[6].value  = data.angular_velocity[0] / 16.0
+            self.sensor_data[7].value  = data.angular_velocity[1] / 16.0
+            self.sensor_data[8].value  = data.angular_velocity[2] / 16.0
+            self.sensor_data[9].value  = data.euler_angle[0] / 16.0
+            self.sensor_data[10].value = data.euler_angle[1] / 16.0
+            self.sensor_data[11].value = data.euler_angle[2] / 16.0
+            self.sensor_data[12].value = data.quaternion[0] / (2 ** 14 - 1)
+            self.sensor_data[13].value = data.quaternion[1] / (2 ** 14 - 1)
+            self.sensor_data[14].value = data.quaternion[2] / (2 ** 14 - 1)
+            self.sensor_data[15].value = data.quaternion[3] / (2 ** 14 - 1)
+            self.sensor_data[16].value = data.linear_acceleration[0] / 100.0
+            self.sensor_data[17].value = data.linear_acceleration[1] / 100.0
+            self.sensor_data[18].value = data.linear_acceleration[2] / 100.0
+            self.sensor_data[19].value = data.gravity_vector[0] / 100.0
+            self.sensor_data[20].value = data.gravity_vector[1] / 100.0
+            self.sensor_data[21].value = data.gravity_vector[2] / 100.0
+            self.sensor_data[22].value = data.temperature
 
             for i in range(23):
-                self.data_labels[i].setText("{0:.2f}".format(self.sensor_data[i]))
+                self.data_labels[i].setText("{0:.2f}".format(self.sensor_data[i].value))
 
-            self.imu_gl.update(self.sensor_data[12],
-                               self.sensor_data[13],
-                               self.sensor_data[14],
-                               self.sensor_data[15])
+            self.imu_gl.update(self.sensor_data[12].value,
+                               self.sensor_data[13].value,
+                               self.sensor_data[14].value,
+                               self.sensor_data[15].value)
 
             if self.imu_gl_wrapper is not None:
-                self.imu_gl_wrapper.glWidget.update(self.sensor_data[12],
-                                                    self.sensor_data[13],
-                                                    self.sensor_data[14],
-                                                    self.sensor_data[15])
+                self.imu_gl_wrapper.glWidget.update(self.sensor_data[12].value,
+                                                    self.sensor_data[13].value,
+                                                    self.sensor_data[14].value,
+                                                    self.sensor_data[15].value)
 
             cal_mag = data.calibration_status & 3
             cal_acc = (data.calibration_status & (3 << 2)) >> 2

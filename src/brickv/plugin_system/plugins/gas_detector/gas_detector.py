@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QCheckBox, QComboB
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_gas_detector import BrickletGasDetector
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -41,9 +41,9 @@ class GasDetector(PluginBase):
                                           self.cb_value,
                                           self.increase_error_count)
 
-        self.current_value = None
+        self.current_value = CurveValueWrapper()
 
-        plots = [('Value', Qt.red, lambda: self.current_value, str)]
+        plots = [('Value', Qt.red, self.current_value, str)]
         self.plot_widget = PlotWidget('Value', plots, y_resolution=1.0)
 
         self.heater_checkbox = QCheckBox()
@@ -91,7 +91,7 @@ class GasDetector(PluginBase):
             self.heater_checkbox.setChecked(False)
 
     def cb_value(self, value):
-        self.current_value = value
+        self.current_value.value = value
 
     def start(self):
         async_call(self.gas_detector.get_detector_type, None, self.get_detector_type_async, self.increase_error_count)

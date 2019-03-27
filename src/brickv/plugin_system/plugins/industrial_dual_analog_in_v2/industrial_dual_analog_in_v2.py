@@ -31,7 +31,7 @@ from PyQt5.QtCore import Qt
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_industrial_dual_analog_in_v2 import BrickletIndustrialDualAnalogInV2
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_modeless_dialog_flags
@@ -157,14 +157,14 @@ class IndustrialDualAnalogInV2(COMCUPluginBase):
         self.sample_rate_combo.addItem('2 Hz')
         self.sample_rate_combo.addItem('1 Hz')
 
-        self.current_voltage = [None, None] # float, V
+        self.current_voltage = [CurveValueWrapper(), CurveValueWrapper()] # float, V
         self.calibration_button = QPushButton('Calibration...')
 
         self.sample_rate_combo.currentIndexChanged.connect(self.sample_rate_combo_index_changed)
         self.calibration_button.clicked.connect(self.calibration_button_clicked)
 
-        plots = [('Channel 0', Qt.red, lambda: self.current_voltage[0], format_voltage),
-                 ('Channel 1', Qt.blue, lambda: self.current_voltage[1], format_voltage)]
+        plots = [('Channel 0', Qt.red, self.current_voltage[0], format_voltage),
+                 ('Channel 1', Qt.blue, self.current_voltage[1], format_voltage)]
         self.plot_widget = PlotWidget('Voltage [V]', plots, y_resolution=0.001)
 
         # Define lines
@@ -483,4 +483,4 @@ class IndustrialDualAnalogInV2(COMCUPluginBase):
         self.led_status_config_ch1_combo.blockSignals(False)
 
     def cb_voltage(self, sensor, voltage):
-        self.current_voltage[sensor] = voltage / 1000.0
+        self.current_voltage[sensor].value = voltage / 1000.0

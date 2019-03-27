@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_heart_rate import BrickletHeartRate
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.load_pixmap import load_masked_pixmap
@@ -54,9 +54,9 @@ class HeartRate(PluginBase):
         self.heart_icon = QLabel()
         self.heart_icon.setPixmap(self.heart_white_bitmap)
 
-        self.current_heart_rate = None
+        self.current_heart_rate = CurveValueWrapper()
 
-        plots = [('Heart Rate', Qt.red, lambda: self.current_heart_rate, '{} BPM'.format)]
+        plots = [('Heart Rate', Qt.red, self.current_heart_rate, '{} BPM'.format)]
         self.plot_widget = PlotWidget('Heart Rate [BPM]', plots, extra_key_widgets=[self.heart_icon], y_resolution=1.0)
 
         layout = QVBoxLayout(self)
@@ -83,7 +83,7 @@ class HeartRate(PluginBase):
         return device_identifier == BrickletHeartRate.DEVICE_IDENTIFIER
 
     def cb_heart_rate(self, heart_rate):
-        self.current_heart_rate = heart_rate
+        self.current_heart_rate.value = heart_rate
 
     def cb_beat_state_changed(self, state):
         if state == self.hr.BEAT_STATE_RISING:

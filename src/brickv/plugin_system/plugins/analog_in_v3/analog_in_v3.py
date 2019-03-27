@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QFrame, 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_analog_in_v3 import BrickletAnalogInV3
 from brickv.plugin_system.plugins.analog_in_v3.ui_calibration import Ui_Calibration
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import format_voltage
@@ -104,9 +104,9 @@ class AnalogInV3(COMCUPluginBase):
                                             self.cb_voltage,
                                             self.increase_error_count)
 
-        self.current_voltage = None # float, V
+        self.current_voltage = CurveValueWrapper() # float, V
 
-        plots = [('Voltage', Qt.red, lambda: self.current_voltage, format_voltage)]
+        plots = [('Voltage', Qt.red, self.current_voltage, format_voltage)]
         self.plot_widget = PlotWidget('Voltage [V]', plots, y_resolution=0.001)
 
         self.oversampling_combo = QComboBox()
@@ -174,7 +174,7 @@ class AnalogInV3(COMCUPluginBase):
         return device_identifier == BrickletAnalogInV3.DEVICE_IDENTIFIER
 
     def cb_voltage(self, voltage):
-        self.current_voltage = voltage / 1000.0
+        self.current_voltage.value = voltage / 1000.0
 
     def oversampling_combo_index_changed(self, index):
         async_call(self.ai.set_oversampling, index, None, self.increase_error_count)

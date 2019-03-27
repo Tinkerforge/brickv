@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import QSpinBox, QVBoxLayout, QHBoxLayout, QFrame, QLabel
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_distance_us_v2 import BrickletDistanceUSV2
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -40,9 +40,9 @@ class DistanceUSV2(COMCUPluginBase):
                                              self.cb_distance,
                                              self.increase_error_count)
 
-        self.current_distance = None
+        self.current_distance = CurveValueWrapper()
 
-        plots = [('Distance', Qt.red, lambda: self.current_distance, '{} cm'.format)]
+        plots = [('Distance', Qt.red, self.current_distance, '{} cm'.format)]
         self.plot_widget = PlotWidget('Distance [cm]', plots, y_resolution=1.0)
 
         layout = QVBoxLayout(self)
@@ -67,4 +67,4 @@ class DistanceUSV2(COMCUPluginBase):
         return device_identifier == BrickletDistanceUSV2.DEVICE_IDENTIFIER
 
     def cb_distance(self, distance):
-        self.current_distance = distance
+        self.current_distance.value = distance

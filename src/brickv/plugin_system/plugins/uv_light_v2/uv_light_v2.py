@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QComboBox, QHBoxLayout, QFrame
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_uv_light_v2 import BrickletUVLightV2
-from brickv.plot_widget import PlotWidget, FixedSizeLabel
+from brickv.plot_widget import PlotWidget, CurveValueWrapper, FixedSizeLabel
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -55,12 +55,11 @@ class UVLightV2(COMCUPluginBase):
         self.index_label = IndexLabel(' UVI: ? ')
         self.index_label.setText('0.0')
 
-        self.current_uva = None
-        self.current_uvb = None
-        self.current_uvi = None
+        self.current_uva = CurveValueWrapper()
+        self.current_uvb = CurveValueWrapper()
 
-        plots = [('UVA', Qt.red, lambda: self.current_uva, '{} mW/m²'.format),
-                 ('UVB', Qt.darkGreen, lambda: self.current_uvb, '{} mW/m²'.format)]
+        plots = [('UVA', Qt.red, self.current_uva, '{} mW/m²'.format),
+                 ('UVB', Qt.darkGreen, self.current_uvb, '{} mW/m²'.format)]
 
         self.plot_widget = PlotWidget('UV [mW/m²]', plots, extra_key_widgets=[self.index_label], y_resolution=0.1)
 
@@ -133,7 +132,7 @@ class UVLightV2(COMCUPluginBase):
         if uva < 0: # saturated
             return
 
-        self.current_uva = uva / 10.0
+        self.current_uva.value = uva / 10.0
 
     def cb_uvb(self, uvb):
         self.saturation_label.setVisible(uvb < 0)
@@ -141,7 +140,7 @@ class UVLightV2(COMCUPluginBase):
         if uvb < 0: # saturated
             return
 
-        self.current_uvb = uvb / 10.0
+        self.current_uvb.value = uvb / 10.0
 
     def cb_uvi(self, uvi):
         self.saturation_label.setVisible(uvi < 0)

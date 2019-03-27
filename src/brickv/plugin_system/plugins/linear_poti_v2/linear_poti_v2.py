@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QSlider
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_linear_poti_v2 import BrickletLinearPotiV2
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -44,9 +44,9 @@ class LinearPotiV2(COMCUPluginBase):
         self.slider.setRange(0, 100)
         self.slider.setMinimumWidth(200)
 
-        self.current_position = None
+        self.current_position = CurveValueWrapper()
 
-        plots = [('Position', Qt.red, lambda: self.current_position, str)]
+        plots = [('Position', Qt.red, self.current_position, str)]
         self.plot_widget = PlotWidget('Position', plots, extra_key_widgets=[self.slider],
                                       curve_motion_granularity=40, update_interval=0.025,
                                       y_resolution=1.0)
@@ -73,5 +73,5 @@ class LinearPotiV2(COMCUPluginBase):
         return device_identifier == BrickletLinearPotiV2.DEVICE_IDENTIFIER
 
     def cb_position(self, position):
-        self.current_position = position
+        self.current_position.value = position
         self.slider.setValue(position)

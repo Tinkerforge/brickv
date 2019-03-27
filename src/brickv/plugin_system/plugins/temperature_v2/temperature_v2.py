@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_temperature_v2 import BrickletTemperatureV2
 from brickv.async_call import async_call
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.callback_emulator import CallbackEmulator
 
 class TemperatureV2(COMCUPluginBase):
@@ -40,9 +40,9 @@ class TemperatureV2(COMCUPluginBase):
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 
-        self.current_temperature = None # float, °C
+        self.current_temperature = CurveValueWrapper() # float, °C
 
-        plots_temperature = [('Temperature', Qt.red, lambda: self.current_temperature, '{} °C'.format)]
+        plots_temperature = [('Temperature', Qt.red, self.current_temperature, '{} °C'.format)]
         self.plot_widget_temperature = PlotWidget('Temperature [°C]', plots_temperature, y_resolution=0.01)
 
         self.enable_heater = QCheckBox("Enable Heater")
@@ -87,7 +87,7 @@ class TemperatureV2(COMCUPluginBase):
         return device_identifier == BrickletTemperatureV2.DEVICE_IDENTIFIER
 
     def cb_temperature(self, temperature):
-        self.current_temperature = temperature / 100.0
+        self.current_temperature.value = temperature / 100.0
 
     def cb_heater_configuration(self, heater_config):
         if heater_config == 0:

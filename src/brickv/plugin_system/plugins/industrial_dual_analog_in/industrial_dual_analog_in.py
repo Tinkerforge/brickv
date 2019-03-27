@@ -29,7 +29,7 @@ from PyQt5.QtCore import Qt
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_modeless_dialog_flags
@@ -155,14 +155,14 @@ class IndustrialDualAnalogIn(PluginBase):
         self.sample_rate_combo.addItem('2 Hz')
         self.sample_rate_combo.addItem('1 Hz')
 
-        self.current_voltage = [None, None] # float, V
+        self.current_voltage = [CurveValueWrapper(), CurveValueWrapper()] # float, V
         self.calibration_button = QPushButton('Calibration...')
 
         self.sample_rate_combo.currentIndexChanged.connect(self.sample_rate_combo_index_changed)
         self.calibration_button.clicked.connect(self.calibration_button_clicked)
 
-        plots = [('Channel 0', Qt.red, lambda: self.current_voltage[0], format_voltage),
-                 ('Channel 1', Qt.blue, lambda: self.current_voltage[1], format_voltage)]
+        plots = [('Channel 0', Qt.red, self.current_voltage[0], format_voltage),
+                 ('Channel 1', Qt.blue, self.current_voltage[1], format_voltage)]
         self.plot_widget = PlotWidget('Voltage [V]', plots, y_resolution=0.001)
 
         hlayout = QHBoxLayout()
@@ -224,4 +224,4 @@ class IndustrialDualAnalogIn(PluginBase):
         self.sample_rate_combo.setCurrentIndex(rate)
 
     def cb_voltage(self, sensor, voltage):
-        self.current_voltage[sensor] = voltage / 1000.0
+        self.current_voltage[sensor].value = voltage / 1000.0

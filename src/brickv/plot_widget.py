@@ -35,7 +35,7 @@ from PyQt5.QtGui import QPainter, QFontMetrics, QPixmap, QIcon, QColor, \
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
                             QSizePolicy, QLabel, QSpinBox
 
-CurveConfig = namedtuple('CurveConfig', 'title color value_getter value_formatter')
+CurveConfig = namedtuple('CurveConfig', 'title color value_wrapper value_formatter')
 MovingAverageConfig = namedtuple('MovingAverageConfig', 'min_length max_length callback')
 
 EPSILON = 0.000001
@@ -60,6 +60,25 @@ def fuzzy_leq(a, b):
 
 def fuzzy_geq(a, b):
     return a > b or fuzzy_eq(a, b)
+
+class CurveValueWrapper:
+    def __init__(self):
+        self.valid = False
+        self.locked = False
+        self._value = None
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = value
+
+        if self.locked:
+            return
+
+        self.valid = True
 
 class Scale:
     def __init__(self, tick_text_font, title_text_font):
@@ -447,8 +466,10 @@ class CurveArea(QWidget):
 
                     curve_x = self.plot.curves_x[c]
                     curve_y = self.plot.curves_y[c]
+                    curve_jump = self.plot.curves_jump[c]
                     path = QPainterPath()
                     lineTo = path.lineTo
+                    moveTo = path.moveTo
 
                     if self.plot.curve_motion_granularity > 1:
                         start = max(min(bisect.bisect_left(curve_x, inverted_event_rect.left()), len(curve_x) - 1) - 1, 0)
@@ -458,10 +479,13 @@ class CurveArea(QWidget):
                     if start >= len(curve_x):
                         continue
 
-                    path.moveTo(curve_x[start], curve_y[start])
+                    moveTo(curve_x[start], curve_y[start])
 
                     for i in range(start + 1, len(curve_x)):
-                        lineTo(curve_x[i], curve_y[i])
+                        if curve_jump[i]:
+                            moveTo(curve_x[i], curve_y[i])
+                        else:
+                            lineTo(curve_x[i], curve_y[i])
 
                     pen.setColor(self.plot.curve_configs[c].color)
                     painter.setPen(pen)
@@ -671,6 +695,8 @@ class Plot(QWidget):
 
         self.curves_x[c].append(x)
         self.curves_y[c].append(y)
+        self.curves_jump[c].append(self.curves_jump_pending[c])
+        self.curves_jump_pending[c] = False
 
         if self.curves_x_min[c] == None:
             self.curves_x_min[c] = x
@@ -692,6 +718,7 @@ class Plot(QWidget):
             if (self.curves_x[c][-1] - self.curves_x[c][0]) >= self.x_diff:
                 self.curves_x[c] = self.curves_x[c][self.curve_motion_granularity:]
                 self.curves_y[c] = self.curves_y[c][self.curve_motion_granularity:]
+                self.curves_jump[c] = self.curves_jump[c][self.curve_motion_granularity:]
 
                 if len(self.curves_x[c]) > 0:
                     self.curves_x_min[c] = self.curves_x[c][0]
@@ -722,6 +749,9 @@ class Plot(QWidget):
         else:
             self.curve_area.update()
 
+    def add_jump(self, c):
+        self.curves_jump_pending[c] = True
+
     # NOTE: assumes that x and y are non-empty lists and that x is sorted ascendingly
     def set_data(self, c, x, y):
         if self.y_type == None:
@@ -741,6 +771,8 @@ class Plot(QWidget):
 
         self.curves_x[c] = x
         self.curves_y[c] = y
+        self.curves_jump[c] = [False] * len(x)
+        self.curves_jump_pending[c] = False
 
         self.curves_x_min[c] = x_min
         self.curves_x_max[c] = x_max
@@ -897,15 +929,14 @@ class Plot(QWidget):
         if not hasattr(self, 'curves_visible'):
             self.curves_visible = [True]*count # per curve visibility
 
-        def new_list():
-            return []
-
-        self.curves_x = [new_list() for i in range(count)] # per curve x values
-        self.curves_y = [new_list() for i in range(count)] # per curve y values
-        self.curves_x_min = [None]*count # per curve minimum x value
-        self.curves_x_max = [None]*count # per curve maximum x value
-        self.curves_y_min = [None]*count # per curve minimum y value
-        self.curves_y_max = [None]*count # per curve maximum y value
+        self.curves_x = [[] for i in range(count)] # per curve x values
+        self.curves_y = [[] for i in range(count)] # per curve y values
+        self.curves_jump = [[] for i in range(count)] # per curve jump values
+        self.curves_jump_pending = [False] * count # per curve jump pending
+        self.curves_x_min = [None] * count # per curve minimum x value
+        self.curves_x_max = [None] * count # per curve maximum x value
+        self.curves_y_min = [None] * count # per curve minimum y value
+        self.curves_y_max = [None] * count # per curve maximum y value
         self.x_min = None # minimum x value over all curves
         self.x_max = None # maximum x value over all curves
         self.y_min = None # minimum y value over all curves
@@ -974,8 +1005,13 @@ class PlotWidget(QWidget):
         else:
             y_diff_min = None
 
-        self.stop = True
+        self._stop = True
         self.curve_configs = [CurveConfig(*curve_config) for curve_config in curve_configs]
+
+        for curve_config in self.curve_configs:
+            if curve_config.value_wrapper != None:
+                assert isinstance(curve_config.value_wrapper, CurveValueWrapper)
+
         self.plot = Plot(self, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
                          self.curve_configs, scales_visible, curve_outer_border_visible,
                          curve_motion_granularity, canvas_color, curve_start, x_diff, y_diff_min,
@@ -1150,15 +1186,39 @@ class PlotWidget(QWidget):
         # FIXME: how to set potential key items from this?
         self.plot.set_data(i, x, y)
 
+    @property
+    def stop(self):
+        return self._stop
+
+    @stop.setter
+    def stop(self, stop):
+        for i, curve_config in enumerate(self.curve_configs):
+            if curve_config.value_wrapper == None:
+                continue
+
+            curve_config.value_wrapper.valid = False
+            curve_config.value_wrapper.locked = stop
+
+            if stop:
+                self.plot.add_jump(i)
+
+        self._stop = stop
+
     # internal
     def add_new_data(self):
         if self.stop:
             return
 
         for i, curve_config in enumerate(self.curve_configs):
-            value = curve_config.value_getter()
+            if curve_config.value_wrapper == None:
+                continue
 
-            if value != None:
+            valid = curve_config.value_wrapper.valid
+            value = curve_config.value_wrapper.value
+
+            if valid:
+                assert value != None
+
                 if len(self.key_items) > 0 and self.key_has_values:
                     self.key_items[i].setText(curve_config.title + ': ' + curve_config.value_formatter(value))
 

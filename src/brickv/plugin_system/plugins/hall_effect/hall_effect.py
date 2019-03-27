@@ -29,7 +29,7 @@ from PyQt5.QtWidgets import QFrame, QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
 from brickv.async_call import async_call
-from brickv.plot_widget import PlotWidget, FixedSizeLabel
+from brickv.plot_widget import PlotWidget, CurveValueWrapper, FixedSizeLabel
 from brickv.callback_emulator import CallbackEmulator
 
 class CountLabel(FixedSizeLabel):
@@ -47,11 +47,11 @@ class HallEffect(PluginBase):
                                                self.cb_edge_count,
                                                self.increase_error_count)
 
-        self.current_value = None
+        self.current_value = CurveValueWrapper()
 
         self.label_count = CountLabel('Count')
 
-        plots = [('Value', Qt.red, lambda: self.current_value, str)]
+        plots = [('Value', Qt.red, self.current_value, str)]
         self.plot_widget = PlotWidget('Value', plots, extra_key_widgets=[self.label_count],
                                       curve_motion_granularity=20, update_interval=0.05)
         self.plot_widget.set_fixed_y_scale(0, 1, 1, 1)
@@ -103,9 +103,9 @@ class HallEffect(PluginBase):
         count, value = data
 
         if value:
-            self.current_value = 1
+            self.current_value.value = 1
         else:
-            self.current_value = 0
+            self.current_value.value = 0
 
         self.label_count.setText(count)
 
@@ -119,9 +119,9 @@ class HallEffect(PluginBase):
 
     def get_value_async(self, value):
         if value:
-            self.current_value = 1
+            self.current_value.value = 1
         else:
-            self.current_value = 0
+            self.current_value.value = 0
 
     def reset_count(self):
         self.hf.get_edge_count(True)

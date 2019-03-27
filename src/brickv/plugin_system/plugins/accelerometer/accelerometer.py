@@ -29,7 +29,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QCheckB
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer
-from brickv.plot_widget import PlotWidget, FixedSizeLabel
+from brickv.plot_widget import PlotWidget, CurveValueWrapper, FixedSizeLabel
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -72,15 +72,17 @@ class Accelerometer(PluginBase):
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 
-        self.current_acceleration = [None, None, None] # float, g
+        self.current_acceleration_x = CurveValueWrapper() # float, g
+        self.current_acceleration_y = CurveValueWrapper() # float, g
+        self.current_acceleration_z = CurveValueWrapper() # float, g
 
         self.pitch_label = PitchLabel()
         self.roll_label = RollLabel()
         self.temperature_label = TemperatureLabel()
 
-        plots = [('X', Qt.red, lambda: self.current_acceleration[0], '{:.3f} g'.format),
-                 ('Y', Qt.darkGreen, lambda: self.current_acceleration[1], '{:.3f} g'.format),
-                 ('Z', Qt.blue, lambda: self.current_acceleration[2], '{:.3f} g'.format)]
+        plots = [('X', Qt.red, self.current_acceleration_x, '{:.3f} g'.format),
+                 ('Y', Qt.darkGreen, self.current_acceleration_y, '{:.3f} g'.format),
+                 ('Z', Qt.blue, self.current_acceleration_z, '{:.3f} g'.format)]
         self.plot_widget = PlotWidget('Acceleration [g]', plots, extra_key_widgets=[self.pitch_label, self.roll_label, self.temperature_label],
                                       curve_motion_granularity=20, update_interval=0.05, y_resolution=0.001)
 
@@ -157,7 +159,9 @@ class Accelerometer(PluginBase):
 
     def cb_acceleration(self, data):
         x, y, z = data
-        self.current_acceleration = [x / 1000.0, y / 1000.0, z / 1000.0]
+        self.current_acceleration_x.value = x / 1000.0
+        self.current_acceleration_y.value = y / 1000.0
+        self.current_acceleration_z.value = z / 1000.0
         self.pitch_label.setText(x, y, z)
         self.roll_label.setText(x, y, z)
 

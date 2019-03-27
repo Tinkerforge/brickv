@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QFrame
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_accelerometer_v2 import BrickletAccelerometerV2
-from brickv.plot_widget import PlotWidget, FixedSizeLabel
+from brickv.plot_widget import PlotWidget, CurveValueWrapper, FixedSizeLabel
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -63,14 +63,16 @@ class AccelerometerV2(COMCUPluginBase):
                                                  self.cb_acceleration,
                                                  self.increase_error_count)
 
-        self.current_acceleration = [None, None, None] # float, g
+        self.current_acceleration_x = CurveValueWrapper() # float, g
+        self.current_acceleration_y = CurveValueWrapper() # float, g
+        self.current_acceleration_z = CurveValueWrapper() # float, g
 
         self.pitch_label = PitchLabel()
         self.roll_label = RollLabel()
 
-        plots = [('X', Qt.red, lambda: self.current_acceleration[0], '{:.4f} g'.format),
-                 ('Y', Qt.darkGreen, lambda: self.current_acceleration[1], '{:.4f} g'.format),
-                 ('Z', Qt.blue, lambda: self.current_acceleration[2], '{:.4f} g'.format)]
+        plots = [('X', Qt.red, self.current_acceleration_x, '{:.4f} g'.format),
+                 ('Y', Qt.darkGreen, self.current_acceleration_y, '{:.4f} g'.format),
+                 ('Z', Qt.blue, self.current_acceleration_z, '{:.4f} g'.format)]
         self.plot_widget = PlotWidget('Acceleration [g]', plots, extra_key_widgets=[self.pitch_label, self.roll_label],
                                       curve_motion_granularity=20, update_interval=0.05, y_resolution=0.0001)
 
@@ -128,7 +130,9 @@ class AccelerometerV2(COMCUPluginBase):
 
     def cb_acceleration(self, data):
         x, y, z = data
-        self.current_acceleration = [x / 10000.0, y / 10000.0, z / 10000.0]
+        self.current_acceleration_x.value = x / 10000.0
+        self.current_acceleration_y.value = y / 10000.0
+        self.current_acceleration_z.value = z / 10000.0
         self.pitch_label.setText(x, y, z)
         self.roll_label.setText(x, y, z)
 
@@ -140,7 +144,6 @@ class AccelerometerV2(COMCUPluginBase):
         self.temperature_label.setText(temp)
 
     def start(self):
-#        async_call(self.accelerometer.is_led_on, None, self.is_led_on_async, self.increase_error_count)
         async_call(self.accelerometer.get_configuration, None, self.get_configuration_async, self.increase_error_count)
         async_call(self.accelerometer.get_acceleration, None, self.cb_acceleration, self.increase_error_count)
         self.cbe_acceleration.set_period(50)

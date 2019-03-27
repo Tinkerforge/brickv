@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBo
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_pressure import BrickletPressure
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -40,9 +40,9 @@ class Pressure(PluginBase):
                                              self.cb_pressure,
                                              self.increase_error_count)
 
-        self.current_pressure = None # float, kPa
+        self.current_pressure = CurveValueWrapper() # float, kPa
 
-        plots = [('Pressure', Qt.red, lambda: self.current_pressure, '{:.3f} kPa'.format)]
+        plots = [('Pressure', Qt.red, self.current_pressure, '{:.3f} kPa'.format)]
         self.plot_widget = PlotWidget('Pressure [kPa]', plots, y_resolution=0.001)
 
         self.combo_sensor = QComboBox()
@@ -102,7 +102,7 @@ class Pressure(PluginBase):
         return device_identifier == BrickletPressure.DEVICE_IDENTIFIER
 
     def cb_pressure(self, pressure):
-        self.current_pressure = pressure / 1000.0
+        self.current_pressure.value = pressure / 1000.0
 
     def combo_sensor_changed(self):
         self.p.set_sensor_type(self.combo_sensor.currentIndex())

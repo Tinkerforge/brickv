@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, QFrame
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_temperature_ir_v2 import BrickletTemperatureIRV2
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -43,11 +43,11 @@ class TemperatureIRV2(COMCUPluginBase):
                                                        self.cb_object_temperature,
                                                        self.increase_error_count)
 
-        self.current_ambient = None # float, °C
-        self.current_object = None # float, °C
+        self.current_ambient = CurveValueWrapper() # float, °C
+        self.current_object = CurveValueWrapper() # float, °C
 
-        plots = [('Ambient', Qt.blue, lambda: self.current_ambient, '{} °C'.format),
-                 ('Object', Qt.red, lambda: self.current_object, '{} °C'.format)]
+        plots = [('Ambient', Qt.blue, self.current_ambient, '{} °C'.format),
+                 ('Object', Qt.red, self.current_object, '{} °C'.format)]
         self.plot_widget = PlotWidget('Temperature [°C]', plots, y_resolution=0.1)
 
         self.spin_emissivity = QSpinBox()
@@ -94,10 +94,10 @@ class TemperatureIRV2(COMCUPluginBase):
         return device_identifier == BrickletTemperatureIRV2.DEVICE_IDENTIFIER
 
     def cb_object_temperature(self, temperature):
-        self.current_object = temperature / 10.0
+        self.current_object.value = temperature / 10.0
 
     def cb_ambient_temperature(self, temperature):
-        self.current_ambient = temperature / 10.0
+        self.current_ambient.value = temperature / 10.0
 
     def get_emissivity_async(self, emissivity):
         self.spin_emissivity.setValue(emissivity)

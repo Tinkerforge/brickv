@@ -26,7 +26,7 @@ from PyQt5.QtCore import Qt
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_hall_effect_v2 import BrickletHallEffectV2
 from brickv.plugin_system.plugins.hall_effect_v2.ui_hall_effect_v2 import Ui_HallEffectV2
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -45,8 +45,8 @@ class HallEffectV2(COMCUPluginBase, Ui_HallEffectV2):
                                             self.cb_counter,
                                             self.increase_error_count)
 
-        self.current_magnetic_flux_density = None
-        plots = [('Magnetic Flux Density', Qt.red, lambda: self.current_magnetic_flux_density, '{} µT'.format)]
+        self.current_magnetic_flux_density = CurveValueWrapper()
+        plots = [('Magnetic Flux Density', Qt.red, self.current_magnetic_flux_density, '{} µT'.format)]
         self.plot_widget = PlotWidget('Magnetic Flux Density [µT]', plots, y_resolution=1.0)
 
         self.button_reset.clicked.connect(self.button_reset_clicked)
@@ -96,4 +96,4 @@ class HallEffectV2(COMCUPluginBase, Ui_HallEffectV2):
         self.label_count.setText(str(count))
 
     def cb_magnetic_flux_density(self, magnetic_flux_density):
-        self.current_magnetic_flux_density = magnetic_flux_density
+        self.current_magnetic_flux_density.value = magnetic_flux_density

@@ -32,7 +32,7 @@ from brickv.plugin_system.plugins.imu.ui_imu import Ui_IMU
 from brickv.plugin_system.plugins.imu.calibrate_window import CalibrateWindow
 from brickv.bindings.brick_imu import BrickIMU
 from brickv.async_call import async_call
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.callback_emulator import CallbackEmulator
 
 class IMU(PluginBase, Ui_IMU):
@@ -43,16 +43,16 @@ class IMU(PluginBase, Ui_IMU):
 
         self.imu = self.device
 
-        self.acc_x = None
-        self.acc_y = None
-        self.acc_z = None
-        self.mag_x = None
-        self.mag_y = None
-        self.mag_z = None
-        self.gyr_x = None
-        self.gyr_y = None
-        self.gyr_z = None
-        self.temp  = None
+        self.acc_x = CurveValueWrapper()
+        self.acc_y = CurveValueWrapper()
+        self.acc_z = CurveValueWrapper()
+        self.mag_x = CurveValueWrapper()
+        self.mag_y = CurveValueWrapper()
+        self.mag_z = CurveValueWrapper()
+        self.gyr_x = CurveValueWrapper()
+        self.gyr_y = CurveValueWrapper()
+        self.gyr_z = CurveValueWrapper()
+        self.temp  = CurveValueWrapper()
         self.roll  = None
         self.pitch = None
         self.yaw   = None
@@ -90,25 +90,25 @@ class IMU(PluginBase, Ui_IMU):
         self.update_counter = 0
 
         self.mag_plot_widget = PlotWidget("Magnetic Field [mG]",
-                                          [("X", Qt.red, lambda: self.mag_x, str),
-                                           ("Y", Qt.darkGreen, lambda: self.mag_y, str),
-                                           ("Z", Qt.blue, lambda: self.mag_z, str)],
+                                          [("X", Qt.red, self.mag_x, str),
+                                           ("Y", Qt.darkGreen, self.mag_y, str),
+                                           ("Z", Qt.blue, self.mag_z, str)],
                                           clear_button=self.clear_graphs,
                                           key='right-no-icon', y_resolution=5)
         self.acc_plot_widget = PlotWidget("Acceleration [mg]",
-                                          [("X", Qt.red, lambda: self.acc_x, str),
-                                           ("Y", Qt.darkGreen, lambda: self.acc_y, str),
-                                           ("Z", Qt.blue, lambda: self.acc_z, str)],
+                                          [("X", Qt.red, self.acc_x, str),
+                                           ("Y", Qt.darkGreen, self.acc_y, str),
+                                           ("Z", Qt.blue, self.acc_z, str)],
                                           clear_button=self.clear_graphs,
                                           key='right-no-icon', y_resolution=5)
         self.gyr_plot_widget = PlotWidget("Angular Velocity [°/s]",
-                                          [("X", Qt.red, lambda: self.gyr_x, str),
-                                           ("Y", Qt.darkGreen, lambda: self.gyr_y, str),
-                                           ("Z", Qt.blue, lambda: self.gyr_z, str)],
+                                          [("X", Qt.red, self.gyr_x, str),
+                                           ("Y", Qt.darkGreen, self.gyr_y, str),
+                                           ("Z", Qt.blue, self.gyr_z, str)],
                                           clear_button=self.clear_graphs,
                                           key='right-no-icon', y_resolution=0.05)
         self.temp_plot_widget = PlotWidget("Temperature [°C]",
-                                           [("t", Qt.red, lambda: self.temp, str)],
+                                           [("t", Qt.red, self.temp, str)],
                                            clear_button=self.clear_graphs,
                                            key=None, y_resolution=0.01)
 
@@ -216,16 +216,16 @@ class IMU(PluginBase, Ui_IMU):
     def all_data_callback(self, data):
         acc_x, acc_y, acc_z, mag_x, mag_y, mag_z, gyr_x, gyr_y, gyr_z, temp = data
 
-        self.acc_x = acc_x
-        self.acc_y = acc_y
-        self.acc_z = acc_z
-        self.mag_x = mag_x
-        self.mag_y = mag_y
-        self.mag_z = mag_z
-        self.gyr_x = gyr_x / 14.375
-        self.gyr_y = gyr_y / 14.375
-        self.gyr_z = gyr_z / 14.375
-        self.temp = temp / 100.0
+        self.acc_x.value = acc_x
+        self.acc_y.value = acc_y
+        self.acc_z.value = acc_z
+        self.mag_x.value = mag_x
+        self.mag_y.value = mag_y
+        self.mag_z.value = mag_z
+        self.gyr_x.value = gyr_x / 14.375
+        self.gyr_y.value = gyr_y / 14.375
+        self.gyr_z.value = gyr_z / 14.375
+        self.temp.value  = temp / 100.0
 
         self.all_data_valid = True
 
@@ -266,11 +266,11 @@ class IMU(PluginBase, Ui_IMU):
             self.update_counter = 0
 
             if self.all_data_valid and self.orientation_valid:
-                self.acceleration_update(self.acc_x, self.acc_y, self.acc_z)
-                self.magnetometer_update(self.mag_x, self.mag_y, self.mag_z)
-                self.gyroscope_update(self.gyr_x,self. gyr_y, self.gyr_z)
+                self.acceleration_update(self.acc_x.value, self.acc_y.value, self.acc_z.value)
+                self.magnetometer_update(self.mag_x.value, self.mag_y.value, self.mag_z.value)
+                self.gyroscope_update(self.gyr_x.value, self.gyr_y.value, self.gyr_z.value)
                 self.orientation_update(self.roll, self.pitch, self.yaw)
-                self.temperature_update(self.temp)
+                self.temperature_update(self.temp.value)
 
     def acceleration_update(self, x, y, z):
         self.acc_y_label.setText(format(x, '.1f'))

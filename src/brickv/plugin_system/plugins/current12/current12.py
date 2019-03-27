@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QPushButton, QFrame
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_current12 import BrickletCurrent12
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import format_current
@@ -53,9 +53,9 @@ class Current12(PluginBase):
         self.calibrate_button = QPushButton('Calibrate Zero')
         self.calibrate_button.clicked.connect(self.calibrate_clicked)
 
-        self.current_current = None # float, A
+        self.current_current = CurveValueWrapper() # float, A
 
-        plots = [('Current', Qt.red, lambda: self.current_current, format_current)]
+        plots = [('Current', Qt.red, self.current_current, format_current)]
         self.plot_widget = PlotWidget('Current [A]', plots, extra_key_widgets=[self.over_label], y_resolution=0.001)
 
         line = QFrame()
@@ -87,7 +87,7 @@ class Current12(PluginBase):
         return device_identifier == BrickletCurrent12.DEVICE_IDENTIFIER
 
     def cb_current(self, current):
-        self.current_current = current / 1000.0
+        self.current_current.value = current / 1000.0
 
     def cb_over(self):
         self.over_label.setText('Over Current: Yes')

@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_uv_light import BrickletUVLight
-from brickv.plot_widget import PlotWidget, FixedSizeLabel
+from brickv.plot_widget import PlotWidget, CurveValueWrapper, FixedSizeLabel
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -47,9 +47,9 @@ class UVLight(PluginBase):
 
         self.index_label = IndexLabel(' UV Index: ? ')
 
-        self.current_uv_light = None
+        self.current_uv_light = CurveValueWrapper()
 
-        plots = [('UV Light', Qt.red, lambda: self.current_uv_light, '{} mW/m²'.format)]
+        plots = [('UV Light', Qt.red, self.current_uv_light, '{} mW/m²'.format)]
         self.plot_widget = PlotWidget('UV Light [mW/m²]', plots, extra_key_widgets=[self.index_label], y_resolution=0.1)
 
         layout = QVBoxLayout(self)
@@ -74,7 +74,7 @@ class UVLight(PluginBase):
         return device_identifier == BrickletUVLight.DEVICE_IDENTIFIER
 
     def cb_uv_light(self, uv_light):
-        self.current_uv_light = uv_light / 10.0
+        self.current_uv_light.value = uv_light / 10.0
 
         index = round(uv_light/250.0, 1)
         self.index_label.setText(str(index))

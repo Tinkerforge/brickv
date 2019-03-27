@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QSpinBox, QFrame, QLabel
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_ozone import BrickletOzone
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -41,9 +41,9 @@ class Ozone(PluginBase):
                                                         self.cb_ozone_concentration,
                                                         self.increase_error_count)
 
-        self.current_ozone_concentration = None
+        self.current_ozone_concentration = CurveValueWrapper()
 
-        plots = [('Ozone Concentration', Qt.red, lambda: self.current_ozone_concentration, '{} ppb'.format)]
+        plots = [('Ozone Concentration', Qt.red, self.current_ozone_concentration, '{} ppb'.format)]
         self.plot_widget = PlotWidget('Ozone Concentration [ppb]', plots, y_resolution=1.0)
 
         self.spin_average = QSpinBox()
@@ -91,7 +91,7 @@ class Ozone(PluginBase):
         return device_identifier == BrickletOzone.DEVICE_IDENTIFIER
 
     def cb_ozone_concentration(self, ozone_concentration):
-        self.current_ozone_concentration = ozone_concentration
+        self.current_ozone_concentration.value = ozone_concentration
 
     def spin_average_finished(self):
         self.ozone.set_moving_average(self.spin_average.value())

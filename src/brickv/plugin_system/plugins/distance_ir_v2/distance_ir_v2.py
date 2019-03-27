@@ -30,7 +30,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_distance_ir_v2 import BrickletDistanceIRV2
-from brickv.plot_widget import PlotWidget, FixedSizeLabel
+from brickv.plot_widget import PlotWidget, CurveValueWrapper, FixedSizeLabel
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_main_window, get_home_path, get_open_file_name
@@ -79,9 +79,9 @@ class DistanceIRV2(COMCUPluginBase):
         hlayout.addWidget(self.sensor_label)
         hlayout.addWidget(self.sensor_combo)
 
-        self.current_distance = None # float, cm
+        self.current_distance = CurveValueWrapper() # float, cm
 
-        plots = [('Distance', Qt.red, lambda: self.current_distance, '{} cm'.format)]
+        plots = [('Distance', Qt.red, self.current_distance, '{} cm'.format)]
         self.plot_widget = PlotWidget('Distance [cm]', plots, extra_key_widgets=[self.analog_label], y_resolution=0.1)
 
         line = QFrame()
@@ -133,7 +133,7 @@ class DistanceIRV2(COMCUPluginBase):
         return device_identifier == BrickletDistanceIRV2.DEVICE_IDENTIFIER
 
     def cb_distance(self, distance):
-        self.current_distance = distance / 10.0
+        self.current_distance.value = distance / 10.0
 
     def cb_analog_value(self, analog_value):
         self.analog_label.setText(analog_value)

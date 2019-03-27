@@ -29,7 +29,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, \
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_load_cell_v2 import BrickletLoadCellV2
 from brickv.plugin_system.plugins.load_cell.ui_calibration import Ui_Calibration
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_modeless_dialog_flags
@@ -85,10 +85,10 @@ class LoadCellV2(COMCUPluginBase):
                                            self.cb_weight,
                                            self.increase_error_count)
 
-        self.current_weight = None # int, g
+        self.current_weight = CurveValueWrapper() # int, g
         self.calibration = None
 
-        plots = [('Weight', Qt.red, lambda: self.current_weight, format_weight)]
+        plots = [('Weight', Qt.red, self.current_weight, format_weight)]
         self.plot_widget = PlotWidget('Weight [g]', plots, y_resolution=1.0)
 
         self.button_calibration = QPushButton("Calibration...")
@@ -207,4 +207,4 @@ class LoadCellV2(COMCUPluginBase):
         self.lc.set_moving_average(self.spin_average.value())
 
     def cb_weight(self, weight):
-        self.current_weight = weight
+        self.current_weight.value = weight

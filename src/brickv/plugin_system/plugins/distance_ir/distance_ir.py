@@ -31,7 +31,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
-from brickv.plot_widget import PlotWidget, FixedSizeLabel
+from brickv.plot_widget import PlotWidget, CurveValueWrapper, FixedSizeLabel
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_main_window, get_home_path, get_open_file_name
@@ -169,9 +169,9 @@ class DistanceIR(PluginBase):
         hlayout.addWidget(self.sample_file)
         hlayout.addWidget(self.sample_save)
 
-        self.current_distance = None # float, cm
+        self.current_distance = CurveValueWrapper() # float, cm
 
-        plots = [('Distance', Qt.red, lambda: self.current_distance, '{} cm'.format)]
+        plots = [('Distance', Qt.red, self.current_distance, '{} cm'.format)]
         self.plot_widget = PlotWidget('Distance [cm]', plots, extra_key_widgets=[self.analog_label], y_resolution=0.1)
 
         line = QFrame()
@@ -307,7 +307,7 @@ class DistanceIR(PluginBase):
         self.sample_save.setEnabled(True)
 
     def cb_distance(self, distance):
-        self.current_distance = distance / 10.0
+        self.current_distance.value = distance / 10.0
 
     def cb_analog_value(self, analog_value):
         self.analog_label.setText(analog_value)

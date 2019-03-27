@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QLabel
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_particulate_matter import BrickletParticulateMatter
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -44,13 +44,13 @@ class ParticulateMatter(COMCUPluginBase):
                                              self.cb_pm_count,
                                              self.increase_error_count)
 
-        self.current_pm_concentration_pm10 = None
-        self.current_pm_concentration_pm25 = None
-        self.current_pm_concentration_pm100 = None
+        self.current_pm_concentration_pm10 = CurveValueWrapper()
+        self.current_pm_concentration_pm25 = CurveValueWrapper()
+        self.current_pm_concentration_pm100 = CurveValueWrapper()
 
-        plots = [('PM1.0', Qt.red, lambda: self.current_pm_concentration_pm10, '{} µg/m³'.format),
-                 ('PM2.5', Qt.darkGreen, lambda: self.current_pm_concentration_pm25, '{} µg/m³'.format),
-                 ('PM10.0', Qt.blue, lambda: self.current_pm_concentration_pm100, '{} µg/m³'.format)]
+        plots = [('PM1.0', Qt.red, self.current_pm_concentration_pm10, '{} µg/m³'.format),
+                 ('PM2.5', Qt.darkGreen, self.current_pm_concentration_pm25, '{} µg/m³'.format),
+                 ('PM10.0', Qt.blue, self.current_pm_concentration_pm100, '{} µg/m³'.format)]
         self.plot_widget = PlotWidget('PM Concentration [µg/m³]', plots, y_resolution=1.0)
 
         self.label_count = QLabel('PM Count > 0.3, 0.5, 1.0, 2.5, 5.0, 10.0 µm:')
@@ -131,9 +131,9 @@ class ParticulateMatter(COMCUPluginBase):
         return device_identifier == BrickletParticulateMatter.DEVICE_IDENTIFIER
 
     def cb_pm_concentration(self, pm_concentration):
-        self.current_pm_concentration_pm10 = pm_concentration.pm10
-        self.current_pm_concentration_pm25 = pm_concentration.pm25
-        self.current_pm_concentration_pm100 = pm_concentration.pm100
+        self.current_pm_concentration_pm10.value = pm_concentration.pm10
+        self.current_pm_concentration_pm25.value = pm_concentration.pm25
+        self.current_pm_concentration_pm100.value = pm_concentration.pm100
 
     def cb_pm_count(self, pm_count):
         self.label_count_value.setText(', '.join(map(str, pm_count)))

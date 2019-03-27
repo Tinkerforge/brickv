@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_thermocouple import BrickletThermocouple
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -47,12 +47,12 @@ class Thermocouple(PluginBase):
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 
-        self.current_temperature = None # float, °C
+        self.current_temperature = CurveValueWrapper() # float, °C
 
         self.error_label = QLabel('Current Errors: None')
         self.error_label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
 
-        plots = [('Temperature', Qt.red, lambda: self.current_temperature, '{:.2f} °C'.format)]
+        plots = [('Temperature', Qt.red, self.current_temperature, '{:.2f} °C'.format)]
         self.plot_widget = PlotWidget('Temperature [°C]', plots, extra_key_widgets=[self.error_label], y_resolution=0.01)
 
         self.averaging_label = QLabel('Averaging:')
@@ -125,9 +125,6 @@ class Thermocouple(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletThermocouple.DEVICE_IDENTIFIER
 
-    def get_current_value(self):
-        return self.current_value
-
     def configuration_changed(self, _):
         conf_averaging = self.averaging_combo.itemData(self.averaging_combo.currentIndex())
         conf_type = self.type_combo.itemData(self.type_combo.currentIndex())
@@ -136,7 +133,7 @@ class Thermocouple(PluginBase):
         self.thermo.set_configuration(conf_averaging, conf_type, conf_filter)
 
     def cb_temperature(self, temperature):
-        self.current_temperature = temperature / 100.0
+        self.current_temperature.value = temperature / 100.0
 
     def cb_configuration(self, conf):
         self.averaging_combo.blockSignals(True)

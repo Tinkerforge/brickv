@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_ptc import BrickletPTC
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -57,12 +57,12 @@ class PTC(PluginBase):
 
         self.connected_label = QLabel(self.str_connected)
 
-        self.current_temperature = None # float, °C
+        self.current_temperature = CurveValueWrapper() # float, °C
 
         self.wire_combo.currentIndexChanged.connect(self.wire_combo_index_changed)
         self.noise_combo.currentIndexChanged.connect(self.noise_combo_index_changed)
 
-        plots = [('Temperature', Qt.red, lambda: self.current_temperature, '{} °C'.format)]
+        plots = [('Temperature', Qt.red, self.current_temperature, '{} °C'.format)]
         self.plot_widget = PlotWidget('Temperature [°C]', plots, extra_key_widgets=[self.connected_label], y_resolution=0.01)
 
         hlayout = QHBoxLayout()
@@ -132,7 +132,7 @@ class PTC(PluginBase):
         self.wire_combo.setCurrentIndex(mode-2)
 
     def cb_temperature(self, temperature):
-        self.current_temperature = temperature / 100.0
+        self.current_temperature.value = temperature / 100.0
 
     def cb_resistance(self, resistance):
         resistance_str = str(round(resistance * 3900.0 / (1 << 15), 1))

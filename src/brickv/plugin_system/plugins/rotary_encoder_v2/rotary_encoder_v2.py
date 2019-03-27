@@ -29,7 +29,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_rotary_encoder_v2 import BrickletRotaryEncoderV2
 from brickv.knob_widget import KnobWidget
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -67,9 +67,9 @@ class RotaryEncoderV2(COMCUPluginBase):
         self.encoder_knob.set_knob_radius(25)
         self.encoder_knob.set_value(0)
 
-        self.current_count = None
+        self.current_count = CurveValueWrapper()
 
-        plots = [('Count', Qt.red, lambda: self.current_count, str)]
+        plots = [('Count', Qt.red, self.current_count, str)]
         self.plot_widget = PlotWidget('Count', plots, curve_motion_granularity=40,
                                       update_interval=0.025, y_resolution=1.0)
 
@@ -90,7 +90,7 @@ class RotaryEncoderV2(COMCUPluginBase):
         self.encoder_knob.set_pressed(True)
 
     def cb_count(self, count):
-        self.current_count = count
+        self.current_count.value = count
         self.encoder_knob.set_value((count + 12) % 24)
 
     def reset_clicked(self):

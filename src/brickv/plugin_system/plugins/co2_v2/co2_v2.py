@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_co2_v2 import BrickletCO2V2
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -40,17 +40,17 @@ class CO2V2(COMCUPluginBase):
                                         self.cb_get_all_values,
                                         self.increase_error_count)
 
-        self.current_co2 = None # float, ppm
-        self.current_temperature = None # float, °C
-        self.current_humidity = None # float, %RH
+        self.current_co2 = CurveValueWrapper() # int, ppm
+        self.current_temperature = CurveValueWrapper() # float, °C
+        self.current_humidity = CurveValueWrapper() # float, %RH
 
-        plots_co2 = [('CO2', Qt.red, lambda: self.current_co2, '{} PPM'.format)]
+        plots_co2 = [('CO2', Qt.red, self.current_co2, '{} PPM'.format)]
         self.plot_widget_co2 = PlotWidget('CO2 [PPM]', plots_co2, y_resolution=1.0)
 
-        plots_temperature = [('Temperature', Qt.red, lambda: self.current_temperature, '{} °C'.format)]
+        plots_temperature = [('Temperature', Qt.red, self.current_temperature, '{} °C'.format)]
         self.plot_widget_temperature = PlotWidget('Temperature [°C]', plots_temperature, y_resolution=0.01)
 
-        plots_humidity = [('Relative Humidity', Qt.red, lambda: self.current_humidity, '{} %RH'.format)]
+        plots_humidity = [('Relative Humidity', Qt.red, self.current_humidity, '{} %RH'.format)]
         self.plot_widget_humidity = PlotWidget('Relative Humidity [%RH]', plots_humidity, y_resolution=0.01)
 
         layout_plot1 = QHBoxLayout()
@@ -65,9 +65,9 @@ class CO2V2(COMCUPluginBase):
         layout_main.addLayout(layout_plot2)
 
     def cb_get_all_values(self, values):
-        self.current_co2 = values.co2_concentration
-        self.current_temperature = values.temperature / 100.0
-        self.current_humidity = values.humidity / 100.0
+        self.current_co2.value = values.co2_concentration
+        self.current_temperature.value = values.temperature / 100.0
+        self.current_humidity.value = values.humidity / 100.0
 
     def start(self):
         async_call(self.co2.get_all_values, None, self.cb_get_all_values, self.increase_error_count)

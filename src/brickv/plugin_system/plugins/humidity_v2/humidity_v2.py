@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_humidity_v2 import BrickletHumidityV2
-from brickv.plot_widget import PlotWidget, MovingAverageConfig
+from brickv.plot_widget import PlotWidget, CurveValueWrapper, MovingAverageConfig
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -44,16 +44,16 @@ class HumidityV2(COMCUPluginBase):
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 
-        self.current_humidity = None # float, %RH
-        self.current_temperature = None # float, °C
+        self.current_humidity = CurveValueWrapper() # float, %RH
+        self.current_temperature = CurveValueWrapper() # float, °C
 
         moving_average_humidity = MovingAverageConfig(1, 1000, self.new_moving_average_humidity)
-        plots_humidity = [('Relative Humidity', Qt.red, lambda: self.current_humidity, '{} %RH'.format)]
+        plots_humidity = [('Relative Humidity', Qt.red, self.current_humidity, '{} %RH'.format)]
         self.plot_widget_humidity = PlotWidget('Relative Humidity [%RH]', plots_humidity,
                                                moving_average_config=moving_average_humidity, y_resolution=0.01)
 
         moving_average_temperature = MovingAverageConfig(1, 1000, self.new_moving_average_temperature)
-        plots_temperature = [('Temperature', Qt.red, lambda: self.current_temperature, '{} °C'.format)]
+        plots_temperature = [('Temperature', Qt.red, self.current_temperature, '{} °C'.format)]
         self.plot_widget_temperature = PlotWidget('Temperature [°C]', plots_temperature,
                                                   moving_average_config=moving_average_temperature, y_resolution=0.01)
 
@@ -112,10 +112,10 @@ class HumidityV2(COMCUPluginBase):
         return device_identifier == BrickletHumidityV2.DEVICE_IDENTIFIER
 
     def cb_humidity(self, humidity):
-        self.current_humidity = humidity / 100.0
+        self.current_humidity.value = humidity / 100.0
 
     def cb_temperature(self, temperature):
-        self.current_temperature = temperature / 100.0
+        self.current_temperature.value = temperature / 100.0
 
     def cb_heater_configuration(self, heater_config):
         if heater_config == 0:

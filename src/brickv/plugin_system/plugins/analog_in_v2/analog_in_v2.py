@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import format_voltage
@@ -42,9 +42,9 @@ class AnalogInV2(PluginBase):
                                             self.cb_voltage,
                                             self.increase_error_count)
 
-        self.current_voltage = None # float, V
+        self.current_voltage = CurveValueWrapper() # float, V
 
-        plots = [('Voltage', Qt.red, lambda: self.current_voltage, format_voltage)]
+        plots = [('Voltage', Qt.red, self.current_voltage, format_voltage)]
         self.plot_widget = PlotWidget('Voltage [V]', plots, y_resolution=0.001)
 
         self.spin_average = QSpinBox()
@@ -92,7 +92,7 @@ class AnalogInV2(PluginBase):
         return device_identifier == BrickletAnalogInV2.DEVICE_IDENTIFIER
 
     def cb_voltage(self, voltage):
-        self.current_voltage = voltage / 1000.0
+        self.current_voltage.value = voltage / 1000.0
 
     def spin_average_finished(self):
         self.ai.set_moving_average(self.spin_average.value())

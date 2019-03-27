@@ -28,7 +28,7 @@ from PyQt5.QtGui import QPainter, QBrush
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_joystick_v2 import BrickletJoystickV2
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -81,11 +81,11 @@ class JoystickV2(COMCUPluginBase):
         self.calibrate_button = QPushButton('Calibrate Zero')
         self.calibrate_button.clicked.connect(self.calibrate_clicked)
 
-        self.current_x = None
-        self.current_y = None
+        self.current_x = CurveValueWrapper()
+        self.current_y = CurveValueWrapper()
 
-        plots = [('X', Qt.darkGreen, lambda: self.current_x, str),
-                 ('Y', Qt.blue, lambda: self.current_y, str)]
+        plots = [('X', Qt.darkGreen, self.current_x, str),
+                 ('Y', Qt.blue, self.current_y, str)]
         self.plot_widget = PlotWidget('Position', plots, curve_motion_granularity=40,
                                       update_interval=0.025, y_resolution=1.0)
 
@@ -127,8 +127,8 @@ class JoystickV2(COMCUPluginBase):
 
     def cb_position(self, data):
         x, y = data
-        self.current_x = x
-        self.current_y = y
+        self.current_x.value = x
+        self.current_y.value = y
         self.joystick_frame.set_position(x, y)
 
     def cb_pressed(self, pressed):

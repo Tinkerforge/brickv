@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_dust_detector import BrickletDustDetector
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -41,16 +41,16 @@ class DustDetector(PluginBase):
                                                  self.cb_dust_density,
                                                  self.increase_error_count)
 
-        self.current_dust_density = None
+        self.current_dust_density = CurveValueWrapper()
 
-        plots = [('Dust Density', Qt.red, lambda: self.current_dust_density, '{} µg/m³'.format)]
+        plots = [('Dust Density', Qt.red, self.current_dust_density, '{} µg/m³'.format)]
         self.plot_widget = PlotWidget('Dust Density [µg/m³]', plots, y_resolution=1.0)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)
 
     def cb_dust_density(self, dust_density):
-        self.current_dust_density = dust_density
+        self.current_dust_density.value = dust_density
 
     def start(self):
         async_call(self.dust_detector.get_dust_density, None, self.cb_dust_density, self.increase_error_count)

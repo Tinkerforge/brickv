@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import QLabel, QVBoxLayout, QHBoxLayout, QSpinBox, QCheckBo
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -51,11 +51,11 @@ class LaserRangeFinder(PluginBase):
                                              self.cb_velocity,
                                              self.increase_error_count)
 
-        self.current_distance = None # int, cm
-        self.current_velocity = None # float, m/s
+        self.current_distance = CurveValueWrapper() # int, cm
+        self.current_velocity = CurveValueWrapper() # float, m/s
 
-        plots_distance = [('Distance', Qt.red, lambda: self.current_distance, format_distance)]
-        plots_velocity = [('Velocity', Qt.red, lambda: self.current_velocity, '{:.2f} m/s'.format)]
+        plots_distance = [('Distance', Qt.red, self.current_distance, format_distance)]
+        plots_velocity = [('Velocity', Qt.red, self.current_velocity, '{:.2f} m/s'.format)]
         self.plot_widget_distance = PlotWidget('Distance [cm]', plots_distance, y_resolution=1.0)
         self.plot_widget_velocity = PlotWidget('Velocity [m/s]', plots_velocity, y_resolution=0.01)
 
@@ -240,10 +240,10 @@ class LaserRangeFinder(PluginBase):
                 w.show()
 
     def cb_distance(self, distance):
-        self.current_distance = distance
+        self.current_distance.value = distance
 
     def cb_velocity(self, velocity):
-        self.current_velocity = velocity / 100.0
+        self.current_velocity.value = velocity / 100.0
 
     def configuration_changed(self):
         acquisition_count = self.spin_acquisition_count.value()

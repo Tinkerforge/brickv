@@ -29,7 +29,7 @@ from PyQt5.QtGui import QPainter, QLinearGradient, QColor
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
 from brickv.async_call import async_call
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.callback_emulator import CallbackEmulator
 
 class TuningThermo(QWidget):
@@ -79,10 +79,10 @@ class SoundIntensity(PluginBase):
                                               self.cb_intensity,
                                               self.increase_error_count)
 
-        self.current_intensity = None
+        self.current_intensity = CurveValueWrapper()
         self.thermo = TuningThermo()
 
-        plots = [('Intensity Value', Qt.red, lambda: self.current_intensity, str)]
+        plots = [('Intensity Value', Qt.red, self.current_intensity, str)]
         self.plot_widget = PlotWidget('Intensity Value', plots, curve_motion_granularity=40,
                                       update_interval=0.025, extra_key_widgets=[self.thermo],
                                       y_resolution=1.0)
@@ -92,7 +92,7 @@ class SoundIntensity(PluginBase):
 
     def cb_intensity(self, intensity):
         self.thermo.set_value(intensity)
-        self.current_intensity = intensity
+        self.current_intensity.value = intensity
 
     def start(self):
         async_call(self.si.get_intensity, None, self.cb_intensity, self.increase_error_count)

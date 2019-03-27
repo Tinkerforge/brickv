@@ -29,7 +29,7 @@ from brickv.bindings.bricklet_voltage_current_v2 import BrickletVoltageCurrentV2
 from brickv.plugin_system.plugins.voltage_current_v2.ui_voltage_current_v2 import Ui_VoltageCurrentV2
 from brickv.plugin_system.plugins.voltage_current_v2.ui_calibration import Ui_Calibration
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import format_voltage, format_current
@@ -171,13 +171,13 @@ class VoltageCurrentV2(COMCUPluginBase, Ui_VoltageCurrentV2):
                                           self.cb_power,
                                           self.increase_error_count)
 
-        self.current_voltage = None # float, V
-        self.current_current = None # float, A
-        self.current_power = None # float, W
+        self.current_voltage = CurveValueWrapper() # float, V
+        self.current_current = CurveValueWrapper() # float, A
+        self.current_power = CurveValueWrapper() # float, W
 
-        plots_voltage = [('Voltage', Qt.red, lambda: self.current_voltage, format_voltage)]
-        plots_current = [('Current', Qt.blue, lambda: self.current_current, format_current)]
-        plots_power = [('Power', Qt.darkGreen, lambda: self.current_power, format_power)]
+        plots_voltage = [('Voltage', Qt.red, self.current_voltage, format_voltage)]
+        plots_current = [('Current', Qt.blue, self.current_current, format_current)]
+        plots_power = [('Power', Qt.darkGreen, self.current_power, format_power)]
         self.plot_widget_voltage = PlotWidget('Voltage [V]', plots_voltage, clear_button=self.button_clear_graphs, y_resolution=0.001)
         self.plot_widget_current = PlotWidget('Current [A]', plots_current, clear_button=self.button_clear_graphs, y_resolution=0.001)
         self.plot_widget_power = PlotWidget('Power [W]', plots_power, clear_button=self.button_clear_graphs, y_resolution=0.001)
@@ -234,13 +234,13 @@ class VoltageCurrentV2(COMCUPluginBase, Ui_VoltageCurrentV2):
         return 'voltage_current_v2'
 
     def cb_current(self, current):
-        self.current_current = current / 1000.0
+        self.current_current.value = current / 1000.0
 
     def cb_voltage(self, voltage):
-        self.current_voltage = voltage / 1000.0
+        self.current_voltage.value = voltage / 1000.0
 
     def cb_power(self, power):
-        self.current_power = power / 1000.0
+        self.current_power.value = power / 1000.0
 
     def save_cal_clicked(self):
         gainmul = self.gainmul_spinbox.value()

@@ -29,7 +29,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QGridLa
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_industrial_dual_0_20ma_v2 import BrickletIndustrialDual020mAV2
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -69,15 +69,15 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         self.connected_labels = [FixedSizeLabel(self.str_not_connected.format(CH_0)),
                                  FixedSizeLabel(self.str_not_connected.format(CH_1))]
 
-        self.current_current = [None, None] # float, mA
+        self.current_current = [CurveValueWrapper(), CurveValueWrapper()] # float, mA
 
         plots = [('Channel 0',
                   Qt.red,
-                  lambda: self.current_current[CH_0],
+                  self.current_current[CH_0],
                   lambda value: '{:.03f} mA'.format(round(value, 3))),
                  ('Channel 1',
                   Qt.blue,
-                  lambda: self.current_current[CH_1],
+                  self.current_current[CH_1],
                   lambda value: '{:.03f} mA'.format(round(value, 3)))]
 
         self.plot_widget = PlotWidget('Current [mA]', plots,
@@ -387,7 +387,7 @@ class IndustrialDual020mAV2(COMCUPluginBase):
 
     def cb_current(self, channel, current):
         value = current / 1000000.0
-        self.current_current[channel] = value
+        self.current_current[channel].value = value
 
         if value < 3.9:
             self.connected_labels[channel].setText(self.str_not_connected.format(channel))

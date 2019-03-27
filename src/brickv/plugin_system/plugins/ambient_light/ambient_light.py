@@ -28,7 +28,7 @@ from PyQt5.QtGui import QPainter, QColor, QBrush
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -64,9 +64,9 @@ class AmbientLight(PluginBase):
 
         self.alf = AmbientLightFrame()
 
-        self.current_illuminance = None # float, lx
+        self.current_illuminance = CurveValueWrapper() # float, lx
 
-        plots = [('Illuminance', Qt.red, lambda: self.current_illuminance, '{} lx (Lux)'.format)]
+        plots = [('Illuminance', Qt.red, self.current_illuminance, '{} lx (Lux)'.format)]
         self.plot_widget = PlotWidget('Illuminance [lx]', plots, extra_key_widgets=[self.alf], y_resolution=0.1)
 
         layout = QVBoxLayout(self)
@@ -91,7 +91,7 @@ class AmbientLight(PluginBase):
         return device_identifier == BrickletAmbientLight.DEVICE_IDENTIFIER
 
     def cb_illuminance(self, illuminance):
-        self.current_illuminance = illuminance / 10.0
+        self.current_illuminance.value = illuminance / 10.0
 
         value = illuminance * 255 / 9000
         self.alf.set_color(value, value, value)

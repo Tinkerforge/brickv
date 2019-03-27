@@ -29,7 +29,7 @@ from PyQt5.QtGui import QPainter, QColor, QBrush
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_ambient_light_v2 import BrickletAmbientLightV2
 from brickv.bindings import ip_connection
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -74,9 +74,9 @@ class AmbientLightV2(PluginBase):
         self.saturated_label.hide()
         self.saturated_label.setStyleSheet('QLabel { color: magenta }')
 
-        self.current_illuminance = None # float, lx
+        self.current_illuminance = CurveValueWrapper() # float, lx
 
-        plots = [('Illuminance', Qt.red, lambda: self.current_illuminance, '{:.2f} lx (Lux)'.format)]
+        plots = [('Illuminance', Qt.red, self.current_illuminance, '{:.2f} lx (Lux)'.format)]
         self.plot_widget = PlotWidget('Illuminance [lx]', plots,
                                       extra_key_widgets=[self.out_of_range_label, self.saturated_label, self.alf],
                                       y_resolution=0.01)
@@ -153,10 +153,11 @@ class AmbientLightV2(PluginBase):
             pass
 
     def cb_illuminance(self, illuminance):
-        self.current_illuminance = illuminance / 100.0
+        self.current_illuminance.value = illuminance / 100.0
 
         max_illuminance = 12000000 # Approximation for unlimited range
         current_range = self.range_combo.itemData(self.range_combo.currentIndex())
+
         if current_range == BrickletAmbientLightV2.ILLUMINANCE_RANGE_64000LUX:
             max_illuminance = 6400001
         elif current_range == BrickletAmbientLightV2.ILLUMINANCE_RANGE_32000LUX:

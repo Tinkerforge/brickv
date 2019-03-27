@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_co2 import BrickletCO2
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -41,9 +41,9 @@ class CO2(PluginBase):
                                                       self.cb_co2_concentration,
                                                       self.increase_error_count)
 
-        self.current_co2_concentration = None # int, ppm
+        self.current_co2_concentration = CurveValueWrapper() # int, ppm
 
-        plots = [('CO2 Concentration', Qt.red, lambda: self.current_co2_concentration, '{} ppm'.format)]
+        plots = [('CO2 Concentration', Qt.red, self.current_co2_concentration, '{} ppm'.format)]
         self.plot_widget = PlotWidget('CO2 Concentration [ppm]', plots, y_resolution=1.0)
 
         layout = QVBoxLayout(self)
@@ -68,4 +68,4 @@ class CO2(PluginBase):
         return device_identifier == BrickletCO2.DEVICE_IDENTIFIER
 
     def cb_co2_concentration(self, co2_concentration):
-        self.current_co2_concentration = co2_concentration
+        self.current_co2_concentration.value = co2_concentration

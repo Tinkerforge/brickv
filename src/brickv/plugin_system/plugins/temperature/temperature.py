@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_temperature import BrickletTemperature
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -41,9 +41,9 @@ class Temperature(PluginBase):
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 
-        self.current_temperature = None # float, °C
+        self.current_temperature = CurveValueWrapper() # float, °C
 
-        plots = [('Temperature', Qt.red, lambda: self.current_temperature, '{:.2f} °C'.format)]
+        plots = [('Temperature', Qt.red, self.current_temperature, '{:.2f} °C'.format)]
         self.plot_widget = PlotWidget('Temperature [°C]', plots, y_resolution=0.01)
 
         layout = QVBoxLayout(self)
@@ -68,4 +68,4 @@ class Temperature(PluginBase):
         return device_identifier == BrickletTemperature.DEVICE_IDENTIFIER
 
     def cb_temperature(self, temperature):
-        self.current_temperature = temperature / 100.0
+        self.current_temperature.value = temperature / 100.0

@@ -29,7 +29,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QPushButton, \
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_barometer import BrickletBarometer
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -60,15 +60,15 @@ class Barometer(PluginBase):
 
         self.chip_temperature_label = ChipTemperatureLabel()
 
-        self.current_air_pressure = None # float, mbar
-        self.current_altitude = None # float, m
+        self.current_air_pressure = CurveValueWrapper() # float, mbar
+        self.current_altitude = CurveValueWrapper() # float, m
 
         self.clear_graphs_button = QPushButton('Clear Graphs')
 
-        plots = [('Air Pressure', Qt.red, lambda: self.current_air_pressure, '{:.3f} mbar (QFE)'.format)]
+        plots = [('Air Pressure', Qt.red, self.current_air_pressure, '{:.3f} mbar (QFE)'.format)]
         self.air_pressure_plot_widget = PlotWidget('Air Pressure [mbar]', plots, self.clear_graphs_button, y_resolution=0.001)
 
-        plots = [('Altitude', Qt.darkGreen, lambda: self.current_altitude, lambda value: '{:.2f} m ({:.2f} ft)'.format(value, value / 0.3048))]
+        plots = [('Altitude', Qt.darkGreen, self.current_altitude, lambda value: '{:.2f} m ({:.2f} ft)'.format(value, value / 0.3048))]
         self.altitude_plot_widget = PlotWidget('Altitude [m]', plots, self.clear_graphs_button, y_resolution=0.01)
 
         if self.has_calibrate:
@@ -243,7 +243,7 @@ class Barometer(PluginBase):
         async_call(self.barometer.get_chip_temperature, None, self.update_chip_temp_async, self.increase_error_count)
 
     def cb_air_pressure(self, air_pressure):
-        self.current_air_pressure = air_pressure / 1000.0
+        self.current_air_pressure.value = air_pressure / 1000.0
 
     def cb_altitude(self, altitude):
-        self.current_altitude = altitude / 100.0
+        self.current_altitude.value = altitude / 100.0

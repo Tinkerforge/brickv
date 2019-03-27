@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QSpinBo
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_analog_in import BrickletAnalogIn
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import format_voltage
@@ -42,9 +42,9 @@ class AnalogIn(PluginBase):
                                             self.cb_voltage,
                                             self.increase_error_count)
 
-        self.current_voltage = None # float, V
+        self.current_voltage = CurveValueWrapper() # float, V
 
-        plots = [('Voltage', Qt.red, lambda: self.current_voltage, format_voltage)]
+        plots = [('Voltage', Qt.red, self.current_voltage, format_voltage)]
         self.plot_widget = PlotWidget('Voltage [V]', plots, y_resolution=0.001)
 
         layout = QVBoxLayout(self)
@@ -117,7 +117,7 @@ class AnalogIn(PluginBase):
         return device_identifier == BrickletAnalogIn.DEVICE_IDENTIFIER
 
     def cb_voltage(self, voltage):
-        self.current_voltage = voltage / 1000.0
+        self.current_voltage.value = voltage / 1000.0
 
     def range_changed(self, index):
         if index >= 0 and self.firmware_version >= (2, 0, 1):

@@ -29,7 +29,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
@@ -66,10 +66,10 @@ class IndustrialDual020mA(PluginBase):
         self.connected_labels = [FixedSizeLabel(self.str_not_connected.format(0)),
                                  FixedSizeLabel(self.str_not_connected.format(1))]
 
-        self.current_current = [None, None] # float, mA
+        self.current_current = [CurveValueWrapper(), CurveValueWrapper()] # float, mA
 
-        plots = [('Sensor 0', Qt.red, lambda: self.current_current[0], lambda value: '{:.03f} mA'.format(round(value, 3))),
-                 ('Sensor 1', Qt.blue, lambda: self.current_current[1], lambda value: '{:.03f} mA'.format(round(value, 3)))]
+        plots = [('Sensor 0', Qt.red, self.current_current[0], lambda value: '{:.03f} mA'.format(round(value, 3))),
+                 ('Sensor 1', Qt.blue, self.current_current[1], lambda value: '{:.03f} mA'.format(round(value, 3)))]
         self.plot_widget = PlotWidget('Current [mA]', plots, extra_key_widgets=self.connected_labels, y_resolution=0.001)
 
         self.sample_rate_label = QLabel('Sample Rate:')
@@ -125,7 +125,7 @@ class IndustrialDual020mA(PluginBase):
 
     def cb_current(self, sensor, current):
         value = current / 1000000.0
-        self.current_current[sensor] = value
+        self.current_current[sensor].value = value
 
         if value < 3.9:
             self.connected_labels[sensor].setText(self.str_not_connected.format(sensor))

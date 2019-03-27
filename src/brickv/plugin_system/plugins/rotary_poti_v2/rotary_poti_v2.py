@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import QHBoxLayout
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_rotary_poti_v2 import BrickletRotaryPotiV2
-from brickv.plot_widget import PlotWidget
+from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.knob_widget import KnobWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
@@ -48,9 +48,9 @@ class RotaryPotiV2(COMCUPluginBase):
         self.position_knob.set_scale(30, 3)
         self.position_knob.set_knob_radius(25)
 
-        self.current_position = None
+        self.current_position = CurveValueWrapper()
 
-        plots = [('Position', Qt.red, lambda: self.current_position, str)]
+        plots = [('Position', Qt.red, self.current_position, str)]
         self.plot_widget = PlotWidget('Position', plots, curve_motion_granularity=40,
                                       update_interval=0.025, y_resolution=1.0)
 
@@ -77,5 +77,5 @@ class RotaryPotiV2(COMCUPluginBase):
         return device_identifier == BrickletRotaryPotiV2.DEVICE_IDENTIFIER
 
     def cb_position(self, position):
-        self.current_position = position
+        self.current_position.value = position
         self.position_knob.set_value(position)
