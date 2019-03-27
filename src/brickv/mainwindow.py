@@ -1116,9 +1116,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def fw_versions_fetched(self, firmware_info):
         if isinstance(firmware_info, int):
             if firmware_info > 0:
+                self.setStatusBar(None)
+
                 label_icon = QLabel()
                 label_icon.setPixmap(load_pixmap('warning-icon-16.png'))
+
                 self.statusBar().addWidget(label_icon)
+
                 if firmware_info == 1:
                     message = 'Update information could not be downloaded from tinkerforge.com.<br/>' + \
                               'Is your computer connected to the Internet?'
