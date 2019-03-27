@@ -101,9 +101,10 @@ class Scale:
         self.title_text_font_metrics = QFontMetrics(self.title_text_font)
 
 class XScale(Scale):
-    def __init__(self, tick_text_font, title_text_font, title_text, tick_skip_last):
+    def __init__(self, tick_text_font, title_text_font, title_text, tick_align_first, tick_skip_last):
         super().__init__(tick_text_font, title_text_font)
 
+        self.tick_align_first = tick_align_first
         self.tick_skip_last = tick_skip_last
 
         self.step_size = None # set by update_tick_config
@@ -150,6 +151,7 @@ class XScale(Scale):
                       self.tick_mark_to_tick_text
         tick_text_width = factor_int + self.tick_mark_thickness + factor_int
         tick_text_height = self.tick_text_height
+        first = True
         value = value_min - (value_min % self.step_size)
 
         while fuzzy_leq(value, value_max):
@@ -159,8 +161,11 @@ class XScale(Scale):
                 if self.tick_skip_last:
                     break
 
-                tick_text_x = x - tick_text_width + self.tick_text_half_digit_width
+                tick_text_x = x + self.tick_text_half_digit_width
                 tick_text_alignment = Qt.AlignRight
+            elif first and self.tick_align_first == 'right':
+                tick_text_x = x - self.tick_text_half_digit_width
+                tick_text_alignment = Qt.AlignLeft
             else:
                 tick_text_x = x - factor_int
                 tick_text_alignment = Qt.AlignHCenter
@@ -197,6 +202,7 @@ class XScale(Scale):
 
                     painter.drawLine(subx, 0, subx, tick_mark_size)
 
+            first = False
             value += self.step_size
 
         # title
@@ -498,14 +504,15 @@ class CurveArea(QWidget):
 
 class Plot(QWidget):
     def __init__(self, parent, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
-                 curve_configs, scales_visible, curve_outer_border_visible, curve_motion_granularity,
+                 curve_configs, x_scale_visible, y_scale_visible, curve_outer_border_visible, curve_motion_granularity,
                  canvas_color, curve_start, x_diff, y_diff_min, y_scale_shrinkable):
         super().__init__(parent)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.curve_configs = curve_configs
-        self.scales_visible = scales_visible
+        self.x_scale_visible = x_scale_visible
+        self.y_scale_visible = y_scale_visible
 
         if curve_outer_border_visible:
             self.curve_outer_border = 5 # px, fixed
@@ -534,7 +541,8 @@ class Plot(QWidget):
         self.title_text_font.setPointSize(round(self.title_text_font.pointSize() * 1.2))
         self.title_text_font.setBold(True)
 
-        self.x_scale = XScale(self.tick_text_font, self.title_text_font, x_scale_title_text, x_scale_skip_last_tick)
+        self.x_scale = XScale(self.tick_text_font, self.title_text_font, x_scale_title_text,
+                              'center' if y_scale_visible else 'right', x_scale_skip_last_tick)
 
         self.y_scale = YScale(self.tick_text_font, self.title_text_font, y_scale_title_text)
         self.y_scale_fixed = False
@@ -568,18 +576,18 @@ class Plot(QWidget):
         width = self.width()
         height = self.height()
 
-        if self.scales_visible:
+        if self.y_scale_visible:
             curve_width = width - self.y_scale.total_width - self.curve_to_scale - self.curve_outer_border
-            curve_height = height - self.y_scale_height_offset - self.x_scale.total_height - self.curve_to_scale
         else:
             curve_width = width - self.curve_outer_border - self.curve_outer_border
-            curve_height = height - self.curve_outer_border - self.curve_outer_border
+
+        curve_height = self.get_curve_height(height)
 
         if DEBUG:
             painter.fillRect(0, 0, width, height, Qt.green)
 
         # fill canvas
-        if self.scales_visible:
+        if self.y_scale_visible:
             canvas_x = self.y_scale.total_width + self.curve_to_scale - self.curve_outer_border
             canvas_y = self.y_scale_height_offset - self.curve_outer_border
         else:
@@ -605,14 +613,17 @@ class Plot(QWidget):
                              Qt.cyan)
 
         # draw scales
-        if self.scales_visible:
+        if self.x_scale_visible:
+            factor_x = float(curve_width) / self.x_diff
+
+            self.draw_x_scale(painter, curve_width, factor_x)
+
+        if self.y_scale_visible:
             y_min_scale = self.y_scale.value_min
             y_max_scale = self.y_scale.value_max
 
-            factor_x = float(curve_width) / self.x_diff
             factor_y = float(curve_height - 1) / max(y_max_scale - y_min_scale, EPSILON) # -1 to accommodate the 1px width of the curve
 
-            self.draw_x_scale(painter, curve_width, factor_x)
             self.draw_y_scale(painter, curve_height, factor_y)
 
     def resize_curve_area(self):
@@ -622,16 +633,16 @@ class Plot(QWidget):
         width = self.width()
         height = self.height()
 
-        if self.scales_visible:
+        if self.y_scale_visible:
             curve_x = self.y_scale.total_width + self.curve_to_scale
             curve_y = self.y_scale_height_offset
             curve_width = width - self.y_scale.total_width - self.curve_to_scale - self.curve_outer_border
-            curve_height = height - self.y_scale_height_offset - self.x_scale.total_height - self.curve_to_scale
         else:
             curve_x = self.curve_outer_border
             curve_y = self.curve_outer_border
             curve_width = width - self.curve_outer_border - self.curve_outer_border
-            curve_height = height - self.curve_outer_border - self.curve_outer_border
+
+        curve_height = self.get_curve_height(height)
 
         self.curve_area.setGeometry(curve_x, curve_y, curve_width, curve_height)
 
@@ -645,8 +656,24 @@ class Plot(QWidget):
     def get_legend_offset_y(self): # px, from top
         return max(self.y_scale.tick_text_height_half - self.curve_outer_border, 0)
 
+    def get_curve_height(self, height):
+        if self.x_scale_visible and self.y_scale_visible:
+            curve_height = height - self.y_scale_height_offset - self.x_scale.total_height - self.curve_to_scale
+        elif self.x_scale_visible:
+            curve_height = height - self.curve_outer_border - self.x_scale.total_height - self.curve_to_scale
+        elif self.y_scale_visible:
+            curve_height = height - self.y_scale_height_offset - self.y_scale_height_offset
+        else:
+            curve_height = height - self.curve_outer_border - self.curve_outer_border
+
+        return curve_height
+
     def draw_x_scale(self, painter, width, factor):
-        offset_x = self.y_scale.total_width + self.curve_to_scale
+        if self.y_scale_visible:
+            offset_x = self.y_scale.total_width + self.curve_to_scale
+        else:
+            offset_x = self.curve_outer_border
+
         offset_y = self.height() - self.x_scale.total_height
 
         if self.x_min != None:
@@ -661,7 +688,11 @@ class Plot(QWidget):
 
     def draw_y_scale(self, painter, height, factor):
         offset_x = self.y_scale.total_width
-        offset_y = self.height() - self.x_scale.total_height - self.curve_to_scale - 1
+
+        if self.x_scale_visible:
+            offset_y = self.height() - self.x_scale.total_height - self.curve_to_scale - 1
+        else:
+            offset_y = self.height() - self.y_scale_height_offset - 1
 
         painter.save()
         painter.translate(offset_x, offset_y)
@@ -984,14 +1015,15 @@ class PlotWidget(QWidget):
                  curve_configs,
                  clear_button='default',
                  parent=None,
-                 scales_visible=True,
+                 x_scale_visible=True,
+                 y_scale_visible=True,
                  curve_outer_border_visible=True,
-                 curve_motion_granularity=10,
+                 curve_motion_granularity=10, # values
                  canvas_color=QColor(245, 245, 245),
                  external_timer=None,
                  key='top-value', # top-value, right-no-icon
                  extra_key_widgets=None,
-                 update_interval=0.1,
+                 update_interval=0.1, # seconds
                  curve_start='left',
                  moving_average_config=None,
                  x_scale_title_text='Time [s]',
@@ -1016,7 +1048,7 @@ class PlotWidget(QWidget):
                 assert isinstance(curve_config.value_wrapper, CurveValueWrapper)
 
         self.plot = Plot(self, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
-                         self.curve_configs, scales_visible, curve_outer_border_visible,
+                         self.curve_configs, x_scale_visible, y_scale_visible, curve_outer_border_visible,
                          curve_motion_granularity, canvas_color, curve_start, x_diff, y_diff_min,
                          y_scale_shrinkable)
         self.set_x_scale = self.plot.set_x_scale
