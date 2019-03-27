@@ -24,6 +24,8 @@ Boston, MA 02111-1307, USA.
 
 import urllib.request
 import urllib.error
+import html
+
 from PyQt5.QtWidgets import QWidget, QMessageBox, QProgressDialog
 from PyQt5.QtCore import Qt
 
@@ -101,7 +103,10 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
         try:
             imu_calibration_text = imu_calibration_text.decode('utf-8')
         except UnicodeDecodeError as e:
-            self.popup_fail('Factory Calibration', 'Factory calibration is malformed, please report to info@tinkerforge.com: {0}'.format(e))
+            self.popup_fail('Factory Calibration',
+                            ("Factory calibration is malformed, please report this error to " +
+                             "<a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>:<br/><br/> {0}")
+                            .format(html.escape(str(e))))
             return
 
         progress.cancel()
@@ -111,7 +116,9 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
         try:
             parsed = parse_imu_calibration(imu_calibration_text)
         except (ValueError, TypeError):
-            self.popup_fail('Factory Calibration', 'Factory calibration is malformed, please report to info@tinkerforge.com')
+            self.popup_fail('Factory Calibration',
+                            "Factory calibration is malformed, please report this error to " +
+                            "<a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>")
             return
 
         try:

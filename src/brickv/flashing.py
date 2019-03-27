@@ -226,9 +226,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 self.combo_extension_firmware.setEnabled(False)
 
                 if firmware_info == ERROR_DOWNLOAD:
-                    self.popup_fail('Updates / Flashing', 'Latest version information on tinkerforge.com could not be downloaded. Please report this to info@tinkerforge.com.\n\nFirmwares and plugins can be flashed from local files only.')
+                    self.popup_fail('Updates / Flashing',
+                                    "Update information could not be downloaded from tinkerforge.com.<br/><br/>" +
+                                    "Is your computer connected to the Internet?<br/><br/>" +
+                                    "Firmwares and plugins can be flashed from local files only.")
                 else:
-                    self.popup_fail('Updates / Flashing', 'Latest version information on tinkerforge.com is malformed (error code {0}). Please report this to info@tinkerforge.com.\n\nFirmwares and plugins can be flashed from local files only.'.format(firmware_info))
+                    self.popup_fail('Updates / Flashing',
+                                    ("Update information on tinkerforge.com is malformed (error code {0}).<br/><br/>" +
+                                     "Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>.<br/><br/>" +
+                                     "Firmwares and plugins can be flashed from local files only.").format(firmware_info))
         else:
             self.load_version_info(firmware_info)
 

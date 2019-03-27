@@ -1120,10 +1120,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 label_icon.setPixmap(load_pixmap('warning-icon-16.png'))
                 self.statusBar().addWidget(label_icon)
                 if firmware_info == 1:
-                    self.statusBar().addWidget(QLabel('Latest firmware information could not be downloaded.'))
+                    message = 'Update information could not be downloaded from tinkerforge.com.<br/>' + \
+                              'Is your computer connected to the Internet?'
                 else:
-                    self.statusBar().addWidget(QLabel('Latest firmware information on tinkerforge.com is malformed'\
-                        + '(error code {0}). Please report this to info@tinkerforge.com.'.format(firmware_info)))
+                    message = ("Update information on tinkerforge.com is malformed " +
+                               "(error code {0}).<br/>Please report this error to " +
+                               "<a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>.").format(firmware_info)
+
+                label_message = QLabel(message)
+                label_message.setOpenExternalLinks(True)
+
+                self.statusBar().addWidget(label_message)
+
             infos.reset_latest_fws()
         else:
             self.setStatusBar(None)
