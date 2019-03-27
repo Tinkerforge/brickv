@@ -92,8 +92,8 @@ class Scale:
         self.tick_text_font = tick_text_font
         self.tick_text_font_metrics = QFontMetrics(self.tick_text_font)
         self.tick_text_height = self.tick_text_font_metrics.boundingRect('0123456789').height()
-        self.tick_text_height_half = int(math.ceil(self.tick_text_height / 2.0))
-        self.tick_text_half_digit_width = int(math.ceil(self.tick_text_font_metrics.width('0123456789') / 20.0))
+        self.tick_text_height_half = int(round(self.tick_text_height / 2.0))
+        self.tick_text_half_digit_width = int(round(self.tick_text_font_metrics.width('0123456789') / 20.0))
 
         self.tick_value_to_str = istr
 
