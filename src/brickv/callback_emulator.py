@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015, 2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
 
 callback_emulator.py: Emulate callback using getters and threads
 
@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 
 import threading
 import logging
+import time
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
@@ -36,8 +37,8 @@ class CallbackEmulator(QObject):
                  ignore_last_data=False, debug_exception=False):
         super().__init__()
 
-        self.period = 0 # milliseconds
-        self.timer = None
+        self.thread = None
+        self.thread_id = 0
         self.data_getter = data_getter
         self.use_data_signal = use_data_signal
         self.data_callback = data_callback
@@ -52,44 +53,43 @@ class CallbackEmulator(QObject):
         if error_callback != None:
             self.qtcb_error.connect(self.error_callback)
 
-    def set_period(self, period):
-        self.period = period
+    def set_period(self, period): # milliseconds
+        self.thread_id += 1 # force current thread (if any) to exit eventually
 
-        if self.period > 0 and self.timer == None:
-            self.timer = threading.Timer(self.period / 1000.0, self.update)
-            self.timer.start()
+        if period > 0:
+            self.thread = threading.Thread(target=self.loop, args=(self.thread_id, period), daemon=True)
+            self.thread.start()
 
-    def update(self):
-        self.timer = None
+    def loop(self, thread_id, period):
+        period_override = None
 
-        if self.period < 1:
-            # period was set to 0 in the meantime, ignore update
-            return
+        while thread_id == self.thread_id:
+            if period_override != None:
+                time.sleep(period_override / 1000.0)
 
-        try:
-            data = self.data_getter()
-        except Error:
-            if self.debug_exception:
-                logging.exception('Error while getting callback data')
-
-            self.qtcb_error.emit()
-
-            # an error occurred, retry in 5 seconds if period was not set
-            # to 0 in the meantime
-            if self.period > 0:
-                self.timer = threading.Timer(5, self.update)
-                self.timer.start()
-
-            return
-
-        if self.ignore_last_data or self.last_data != data:
-            self.last_data = data
-
-            if self.use_data_signal:
-                self.qtcb_data.emit(data)
+                period_override = None
             else:
-                self.data_callback(data)
+                time.sleep(period / 1000.0)
 
-        if self.period > 0:
-            self.timer = threading.Timer(self.period / 1000.0, self.update)
-            self.timer.start()
+            if thread_id != self.thread_id:
+                break
+
+            try:
+                data = self.data_getter()
+            except Error:
+                if self.debug_exception:
+                    logging.exception('Error while getting callback data')
+
+                self.qtcb_error.emit()
+
+                # an error occurred, retry in 5 seconds
+                period_override = 5000
+                continue
+
+            if self.ignore_last_data or self.last_data != data:
+                self.last_data = data
+
+                if self.use_data_signal:
+                    self.qtcb_data.emit(data)
+                else:
+                    self.data_callback(data)
