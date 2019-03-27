@@ -175,6 +175,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
     def edit_custom_plugin_text_changed(self, text):
         self.button_plugin_save.setEnabled(os.path.isfile(text))
+
         if len(text) > 0:
             QTimer.singleShot(5000, lambda: self.edit_custom_plugin_text_changed(self.edit_custom_plugin.text()))
 
@@ -186,11 +187,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         if is_red_brick_brickv or is_red_brick_binding:
             parent = idx.parent()
+
             while parent.parent().data() is not None:
                 parent = parent.parent()
+
             uid = parent.sibling(parent.row(), 1).data()
+
             if infos.get_info(uid).plugin is not None:
                 infos.get_info(uid).plugin.perform_action(3)
+
             return
 
         if "wifi" in name.lower() and "2.0" in name.lower():
@@ -219,6 +224,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 self.combo_firmware.setEnabled(False)
                 self.combo_plugin.setEnabled(False)
                 self.combo_extension_firmware.setEnabled(False)
+
                 if firmware_info == ERROR_DOWNLOAD:
                     self.popup_fail('Updates / Flashing', 'Latest version information on tinkerforge.com could not be downloaded. Please report this to info@tinkerforge.com.\n\nFirmwares and plugins can be flashed from local files only.')
                 else:

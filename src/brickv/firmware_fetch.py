@@ -74,6 +74,7 @@ def refresh_plugin_info(url_part, latest_version):
         name = name.upper()
     elif name.startswith('lcd_'):
         name = name.replace('lcd_', 'LCD_')
+
         if url_part.startswith('lcd_20x4_'):
             name = name.replace('_v11', '_1.1').replace('_v12', '_1.2')
     elif name.startswith('io'):
@@ -152,14 +153,14 @@ def refresh_red_image_info(url_part, latest_version):
 
     return red_image_info
 
-
-
 # Returns None if the binding is not supported on the red brick
 def refresh_binding_info(url_part, latest_version):
     red_image_info = infos.BindingInfo()
     red_image_info.name = infos.get_bindings_name(url_part)
+
     if red_image_info.name is None:
         return None
+
     red_image_info.url_part = url_part
     red_image_info.firmware_version_latest = latest_version
 
@@ -167,6 +168,7 @@ def refresh_binding_info(url_part, latest_version):
 
 def fetch_latest_fw_versions(report_error_fn):
     result = infos.LatestFirmwares({}, {}, {}, {}, {}, {})
+
     try:
         response = urllib.request.urlopen(LATEST_VERSIONS_URL, timeout=10)
         latest_versions_data = response.read().decode('utf-8')
@@ -216,8 +218,10 @@ def fetch_latest_fw_versions(report_error_fn):
             result.red_image_infos[parts[1]] = refresh_red_image_info(parts[1], latest_version)
         elif parts[0] == 'bindings':
             info = refresh_binding_info(parts[1], latest_version)
+
             if info is not None:
                 result.binding_infos[parts[1]] = info
+
     return result
 
 class LatestFWVersionFetcher(QObject):
@@ -232,6 +236,7 @@ class LatestFWVersionFetcher(QObject):
     def run(self):
         while not self._abort:
             new_data = fetch_latest_fw_versions(self.fw_versions_avail.emit)
+
             if new_data is not None:
                 self.fw_versions_avail.emit(new_data)
 
@@ -243,6 +248,7 @@ class LatestFWVersionFetcher(QObject):
     def fetch_now(self):
         if self._abort:
             new_data = fetch_latest_fw_versions(self.fw_versions_avail.emit)
+
             if new_data is not None:
                 self.fw_versions_avail.emit(new_data)
         else:
