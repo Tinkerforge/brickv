@@ -1148,14 +1148,14 @@ class RED(PluginBase, Ui_RED):
         button_text = ""
         tool_tip_text = ""
         if bindings and brickv:
-            button_text = "Update Bindings and Brick Viewer"
-            tool_tip_text = "Binding and Brick Viewer Updates available"
+            button_text = "Update Bindings and Brick Viewer for RED Brick"
+            tool_tip_text = "Binding and Brick Viewer Updates for RED Brick available"
         elif bindings:
-            button_text = "Update Bindings"
-            tool_tip_text = "Binding Updates available"
+            button_text = "Update Bindings for RED Brick"
+            tool_tip_text = "Binding Updates for RED Brick available"
         elif brickv:
-            button_text = "Update Brick Viewer"
-            tool_tip_text = "Brick Viewer Update available"
+            button_text = "Update Brick Viewer for RED Brick"
+            tool_tip_text = "Brick Viewer Update for RED Brick available"
 
         # Show "normal" update button and customize it
         self.show_update()
@@ -1173,11 +1173,11 @@ class RED(PluginBase, Ui_RED):
 
         # Maybe a bindings update was shown the last time,
         # revert changes to the update buttons.
-        self.device_info.tab_window.button_update.setText("Update Image")
+        self.device_info.tab_window.button_update.setText("Update Image for RED Brick")
         self.device_info.tab_window.button_update.clicked.disconnect()
         self.device_info.tab_window.button_update.clicked.connect(get_main_window().show_red_brick_update)
 
-        self.update_tab_button.setToolTip('Image Update available')
+        self.update_tab_button.setToolTip('Image Update for RED Brick available')
         self.update_tab_button.clicked.disconnect()
         self.update_tab_button.clicked.connect(lambda: get_main_window().show_red_brick_update())
 
@@ -1194,6 +1194,9 @@ class RED(PluginBase, Ui_RED):
         # as they are easier to install. Also when they are updated,
         # device_infos_changed is triggered again, so the image update
         # will be shown afterwards.
+        # A special case is the update to image 1.14: This adds
+        # support for the Brick Viewer version 2.4.0 and should therefore
+        # be prioritized.
 
         brickv_update = (self.device_info.brickv_info is not None) \
                         and (self.device_info.brickv_info.firmware_version_installed < self.device_info.brickv_info.firmware_version_latest) \
@@ -1203,7 +1206,9 @@ class RED(PluginBase, Ui_RED):
 
         image_update = self.device_info.firmware_version_installed < self.device_info.firmware_version_latest
 
-        if brickv_update or bindings_update:
+        if image_update and self.device_info.firmware_version_installed < (1, 14, 0):
+            self.show_image_update()
+        elif brickv_update or bindings_update:
             self.show_bindings_update(bindings=bindings_update, brickv=brickv_update)
         elif image_update:
             self.show_image_update()
