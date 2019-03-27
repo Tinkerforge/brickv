@@ -273,7 +273,7 @@ def get_info(uid):
         return None
 
 def reset_latest_fws():
-    update_latest_fws(LatestFirmwares({}, {}, {}, {}))
+    update_latest_fws(LatestFirmwares({}, {}, {}, {}, {}, {}))
 
 def update_latest_fws(latest_fws):
     global _latest_fws
