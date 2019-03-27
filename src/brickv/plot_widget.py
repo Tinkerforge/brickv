@@ -345,22 +345,25 @@ class YScale(Scale):
         title_height = self.title_text_height
 
         if self.title_text_pixmap == None or self.title_text_pixmap.size() != QSize(title_width, title_height):
-            self.title_text_pixmap = QPixmap(title_width, title_height)
+            self.title_text_pixmap = QPixmap(title_width + 100, title_height + 100)
 
-            if DEBUG:
-                self.title_text_pixmap.fill(Qt.yellow)
-            else:
-                self.title_text_pixmap.fill(QColor(0, 0, 0, 0))
+            self.title_text_pixmap.fill(QColor(0, 0, 0, 0))
 
             title_painter = QPainter(self.title_text_pixmap)
+
+            if DEBUG:
+                title_painter.fillRect(50, 50, title_width, title_height, Qt.yellow)
+
             title_painter.setFont(self.title_text_font)
-            title_painter.drawText(0, 0, title_width, title_height,
+            title_painter.drawText(50, 50, title_width, title_height,
                                    Qt.TextWordWrap | Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignTop,
                                    self.title_text)
+
             title_painter = None
 
         painter.save()
         painter.rotate(-90)
+        painter.translate(-50, -50)
 
         title_x = -1
         title_y = -self.axis_line_thickness - \
