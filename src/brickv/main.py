@@ -88,11 +88,14 @@ class ExceptionReporter:
     def error_spawner(self):
         ignored = []
         while True:
-            error = self.error_queue.get()
+            exctype, value, tb = self.error_queue.get()
+            error = "".join(traceback.format_exception(etype=exctype, value=value, tb=tb))
 
             hash_ = hash(error)
             if hash_ in ignored:
                 continue
+
+            traceback.print_exception(etype=exctype, value=value, tb=tb)
 
             # Either sys.executable is /path/to/python, then run calls /path/to/python /path/to/main.py --error-report,
             # or sys.executable is brickv[.exe], then the --error-report flag ensures, that the path to main.py is ignored.
@@ -101,10 +104,7 @@ class ExceptionReporter:
                 ignored.append(hash_)
 
     def exception_hook(self, exctype, value, tb):
-        traceback.print_exception(etype=exctype, value=value, tb=tb)
-
-        message = "".join(traceback.format_exception(etype=exctype, value=value, tb=tb))
-        self.error_queue.put(message)
+        self.error_queue.put((exctype, value, tb))
 
 class BrickViewer(QApplication):
     object_creator_signal = pyqtSignal(object)
