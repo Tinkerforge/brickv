@@ -487,7 +487,7 @@
        <item>
         <widget class="QGroupBox" name="group_arguments">
          <property name="title">
-          <string>Arguments and Evironment</string>
+          <string>Arguments and Environment</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
