@@ -1728,10 +1728,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.update_tree_view.setAnimated(True)
 
-        self.update_tree_view.setColumnWidth(0, 260)
-        self.update_tree_view.setColumnWidth(1, 75)
-        self.update_tree_view.setColumnWidth(2, 75)
-        self.update_tree_view.setColumnWidth(3, 75)
+        self.update_tree_view.setColumnWidth(0, 280)
+        self.update_tree_view.setColumnWidth(1, 70)
+        self.update_tree_view.setColumnWidth(2, 90)
+        self.update_tree_view.setColumnWidth(3, 105)
+        self.update_tree_view.setColumnWidth(4, 105)
         self.update_tree_view.setSortingEnabled(True)
         self.update_tree_view.header().setSortIndicator(sis, sio)
 
