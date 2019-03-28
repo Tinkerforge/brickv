@@ -56,11 +56,12 @@ class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
 
         plots_waveform_v = [('Waveform V', Qt.red, None, None)]
         self.plot_widget_waveform_v = PlotWidget('Voltage [V]', plots_waveform_v, clear_button=None, x_diff=768*ENERGY_MONITOR_MS_PER_TICK, x_scale_title_text='Time [ms]', key=None, x_scale_visible=False)
-        self.plot_widget_waveform_v.set_x_scale(10, 1)
 
         plots_waveform_a = [('Waveform A', Qt.red, None, None)]
         self.plot_widget_waveform_a = PlotWidget('Current [A]', plots_waveform_a, clear_button=None, x_diff=768*ENERGY_MONITOR_MS_PER_TICK, x_scale_title_text='Time [ms]', key=None)
-        self.plot_widget_waveform_a.set_x_scale(10, 1)
+
+        self.plot_widget_waveform_v.add_y_scale_sibling(self.plot_widget_waveform_a)
+        self.plot_widget_waveform_a.add_y_scale_sibling(self.plot_widget_waveform_v)
 
         self.layout_graph.insertWidget(0, self.plot_widget_waveform_v)
         self.layout_graph.addWidget(self.plot_widget_waveform_a)

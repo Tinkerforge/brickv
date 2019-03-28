@@ -29,7 +29,7 @@ import bisect
 from collections import namedtuple
 import time
 
-from PyQt5.QtCore import QTimer, Qt, QSize, QRectF, QLineF, QPoint
+from PyQt5.QtCore import pyqtSignal, Qt, QObject, QTimer, QSize, QRectF, QLineF, QPoint
 from PyQt5.QtGui import QPainter, QFontMetrics, QPixmap, QIcon, QColor, \
                         QPainterPath, QTransform, QPen
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
@@ -80,8 +80,10 @@ class CurveValueWrapper:
 
         self.valid = True
 
-class Scale:
-    def __init__(self, tick_text_font, title_text_font):
+class Scale(QObject):
+    def __init__(self, tick_text_font, title_text_font, parent):
+        super().__init__(parent)
+
         self.axis_line_thickness = 1 # px, fixed
 
         self.tick_mark_thickness = 1 # px, fixed
@@ -101,8 +103,8 @@ class Scale:
         self.title_text_font_metrics = QFontMetrics(self.title_text_font)
 
 class XScale(Scale):
-    def __init__(self, tick_text_font, title_text_font, title_text, tick_align_first, tick_skip_last):
-        super().__init__(tick_text_font, title_text_font)
+    def __init__(self, tick_text_font, title_text_font, title_text, tick_align_first, tick_skip_last, parent):
+        super().__init__(tick_text_font, title_text_font, parent)
 
         self.tick_align_first = tick_align_first
         self.tick_skip_last = tick_skip_last
@@ -227,8 +229,10 @@ class XScale(Scale):
                          self.title_text)
 
 class YScale(Scale):
-    def __init__(self, tick_text_font, title_text_font, title_text):
-        super().__init__(tick_text_font, title_text_font)
+    total_width_changed = pyqtSignal()
+
+    def __init__(self, tick_text_font, title_text_font, title_text, parent):
+        super().__init__(tick_text_font, title_text_font, parent)
 
         self.value_min = None # set by update_tick_config
         self.value_max = None # set by update_tick_config
@@ -245,9 +249,10 @@ class YScale(Scale):
         self.title_text_to_border = 2 # px, fixed
         self.title_text_height = None # set by update_title_text_height
         self.title_text_pixmap = None
+        self.title_text_padding = 0 # px, initial value, set by set_title_text_padding
 
         self.total_width = None # set by update_total_width
-        self.total_width_changed = None
+        self.total_unpadded_width = None # set by update_total_width
 
         self.update_title_text_height(1000)
         self.update_tick_config(-1.0, 1.0, 1.0, 5)
@@ -281,19 +286,31 @@ class YScale(Scale):
 
         self.update_total_width()
 
+    def set_title_text_padding(self, padding):
+        old_title_text_padding = self.title_text_padding
+
+        self.title_text_padding = padding
+
+        self.update_total_width()
+
+        if old_title_text_padding != self.title_text_padding:
+            self.total_width_changed.emit()
+
     def update_total_width(self):
         old_total_width = self.total_width
 
-        self.total_width = self.axis_line_thickness + \
-                           self.tick_mark_size_large + \
-                           self.tick_mark_to_tick_text + \
-                           self.tick_text_max_width + \
-                           self.tick_text_to_title_text + \
-                           self.title_text_height + \
-                           self.title_text_to_border
+        self.total_unpadded_width = self.axis_line_thickness + \
+                                    self.tick_mark_size_large + \
+                                    self.tick_mark_to_tick_text + \
+                                    self.tick_text_max_width + \
+                                    self.tick_text_to_title_text + \
+                                    self.title_text_height + \
+                                    self.title_text_to_border
 
-        if old_total_width != self.total_width and self.total_width_changed != None:
-            self.total_width_changed()
+        self.total_width = self.total_unpadded_width + max(self.title_text_padding, 0)
+
+        if old_total_width != self.total_width:
+            self.total_width_changed.emit()
 
     def draw(self, painter, height, factor):
         # axis line
@@ -377,6 +394,7 @@ class YScale(Scale):
                   self.tick_mark_to_tick_text - \
                   self.tick_text_max_width - \
                   self.tick_text_to_title_text - \
+                  max(self.title_text_padding, 0) - \
                   title_height
 
         painter.drawPixmap(title_x, title_y, self.title_text_pixmap)
@@ -504,8 +522,9 @@ class CurveArea(QWidget):
 
 class Plot(QWidget):
     def __init__(self, parent, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
-                 curve_configs, x_scale_visible, y_scale_visible, curve_outer_border_visible, curve_motion_granularity,
-                 canvas_color, curve_start, x_diff, y_diff_min, y_scale_shrinkable):
+                 curve_configs, x_scale_visible, y_scale_visible, curve_outer_border_visible,
+                 curve_motion_granularity, canvas_color, curve_start, x_diff, y_diff_min,
+                 y_scale_shrinkable):
         super().__init__(parent)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -542,15 +561,15 @@ class Plot(QWidget):
         self.title_text_font.setBold(True)
 
         self.x_scale = XScale(self.tick_text_font, self.title_text_font, x_scale_title_text,
-                              'center' if y_scale_visible else 'right', x_scale_skip_last_tick)
+                              'center' if y_scale_visible else 'right', x_scale_skip_last_tick, self)
 
-        self.y_scale = YScale(self.tick_text_font, self.title_text_font, y_scale_title_text)
+        self.y_scale = YScale(self.tick_text_font, self.title_text_font, y_scale_title_text, self)
         self.y_scale_fixed = False
         self.y_scale_shrinkable = y_scale_shrinkable
         self.y_scale_height_offset = max(self.curve_outer_border, self.y_scale.tick_text_height_half) # px, from top
 
         self.curve_area = CurveArea(self)
-        self.y_scale.total_width_changed = self.resize_curve_area
+        self.y_scale.total_width_changed.connect(self.resize_curve_area)
 
         self.clear_graph()
         self.resize_curve_area()
@@ -1183,6 +1202,14 @@ class PlotWidget(QWidget):
         else:
             # assuming that the external timer runs with the configured interval
             external_timer.timeout.connect(self.add_new_data)
+
+    def update_y_scale_sibling(self, plot_widget): # internal
+        total_unpadded_width_diff = plot_widget.plot.y_scale.total_unpadded_width - self.plot.y_scale.total_unpadded_width
+
+        self.plot.y_scale.set_title_text_padding(total_unpadded_width_diff)
+
+    def add_y_scale_sibling(self, plot_widget):
+        plot_widget.plot.y_scale.total_width_changed.connect(functools.partial(self.update_y_scale_sibling, plot_widget))
 
     def set_moving_average_value(self, value):
         self.moving_average_spinbox.blockSignals(True)
