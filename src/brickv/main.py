@@ -131,6 +131,7 @@ def error_report_main():
     app = QApplication(sys.argv)
     window = QMainWindow()
     window.setWindowTitle('Error - Brick Viewer ' + config.BRICKV_VERSION)
+    window.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
 
     widget = QWidget()
     window.setCentralWidget(widget)
@@ -143,6 +144,7 @@ def error_report_main():
 
     right_widget = QWidget()
     right_widget.setLayout(QVBoxLayout())
+    right_widget.layout().setContentsMargins(0, 0, 0, 0)
 
     label = QLabel("Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>.<br/><br/>" +
                    "If you know what caused the error and could work around it, please report it anyway. This allows us to improve the error messages.")
@@ -158,7 +160,7 @@ def error_report_main():
     cbox.setChecked(True)
     right_widget.layout().addWidget(cbox)
 
-    btn = QPushButton("OK")
+    btn = QPushButton("Close")
     btn.clicked.connect(lambda event: app.exit())
     right_widget.layout().addWidget(btn)
 
