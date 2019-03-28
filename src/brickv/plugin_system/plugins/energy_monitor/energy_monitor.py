@@ -63,8 +63,13 @@ class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
         self.plot_widget_waveform_v.add_y_scale_sibling(self.plot_widget_waveform_a)
         self.plot_widget_waveform_a.add_y_scale_sibling(self.plot_widget_waveform_v)
 
-        self.layout_graph.insertWidget(0, self.plot_widget_waveform_v)
-        self.layout_graph.addWidget(self.plot_widget_waveform_a)
+        # try to make the actual curve area equal in height by fiddling with the
+        # minimum-height and the stretch factors
+        self.plot_widget_waveform_v.setMinimumHeight(194)
+        self.plot_widget_waveform_a.setMinimumHeight(250)
+        self.layout_graph.insertWidget(0, self.plot_widget_waveform_v, 86)
+        self.layout_graph.addWidget(self.plot_widget_waveform_a, 100)
+
         self.x_data = [x * ENERGY_MONITOR_MS_PER_TICK for x in list(range(768))]
 
         self.button_energy.clicked.connect(self.button_energy_clicked)
