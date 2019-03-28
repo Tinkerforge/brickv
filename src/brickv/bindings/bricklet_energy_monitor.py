@@ -20,6 +20,7 @@ except ValueError:
 
 GetEnergyData = namedtuple('EnergyData', ['voltage', 'current', 'energy', 'real_power', 'apparent_power', 'reactive_power', 'power_factor', 'frequency'])
 GetWaveformLowLevel = namedtuple('WaveformLowLevel', ['waveform_chunk_offset', 'waveform_chunk_data'])
+GetTransformerStatus = namedtuple('TransformerStatus', ['voltage_transformer_connected', 'current_transformer_connected'])
 GetTransformerCalibration = namedtuple('TransformerCalibration', ['voltage_ratio', 'current_ratio', 'phase_shift'])
 GetEnergyDataCallbackConfiguration = namedtuple('EnergyDataCallbackConfiguration', ['period', 'value_has_to_change'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
@@ -34,17 +35,18 @@ class BrickletEnergyMonitor(Device):
     DEVICE_DISPLAY_NAME = 'Energy Monitor Bricklet'
     DEVICE_URL_PART = 'energy_monitor' # internal
 
-    CALLBACK_ENERGY_DATA = 9
+    CALLBACK_ENERGY_DATA = 10
 
 
     FUNCTION_GET_ENERGY_DATA = 1
     FUNCTION_RESET_ENERGY = 2
     FUNCTION_GET_WAVEFORM_LOW_LEVEL = 3
-    FUNCTION_SET_TRANSFORMER_CALIBRATION = 4
-    FUNCTION_GET_TRANSFORMER_CALIBRATION = 5
-    FUNCTION_CALIBRATE_OFFSET = 6
-    FUNCTION_SET_ENERGY_DATA_CALLBACK_CONFIGURATION = 7
-    FUNCTION_GET_ENERGY_DATA_CALLBACK_CONFIGURATION = 8
+    FUNCTION_GET_TRANSFORMER_STATUS = 4
+    FUNCTION_SET_TRANSFORMER_CALIBRATION = 5
+    FUNCTION_GET_TRANSFORMER_CALIBRATION = 6
+    FUNCTION_CALIBRATE_OFFSET = 7
+    FUNCTION_SET_ENERGY_DATA_CALLBACK_CONFIGURATION = 8
+    FUNCTION_GET_ENERGY_DATA_CALLBACK_CONFIGURATION = 9
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -86,6 +88,7 @@ class BrickletEnergyMonitor(Device):
         self.response_expected[BrickletEnergyMonitor.FUNCTION_GET_ENERGY_DATA] = BrickletEnergyMonitor.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEnergyMonitor.FUNCTION_RESET_ENERGY] = BrickletEnergyMonitor.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEnergyMonitor.FUNCTION_GET_WAVEFORM_LOW_LEVEL] = BrickletEnergyMonitor.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEnergyMonitor.FUNCTION_GET_TRANSFORMER_STATUS] = BrickletEnergyMonitor.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEnergyMonitor.FUNCTION_SET_TRANSFORMER_CALIBRATION] = BrickletEnergyMonitor.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEnergyMonitor.FUNCTION_GET_TRANSFORMER_CALIBRATION] = BrickletEnergyMonitor.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEnergyMonitor.FUNCTION_CALIBRATE_OFFSET] = BrickletEnergyMonitor.RESPONSE_EXPECTED_FALSE
@@ -124,6 +127,12 @@ class BrickletEnergyMonitor(Device):
 
         """
         return GetWaveformLowLevel(*self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_WAVEFORM_LOW_LEVEL, (), '', 'H 30h'))
+
+    def get_transformer_status(self):
+        """
+
+        """
+        return GetTransformerStatus(*self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_TRANSFORMER_STATUS, (), '', '! !'))
 
     def set_transformer_calibration(self, voltage_ratio, current_ratio, phase_shift):
         """
