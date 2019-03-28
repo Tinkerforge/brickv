@@ -184,26 +184,40 @@ def main():
     # PyQt5 does not silence exceptions in slots (as did PyQt4), so there
     # can be slots which try to (for example) send requests but don't wrap
     # them in an async call with error handling.
-    ExceptionReporter(deepcopy(sys.argv)) # Deep copy because QApplication (i.e. BrickViewer) constructor parses away Qt args and we want to know the style.
+    argv = deepcopy(sys.argv) # Deep copy because QApplication (i.e. BrickViewer) constructor parses away Qt args and we want to know the style.
+    ExceptionReporter(argv)
 
-    # importing the MainWindow after creating the QApplication instance triggers this warning
-    #
-    #  Qt WebEngine seems to be initialized from a plugin. Please set Qt::AA_ShareOpenGLContexts
-    #  using QCoreApplication::setAttribute before constructing QGuiApplication.
-    #
-    # do what the warnings says to avoid it
-    QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
+    # Exceptions that happen before the event loop runs (f.e. syntax errors) kill the brickv so fast, that the error reporter thread
+    # (which is daemonized) can not report the error before it is killed. Report them manually.
+    try:
+        # importing the MainWindow after creating the QApplication instance triggers this warning
+        #
+        #  Qt WebEngine seems to be initialized from a plugin. Please set Qt::AA_ShareOpenGLContexts
+        #  using QCoreApplication::setAttribute before constructing QGuiApplication.
+        #
+        # do what the warnings says to avoid it
+        QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 
-    brick_viewer = BrickViewer(sys.argv)
-    splash = QSplashScreen(load_pixmap('splash.png'), Qt.WindowStaysOnTopHint)
-    splash.show()
-    splash.showMessage('Starting Brick Viewer ' + config.BRICKV_VERSION, Qt.AlignHCenter | Qt.AlignBottom, Qt.white)
-    brick_viewer.processEvents()
+        brick_viewer = BrickViewer(sys.argv)
+        splash = QSplashScreen(load_pixmap('splash.png'), Qt.WindowStaysOnTopHint)
+        splash.show()
+        splash.showMessage('Starting Brick Viewer ' + config.BRICKV_VERSION, Qt.AlignHCenter | Qt.AlignBottom, Qt.white)
+        brick_viewer.processEvents()
+        from brickv.mainwindow import MainWindow
+        main_window = MainWindow()
+        main_window.show()
+        splash.finish(main_window)
+    except:
+        etype, value, tb = sys.exc_info()
+        error = "".join(traceback.format_exception(etype, value, tb))
+        error = "The following error is fatal. Exiting now.\n\n" + error
 
-    from brickv.mainwindow import MainWindow
-    main_window = MainWindow()
-    main_window.show()
-    splash.finish(main_window)
+        traceback.print_exception(etype, value, tb)
+
+        # Either sys.executable is /path/to/python, then run calls /path/to/python /path/to/main.py --error-report,
+        # or sys.executable is brickv[.exe], then the --error-report flag ensures, that the path to main.py is ignored.
+        subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"] + argv, input=error, universal_newlines=True)
+        sys.exit(1)
 
     sys.exit(brick_viewer.exec_())
 
