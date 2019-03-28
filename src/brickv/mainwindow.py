@@ -51,35 +51,8 @@ from brickv import infos
 from brickv.tab_window import TabWindow, IconButton
 from brickv.plugin_system.comcu_bootloader import COMCUBootloader
 from brickv.load_pixmap import load_pixmap
-
 from brickv.firmware_fetch import LatestFWVersionFetcher
-
-USER_ROLE_POSITION = Qt.UserRole + 1
-
-class DevicesProxyModel(QSortFilterProxyModel):
-    # overrides QSortFilterProxyModel.lessThan
-    def lessThan(self, left, right):
-        if left.column() != 2: # position
-            return QSortFilterProxyModel.lessThan(self, left, right)
-
-        # Keep grouping intact.
-        left_position = left.data(USER_ROLE_POSITION)
-        right_position = right.data(USER_ROLE_POSITION)
-
-        if left_position != None and right_position != None:
-            return left_position < right_position
-
-        # Sort letters before digits, so that Bricklets connected to a
-        # Master Brick are shown before Bricks stacked on the Master.
-        # Also sort extensions after letters (i.e Bricks), so they are shown last.
-        def get_sort_key(data):
-            diff = ord('z') - ord('0') + 1 # Put digits after letters
-            if 'Ext' in data:
-                diff += 10 # Put digits of extensions after normal digits
-                data = data[3:]
-            return ord(data) + (diff if data.isdigit() else 0)
-
-        return get_sort_key(left.data()) < get_sort_key(right.data())
+from brickv.devicesproxymodel import DevicesProxyModel
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     qtcb_enumerate = pyqtSignal(str, str, str, type((0,)), type((0,)), int, int)
@@ -1021,18 +994,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.tree_view_model.clear()
 
-        def get_row(info, is_parent=False):
-
-            # Add prefix info for top-level rows
-            if is_parent:
-                if info.position != '0' and info.connected_uid != '0':
-                    position_prefix = info.connected_uid
-                else:
-                    position_prefix = info.uid
-
-                position_item = QStandardItem(info.position.upper())
-                position_item.setData(position_prefix + ':' + info.position.upper(), USER_ROLE_POSITION)
-
+        def get_row(info):
             replacement = '0.0.0'
             if info.url_part == 'wifi_v2':
                 replacement = "Querying..."
@@ -1047,7 +1009,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             row = [QStandardItem(info.name),
                    QStandardItem(uid),
-                   QStandardItem(info.position.title()) if not is_parent else position_item,
+                   QStandardItem(info.position.title()),
                    QStandardItem(fw_version)]
 
             updateable = info.firmware_version_installed != (0, 0, 0) and info.firmware_version_installed < info.firmware_version_latest
@@ -1077,7 +1039,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if info.reverse_connection != None:
                 continue
 
-            parent = get_row(info, is_parent=True)
+            parent = get_row(info)
             self.tree_view_model.appendRow(parent)
 
             # Search for childs up to a recursion depth of 3 at most.

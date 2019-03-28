@@ -49,6 +49,7 @@ from brickv.esp_flash import ESPFlash, FatalError
 from brickv import infos
 from brickv.firmware_fetch import ERROR_DOWNLOAD
 from brickv.utils import get_main_window
+from brickv.devicesproxymodel import DevicesProxyModel
 
 LATEST_VERSIONS_URL = 'http://download.tinkerforge.com/latest_versions.txt'
 FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
@@ -153,11 +154,17 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.brick_changed(0)
         self.extension_changed(0)
 
-        self.update_tree_view_model_labels = ['Name', 'UID', 'Installed', 'Latest']
+        self.update_tree_view_model_labels = ['Name', 'UID', 'Position', 'Installed', 'Latest']
+
         self.update_tree_view_model = QStandardItemModel(self)
-        self.update_tree_view.setModel(self.update_tree_view_model)
+
+        self.update_tree_view_proxy_model = DevicesProxyModel(self)
+        self.update_tree_view_proxy_model.setSourceModel(self.update_tree_view_model)
+        self.update_tree_view.setModel(self.update_tree_view_proxy_model)
+
+        #self.update_tree_view.setModel(self.update_tree_view_model)
         self.update_tree_view.setSortingEnabled(True)
-        self.update_tree_view.header().setSortIndicator(0, Qt.AscendingOrder)
+        self.update_tree_view.header().setSortIndicator(2, Qt.AscendingOrder)
         self.update_tree_view.activated.connect(self.update_tree_view_clicked)
         self.update_tree_view.setExpandsOnDoubleClick(False)
 
@@ -1512,6 +1519,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.fw_fetch_progress_bar.cancel()
             self.fw_fetch_progress_bar = None
 
+        sis = self.update_tree_view.header().sortIndicatorSection()
+        sio = self.update_tree_view.header().sortIndicatorOrder()
+
         self.update_tree_view_model.clear()
         self.update_tree_view_model.setHorizontalHeaderLabels(self.update_tree_view_model_labels)
 
@@ -1527,6 +1537,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 parent = [QStandardItem(info.name),
                           QStandardItem(info.uid),
+                          QStandardItem('0'),
                           QStandardItem(get_version_string(info.firmware_version_installed, is_red_brick=isinstance(info, infos.BrickREDInfo))),
                           QStandardItem(get_version_string(info.firmware_version_latest, replace_unknown="Unknown", is_red_brick=isinstance(info, infos.BrickREDInfo)))]
 
@@ -1544,8 +1555,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 # Search for childs up to a recursion depth of 3 at most.
                 for connected_info1 in info.connections.values():
-                    child1 = [QStandardItem(connected_info1.position.upper() + ': ' + connected_info1.name),
+                    child1 = [QStandardItem(connected_info1.name),
                               QStandardItem(connected_info1.uid),
+                              QStandardItem(connected_info1.position.upper()),
                               QStandardItem(get_version_string(connected_info1.firmware_version_installed)),
                               QStandardItem(get_version_string(connected_info1.firmware_version_latest, replace_unknown="Unknown"))]
 
@@ -1561,8 +1573,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     parent[0].appendRow(child1)
 
                     for connected_info2 in connected_info1.connections.values():
-                        child2 = [QStandardItem(connected_info2.position.upper() + ': ' + connected_info2.name),
+                        child2 = [QStandardItem(connected_info2.name),
                                   QStandardItem(connected_info2.uid),
+                                  QStandardItem(connected_info2.position.upper()),
                                   QStandardItem(get_version_string(connected_info2.firmware_version_installed)),
                                   QStandardItem(get_version_string(connected_info2.firmware_version_latest, replace_unknown="Unknown"))]
 
@@ -1578,8 +1591,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         child1[0].appendRow(child2)
 
                         for connected_info3 in connected_info2.connections.values():
-                            child3 = [QStandardItem(connected_info3.position.upper() + ': ' + connected_info3.name),
+                            child3 = [QStandardItem(connected_info3.name),
                                       QStandardItem(connected_info3.uid),
+                                      QStandardItem(connected_info3.position.upper()),
                                       QStandardItem(get_version_string(connected_info3.firmware_version_installed)),
                                       QStandardItem(get_version_string(connected_info3.firmware_version_latest, replace_unknown="Unknown"))]
 
@@ -1600,13 +1614,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
                             has_firmware = info.extensions[ext].url_part == 'wifi_v2'
 
                             if has_firmware:
-                                child = [QStandardItem(ext.capitalize() + ': ' + info.extensions[ext].name),
+                                child = [QStandardItem(info.extensions[ext].name),
                                          QStandardItem(''),
+                                         QStandardItem(ext.capitalize()),
                                          QStandardItem(get_version_string(info.extensions[ext].firmware_version_installed, replace_unknown="Querying...")),
                                          QStandardItem(get_version_string(info.extensions[ext].firmware_version_latest, replace_unknown="Unknown"))]
                             else:
-                                child = [QStandardItem(ext.capitalize() + ': ' + info.extensions[ext].name),
+                                child = [QStandardItem(info.extensions[ext].name),
                                          QStandardItem(''),
+                                         QStandardItem(ext.capitalize()),
                                          QStandardItem(get_version_string(info.extensions[ext].firmware_version_installed, replace_unknown="")),
                                          QStandardItem(get_version_string(info.extensions[ext].firmware_version_latest, replace_unknown=""))]
 
@@ -1628,6 +1644,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     if info.brickv_info is not None:
                         brickv_row = [QStandardItem(info.brickv_info.name),
                                       QStandardItem(''),
+                                      QStandardItem(''),
                                       QStandardItem(get_version_string(info.brickv_info.firmware_version_installed, replace_unknown="Querying...")),
                                       QStandardItem(get_version_string(info.brickv_info.firmware_version_latest, replace_unknown="Unknown"))]
                         color, update = get_color_for_device(info.brickv_info)
@@ -1636,6 +1653,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                             is_update = True
                     else:
                         brickv_row = [QStandardItem("Brick Viewer"),
+                                      QStandardItem(''),
                                       QStandardItem(''),
                                       QStandardItem("Querying..."),
                                       QStandardItem("Unknown")]
@@ -1648,11 +1666,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                     parent[0].appendRow(brickv_row)
 
-                    binding_row = [QStandardItem('Bindings'), QStandardItem(''), QStandardItem(''), QStandardItem('')]
+                    binding_row = [QStandardItem('Bindings'), QStandardItem(''), QStandardItem(''), QStandardItem(''), QStandardItem('')]
                     is_update = False
 
                     for binding in info.bindings_infos:
                         child = [QStandardItem(binding.name),
+                                 QStandardItem(''),
                                  QStandardItem(''),
                                  QStandardItem(get_version_string(binding.firmware_version_installed, replace_unknown="Querying...")),
                                  QStandardItem(get_version_string(binding.firmware_version_latest, replace_unknown="Unknown"))]
@@ -1676,10 +1695,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                     parent[0].appendRow(binding_row)
 
-                    to_collapse.append(binding_row[0].index())
+                    index = self.update_tree_view_proxy_model.mapFromSource(binding_row[0].index())
+
+                    to_collapse.append(index)
 
             elif info.type == 'tool' and 'Brick Viewer' in info.name:
                 parent = [QStandardItem(info.name),
+                          QStandardItem(''),
                           QStandardItem(''),
                           QStandardItem(get_version_string(info.firmware_version_installed)),
                           QStandardItem(get_version_string(info.firmware_version_latest, replace_unknown="Unknown"))]
@@ -1705,12 +1727,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.update_tree_view.collapse(model_idx)
 
         self.update_tree_view.setAnimated(True)
+
         self.update_tree_view.setColumnWidth(0, 260)
         self.update_tree_view.setColumnWidth(1, 75)
         self.update_tree_view.setColumnWidth(2, 75)
         self.update_tree_view.setColumnWidth(3, 75)
         self.update_tree_view.setSortingEnabled(True)
-        self.update_tree_view.header().setSortIndicator(0, Qt.AscendingOrder)
+        self.update_tree_view.header().setSortIndicator(sis, sio)
 
         if is_update:
             self.update_button_bricklets.setEnabled(True)
