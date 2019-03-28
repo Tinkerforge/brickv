@@ -167,7 +167,9 @@ def error_report_main():
     widget.layout().addWidget(right_widget)
     window.show()
     window.setMinimumSize(640, 400)
+
     app.exec_()
+
     return int(cbox.isChecked())
 
 def main():
@@ -201,13 +203,18 @@ def main():
         QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 
         brick_viewer = BrickViewer(sys.argv)
+
         splash = QSplashScreen(load_pixmap('splash.png'), Qt.WindowStaysOnTopHint)
         splash.show()
         splash.showMessage('Starting Brick Viewer ' + config.BRICKV_VERSION, Qt.AlignHCenter | Qt.AlignBottom, Qt.white)
+
         brick_viewer.processEvents()
+
         from brickv.mainwindow import MainWindow
+
         main_window = MainWindow()
         main_window.show()
+
         splash.finish(main_window)
     except:
         etype, value, tb = sys.exc_info()

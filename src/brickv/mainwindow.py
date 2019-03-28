@@ -148,6 +148,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.fw_version_fetcher.fw_versions_avail.connect(self.fw_versions_fetched)
         self.fw_version_fetcher_thread = QThread()
         self.fw_version_fetcher_thread.setObjectName("fw_version_fetcher_thread")
+
         if config.get_auto_search_for_updates():
             self.enable_auto_search_for_updates()
         else:
