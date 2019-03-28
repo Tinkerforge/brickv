@@ -31,6 +31,7 @@ from brickv.plugin_system.plugins.dual_button_v2 import device_class as dual_but
 from brickv.plugin_system.plugins.dual_relay import device_class as dual_relay
 from brickv.plugin_system.plugins.dust_detector import device_class as dust_detector
 from brickv.plugin_system.plugins.e_paper_296x128 import device_class as e_paper_296x128
+from brickv.plugin_system.plugins.energy_monitor import device_class as energy_monitor
 from brickv.plugin_system.plugins.gas_detector import device_class as gas_detector
 from brickv.plugin_system.plugins.gps import device_class as gps
 from brickv.plugin_system.plugins.gps_v2 import device_class as gps_v2
@@ -171,6 +172,7 @@ device_classes = [
     dual_relay,
     dust_detector,
     e_paper_296x128,
+    energy_monitor,
     gas_detector,
     gps,
     gps_v2,
