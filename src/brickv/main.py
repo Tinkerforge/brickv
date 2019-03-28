@@ -216,6 +216,11 @@ def main():
 
         traceback.print_exception(etype, value, tb)
 
+        try:
+            splash.close()
+        except:
+            pass
+
         # Either sys.executable is /path/to/python, then run calls /path/to/python /path/to/main.py --error-report,
         # or sys.executable is brickv[.exe], then the --error-report flag ensures, that the path to main.py is ignored.
         subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"] + argv, input=error, universal_newlines=True)
