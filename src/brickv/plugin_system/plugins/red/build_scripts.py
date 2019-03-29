@@ -31,7 +31,6 @@ from pprint import pformat
 print("Adding RED Brick scripts:")
 
 try:
-    use_minified = True
     script_data = []
     build_script_path = os.path.dirname(os.path.realpath(__file__))
     scripts = []
@@ -58,12 +57,6 @@ try:
         with open(script + '_prepared', 'w') as f:
             f.writelines(lines)
 
-        if use_minified:
-            if os.system('pyminifier ' + script + '_prepared > ' + script + '_minified') != 0:
-                print('----> Could not minify scripts, please install https://github.com/liftoff/pyminifier if you want to make a release version.')
-                print('----> I will use the non-minified versions for now.')
-                use_minified = False
-
     for script in glob.glob(os.path.join(build_script_path, 'scripts', '*.sh')):
         scripts.append(script)
         lines = []
@@ -79,16 +72,13 @@ try:
 
     for i, script in enumerate(scripts):
         if script.endswith('.py'):
-            if use_minified:
-                path = script + '_minified'
-            else:
-                path = script + '_prepared'
+            path = script + '_prepared'
         else:
             path = script + '_prepared'
 
         with open(path) as f:
             name, extension = os.path.splitext(os.path.split(script)[-1])
-            content = f.read().replace('\n# Created by pyminifier (https://github.com/liftoff/pyminifier)\n\n', '')
+            content = f.read()
 
             script_data.append((name, extension, content))
 
