@@ -44,9 +44,6 @@ class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
         self.setupUi(self)
 
         self.energy_monitor = self.device
-        self.cbe_get_waveform = CallbackEmulator(self.energy_monitor.get_waveform,
-                                                 self.cb_waveform,
-                                                 self.increase_error_count)
         self.cbe_get_energy_data = CallbackEmulator(self.energy_monitor.get_energy_data,
                                                     self.cb_energy_data,
                                                     self.increase_error_count)
@@ -78,6 +75,8 @@ class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
         self.voltage_connected = True
         self.current_connected = True
 
+        self.running = False
+
     def button_energy_clicked(self):
         self.energy_monitor.reset_energy()
     
@@ -86,11 +85,20 @@ class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
         current_ratio = int(self.spinbox_current_ratio.value()*100)
         self.energy_monitor.set_transformer_calibration(voltage_ratio, current_ratio, 0)
 
+    def cb_waveform_error(self):
+        if self.running:
+            self.increase_error_count()
+            async_call(self.energy_monitor.get_waveform, None, self.cb_waveform, self.cb_waveform_error, delay=0.5)
+
+
     def cb_waveform(self, waveform):
         y_data_v = [x*0.1 for x in waveform[::2]]
         y_data_a = [x*0.01 for x in waveform[1::2]]
         self.plot_widget_waveform_v.set_data(0, self.x_data, y_data_v)
         self.plot_widget_waveform_a.set_data(0, self.x_data, y_data_a)
+
+        if self.running:
+            async_call(self.energy_monitor.get_waveform, None, self.cb_waveform, self.cb_waveform_error, delay=0.5)
     
     def cb_energy_data(self, data):
         if self.voltage_connected:
@@ -123,14 +131,14 @@ class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
 
 
     def start(self):
+        self.running = True
         async_call(self.energy_monitor.get_transformer_calibration, None, self.cb_transformer_calibration, self.increase_error_count)
-        async_call(self.energy_monitor.get_waveform, None, self.cb_waveform, self.increase_error_count)
-        self.cbe_get_waveform.set_period(500)
+        async_call(self.energy_monitor.get_waveform, None, self.cb_waveform, self.cb_waveform_error)
         self.cbe_get_energy_data.set_period(200)
         self.cbe_get_transformer_status.set_period(200)
 
     def stop(self):
-        self.cbe_get_waveform.set_period(0)
+        self.running = False 
         self.cbe_get_energy_data.set_period(0)
         self.cbe_get_transformer_status.set_period(0)
 
