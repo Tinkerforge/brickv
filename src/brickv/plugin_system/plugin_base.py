@@ -142,6 +142,9 @@ class PluginBase(QWidget):
 
                 self.plugin_state = PluginBase.PLUGIN_STATE_RUNNING
 
+                # Ensure that the update button is shown when the plugin is untabbed and tabbed again.
+                self.device_info.tab_window.set_callback_post_tab(lambda idx: self.device_infos_changed(self.device_info.uid))
+
     def stop_plugin(self):
         # only stop the plugin, if it's running
         if self.plugin_state == PluginBase.PLUGIN_STATE_RUNNING:
