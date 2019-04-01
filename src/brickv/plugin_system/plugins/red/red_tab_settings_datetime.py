@@ -73,8 +73,6 @@ class REDTabSettingsDateTime(QWidget, Ui_REDTabSettingsDateTime):
         h = abs(tz) // 60
         m = abs(tz) % 60
 
-        print(tz, h, m)
-
         if m != 0:
             return 'UTC{}{:02}:{:02}'.format('-' if tz < 0 else '+', h, m)
 
