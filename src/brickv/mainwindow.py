@@ -1020,6 +1020,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 for binding in info.bindings_infos:
                     updateable |= binding.firmware_version_installed != (0, 0, 0) \
                                   and binding.firmware_version_installed < binding.firmware_version_latest
+                updateable |= info.brickv_info.firmware_version_installed != (0, 0, 0) \
+                              and info.brickv_info.firmware_version_installed < info.brickv_info.firmware_version_latest
 
             if updateable:
                 self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels + ['Update'])
