@@ -434,7 +434,7 @@
 - Optimize RED Brick Tinkerforge software update process
 - Increase supported RED Brick image version to 1.13
 
-2019-03-22: 2.4.0 (<unknown>)
+2019-03-22: 2.4.0 (c2eef61)
 - Port to Python 3, PyQt 5 and QtOpenGL
 - Add firmware/software update notifications in setup and device tabs
 - Fix RED Brick Tinkerforge software update for Perl and Brick Viewer
@@ -455,6 +455,12 @@
   could result in Brick Viewer hanging in the connecting state
 - Stop overemphasizing sensor noise in plots by limiting the minimum y-axis size
   relative to the sensor resolution
+
+2019-04-01: 2.4.1 (<unknown>)
+- Properly show start/stop jumps as gaps in plot curves
+- Fix update detection if Internet connection is missing
+- Unify update and setup tab device tree sorting
+- Properly close detached tab window if corresponding device is removed
 
 <unknown>: 2.4.x (<unknown>)
 - Add Data Logger support for CO2 2.0, Hall Effect 2.0, Linear Poti 2.0,
