@@ -1645,7 +1645,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                                     QStandardItem(''),
                                     QStandardItem(''),
                                     QStandardItem(get_version_string(info.brickv_info.firmware_version_installed, replace_unknown="Querying...")),
-                                    QStandardItem(get_version_string(info.brickv_info.firmware_version_latest, replace_unknown="Unknown"))]
+                                    QStandardItem(get_version_string(self.tool_infos['brickv'].firmware_version_latest, replace_unknown="Unknown"))]
                     color, update = get_color_for_device(info.brickv_info)
 
                     if update:
