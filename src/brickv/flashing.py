@@ -1657,7 +1657,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                     parent[0].appendRow(brickv_row)
 
-                    binding_row = [QStandardItem('Bindings'), QStandardItem(''), QStandardItem(''), QStandardItem(''), QStandardItem('')]
+
+                    installed_bindings_string = 'Querying...' if len(info.bindings_infos) == 0 else ''
+                    binding_row = [QStandardItem('Bindings'), QStandardItem(''), QStandardItem(''), QStandardItem(installed_bindings_string) , QStandardItem('')]
                     is_update = False
 
                     for binding in info.bindings_infos:
