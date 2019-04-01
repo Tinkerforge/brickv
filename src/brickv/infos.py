@@ -232,8 +232,31 @@ def add_latest_fw(info):
     latest_fw = get_latest_fw(info)
 
     version_changed = info.firmware_version_latest != latest_fw
-
     info.firmware_version_latest = latest_fw
+
+    # RED Brick: Add latest binding and brickv versions
+    if isinstance(info, BrickREDInfo):
+        d = _latest_fws.binding_infos
+        for binding_info in info.bindings_infos:
+            if binding_info.url_part not in d:
+                latest_fw = (0, 0, 0)
+            else:
+                latest_fw = d[binding_info.url_part].firmware_version_latest
+
+            version_changed |= binding_info.firmware_version_latest != latest_fw
+            binding_info.firmware_version_latest = latest_fw
+
+        d = _latest_fws.tool_infos
+        if info.brickv_info is not None:
+            if info.brickv_info.url_part not in d:
+                latest_fw = (0, 0, 0)
+            else:
+                latest_fw = d[info.brickv_info.url_part].firmware_version_latest
+
+            version_changed |= info.brickv_info.firmware_version_latest != latest_fw
+            info.brickv_info.firmware_version_latest = latest_fw
+
+    # Add latest extension versions
     if info.can_have_extension:
         d = _latest_fws.extension_firmware_infos
         for extension in info.extensions.values():
