@@ -1189,7 +1189,7 @@ class RED(PluginBase, Ui_RED):
         # support for the Brick Viewer version 2.4.0 and should therefore
         # be prioritized.
 
-        brickv_update = (self.device_info.brickv_info is not None) \
+        brickv_update = (self.device_info.brickv_info.firmware_version_installed != (0, 0, 0)) \
                         and (self.device_info.brickv_info.firmware_version_installed < self.device_info.brickv_info.firmware_version_latest) \
                         and self.device_info.firmware_version_installed >= (1, 14, 0) # Don't show brickv update if the image does not contain Qt5
 

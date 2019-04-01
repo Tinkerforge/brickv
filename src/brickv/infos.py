@@ -151,7 +151,8 @@ class BrickREDInfo(BrickInfo):
     def __init__(self):
         super().__init__()
         self.bindings_infos = []
-        self.brickv_info = None
+        self.brickv_info = ToolInfo()
+        self.brickv_info.name = "Brick Viewer"
 
 def get_bindings_name(url_part):
     # These are all bindings supported on the red brick.
@@ -247,14 +248,13 @@ def add_latest_fw(info):
             binding_info.firmware_version_latest = latest_fw
 
         d = _latest_fws.tool_infos
-        if info.brickv_info is not None:
-            if info.brickv_info.url_part not in d:
-                latest_fw = (0, 0, 0)
-            else:
-                latest_fw = d[info.brickv_info.url_part].firmware_version_latest
+        if info.brickv_info.url_part not in d:
+            latest_fw = (0, 0, 0)
+        else:
+            latest_fw = d[info.brickv_info.url_part].firmware_version_latest
 
-            version_changed |= info.brickv_info.firmware_version_latest != latest_fw
-            info.brickv_info.firmware_version_latest = latest_fw
+        version_changed |= info.brickv_info.firmware_version_latest != latest_fw
+        info.brickv_info.firmware_version_latest = latest_fw
 
     # Add latest extension versions
     if info.can_have_extension:

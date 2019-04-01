@@ -1641,24 +1641,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
                             parent[0].appendRow(child)
 
                 if is_red_brick:
-                    if info.brickv_info is not None:
-                        brickv_row = [QStandardItem(info.brickv_info.name),
-                                      QStandardItem(''),
-                                      QStandardItem(''),
-                                      QStandardItem(get_version_string(info.brickv_info.firmware_version_installed, replace_unknown="Querying...")),
-                                      QStandardItem(get_version_string(info.brickv_info.firmware_version_latest, replace_unknown="Unknown"))]
-                        color, update = get_color_for_device(info.brickv_info)
+                    brickv_row = [QStandardItem(info.brickv_info.name),
+                                    QStandardItem(''),
+                                    QStandardItem(''),
+                                    QStandardItem(get_version_string(info.brickv_info.firmware_version_installed, replace_unknown="Querying...")),
+                                    QStandardItem(get_version_string(info.brickv_info.firmware_version_latest, replace_unknown="Unknown"))]
+                    color, update = get_color_for_device(info.brickv_info)
 
-                        if update:
-                            is_update = True
-                    else:
-                        brickv_row = [QStandardItem("Brick Viewer"),
-                                      QStandardItem(''),
-                                      QStandardItem(''),
-                                      QStandardItem("Querying..."),
-                                      QStandardItem("Unknown")]
-                        is_update = False
-                        color = None
+                    if update:
+                        is_update = True
 
                     for item in brickv_row:
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
