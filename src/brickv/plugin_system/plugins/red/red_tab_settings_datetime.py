@@ -63,9 +63,22 @@ class REDTabSettingsDateTime(QWidget, Ui_REDTabSettingsDateTime):
 
     def time_utc_offset(self):
         if time.localtime(time.time()).tm_isdst and time.daylight:
-            return -time.altzone/(60*60)
+            return -time.altzone
 
-        return -time.timezone/(60*60)
+        return -time.timezone
+
+    def format_time_utc_offset(self, tz):
+        tz //= 60
+
+        h = abs(tz) // 60
+        m = abs(tz) % 60
+
+        print(tz, h, m)
+
+        if m != 0:
+            return 'UTC{}{:02}:{:02}'.format('-' if tz < 0 else '+', h, m)
+
+        return 'UTC{}{}'.format('-' if tz < 0 else '+', h)
 
     def time_start(self):
         self.time_sync_button.setEnabled(False)
@@ -76,20 +89,10 @@ class REDTabSettingsDateTime(QWidget, Ui_REDTabSettingsDateTime):
 
             try:
                 self.time_red_old, tz = list(map(int, result.stdout.split('\n')[:2]))
-                if tz < 0:
-                    tz_str_red = 'UTC' + str(tz)
-                else:
-                    tz_str_red = 'UTC+' + str(tz)
-                self.time_timezone_red.setText(tz_str_red)
+                self.time_timezone_red.setText(self.format_time_utc_offset(tz))
 
                 self.time_local_old = int(time.time())
-                tz = self.time_utc_offset()
-                if tz < 0:
-                    tz_str_local = 'UTC' + str(tz)
-                else:
-                    tz_str_local = 'UTC+' + str(tz)
-
-                self.time_timezone_local.setText(tz_str_local)
+                self.time_timezone_local.setText(self.format_time_utc_offset(self.time_utc_offset()))
                 self.time_update_gui()
 
                 self.time_refresh_timer.start()
