@@ -1527,6 +1527,34 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         is_update = False
 
+        def get_row(info):
+            nonlocal is_update
+            inst_replacement = '0.0.0'
+            unknown_replacement = 'Unknown'
+
+            if info.url_part == 'wifi_v2' or info.type == 'tool' or info.type == 'binding':
+                inst_replacement = "Querying..."
+            elif info.type == "extension":
+                inst_replacement = ""
+                unknown_replacement = ''
+
+            row = [QStandardItem(info.name),
+                    QStandardItem(info.uid if hasattr(info, 'uid') else ''),
+                    QStandardItem(info.position.title() if hasattr(info, 'position') else ''),
+                    QStandardItem(get_version_string(info.firmware_version_installed, replace_unknown=inst_replacement)),
+                    QStandardItem(get_version_string(info.firmware_version_latest, replace_unknown=unknown_replacement))]
+
+            color, update = get_color_for_device(info)
+
+            if update:
+                is_update = True
+
+            for item in row:
+                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                item.setData(color, Qt.BackgroundRole)
+
+            return row
+
         to_collapse = []
 
         for info in infos.get_infos():
@@ -1550,7 +1578,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 color, update = get_color_for_device(info)
 
-                if update:
+                if update and info.type == 'bricklet':
                     is_update = True
 
                 for item in parent:
@@ -1562,127 +1590,51 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 # Search for childs up to a recursion depth of 3 at most.
                 for connected_info1 in info.connections.values():
-                    child1 = [QStandardItem(connected_info1.name),
-                              QStandardItem(connected_info1.uid),
-                              QStandardItem(connected_info1.position.upper()),
-                              QStandardItem(get_version_string(connected_info1.firmware_version_installed)),
-                              QStandardItem(get_version_string(connected_info1.firmware_version_latest, replace_unknown="Unknown"))]
-
-                    color, update = get_color_for_device(connected_info1)
-
-                    if update:
-                        is_update = True
-
-                    for item in child1:
-                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                        item.setData(color, Qt.BackgroundRole)
-
+                    child1 = get_row(connected_info1)
                     parent[0].appendRow(child1)
 
                     for connected_info2 in connected_info1.connections.values():
-                        child2 = [QStandardItem(connected_info2.name),
-                                  QStandardItem(connected_info2.uid),
-                                  QStandardItem(connected_info2.position.upper()),
-                                  QStandardItem(get_version_string(connected_info2.firmware_version_installed)),
-                                  QStandardItem(get_version_string(connected_info2.firmware_version_latest, replace_unknown="Unknown"))]
-
-                        color, update = get_color_for_device(connected_info2)
-
-                        if update:
-                            is_update = True
-
-                        for item in child2:
-                            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                            item.setData(color, Qt.BackgroundRole)
-
+                        child2 = get_row(connected_info2)
                         child1[0].appendRow(child2)
 
                         for connected_info3 in connected_info2.connections.values():
-                            child3 = [QStandardItem(connected_info3.name),
-                                      QStandardItem(connected_info3.uid),
-                                      QStandardItem(connected_info3.position.upper()),
-                                      QStandardItem(get_version_string(connected_info3.firmware_version_installed)),
-                                      QStandardItem(get_version_string(connected_info3.firmware_version_latest, replace_unknown="Unknown"))]
-
-                            color, update = get_color_for_device(connected_info3)
-
-                            if update:
-                                is_update = True
-
-                            for item in child3:
-                                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                                item.setData(color, Qt.BackgroundRole)
-
+                            child3 = get_row(connected_info3)
                             child2[0].appendRow(child3)
 
                 if info.can_have_extension:
                     for ext in info.extensions:
                         if info.extensions[ext]:
-                            has_firmware = info.extensions[ext].url_part == 'wifi_v2'
+                            child = get_row(info.extensions[ext])
 
-                            child = [QStandardItem(info.extensions[ext].name),
-                                     QStandardItem(''),
-                                     QStandardItem(ext.capitalize()),
-                                     QStandardItem(get_version_string(info.extensions[ext].firmware_version_installed, replace_unknown="Querying..." if has_firmware else "")),
-                                     QStandardItem(get_version_string(info.extensions[ext].firmware_version_latest, replace_unknown="Unknown" if has_firmware else ""))]
-
-                            color, update = get_color_for_device(info.extensions[ext])
-
-                            if update:
-                                is_update = True
-
-                            for item in child:
-                                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                                item.setData(color, Qt.BackgroundRole)
-
-                                if not has_firmware:
+                            if info.extensions[ext].url_part != 'wifi_v2':
+                                for item in child:
                                     item.setData(QBrush(QColor(0x80, 0x80, 0x80)), Qt.ForegroundRole)
 
                             parent[0].appendRow(child)
 
                 if is_red_brick:
-                    brickv_row = [QStandardItem(info.brickv_info.name),
-                                    QStandardItem(''),
-                                    QStandardItem(''),
-                                    QStandardItem(get_version_string(info.brickv_info.firmware_version_installed, replace_unknown="Querying...")),
-                                    QStandardItem(get_version_string(self.tool_infos['brickv'].firmware_version_latest, replace_unknown="Unknown"))]
-                    color, update = get_color_for_device(info.brickv_info)
+                    # Cache is_update state and restore after handling bindings. They should not enable the update all bindings button.
+                    old_is_update = is_update
 
-                    if update:
-                        is_update = True
+                    brickv_row = get_row(info.brickv_info)
 
-                    for item in brickv_row:
-                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                        item.setData(color, Qt.BackgroundRole)
-
-                    parent[0].appendRow(brickv_row)
-
-
-                    installed_bindings_string = 'Querying...' if len(info.bindings_infos) == 0 else ''
-                    binding_row = [QStandardItem('Bindings'), QStandardItem(''), QStandardItem(''), QStandardItem(installed_bindings_string) , QStandardItem('')]
                     is_update = False
 
+                    # Use cached latest fw, as the one in info.brickv_info is not updated when still querying
+                    row_color = brickv_row[4].data(Qt.BackgroundRole)
+                    brickv_row[4] = QStandardItem(get_version_string(self.tool_infos['brickv'].firmware_version_latest, replace_unknown="Unknown"))
+                    brickv_row[4].setData(row_color, Qt.BackgroundRole)
+                    parent[0].appendRow(brickv_row)
+
+                    installed_bindings_string = 'Querying...' if len(info.bindings_infos) == 0 else ''
+                    binding_row = [QStandardItem('Bindings'), QStandardItem(''), QStandardItem(''), QStandardItem(installed_bindings_string), QStandardItem('')]
+
                     for binding in info.bindings_infos:
-                        child = [QStandardItem(binding.name),
-                                 QStandardItem(''),
-                                 QStandardItem(''),
-                                 QStandardItem(get_version_string(binding.firmware_version_installed, replace_unknown="Querying...")),
-                                 QStandardItem(get_version_string(binding.firmware_version_latest, replace_unknown="Unknown"))]
-
-                        color, update = get_color_for_device(binding)
-
-                        if update:
-                            is_update = True
-
-                        for item in child:
-                            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                            item.setData(color, Qt.BackgroundRole)
-
+                        child = get_row(binding)
                         binding_row[0].appendRow(child)
 
                     for item in binding_row:
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-
                         if is_update:
                             item.setData(QBrush(QColor(255, 160, 55)), Qt.BackgroundRole)
 
@@ -1691,6 +1643,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     index = self.update_tree_view_proxy_model.mapFromSource(binding_row[0].index())
 
                     to_collapse.append(index)
+
+                    # Restore cached is_update state, see above.
+                    is_update = old_is_update
 
             elif info.type == 'tool' and 'Brick Viewer' in info.name:
                 parent = [QStandardItem(info.name),
