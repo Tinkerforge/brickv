@@ -61,15 +61,15 @@ class CallbackEmulator(QObject):
             self.thread.start()
 
     def loop(self, thread_id, period):
-        period_override = None
+        monotonic_timestamp = time.monotonic()
 
         while thread_id == self.thread_id:
-            if period_override != None:
-                time.sleep(period_override / 1000.0)
+            elapsed = time.monotonic() - monotonic_timestamp
+            remaining = max(period / 1000.0 - elapsed, 0)
 
-                period_override = None
-            else:
-                time.sleep(period / 1000.0)
+            time.sleep(remaining)
+
+            monotonic_timestamp = time.monotonic()
 
             if thread_id != self.thread_id:
                 break
@@ -81,9 +81,6 @@ class CallbackEmulator(QObject):
                     logging.exception('Error while getting callback data')
 
                 self.qtcb_error.emit()
-
-                # an error occurred, retry in 5 seconds
-                period_override = 5000
                 continue
 
             if self.ignore_last_data or self.last_data != data:
