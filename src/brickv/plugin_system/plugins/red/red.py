@@ -45,8 +45,6 @@ from brickv.async_call import async_call
 from brickv.plugin_system.plugins.red.ui_red_update_tinkerforge_software import Ui_REDUpdateTinkerforgeSoftware
 import brickv.infos
 
-MAX_IMAGE_VERSION = (1, 13)
-
 class ImageVersion:
     string = None
     number = (0, 0)
@@ -1047,12 +1045,9 @@ class RED(PluginBase, Ui_RED):
         self.label_version  = None
         self.script_manager = ScriptManager(self.session)
         self.tabs           = []
-        self.ignore_image_version = False
 
         self.setupUi(self)
 
-        self.button_anyway.hide()
-        self.button_anyway.clicked.connect(self.anyway_clicked)
         self.tab_widget.hide()
 
         for i in range(self.tab_widget.count()):
@@ -1102,13 +1097,9 @@ class RED(PluginBase, Ui_RED):
                 except:
                     self.label_discovering.setText('Error: Could not parse Image Version: {0}'.format(image_version))
                 else:
-                    if self.image_version.number > MAX_IMAGE_VERSION:
-                        self.label_discovering.setText('Image Version {0} is not officially supported yet. Please update Brick Viewer!'.format(image_version))
-                        self.button_anyway.show()
-                    else:
-                        self.widget_discovering.hide()
-                        self.tab_widget.show()
-                        self.tab_widget_current_changed(self.tab_widget.currentIndex())
+                    self.widget_discovering.hide()
+                    self.tab_widget.show()
+                    self.tab_widget_current_changed(self.tab_widget.currentIndex())
                     self.device_info.firmware_version_installed = self.image_version.number + (0, )
                     brickv.infos.update_info(self.device_info.uid)
             else:
@@ -1267,17 +1258,8 @@ class RED(PluginBase, Ui_RED):
             else:
                 tab.tab_off_focus()
 
-    def anyway_clicked(self):
-        self.ignore_image_version = True
-        self.widget_discovering.hide()
-        self.button_anyway.hide()
-        self.tab_widget.show()
-        self.tab_widget_current_changed(self.tab_widget.currentIndex())
-
     def perform_action(self, param):
-        if self.session == None or \
-           self.image_version.string == None or \
-           (self.image_version.number > MAX_IMAGE_VERSION and not self.ignore_image_version):
+        if self.session == None or self.image_version.string == None:
             return
 
         # Restart Brick Daemon
