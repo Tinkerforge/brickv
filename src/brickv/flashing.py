@@ -1535,11 +1535,18 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 if info.reverse_connection != None:
                     continue
 
+                is_red_brick = isinstance(info, infos.BrickREDInfo)
+
+                if is_red_brick:
+                    replace_unknown = 'Querying...'
+                else:
+                    replace_unknown = None
+
                 parent = [QStandardItem(info.name),
                           QStandardItem(info.uid),
                           QStandardItem('0'),
-                          QStandardItem(get_version_string(info.firmware_version_installed, is_red_brick=isinstance(info, infos.BrickREDInfo))),
-                          QStandardItem(get_version_string(info.firmware_version_latest, replace_unknown="Unknown", is_red_brick=isinstance(info, infos.BrickREDInfo)))]
+                          QStandardItem(get_version_string(info.firmware_version_installed, replace_unknown=replace_unknown, is_red_brick=is_red_brick)),
+                          QStandardItem(get_version_string(info.firmware_version_latest, replace_unknown="Unknown", is_red_brick=is_red_brick))]
 
                 color, update = get_color_for_device(info)
 
@@ -1613,18 +1620,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         if info.extensions[ext]:
                             has_firmware = info.extensions[ext].url_part == 'wifi_v2'
 
-                            if has_firmware:
-                                child = [QStandardItem(info.extensions[ext].name),
-                                         QStandardItem(''),
-                                         QStandardItem(ext.capitalize()),
-                                         QStandardItem(get_version_string(info.extensions[ext].firmware_version_installed, replace_unknown="Querying...")),
-                                         QStandardItem(get_version_string(info.extensions[ext].firmware_version_latest, replace_unknown="Unknown"))]
-                            else:
-                                child = [QStandardItem(info.extensions[ext].name),
-                                         QStandardItem(''),
-                                         QStandardItem(ext.capitalize()),
-                                         QStandardItem(get_version_string(info.extensions[ext].firmware_version_installed, replace_unknown="")),
-                                         QStandardItem(get_version_string(info.extensions[ext].firmware_version_latest, replace_unknown=""))]
+                            child = [QStandardItem(info.extensions[ext].name),
+                                     QStandardItem(''),
+                                     QStandardItem(ext.capitalize()),
+                                     QStandardItem(get_version_string(info.extensions[ext].firmware_version_installed, replace_unknown="Querying..." if has_firmware else "")),
+                                     QStandardItem(get_version_string(info.extensions[ext].firmware_version_latest, replace_unknown="Unknown" if has_firmware else ""))]
 
                             color, update = get_color_for_device(info.extensions[ext])
 
@@ -1640,7 +1640,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                             parent[0].appendRow(child)
 
-                if isinstance(info, infos.BrickREDInfo):
+                if is_red_brick:
                     if info.brickv_info is not None:
                         brickv_row = [QStandardItem(info.brickv_info.name),
                                       QStandardItem(''),

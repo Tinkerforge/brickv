@@ -524,7 +524,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # firmware version
         label_version_name = QLabel('Version:')
-        label_version = QLabel('...')
+        label_version = QLabel('Querying...')
 
         button_update = QPushButton(QIcon(self.button_update_pixmap_normal), 'Update')
         button_update.installEventFilter(self)
@@ -996,14 +996,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         def get_row(info):
             replacement = '0.0.0'
-            if info.url_part == 'wifi_v2':
+            is_red_brick = isinstance(info, infos.BrickREDInfo)
+
+            if is_red_brick or info.url_part == 'wifi_v2':
                 replacement = "Querying..."
             elif info.type == "extension":
                 replacement = ""
 
             fw_version = infos.get_version_string(info.firmware_version_installed,
                                                   replace_unknown=replacement,
-                                                  is_red_brick=isinstance(info, infos.BrickREDInfo))
+                                                  is_red_brick=is_red_brick)
 
             uid = info.uid if info.type != "extension" else ''
 
@@ -1014,7 +1016,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             updateable = info.firmware_version_installed != (0, 0, 0) and info.firmware_version_installed < info.firmware_version_latest
 
-            if isinstance(info, infos.BrickREDInfo):
+            if is_red_brick:
                 for binding in info.bindings_infos:
                     updateable |= binding.firmware_version_installed != (0, 0, 0) \
                                   and binding.firmware_version_installed < binding.firmware_version_latest
@@ -1022,7 +1024,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if updateable:
                 self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels + ['Update'])
                 row.append(QStandardItem(
-                    infos.get_version_string(info.firmware_version_latest, is_red_brick=isinstance(info, infos.BrickREDInfo))))
+                    infos.get_version_string(info.firmware_version_latest, is_red_brick=is_red_brick)))
 
                 self.tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, self.update_tab_button)
                 self.update_tab_button.show()
