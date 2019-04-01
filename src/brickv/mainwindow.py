@@ -455,7 +455,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_DISCONNECTED:
             self.last_host = self.combo_host.currentText()
             self.setDisabled(True)
-            self.button_connect.setText("Connecting ...")
+            self.button_connect.setText("Connecting...")
 
             async_call(self.ipcon.connect, (self.last_host, self.spinbox_port.value()), None, self.connect_error)
         else:
