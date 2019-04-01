@@ -1017,16 +1017,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             updateable = info.firmware_version_installed != (0, 0, 0) and info.firmware_version_installed < info.firmware_version_latest
 
             if is_red_brick:
+                old_updateable = updateable
                 for binding in info.bindings_infos:
                     updateable |= binding.firmware_version_installed != (0, 0, 0) \
                                   and binding.firmware_version_installed < binding.firmware_version_latest
                 updateable |= info.brickv_info.firmware_version_installed != (0, 0, 0) \
                               and info.brickv_info.firmware_version_installed < info.brickv_info.firmware_version_latest
+                # There are bindings/brickv updates but there is no image update
+                red_brick_binding_update_only = not old_updateable and updateable
+            else:
+                red_brick_binding_update_only = False
 
             if updateable:
                 self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels + ['Update'])
                 row.append(QStandardItem(
-                    infos.get_version_string(info.firmware_version_latest, is_red_brick=is_red_brick)))
+                    infos.get_version_string(info.firmware_version_latest, is_red_brick=is_red_brick) + ("+" if red_brick_binding_update_only else "")))
 
                 self.tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, self.update_tab_button)
                 self.update_tab_button.show()
