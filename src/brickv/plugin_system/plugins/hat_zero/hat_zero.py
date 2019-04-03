@@ -43,9 +43,17 @@ class HATZero(COMCUPluginBase, Ui_HATZero):
         self.setupUi(self)
 
         self.hat_zero = self.device
+
+        self.cbe_voltage = CallbackEmulator(self.hat_zero.get_usb_voltage,
+                                            self.cb_get_usb_voltage,
+                                            self.increase_error_count)
+
         self.ports = [self.port_a, self.port_b, self.port_c, self.port_d]
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_bricklets)
+
+    def cb_get_usb_voltage(self, voltage):
+        self.label_usb_voltage.setText('{:.2f}V'.format(voltage/1000))
 
     def port_label_clicked(self, event, uid):
         get_main_window().show_plugin(uid)
@@ -72,9 +80,11 @@ class HATZero(COMCUPluginBase, Ui_HATZero):
             pass
 
     def start(self):
+        self.cbe_voltage.set_period(250)
         self.update_timer.start(500)
 
     def stop(self):
+        self.cbe_voltage.set_period(0)
         self.update_timer.stop()
 
     def destroy(self):

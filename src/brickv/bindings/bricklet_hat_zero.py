@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-04-03.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -32,6 +32,7 @@ class BrickletHATZero(Device):
 
 
 
+    FUNCTION_GET_USB_VOLTAGE = 1
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -70,6 +71,7 @@ class BrickletHATZero(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletHATZero.FUNCTION_GET_USB_VOLTAGE] = BrickletHATZero.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHATZero.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletHATZero.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHATZero.FUNCTION_SET_BOOTLOADER_MODE] = BrickletHATZero.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHATZero.FUNCTION_GET_BOOTLOADER_MODE] = BrickletHATZero.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -84,6 +86,12 @@ class BrickletHATZero(Device):
         self.response_expected[BrickletHATZero.FUNCTION_GET_IDENTITY] = BrickletHATZero.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+
+    def get_usb_voltage(self):
+        """
+        Returns the USB supply voltage of the Raspberry Pi in mv.
+        """
+        return self.ipcon.send_request(self, BrickletHATZero.FUNCTION_GET_USB_VOLTAGE, (), '', 'H')
 
     def get_spitfp_error_count(self):
         """
