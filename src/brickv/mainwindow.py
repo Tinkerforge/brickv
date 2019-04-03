@@ -811,7 +811,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.tab_widget.setCurrentIndex(0)
                 self.remove_device_info(device_info.uid)
 
-            if device_info.type == 'brick':
+            if isinstance(device_info, infos.DeviceInfo):
                 to_delete = []
                 for port, info in device_info.connections.items():
                     if info.uid == uid:

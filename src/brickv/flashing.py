@@ -457,7 +457,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.combo_parent.clear()
 
         for info in infos.get_device_infos():
-            if len(info.connections) > 0 or info.type == 'brick':
+            if isinstance(info, infos.DeviceInfo):
                 self.combo_parent.addItem(info.get_combo_item(), info)
 
         has_no_parent_devices = False
@@ -1558,7 +1558,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         to_collapse = []
 
         for info in infos.get_infos():
-            if info.type == 'brick' or info.type == 'bricklet':
+            if isinstance(info, infos.DeviceInfo):
                 # If a device has a reverse connection, it will be handled as a child below.
                 if info.reverse_connection != None:
                     continue
