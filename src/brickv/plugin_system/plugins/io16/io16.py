@@ -174,7 +174,7 @@ class IO16(PluginBase, Ui_IO16):
 
     def init_values(self, port, value, _dir, config, time, time_remaining):
         for i in range(8):
-            if dir & (1 << i):
+            if _dir & (1 << i):
                 self.port_direction[port][i].setText('Input')
 
                 if config & (1 << i):
