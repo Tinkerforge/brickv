@@ -189,7 +189,8 @@ def main():
     # can be slots which try to (for example) send requests but don't wrap
     # them in an async call with error handling.
     argv = deepcopy(sys.argv) # Deep copy because QApplication (i.e. BrickViewer) constructor parses away Qt args and we want to know the style.
-    ExceptionReporter(argv)
+    if '--no-error-reporter' not in sys.argv:
+        ExceptionReporter(argv)
 
     # Exceptions that happen before the event loop runs (f.e. syntax errors) kill the brickv so fast, that the error reporter thread
     # (which is daemonized) can not report the error before it is killed. Report them manually.
@@ -217,6 +218,9 @@ def main():
 
         splash.finish(main_window)
     except:
+        if '--no-error-reporter' in sys.argv:
+            raise
+
         etype, value, tb = sys.exc_info()
         error = "".join(traceback.format_exception(etype, value, tb))
         error = "The following error is fatal. Exiting now.\n\n" + error
