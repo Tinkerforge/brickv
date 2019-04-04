@@ -22,7 +22,7 @@
       </property>
       <widget class="QWidget" name="tab_setup">
        <attribute name="title">
-        <string>Setup</string>
+        <string>&amp;Setup</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
