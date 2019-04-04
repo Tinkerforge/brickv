@@ -1349,9 +1349,6 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
                 if result and result.stdout and not result.stderr and result.exit_code == 0:
                     self.network_all_data['scan_result'] = json.loads(result.stdout)
                     self.update_access_points(self.network_all_data['scan_result'])
-                    QMessageBox.information(get_main_window(),
-                                            'Settings | Network',
-                                            'Scan finished')
                 else:
                     QMessageBox.critical(get_main_window(),
                                          'Settings | Network',
