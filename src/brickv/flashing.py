@@ -472,7 +472,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             for info in infos.get_device_infos():
                 if info.reverse_connection == None and info.type != 'brick':
-                    no_parent_info.connections[info.position] = info
+                    no_parent_info.connections.append((info.position, info))
 
             self.combo_parent.addItem('No Parent', no_parent_info)
 
@@ -914,8 +914,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         # First display all of the standard ports of the Brick and add
         # Bricklet information if a Bricklet is connected
         for port in brick_info.bricklet_ports:
-            if port in brick_info.connections:
-                bricklet_info = brick_info.connections[port]
+            if port in brick_info.connections_keys():
+                bricklet_info = brick_info.connections_get(port)[0]
 
                 if bricklet_info.type == 'bricklet':
                     if first_index == None:
@@ -928,7 +928,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.combo_port.addItem(port.upper(), (port, None))
 
         # Then we fill the non-standard ports (e.g. RPi or Isolator Bricklet)
-        for port, bricklet_info in brick_info.connections.items():
+        for port, bricklet_info in brick_info.connections:
             if port in brick_info.bricklet_ports:
                 continue
 
@@ -1555,6 +1555,37 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             return row
 
+        def recurse_on_device(info, insertion_point):
+            row = get_row(info)
+            insertion_point.appendRow(row)
+
+            for child in info.connections_values():
+                recurse_on_device(child, row[0])
+
+            if info.can_have_extension:
+                for extension in info.extensions.values():
+                    if extension is None:
+                        continue
+                    ext_row = get_row(extension)
+                    if extension.url_part != 'wifi_v2':
+                        for item in ext_row:
+                            item.setData(QBrush(QColor(0x80, 0x80, 0x80)), Qt.ForegroundRole)
+                    row[0].appendRow(ext_row)
+
+        def recurse_on_chilren(info, row):
+            for child in info.connections_values():
+                recurse_on_device(child, row[0])
+
+            if info.can_have_extension:
+                for extension in info.extensions.values():
+                    if extension is None:
+                        continue
+                    ext_row = get_row(extension)
+                    if extension.url_part != 'wifi_v2':
+                        for item in ext_row:
+                            item.setData(QBrush(QColor(0x80, 0x80, 0x80)), Qt.ForegroundRole)
+                    row[0].appendRow(ext_row)
+
         to_collapse = []
 
         for info in infos.get_infos():
@@ -1588,29 +1619,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 parent[0].setData(info.uid, Qt.UserRole)
                 self.update_tree_view_model.appendRow(parent)
 
-                # Search for childs up to a recursion depth of 3 at most.
-                for connected_info1 in info.connections.values():
-                    child1 = get_row(connected_info1)
-                    parent[0].appendRow(child1)
-
-                    for connected_info2 in connected_info1.connections.values():
-                        child2 = get_row(connected_info2)
-                        child1[0].appendRow(child2)
-
-                        for connected_info3 in connected_info2.connections.values():
-                            child3 = get_row(connected_info3)
-                            child2[0].appendRow(child3)
-
-                if info.can_have_extension:
-                    for ext in info.extensions:
-                        if info.extensions[ext]:
-                            child = get_row(info.extensions[ext])
-
-                            if info.extensions[ext].url_part != 'wifi_v2':
-                                for item in child:
-                                    item.setData(QBrush(QColor(0x80, 0x80, 0x80)), Qt.ForegroundRole)
-
-                            parent[0].appendRow(child)
+                recurse_on_chilren(info, parent)
 
                 if is_red_brick:
                     # Cache is_update state and restore after handling bindings. They should not enable the update all bindings button.

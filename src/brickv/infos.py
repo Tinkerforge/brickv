@@ -93,7 +93,7 @@ class DeviceInfo(AbstractInfo):
     reverse_connection = None
 
     def __init__(self, connections=None):
-        self.connections = connections or dict()
+        self.connections = connections or []
         self.bricklet_ports = tuple()
 
     def __repr__(self):
@@ -114,7 +114,7 @@ class DeviceInfo(AbstractInfo):
 
         if len(self.connections) > 0:
             repr_str += "  Connections:\n"
-            for port, con in self.connections.items():
+            for port, con in self.connections:
                 repr_str += "   {0}: {1} ({2})\n".format(port, con.name, con.uid)
         return repr_str
 
@@ -122,6 +122,20 @@ class DeviceInfo(AbstractInfo):
         version_str = get_version_string(self.firmware_version_installed)
 
         return '{0} [{1}] ({2})'.format(self.name, self.uid, version_str)
+
+    def connections_keys(self):
+        return [k for k, v in self.connections]
+
+    def connections_values(self):
+        return [v for k, v in self.connections]
+
+    def connections_get(self, key):
+        result = [v for k, v in self.connections if k == key]
+        if key != '0':
+            assert len(result) <= 1, 'On a port, other than the "meta" port 0 (that is used for extensions),'\
+                ' there should only be one device attached. On port {} there where {} devices attached: {}'\
+                .format(key, len(result), [r.uid for r in result])
+        return result
 
 class BrickletInfo(DeviceInfo):
     type = 'bricklet'

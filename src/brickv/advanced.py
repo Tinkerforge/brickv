@@ -107,10 +107,10 @@ class AdvancedWindow(QDialog, Ui_Advanced):
         info = self.brick_infos[index]
 
         for key in ['a', 'b', 'c', 'd']:
-            if not key in info.connections or info.connections[key].type != 'bricklet':
+            if not key in info.connections_keys() or info.connections_get(key)[0].type != 'bricklet':
                 self.combo_port.addItem(key.upper())
             else:
-                self.combo_port.addItem('{0}: {1}'.format(key.upper(), info.connections[key].get_combo_item()))
+                self.combo_port.addItem('{0}: {1}'.format(key.upper(), info.connections_get(key)[0].get_combo_item()))
 
         self.update_ui_state()
         self.update_calibration()

@@ -772,15 +772,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     continue
 
                 if info.uid != '' and info.uid == device_info.connected_uid:
-                    if info.connections.get(device_info.position) != device_info:
-                        info.connections[device_info.position] = device_info
+                    if device_info not in info.connections_get(device_info.position):
+                        info.connections.append((device_info.position, device_info))
                         device_info.reverse_connection = info
                         something_changed_ref[0] = True
                         infos.get_infos_changed_signal().emit(info.uid)
 
                 if info.connected_uid != '' and info.connected_uid == device_info.uid:
-                    if device_info.connections.get(info.position) != info:
-                        device_info.connections[info.position] = info
+                    if info not in device_info.connections_get(info.position):
+                        device_info.connections.append((info.position, info))
                         info.reverse_connection = device_info
                         something_changed_ref[0] = True
                         infos.get_infos_changed_signal().emit(info.uid)
@@ -813,11 +813,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             if isinstance(device_info, infos.DeviceInfo):
                 to_delete = []
-                for port, info in device_info.connections.items():
+                for idx, tup in enumerate(device_info.connections):
+                    port, info = tup
                     if info.uid == uid:
-                        to_delete.append(port)
-                for key in to_delete:
-                    del device_info.connections[key]
+                        to_delete.append(idx)
+                for idx in to_delete:
+                    del device_info.connections[idx]
 
         self.update_tree_view()
 
@@ -1043,33 +1044,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             return row
 
-        for info in infos.get_device_infos():
-            # If a device has a reverse connection, it will be handled as a child below.
-            if info.reverse_connection != None:
-                continue
+        def recurse_on_device(info, insertion_point):
+            row = get_row(info)
+            insertion_point.appendRow(row)
 
-            parent = get_row(info)
-            self.tree_view_model.appendRow(parent)
-
-            # Search for childs up to a recursion depth of 3 at most.
-            for connected_info1 in info.connections.values():
-                child1_row = get_row(connected_info1)
-                parent[0].appendRow(child1_row)
-
-                for connected_info2 in connected_info1.connections.values():
-                    child2_row = get_row(connected_info2)
-                    child1_row[0].appendRow(child2_row)
-
-                    for connected_info3 in connected_info2.connections.values():
-                        child3_row = get_row(connected_info3)
-                        child2_row[0].appendRow(child3_row)
+            for child in info.connections_values():
+                recurse_on_device(child, row[0])
 
             if info.can_have_extension:
                 for extension in info.extensions.values():
                     if extension is None:
                         continue
                     ext_row = get_row(extension)
-                    parent[0].appendRow(ext_row)
+                    row[0].appendRow(ext_row)
+
+        for info in infos.get_device_infos():
+            # If a device has a reverse connection, it will be handled as a child of another top-level brick.
+            if info.reverse_connection is not None:
+                continue
+            recurse_on_device(info, self.tree_view_model)
 
         self.set_tree_view_defaults()
         self.tree_view.header().setSortIndicator(sis, sio)

@@ -63,13 +63,13 @@ class HATZero(COMCUPluginBase, Ui_HATZero):
 
     def update_bricklets(self):
         try:
-            bricklets = infos.get_info(self.uid).connections
+            info = infos.get_info(self.uid)
 
             for i in range(4):
                 port = chr(ord('a') + i)
 
                 try:
-                    bricklet = bricklets[port]
+                    bricklet = info.connections_get(port)[0]
                     text = '{0} ({1})'.format(bricklet.name, bricklet.uid)
                     if text != self.ports[i].text():
                         self.ports[i].setText(text)
