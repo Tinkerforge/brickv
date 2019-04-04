@@ -9,11 +9,20 @@ class DevicesProxyModel(QSortFilterProxyModel):
         # Sort letters before digits, so that Bricklets connected to a
         # Master Brick are shown before Bricks stacked on the Master.
         # Also sort extensions after letters (i.e Bricks), so they are shown last.
+        # Also sort slave stacks, having position 0, (i.e. from a RS485 Extension)
+        # behind Bricks stacked on the Master.
         def get_sort_key(data):
             if len(data) == 0: # Put empty string before everything
                 return 0
 
             diff = ord('z') - ord('0') + 1 # Put digits after letters
+
+            if data.isdigit(): # Swap 0 behind 1-9
+                if data == '0':
+                    diff += 9
+                else:
+                    diff -= 1
+
             if 'Ext' in data:
                 diff += 10 # Put digits of extensions after normal digits
                 data = data[3:]
