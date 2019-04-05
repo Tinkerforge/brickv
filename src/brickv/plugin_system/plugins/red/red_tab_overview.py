@@ -36,6 +36,7 @@ from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOverview
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import check_script_result
+from brickv.config import get_use_fusion_gui_style
 
 # constants
 REFRESH_TIME = 3000 # in milliseconds
@@ -200,7 +201,7 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
         pbar_memory_fmt = "{0}% [{1} of {2} MiB]".format(memory_percent, memory_used, memory_total)
         pbar_storage_fmt = "{0}% [{1} of {2} GiB]".format(storage_percent, storage_used, storage_total)
 
-        if sys.platform == 'darwin':
+        if sys.platform == 'darwin' and not get_use_fusion_gui_style():
             self.label_pbar_cpu.show()
             self.label_pbar_memory.show()
             self.label_pbar_storage.show()

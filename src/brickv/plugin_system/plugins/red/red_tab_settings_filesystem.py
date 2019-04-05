@@ -32,6 +32,7 @@ from brickv.plugin_system.plugins.red.ui_red_tab_settings_filesystem import Ui_R
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import report_script_result
 from brickv.utils import get_main_window
+from brickv.config import get_use_fusion_gui_style
 
 class REDTabSettingsFileSystem(QWidget, Ui_REDTabSettingsFileSystem):
     def __init__(self):
@@ -125,7 +126,7 @@ class REDTabSettingsFileSystem(QWidget, Ui_REDTabSettingsFileSystem):
 
         pbar_fs_capacity_utilization_fmt = "Using {0}% of total capacity".format(percentage_utilization)
 
-        if sys.platform == 'darwin':
+        if sys.platform == 'darwin' and not get_use_fusion_gui_style():
             self.label_pbar_fs_capacity_utilization.show()
             self.label_pbar_fs_capacity_utilization.setText(pbar_fs_capacity_utilization_fmt)
         else:
