@@ -25,7 +25,7 @@ from PyQt5.QtWidgets import QSpinBox, QSlider, QWidget, QAction
 from PyQt5.QtGui import QImage, QPainter, QPen
 from PyQt5.QtCore import pyqtSignal, Qt, QPoint, QSize, QTimer
 
-from brickv.bindings.bricklet_hat_zero import BrickletHATZero
+from brickv.bindings.brick_hat_zero import BrickHATZero
 from brickv.plugin_system.plugins.hat_zero.ui_hat_zero import Ui_HATZero
 from brickv.async_call import async_call
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
@@ -38,7 +38,7 @@ from datetime import datetime
 
 class HATZero(COMCUPluginBase, Ui_HATZero):
     def __init__(self, *args):
-        COMCUPluginBase.__init__(self, BrickletHATZero, *args)
+        COMCUPluginBase.__init__(self, BrickHATZero, *args)
 
         self.setupUi(self)
 
@@ -92,4 +92,4 @@ class HATZero(COMCUPluginBase, Ui_HATZero):
 
     @staticmethod
     def has_device_identifier(device_identifier):
-        return device_identifier == BrickletHATZero.DEVICE_IDENTIFIER
+        return device_identifier == BrickHATZero.DEVICE_IDENTIFIER

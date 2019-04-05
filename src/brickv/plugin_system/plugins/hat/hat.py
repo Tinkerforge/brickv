@@ -25,7 +25,7 @@ from PyQt5.QtWidgets import QSpinBox, QSlider, QWidget, QAction
 from PyQt5.QtGui import QImage, QPainter, QPen
 from PyQt5.QtCore import pyqtSignal, Qt, QPoint, QSize
 
-from brickv.bindings.bricklet_hat import BrickletHAT
+from brickv.bindings.brick_hat import BrickHAT
 from brickv.plugin_system.plugins.hat.ui_hat import Ui_HAT
 from brickv.async_call import async_call
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
@@ -38,7 +38,7 @@ from datetime import datetime
 
 class HAT(COMCUPluginBase, Ui_HAT):
     def __init__(self, *args):
-        COMCUPluginBase.__init__(self, BrickletHAT, *args)
+        COMCUPluginBase.__init__(self, BrickHAT, *args)
 
         self.setupUi(self)
 
@@ -107,4 +107,4 @@ class HAT(COMCUPluginBase, Ui_HAT):
 
     @staticmethod
     def has_device_identifier(device_identifier):
-        return device_identifier == BrickletHAT.DEVICE_IDENTIFIER
+        return device_identifier == BrickHAT.DEVICE_IDENTIFIER

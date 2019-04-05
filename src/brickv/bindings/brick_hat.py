@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-03-14.      #
+# This file was automatically generated on 2019-04-05.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -23,13 +23,13 @@ GetVoltages = namedtuple('Voltages', ['voltage_usb', 'voltage_dc'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
-class BrickletHAT(Device):
+class BrickHAT(Device):
     """
 
     """
 
-    DEVICE_IDENTIFIER = 2126
-    DEVICE_DISPLAY_NAME = 'HAT Bricklet'
+    DEVICE_IDENTIFIER = 111
+    DEVICE_DISPLAY_NAME = 'HAT Brick'
     DEVICE_URL_PART = 'hat' # internal
 
 
@@ -77,23 +77,23 @@ class BrickletHAT(Device):
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[BrickletHAT.FUNCTION_SET_SLEEP_MODE] = BrickletHAT.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletHAT.FUNCTION_GET_SLEEP_MODE] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHAT.FUNCTION_SET_BRICKLET_POWER] = BrickletHAT.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletHAT.FUNCTION_GET_BRICKLET_POWER] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHAT.FUNCTION_GET_VOLTAGES] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHAT.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHAT.FUNCTION_SET_BOOTLOADER_MODE] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHAT.FUNCTION_GET_BOOTLOADER_MODE] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHAT.FUNCTION_SET_WRITE_FIRMWARE_POINTER] = BrickletHAT.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletHAT.FUNCTION_WRITE_FIRMWARE] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHAT.FUNCTION_SET_STATUS_LED_CONFIG] = BrickletHAT.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletHAT.FUNCTION_GET_STATUS_LED_CONFIG] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHAT.FUNCTION_GET_CHIP_TEMPERATURE] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHAT.FUNCTION_RESET] = BrickletHAT.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletHAT.FUNCTION_WRITE_UID] = BrickletHAT.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletHAT.FUNCTION_READ_UID] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletHAT.FUNCTION_GET_IDENTITY] = BrickletHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickHAT.FUNCTION_SET_SLEEP_MODE] = BrickHAT.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickHAT.FUNCTION_GET_SLEEP_MODE] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickHAT.FUNCTION_SET_BRICKLET_POWER] = BrickHAT.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickHAT.FUNCTION_GET_BRICKLET_POWER] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickHAT.FUNCTION_GET_VOLTAGES] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickHAT.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickHAT.FUNCTION_SET_BOOTLOADER_MODE] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickHAT.FUNCTION_GET_BOOTLOADER_MODE] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickHAT.FUNCTION_SET_WRITE_FIRMWARE_POINTER] = BrickHAT.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickHAT.FUNCTION_WRITE_FIRMWARE] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickHAT.FUNCTION_SET_STATUS_LED_CONFIG] = BrickHAT.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickHAT.FUNCTION_GET_STATUS_LED_CONFIG] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickHAT.FUNCTION_GET_CHIP_TEMPERATURE] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickHAT.FUNCTION_RESET] = BrickHAT.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickHAT.FUNCTION_WRITE_UID] = BrickHAT.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickHAT.FUNCTION_READ_UID] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickHAT.FUNCTION_GET_IDENTITY] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
 
@@ -107,13 +107,13 @@ class BrickletHAT(Device):
         bricklets_off = bool(bricklets_off)
         enable_sleep_indicator = bool(enable_sleep_indicator)
 
-        self.ipcon.send_request(self, BrickletHAT.FUNCTION_SET_SLEEP_MODE, (power_off_delay, power_off_duration, raspberry_pi_off, bricklets_off, enable_sleep_indicator), 'I I ! ! !', '')
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_SLEEP_MODE, (power_off_delay, power_off_duration, raspberry_pi_off, bricklets_off, enable_sleep_indicator), 'I I ! ! !', '')
 
     def get_sleep_mode(self):
         """
 
         """
-        return GetSleepMode(*self.ipcon.send_request(self, BrickletHAT.FUNCTION_GET_SLEEP_MODE, (), '', 'I I ! ! !'))
+        return GetSleepMode(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_SLEEP_MODE, (), '', 'I I ! ! !'))
 
     def set_bricklet_power(self, bricklet_power):
         """
@@ -121,19 +121,19 @@ class BrickletHAT(Device):
         """
         bricklet_power = bool(bricklet_power)
 
-        self.ipcon.send_request(self, BrickletHAT.FUNCTION_SET_BRICKLET_POWER, (bricklet_power,), '!', '')
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_BRICKLET_POWER, (bricklet_power,), '!', '')
 
     def get_bricklet_power(self):
         """
 
         """
-        return self.ipcon.send_request(self, BrickletHAT.FUNCTION_GET_BRICKLET_POWER, (), '', '!')
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_BRICKLET_POWER, (), '', '!')
 
     def get_voltages(self):
         """
 
         """
-        return GetVoltages(*self.ipcon.send_request(self, BrickletHAT.FUNCTION_GET_VOLTAGES, (), '', 'H H'))
+        return GetVoltages(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_VOLTAGES, (), '', 'H H'))
 
     def get_spitfp_error_count(self):
         """
@@ -149,7 +149,7 @@ class BrickletHAT(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletHAT.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -165,13 +165,13 @@ class BrickletHAT(Device):
         """
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletHAT.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
 
     def get_bootloader_mode(self):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
-        return self.ipcon.send_request(self, BrickletHAT.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -184,7 +184,7 @@ class BrickletHAT(Device):
         """
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletHAT.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
 
     def write_firmware(self, data):
         """
@@ -199,7 +199,7 @@ class BrickletHAT(Device):
         """
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletHAT.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
 
     def set_status_led_config(self, config):
         """
@@ -213,13 +213,13 @@ class BrickletHAT(Device):
         """
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletHAT.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
 
     def get_status_led_config(self):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
-        return self.ipcon.send_request(self, BrickletHAT.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
         """
@@ -230,7 +230,7 @@ class BrickletHAT(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
-        return self.ipcon.send_request(self, BrickletHAT.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
         """
@@ -241,7 +241,7 @@ class BrickletHAT(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
-        self.ipcon.send_request(self, BrickletHAT.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
         """
@@ -253,14 +253,14 @@ class BrickletHAT(Device):
         """
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletHAT.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_WRITE_UID, (uid,), 'I', '')
 
     def read_uid(self):
         """
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
-        return self.ipcon.send_request(self, BrickletHAT.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):
         """
@@ -273,6 +273,6 @@ class BrickletHAT(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletHAT.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
-HAT = BrickletHAT # for backward compatibility
+HAT = BrickHAT # for backward compatibility
