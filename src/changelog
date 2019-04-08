@@ -456,7 +456,7 @@
 - Stop overemphasizing sensor noise in plots by limiting the minimum y-axis size
   relative to the sensor resolution
 
-2019-04-01: 2.4.1 (<unknown>)
+2019-04-01: 2.4.1 (a35bc29)
 - Properly show start/stop jumps as gaps in plot curves
 - Fix update detection if Internet connection is missing
 - Unify update and setup tab device tree sorting
