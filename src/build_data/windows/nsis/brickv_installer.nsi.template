@@ -247,6 +247,13 @@ SectionEnd
 
 Function .onInit
 
+${IfNot} ${AtLeastWin7}
+
+  MessageBox MB_OK|MB_ICONEXCLAMATION "Brick Viewer ${BRICKV_VERSION} requires Windows 7 or newer!"
+  Quit
+
+${EndIf}
+
   ; Check to see if already installed
   ClearErrors
   ReadRegStr $0 HKLM "Software\Tinkerforge\Brickv" "Version"
