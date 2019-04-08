@@ -3,6 +3,13 @@ Brick Viewer
 
 This repository contains the source code of Brick Viewer.
 
+Platforms
+---------
+
+* Linux
+* macOS 10.11 or newer
+* Windows 7 or newer
+
 Usage
 -----
 

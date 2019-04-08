@@ -435,7 +435,7 @@
 - Increase supported RED Brick image version to 1.13
 
 2019-03-22: 2.4.0 (c2eef61)
-- Port to Python 3, PyQt 5 and QtOpenGL
+- Port to Python 3, PyQt 5 and QtOpenGL (macOS 10.11, Windows 7 required)
 - Add firmware/software update notifications in setup and device tabs
 - Fix RED Brick Tinkerforge software update for Perl and Brick Viewer
 - Add RED Brick server room monitoring support for Ambient Light 3.0,
