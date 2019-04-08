@@ -104,7 +104,7 @@ if utils.macos:
                  name=utils.CAMEL_CASE_NAME + '.app',
                  icon=utils.icon,
                  info_plist={
-                     'LSMinimumSystemVersion': '10.11', # required for PyQt 5.11.2
+                     'LSMinimumSystemVersion': '10.11', # required for PyQt 5.11.3
                      'CFBundleVersion': BRICKV_VERSION,
                      'CFBundleShortVersionString': BRICKV_VERSION
                  })
