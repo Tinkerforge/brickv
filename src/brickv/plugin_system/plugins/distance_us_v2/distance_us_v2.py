@@ -42,7 +42,7 @@ class DistanceUSV2(COMCUPluginBase):
 
         self.current_distance = CurveValueWrapper()
 
-        plots = [('Distance', Qt.red, self.current_distance, '{} cm'.format)]
+        plots = [('Distance', Qt.red, self.current_distance, '{:.1f} cm'.format)]
         self.plot_widget = PlotWidget('Distance [cm]', plots, y_resolution=1.0)
 
         layout = QVBoxLayout(self)
@@ -67,4 +67,4 @@ class DistanceUSV2(COMCUPluginBase):
         return device_identifier == BrickletDistanceUSV2.DEVICE_IDENTIFIER
 
     def cb_distance(self, distance):
-        self.current_distance.value = distance
+        self.current_distance.value = distance/10.0
