@@ -18,6 +18,7 @@ from brickv.plugin_system.plugins.can_v2 import device_class as can_v2
 from brickv.plugin_system.plugins.co2 import device_class as co2
 from brickv.plugin_system.plugins.co2_v2 import device_class as co2_v2
 from brickv.plugin_system.plugins.color import device_class as color
+from brickv.plugin_system.plugins.color_v2 import device_class as color_v2
 from brickv.plugin_system.plugins.current12 import device_class as current12
 from brickv.plugin_system.plugins.current25 import device_class as current25
 from brickv.plugin_system.plugins.dc import device_class as dc
@@ -159,6 +160,7 @@ device_classes = [
     co2,
     co2_v2,
     color,
+    color_v2,
     current12,
     current25,
     dc,
