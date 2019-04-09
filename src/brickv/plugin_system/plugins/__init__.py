@@ -84,6 +84,7 @@ from brickv.plugin_system.plugins.motion_detector import device_class as motion_
 from brickv.plugin_system.plugins.motion_detector_v2 import device_class as motion_detector_v2
 from brickv.plugin_system.plugins.motorized_linear_poti import device_class as motorized_linear_poti
 from brickv.plugin_system.plugins.multi_touch import device_class as multi_touch
+from brickv.plugin_system.plugins.multi_touch_v2 import device_class as multi_touch_v2
 from brickv.plugin_system.plugins.nfc import device_class as nfc
 from brickv.plugin_system.plugins.nfc_rfid import device_class as nfc_rfid
 from brickv.plugin_system.plugins.oled_128x64 import device_class as oled_128x64
@@ -226,6 +227,7 @@ device_classes = [
     motion_detector_v2,
     motorized_linear_poti,
     multi_touch,
+    multi_touch_v2,
     nfc,
     nfc_rfid,
     oled_128x64,

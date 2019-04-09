@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-04-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -18,20 +18,32 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
+GetTouchStateCallbackConfiguration = namedtuple('TouchStateCallbackConfiguration', ['period', 'value_has_to_change'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletMultiTouchV2(Device):
     """
-
+    Capacitive touch sensor for 12 electrodes
     """
 
     DEVICE_IDENTIFIER = 2129
     DEVICE_DISPLAY_NAME = 'Multi Touch Bricklet 2.0'
     DEVICE_URL_PART = 'multi_touch_v2' # internal
 
+    CALLBACK_TOUCH_STATE = 4
 
 
+    FUNCTION_GET_TOUCH_STATE = 1
+    FUNCTION_SET_TOUCH_STATE_CALLBACK_CONFIGURATION = 2
+    FUNCTION_GET_TOUCH_STATE_CALLBACK_CONFIGURATION = 3
+    FUNCTION_RECALIBRATE = 5
+    FUNCTION_SET_ELECTRODE_CONFIG = 6
+    FUNCTION_GET_ELECTRODE_CONFIG = 7
+    FUNCTION_SET_ELECTRODE_SENSITIVITY = 8
+    FUNCTION_GET_ELECTRODE_SENSITIVITY = 9
+    FUNCTION_SET_TOUCH_LED_CONFIG = 10
+    FUNCTION_GET_TOUCH_LED_CONFIG = 11
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -45,6 +57,10 @@ class BrickletMultiTouchV2(Device):
     FUNCTION_READ_UID = 249
     FUNCTION_GET_IDENTITY = 255
 
+    TOUCH_LED_CONFIG_OFF = 0
+    TOUCH_LED_CONFIG_ON = 1
+    TOUCH_LED_CONFIG_SHOW_HEARTBEAT = 2
+    TOUCH_LED_CONFIG_SHOW_TOUCH = 3
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -70,6 +86,16 @@ class BrickletMultiTouchV2(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletMultiTouchV2.FUNCTION_GET_TOUCH_STATE] = BrickletMultiTouchV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletMultiTouchV2.FUNCTION_SET_TOUCH_STATE_CALLBACK_CONFIGURATION] = BrickletMultiTouchV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletMultiTouchV2.FUNCTION_GET_TOUCH_STATE_CALLBACK_CONFIGURATION] = BrickletMultiTouchV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletMultiTouchV2.FUNCTION_RECALIBRATE] = BrickletMultiTouchV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletMultiTouchV2.FUNCTION_SET_ELECTRODE_CONFIG] = BrickletMultiTouchV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletMultiTouchV2.FUNCTION_GET_ELECTRODE_CONFIG] = BrickletMultiTouchV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletMultiTouchV2.FUNCTION_SET_ELECTRODE_SENSITIVITY] = BrickletMultiTouchV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletMultiTouchV2.FUNCTION_GET_ELECTRODE_SENSITIVITY] = BrickletMultiTouchV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletMultiTouchV2.FUNCTION_SET_TOUCH_LED_CONFIG] = BrickletMultiTouchV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletMultiTouchV2.FUNCTION_GET_TOUCH_LED_CONFIG] = BrickletMultiTouchV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMultiTouchV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletMultiTouchV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMultiTouchV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletMultiTouchV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMultiTouchV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletMultiTouchV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -83,7 +109,134 @@ class BrickletMultiTouchV2(Device):
         self.response_expected[BrickletMultiTouchV2.FUNCTION_READ_UID] = BrickletMultiTouchV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMultiTouchV2.FUNCTION_GET_IDENTITY] = BrickletMultiTouchV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletMultiTouchV2.CALLBACK_TOUCH_STATE] = '13!'
 
+
+    def get_touch_state(self):
+        """
+        Returns the current touch state. The state is given as a bitfield.
+
+        Bits 0 to 11 represent the 12 electrodes and bit 12 represents
+        the proximity.
+
+        If an electrode is touched, the corresponding bit is *true*. If
+        a hand or similar is in proximity to the electrodes, bit 12 is
+        *true*.
+
+        Example: The state 4103 = 0x1007 = 0b1000000000111 means that
+        electrodes 0, 1 and 2 are touched and that something is in the
+        proximity of the electrodes.
+
+        The proximity is activated with a distance of 1-2cm. An electrode
+        is already counted as touched if a finger is nearly touching the
+        electrode. This means that you can put a piece of paper or foil
+        or similar on top of a electrode to build a touch panel with
+        a professional look.
+        """
+        return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_TOUCH_STATE, (), '', '13!')
+
+    def set_touch_state_callback_configuration(self, period, value_has_to_change):
+        """
+        The period in ms is the period with which the :cb:`Touch State` callback
+        is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
+        """
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+
+        self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_SET_TOUCH_STATE_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+
+    def get_touch_state_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set Touch State Callback Configuration`.
+        """
+        return GetTouchStateCallbackConfiguration(*self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_TOUCH_STATE_CALLBACK_CONFIGURATION, (), '', 'I !'))
+
+    def recalibrate(self):
+        """
+        Recalibrates the electrodes. Call this function whenever you changed
+        or moved you electrodes.
+        """
+        self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_RECALIBRATE, (), '', '')
+
+    def set_electrode_config(self, enabled_electrodes):
+        """
+        Enables/disables electrodes with a bitfield (see :func:`Get Touch State`).
+
+        *True* enables the electrode, *false* disables the electrode. A
+        disabled electrode will always return *false* as its state. If you
+        don't need all electrodes you can disable the electrodes that are
+        not needed.
+
+        It is recommended that you disable the proximity bit (bit 12) if
+        the proximity feature is not needed. This will reduce the amount of
+        traffic that is produced by the :cb:`Touch State` callback.
+
+        Disabling electrodes will also reduce power consumption.
+
+        Default: 8191 = 0x1FFF = 0b1111111111111 (all electrodes enabled)
+        """
+        enabled_electrodes = list(map(bool, enabled_electrodes))
+
+        self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_SET_ELECTRODE_CONFIG, (enabled_electrodes,), '13!', '')
+
+    def get_electrode_config(self):
+        """
+        Returns the electrode configuration, as set by :func:`Set Electrode Config`.
+        """
+        return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_ELECTRODE_CONFIG, (), '', '13!')
+
+    def set_electrode_sensitivity(self, sensitivity):
+        """
+        Sets the sensitivity of the electrodes. An electrode with a high sensitivity
+        will register a touch earlier then an electrode with a low sensitivity.
+
+        If you build a big electrode you might need to decrease the sensitivity, since
+        the area that can be charged will get bigger. If you want to be able to
+        activate an electrode from further away you need to increase the sensitivity.
+
+        After a new sensitivity is set, you likely want to call :func:`Recalibrate`
+        to calibrate the electrodes with the newly defined sensitivity.
+
+        The valid sensitivity value range is 5-201.
+
+        The default sensitivity value is 181.
+        """
+        sensitivity = int(sensitivity)
+
+        self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_SET_ELECTRODE_SENSITIVITY, (sensitivity,), 'B', '')
+
+    def get_electrode_sensitivity(self):
+        """
+        Returns the current sensitivity, as set by :func:`Set Electrode Sensitivity`.
+        """
+        return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_ELECTRODE_SENSITIVITY, (), '', 'B')
+
+    def set_touch_led_config(self, config):
+        """
+        Configures the touch LED to be either turned off, turned on, blink in
+        heartbeat mode or show the touch state (electrode touched = LED on).
+
+        The default value is 3 (show touch state).
+        """
+        config = int(config)
+
+        self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_SET_TOUCH_LED_CONFIG, (config,), 'B', '')
+
+    def get_touch_led_config(self):
+        """
+        Returns the LED configuration as set by :func:`Set Touch LED Config`
+        """
+        return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_TOUCH_LED_CONFIG, (), '', 'B')
 
     def get_spitfp_error_count(self):
         """
@@ -224,5 +377,14 @@ class BrickletMultiTouchV2(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def register_callback(self, callback_id, function):
+        """
+        Registers the given *function* with the given *callback_id*.
+        """
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
+        else:
+            self.registered_callbacks[callback_id] = function
 
 MultiTouchV2 = BrickletMultiTouchV2 # for backward compatibility
