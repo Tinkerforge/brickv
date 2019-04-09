@@ -165,8 +165,9 @@ def error_report_main():
     right_widget.layout().addWidget(btn)
 
     widget.layout().addWidget(right_widget)
-    window.show()
     window.setMinimumSize(640, 400)
+    window.resize(950, 600)
+    window.show()
 
     app.exec_()
 
