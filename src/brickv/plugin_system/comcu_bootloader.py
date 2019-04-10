@@ -38,7 +38,7 @@ class COMCUBootloader(QWidget):
         layout.addWidget(label)
 
         button = QPushButton("Flash Bricklet")
-        button.pressed.connect(self.button_pressed)
+        button.clicked.connect(self.button_pressed)
         layout.addWidget(button)
         layout.addStretch()
 

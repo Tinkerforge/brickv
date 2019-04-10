@@ -44,14 +44,13 @@ class QColorButton(QPushButton):
 
         self._color = QColor(255, 0, 0)
         self._apply_color()
-        self.pressed.connect(self.onColorPicker)
+        self.clicked.connect(self.onColorPicker)
 
     def _apply_color(self):
         pixmap = QPixmap(16, 16)
         QPainter(pixmap).fillRect(0, 0, 16, 16, self._color)
         self.setIcon(QIcon(pixmap))
         self.setText(self._color.name())
-
 
     def set_color(self, color):
         if color != self._color:
@@ -65,9 +64,9 @@ class QColorButton(QPushButton):
     def onColorPicker(self):
         dialog = QColorDialog()
         dialog.setCurrentColor(self._color)
+
         if dialog.exec_():
             self.set_color(dialog.currentColor())
-
 
 class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
     qtcb_frame_started = pyqtSignal(int)
