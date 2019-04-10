@@ -84,7 +84,7 @@ class Accelerometer(PluginBase):
                  ('Y', Qt.darkGreen, self.current_acceleration_y, '{:.3f} g'.format),
                  ('Z', Qt.blue, self.current_acceleration_z, '{:.3f} g'.format)]
         self.plot_widget = PlotWidget('Acceleration [g]', plots, extra_key_widgets=[self.pitch_label, self.roll_label, self.temperature_label],
-                                      curve_motion_granularity=20, update_interval=0.05, y_resolution=0.001)
+                                      update_interval=0.05, y_resolution=0.001)
 
         self.fs_label = QLabel('Full Scale:')
         self.fs_combo = QComboBox()

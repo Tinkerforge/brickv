@@ -446,9 +446,8 @@ class CurveArea(QWidget):
             transform.scale(factor_x, -factor_y)
             transform.translate(-x_min, -y_min_scale)
 
-            if self.plot.curve_motion_granularity > 1:
-                self.plot.partial_update_width = math.ceil(transform.map(QLineF(0, 0, 1.5, 0)).length())
-                inverted_event_rect = transform.inverted()[0].mapRect(QRectF(event.rect()))
+            self.plot.partial_update_width = math.ceil(transform.map(QLineF(0, 0, 1.5, 0)).length())
+            inverted_event_rect = transform.inverted()[0].mapRect(QRectF(event.rect()))
 
             painter.save()
             painter.setTransform(transform)
@@ -497,11 +496,7 @@ class CurveArea(QWidget):
                     path = QPainterPath()
                     lineTo = path.lineTo
                     moveTo = path.moveTo
-
-                    if self.plot.curve_motion_granularity > 1:
-                        start = max(min(bisect.bisect_left(curve_x, inverted_event_rect.left()), len(curve_x) - 1) - 1, 0)
-                    else:
-                        start = 0
+                    start = max(min(bisect.bisect_left(curve_x, inverted_event_rect.left()), len(curve_x) - 1) - 1, 0)
 
                     if start >= len(curve_x):
                         continue
@@ -524,7 +519,7 @@ class Plot(QWidget):
     def __init__(self, parent, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
                  curve_configs, x_scale_visible, y_scale_visible, curve_outer_border_visible,
                  curve_motion_granularity, canvas_color, curve_start, x_diff, y_diff_min,
-                 y_scale_shrinkable):
+                 y_scale_shrinkable, update_interval):
         super().__init__(parent)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -532,6 +527,7 @@ class Plot(QWidget):
         self.curve_configs = curve_configs
         self.x_scale_visible = x_scale_visible
         self.y_scale_visible = y_scale_visible
+        self.update_interval = update_interval
 
         if curve_outer_border_visible:
             self.curve_outer_border = 5 # px, fixed
@@ -769,9 +765,12 @@ class Plot(QWidget):
 
         if len(self.curves_x[c]) > 0:
             if (self.curves_x[c][-1] - self.curves_x[c][0]) >= self.x_diff:
-                self.curves_x[c] = self.curves_x[c][self.curve_motion_granularity:]
-                self.curves_y[c] = self.curves_y[c][self.curve_motion_granularity:]
-                self.curves_jump[c] = self.curves_jump[c][self.curve_motion_granularity:]
+                x_motion = self.x_min + self.curve_motion_granularity - self.update_interval / 2
+                k_motion = bisect.bisect_left(self.curves_x[c], x_motion)
+
+                self.curves_x[c] = self.curves_x[c][k_motion:]
+                self.curves_y[c] = self.curves_y[c][k_motion:]
+                self.curves_jump[c] = self.curves_jump[c][k_motion:]
 
                 if len(self.curves_x[c]) > 0:
                     self.curves_x_min[c] = self.curves_x[c][0]
@@ -797,7 +796,7 @@ class Plot(QWidget):
         if self.curves_visible[c] and (last_y_min != self.y_min or last_y_max != self.y_max):
             self.update_y_min_max_scale()
 
-        if self.partial_update_enabled and self.curve_motion_granularity > 1:
+        if self.partial_update_enabled:
             self.curve_area.update(self.curve_area.width() - self.partial_update_width, 0, self.partial_update_width, self.curve_area.height())
         else:
             self.curve_area.update()
@@ -1037,7 +1036,7 @@ class PlotWidget(QWidget):
                  x_scale_visible=True,
                  y_scale_visible=True,
                  curve_outer_border_visible=True,
-                 curve_motion_granularity=10, # values
+                 curve_motion_granularity=1.0, # seconds
                  canvas_color=QColor(245, 245, 245),
                  external_timer=None,
                  key='top-value', # top-value, right-no-icon
@@ -1069,7 +1068,7 @@ class PlotWidget(QWidget):
         self.plot = Plot(self, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
                          self.curve_configs, x_scale_visible, y_scale_visible, curve_outer_border_visible,
                          curve_motion_granularity, canvas_color, curve_start, x_diff, y_diff_min,
-                         y_scale_shrinkable)
+                         y_scale_shrinkable, update_interval)
         self.set_x_scale = self.plot.set_x_scale
         self.set_fixed_y_scale = self.plot.set_fixed_y_scale
         self.key = key

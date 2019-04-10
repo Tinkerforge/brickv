@@ -55,7 +55,7 @@ class MotorizedLinearPoti(COMCUPluginBase):
 
         plots = [('Potentiometer Position', Qt.red, self.current_position, str)]
         self.plot_widget = PlotWidget('Position', plots, extra_key_widgets=[self.slider],
-                                      curve_motion_granularity=40, update_interval=0.025, y_resolution=1.0)
+                                      update_interval=0.025, y_resolution=1.0)
 
         self.motor_slider = QSlider(Qt.Horizontal)
         self.motor_slider.setRange(0, 100)

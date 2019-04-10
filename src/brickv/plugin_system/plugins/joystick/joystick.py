@@ -94,8 +94,7 @@ class Joystick(PluginBase):
 
         plots = [('X', Qt.darkGreen, self.current_x, str),
                  ('Y', Qt.blue, self.current_y, str)]
-        self.plot_widget = PlotWidget('Position', plots, curve_motion_granularity=40,
-                                      update_interval=0.025, y_resolution=1.0)
+        self.plot_widget = PlotWidget('Position', plots, update_interval=0.025, y_resolution=1.0)
 
         vlayout = QVBoxLayout()
         vlayout.addStretch()

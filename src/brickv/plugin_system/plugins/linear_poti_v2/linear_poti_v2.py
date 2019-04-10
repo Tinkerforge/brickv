@@ -48,8 +48,7 @@ class LinearPotiV2(COMCUPluginBase):
 
         plots = [('Position', Qt.red, self.current_position, str)]
         self.plot_widget = PlotWidget('Position', plots, extra_key_widgets=[self.slider],
-                                      curve_motion_granularity=40, update_interval=0.025,
-                                      y_resolution=1.0)
+                                      update_interval=0.025, y_resolution=1.0)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)

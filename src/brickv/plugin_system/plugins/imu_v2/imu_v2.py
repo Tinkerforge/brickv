@@ -223,7 +223,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
                                                     x_scale_visible=False,
                                                     y_scale_visible=False,
                                                     curve_outer_border_visible=False,
-                                                    curve_motion_granularity=1,
+                                                    curve_motion_granularity=0.1,
                                                     canvas_color=self.data_color[i][1],
                                                     external_timer=self.plot_timer,
                                                     curve_start='right',

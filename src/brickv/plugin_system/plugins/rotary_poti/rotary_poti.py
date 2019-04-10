@@ -52,8 +52,7 @@ class RotaryPoti(PluginBase):
         self.current_position = CurveValueWrapper()
 
         plots = [('Position', Qt.red, self.current_position, str)]
-        self.plot_widget = PlotWidget('Position', plots, curve_motion_granularity=40,
-                                      update_interval=0.025, y_resolution=1.0)
+        self.plot_widget = PlotWidget('Position', plots, update_interval=0.025, y_resolution=1.0)
 
         layout = QHBoxLayout(self)
         layout.addWidget(self.plot_widget)

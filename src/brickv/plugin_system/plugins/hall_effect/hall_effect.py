@@ -52,8 +52,7 @@ class HallEffect(PluginBase):
         self.label_count = CountLabel('Count')
 
         plots = [('Value', Qt.red, self.current_value, str)]
-        self.plot_widget = PlotWidget('Value', plots, extra_key_widgets=[self.label_count],
-                                      curve_motion_granularity=20, update_interval=0.05)
+        self.plot_widget = PlotWidget('Value', plots, extra_key_widgets=[self.label_count], update_interval=0.05)
         self.plot_widget.set_fixed_y_scale(0, 1, 1, 1)
 
         self.combo_edge_type = QComboBox()
