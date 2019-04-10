@@ -792,7 +792,7 @@ class Plot(QWidget):
                 self.partial_update_enabled = True
             else:
                 self.curves_x_max[c] = self.curves_x[c][-1]
-                self.x_max = min([curve_x_max for curve_x_max in self.curves_x_max if curve_x_max != None])
+                self.x_max = max([curve_x_max for curve_x_max in self.curves_x_max if curve_x_max != None])
 
         if self.curves_visible[c] and (last_y_min != self.y_min or last_y_max != self.y_max):
             self.update_y_min_max_scale()
@@ -851,7 +851,7 @@ class Plot(QWidget):
             self.x_min = None
 
         if len(curves_x_max) > 0:
-            self.x_max = min(curves_x_max)
+            self.x_max = max(curves_x_max)
         else:
             self.x_max = None
 
