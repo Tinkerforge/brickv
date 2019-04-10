@@ -1271,6 +1271,8 @@ class PlotWidget(QWidget):
         if self.stop:
             return
 
+        any_valid = False
+
         for i, curve_config in enumerate(self.curve_configs):
             if curve_config.value_wrapper == None:
                 continue
@@ -1281,6 +1283,8 @@ class PlotWidget(QWidget):
             if valid:
                 assert value != None
 
+                any_valid = True
+
                 if len(self.key_items) > 0 and self.key_has_values:
                     self.key_items[i].setText(curve_config.title + ': ' + curve_config.value_formatter(value))
 
@@ -1288,7 +1292,8 @@ class PlotWidget(QWidget):
             elif len(self.key_items) > 0 and self.key_has_values:
                 self.key_items[i].setText(curve_config.title)
 
-        self.timestamp += self.update_interval
+        if any_valid:
+            self.timestamp += self.update_interval
 
     # internal
     def clear_clicked(self):
