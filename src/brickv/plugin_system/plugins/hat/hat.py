@@ -48,9 +48,14 @@ class HAT(COMCUPluginBase, Ui_HAT):
                                              self.cb_voltages,
                                              self.increase_error_count)
 
-        self.button_sleep.pressed.connect(self.button_sleep_pressed)
+        self.button_sleep.clicked.connect(self.button_sleep_pressed)
         self.bricklet_power_checkbox.stateChanged.connect(self.bricklet_power_changed)
         self.ports = [self.port_a, self.port_b, self.port_c, self.port_d, self.port_e, self.port_f, self.port_g, self.port_h]
+
+        for port in self.ports:
+            port.setProperty('_bricklet_uid', None)
+            port.setEnabled(False)
+            port.clicked.connect(self.port_clicked)
 
     def bricklet_power_changed(self, state):
         self.hat.set_bricklet_power(state == Qt.Checked)
@@ -62,29 +67,33 @@ class HAT(COMCUPluginBase, Ui_HAT):
                                 self.checkbox_bricklets_off.isChecked(),
                                 self.checkbox_sleep_indicator.isChecked())
 
-    def port_label_clicked(self, event, uid):
-        get_main_window().show_plugin(uid)
+    def port_clicked(self):
+        uid = self.sender().property('_bricklet_uid')
 
-    def get_port_label_clicked_lambda(self, uid):
-        return lambda x: self.port_label_clicked(x, uid)
+        if uid != None:
+            get_main_window().show_plugin(uid)
 
     def update_bricklets(self):
-        try:
-            info = infos.get_info(self.uid)
+        info = infos.get_info(self.uid)
 
-            for i in range(8):
-                port = chr(ord('a') + i)
+        if info == None:
+            return
 
-                try:
-                    bricklet = info.connections_get(port)[0]
-                    text = '{0} ({1})'.format(bricklet.name, bricklet.uid)
-                    if text != self.ports[i].text():
-                        self.ports[i].setText(text)
-                        self.ports[i].mousePressEvent = self.get_port_label_clicked_lambda(bricklet.uid)
-                except:
-                    self.ports[i].setText('Not Connected')
-        except:
-            pass
+        for i in range(8):
+            port = chr(ord('a') + i)
+
+            try:
+                bricklet = info.connections_get(port)[0]
+                text = '{0} ({1})'.format(bricklet.name, bricklet.uid)
+
+                if text != self.ports[i].text():
+                    self.ports[i].setText(text)
+                    self.ports[i].setProperty('_bricklet_uid', bricklet.uid)
+                    self.ports[i].setEnabled(True)
+            except:
+                self.ports[i].setText('Not Connected')
+                self.ports[i].setProperty('_bricklet_uid', None)
+                self.ports[i].setEnabled(False)
 
     def get_bricklet_power_async(self, power):
         self.bricklet_power_checkbox.setChecked(power)
@@ -97,6 +106,7 @@ class HAT(COMCUPluginBase, Ui_HAT):
 
     def start(self):
         async_call(self.hat.get_bricklet_power, None, self.get_bricklet_power_async, self.increase_error_count)
+        self.update_bricklets()
         self.cbe_voltages.set_period(250)
 
     def stop(self):

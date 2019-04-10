@@ -49,38 +49,49 @@ class HATZero(COMCUPluginBase, Ui_HATZero):
                                             self.increase_error_count)
 
         self.ports = [self.port_a, self.port_b, self.port_c, self.port_d]
+
+        for port in self.ports:
+            port.setProperty('_bricklet_uid', None)
+            port.setEnabled(False)
+            port.clicked.connect(self.port_clicked)
+
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_bricklets)
 
     def cb_get_usb_voltage(self, voltage):
         self.label_usb_voltage.setText('{:.2f}V'.format(voltage/1000))
 
-    def port_label_clicked(self, event, uid):
-        get_main_window().show_plugin(uid)
+    def port_clicked(self):
+        uid = self.sender().property('_bricklet_uid')
 
-    def get_port_label_clicked_lambda(self, uid):
-        return lambda x: self.port_label_clicked(x, uid)
+        if uid != None:
+            get_main_window().show_plugin(uid)
 
     def update_bricklets(self):
-        try:
-            info = infos.get_info(self.uid)
+        info = infos.get_info(self.uid)
 
-            for i in range(4):
-                port = chr(ord('a') + i)
+        if info == None:
+            return
 
-                try:
-                    bricklet = info.connections_get(port)[0]
-                    text = '{0} ({1})'.format(bricklet.name, bricklet.uid)
-                    if text != self.ports[i].text():
-                        self.ports[i].setText(text)
-                        self.ports[i].mousePressEvent = self.get_port_label_clicked_lambda(bricklet.uid)
-                except:
-                    self.ports[i].setText('Not Connected')
-        except:
-            pass
+        for i in range(4):
+            port = chr(ord('a') + i)
+
+            try:
+                bricklet = info.connections_get(port)[0]
+                text = '{0} ({1})'.format(bricklet.name, bricklet.uid)
+
+                if text != self.ports[i].text():
+                    self.ports[i].setText(text)
+                    self.ports[i].setProperty('_bricklet_uid', bricklet.uid)
+                    self.ports[i].setEnabled(True)
+            except:
+                self.ports[i].setText('Not Connected')
+                self.ports[i].setProperty('_bricklet_uid', None)
+                self.ports[i].setEnabled(False)
 
     def start(self):
         self.cbe_voltage.set_period(250)
+        self.update_bricklets()
         self.update_timer.start(500)
 
     def stop(self):
