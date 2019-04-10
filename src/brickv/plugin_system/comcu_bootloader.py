@@ -38,7 +38,7 @@ class COMCUBootloader(QWidget):
         layout.addWidget(label)
 
         button = QPushButton("Flash Bricklet")
-        button.clicked.connect(self.button_pressed)
+        button.clicked.connect(self.button_clicked)
         layout.addWidget(button)
         layout.addStretch()
 
@@ -47,5 +47,5 @@ class COMCUBootloader(QWidget):
         hbox.addLayout(layout)
         hbox.addStretch()
 
-    def button_pressed(self):
+    def button_clicked(self):
         get_main_window().show_bricklet_update(self.info.connected_uid, self.info.position)

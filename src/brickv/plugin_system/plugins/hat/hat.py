@@ -48,7 +48,7 @@ class HAT(COMCUPluginBase, Ui_HAT):
                                              self.cb_voltages,
                                              self.increase_error_count)
 
-        self.button_sleep.clicked.connect(self.button_sleep_pressed)
+        self.button_sleep.clicked.connect(self.button_sleep_clicked)
         self.bricklet_power_checkbox.stateChanged.connect(self.bricklet_power_changed)
         self.ports = [self.port_a, self.port_b, self.port_c, self.port_d, self.port_e, self.port_f, self.port_g, self.port_h]
 
@@ -60,7 +60,7 @@ class HAT(COMCUPluginBase, Ui_HAT):
     def bricklet_power_changed(self, state):
         self.hat.set_bricklet_power(state == Qt.Checked)
 
-    def button_sleep_pressed(self):
+    def button_sleep_clicked(self):
         self.hat.set_sleep_mode(self.spinbox_sleep_delay.value(),
                                 self.spinbox_sleep_duration.value(),
                                 self.checkbox_rpi_off.isChecked(),
