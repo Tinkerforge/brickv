@@ -79,7 +79,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;body&gt;&lt;p&gt;The following calibration calibrates the Analog to Digital Converter of the choosen Brick above. To do this you need a Linear- or Rotary Poti Bricklet or simlar. See the &lt;a href=&quot;http://www.tinkerforge.com/doc/Software/Brickv.html#brick-adc-calibration&quot;&gt;&lt;span style=&quot;text-decoration: underline; color:#0000ff;&quot;&gt;documentation&lt;/span&gt;&lt;/a&gt; for more details.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Warning:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;If you accidentially miscalibrate the ADC and you don't have an appropriate Bricklet to recalibrate, you have to reflash the Brick to go back to default.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;body&gt;&lt;p&gt;The following calibration calibrates the Analog to Digital Converter of the choosen Brick above. To do this you need a Linear- or Rotary Poti Bricklet or simlar. See the &lt;a href=&quot;https://www.tinkerforge.com/en/doc/Software/Brickv.html#brick-adc-calibration&quot;&gt;&lt;span style=&quot;text-decoration: underline; color:#0000ff;&quot;&gt;documentation&lt;/span&gt;&lt;/a&gt; for more details.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Warning:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;If you accidentially miscalibrate the ADC and you don't have an appropriate Bricklet to recalibrate, you have to reflash the Brick to go back to default.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

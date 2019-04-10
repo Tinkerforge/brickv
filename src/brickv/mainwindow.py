@@ -498,8 +498,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.flashing_window.show_extension_update(master_uid)
 
     def show_red_brick_update(self):
-        text = "To update the RED Brick Image, please follow the instructions " \
-            + "<a href=https://www.tinkerforge.com/en/doc/Hardware/Bricks/RED_Brick.html#red-brick-copy-image>here</a>."
+        text = "To update the RED Brick Image, please follow the instructions " + \
+               "<a href=https://www.tinkerforge.com/en/doc/Hardware/Bricks/RED_Brick.html#red-brick-copy-image>here</a>."
         QMessageBox.information(self, "RED Brick Update", text)
 
     def create_tab_window(self, device_info, ipcon):
