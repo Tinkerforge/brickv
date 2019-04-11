@@ -252,7 +252,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         # This dictionary is needed to be kept in sync with all the GUI changes
         # on the hosts as some of the rule fields depend on available host information
         self.dict_hosts = {}
-        self.model_hosts = QStandardItemModel()
+        self.model_hosts = QStandardItemModel(self)
         self.model_hosts.setHorizontalHeaderLabels(HEADERS_TVIEW_HOSTS)
         self.tview_sm_hosts.setModel(self.model_hosts)
         self.set_default_col_width_hosts()
@@ -263,7 +263,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         # No need to keep this data structure in sync with the changes made on the GUI model
         self.list_rules = []
         self.dict_email = {}
-        self.model_rules = QStandardItemModel()
+        self.model_rules = QStandardItemModel(self)
         self.model_rules.setHorizontalHeaderLabels(HEADERS_TVIEW_RULES)
         self.tview_sm_rules.setModel(self.model_rules)
         self.set_default_col_width_rules()

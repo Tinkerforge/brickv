@@ -94,7 +94,7 @@ class IO16(PluginBase, Ui_IO16):
         self.io.register_callback(self.io.CALLBACK_MONOFLOP_DONE,
                                   self.qtcb_monoflop.emit)
 
-        self.update_timer = QTimer()
+        self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update)
         self.update_timer.setInterval(50)
 

@@ -135,7 +135,7 @@ class Servo(PluginBase, Ui_Servo):
         self.up_vel = [0]*7
         self.up_acc = [0]*7
 
-        self.update_timer = QTimer()
+        self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_apply)
         self.update_timer.setInterval(50)
 

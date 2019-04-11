@@ -47,7 +47,7 @@ class DC(PluginBase, Ui_DC):
 
         self.encoder_hide_all()
 
-        self.update_timer = QTimer()
+        self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_data)
 
         self.new_value = 0

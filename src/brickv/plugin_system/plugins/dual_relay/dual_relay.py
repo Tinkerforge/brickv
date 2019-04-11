@@ -64,7 +64,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
         self.b1_pixmap = load_masked_pixmap('plugin_system/plugins/dual_relay/relay_b1.bmp')
         self.b2_pixmap = load_masked_pixmap('plugin_system/plugins/dual_relay/relay_b2.bmp')
 
-        self.update_timer = QTimer()
+        self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update)
         self.update_timer.setInterval(50)
 

@@ -49,7 +49,7 @@ class Master(PluginBase, Ui_Master):
 
         self.master = self.device
 
-        self.update_timer = QTimer()
+        self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_data)
 
         self.extension_type = None

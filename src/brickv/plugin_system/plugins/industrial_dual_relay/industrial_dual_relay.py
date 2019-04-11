@@ -61,7 +61,7 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
         self.b0_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_relay/channel0_b.bmp')
         self.b1_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_relay/channel1_b.bmp')
 
-        self.update_timer = QTimer()
+        self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update)
         self.update_timer.setInterval(50)
 

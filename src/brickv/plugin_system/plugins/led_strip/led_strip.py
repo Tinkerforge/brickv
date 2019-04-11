@@ -107,7 +107,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
 
         self.voltage = 0
 
-        self.voltage_timer = QTimer()
+        self.voltage_timer = QTimer(self)
         self.voltage_timer.timeout.connect(self.update_voltage)
         self.voltage_timer.setInterval(1000)
 

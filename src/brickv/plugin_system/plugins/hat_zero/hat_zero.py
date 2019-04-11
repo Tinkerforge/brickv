@@ -50,7 +50,7 @@ class HATZero(COMCUPluginBase, Ui_HATZero):
             port.setEnabled(False)
             port.clicked.connect(self.port_clicked)
 
-        self.update_timer = QTimer()
+        self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_bricklets)
 
     def cb_get_usb_voltage(self, voltage):

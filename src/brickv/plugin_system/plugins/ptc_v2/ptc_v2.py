@@ -82,7 +82,7 @@ class PTCV2(COMCUPluginBase):
         layout.addWidget(line)
         layout.addLayout(hlayout)
 
-        self.connected_timer = QTimer()
+        self.connected_timer = QTimer(self)
         self.connected_timer.timeout.connect(self.update_connected)
         self.connected_timer.setInterval(1000)
 

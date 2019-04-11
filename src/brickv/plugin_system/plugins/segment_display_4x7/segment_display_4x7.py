@@ -88,7 +88,7 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
             button.setStyleSheet(self.STYLE_OFF)
             button.clicked.connect(get_clicked_func(4, i))
 
-        self.counter_timer = QTimer()
+        self.counter_timer = QTimer(self)
         self.counter_timer.timeout.connect(self.update_counter)
         self.counter_timer.setInterval(100)
 

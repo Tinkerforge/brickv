@@ -154,7 +154,7 @@ class Barometer(PluginBase):
 
             layout.addLayout(layout_h3)
 
-        self.chip_temp_timer = QTimer()
+        self.chip_temp_timer = QTimer(self)
         self.chip_temp_timer.timeout.connect(self.update_chip_temp)
         self.chip_temp_timer.setInterval(100)
 

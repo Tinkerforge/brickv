@@ -51,10 +51,10 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
         self.identifiers_station = []
         self.identifiers_sensor = []
 
-        self.data_timer_station = QTimer()
+        self.data_timer_station = QTimer(self)
         self.data_timer_station.timeout.connect(self.data_timeout_station)
 
-        self.data_timer_sensor = QTimer()
+        self.data_timer_sensor = QTimer(self)
         self.data_timer_sensor.timeout.connect(self.data_timeout_sensor)
 
     def data_timeout_station(self):

@@ -89,7 +89,7 @@ class PiezoSpeaker(PluginBase):
         self.scale_layout.addWidget(self.calibrate_button)
         self.scale_layout.addStretch()
 
-        self.scale_timer = QTimer()
+        self.scale_timer = QTimer(self)
         self.scale_timer.setInterval(25)
         self.scale_time = 585
 

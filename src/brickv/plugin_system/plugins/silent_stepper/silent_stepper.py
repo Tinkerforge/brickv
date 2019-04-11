@@ -45,7 +45,7 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
 
         self.endis_all(False)
 
-        self.update_timer = QTimer()
+        self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_data)
 
         self.speedometer = SpeedoMeter()

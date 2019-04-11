@@ -190,10 +190,10 @@ class IO16V2(COMCUPluginBase, Ui_IO16V2):
                                      self.lbl_st_ch14_monoflop_t,
                                      self.lbl_st_ch15_monoflop_t]
 
-        self.ch_status_update_timer = QTimer()
+        self.ch_status_update_timer = QTimer(self)
         self.ch_status_update_timer.timeout.connect(self.ch_status_update_timeout)
 
-        self.iv_cb_timer = QTimer()
+        self.iv_cb_timer = QTimer(self)
         self.iv_cb_timer.timeout.connect(self.iv_cb_timeout)
 
         self.btn_monoflop_go.clicked.connect(self.btn_monoflop_go_clicked)

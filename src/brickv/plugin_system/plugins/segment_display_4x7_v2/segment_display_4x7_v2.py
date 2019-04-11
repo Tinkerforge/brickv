@@ -72,7 +72,7 @@ class SegmentDisplay4x7V2(COMCUPluginBase, Ui_SegmentDisplay4x7V2):
             segment.setStyleSheet(self.STYLE_OFF)
             segment.clicked.connect(get_clicked_func(i))
 
-        self.counter_timer = QTimer()
+        self.counter_timer = QTimer(self)
         self.counter_timer.timeout.connect(self.update_counter)
         self.counter_timer.setInterval(100)
 

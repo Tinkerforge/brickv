@@ -98,7 +98,7 @@ class RS485(QWidget, Ui_RS485):
         # Update data stuff
         self.red_file_crc_error_count = None
         self.update_interval_crc_error_count = 2000
-        self.timer_update_crc_error_count = QTimer()
+        self.timer_update_crc_error_count = QTimer(self)
         self.timer_update_crc_error_count.timeout.connect(self.do_update_crc_error_count)
 
     def start_update_data(self):

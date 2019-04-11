@@ -79,7 +79,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
         self.monoflop_time_before = [1000] * 16
         self.monoflop_pending = [False] * 16
 
-        self.update_timer = QTimer()
+        self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update)
         self.update_timer.setInterval(50)
 

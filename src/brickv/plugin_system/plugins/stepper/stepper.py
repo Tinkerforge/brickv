@@ -46,7 +46,7 @@ class Stepper(PluginBase, Ui_Stepper):
 
         self.endis_all(False)
 
-        self.update_timer = QTimer()
+        self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_data)
 
         self.new_value = 0

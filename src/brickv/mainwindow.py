@@ -113,7 +113,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.flashing_window = None
         self.advanced_window = None
         self.data_logger_window = None
-        self.delayed_refresh_updates_timer = QTimer()
+        self.delayed_refresh_updates_timer = QTimer(self)
         self.delayed_refresh_updates_timer.timeout.connect(self.delayed_refresh_updates)
         self.delayed_refresh_updates_timer.setInterval(100)
         self.reset_view()

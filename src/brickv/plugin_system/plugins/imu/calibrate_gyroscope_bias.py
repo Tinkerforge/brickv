@@ -57,7 +57,7 @@ class CalibrateGyroscopeBias(QWidget, Ui_calibrate_gyroscope_bias):
         self.gyr_bias_low = [0, 0, 0]
         self.gyr_bias_high = [0, 0, 0]
 
-        self.update_timer = QTimer()
+        self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_temperature)
         self.update_timer.setInterval(1000)
 

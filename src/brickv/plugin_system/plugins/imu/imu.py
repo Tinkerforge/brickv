@@ -65,7 +65,7 @@ class IMU(PluginBase, Ui_IMU):
         self.quaternion_valid = False
         self.orientation_valid = False
 
-        self.update_timer = QTimer()
+        self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_data)
 
         self.cbe_all_data = CallbackEmulator(self.imu.get_all_data,

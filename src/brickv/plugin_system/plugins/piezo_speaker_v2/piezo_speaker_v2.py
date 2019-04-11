@@ -56,7 +56,7 @@ class PiezoSpeakerV2(COMCUPluginBase, Ui_PiezoSpeakerV2):
         self.beep_button.clicked.connect(self.beep_clicked)
         self.alarm_button.clicked.connect(self.alarm_clicked)
 
-        self.new_value_timer = QTimer()
+        self.new_value_timer = QTimer(self)
         self.new_value_timer.timeout.connect(self.new_value_update)
         self.last_frequency = self.frequency_spinbox.value()
         self.last_volume    = self.volume_spinbox.value()

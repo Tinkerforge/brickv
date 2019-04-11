@@ -326,7 +326,7 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
                                  'wired_settings': None}
 
 
-        self.ap_tree_model = QStandardItemModel(0, 4)
+        self.ap_tree_model = QStandardItemModel(0, 4, self)
 
         self.ap_tree_model.setHorizontalHeaderItem(0, QStandardItem('SSID'))
         self.ap_tree_model.setHorizontalHeaderItem(1, QStandardItem('Channel'))

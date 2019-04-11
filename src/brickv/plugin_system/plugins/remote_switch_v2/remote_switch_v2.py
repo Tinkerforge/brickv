@@ -77,7 +77,7 @@ class RemoteSwitchV2(COMCUPluginBase, Ui_RemoteSwitchV2):
         self.button_remote_input_clear.clicked.connect(self.plaintextedit_remote_input.clear)
 
         self.current_remote_type = None
-        self.timer_get_remote_input = QTimer()
+        self.timer_get_remote_input = QTimer(self)
         self.timer_get_remote_input.timeout.connect(self.timeout_get_remote_input)
         self.timer_get_remote_input.setInterval(50)
 

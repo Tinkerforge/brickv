@@ -43,7 +43,7 @@ class REDTabSettingsDateTime(QWidget, Ui_REDTabSettingsDateTime):
         self.image_version  = None # Set from REDTabSettings
         self.service_state  = None # Set from REDTabSettings
 
-        self.time_refresh_timer = QTimer()
+        self.time_refresh_timer = QTimer(self)
         self.time_refresh_timer.setInterval(1000)
         self.time_refresh_timer.timeout.connect(self.time_refresh)
         self.time_local_old = 0
