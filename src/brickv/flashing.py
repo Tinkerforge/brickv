@@ -217,9 +217,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         if isinstance(device_info, infos.BrickREDInfo):
             self.show_red_brick_update()
-        elif device_info.type == 'brick':
+        elif not device_info.flashable_like_bricklet:
             self.show_brick_update(device_info.url_part)
-        elif device_info.type == 'bricklet':
+        elif device_info.flashable_like_bricklet:
             self.show_bricklet_update(device_info.connected_uid, device_info.position)
 
     def fw_versions_fetched(self, firmware_info):
@@ -456,25 +456,25 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def update_bricks(self):
         self.combo_parent.clear()
 
-        for info in infos.get_device_infos():
-            if isinstance(info, infos.DeviceInfo):
-                self.combo_parent.addItem(info.get_combo_item(), info)
-
         has_no_parent_devices = False
         for info in infos.get_device_infos():
-            if info.reverse_connection == None and info.type != 'brick':
+            if info.reverse_connection == None and info.flashable_like_bricklet:
                 has_no_parent_devices = True
 
         if has_no_parent_devices:
             no_parent_info = infos.DeviceInfo()
-            no_parent_info.name = 'No Parent'
+            no_parent_info.name = 'None'
             no_parent_info.uid = '0'
 
             for info in infos.get_device_infos():
-                if info.reverse_connection == None and info.type != 'brick':
+                if info.reverse_connection == None and info.flashable_like_bricklet:
                     no_parent_info.connections.append((info.position, info))
 
-            self.combo_parent.addItem('No Parent', no_parent_info)
+            self.combo_parent.addItem('None', no_parent_info)
+
+        for info in infos.get_device_infos():
+            if isinstance(info, infos.DeviceInfo) and len(info.bricklet_ports) > 0:
+                self.combo_parent.addItem(info.get_combo_item(), info)
 
         if self.combo_parent.count() == 0:
             self.combo_parent.addItem(NO_BRICK, None)
@@ -917,7 +917,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             if port in brick_info.connections_keys():
                 bricklet_info = brick_info.connections_get(port)[0]
 
-                if bricklet_info.type == 'bricklet':
+                if bricklet_info.flashable_like_bricklet:
                     if first_index == None:
                         first_index = self.combo_port.count()
 
@@ -932,7 +932,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             if port in brick_info.bricklet_ports:
                 continue
 
-            if bricklet_info.type == 'bricklet':
+            if bricklet_info.flashable_like_bricklet:
                 if first_index == None:
                     first_index = self.combo_port.count()
 

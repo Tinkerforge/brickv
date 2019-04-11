@@ -45,6 +45,8 @@ from brickv.data_logger.setup_dialog import SetupDialog as DataLoggerWindow
 from brickv.async_call import async_start_thread, async_next_session, async_call, async_stop_thread
 from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
+from brickv.bindings.brick_hat import BrickHAT
+from brickv.bindings.brick_hat_zero import BrickHATZero
 from brickv.plugin_system.plugins.red import RED
 from brickv import config
 from brickv import infos
@@ -743,6 +745,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     device_info = infos.BrickMasterInfo()
                 elif device_identifier == BrickRED.DEVICE_IDENTIFIER:
                     device_info = infos.BrickREDInfo()
+                elif device_identifier == BrickHAT.DEVICE_IDENTIFIER:
+                    device_info = infos.BrickHATInfo()
+                elif device_identifier == BrickHATZero.DEVICE_IDENTIFIER:
+                    device_info = infos.BrickHATZeroInfo()
                 elif '0' <= position <= '9':
                     device_info = infos.BrickInfo()
                     something_changed_ref[0] = True

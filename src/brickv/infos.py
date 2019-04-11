@@ -91,6 +91,7 @@ class DeviceInfo(AbstractInfo):
     tab_index = -1
     enumeration_type = -1
     reverse_connection = None
+    flashable_like_bricklet = False
 
     def __init__(self, connections=None):
         self.connections = connections or []
@@ -139,15 +140,29 @@ class DeviceInfo(AbstractInfo):
 
 class BrickletInfo(DeviceInfo):
     type = 'bricklet'
+    flashable_like_bricklet = True
 
 class BrickInfo(DeviceInfo):
     can_have_extension = False
     type = 'brick'
+    flashable_like_bricklet = False
 
     def __init__(self):
         super().__init__()
 
         self.bricklet_ports = ('a', 'b')
+
+class BrickHATInfo(BrickInfo):
+    flashable_like_bricklet = True
+    def __init__(self):
+        super().__init__()
+        self.bricklet_ports = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
+
+class BrickHATZeroInfo(BrickInfo):
+    flashable_like_bricklet = True
+    def __init__(self):
+        super().__init__()
+        self.bricklet_ports = ('a', 'b', 'c', 'd')
 
 class BrickMasterInfo(BrickInfo):
     can_have_extension = True
