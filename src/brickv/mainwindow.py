@@ -777,19 +777,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if info == device_info:
                     continue
 
+                def add_to_connections(info_to_add, connected_info):
+                    connected_info.connections.append((info_to_add.position, info_to_add))
+                    info_to_add.reverse_connection = connected_info
+                    something_changed_ref[0] = True
+                    infos.get_infos_changed_signal().emit(connected_info.uid)
+
                 if info.uid != '' and info.uid == device_info.connected_uid:
+                    if device_info in info.connections_values(): #Device was already connected, but to another port
+                        info.connections = [(pos, i) for pos, i in info.connections if i.uid != device_info.uid]
                     if device_info not in info.connections_get(device_info.position):
-                        info.connections.append((device_info.position, device_info))
-                        device_info.reverse_connection = info
-                        something_changed_ref[0] = True
-                        infos.get_infos_changed_signal().emit(info.uid)
+                        add_to_connections(device_info, info)
+
 
                 if info.connected_uid != '' and info.connected_uid == device_info.uid:
+                    if info in device_info.connections_values(): #Device was already connected, but to another port
+                        device_info.connections = [(pos, i) for pos, i in device_info.connections if i.uid != info.uid]
                     if info not in device_info.connections_get(info.position):
-                        device_info.connections.append((info.position, info))
-                        info.reverse_connection = device_info
-                        something_changed_ref[0] = True
-                        infos.get_infos_changed_signal().emit(info.uid)
+                        add_to_connections(info, device_info)
 
             if device_info.plugin == None:
                 plugin = self.plugin_manager.create_plugin_instance(device_identifier, self.ipcon, device_info)
