@@ -1195,7 +1195,8 @@ class RED(PluginBase, Ui_RED):
 
         bindings_update = any(info.firmware_version_installed < info.firmware_version_latest for info in self.device_info.bindings_infos)
 
-        image_update = self.device_info.firmware_version_installed < self.device_info.firmware_version_latest
+        image_update = self.device_info.firmware_version_installed != (0, 0, 0) \
+                       and self.device_info.firmware_version_installed < self.device_info.firmware_version_latest
 
         if image_update and self.device_info.firmware_version_installed < (1, 14, 0):
             self.show_image_update()

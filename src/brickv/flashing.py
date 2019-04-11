@@ -1530,7 +1530,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         is_update = False
 
-        def get_row(info):
+        def get_row(info, ignore_update=False):
             nonlocal is_update
             inst_replacement = '0.0.0'
             unknown_replacement = 'Unknown'
@@ -1548,6 +1548,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
                    QStandardItem(get_version_string(info.firmware_version_latest, replace_unknown=unknown_replacement))]
 
             color, update = get_color_for_device(info)
+            if ignore_update:
+                color, update = None, False
 
             if update:
                 is_update = True
@@ -1628,7 +1630,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     # Cache is_update state and restore after handling bindings. They should not enable the update all bindings button.
                     old_is_update = is_update
 
-                    brickv_row = get_row(info.brickv_info)
+                    brickv_row = get_row(info.brickv_info, ignore_update=info.firmware_version_installed < (1, 14, 0))
 
                     is_update = False
 

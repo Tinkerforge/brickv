@@ -1034,7 +1034,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     updateable |= binding.firmware_version_installed != (0, 0, 0) \
                                   and binding.firmware_version_installed < binding.firmware_version_latest
                 updateable |= info.brickv_info.firmware_version_installed != (0, 0, 0) \
-                              and info.brickv_info.firmware_version_installed < info.brickv_info.firmware_version_latest
+                              and info.brickv_info.firmware_version_installed < info.brickv_info.firmware_version_latest \
+                              and not info.firmware_version_installed < (1, 14, 0) # Hide Brickv update if image is too old.
                 # There are bindings/brickv updates but there is no image update
                 red_brick_binding_update_only = not old_updateable and updateable
             else:
