@@ -30,12 +30,12 @@ import urllib.error
 import posixpath
 import functools
 
-# As a work-around for https://github.com/pyinstaller/pyinstaller/issues/4064 use a local copy of distutils.version.
-from .version import StrictVersion
-
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QMessageBox, QLabel, QVBoxLayout, QAction
 from PyQt5.QtGui import QFont
-from PyQt5.QtCore import Qt
+
+# As a work-around for https://github.com/pyinstaller/pyinstaller/issues/4064 use a local copy of distutils.version.
+from .version import StrictVersion
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.red.ui_red import Ui_RED

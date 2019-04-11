@@ -21,12 +21,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import time
+
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSignal
 
 from brickv.plugin_system.plugins.imu.ui_calibrate_accelerometer import Ui_calibrate_accelerometer
-
-import time
 
 class CalibrateAccelerometer(QWidget, Ui_calibrate_accelerometer):
     TYPE_ACC_GAIN = 0

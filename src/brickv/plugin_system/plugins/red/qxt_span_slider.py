@@ -306,9 +306,9 @@ class QxtSpanSlider(QSlider):
         groove = self.style().subControlRect(QStyle.CC_Slider, opt, QStyle.SC_SliderGroove, self)
 
         if opt.orientation == Qt.Horizontal:
-            groove.adjust(0, 0, -1, 0);
+            groove.adjust(0, 0, -1, 0)
         else:
-            groove.adjust(0, 0, 0, -1);
+            groove.adjust(0, 0, 0, -1)
 
         # pen & brush
         painter.setPen(QPen(self.gradientLeftColor, 0))
@@ -434,7 +434,7 @@ class QxtSpanSlider(QSlider):
             if self.movement == QxtSpanSlider.NoCrossing:
                 newPosition = max(newPosition, self.lowerValue)
             elif self.movement == QxtSpanSlider.NoOverlapping:
-                newPosition = max(newPosition, self.lowerValue + 1);
+                newPosition = max(newPosition, self.lowerValue + 1)
 
             if self.movement == QxtSpanSlider.FreeMovement and newPosition < self.lower:
                 self.swapControls()

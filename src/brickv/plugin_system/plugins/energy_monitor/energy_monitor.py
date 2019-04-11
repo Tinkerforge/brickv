@@ -112,8 +112,9 @@ class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
         self.label_frequency.setText('{0:.2f}'.format(data.frequency/100))
 
     def cb_transformer_status(self, status):
-        self.voltage_connected = status.voltage_transformer_connected;
-        self.current_connected = status.current_transformer_connected;
+        self.voltage_connected = status.voltage_transformer_connected
+        self.current_connected = status.current_transformer_connected
+
         if not self.voltage_connected:
             self.label_voltage.setText('NC')
 

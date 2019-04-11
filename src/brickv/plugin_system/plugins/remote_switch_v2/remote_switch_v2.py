@@ -225,7 +225,6 @@ class RemoteSwitchV2(COMCUPluginBase, Ui_RemoteSwitchV2):
                    self.increase_error_count)
 
     def stop(self):
-        pass
         self.timer_get_remote_input.stop()
 
     def destroy(self):

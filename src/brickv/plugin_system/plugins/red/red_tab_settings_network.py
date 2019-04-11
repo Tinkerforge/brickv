@@ -239,7 +239,7 @@ class REDTabSettingsNetworkWirelessConnectHidden(QDialog,
             self.ui_group_toggle(self.ui_group_encryption, True)
 
     def slot_cbox_address_current_idx_changed(self, idx):
-        if(idx == CBOX_NET_CONTYPE_INDEX_STATIC):
+        if idx == CBOX_NET_CONTYPE_INDEX_STATIC:
             self.ui_group_toggle(self.ui_group_static_ip, True)
         else:
             self.ui_group_toggle(self.ui_group_static_ip, False)

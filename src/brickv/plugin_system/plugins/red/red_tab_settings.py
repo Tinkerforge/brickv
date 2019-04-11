@@ -23,9 +23,10 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import json
+
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_settings import Ui_REDTabSettings
-import json
 
 class ServiceState:
     fetched          = False

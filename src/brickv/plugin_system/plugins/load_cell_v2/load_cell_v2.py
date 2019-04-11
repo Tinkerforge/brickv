@@ -163,7 +163,7 @@ class LoadCellV2(COMCUPluginBase):
         self.plot_widget.stop = True
 
     def destroy(self):
-        if self.calibration:
+        if self.calibration != None:
             self.calibration.close()
 
     @staticmethod

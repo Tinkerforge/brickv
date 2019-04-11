@@ -159,7 +159,7 @@ class SegmentDisplay4x7V2(COMCUPluginBase, Ui_SegmentDisplay4x7V2):
                 self.segments[i].setStyleSheet(self.STYLE_OFF)
 
     def start(self):
-        async_call(self.sd4x7.get_segments,   None, self.cb_get_segments,   self.increase_error_count)
+        async_call(self.sd4x7.get_segments, None, self.cb_get_segments, self.increase_error_count)
         async_call(self.sd4x7.get_brightness, None, self.cb_get_brightness, self.increase_error_count)
 
     def stop(self):

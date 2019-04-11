@@ -139,9 +139,9 @@ class IO4(PluginBase, Ui_IO4):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIO4.DEVICE_IDENTIFIER
 
-    def init_values(self, value, dir, config, time, time_remaining):
+    def init_values(self, value, direction, config, time, time_remaining):
         for i in range(4):
-            if dir & (1 << i):
+            if direction & (1 << i):
                 self.port_direction[i].setText('Input')
 
                 if config & (1 << i):
