@@ -139,7 +139,7 @@ class LoadCell(PluginBase):
         async_call(self.lc.is_led_on, None, self.is_led_on_async, self.increase_error_count)
         async_call(self.lc.get_configuration, None, self.get_configuration_async, self.increase_error_count)
         async_call(self.lc.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
-        async_call(self.lc.get_weight, None, self.cb_weight, self.increase_error_count)
+
         self.cbe_weight.set_period(100)
 
         self.plot_widget.stop = False

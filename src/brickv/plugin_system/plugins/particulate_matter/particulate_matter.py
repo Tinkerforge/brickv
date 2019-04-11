@@ -103,8 +103,6 @@ class ParticulateMatter(COMCUPluginBase):
         self.pm.set_enable(state == Qt.Checked)
 
     def start(self):
-        async_call(self.pm.get_pm_concentration, None, self.cb_pm_concentration, self.increase_error_count)
-        async_call(self.pm.get_pm_count, None, self.cb_pm_count, self.increase_error_count)
         async_call(self.pm.get_enable, None, self.get_enable_async, self.increase_error_count)
 
         self.cbe_pm_concentration.set_period(100)

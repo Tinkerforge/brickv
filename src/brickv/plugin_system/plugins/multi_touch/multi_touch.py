@@ -103,19 +103,19 @@ class MultiTouch(PluginBase, Ui_MultiTouch):
             else:
                 self.mt_labels[i].setStyleSheet("QLabel { background-color : black; }")
 
-    def cb_electrode_config(self, enabled_electrodes):
+    def get_electrode_config_async(self, enabled_electrodes):
         for i in range(13):
             if enabled_electrodes & (1 << i):
                 self.cbs[i].setChecked(True)
             else:
                 self.cbs[i].setChecked(False)
 
-    def cb_electrode_sensitivity(self, sensitivity):
+    def get_electrode_sensitivity_async(self, sensitivity):
         self.sensitivity_spinbox.setValue(sensitivity)
 
     def start(self):
-        async_call(self.mt.get_electrode_sensitivity, None, self.cb_electrode_sensitivity, self.increase_error_count)
-        async_call(self.mt.get_electrode_config, None, self.cb_electrode_config, self.increase_error_count)
+        async_call(self.mt.get_electrode_sensitivity, None, self.get_electrode_sensitivity_async, self.increase_error_count)
+        async_call(self.mt.get_electrode_config, None, self.get_electrode_config_async, self.increase_error_count)
 
     def stop(self):
         pass

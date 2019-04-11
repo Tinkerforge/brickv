@@ -97,7 +97,6 @@ class RotaryEncoderV2(COMCUPluginBase):
         self.cb_count(0)
 
     def start(self):
-        async_call(self.re.get_count, False, self.cb_count, self.increase_error_count)
         async_call(self.re.is_pressed, None, self.encoder_knob.set_pressed, self.increase_error_count)
 
         self.cbe_count.set_period(25)

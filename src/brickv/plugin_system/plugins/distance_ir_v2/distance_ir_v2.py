@@ -96,20 +96,20 @@ class DistanceIRV2(COMCUPluginBase):
     def average_spin_finished(self):
         self.dist.set_moving_average_configuration(self.average_spin.value())
 
-    def cb_moving_average_configuration(self, average):
+    def get_moving_average_configuration_async(self, average):
         self.average_spin.blockSignals(True)
         self.average_spin.setValue(average)
         self.average_spin.blockSignals(False)
 
-    def cb_sensor_type(self, sensor):
+    def get_sensor_type_async(self, sensor):
         self.sensor_combo.blockSignals(True)
         self.sensor_combo.setCurrentIndex(sensor)
         self.sensor_combo.blockSignals(False)
 
     def start(self):
-        async_call(self.dist.get_moving_average_configuration, None, self.cb_moving_average_configuration, self.increase_error_count)
-        async_call(self.dist.get_sensor_type, None, self.cb_sensor_type, self.increase_error_count)
-        async_call(self.dist.get_distance, None, self.cb_distance, self.increase_error_count)
+        async_call(self.dist.get_moving_average_configuration, None, self.get_moving_average_configuration_async, self.increase_error_count)
+        async_call(self.dist.get_sensor_type, None, self.get_sensor_type_async, self.increase_error_count)
+
         self.cbe_distance.set_period(10)
         self.cbe_analog_value.set_period(100)
 

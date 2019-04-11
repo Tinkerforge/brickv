@@ -57,9 +57,8 @@ class HallEffectV2(COMCUPluginBase, Ui_HallEffectV2):
         self.main_vert_layout.insertWidget(0, self.plot_widget)
 
     def start(self):
-        async_call(self.hf.get_magnetic_flux_density, None, self.cb_magnetic_flux_density, self.increase_error_count)
-        async_call(lambda: self.hf.get_counter(False), None, self.cb_counter, self.increase_error_count)
-        async_call(self.hf.get_counter_config, None, self.cb_counter_config, self.increase_error_count)
+        async_call(self.hf.get_counter_config, None, self.get_counter_config_async, self.increase_error_count)
+
         self.cbe_magnetic_flux_density.set_period(25)
         self.cbe_counter.set_period(100)
 
@@ -87,7 +86,7 @@ class HallEffectV2(COMCUPluginBase, Ui_HallEffectV2):
     def button_reset_clicked(self):
         async_call(lambda: self.hf.get_counter(True), None, self.cb_counter, self.increase_error_count)
 
-    def cb_counter_config(self, config):
+    def get_counter_config_async(self, config):
         self.spinbox_high.setValue(config.high_threshold)
         self.spinbox_low.setValue(config.low_threshold)
         self.spinbox_debounce.setValue(config.debounce)

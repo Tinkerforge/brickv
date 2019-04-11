@@ -27,7 +27,6 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_air_quality import BrickletAirQuality
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class AirQuality(COMCUPluginBase):
@@ -36,9 +35,9 @@ class AirQuality(COMCUPluginBase):
 
         self.air_quality = self.device
 
-        self.cbe_air_quality = CallbackEmulator(self.air_quality.get_all_values,
-                                                self.cb_get_all_values,
-                                                self.increase_error_count)
+        self.cbe_all_values = CallbackEmulator(self.air_quality.get_all_values,
+                                               self.cb_all_values,
+                                               self.increase_error_count)
 
         self.current_iaq_index = CurveValueWrapper() # float
         self.current_temperature = CurveValueWrapper() # float, °C
@@ -71,7 +70,7 @@ class AirQuality(COMCUPluginBase):
         layout_main.addLayout(layout_plot1)
         layout_main.addLayout(layout_plot2)
 
-    def cb_get_all_values(self, values):
+    def cb_all_values(self, values):
         self.current_iaq_index.value = values.iaq_index
         self.current_temperature.value = values.temperature / 100.0
         self.current_humidity.value = values.humidity / 100.0
@@ -87,9 +86,7 @@ class AirQuality(COMCUPluginBase):
             self.iaq_accuracy_label.setText('(Accuracy: High)')
 
     def start(self):
-        async_call(self.air_quality.get_all_values, None, self.cb_get_all_values, self.increase_error_count)
-
-        self.cbe_air_quality.set_period(500)
+        self.cbe_all_values.set_period(500)
 
         self.plot_widget_iaq_index.stop = False
         self.plot_widget_temperature.stop = False
@@ -97,7 +94,7 @@ class AirQuality(COMCUPluginBase):
         self.plot_widget_air_pressure.stop = False
 
     def stop(self):
-        self.cbe_air_quality.set_period(0)
+        self.cbe_all_values.set_period(0)
 
         self.plot_widget_iaq_index.stop = True
         self.plot_widget_temperature.stop = True

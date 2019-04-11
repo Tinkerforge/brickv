@@ -28,7 +28,6 @@ from PyQt5.QtWidgets import QVBoxLayout
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_temperature import BrickletTemperature
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class Temperature(PluginBase):
@@ -50,7 +49,6 @@ class Temperature(PluginBase):
         layout.addWidget(self.plot_widget)
 
     def start(self):
-        async_call(self.tem.get_temperature, None, self.cb_temperature, self.increase_error_count)
         self.cbe_temperature.set_period(100)
 
         self.plot_widget.stop = False

@@ -54,14 +54,14 @@ class Calibration(QDialog, Ui_Calibration):
         self.button_cal_offset.clicked.connect(self.offset_clicked)
         self.button_cal_gain.clicked.connect(self.gain_clicked)
 
-        self.cbe_adc = CallbackEmulator(self.parent.analog_in.get_adc_values,
-                                        self.cb_adc_values,
-                                        self.parent.increase_error_count)
+        self.cbe_adc_values = CallbackEmulator(self.parent.analog_in.get_adc_values,
+                                               self.cb_adc_values,
+                                               self.parent.increase_error_count)
 
     def show(self):
         QDialog.show(self)
 
-        self.cbe_adc.set_period(100)
+        self.cbe_adc_values.set_period(100)
 
         self.current_offset0 = 0
         self.current_offset1 = 0
@@ -71,7 +71,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.update_calibration()
 
     def update_calibration(self):
-        async_call(self.parent.analog_in.get_calibration, None, self.cb_get_calibration, self.parent.increase_error_count)
+        async_call(self.parent.analog_in.get_calibration, None, self.get_calibration_async, self.parent.increase_error_count)
 
     def remove_clicked(self):
         self.parent.analog_in.set_calibration((0, 0), (0, 0))
@@ -103,7 +103,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.parent.analog_in.set_calibration((self.current_offset0, self.current_offset1), (gain0, gain1))
         self.update_calibration()
 
-    def cb_get_calibration(self, cal):
+    def get_calibration_async(self, cal):
         self.current_offset0 = cal.offset[0]
         self.current_offset1 = cal.offset[1]
         self.current_gain0 = cal.gain[0]
@@ -127,7 +127,7 @@ class Calibration(QDialog, Ui_Calibration):
 
     def closeEvent(self, event):
         self.parent.calibration_button.setEnabled(True)
-        self.cbe_adc.set_period(0)
+        self.cbe_adc_values.set_period(0)
 
 class IndustrialDualAnalogIn(PluginBase):
     def __init__(self, *args):
@@ -182,12 +182,11 @@ class IndustrialDualAnalogIn(PluginBase):
         layout.addLayout(hlayout)
 
     def start(self):
-        async_call(self.analog_in.get_voltage, 0, lambda x: self.cb_voltage(0, x), self.increase_error_count)
-        async_call(self.analog_in.get_voltage, 1, lambda x: self.cb_voltage(1, x), self.increase_error_count)
+        async_call(self.analog_in.get_sample_rate, None, self.get_sample_rate_async, self.increase_error_count)
+
         self.cbe_voltage0.set_period(100)
         self.cbe_voltage1.set_period(100)
 
-        async_call(self.analog_in.get_sample_rate, None, self.get_sample_rate_async, self.increase_error_count)
         self.plot_widget.stop = False
 
     def stop(self):

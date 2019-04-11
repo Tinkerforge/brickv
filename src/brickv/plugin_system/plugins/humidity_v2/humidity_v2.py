@@ -86,10 +86,8 @@ class HumidityV2(COMCUPluginBase):
             self.hum.set_heater_configuration(self.hum.HEATER_CONFIG_DISABLED)
 
     def start(self):
-        async_call(self.hum.get_humidity, None, self.cb_humidity, self.increase_error_count)
-        async_call(self.hum.get_temperature, None, self.cb_temperature, self.increase_error_count)
-        async_call(self.hum.get_heater_configuration, None, self.cb_heater_configuration, self.increase_error_count)
-        async_call(self.hum.get_moving_average_configuration, None, self.cb_moving_average_configuration, self.increase_error_count)
+        async_call(self.hum.get_heater_configuration, None, self.get_heater_configuration_async, self.increase_error_count)
+        async_call(self.hum.get_moving_average_configuration, None, self.get_moving_average_configuration_async, self.increase_error_count)
 
         self.cbe_humidity.set_period(100)
         self.cbe_temperature.set_period(100)
@@ -117,12 +115,12 @@ class HumidityV2(COMCUPluginBase):
     def cb_temperature(self, temperature):
         self.current_temperature.value = temperature / 100.0
 
-    def cb_heater_configuration(self, heater_config):
+    def get_heater_configuration_async(self, heater_config):
         if heater_config == 0:
             self.enable_heater.setChecked(False)
         else:
             self.enable_heater.setChecked(True)
 
-    def cb_moving_average_configuration(self, average):
+    def get_moving_average_configuration_async(self, average):
         self.plot_widget_humidity.set_moving_average_value(average.moving_average_length_humidity)
         self.plot_widget_temperature.set_moving_average_value(average.moving_average_length_temperature)

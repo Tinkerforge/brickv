@@ -52,12 +52,12 @@ class IndustrialDigitalIn4V2(COMCUPluginBase, Ui_IndustrialDigitalIn4V2):
         self.cbox_cs3_cfg.currentIndexChanged.connect(self.cbox_cs3_cfg_changed)
 
     def start(self):
-        self.cbe_get_value.set_period(100)
-
         async_call(self.idi4.get_channel_led_config, 0, lambda x: self.async_get_channel_led_config(0, x), self.increase_error_count)
         async_call(self.idi4.get_channel_led_config, 1, lambda x: self.async_get_channel_led_config(1, x), self.increase_error_count)
         async_call(self.idi4.get_channel_led_config, 2, lambda x: self.async_get_channel_led_config(2, x), self.increase_error_count)
         async_call(self.idi4.get_channel_led_config, 3, lambda x: self.async_get_channel_led_config(3, x), self.increase_error_count)
+
+        self.cbe_get_value.set_period(100)
 
     def stop(self):
         self.cbe_get_value.set_period(0)

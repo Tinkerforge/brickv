@@ -25,7 +25,6 @@ from PyQt5.QtCore import QTimer
 
 from brickv.bindings.brick_hat_zero import BrickHATZero
 from brickv.plugin_system.plugins.hat_zero.ui_hat_zero import Ui_HATZero
-from brickv.async_call import async_call
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.callback_emulator import CallbackEmulator
 from brickv import infos

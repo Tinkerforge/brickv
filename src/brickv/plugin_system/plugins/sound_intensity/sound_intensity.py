@@ -28,7 +28,6 @@ from PyQt5.QtGui import QPainter, QLinearGradient, QColor
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
-from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.callback_emulator import CallbackEmulator
 
@@ -94,7 +93,6 @@ class SoundIntensity(PluginBase):
         self.current_intensity.value = intensity
 
     def start(self):
-        async_call(self.si.get_intensity, None, self.cb_intensity, self.increase_error_count)
         self.cbe_intensity.set_period(25)
 
         self.plot_widget.stop = False

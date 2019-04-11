@@ -189,8 +189,7 @@ class LaserRangeFinder(PluginBase):
         async_call(self.lrf.get_mode, None, self.get_mode_async, self.increase_error_count)
         async_call(self.lrf.is_laser_enabled, None, self.is_laser_enabled_async, self.increase_error_count)
         async_call(self.lrf.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
-        async_call(self.lrf.get_distance, None, self.cb_distance, self.increase_error_count)
-        async_call(self.lrf.get_velocity, None, self.cb_velocity, self.increase_error_count)
+
         self.cbe_distance.set_period(25)
         self.cbe_velocity.set_period(25)
 

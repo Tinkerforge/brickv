@@ -46,14 +46,14 @@ class Calibration(QDialog, Ui_Calibration):
         self.button_cal_offset.clicked.connect(self.offset_clicked)
         self.button_cal_gain.clicked.connect(self.gain_clicked)
 
-        self.cbe_adc = CallbackEmulator(self.parent.ai.get_voltage,
-                                        self.cb_get_voltage,
-                                        self.parent.increase_error_count)
+        self.cbe_voltage = CallbackEmulator(self.parent.ai.get_voltage,
+                                            self.cb_voltage,
+                                            self.parent.increase_error_count)
 
     def show(self):
         QDialog.show(self)
 
-        self.cbe_adc.set_period(100)
+        self.cbe_voltage.set_period(100)
 
         self.current_value = 0
         self.current_offset = 0
@@ -63,7 +63,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.update_calibration()
 
     def update_calibration(self):
-        async_call(self.parent.ai.get_calibration, None, self.cb_get_calibration, self.parent.increase_error_count)
+        async_call(self.parent.ai.get_calibration, None, self.get_calibration_async, self.parent.increase_error_count)
 
     def remove_clicked(self):
         self.parent.ai.set_calibration(0, 1, 1)
@@ -77,7 +77,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.parent.ai.set_calibration(self.current_offset, self.spinbox_voltage.value(), self.current_value)
         self.update_calibration()
 
-    def cb_get_calibration(self, cal):
+    def get_calibration_async(self, cal):
         self.current_offset     = cal.offset
         self.current_multiplier = cal.multiplier
         self.current_divisor    = cal.divisor
@@ -86,13 +86,13 @@ class Calibration(QDialog, Ui_Calibration):
         self.label_multiplier.setText(str(cal.multiplier))
         self.label_divisor.setText(str(cal.divisor))
 
-    def cb_get_voltage(self, value):
+    def cb_voltage(self, value):
         self.current_value = value
         self.label_voltage.setText(str(value) + " mV")
 
     def closeEvent(self, event):
         self.parent.calibration_button.setEnabled(True)
-        self.cbe_adc.set_period(0)
+        self.cbe_voltage.set_period(0)
 
 class AnalogInV3(COMCUPluginBase):
     def __init__(self, *args):
@@ -155,7 +155,7 @@ class AnalogInV3(COMCUPluginBase):
 
     def start(self):
         async_call(self.ai.get_oversampling, None, self.get_oversampling_async, self.increase_error_count)
-        async_call(self.ai.get_voltage, None, self.cb_voltage, self.increase_error_count)
+
         self.cbe_voltage.set_period(100)
 
         self.plot_widget.stop = False

@@ -84,7 +84,7 @@ class Pressure(PluginBase):
     def start(self):
         async_call(self.p.get_sensor_type, None, self.get_sensor_type_async, self.increase_error_count)
         async_call(self.p.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
-        async_call(self.p.get_pressure, None, self.cb_pressure, self.increase_error_count)
+
         self.cbe_pressure.set_period(100)
 
         self.plot_widget.stop = False

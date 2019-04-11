@@ -159,17 +159,14 @@ class Barometer(PluginBase):
         self.chip_temp_timer.setInterval(100)
 
     def start(self):
-        async_call(self.barometer.get_air_pressure, None, self.cb_air_pressure, self.increase_error_count)
-        async_call(self.barometer.get_altitude, None, self.cb_altitude, self.increase_error_count)
-
-        self.cbe_air_pressure.set_period(100)
-        self.cbe_altitude.set_period(100)
-
         if self.has_averaging:
             async_call(self.barometer.get_averaging, None, self.get_averaging_async, self.increase_error_count)
 
         if not self.has_calibrate:
             async_call(self.barometer.get_reference_air_pressure, None, self.get_reference_air_pressure_async, self.increase_error_count)
+
+        self.cbe_air_pressure.set_period(100)
+        self.cbe_altitude.set_period(100)
 
         self.air_pressure_plot_widget.stop = False
         self.altitude_plot_widget.stop = False

@@ -73,8 +73,6 @@ class TemperatureIR(PluginBase):
         layout.addLayout(hlayout)
 
     def start(self):
-        async_call(self.tir.get_ambient_temperature, None, self.cb_ambient_temperature, self.increase_error_count)
-        async_call(self.tir.get_object_temperature, None, self.cb_object_temperature, self.increase_error_count)
         async_call(self.tir.get_emissivity, None, self.get_emissivity_async, self.increase_error_count)
 
         self.cbe_ambient_temperature.set_period(250)

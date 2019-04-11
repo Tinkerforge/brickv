@@ -73,7 +73,7 @@ class Ozone(PluginBase):
 
     def start(self):
         async_call(self.ozone.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
-        async_call(self.ozone.get_ozone_concentration, None, self.cb_ozone_concentration, self.increase_error_count)
+
         self.cbe_ozone_concentration.set_period(100)
 
         self.plot_widget.stop = False

@@ -156,7 +156,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.imu = self.device
 
         self.cbe_all_data = CallbackEmulator(self.imu.get_all_data,
-                                             self.all_data_callback,
+                                             self.cb_all_data,
                                              self.increase_error_count)
 
         self.imu_gl = IMUV2GLWidget(self)
@@ -304,9 +304,11 @@ class IMUV2(PluginBase, Ui_IMUV2):
 
         # Stop callback to fix deadlock with callback emulation thread.
         self.cbe_all_data.set_period(0)
-        if self.calibration:
+
+        if self.calibration != None:
             self.calibration.close()
-        if self.imu_gl_wrapper:
+
+        if self.imu_gl_wrapper != None:
             self.imu_gl_wrapper.close()
 
     @staticmethod
@@ -332,7 +334,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
 
         self.imu_gl_wrapper.show()
 
-    def all_data_callback(self, data):
+    def cb_all_data(self, data):
         self.callback_counter += 1
 
         if self.callback_counter == 2:

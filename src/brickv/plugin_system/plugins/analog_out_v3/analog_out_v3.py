@@ -38,12 +38,12 @@ class AnalogOutV3(COMCUPluginBase, Ui_AnalogOutV3):
         self.output_voltage_box.editingFinished.connect(self.voltage_finished)
 
         self.cbe_input_voltage = CallbackEmulator(self.ao.get_input_voltage,
-                                                  self.cb_get_input_voltage,
+                                                  self.cb_input_voltage,
                                                   self.increase_error_count)
 
     def start(self):
-        async_call(self.ao.get_output_voltage, None, self.cb_get_output_voltage, self.increase_error_count)
-        async_call(self.ao.get_input_voltage, None, self.cb_get_input_voltage, self.increase_error_count)
+        async_call(self.ao.get_output_voltage, None, self.get_output_voltage_async, self.increase_error_count)
+
         self.cbe_input_voltage.set_period(1000)
 
     def stop(self):
@@ -56,10 +56,10 @@ class AnalogOutV3(COMCUPluginBase, Ui_AnalogOutV3):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletAnalogOutV3.DEVICE_IDENTIFIER
 
-    def cb_get_output_voltage(self, voltage):
+    def get_output_voltage_async(self, voltage):
         self.output_voltage_box.setValue(voltage / 1000.0)
 
-    def cb_get_input_voltage(self, voltage):
+    def cb_input_voltage(self, voltage):
         self.input_voltage_label.setText("{:.3f} V".format(round(voltage / 1000.0, 2)))
 
     def voltage_finished(self):

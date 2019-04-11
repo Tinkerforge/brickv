@@ -67,8 +67,7 @@ class TemperatureV2(COMCUPluginBase):
             self.tem.set_heater_configuration(self.tem.HEATER_CONFIG_DISABLED)
 
     def start(self):
-        async_call(self.tem.get_temperature, None, self.cb_temperature, self.increase_error_count)
-        async_call(self.tem.get_heater_configuration, None, self.cb_heater_configuration, self.increase_error_count)
+        async_call(self.tem.get_heater_configuration, None, self.get_heater_configuration_async, self.increase_error_count)
 
         self.cbe_temperature.set_period(250)
 
@@ -89,7 +88,7 @@ class TemperatureV2(COMCUPluginBase):
     def cb_temperature(self, temperature):
         self.current_temperature.value = temperature / 100.0
 
-    def cb_heater_configuration(self, heater_config):
+    def get_heater_configuration_async(self, heater_config):
         if heater_config == 0:
             self.enable_heater.setChecked(False)
         else:

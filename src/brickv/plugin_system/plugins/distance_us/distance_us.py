@@ -70,7 +70,7 @@ class DistanceUS(PluginBase):
 
     def start(self):
         async_call(self.dist.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
-        async_call(self.dist.get_distance_value, None, self.cb_distance, self.increase_error_count)
+
         self.cbe_distance.set_period(100)
 
         self.plot_widget.stop = False

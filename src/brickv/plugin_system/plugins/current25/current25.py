@@ -29,7 +29,6 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_current25 import BrickletCurrent25
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import format_current
 
@@ -69,7 +68,6 @@ class Current25(PluginBase):
         layout.addWidget(self.calibrate_button)
 
     def start(self):
-        async_call(self.cur.get_current, None, self.cb_current, self.increase_error_count)
         self.cbe_current.set_period(100)
 
         self.plot_widget.stop = False

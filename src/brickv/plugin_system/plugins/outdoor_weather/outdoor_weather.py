@@ -46,36 +46,36 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
                                                        self.cb_sensor_identifiers,
                                                        self.increase_error_count)
 
-        self.combo_identifier_station.currentIndexChanged.connect(self.data_timeout_station)
+        self.combo_identifier_station.currentIndexChanged.connect(self.update_station)
 
         self.identifiers_station = []
         self.identifiers_sensor = []
 
         self.data_timer_station = QTimer(self)
-        self.data_timer_station.timeout.connect(self.data_timeout_station)
+        self.data_timer_station.timeout.connect(self.update_station)
 
         self.data_timer_sensor = QTimer(self)
-        self.data_timer_sensor.timeout.connect(self.data_timeout_sensor)
+        self.data_timer_sensor.timeout.connect(self.update_sensor)
 
-    def data_timeout_station(self):
+    def update_station(self):
         if len(self.identifiers_station) > 0:
             try:
                 identifier = int(str(self.combo_identifier_station.itemText(self.combo_identifier_station.currentIndex())))
             except:
                 return
 
-            async_call(lambda: self.outdoor_weather.get_station_data(identifier), None, self.cb_station_data, self.increase_error_count)
+            async_call(self.outdoor_weather.get_station_data, identifier, self.get_station_data_async, self.increase_error_count)
         else:
             pass # TODO
 
-    def data_timeout_sensor(self):
+    def update_sensor(self):
         if len(self.identifiers_sensor) > 0:
             try:
                 identifier = int(str(self.combo_identifier_sensor.itemText(self.combo_identifier_sensor.currentIndex())))
             except:
                 return
 
-            async_call(lambda: self.outdoor_weather.get_sensor_data(identifier), None, self.cb_sensor_data, self.increase_error_count)
+            async_call(self.outdoor_weather.get_sensor_data, identifier, self.get_sensor_data_async, self.increase_error_count)
         else:
             pass # TODO
 
@@ -94,7 +94,7 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
             if new_text == old_text:
                 self.combo_identifier_station.setCurrentIndex(index)
 
-        self.data_timeout_station()
+        self.update_station()
 
     def cb_sensor_identifiers(self, identifiers):
         if len(identifiers) == 0:
@@ -111,9 +111,9 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
             if new_text == old_text:
                 self.combo_identifier_sensor.setCurrentIndex(index)
 
-        self.data_timeout_sensor()
+        self.update_sensor()
 
-    def cb_station_data(self, data):
+    def get_station_data_async(self, data):
         self.label_temperature_station.setText("{:.1f}".format(data.temperature/10.0))
         self.label_humidity_station.setText("{}".format(data.humidity))
         self.label_wind_speed_station.setText("{:.1f}".format(data.wind_speed/10.0))
@@ -133,15 +133,12 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
 
         self.label_wind_direction_station.setText(wind_direction)
 
-    def cb_sensor_data(self, data):
+    def get_sensor_data_async(self, data):
         self.label_temperature_sensor.setText("{:.1f}".format(data.temperature/10.0))
         self.label_humidity_sensor.setText("{}".format(data.humidity))
         self.label_last_change_sensor.setText("{}".format(data.last_change))
 
     def start(self):
-        async_call(self.outdoor_weather.get_station_identifiers, None, self.cb_station_identifiers, self.increase_error_count)
-        async_call(self.outdoor_weather.get_sensor_identifiers, None, self.cb_sensor_identifiers, self.increase_error_count)
-
         self.cbe_identifiers_station.set_period(10000)
         self.cbe_identifiers_sensor.set_period(10000)
 

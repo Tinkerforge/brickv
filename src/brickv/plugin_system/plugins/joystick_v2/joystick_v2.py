@@ -29,7 +29,6 @@ from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_joystick_v2 import BrickletJoystickV2
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class JoystickFrame(QFrame):
@@ -99,7 +98,6 @@ class JoystickV2(COMCUPluginBase):
         layout.addLayout(vlayout)
 
     def start(self):
-        async_call(self.js.get_position, None, self.cb_position, self.increase_error_count)
         self.cbe_position.set_period(50)
         self.cbe_pressed.set_period(100)
 

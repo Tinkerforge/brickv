@@ -90,8 +90,7 @@ class MotorizedLinearPoti(COMCUPluginBase):
         layout.addLayout(hlayout)
 
     def start(self):
-        async_call(self.mp.get_position, None, self.cb_position, self.increase_error_count)
-        async_call(self.mp.get_motor_position, None, self.cb_motor_position, self.increase_error_count)
+        async_call(self.mp.get_motor_position, None, self.get_motor_position_async, self.increase_error_count)
 
         self.cbe_position.set_period(25)
 
@@ -113,7 +112,7 @@ class MotorizedLinearPoti(COMCUPluginBase):
         self.current_position.value = position
         self.slider.setValue(position)
 
-    def cb_motor_position(self, motor):
+    def get_motor_position_async(self, motor):
         self.motor_slider.blockSignals(True)
         self.motor_hold_position.blockSignals(True)
         self.motor_drive_mode.blockSignals(True)

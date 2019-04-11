@@ -124,7 +124,7 @@ class AmbientLightV2(PluginBase):
 
     def start(self):
         async_call(self.al.get_configuration, None, self.get_configucation_async, self.increase_error_count)
-        async_call(self.al.get_illuminance, None, self.cb_illuminance, self.increase_error_count)
+
         self.cbe_illuminance.set_period(100)
 
         self.plot_widget.stop = False

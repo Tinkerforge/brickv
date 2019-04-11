@@ -81,8 +81,9 @@ class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
         self.energy_monitor.set_transformer_calibration(voltage_ratio, current_ratio, 0)
 
     def cb_waveform_error(self):
+        self.increase_error_count()
+
         if self.running:
-            self.increase_error_count()
             async_call(self.energy_monitor.get_waveform, None, self.cb_waveform, self.cb_waveform_error, delay=0.5)
 
     def cb_waveform(self, waveform):

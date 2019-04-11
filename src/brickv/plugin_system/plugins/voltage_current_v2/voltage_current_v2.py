@@ -64,15 +64,15 @@ class Calibration(QDialog, Ui_Calibration):
         self.btn_cal_rst.clicked.connect(self.cal_rst_clicked)
 
         self.cbe_v = CallbackEmulator(self.parent.vc.get_voltage,
-                                      self.cb_get_voltage,
+                                      self.cb_voltage,
                                       self.parent.increase_error_count)
 
         self.cbe_c = CallbackEmulator(self.parent.vc.get_current,
-                                      self.cb_get_current,
+                                      self.cb_current,
                                       self.parent.increase_error_count)
 
         self.cbe_p = CallbackEmulator(self.parent.vc.get_power,
-                                      self.cb_get_power,
+                                      self.cb_power,
                                       self.parent.increase_error_count)
 
     def show(self):
@@ -84,7 +84,7 @@ class Calibration(QDialog, Ui_Calibration):
 
         async_call(self.parent.vc.get_calibration,
                    None,
-                   self.cb_get_calibration,
+                   self.get_calibration_async,
                    self.parent.increase_error_count)
 
     def cal_rst_clicked(self):
@@ -92,7 +92,7 @@ class Calibration(QDialog, Ui_Calibration):
 
         async_call(self.parent.vc.get_calibration,
                    None,
-                   self.cb_get_calibration,
+                   self.get_calibration_async,
                    self.parent.increase_error_count)
 
     def cal_v_clicked(self):
@@ -100,7 +100,7 @@ class Calibration(QDialog, Ui_Calibration):
 
         async_call(self.parent.vc.get_calibration,
                    None,
-                   self.cb_get_calibration,
+                   self.get_calibration_async,
                    self.parent.increase_error_count)
 
     def cal_c_clicked(self):
@@ -111,10 +111,10 @@ class Calibration(QDialog, Ui_Calibration):
 
         async_call(self.parent.vc.get_calibration,
                    None,
-                   self.cb_get_calibration,
+                   self.get_calibration_async,
                    self.parent.increase_error_count)
 
-    def cb_get_calibration(self, cal):
+    def get_calibration_async(self, cal):
         self.cal_v_mul = cal.voltage_multiplier
         self.cal_v_div = cal.voltage_divisor
         self.cal_c_mul = cal.current_multiplier
@@ -123,7 +123,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.sbox_cal_v_mul.setValue(self.cal_v_mul)
         self.sbox_cal_c_mul.setValue(self.cal_c_mul)
 
-    def cb_get_voltage(self, value):
+    def cb_voltage(self, value):
         self.v = value
 
         if (self.v / 1000.0) < 1.0:
@@ -131,7 +131,7 @@ class Calibration(QDialog, Ui_Calibration):
         else:
             self.lbl_v.setText(str(self.v / 1000.0) + ' V')
 
-    def cb_get_current(self, value):
+    def cb_current(self, value):
         self.c = value
 
         if (self.c / 1000.0) < 1.0:
@@ -139,7 +139,7 @@ class Calibration(QDialog, Ui_Calibration):
         else:
             self.lbl_c.setText(str(self.c / 1000.0) + ' A')
 
-    def cb_get_power(self, value):
+    def cb_power(self, value):
         self.p = value
 
         if (self.p / 1000.0) < 1.0:
@@ -201,9 +201,6 @@ class VoltageCurrentV2(COMCUPluginBase, Ui_VoltageCurrentV2):
         self.current_box.setCurrentIndex(cur)
 
     def start(self):
-        async_call(self.vc.get_current, None, self.cb_current, self.increase_error_count)
-        async_call(self.vc.get_voltage, None, self.cb_voltage, self.increase_error_count)
-        async_call(self.vc.get_power, None, self.cb_power, self.increase_error_count)
         async_call(self.vc.get_configuration, None, self.get_configuration_async, self.increase_error_count)
 
         self.cbe_current.set_period(100)

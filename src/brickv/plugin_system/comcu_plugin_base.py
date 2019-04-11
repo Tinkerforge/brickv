@@ -97,7 +97,6 @@ class COMCUPluginBase(PluginBase):
 
     def start_comcu(self):
         self.start_called = False
-        async_call(self.device.get_bootloader_mode, None, self.cb_bootloader_mode, self.increase_error_count)
         self.cbe_bootloader_mode.set_period(1000)
 
     def stop_comcu(self):

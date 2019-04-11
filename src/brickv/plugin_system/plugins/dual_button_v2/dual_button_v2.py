@@ -24,7 +24,6 @@ Boston, MA 02111-1307, USA.
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.dual_button_v2.ui_dual_button_v2 import Ui_DualButtonV2
 from brickv.bindings.bricklet_dual_button_v2 import BrickletDualButtonV2
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class DualButtonV2(COMCUPluginBase, Ui_DualButtonV2):
@@ -36,12 +35,13 @@ class DualButtonV2(COMCUPluginBase, Ui_DualButtonV2):
         self.button = self.device
 
         self.cbe_button_state = CallbackEmulator(self.button.get_button_state,
-                                                 self.get_button_state_async,
+                                                 self.cb_button_state,
                                                  self.increase_error_count)
 
         self.cbe_led_state = CallbackEmulator(self.button.get_led_state,
-                                              self.get_led_state_async,
+                                              self.cb_led_state,
                                               self.increase_error_count)
+
         self.led_r = BrickletDualButtonV2.LED_STATE_OFF
         self.led_l = BrickletDualButtonV2.LED_STATE_OFF
         self.button_r = BrickletDualButtonV2.BUTTON_STATE_RELEASED
@@ -56,7 +56,7 @@ class DualButtonV2(COMCUPluginBase, Ui_DualButtonV2):
 
         self.count = 0
 
-    def get_button_state_async(self, state):
+    def cb_button_state(self, state):
         self.button_l, self.button_r = state
         led_text_button_l = ''
         led_text_button_r = ''
@@ -140,14 +140,11 @@ class DualButtonV2(COMCUPluginBase, Ui_DualButtonV2):
             self.button_led_on_button_l.setEnabled(True)
             self.button_led_off_button_l.setEnabled(True)
 
-    def get_led_state_async(self, led):
+    def cb_led_state(self, led):
         self.led_l, self.led_r = led
-        self.get_button_state_async((self.button_l, self.button_r))
-
+        self.cb_button_state((self.button_l, self.button_r))
 
     def start(self):
-        async_call(self.button.get_led_state, None, self.get_led_state_async, self.increase_error_count)
-        async_call(self.button.get_button_state, None, self.get_button_state_async, self.increase_error_count)
         self.cbe_button_state.set_period(200)
         self.cbe_led_state.set_period(200)
 

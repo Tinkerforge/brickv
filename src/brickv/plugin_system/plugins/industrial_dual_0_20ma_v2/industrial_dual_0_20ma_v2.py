@@ -242,19 +242,6 @@ class IndustrialDual020mAV2(COMCUPluginBase):
                                        self.led_status_config_ch1_max_sbox]
 
     def start(self):
-        async_call(self.dual020.get_current,
-                   CH_0,
-                   lambda x: self.cb_current(CH_0, x),
-                   self.increase_error_count)
-
-        async_call(self.dual020.get_current,
-                   CH_1,
-                   lambda x: self.cb_current(CH_1, x),
-                   self.increase_error_count)
-
-        self.cbe_current0.set_period(100)
-        self.cbe_current1.set_period(100)
-
         async_call(self.dual020.get_sample_rate,
                    None,
                    self.get_sample_rate_async,
@@ -284,6 +271,9 @@ class IndustrialDual020mAV2(COMCUPluginBase):
                    CH_1,
                    lambda config: self.get_channel_led_status_config_async(CH_1, config),
                    self.increase_error_count)
+
+        self.cbe_current0.set_period(100)
+        self.cbe_current1.set_period(100)
 
         self.plot_widget.stop = False
 

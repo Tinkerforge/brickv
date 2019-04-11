@@ -25,7 +25,6 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_xmc1400_breakout import BrickletXMC1400Breakout
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class XMC1400Breakout(COMCUPluginBase):
@@ -62,7 +61,6 @@ If the Bricklet is working it should increase once per second.
         layout_main.addStretch()
 
     def start(self):
-        async_call(self.xmc1400.get_count, None, self.cb_count, self.increase_error_count)
         self.cbe_count.set_period(100)
 
     def stop(self):

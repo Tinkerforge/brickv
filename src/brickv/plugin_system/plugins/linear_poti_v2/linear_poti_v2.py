@@ -27,7 +27,6 @@ from PyQt5.QtWidgets import QVBoxLayout, QSlider
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_linear_poti_v2 import BrickletLinearPotiV2
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class LinearPotiV2(COMCUPluginBase):
@@ -54,7 +53,6 @@ class LinearPotiV2(COMCUPluginBase):
         layout.addWidget(self.plot_widget)
 
     def start(self):
-        async_call(self.lp.get_position, None, self.cb_position, self.increase_error_count)
         self.cbe_position.set_period(25)
 
         self.plot_widget.stop = False

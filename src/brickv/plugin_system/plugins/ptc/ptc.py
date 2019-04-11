@@ -87,20 +87,21 @@ class PTC(PluginBase):
         self.connected_timer.setInterval(1000)
 
     def start(self):
-        async_call(self.ptc.get_temperature, None, self.cb_temperature, self.increase_error_count)
-        self.cbe_temperature.set_period(100)
-
         async_call(self.ptc.is_sensor_connected, None, self.is_sensor_connected_async, self.increase_error_count)
         async_call(self.ptc.get_noise_rejection_filter, None, self.get_noise_rejection_filter_async, self.increase_error_count)
         async_call(self.ptc.get_wire_mode, None, self.get_wire_mode_async, self.increase_error_count)
 
         self.connected_timer.start()
+
+        self.cbe_temperature.set_period(100)
+
         self.plot_widget.stop = False
 
     def stop(self):
+        self.connected_timer.stop()
+
         self.cbe_temperature.set_period(0)
 
-        self.connected_timer.stop()
         self.plot_widget.stop = True
 
     def destroy(self):

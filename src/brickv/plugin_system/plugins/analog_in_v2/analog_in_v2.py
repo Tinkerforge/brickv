@@ -74,7 +74,7 @@ class AnalogInV2(PluginBase):
 
     def start(self):
         async_call(self.ai.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
-        async_call(self.ai.get_voltage, None, self.cb_voltage, self.increase_error_count)
+
         self.cbe_voltage.set_period(100)
 
         self.plot_widget.stop = False

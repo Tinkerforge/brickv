@@ -28,7 +28,6 @@ from PyQt5.QtWidgets import QVBoxLayout
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_humidity import BrickletHumidity
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class Humidity(PluginBase):
@@ -50,7 +49,6 @@ class Humidity(PluginBase):
         layout.addWidget(self.plot_widget)
 
     def start(self):
-        async_call(self.hum.get_humidity, None, self.cb_humidity, self.increase_error_count)
         self.cbe_humidity.set_period(100)
 
         self.plot_widget.stop = False

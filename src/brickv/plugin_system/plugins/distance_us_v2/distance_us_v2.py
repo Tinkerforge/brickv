@@ -27,7 +27,6 @@ from PyQt5.QtWidgets import QVBoxLayout
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_distance_us_v2 import BrickletDistanceUSV2
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class DistanceUSV2(COMCUPluginBase):
@@ -49,7 +48,6 @@ class DistanceUSV2(COMCUPluginBase):
         layout.addWidget(self.plot_widget)
 
     def start(self):
-        async_call(self.dist.get_distance, None, self.cb_distance, self.increase_error_count)
         self.cbe_distance.set_period(100)
 
         self.plot_widget.stop = False

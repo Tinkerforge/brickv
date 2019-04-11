@@ -97,7 +97,6 @@ class GasDetector(PluginBase):
         async_call(self.gas_detector.get_detector_type, None, self.get_detector_type_async, self.increase_error_count)
         async_call(self.gas_detector.is_heater_on, None, self.is_heater_on_async, self.increase_error_count)
 
-        async_call(self.gas_detector.get_value, None, self.cb_value, self.increase_error_count)
         self.cbe_value.set_period(100)
 
         self.plot_widget.stop = False

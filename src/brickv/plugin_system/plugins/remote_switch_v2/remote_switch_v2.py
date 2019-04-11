@@ -218,11 +218,12 @@ class RemoteSwitchV2(COMCUPluginBase, Ui_RemoteSwitchV2):
             self.combo_remote_type.setCurrentIndex(self.rs2.REMOTE_TYPE_C)
 
     def start(self):
-        self.timer_get_remote_input.start()
         async_call(self.rs2.get_remote_configuration,
                    None,
                    self.get_remote_configuration_async,
                    self.increase_error_count)
+
+        self.timer_get_remote_input.start()
 
     def stop(self):
         self.timer_get_remote_input.stop()

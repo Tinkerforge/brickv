@@ -32,7 +32,6 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
 from brickv.plot_widget import PlotWidget, CurveValueWrapper, FixedSizeLabel
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_main_window, get_home_path, get_open_file_name
 
@@ -185,7 +184,6 @@ class DistanceIR(PluginBase):
         layout.addLayout(hlayout)
 
     def start(self):
-        async_call(self.dist.get_distance, None, self.cb_distance, self.increase_error_count)
         self.cbe_distance.set_period(100)
         self.cbe_analog_value.set_period(100)
 

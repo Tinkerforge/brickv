@@ -145,7 +145,7 @@ class AccelerometerV2(COMCUPluginBase):
 
     def start(self):
         async_call(self.accelerometer.get_configuration, None, self.get_configuration_async, self.increase_error_count)
-        async_call(self.accelerometer.get_acceleration, None, self.cb_acceleration, self.increase_error_count)
+
         self.cbe_acceleration.set_period(50)
 
         self.plot_widget.stop = False

@@ -94,11 +94,9 @@ class UVLightV2(COMCUPluginBase):
 
     def start(self):
         async_call(self.uv_light.get_configuration, None, self.get_configucation_async, self.increase_error_count)
-        async_call(self.uv_light.get_uva, None, self.cb_uva, self.increase_error_count)
+
         self.cbe_uva.set_period(100)
-        async_call(self.uv_light.get_uvb, None, self.cb_uvb, self.increase_error_count)
         self.cbe_uvb.set_period(100)
-        async_call(self.uv_light.get_uvi, None, self.cb_uvi, self.increase_error_count)
         self.cbe_uvi.set_period(100)
 
         self.plot_widget.stop = False

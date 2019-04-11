@@ -29,7 +29,6 @@ from PyQt5.QtGui import QPainter, QLinearGradient
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_line import BrickletLine
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class ReflectivityFrame(QFrame):
@@ -81,7 +80,6 @@ class Line(PluginBase):
         self.rf.set_reflectivity(reflectivity)
 
     def start(self):
-        async_call(self.line.get_reflectivity, None, self.cb_reflectivity, self.increase_error_count)
         self.cbe_reflectivity.set_period(25)
 
         self.plot_widget.stop = False

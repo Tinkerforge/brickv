@@ -105,9 +105,9 @@ class ThermocoupleV2(COMCUPluginBase):
         self.filter_combo.currentIndexChanged.connect(self.configuration_changed)
 
     def start(self):
-        async_call(self.thermo2.get_temperature, None, self.cb_temperature, self.increase_error_count)
-        async_call(self.thermo2.get_configuration, None, self.cb_configuration, self.increase_error_count)
-        async_call(self.thermo2.get_error_state, None, lambda e: self.cb_error_state(e.over_under, e.open_circuit))
+        async_call(self.thermo2.get_configuration, None, self.get_configuration_async, self.increase_error_count)
+        async_call(self.thermo2.get_error_state, None, lambda data: self.cb_error_state(data.over_under, data.open_circuit), self.increase_error_count)
+
         self.cbe_temperature.set_period(100)
 
         self.plot_widget.stop = False
@@ -134,7 +134,7 @@ class ThermocoupleV2(COMCUPluginBase):
     def cb_temperature(self, temperature):
         self.current_temperature.value = temperature / 100.0
 
-    def cb_configuration(self, conf):
+    def get_configuration_async(self, conf):
         self.averaging_combo.blockSignals(True)
         self.averaging_combo.setCurrentIndex(self.averaging_combo.findData(conf.averaging))
         self.averaging_combo.blockSignals(False)

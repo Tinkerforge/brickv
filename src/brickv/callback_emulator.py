@@ -62,14 +62,18 @@ class CallbackEmulator(QObject):
 
     def loop(self, thread_id, period):
         monotonic_timestamp = time.monotonic()
+        first = True
+        ignore_last_data_override = True
 
         while thread_id == self.thread_id:
-            elapsed = time.monotonic() - monotonic_timestamp
-            remaining = max(period / 1000.0 - elapsed, 0)
+            if not first:
+                elapsed = time.monotonic() - monotonic_timestamp
+                remaining = max(period / 1000.0 - elapsed, 0)
+                time.sleep(remaining)
 
-            time.sleep(remaining)
+                monotonic_timestamp = time.monotonic()
 
-            monotonic_timestamp = time.monotonic()
+            first = False
 
             if thread_id != self.thread_id:
                 break
@@ -83,10 +87,12 @@ class CallbackEmulator(QObject):
                 self.qtcb_error.emit()
                 continue
 
-            if self.ignore_last_data or self.last_data != data:
+            if self.ignore_last_data or ignore_last_data_override or self.last_data != data:
                 self.last_data = data
 
                 if self.use_data_signal:
                     self.qtcb_data.emit(data)
                 else:
                     self.data_callback(data)
+
+            ignore_last_data_override = False

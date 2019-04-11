@@ -98,8 +98,6 @@ class RotaryEncoder(PluginBase):
         self.cb_count(0)
 
     def start(self):
-        async_call(self.re.get_count, False, self.cb_count, self.increase_error_count)
-
         if self.firmware_version >= (2, 0, 2):
             # firmware 2.0.2 fixed the is_pressed return value, it was inverted before
             async_call(self.re.is_pressed, None, self.encoder_knob.set_pressed, self.increase_error_count)

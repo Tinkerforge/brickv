@@ -28,7 +28,6 @@ from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_rotary_poti_v2 import BrickletRotaryPotiV2
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.knob_widget import KnobWidget
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class RotaryPotiV2(COMCUPluginBase):
@@ -58,7 +57,6 @@ class RotaryPotiV2(COMCUPluginBase):
         layout.addWidget(self.position_knob)
 
     def start(self):
-        async_call(self.rp.get_position, None, self.cb_position, self.increase_error_count)
         self.cbe_position.set_period(25)
 
         self.plot_widget.stop = False

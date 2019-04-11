@@ -29,7 +29,6 @@ from PyQt5.QtGui import QPainter, QColor, QBrush
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class AmbientLightFrame(QFrame):
@@ -73,7 +72,6 @@ class AmbientLight(PluginBase):
         layout.addWidget(self.plot_widget)
 
     def start(self):
-        async_call(self.al.get_illuminance, None, self.cb_illuminance, self.increase_error_count)
         self.cbe_illuminance.set_period(100)
 
         self.plot_widget.stop = False

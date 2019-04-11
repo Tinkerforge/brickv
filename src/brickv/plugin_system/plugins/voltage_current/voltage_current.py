@@ -90,9 +90,6 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
         self.gaindiv_spinbox.setValue(gaindiv)
 
     def start(self):
-        async_call(self.vc.get_current, None, self.cb_current, self.increase_error_count)
-        async_call(self.vc.get_voltage, None, self.cb_voltage, self.increase_error_count)
-        async_call(self.vc.get_power, None, self.cb_power, self.increase_error_count)
         async_call(self.vc.get_configuration, None, self.get_configuration_async, self.increase_error_count)
         async_call(self.vc.get_calibration, None, self.get_calibration_async, self.increase_error_count)
 

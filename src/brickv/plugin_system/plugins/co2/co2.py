@@ -28,7 +28,6 @@ from PyQt5.QtWidgets import QVBoxLayout
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_co2 import BrickletCO2
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class CO2(PluginBase):
@@ -50,7 +49,6 @@ class CO2(PluginBase):
         layout.addWidget(self.plot_widget)
 
     def start(self):
-        async_call(self.co2.get_co2_concentration, None, self.cb_co2_concentration, self.increase_error_count)
         self.cbe_co2_concentration.set_period(100)
 
         self.plot_widget.stop = False

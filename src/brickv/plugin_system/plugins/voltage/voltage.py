@@ -28,7 +28,6 @@ from PyQt5.QtWidgets import QVBoxLayout
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_voltage import BrickletVoltage
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import format_voltage
 
@@ -51,7 +50,6 @@ class Voltage(PluginBase):
         layout.addWidget(self.plot_widget)
 
     def start(self):
-        async_call(self.vol.get_voltage, None, self.cb_voltage, self.increase_error_count)
         self.cbe_voltage.set_period(100)
 
         self.plot_widget.stop = False

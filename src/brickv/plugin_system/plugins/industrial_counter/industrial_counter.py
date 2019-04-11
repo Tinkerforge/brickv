@@ -206,7 +206,7 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
 
         self.counter.set_counter_configuration(channel, count_edge, count_direction, duty_cycle_prescaler, frequency_integration)
 
-    def get_all_counter_active_cb(self, active):
+    def get_all_counter_active_async(self, active):
         for i in range(4):
             self.checkboxess_active[i].blockSignals(True)
             if active[i]:
@@ -215,7 +215,7 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
                 self.checkboxess_active[i].setCheckState(Qt.Unchecked)
             self.checkboxess_active[i].blockSignals(False)
 
-    def get_counter_configuration_cb(self, channel, configuration):
+    def get_counter_configuration_async(self, channel, configuration):
         self.combo_signals_block(channel)
         self.combos_count_edge[channel].setCurrentIndex(configuration.count_edge)
         self.combos_count_direction[channel].setCurrentIndex(configuration.count_direction)
@@ -224,18 +224,18 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
         self.combo_signals_release(channel)
 
     def start(self):
-        async_call(self.counter.get_counter_configuration, 0, lambda x: self.get_counter_configuration_cb(0, x), self.increase_error_count)
-        async_call(self.counter.get_counter_configuration, 1, lambda x: self.get_counter_configuration_cb(1, x), self.increase_error_count)
-        async_call(self.counter.get_counter_configuration, 2, lambda x: self.get_counter_configuration_cb(2, x), self.increase_error_count)
-        async_call(self.counter.get_counter_configuration, 3, lambda x: self.get_counter_configuration_cb(3, x), self.increase_error_count)
-        async_call(self.counter.get_all_counter_active, None, self.get_all_counter_active_cb, self.increase_error_count)
-        self.cbe_signal.set_period(50)
-        self.cbe_counter.set_period(50)
-
+        async_call(self.counter.get_counter_configuration, 0, lambda x: self.get_counter_configuration_async(0, x), self.increase_error_count)
+        async_call(self.counter.get_counter_configuration, 1, lambda x: self.get_counter_configuration_async(1, x), self.increase_error_count)
+        async_call(self.counter.get_counter_configuration, 2, lambda x: self.get_counter_configuration_async(2, x), self.increase_error_count)
+        async_call(self.counter.get_counter_configuration, 3, lambda x: self.get_counter_configuration_async(3, x), self.increase_error_count)
+        async_call(self.counter.get_all_counter_active, None, self.get_all_counter_active_async, self.increase_error_count)
         async_call(self.counter.get_channel_led_config, 0, lambda x: self.async_get_channel_led_config(0, x), self.increase_error_count)
         async_call(self.counter.get_channel_led_config, 1, lambda x: self.async_get_channel_led_config(1, x), self.increase_error_count)
         async_call(self.counter.get_channel_led_config, 2, lambda x: self.async_get_channel_led_config(2, x), self.increase_error_count)
         async_call(self.counter.get_channel_led_config, 3, lambda x: self.async_get_channel_led_config(3, x), self.increase_error_count)
+
+        self.cbe_signal.set_period(50)
+        self.cbe_counter.set_period(50)
 
     def stop(self):
         self.cbe_signal.set_period(0)

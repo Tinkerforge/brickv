@@ -24,7 +24,6 @@ Boston, MA 02111-1307, USA.
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.isolator.ui_isolator import Ui_Isolator 
 from brickv.bindings.bricklet_isolator import BrickletIsolator
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 from brickv import infos
@@ -38,12 +37,12 @@ class Isolator(COMCUPluginBase, Ui_Isolator):
         self.isolator = self.device
 
         self.cbe_statistics = CallbackEmulator(self.isolator.get_statistics,
-                                               self.cb_get_statistics,
+                                               self.cb_statistics,
                                                self.increase_error_count)
 
         self.last_connected = None
 
-    def cb_get_statistics(self, statistics):
+    def cb_statistics(self, statistics):
         self.label_messages_from_brick.setText(str(statistics.messages_from_brick))
         self.label_messages_from_bricklet.setText(str(statistics.messages_from_bricklet))
 

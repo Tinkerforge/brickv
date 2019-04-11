@@ -73,7 +73,7 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
 
     def start(self):
         async_call(self.idi4.get_debounce_period, None, self.debounce_time.setValue, self.increase_error_count)
-        async_call(self.idi4.get_value, None, self.show_new_value, self.increase_error_count)
+
         self.reconfigure_everything()
 
         self.cbe_value.set_period(50)
@@ -87,15 +87,6 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialDigitalIn4.DEVICE_IDENTIFIER
-
-    def show_new_value(self, value):
-        for i in range(16):
-            if value & (1 << i):
-                self.pin_buttons[i].setText('High')
-                self.pin_button_icons[i].setPixmap(self.vcc_pixmap)
-            else:
-                self.pin_buttons[i].setText('Low')
-                self.pin_button_icons[i].setPixmap(self.gnd_pixmap)
 
     def reconfigure_everything_async(self, group):
         for i in range(4):
@@ -167,7 +158,13 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
         self.reconfigure_everything()
 
     def cb_value(self, value_mask):
-        self.show_new_value(value_mask)
+        for i in range(16):
+            if value_mask & (1 << i):
+                self.pin_buttons[i].setText('High')
+                self.pin_button_icons[i].setPixmap(self.vcc_pixmap)
+            else:
+                self.pin_buttons[i].setText('Low')
+                self.pin_button_icons[i].setPixmap(self.gnd_pixmap)
 
     def debounce_go_clicked(self):
         time = self.debounce_time.value()

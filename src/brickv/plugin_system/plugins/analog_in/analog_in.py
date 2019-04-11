@@ -98,8 +98,6 @@ class AnalogIn(PluginBase):
             if self.firmware_version >= (2, 0, 3):
                 async_call(self.ai.get_averaging, None, self.get_averaging_async, self.increase_error_count)
 
-        async_call(self.ai.get_voltage, None, self.cb_voltage, self.increase_error_count)
-
         self.cbe_voltage.set_period(100)
 
         self.plot_widget.stop = False

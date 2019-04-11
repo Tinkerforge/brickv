@@ -27,7 +27,6 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_co2_v2 import BrickletCO2V2
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class CO2V2(COMCUPluginBase):
@@ -36,9 +35,9 @@ class CO2V2(COMCUPluginBase):
 
         self.co2 = self.device
 
-        self.cbe_co2 = CallbackEmulator(self.co2.get_all_values,
-                                        self.cb_get_all_values,
-                                        self.increase_error_count)
+        self.cbe_all_values = CallbackEmulator(self.co2.get_all_values,
+                                               self.cb_all_values,
+                                               self.increase_error_count)
 
         self.current_co2 = CurveValueWrapper() # int, ppm
         self.current_temperature = CurveValueWrapper() # float, °C
@@ -64,22 +63,20 @@ class CO2V2(COMCUPluginBase):
         layout_main.addLayout(layout_plot1)
         layout_main.addLayout(layout_plot2)
 
-    def cb_get_all_values(self, values):
+    def cb_all_values(self, values):
         self.current_co2.value = values.co2_concentration
         self.current_temperature.value = values.temperature / 100.0
         self.current_humidity.value = values.humidity / 100.0
 
     def start(self):
-        async_call(self.co2.get_all_values, None, self.cb_get_all_values, self.increase_error_count)
-
-        self.cbe_co2.set_period(250)
+        self.cbe_all_values.set_period(250)
 
         self.plot_widget_co2.stop = False
         self.plot_widget_temperature.stop = False
         self.plot_widget_humidity.stop = False
 
     def stop(self):
-        self.cbe_co2.set_period(0)
+        self.cbe_all_values.set_period(0)
 
         self.plot_widget_co2.stop = True
         self.plot_widget_temperature.stop = True

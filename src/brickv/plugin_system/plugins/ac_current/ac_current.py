@@ -93,7 +93,7 @@ class ACCurrent(PluginBase):
     def start(self):
         async_call(self.acc.get_configuration, None, self.get_configuration_async, self.increase_error_count)
         async_call(self.acc.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
-        async_call(self.acc.get_current, None, self.cb_current, self.increase_error_count)
+
         self.cbe_current.set_period(100)
 
         self.plot_widget.stop = False

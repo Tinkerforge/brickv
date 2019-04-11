@@ -28,7 +28,6 @@ from PyQt5.QtWidgets import QVBoxLayout
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_uv_light import BrickletUVLight
 from brickv.plot_widget import PlotWidget, CurveValueWrapper, FixedSizeLabel
-from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
 class IndexLabel(FixedSizeLabel):
@@ -56,7 +55,6 @@ class UVLight(PluginBase):
         layout.addWidget(self.plot_widget)
 
     def start(self):
-        async_call(self.uv_light.get_uv_light, None, self.cb_uv_light, self.increase_error_count)
         self.cbe_uv_light.set_period(100)
 
         self.plot_widget.stop = False

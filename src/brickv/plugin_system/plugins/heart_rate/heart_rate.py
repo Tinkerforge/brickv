@@ -63,9 +63,9 @@ class HeartRate(PluginBase):
         layout.addWidget(self.plot_widget)
 
     def start(self):
-        async_call(self.hr.get_heart_rate, None, self.cb_heart_rate, self.increase_error_count)
-        self.cbe_heart_rate.set_period(100)
         async_call(self.hr.enable_beat_state_changed_callback, None, None, self.increase_error_count)
+
+        self.cbe_heart_rate.set_period(100)
 
         self.plot_widget.stop = False
 

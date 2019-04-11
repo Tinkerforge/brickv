@@ -96,12 +96,11 @@ class IndustrialDual020mA(PluginBase):
         layout.addLayout(hlayout)
 
     def start(self):
-        async_call(self.dual020.get_current, 0, lambda x: self.cb_current(0, x), self.increase_error_count)
-        async_call(self.dual020.get_current, 1, lambda x: self.cb_current(1, x), self.increase_error_count)
+        async_call(self.dual020.get_sample_rate, None, self.get_sample_rate_async, self.increase_error_count)
+
         self.cbe_current0.set_period(100)
         self.cbe_current1.set_period(100)
 
-        async_call(self.dual020.get_sample_rate, None, self.get_sample_rate_async, self.increase_error_count)
         self.plot_widget.stop = False
 
     def stop(self):

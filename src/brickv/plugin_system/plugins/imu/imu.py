@@ -69,19 +69,17 @@ class IMU(PluginBase, Ui_IMU):
         self.update_timer.timeout.connect(self.update_data)
 
         self.cbe_all_data = CallbackEmulator(self.imu.get_all_data,
-                                             self.all_data_callback,
+                                             self.cb_all_data,
                                              self.increase_error_count,
                                              use_data_signal=False)
         self.cbe_orientation = CallbackEmulator(self.imu.get_orientation,
-                                                self.orientation_callback,
+                                                self.cb_orientation,
                                                 self.increase_error_count,
                                                 use_data_signal=False)
         self.cbe_quaternion = CallbackEmulator(self.imu.get_quaternion,
-                                               self.quaternion_callback,
+                                               self.cb_quaternion,
                                                self.increase_error_count,
                                                use_data_signal=False)
-
-
 
         self.imu_gl = IMUGLWidget(self)
         self.imu_gl.setMinimumSize(150, 150)
@@ -213,7 +211,7 @@ class IMU(PluginBase, Ui_IMU):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickIMU.DEVICE_IDENTIFIER
 
-    def all_data_callback(self, data):
+    def cb_all_data(self, data):
         acc_x, acc_y, acc_z, mag_x, mag_y, mag_z, gyr_x, gyr_y, gyr_z, temp = data
 
         self.acc_x.value = acc_x
@@ -229,7 +227,7 @@ class IMU(PluginBase, Ui_IMU):
 
         self.all_data_valid = True
 
-    def quaternion_callback(self, data):
+    def cb_quaternion(self, data):
         qua_x, qua_y, qua_z, qua_w = data
 
         self.qua_x = qua_x
@@ -239,7 +237,7 @@ class IMU(PluginBase, Ui_IMU):
 
         self.quaternion_valid = True
 
-    def orientation_callback(self, data):
+    def cb_orientation(self, data):
         roll, pitch, yaw = data
 
         self.roll = roll / 100.0

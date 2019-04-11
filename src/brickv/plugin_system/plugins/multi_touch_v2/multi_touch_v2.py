@@ -34,8 +34,10 @@ class MultiTouchV2(COMCUPluginBase, Ui_MultiTouchV2):
         self.setupUi(self)
 
         self.mt = self.device
-        self.cbe_state = CallbackEmulator(self.mt.get_touch_state, self.cb_touch_state, self.increase_error_count)
 
+        self.cbe_touch_state = CallbackEmulator(self.mt.get_touch_state,
+                                                self.cb_touch_state,
+                                                self.increase_error_count)
 
         self.mt_labels = [
             self.mt_label_0,
@@ -97,24 +99,24 @@ class MultiTouchV2(COMCUPluginBase, Ui_MultiTouchV2):
             else:
                 self.mt_labels[i].setStyleSheet("QLabel { background-color : black; }")
 
-    def cb_electrode_config(self, enabled_electrodes):
+    def get_electrode_config_async(self, enabled_electrodes):
         for i in range(len(enabled_electrodes)):
             if enabled_electrodes[i]:
                 self.cbs[i].setChecked(True)
             else:
                 self.cbs[i].setChecked(False)
 
-    def cb_electrode_sensitivity(self, sensitivity):
+    def get_electrode_sensitivity_async(self, sensitivity):
         self.sensitivity_spinbox.setValue(sensitivity)
 
     def start(self):
-        async_call(self.mt.get_electrode_sensitivity, None, self.cb_electrode_sensitivity, self.increase_error_count)
-        async_call(self.mt.get_electrode_config, None, self.cb_electrode_config, self.increase_error_count)
-        async_call(self.mt.get_touch_state, None, self.cb_touch_state, self.increase_error_count)
-        self.cbe_state.set_period(100)
+        async_call(self.mt.get_electrode_sensitivity, None, self.get_electrode_sensitivity_async, self.increase_error_count)
+        async_call(self.mt.get_electrode_config, None, self.get_electrode_config_async, self.increase_error_count)
+
+        self.cbe_touch_state.set_period(100)
 
     def stop(self):
-        self.cbe_state.set_period(0)
+        self.cbe_touch_state.set_period(0)
 
     def destroy(self):
         pass
