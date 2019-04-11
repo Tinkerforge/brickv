@@ -21,8 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBox, QFrame
-
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_analog_out_v3 import BrickletAnalogOutV3

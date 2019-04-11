@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QFrame, QComboBox, QDialog, QPushButton
+from PyQt5.QtWidgets import QHBoxLayout, QDialog
 
 from brickv.bindings.bricklet_voltage_current_v2 import BrickletVoltageCurrentV2
 from brickv.plugin_system.plugins.voltage_current_v2.ui_voltage_current_v2 import Ui_VoltageCurrentV2

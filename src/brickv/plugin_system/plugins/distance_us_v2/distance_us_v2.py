@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QSpinBox, QVBoxLayout, QHBoxLayout, QFrame, QLabel
+from PyQt5.QtWidgets import QVBoxLayout
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_distance_us_v2 import BrickletDistanceUSV2

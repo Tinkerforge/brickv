@@ -22,14 +22,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import os
 import posixpath
 import stat
 import time
 import html
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWizard
 
 from brickv.plugin_system.plugins.red.api import *

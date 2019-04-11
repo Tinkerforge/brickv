@@ -1,8 +1,7 @@
-from PyQt5.QtCore import pyqtProperty, pyqtSignal, pyqtSlot, Qt, QRect, QRectF, QPoint
+from PyQt5.QtCore import pyqtProperty, pyqtSignal, Qt, QRect, QRectF, QPoint
 from PyQt5.QtGui import QColor, QPen, QPalette, QLinearGradient
-from PyQt5.QtWidgets import QWidget, QAbstractSlider, QSlider, QStyle, QGridLayout, \
-                            QLabel, QDoubleSpinBox, QStylePainter, QStyleOption, QStyleOptionSlider, \
-                            QStyleFactory
+from PyQt5.QtWidgets import QAbstractSlider, QSlider, QStyle, QStylePainter, \
+                            QStyleOptionSlider, QStyleFactory
 
 def clamp(v, lower, upper):
     return min(upper, max(lower, v))

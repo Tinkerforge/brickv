@@ -21,10 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QSpinBox, QSlider, QSizePolicy, QAction
-
-from PyQt5.QtGui import QLinearGradient, QImage, QPainter, QPen, QColor
-from PyQt5.QtCore import pyqtSignal, Qt, QPoint, QSize
+from PyQt5.QtCore import Qt
 
 from brickv.bindings.bricklet_energy_monitor import BrickletEnergyMonitor
 from brickv.plugin_system.plugins.energy_monitor.ui_energy_monitor import Ui_EnergyMonitor
@@ -32,8 +29,6 @@ from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plot_widget import PlotWidget
-
-import math
 
 ENERGY_MONITOR_MS_PER_TICK = 0.07185
 

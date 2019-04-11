@@ -22,12 +22,10 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import posixpath
 import re
 import os
 import html
 
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QPlainTextEdit, QMessageBox
 from PyQt5.QtGui import QTextOption, QFont
 

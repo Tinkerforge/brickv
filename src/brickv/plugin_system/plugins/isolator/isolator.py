@@ -21,13 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QLabel
-
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.isolator.ui_isolator import Ui_Isolator 
 from brickv.bindings.bricklet_isolator import BrickletIsolator
-from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 

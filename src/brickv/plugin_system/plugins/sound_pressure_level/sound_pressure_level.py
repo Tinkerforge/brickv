@@ -21,10 +21,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QSpinBox, QSlider, QSizePolicy, QAction
+import math
 
-from PyQt5.QtGui import QLinearGradient, QImage, QPainter, QPen, QColor
-from PyQt5.QtCore import pyqtSignal, Qt, QPoint, QSize
+from PyQt5.QtCore import pyqtSignal, Qt, QPoint
+from PyQt5.QtWidgets import QWidget, QSizePolicy
+from PyQt5.QtGui import QLinearGradient, QPainter, QColor
 
 from brickv.bindings.bricklet_sound_pressure_level import BrickletSoundPressureLevel
 from brickv.plugin_system.plugins.sound_pressure_level.ui_sound_pressure_level import Ui_SoundPressureLevel
@@ -32,8 +33,6 @@ from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plot_widget import PlotWidget
-
-import math
 
 class TuningThermo(QWidget):
     def __init__(self, *args):

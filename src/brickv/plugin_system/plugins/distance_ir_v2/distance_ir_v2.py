@@ -21,19 +21,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import os
-
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
-                        QLineEdit, QApplication, QMessageBox, QFrame, QSpinBox, QComboBox
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, \
+                            QFrame, QSpinBox, QComboBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
-from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_distance_ir_v2 import BrickletDistanceIRV2
 from brickv.plot_widget import PlotWidget, CurveValueWrapper, FixedSizeLabel
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
-from brickv.utils import get_main_window, get_home_path, get_open_file_name
 
 class AnalogLabel(FixedSizeLabel):
     def setText(self, text):

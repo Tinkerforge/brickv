@@ -21,20 +21,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtWidgets import QSpinBox, QSlider, QWidget, QAction
-from PyQt5.QtGui import QImage, QPainter, QPen
-from PyQt5.QtCore import pyqtSignal, Qt, QPoint, QSize, QTimer
+from PyQt5.QtCore import QTimer
 
 from brickv.bindings.brick_hat_zero import BrickHATZero
 from brickv.plugin_system.plugins.hat_zero.ui_hat_zero import Ui_HATZero
 from brickv.async_call import async_call
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.callback_emulator import CallbackEmulator
-
 from brickv import infos
 from brickv.utils import get_main_window
-
-from datetime import datetime
 
 class HATZero(COMCUPluginBase, Ui_HATZero):
     def __init__(self, *args):

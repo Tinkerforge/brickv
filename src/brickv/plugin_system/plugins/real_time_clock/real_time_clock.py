@@ -27,7 +27,7 @@ import time
 import math
 import random
 
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QDialog
 
 from brickv.plugin_system.plugin_base import PluginBase

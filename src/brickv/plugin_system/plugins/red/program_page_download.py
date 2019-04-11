@@ -29,7 +29,6 @@ import sys
 import errno
 import html
 
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWizard
 from PyQt5.QtGui import QTextCursor
 

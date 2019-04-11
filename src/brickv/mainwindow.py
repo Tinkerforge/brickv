@@ -28,7 +28,7 @@ import time
 import gc
 import functools
 
-from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QEvent, QSortFilterProxyModel, QThread
+from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QEvent, QThread
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QCursor, QIcon, QBrush, QColor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, \
                             QPushButton, QHBoxLayout, QVBoxLayout, \

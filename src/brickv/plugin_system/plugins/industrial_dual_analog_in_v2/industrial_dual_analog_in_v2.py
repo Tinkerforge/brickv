@@ -23,11 +23,11 @@ Boston, MA 02111-1307, USA.
 
 import functools
 
-from PyQt5.QtCore import QObject
-from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QVBoxLayout, QGridLayout, \
-                        QComboBox, QPushButton, QFrame, QDialog, QMessageBox, QSizePolicy, \
-                        QSpinBox
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QObject
+from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QGridLayout, \
+                            QComboBox, QPushButton, QFrame, QDialog, QMessageBox, \
+                            QSizePolicy, QSpinBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_industrial_dual_analog_in_v2 import BrickletIndustrialDualAnalogInV2

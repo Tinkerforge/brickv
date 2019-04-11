@@ -21,7 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 
 from brickv.plugin_system.plugins.red.ui_program_info_files_permissions import Ui_ProgramInfoFilesPermissions

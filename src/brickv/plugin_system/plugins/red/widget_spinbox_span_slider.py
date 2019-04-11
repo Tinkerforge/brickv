@@ -21,7 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5 import Qt, QtCore
 from PyQt5.QtWidgets import QWidget, QSpinBox, QHBoxLayout
 
 from brickv.plugin_system.plugins.red.qxt_span_slider import QxtSpanSlider
