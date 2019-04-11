@@ -479,6 +479,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if self.combo_parent.count() == 0:
             self.combo_parent.addItem(NO_BRICK, None)
 
+        if self.combo_parent.itemText(0) == 'None':
+            self.combo_parent.insertSeparator(1)
+
         self.update_ui_state()
 
     def create_progress_bar(self, title):
@@ -1892,10 +1895,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def show_bricklet_update(self, parent_uid, port):
         self.tab_widget.setCurrentWidget(self.tab_bricklet)
 
-        try:
-            idx = [self.combo_parent.itemData(i).uid for i in range(self.combo_parent.count())].index(parent_uid)
-        except ValueError:
-            idx = -1
+        idx = -1
+        for i in range(self.combo_parent.count()):
+            data = self.combo_parent.itemData(i)
+            if data is not None and data.uid == parent_uid:
+                idx = i
+                break
 
         if idx >= 0:
             self.combo_parent.setCurrentIndex(idx)
