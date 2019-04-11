@@ -264,6 +264,7 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
 
     def start(self):
         async_call(self.gps.get_fix_led_config, None, self.get_fix_led_config_async, self.increase_error_count)
+
         self.cbe_universal.set_period(250)
         self.cbe_universal_gps.set_period(100)
         self.cbe_universal_glo.set_period(100)

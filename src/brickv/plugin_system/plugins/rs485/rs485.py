@@ -1222,12 +1222,14 @@ class RS485(COMCUPluginBase, Ui_RS485):
         async_call(self.rs485.get_rs485_configuration, None, self.get_rs485_configuration_async, self.increase_error_count)
         async_call(self.rs485.get_modbus_configuration, None, self.get_modbus_configuration_async, self.increase_error_count)
         async_call(self.rs485.get_mode, None, self.get_mode_async, self.increase_error_count)
+
         self.cbe_error_count.set_period(250)
         self.cbe_error_count_modbus.set_period(250)
 
     def stop(self):
         self.cbe_error_count.set_period(0)
         self.cbe_error_count_modbus.set_period(0)
+
         if not self.read_callback_was_enabled:
             try:
                 async_call(self.rs485.disable_read_callback, None, None, None)

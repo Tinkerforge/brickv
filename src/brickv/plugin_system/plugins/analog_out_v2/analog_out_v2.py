@@ -94,6 +94,7 @@ class AnalogOutV2(PluginBase):
 
     def voltage_finished(self):
         value = self.output_voltage_box.value()
+
         try:
             self.ao.set_output_voltage(value)
         except ip_connection.Error:

@@ -441,6 +441,7 @@ class QxtSpanSlider(QSlider):
                 self.setLowerPosition(newPosition)
             else:
                 self.setUpperPosition(newPosition)
+
         event.accept()
 
     def mouseReleaseEvent(self, event):

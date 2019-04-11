@@ -75,6 +75,7 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
         async_call(self.idi4.get_debounce_period, None, self.debounce_time.setValue, self.increase_error_count)
         async_call(self.idi4.get_value, None, self.show_new_value, self.increase_error_count)
         self.reconfigure_everything()
+
         self.cbe_value.set_period(50)
 
     def stop(self):

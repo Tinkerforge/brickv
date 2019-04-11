@@ -68,6 +68,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.cbe_t.set_period(100)
 
         self.sbox_cal_actual_air_pressure.setValue(1013.250)
+
         async_call(self.parent.barometer.get_calibration,
                    None,
                    self.get_calibration_async,

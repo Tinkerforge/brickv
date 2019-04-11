@@ -57,13 +57,14 @@ class AnalogOutV3(COMCUPluginBase, Ui_AnalogOutV3):
         return device_identifier == BrickletAnalogOutV3.DEVICE_IDENTIFIER
 
     def cb_get_output_voltage(self, voltage):
-        self.output_voltage_box.setValue(voltage/1000.0)
+        self.output_voltage_box.setValue(voltage / 1000.0)
 
     def cb_get_input_voltage(self, voltage):
         self.input_voltage_label.setText("{:.3f} V".format(round(voltage / 1000.0, 2)))
 
     def voltage_finished(self):
-        value = int(round(self.output_voltage_box.value()*1000, 0))
+        value = int(round(self.output_voltage_box.value() * 1000, 0))
+
         try:
             self.ao.set_output_voltage(value)
         except ip_connection.Error:

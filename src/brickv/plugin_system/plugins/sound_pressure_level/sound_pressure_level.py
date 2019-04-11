@@ -109,6 +109,7 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
 
     def get_spectrum_decrement(self):
         index = self.combo_fft_size.currentIndex()
+
         if index == 0:
             return 0.5
         elif index == 1:
@@ -128,16 +129,18 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
 
     def cb_spectrum(self, spectrum):
         length = len(spectrum)
-        num    = 20480//length
+        num = 20480 // length
 
-        x_data = list(range(0, num*length, num))
-        y_data = list(map(lambda x: 20*math.log10(max(1, x/math.sqrt(2))), spectrum))
+        x_data = list(range(0, num * length, num))
+        y_data = list(map(lambda x: 20 * math.log10(max(1, x / math.sqrt(2))), spectrum))
+
         if self.checkbox_decay.isChecked():
             for i in range(len(y_data)):
                 if y_data[i] > self.last_y_data[i]:
                     self.last_y_data[i] = y_data[i]
                 else:
                     self.last_y_data[i] -= self.get_spectrum_decrement()
+
                     if y_data[i] > self.last_y_data[i]:
                         self.last_y_data[i] = y_data[i]
 

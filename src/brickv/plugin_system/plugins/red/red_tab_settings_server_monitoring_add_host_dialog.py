@@ -68,7 +68,7 @@ class REDTabSettingsServerMonitoringAddHostDialog(QDialog, Ui_REDTabSettingsServ
             return
 
         if self.chkbox_sm_add_host_authentication.isChecked() and \
-           not self.ledit_sm_add_host_secret.text():
+            not self.ledit_sm_add_host_secret.text():
                 QMessageBox.critical(get_main_window(),
                                      'Settings | Server Monitoring',
                                      'No secrets specified.')

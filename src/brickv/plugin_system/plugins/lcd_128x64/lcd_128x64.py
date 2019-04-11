@@ -196,6 +196,7 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
 
         async_call(self.lcd.get_display_configuration, None, self.cb_display_configuration, self.increase_error_count)
         async_call(self.lcd.read_pixels, (0, 0, 127, 63), self.cb_read_pixels, self.increase_error_count)
+
         self.cbe_touch_position.set_period(25)
         self.cbe_touch_gesture.set_period(25)
 

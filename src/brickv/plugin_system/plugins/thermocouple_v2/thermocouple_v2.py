@@ -150,10 +150,13 @@ class ThermocoupleV2(COMCUPluginBase):
     def cb_error_state(self, over_under, open_circuit):
         if over_under or open_circuit:
             text = 'Current Errors: '
+
             if over_under:
                 text += 'Over/Under Voltage'
+
             if over_under and open_circuit:
                 text += ' and '
+
             if open_circuit:
                 text += 'Open Circuit\n(defective thermocouple or nothing connected)'
 

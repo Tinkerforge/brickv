@@ -217,10 +217,10 @@ class REDTabSettingsNetworkWirelessConnectHidden(QDialog,
 
         if self.cbox_encryption.currentIndex() > 0 \
            and self.ledit_wpa_key.text() == '':
-                QMessageBox.critical(get_main_window(),
-                                     'Settings | Network',
-                                     'Please provide WPA key.')
-                return False
+            QMessageBox.critical(get_main_window(),
+                                 'Settings | Network',
+                                 'Please provide WPA key.')
+            return False
 
         return True
 
@@ -267,24 +267,24 @@ class REDTabSettingsNetworkWirelessConnectHidden(QDialog,
             self.parameters['address_conf_type'] = self.cbox_address.currentIndex()
 
             self.parameters['ip'] = '.'.join((str(self.sbox_ip_0.value()),
-                                           str(self.sbox_ip_1.value()),
-                                           str(self.sbox_ip_2.value()),
-                                           str(self.sbox_ip_3.value())))
+                                              str(self.sbox_ip_1.value()),
+                                              str(self.sbox_ip_2.value()),
+                                              str(self.sbox_ip_3.value())))
 
             self.parameters['netmask'] = '.'.join((str(self.sbox_netmask_0.value()),
-                                                str(self.sbox_netmask_1.value()),
-                                                str(self.sbox_netmask_2.value()),
-                                                str(self.sbox_netmask_3.value())))
+                                                   str(self.sbox_netmask_1.value()),
+                                                   str(self.sbox_netmask_2.value()),
+                                                   str(self.sbox_netmask_3.value())))
 
             self.parameters['gw'] = '.'.join((str(self.sbox_gw_0.value()),
-                                           str(self.sbox_gw_1.value()),
-                                           str(self.sbox_gw_2.value()),
-                                           str(self.sbox_gw_3.value())))
+                                              str(self.sbox_gw_1.value()),
+                                              str(self.sbox_gw_2.value()),
+                                              str(self.sbox_gw_3.value())))
 
             self.parameters['dns'] = '.'.join((str(self.sbox_dns_0.value()),
-                                            str(self.sbox_dns_1.value()),
-                                            str(self.sbox_dns_2.value()),
-                                            str(self.sbox_dns_3.value())))
+                                               str(self.sbox_dns_1.value()),
+                                               str(self.sbox_dns_2.value()),
+                                               str(self.sbox_dns_3.value())))
 
             self.parameters['encryption_method'] = self.cbox_encryption.currentIndex()
 
@@ -517,7 +517,7 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
 
             # Check BSSID section
             if not self.network_all_data['wireless_settings'].has_section(bssid):
-               self.network_all_data['wireless_settings'].add_section(bssid)
+                self.network_all_data['wireless_settings'].add_section(bssid)
 
             self.network_all_data['wireless_settings'].set(bssid, 'automatic', 'True')
             self.network_all_data['wireless_settings'].set(bssid, 'essid', essid)

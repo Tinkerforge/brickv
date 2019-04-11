@@ -63,6 +63,7 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
                 identifier = int(str(self.combo_identifier_station.itemText(self.combo_identifier_station.currentIndex())))
             except:
                 return
+
             async_call(lambda: self.outdoor_weather.get_station_data(identifier), None, self.cb_station_data, self.increase_error_count)
         else:
             pass # TODO
@@ -73,10 +74,10 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
                 identifier = int(str(self.combo_identifier_sensor.itemText(self.combo_identifier_sensor.currentIndex())))
             except:
                 return
+
             async_call(lambda: self.outdoor_weather.get_sensor_data(identifier), None, self.cb_sensor_data, self.increase_error_count)
         else:
             pass # TODO
-
 
     def cb_station_identifiers(self, identifiers):
         if len(identifiers) == 0:
@@ -143,6 +144,7 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
 
         self.cbe_identifiers_station.set_period(10000)
         self.cbe_identifiers_sensor.set_period(10000)
+
         self.data_timer_station.start(1000)
         self.data_timer_sensor.start(1000)
 

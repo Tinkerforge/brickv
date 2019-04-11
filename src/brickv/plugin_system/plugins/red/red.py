@@ -1080,8 +1080,8 @@ class RED(PluginBase, Ui_RED):
     def get_image_version_async(self):
         def read_image_version_async(red_file):
             return red_file.open('/etc/tf_image_version',
-                                    REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING,
-                                    0, 0, 0).read(256).decode('utf-8').strip()
+                                 REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING,
+                                 0, 0, 0).read(256).decode('utf-8').strip()
 
         def cb_success(image_version):
             if self.label_version != None:

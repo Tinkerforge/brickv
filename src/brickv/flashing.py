@@ -1542,10 +1542,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 unknown_replacement = ''
 
             row = [QStandardItem(info.name),
-                    QStandardItem(info.uid if hasattr(info, 'uid') else ''),
-                    QStandardItem(info.position.title() if hasattr(info, 'position') else ''),
-                    QStandardItem(get_version_string(info.firmware_version_installed, replace_unknown=inst_replacement)),
-                    QStandardItem(get_version_string(info.firmware_version_latest, replace_unknown=unknown_replacement))]
+                   QStandardItem(info.uid if hasattr(info, 'uid') else ''),
+                   QStandardItem(info.position.title() if hasattr(info, 'position') else ''),
+                   QStandardItem(get_version_string(info.firmware_version_installed, replace_unknown=inst_replacement)),
+                   QStandardItem(get_version_string(info.firmware_version_latest, replace_unknown=unknown_replacement))]
 
             color, update = get_color_for_device(info)
 

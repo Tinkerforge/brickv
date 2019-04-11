@@ -159,25 +159,25 @@ class REDTabSettingsMobileInternet(QWidget, Ui_REDTabSettingsMobileInternet):
         if provider_preset_dialog.exec_() == QDialog.Accepted:
             if provider_preset_dialog.label_mi_preview_apn.text() and \
                provider_preset_dialog.label_mi_preview_apn.text() != '-':
-                    self.ledit_mi_apn.setText(provider_preset_dialog.label_mi_preview_apn.text())
+                self.ledit_mi_apn.setText(provider_preset_dialog.label_mi_preview_apn.text())
             else:
                 self.ledit_mi_apn.setText('')
 
             if provider_preset_dialog.label_mi_preview_username.text() and \
                provider_preset_dialog.label_mi_preview_username.text() != '-':
-                    self.ledit_mi_username.setText(provider_preset_dialog.label_mi_preview_username.text())
+                self.ledit_mi_username.setText(provider_preset_dialog.label_mi_preview_username.text())
             else:
                 self.ledit_mi_username.setText('')
 
             if provider_preset_dialog.label_mi_preview_password.text() and \
                provider_preset_dialog.label_mi_preview_password.text() != '-':
-                    self.ledit_mi_password.setText(provider_preset_dialog.label_mi_preview_password.text())
+                self.ledit_mi_password.setText(provider_preset_dialog.label_mi_preview_password.text())
             else:
                 self.ledit_mi_password.setText('')
 
             if provider_preset_dialog.label_mi_preview_dial.text() and \
                provider_preset_dialog.label_mi_preview_dial.text() != '-':
-                    self.ledit_mi_dial.setText(provider_preset_dialog.label_mi_preview_dial.text())
+                self.ledit_mi_dial.setText(provider_preset_dialog.label_mi_preview_dial.text())
             else:
                 self.ledit_mi_dial.setText('*99#')
 
@@ -331,12 +331,11 @@ class REDTabSettingsMobileInternet(QWidget, Ui_REDTabSettingsMobileInternet):
                                  MESSAGE_ERROR_CONNECT_SERVICE_EXECUTION)
             return
 
-        if result.exit_code == 7 or \
-           result.exit_code == 8:
-                QMessageBox.critical(get_main_window(),
-                                     MESSAGEBOX_TITLE,
-                                     MESSAGE_ERROR_CONNECT_TEST_DEVICE_UNAVAILABLE)
-                return
+        if result.exit_code == 7 or result.exit_code == 8:
+            QMessageBox.critical(get_main_window(),
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_CONNECT_TEST_DEVICE_UNAVAILABLE)
+            return
 
         if result.exit_code == 12:
             QMessageBox.critical(get_main_window(),
@@ -344,8 +343,7 @@ class REDTabSettingsMobileInternet(QWidget, Ui_REDTabSettingsMobileInternet):
                                  MESSAGE_ERROR_CONNECT_TEST_PIN)
             return
 
-        if result.exit_code == 13 or \
-           result.exit_code == 98:
+        if result.exit_code == 13 or result.exit_code == 98:
             QMessageBox.critical(get_main_window(),
                                  MESSAGEBOX_TITLE,
                                  MESSAGE_ERROR_CONNECT_TEST_REGISTER_NETWORK)

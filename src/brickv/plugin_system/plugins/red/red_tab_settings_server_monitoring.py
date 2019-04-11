@@ -390,8 +390,8 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
             return
 
         QMessageBox.information(get_main_window(),
-                                      MESSAGEBOX_TITLE,
-                                      MESSAGE_INFO_TEST_EMAIL_SENT)
+                                MESSAGEBOX_TITLE,
+                                MESSAGE_INFO_TEST_EMAIL_SENT)
 
         self.update_gui(EVENT_RETURNED_REFRESH_GENERIC)
 
@@ -643,8 +643,8 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         # arguments. Therefore we only need to check the exit code.
         if result and result.exit_code != 0:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_ENUMERATION_ERROR)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_ENUMERATION_ERROR)
             restore_gui_on_exception()
             return
 
@@ -652,8 +652,8 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
             dict_enumerate = json.loads(result.stdout)
         except:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_SCRIPT_RETURN_DATA)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_SCRIPT_RETURN_DATA)
             restore_gui_on_exception()
             return
 
@@ -771,8 +771,8 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
             dict_return = json.loads(result.stdout)
         except:
             QMessageBox.critical(get_main_window(),
-                                       MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_SCRIPT_RETURN_DATA)
+                                 MESSAGEBOX_TITLE,
+                                 MESSAGE_ERROR_SCRIPT_RETURN_DATA)
             return
 
         # Reset data structures
@@ -860,8 +860,8 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
 
         if not self.defaulthost:
             QMessageBox.information(get_main_window(),
-                                          MESSAGEBOX_TITLE,
-                                          MESSAGE_ERROR_HOSTNAME_EMPTY)
+                                    MESSAGEBOX_TITLE,
+                                    MESSAGE_ERROR_HOSTNAME_EMPTY)
             self.update_gui(EVENT_RETURNED_REFRESH_FALSE)
             return
 
@@ -877,8 +877,8 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
             return
 
         QMessageBox.information(get_main_window(),
-                                      MESSAGEBOX_TITLE,
-                                      MESSAGE_INFO_SAVE_OK)
+                                MESSAGEBOX_TITLE,
+                                MESSAGE_INFO_SAVE_OK)
 
         self.update_gui(EVENT_RETURNED_SAVE_TRUE)
         self.slot_pbutton_sm_refresh_clicked()
@@ -994,7 +994,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
 
         return True
 
-    def check_rules(self, check_only_email_fields = False):
+    def check_rules(self, check_only_email_fields=False):
         def check_email_fields():
             email_from     = self.ledit_sm_email_from.text()
             email_to       = self.ledit_sm_email_to.text()
@@ -1076,11 +1076,11 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                     if EMPTY_SERVICE_NAME in ledit_name_text or not ledit_name_text:
                         return r, c, CHECK_FAILED_SERVICE_NAME_EMPTY
                     elif any(ic in ledit_name_text for ic in illegal_object_name_chars):
-                        return r, c,  CHECK_FAILED_ILLEGAL_NAGIOS_CHARACTER
+                        return r, c, CHECK_FAILED_ILLEGAL_NAGIOS_CHARACTER
                     elif ledit_name_text in list_service_names:
-                        return r, c,  CHECK_FAILED_SERVICE_NAME_DUPLICATE
+                        return r, c, CHECK_FAILED_SERVICE_NAME_DUPLICATE
                     elif not self.is_ascii(ledit_name_text):
-                        return r, c,  CHECK_FAILED_NON_ASCII
+                        return r, c, CHECK_FAILED_NON_ASCII
                     else:
                         list_service_names.append(ledit_name_text)
 
@@ -1231,7 +1231,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                         elif idx == 1:
                             if ((int(warning_low) & 0x0C) >> 2) == 0:
                                 cbox.setCurrentIndex(0)
-                            elif ((int(warning_low )& 0x0C) >> 2) == 1:
+                            elif ((int(warning_low) & 0x0C) >> 2) == 1:
                                 cbox.setCurrentIndex(1)
                             else:
                                 cbox.setCurrentIndex(2)

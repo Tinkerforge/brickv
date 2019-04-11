@@ -51,22 +51,27 @@ class Isolator(COMCUPluginBase, Ui_Isolator):
             name = infos.get_info(statistics.connected_bricklet_uid).plugin.device_class.DEVICE_DISPLAY_NAME
         except:
             name = None
+
         if statistics.connected_bricklet_uid != '' and name != None:
             self.label_isolated_bricklet.setText('<b>{0}</b> with UID "{1}"'.format(name, statistics.connected_bricklet_uid))
             self.button_bricklet.setText('Open {0}'.format(name))
+
             if self.last_connected != statistics.connected_bricklet_uid:
                 self.last_connected = statistics.connected_bricklet_uid
+
                 try:
                     self.button_bricklet.clicked.disconnect()
                 except:
                     pass
+
                 self.button_bricklet.clicked.connect(lambda: get_main_window().show_plugin(statistics.connected_bricklet_uid))
+
             self.button_bricklet.setEnabled(True)
         else:
             self.label_isolated_bricklet.setText('Unknown Bricklet (Did you connect a Bricklet?)')
             self.button_bricklet.setText('Open Bricklet')
             self.button_bricklet.setEnabled(False)
-                                
+
     def start(self):
         self.cbe_statistics.set_period(200)
 

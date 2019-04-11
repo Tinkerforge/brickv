@@ -101,7 +101,9 @@ class HAT(COMCUPluginBase, Ui_HAT):
 
     def start(self):
         async_call(self.hat.get_bricklet_power, None, self.get_bricklet_power_async, self.increase_error_count)
+
         self.update_bricklets()
+
         self.cbe_voltages.set_period(250)
 
     def stop(self):

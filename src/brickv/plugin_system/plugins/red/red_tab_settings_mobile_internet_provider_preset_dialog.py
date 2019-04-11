@@ -134,7 +134,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QDialog, Ui_REDTabSetting
             password = data['password']
 
         if 'dial' not in data:
-            dial =  ''
+            dial = ''
         else:
             dial = data['dial']
 

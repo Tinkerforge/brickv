@@ -94,10 +94,12 @@ class MotorizedLinearPoti(COMCUPluginBase):
         async_call(self.mp.get_motor_position, None, self.cb_motor_position, self.increase_error_count)
 
         self.cbe_position.set_period(25)
+
         self.plot_widget.stop = False
 
     def stop(self):
         self.cbe_position.set_period(0)
+
         self.plot_widget.stop = True
 
     def destroy(self):

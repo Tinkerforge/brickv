@@ -302,9 +302,9 @@ class REDTabSettingsBrickd(QWidget, Ui_REDTabSettingsBrickd):
 
         async_call(self.brickd_conf_rfile.open,
                    (BRICKD_CONF_PATH,
-                   REDFile.FLAG_WRITE_ONLY |
-                   REDFile.FLAG_CREATE |
-                   REDFile.FLAG_NON_BLOCKING |
-                   REDFile.FLAG_TRUNCATE, 0o500, 0, 0),
+                    REDFile.FLAG_WRITE_ONLY |
+                    REDFile.FLAG_CREATE |
+                    REDFile.FLAG_NON_BLOCKING |
+                    REDFile.FLAG_TRUNCATE, 0o500, 0, 0),
                    lambda x: cb_open(config, x),
                    cb_open_error)

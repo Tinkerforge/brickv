@@ -169,6 +169,7 @@ class Color(PluginBase):
         self.cbe_color.set_period(50)
         self.cbe_illuminance.set_period(100)
         self.cbe_color_temperature.set_period(100)
+
         async_call(self.color.get_config, None, self.cb_config, self.increase_error_count)
         async_call(self.color.is_light_on, None, self.cb_light_on, self.increase_error_count)
 
