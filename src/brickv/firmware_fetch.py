@@ -70,7 +70,7 @@ def refresh_plugin_info(url_part, latest_version):
     elif name.endswith('_v3'):
         name = name.replace('_v3', '_3.0')
 
-    if name in ['gps', 'gps_2.0', 'ptc', 'ptc_2.0', 'rs232', 'rs232_2.0', 'rs485', 'co2', 'can', 'can_2.0', 'rgb_led', 'dmx', 'nfc']:
+    if name in ['gps', 'gps_2.0', 'ptc', 'ptc_2.0', 'rs232', 'rs232_2.0', 'rs485', 'co2', 'can', 'can_2.0', 'rgb_led', 'dmx', 'nfc', 'hat']:
         name = name.upper()
     elif name.startswith('lcd_'):
         name = name.replace('lcd_', 'LCD_')
@@ -99,6 +99,8 @@ def refresh_plugin_info(url_part, latest_version):
         name = name.replace('rgb_', 'RGB_')
     elif name.startswith('midi_'):
         name = name.replace('midi_', 'MIDI_')
+    elif name.startswith('hat_'):
+        name = name.replace('hat_', 'HAT_')
 
     words = name.split('_')
     parts = []
