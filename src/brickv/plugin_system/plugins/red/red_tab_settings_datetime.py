@@ -87,10 +87,12 @@ class REDTabSettingsDateTime(QWidget, Ui_REDTabSettingsDateTime):
 
             try:
                 self.time_red_old, tz = list(map(int, result.stdout.split('\n')[:2]))
-                self.time_timezone_red.setText(self.format_time_utc_offset(tz))
+                tz_str_red = self.format_time_utc_offset(tz)
+                self.time_timezone_red.setText(tz_str_red)
 
                 self.time_local_old = int(time.time())
-                self.time_timezone_local.setText(self.format_time_utc_offset(self.time_utc_offset()))
+                tz_str_local = self.format_time_utc_offset(self.time_utc_offset())
+                self.time_timezone_local.setText(tz_str_local)
                 self.time_update_gui()
 
                 self.time_refresh_timer.start()
