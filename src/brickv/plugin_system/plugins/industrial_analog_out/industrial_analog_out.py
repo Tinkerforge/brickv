@@ -64,8 +64,8 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
     def start(self):
         async_call(self.ao.get_voltage, None, self.new_voltage, self.increase_error_count)
         async_call(self.ao.get_current, None, self.new_current, self.increase_error_count)
-        async_call(self.ao.get_configuration, None, self.cb_get_configuration, self.increase_error_count)
-        async_call(self.ao.is_enabled, None, self.cb_is_enabled, self.increase_error_count)
+        async_call(self.ao.get_configuration, None, self.get_configuration_async, self.increase_error_count)
+        async_call(self.ao.is_enabled, None, self.checkbox_enable.setChecked, self.increase_error_count)
 
     def stop(self):
         pass
@@ -154,12 +154,9 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
         except ip_connection.Error:
             pass
 
-    def cb_get_configuration(self, conf):
+    def get_configuration_async(self, conf):
         self.last_voltage_range = conf.voltage_range
         self.last_current_range = conf.current_range
         self.box_voltage_range.setCurrentIndex(conf.voltage_range)
         self.box_current_range.setCurrentIndex(conf.current_range)
         self.new_configuration()
-
-    def cb_is_enabled(self, enabled):
-        self.checkbox_enable.setChecked(enabled)

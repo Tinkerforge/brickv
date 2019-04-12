@@ -36,6 +36,7 @@ class CO2V2(COMCUPluginBase):
         self.co2 = self.device
 
         self.cbe_all_values = CallbackEmulator(self.co2.get_all_values,
+                                               None,
                                                self.cb_all_values,
                                                self.increase_error_count)
 

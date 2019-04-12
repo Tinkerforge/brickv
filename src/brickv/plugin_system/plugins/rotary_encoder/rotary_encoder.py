@@ -22,8 +22,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import functools
-
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton
 
@@ -43,7 +41,8 @@ class RotaryEncoder(PluginBase):
 
         self.re = self.device
 
-        self.cbe_count = CallbackEmulator(functools.partial(self.re.get_count, False),
+        self.cbe_count = CallbackEmulator(self.get_count,
+                                          False,
                                           self.cb_count,
                                           self.increase_error_count)
 
@@ -93,9 +92,13 @@ class RotaryEncoder(PluginBase):
         self.current_count.value = count
         self.encoder_knob.set_value((count + 12) % 24)
 
+    def get_count(self, reset):
+        count = self.re.get_count(reset)
+
+        return 0 if reset else count
+
     def reset_clicked(self):
-        async_call(self.re.get_count, True, None, self.increase_error_count)
-        self.cb_count(0)
+        async_call(self.get_count, True, self.cb_count, self.increase_error_count)
 
     def start(self):
         if self.firmware_version >= (2, 0, 2):

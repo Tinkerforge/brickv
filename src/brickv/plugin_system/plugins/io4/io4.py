@@ -44,6 +44,7 @@ class IO4(PluginBase, Ui_IO4):
         self.has_monoflop = self.firmware_version >= (1, 1, 1)
 
         self.cbe_value = CallbackEmulator(self.io.get_value,
+                                          None,
                                           self.cb_value,
                                           self.increase_error_count)
 

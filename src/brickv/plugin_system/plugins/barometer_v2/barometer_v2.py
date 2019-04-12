@@ -43,31 +43,34 @@ class Calibration(QDialog, Ui_Calibration):
         self.setupUi(self)
 
         # Synced air pressure, altitude and temperature. Updated with callbacks.
-        self.p = 0
-        self.a = 0
-        self.t = 0
+        self.air_pressure = 0
+        self.altitude = 0
+        self.temperature = 0
 
         self.btn_cal_remove.clicked.connect(self.btn_cal_remove_clicked)
         self.btn_cal_calibrate.clicked.connect(self.btn_cal_calibrate_clicked)
 
-        self.cbe_p = CallbackEmulator(self.parent.barometer.get_air_pressure,
-                                      self.cb_get_p,
-                                      self.parent.increase_error_count)
+        self.cbe_air_pressure = CallbackEmulator(self.parent.barometer.get_air_pressure,
+                                                 None,
+                                                 self.cb_air_pressure,
+                                                 self.parent.increase_error_count)
 
-        self.cbe_a = CallbackEmulator(self.parent.barometer.get_altitude,
-                                      self.cb_get_a,
-                                      self.parent.increase_error_count)
+        self.cbe_altitude = CallbackEmulator(self.parent.barometer.get_altitude,
+                                             None,
+                                             self.cb_altitude,
+                                             self.parent.increase_error_count)
 
-        self.cbe_t = CallbackEmulator(self.parent.barometer.get_temperature,
-                                      self.cb_get_t,
-                                      self.parent.increase_error_count)
+        self.cbe_temperature = CallbackEmulator(self.parent.barometer.get_temperature,
+                                                None,
+                                                self.cb_temperature,
+                                                self.parent.increase_error_count)
 
     def show(self):
         QDialog.show(self)
 
-        self.cbe_p.set_period(100)
-        self.cbe_a.set_period(100)
-        self.cbe_t.set_period(100)
+        self.cbe_air_pressure.set_period(100)
+        self.cbe_altitude.set_period(100)
+        self.cbe_temperature.set_period(100)
 
         self.sbox_cal_actual_air_pressure.setValue(1013.250)
 
@@ -85,7 +88,7 @@ class Calibration(QDialog, Ui_Calibration):
                    self.parent.increase_error_count)
 
     def btn_cal_calibrate_clicked(self):
-        self.parent.barometer.set_calibration(int(self.p * 1000), int(self.sbox_cal_actual_air_pressure.value()*1000))
+        self.parent.barometer.set_calibration(int(self.air_pressure * 1000), int(self.sbox_cal_actual_air_pressure.value() * 1000))
 
         async_call(self.parent.barometer.get_calibration,
                    None,
@@ -98,22 +101,22 @@ class Calibration(QDialog, Ui_Calibration):
         else:
             self.sbox_cal_actual_air_pressure.setValue(cal.actual_air_pressure / 1000.0)
 
-    def cb_get_p(self, air_pressure):
-        self.p = air_pressure / 1000.0
-        self.lbl_p.setText('{:.3f} mbar (QFE)'.format(self.p))
+    def cb_air_pressure(self, air_pressure):
+        self.air_pressure = air_pressure / 1000.0
+        self.lbl_air_pressure.setText('{:.3f} mbar (QFE)'.format(self.air_pressure))
 
-    def cb_get_a(self, altitude):
-        self.a = altitude / 1000.0
-        self.lbl_a.setText('{:.3f} m ({:.3f} ft)'.format(self.a, self.a / METER_TO_FEET_DIVISOR))
+    def cb_altitude(self, altitude):
+        self.altitude = altitude / 1000.0
+        self.lbl_altitude.setText('{:.3f} m ({:.3f} ft)'.format(self.altitude, self.altitude / METER_TO_FEET_DIVISOR))
 
-    def cb_get_t(self, temperature):
-        self.t = temperature / 100.0
-        self.lbl_t.setText('{:.2f} °C'.format(self.t))
+    def cb_temperature(self, temperature):
+        self.temperature = temperature / 100.0
+        self.lbl_temperature.setText('{:.2f} °C'.format(self.temperature))
 
     def closeEvent(self, _event):
-        self.cbe_p.set_period(0)
-        self.cbe_a.set_period(0)
-        self.cbe_t.set_period(0)
+        self.cbe_air_pressure.set_period(0)
+        self.cbe_altitude.set_period(0)
+        self.cbe_temperature.set_period(0)
         self.parent.btn_calibration.setEnabled(True)
 
 
@@ -124,14 +127,17 @@ class BarometerV2(COMCUPluginBase):
         self.barometer = self.device
 
         self.cbe_air_pressure = CallbackEmulator(self.barometer.get_air_pressure,
+                                                 None,
                                                  self.cb_air_pressure,
                                                  self.increase_error_count)
 
         self.cbe_altitude = CallbackEmulator(self.barometer.get_altitude,
+                                             None,
                                              self.cb_altitude,
                                              self.increase_error_count)
 
         self.cbe_temperature = CallbackEmulator(self.barometer.get_temperature,
+                                                None,
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 
@@ -252,20 +258,9 @@ class BarometerV2(COMCUPluginBase):
         layout.addLayout(layout_h4)
 
     def start(self):
-        async_call(self.barometer.get_reference_air_pressure,
-                   None,
-                   self.get_reference_air_pressure_async,
-                   self.increase_error_count)
-
-        async_call(self.barometer.get_moving_average_configuration,
-                   None,
-                   self.get_moving_average_configuration_async,
-                   self.increase_error_count)
-
-        async_call(self.barometer.get_sensor_configuration,
-                   None,
-                   self.get_sensor_configuration_async,
-                   self.increase_error_count)
+        async_call(self.barometer.get_reference_air_pressure, None, self.get_reference_air_pressure_async, self.increase_error_count)
+        async_call(self.barometer.get_moving_average_configuration, None, self.get_moving_average_configuration_async, self.increase_error_count)
+        async_call(self.barometer.get_sensor_configuration, None, self.get_sensor_configuration_async, self.increase_error_count)
 
         self.cbe_air_pressure.set_period(50)
         self.cbe_altitude.set_period(50)
@@ -304,10 +299,7 @@ class BarometerV2(COMCUPluginBase):
 
     def btn_use_current_clicked(self):
         self.barometer.set_reference_air_pressure(0)
-        async_call(self.barometer.get_reference_air_pressure,
-                   None,
-                   self.get_reference_air_pressure_async,
-                   self.increase_error_count)
+        async_call(self.barometer.get_reference_air_pressure, None, self.get_reference_air_pressure_async, self.increase_error_count)
 
     def sbox_reference_air_pressure_editing_finished(self):
         self.barometer.set_reference_air_pressure(self.sbox_reference_air_pressure.value() * 1000.0)

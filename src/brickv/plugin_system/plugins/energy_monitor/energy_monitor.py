@@ -40,9 +40,11 @@ class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
 
         self.energy_monitor = self.device
         self.cbe_get_energy_data = CallbackEmulator(self.energy_monitor.get_energy_data,
+                                                    None,
                                                     self.cb_energy_data,
                                                     self.increase_error_count)
         self.cbe_get_transformer_status = CallbackEmulator(self.energy_monitor.get_transformer_status,
+                                                           None,
                                                            self.cb_transformer_status,
                                                            self.increase_error_count)
 

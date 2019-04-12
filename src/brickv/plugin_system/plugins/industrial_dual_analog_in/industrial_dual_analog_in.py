@@ -22,8 +22,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import functools
-
 from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QPushButton, QFrame, QDialog, QMessageBox
 from PyQt5.QtCore import Qt
 
@@ -55,6 +53,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.button_cal_gain.clicked.connect(self.gain_clicked)
 
         self.cbe_adc_values = CallbackEmulator(self.parent.analog_in.get_adc_values,
+                                               None,
                                                self.cb_adc_values,
                                                self.parent.increase_error_count)
 
@@ -135,12 +134,16 @@ class IndustrialDualAnalogIn(PluginBase):
 
         self.analog_in = self.device
 
-        self.cbe_voltage0 = CallbackEmulator(functools.partial(self.analog_in.get_voltage, 0),
-                                             functools.partial(self.cb_voltage, 0),
-                                             self.increase_error_count)
-        self.cbe_voltage1 = CallbackEmulator(functools.partial(self.analog_in.get_voltage, 1),
-                                             functools.partial(self.cb_voltage, 1),
-                                             self.increase_error_count)
+        self.cbe_voltage0 = CallbackEmulator(self.analog_in.get_voltage,
+                                             0,
+                                             self.cb_voltage,
+                                             self.increase_error_count,
+                                             pass_arguments_to_result_callback=True)
+        self.cbe_voltage1 = CallbackEmulator(self.analog_in.get_voltage,
+                                             1,
+                                             self.cb_voltage,
+                                             self.increase_error_count,
+                                             pass_arguments_to_result_callback=True)
 
         self.calibration = None
 

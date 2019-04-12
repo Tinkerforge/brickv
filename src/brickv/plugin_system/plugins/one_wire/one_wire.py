@@ -48,10 +48,6 @@ class OneWire(COMCUPluginBase, Ui_OneWire):
 
         self.ids = [0]
 
-        self.write_data = 0
-        self.write_command = 0
-        self.write_command_id = 0
-
     def get_status_text(self, status):
         if status == 0:
             return 'OK'
@@ -108,21 +104,24 @@ class OneWire(COMCUPluginBase, Ui_OneWire):
     def button_read_byte_clicked(self):
         async_call(self.one_wire.read, None, self.read_byte_async, self.increase_error_count)
 
-    def write_byte_async(self, status):
-        self.add_to_list('Write Byte', '{0:X}'.format(self.write_data), status)
+    def write_byte_async(self, data, status):
+        self.add_to_list('Write Byte', '{0:X}'.format(data), status)
 
     def button_write_byte_clicked(self):
-        self.write_data = self.spinbox_write_byte.value()
-        async_call(self.one_wire.write, (self.write_data,), self.write_byte_async, self.increase_error_count)
+        data = self.spinbox_write_byte.value()
 
-    def write_command_async(self, status):
-        self.add_to_list('Write Byte', '{0:X} to ID {1:X}'.format(self.write_command, self.write_command_id), status)
+        async_call(self.one_wire.write, data, self.write_byte_async, self.increase_error_count,
+                   pass_arguments_to_result_callback=True)
+
+    def write_command_async(self, id_, command, status):
+        self.add_to_list('Write Byte', '{0:X} to ID {1:X}'.format(command, (id_ >> 8) & 0xFFFFFFFFFFFF), status)
 
     def button_write_command_clicked(self):
-        self.write_command_id = (self.ids[self.combo_box_write_command.currentIndex()] >> 8) & 0xFFFFFFFFFFFF
-        self.write_command = self.spinbox_write_command.value()
-        async_call(self.one_wire.write_command, (self.ids[self.combo_box_write_command.currentIndex()], self.write_command), self.write_command_async, self.increase_error_count)
+        id_ = self.ids[self.combo_box_write_command.currentIndex()]
+        command = self.spinbox_write_command.value()
 
+        async_call(self.one_wire.write_command, (id_, command), self.write_command_async, self.increase_error_count,
+                   pass_arguments_to_result_callback=True, expand_arguments_tuple_for_callback=True)
 
     def start(self):
         pass

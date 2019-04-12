@@ -39,9 +39,11 @@ class HallEffectV2(COMCUPluginBase, Ui_HallEffectV2):
         self.hf = self.device
 
         self.cbe_magnetic_flux_density = CallbackEmulator(self.hf.get_magnetic_flux_density,
+                                                          None,
                                                           self.cb_magnetic_flux_density,
                                                           self.increase_error_count)
-        self.cbe_counter = CallbackEmulator(lambda: self.hf.get_counter(False),
+        self.cbe_counter = CallbackEmulator(self.get_counter,
+                                            False,
                                             self.cb_counter,
                                             self.increase_error_count)
 
@@ -84,12 +86,17 @@ class HallEffectV2(COMCUPluginBase, Ui_HallEffectV2):
         self.hf.set_counter_config(high, low, debounce)
 
     def button_reset_clicked(self):
-        async_call(lambda: self.hf.get_counter(True), None, self.cb_counter, self.increase_error_count)
+        async_call(self.get_counter, True, self.cb_counter, self.increase_error_count)
 
     def get_counter_config_async(self, config):
         self.spinbox_high.setValue(config.high_threshold)
         self.spinbox_low.setValue(config.low_threshold)
         self.spinbox_debounce.setValue(config.debounce)
+
+    def get_counter(self, reset):
+        counter = self.hf.get_counter(reset)
+
+        return 0 if reset else counter
 
     def cb_counter(self, count):
         self.label_count.setText(str(count))

@@ -75,7 +75,7 @@ class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
                 start = "  "
             elif value + j < 100:
                 start = " "
-            async_call(self.oled.write_line, (j, 8, start + str(value+j) + ": " + chr(value+j) + '\0'), None, error_callback=self.increase_error_count)
+            async_call(self.oled.write_line, (j, 8, start + str(value + j) + ": " + chr(value + j) + '\0'), None, self.increase_error_count)
 
     def clear_display_clicked(self):
         self.oled.clear_display()
@@ -98,13 +98,13 @@ class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
                 else:
                     data.append(False)
 
-        async_call(self.oled.write_pixels, (0, 0, 127, 63, data), None, error_callback=self.increase_error_count)
+        async_call(self.oled.write_pixels, (0, 0, 127, 63, data), None, self.increase_error_count)
 
-    def cb_display_configuration(self, conf):
+    def get_display_configuration_async(self, conf):
         self.contrast_slider.setValue(conf.contrast)
         self.invert_checkbox.setChecked(conf.invert)
 
-    def cb_read_pixels(self, pixels):
+    def read_pixels_async(self, pixels):
         for i in range(64):
             for j in range(128):
                 if pixels[i*128 + j]:
@@ -120,8 +120,8 @@ class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
         self.write_line_response_expected = self.oled.get_response_expected(self.oled.FUNCTION_WRITE_LINE)
         self.oled.set_response_expected(self.oled.FUNCTION_WRITE_LINE, True)
 
-        async_call(self.oled.get_display_configuration, None, self.cb_display_configuration, self.increase_error_count)
-        async_call(self.oled.read_pixels, (0, 0, 127, 63), self.cb_read_pixels, self.increase_error_count)
+        async_call(self.oled.get_display_configuration, None, self.get_display_configuration_async, self.increase_error_count)
+        async_call(self.oled.read_pixels, (0, 0, 127, 63), self.read_pixels_async, self.increase_error_count)
 
     def stop(self):
         if self.write_line_response_expected != None:

@@ -94,6 +94,7 @@ class DC(PluginBase, Ui_DC):
                                   self.qtcb_velocity_reached.emit)
 
         self.cbe_current_velocity = CallbackEmulator(self.dc.get_current_velocity,
+                                                     None,
                                                      self.update_velocity,
                                                      self.increase_error_count)
 
@@ -259,9 +260,9 @@ class DC(PluginBase, Ui_DC):
 
         self.current_label.setText(cc_str)
 
-    def update_velocity(self, value):
-        self.speedometer.set_velocity(value)
-        self.current_velocity_label.setText('{0} ({1}%)'.format(value, round(abs(value) * 100 / 32768.0, 1)))
+    def update_velocity(self, velocity):
+        self.speedometer.set_velocity(velocity)
+        self.current_velocity_label.setText('{0} ({1}%)'.format(velocity, round(abs(velocity) * 100 / 32768.0, 1)))
 
     def get_velocity_async(self, velocity):
         if not self.velocity_slider.isSliderDown():

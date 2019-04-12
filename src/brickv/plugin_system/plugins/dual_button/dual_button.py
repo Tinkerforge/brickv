@@ -124,16 +124,18 @@ class DualButton(PluginBase, Ui_DualButton):
 
     def cb_state_changed(self, button_l, button_r, led_l, led_r):
         self.count += 1
-        self.get_led_state_async((led_l, led_r))
-        self.get_button_state_async((button_l, button_r))
+        self.get_led_state_async(led_l, led_r)
+        self.get_button_state_async(button_l, button_r)
 
-    def get_led_state_async(self, led):
-        self.led_l, self.led_r = led
+    def get_led_state_async(self, led_l, led_r):
+        self.led_l = led_l
+        self.led_r = led_r
 
         self.update_buttons()
 
-    def get_button_state_async(self, button):
-        self.button_l, self.button_r = button
+    def get_button_state_async(self, button_l, button_r):
+        self.button_l = button_l
+        self.button_r = button_r
         led_text_button_l = ''
         led_text_button_r = ''
 
@@ -158,8 +160,10 @@ class DualButton(PluginBase, Ui_DualButton):
             self.label_status_button_r.setText('Pressed' + led_text_button_r)
 
     def start(self):
-        async_call(self.button.get_led_state, None, self.get_led_state_async, self.increase_error_count)
-        async_call(self.button.get_button_state, None, self.get_button_state_async, self.increase_error_count)
+        async_call(self.button.get_led_state, None, self.get_led_state_async, self.increase_error_count,
+                   expand_result_tuple_for_callback=True)
+        async_call(self.button.get_button_state, None, self.get_button_state_async, self.increase_error_count,
+                   expand_result_tuple_for_callback=True)
 
     def stop(self):
         pass

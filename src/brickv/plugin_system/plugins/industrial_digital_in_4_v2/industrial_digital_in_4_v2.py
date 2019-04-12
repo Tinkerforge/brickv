@@ -43,7 +43,8 @@ class IndustrialDigitalIn4V2(COMCUPluginBase, Ui_IndustrialDigitalIn4V2):
         self.lbl_stat_v_ch = [self.lbl_stat_v_ch0, self.lbl_stat_v_ch1, self.lbl_stat_v_ch2, self.lbl_stat_v_ch3]
 
         self.cbe_get_value = CallbackEmulator(self.idi4.get_value,
-                                              self.cb_get_value,
+                                              None,
+                                              self.cb_value,
                                               self.increase_error_count)
 
         self.cbox_cs0_cfg.currentIndexChanged.connect(self.cbox_cs0_cfg_changed)
@@ -52,10 +53,9 @@ class IndustrialDigitalIn4V2(COMCUPluginBase, Ui_IndustrialDigitalIn4V2):
         self.cbox_cs3_cfg.currentIndexChanged.connect(self.cbox_cs3_cfg_changed)
 
     def start(self):
-        async_call(self.idi4.get_channel_led_config, 0, lambda x: self.async_get_channel_led_config(0, x), self.increase_error_count)
-        async_call(self.idi4.get_channel_led_config, 1, lambda x: self.async_get_channel_led_config(1, x), self.increase_error_count)
-        async_call(self.idi4.get_channel_led_config, 2, lambda x: self.async_get_channel_led_config(2, x), self.increase_error_count)
-        async_call(self.idi4.get_channel_led_config, 3, lambda x: self.async_get_channel_led_config(3, x), self.increase_error_count)
+        for channel in range(4):
+            async_call(self.idi4.get_channel_led_config, channel, self.get_channel_led_config_async, self.increase_error_count,
+                       pass_arguments_to_result_callback=True)
 
         self.cbe_get_value.set_period(100)
 
@@ -69,7 +69,7 @@ class IndustrialDigitalIn4V2(COMCUPluginBase, Ui_IndustrialDigitalIn4V2):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialDigitalIn4V2.DEVICE_IDENTIFIER
 
-    def cb_get_value(self, value):
+    def cb_value(self, value):
         for i, v in enumerate(value):
             if v:
                 self.lbl_stat_i_ch[i].setPixmap(self.vcc_pixmap)
@@ -78,7 +78,7 @@ class IndustrialDigitalIn4V2(COMCUPluginBase, Ui_IndustrialDigitalIn4V2):
                 self.lbl_stat_i_ch[i].setPixmap(self.gnd_pixmap)
                 self.lbl_stat_v_ch[i].setText('Low')
 
-    def async_get_channel_led_config(self, idx, cfg):
+    def get_channel_led_config_async(self, idx, cfg):
         if idx == 0:
             self.cbox_cs0_cfg.setCurrentIndex(cfg)
         elif idx == 1:

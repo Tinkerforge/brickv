@@ -36,6 +36,7 @@ class Tilt(PluginBase):
         self.tilt = self.device
 
         self.cbe_tilt_state = CallbackEmulator(self.tilt.get_tilt_state,
+                                               None,
                                                self.cb_tilt_state,
                                                self.increase_error_count)
 

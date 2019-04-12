@@ -38,6 +38,7 @@ class Ozone(PluginBase):
         self.ozone = self.device
 
         self.cbe_ozone_concentration = CallbackEmulator(self.ozone.get_ozone_concentration,
+                                                        None,
                                                         self.cb_ozone_concentration,
                                                         self.increase_error_count)
 

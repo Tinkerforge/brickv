@@ -88,9 +88,9 @@ during stabilization.</p>""")
         self.save_calibration.clicked.connect(self.save_calibration_clicked)
 
     def save_calibration_clicked(self):
-        async_call(self.imu.save_calibration, None, self.async_save_calibration, self.parent.increase_error_count)
+        async_call(self.imu.save_calibration, None, self.save_calibration_async, self.parent.increase_error_count)
 
-    def async_save_calibration(self, calibration_done):
+    def save_calibration_async(self, calibration_done):
         if calibration_done:
             self.save_calibration.setText('Save Calibration Again')
 
@@ -156,6 +156,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.imu = self.device
 
         self.cbe_all_data = CallbackEmulator(self.imu.get_all_data,
+                                             None,
                                              self.cb_all_data,
                                              self.increase_error_count)
 

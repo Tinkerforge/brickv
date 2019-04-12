@@ -65,10 +65,13 @@ class Accelerometer(PluginBase):
         self.accelerometer = self.device
 
         self.cbe_acceleration = CallbackEmulator(self.accelerometer.get_acceleration,
+                                                 None,
                                                  self.cb_acceleration,
-                                                 self.increase_error_count)
+                                                 self.increase_error_count,
+                                                 expand_result_tuple_for_callback=True)
 
         self.cbe_temperature = CallbackEmulator(self.accelerometer.get_temperature,
+                                                None,
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 
@@ -157,8 +160,7 @@ class Accelerometer(PluginBase):
         fb = self.fb_combo.currentIndex()
         self.accelerometer.set_configuration(dr, fs, fb)
 
-    def cb_acceleration(self, data):
-        x, y, z = data
+    def cb_acceleration(self, x, y, z):
         self.current_acceleration_x.value = x / 1000.0
         self.current_acceleration_y.value = y / 1000.0
         self.current_acceleration_z.value = z / 1000.0
@@ -170,8 +172,8 @@ class Accelerometer(PluginBase):
         self.fb_combo.setCurrentIndex(conf.filter_bandwidth)
         self.dr_combo.setCurrentIndex(conf.data_rate)
 
-    def cb_temperature(self, temp):
-        self.temperature_label.setText(temp)
+    def cb_temperature(self, temperature):
+        self.temperature_label.setText(temperature)
 
     def start(self):
         async_call(self.accelerometer.is_led_on, None, self.is_led_on_async, self.increase_error_count)

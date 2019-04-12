@@ -156,13 +156,11 @@ class SolidStateRelayV2(COMCUPluginBase, Ui_SolidStateRelayV2):
             self.ssr_button.setText('Switch On')
             self.ssr_image.setPixmap(self.b_pixmap)
 
-    def update_time_remaining(self, time_remaining):
+    def update_time_remaining(self, _state, _value, time_remaining):
         if self.monoflop:
             self.time_spinbox.setValue(time_remaining)
 
     def update(self):
         if self.monoflop:
-            try:
-                async_call(self.ssr.get_monoflop, None, lambda a: self.update_time_remaining(a[2]), self.increase_error_count)
-            except ip_connection.Error:
-                pass
+            async_call(self.ssr.get_monoflop, None, self.update_time_remaining, self.increase_error_count,
+                       expand_result_tuple_for_callback=True)

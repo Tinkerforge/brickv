@@ -69,17 +69,23 @@ class IMU(PluginBase, Ui_IMU):
         self.update_timer.timeout.connect(self.update_data)
 
         self.cbe_all_data = CallbackEmulator(self.imu.get_all_data,
+                                             None,
                                              self.cb_all_data,
                                              self.increase_error_count,
-                                             use_data_signal=False)
+                                             expand_result_tuple_for_callback=True,
+                                             use_result_signal=False)
         self.cbe_orientation = CallbackEmulator(self.imu.get_orientation,
+                                                None,
                                                 self.cb_orientation,
                                                 self.increase_error_count,
-                                                use_data_signal=False)
+                                                expand_result_tuple_for_callback=True,
+                                                use_result_signal=False)
         self.cbe_quaternion = CallbackEmulator(self.imu.get_quaternion,
+                                               None,
                                                self.cb_quaternion,
                                                self.increase_error_count,
-                                               use_data_signal=False)
+                                               expand_result_tuple_for_callback=True,
+                                               use_result_signal=False)
 
         self.imu_gl = IMUGLWidget(self)
         self.imu_gl.setMinimumSize(150, 150)
@@ -211,9 +217,7 @@ class IMU(PluginBase, Ui_IMU):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickIMU.DEVICE_IDENTIFIER
 
-    def cb_all_data(self, data):
-        acc_x, acc_y, acc_z, mag_x, mag_y, mag_z, gyr_x, gyr_y, gyr_z, temp = data
-
+    def cb_all_data(self, acc_x, acc_y, acc_z, mag_x, mag_y, mag_z, gyr_x, gyr_y, gyr_z, temp):
         self.acc_x.value = acc_x
         self.acc_y.value = acc_y
         self.acc_z.value = acc_z
@@ -227,19 +231,15 @@ class IMU(PluginBase, Ui_IMU):
 
         self.all_data_valid = True
 
-    def cb_quaternion(self, data):
-        qua_x, qua_y, qua_z, qua_w = data
-
-        self.qua_x = qua_x
-        self.qua_y = qua_y
-        self.qua_z = qua_z
-        self.qua_w = qua_w
+    def cb_quaternion(self, x, y, z, w):
+        self.qua_x = x
+        self.qua_y = y
+        self.qua_z = z
+        self.qua_w = w
 
         self.quaternion_valid = True
 
-    def cb_orientation(self, data):
-        roll, pitch, yaw = data
-
+    def cb_orientation(self, roll, pitch, yaw):
         self.roll = roll / 100.0
         self.pitch = pitch / 100.0
         self.yaw = yaw / 100.0

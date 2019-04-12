@@ -41,6 +41,7 @@ class PTCV2(COMCUPluginBase):
         self.str_not_connected = 'Sensor is <font color="red">not connected</font>'
 
         self.cbe_temperature = CallbackEmulator(self.ptc.get_temperature,
+                                                None,
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 

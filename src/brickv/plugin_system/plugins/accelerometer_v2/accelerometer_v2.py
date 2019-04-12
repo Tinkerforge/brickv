@@ -60,8 +60,10 @@ class AccelerometerV2(COMCUPluginBase):
         self.accelerometer = self.device
 
         self.cbe_acceleration = CallbackEmulator(self.accelerometer.get_acceleration,
+                                                 None,
                                                  self.cb_acceleration,
-                                                 self.increase_error_count)
+                                                 self.increase_error_count,
+                                                 expand_result_tuple_for_callback=True)
 
         self.current_acceleration_x = CurveValueWrapper() # float, g
         self.current_acceleration_y = CurveValueWrapper() # float, g
@@ -128,8 +130,7 @@ class AccelerometerV2(COMCUPluginBase):
         fs = self.fs_combo.currentIndex()
         self.accelerometer.set_configuration(dr, fs)
 
-    def cb_acceleration(self, data):
-        x, y, z = data
+    def cb_acceleration(self, x, y, z):
         self.current_acceleration_x.value = x / 10000.0
         self.current_acceleration_y.value = y / 10000.0
         self.current_acceleration_z.value = z / 10000.0

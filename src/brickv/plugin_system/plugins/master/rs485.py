@@ -47,7 +47,8 @@ class RS485(QWidget, Ui_RS485):
 
     def start(self):
         if self.parent.firmware_version >= (1, 2, 0):
-            async_call(self.master.get_rs485_configuration, None, self.get_rs485_configuration_async, self.parent.increase_error_count)
+            async_call(self.master.get_rs485_configuration, None, self.get_rs485_configuration_async, self.parent.increase_error_count,
+                       expand_result_tuple_for_callback=True)
             self.update_generator = self.start_async()
             next(self.update_generator)
 
@@ -98,8 +99,7 @@ class RS485(QWidget, Ui_RS485):
     def destroy(self):
         pass
 
-    def get_rs485_configuration_async(self, configuration):
-        speed, parity, stopbits = configuration
+    def get_rs485_configuration_async(self, speed, parity, stopbits):
         self.speed_spinbox.setValue(speed)
         if parity == 'e':
             self.parity_combobox.setCurrentIndex(1)

@@ -207,12 +207,12 @@ class DMX(COMCUPluginBase, Ui_DMX):
 
         self.wait_for_first_read = False
 
-    def cb_get_frame_duration(self, frame_duration):
+    def get_frame_duration_async(self, frame_duration):
         self.frame_duration_spinbox.blockSignals(True)
         self.frame_duration_spinbox.setValue(frame_duration)
         self.frame_duration_spinbox.blockSignals(False)
 
-    def cb_get_dmx_mode(self, mode):
+    def get_dmx_mode_async(self, mode):
         self.mode_combobox.blockSignals(True)
         self.mode_combobox.setCurrentIndex(mode)
         self.mode_changed(mode, False)
@@ -258,8 +258,8 @@ class DMX(COMCUPluginBase, Ui_DMX):
         async_call(self.dmx.get_communication_led_config, None, self.get_communication_led_config_async, self.increase_error_count)
         async_call(self.dmx.get_error_led_config, None, self.get_error_led_config_async, self.increase_error_count)
 
-        async_call(self.dmx.get_frame_duration, None, self.cb_get_frame_duration, self.increase_error_count)
-        async_call(self.dmx.get_dmx_mode, None, self.cb_get_dmx_mode, self.increase_error_count)
+        async_call(self.dmx.get_frame_duration, None, self.get_frame_duration_async, self.increase_error_count)
+        async_call(self.dmx.get_dmx_mode, None, self.get_dmx_mode_async, self.increase_error_count)
 
         self.dmx.register_callback(self.dmx.CALLBACK_FRAME_STARTED, self.qtcb_frame_started.emit)
         self.dmx.register_callback(self.dmx.CALLBACK_FRAME, self.qtcb_frame.emit)

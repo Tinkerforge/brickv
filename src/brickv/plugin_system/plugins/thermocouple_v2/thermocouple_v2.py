@@ -43,6 +43,7 @@ class ThermocoupleV2(COMCUPluginBase):
                                        self.qtcb_error_state.emit)
 
         self.cbe_temperature = CallbackEmulator(self.thermo2.get_temperature,
+                                                None,
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 
@@ -106,7 +107,8 @@ class ThermocoupleV2(COMCUPluginBase):
 
     def start(self):
         async_call(self.thermo2.get_configuration, None, self.get_configuration_async, self.increase_error_count)
-        async_call(self.thermo2.get_error_state, None, lambda data: self.cb_error_state(data.over_under, data.open_circuit), self.increase_error_count)
+        async_call(self.thermo2.get_error_state, None, self.cb_error_state, self.increase_error_count,
+                   expand_result_tuple_for_callback=True)
 
         self.cbe_temperature.set_period(100)
 

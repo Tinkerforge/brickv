@@ -58,12 +58,16 @@ class ColorV2(COMCUPluginBase):
         self.color = self.device
 
         self.cbe_color = CallbackEmulator(self.color.get_color,
+                                          None,
                                           self.cb_color,
-                                          self.increase_error_count)
+                                          self.increase_error_count,
+                                          expand_result_tuple_for_callback=True)
         self.cbe_illuminance = CallbackEmulator(self.color.get_illuminance,
+                                                None,
                                                 self.cb_illuminance,
                                                 self.increase_error_count)
         self.cbe_color_temperature = CallbackEmulator(self.color.get_color_temperature,
+                                                      None,
                                                       self.cb_color_temperature,
                                                       self.increase_error_count)
 
@@ -197,9 +201,7 @@ class ColorV2(COMCUPluginBase):
 
         return str(value)
 
-    def cb_color(self, data):
-        r, g, b, c = data
-
+    def cb_color(self, r, g, b, c):
         self.current_color_r.value = r
         self.current_color_g.value = g
         self.current_color_b.value = b

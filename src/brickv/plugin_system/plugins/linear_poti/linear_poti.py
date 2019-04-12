@@ -37,6 +37,7 @@ class LinearPoti(PluginBase):
         self.lp = self.device
 
         self.cbe_position = CallbackEmulator(self.lp.get_position,
+                                             None,
                                              self.cb_position,
                                              self.increase_error_count)
 

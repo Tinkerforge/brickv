@@ -326,4 +326,4 @@ class LCD16x2(PluginBase):
                     self.character_boxes[4-i][j].setStyleSheet("background-color: rgb(0, 0, 255)")
 
     def char_index_changed(self, index):
-        async_call(self.lcd.get_custom_character, (index,), self.custom_character_async, self.increase_error_count)
+        async_call(self.lcd.get_custom_character, index, self.custom_character_async, self.increase_error_count)

@@ -83,7 +83,8 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
 
         self.sound_pressure_level = self.device
         self.cbe_get_decibel = CallbackEmulator(self.sound_pressure_level.get_decibel,
-                                                self.cb_get_decibel,
+                                                None,
+                                                self.cb_decibel,
                                                 self.increase_error_count)
 
         self.qtcb_spectrum.connect(self.cb_spectrum)
@@ -123,7 +124,7 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
         self.last_y_data = [0]*512
         self.sound_pressure_level.set_configuration(self.combo_fft_size.currentIndex(), self.combo_weighting.currentIndex())
 
-    def cb_get_decibel(self, db):
+    def cb_decibel(self, db):
         self.label_decibel.setText("{:.1f}".format(db/10.0))
         self.thermo.set_value(db)
 
@@ -158,15 +159,17 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
         self.combo_weighting.blockSignals(False)
 
     def start(self):
+        self.sound_pressure_level.register_callback(self.sound_pressure_level.CALLBACK_SPECTRUM, self.qtcb_spectrum.emit)
+
         async_call(self.sound_pressure_level.get_configuration, None, self.get_configuration_async, self.increase_error_count)
-        async_call(self.sound_pressure_level.set_spectrum_callback_configuration, (1,), None, self.increase_error_count)
+        async_call(self.sound_pressure_level.set_spectrum_callback_configuration, 1, None, self.increase_error_count)
 
         self.cbe_get_decibel.set_period(50)
 
-        self.sound_pressure_level.register_callback(self.sound_pressure_level.CALLBACK_SPECTRUM, self.qtcb_spectrum.emit)
-
     def stop(self):
-        async_call(self.sound_pressure_level.set_spectrum_callback_configuration, (0,), None, self.increase_error_count)
+        self.sound_pressure_level.register_callback(self.sound_pressure_level.CALLBACK_SPECTRUM, None)
+
+        async_call(self.sound_pressure_level.set_spectrum_callback_configuration, 0, None, self.increase_error_count)
 
         self.cbe_get_decibel.set_period(0)
 

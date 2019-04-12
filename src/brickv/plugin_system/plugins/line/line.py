@@ -61,6 +61,7 @@ class Line(PluginBase):
         self.line = self.device
 
         self.cbe_reflectivity = CallbackEmulator(self.line.get_reflectivity,
+                                                 None,
                                                  self.cb_reflectivity,
                                                  self.increase_error_count)
 

@@ -37,10 +37,12 @@ class HumidityV2(COMCUPluginBase):
         self.hum = self.device
 
         self.cbe_humidity = CallbackEmulator(self.hum.get_humidity,
+                                             None,
                                              self.cb_humidity,
                                              self.increase_error_count)
 
         self.cbe_temperature = CallbackEmulator(self.hum.get_temperature,
+                                                None,
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 

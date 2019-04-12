@@ -48,12 +48,15 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
         self.vc = self.device
 
         self.cbe_current = CallbackEmulator(self.vc.get_current,
+                                            None,
                                             self.cb_current,
                                             self.increase_error_count)
         self.cbe_voltage = CallbackEmulator(self.vc.get_voltage,
+                                            None,
                                             self.cb_voltage,
                                             self.increase_error_count)
         self.cbe_power = CallbackEmulator(self.vc.get_power,
+                                          None,
                                           self.cb_power,
                                           self.increase_error_count)
 

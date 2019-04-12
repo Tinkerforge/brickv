@@ -63,7 +63,8 @@ class Wifi(QWidget, Ui_Wifi):
                 while self.wifi_connection.count() > 2:
                     self.wifi_connection.removeItem(self.wifi_connection.count() - 1)
 
-            async_call(self.master.get_wifi_configuration, None, self.get_wifi_configuration_async, self.parent.increase_error_count)
+            async_call(self.master.get_wifi_configuration, None, self.get_wifi_configuration_async, self.parent.increase_error_count,
+                       expand_result_tuple_for_callback=True)
             async_call(self.master.get_wifi_certificate, 0xFFFF, self.update_username_async, self.parent.increase_error_count)
             async_call(self.master.get_wifi_certificate, 0xFFFE, self.update_password_async, self.parent.increase_error_count)
             async_call(self.master.get_wifi_power_mode, None, self.wifi_power_mode.setCurrentIndex, self.parent.increase_error_count)
@@ -75,7 +76,8 @@ class Wifi(QWidget, Ui_Wifi):
                 self.wifi_domain.clear()
                 self.wifi_domain.addItem("FW Version >= 1.3.4 required")
 
-            async_call(self.master.get_wifi_encryption, None, self.get_wifi_encryption_async, self.parent.increase_error_count)
+            async_call(self.master.get_wifi_encryption, None, self.get_wifi_encryption_async, self.parent.increase_error_count,
+                       expand_result_tuple_for_callback=True)
 
             if self.parent.firmware_version < (2, 0, 5):
                 self.wifi_hostname.setDisabled(True)
@@ -107,6 +109,7 @@ class Wifi(QWidget, Ui_Wifi):
 
     def get_wifi_authentication_secret_async(self, secret):
         self.wifi_secret.setText(secret)
+
         if secret == '':
             self.wifi_show_characters.hide()
             self.wifi_secret_label.hide()
@@ -117,6 +120,7 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_secret_label.show()
             self.wifi_secret.show()
             self.wifi_use_auth.setChecked(True)
+
             if self.wifi_show_characters.isChecked():
                 self.wifi_secret.setEchoMode(QLineEdit.Normal)
             else:
@@ -165,9 +169,7 @@ class Wifi(QWidget, Ui_Wifi):
     def get_long_wifi_key_async(self, key):
         self.wifi_key.setText(key)
 
-    def get_wifi_encryption_async(self, enc):
-        encryption, _key, key_index, eap_options, _ca_certificate_length, _client_certificate_length, _private_key_length = enc
-
+    def get_wifi_encryption_async(self, encryption, _key, key_index, eap_options, _ca_certificate_length, _client_certificate_length, _private_key_length):
         if self.connection in (2, 3, 4, 5):
             encryption -= 2
 
@@ -192,9 +194,7 @@ class Wifi(QWidget, Ui_Wifi):
         self.encryption_changed(0)
         self.wifi_encryption.setCurrentIndex(encryption) # ensure that the correct encryption is displayed
 
-    def get_wifi_configuration_async(self, configuration):
-        ssid, connection, ip, sub, gw, port = configuration
-
+    def get_wifi_configuration_async(self, ssid, connection, ip, sub, gw, port):
         ssid = ssid.replace('\0', '')
         self.connection = connection
 

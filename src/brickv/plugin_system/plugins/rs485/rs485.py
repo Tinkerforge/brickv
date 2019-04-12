@@ -76,11 +76,13 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.rs485 = self.device
         self.cbe_error_count = CallbackEmulator(self.rs485.get_error_count,
+                                                None,
                                                 self.cb_error_count,
                                                 self.increase_error_count)
 
         self.cbe_error_count_modbus = CallbackEmulator(self.rs485.get_modbus_common_error_count,
-                                                       self.cb_error_count_modbus,
+                                                       None,
+                                                       self.cb_modbus_common_error_count,
                                                        self.increase_error_count)
 
         self.read_callback_was_enabled = False
@@ -1179,18 +1181,18 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.read_callback_was_enabled = enabled
         self.rs485.enable_read_callback()
 
-    def cb_error_count(self, error):
-        self.label_error_overrun.setText(str(error.overrun_error_count))
-        self.label_error_parity.setText(str(error.parity_error_count))
+    def cb_error_count(self, error_count):
+        self.label_error_overrun.setText(str(error_count.overrun_error_count))
+        self.label_error_parity.setText(str(error_count.parity_error_count))
 
-    def cb_error_count_modbus(self, error):
-        self.label_error_modbus_timeout.setText(str(error.timeout_error_count))
-        self.label_error_modbus_checksum.setText(str(error.checksum_error_count))
-        self.label_error_modbus_frame_size.setText(str(error.frame_too_big_error_count))
-        self.label_error_modbus_illegal_function.setText(str(error.illegal_function_error_count))
-        self.label_error_modbus_illegal_data_address.setText(str(error.illegal_data_address_error_count))
-        self.label_error_modbus_illegal_data_value.setText(str(error.illegal_data_value_error_count))
-        self.label_error_modbus_slave_device_failure.setText(str(error.slave_device_failure_error_count))
+    def cb_modbus_common_error_count(self, error_count):
+        self.label_error_modbus_timeout.setText(str(error_count.timeout_error_count))
+        self.label_error_modbus_checksum.setText(str(error_count.checksum_error_count))
+        self.label_error_modbus_frame_size.setText(str(error_count.frame_too_big_error_count))
+        self.label_error_modbus_illegal_function.setText(str(error_count.illegal_function_error_count))
+        self.label_error_modbus_illegal_data_address.setText(str(error_count.illegal_data_address_error_count))
+        self.label_error_modbus_illegal_data_value.setText(str(error_count.illegal_data_value_error_count))
+        self.label_error_modbus_slave_device_failure.setText(str(error_count.slave_device_failure_error_count))
 
     def get_communication_led_config_async(self, config):
         if config == BrickletRS485.COMMUNICATION_LED_CONFIG_OFF:

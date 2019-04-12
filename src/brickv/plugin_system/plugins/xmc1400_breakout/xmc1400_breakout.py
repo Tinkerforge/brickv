@@ -34,6 +34,7 @@ class XMC1400Breakout(COMCUPluginBase):
         self.xmc1400 = self.device
 
         self.cbe_count = CallbackEmulator(self.xmc1400.get_count,
+                                          None,
                                           self.cb_count,
                                           self.increase_error_count)
 

@@ -30,28 +30,42 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from brickv.bindings.ip_connection import Error
 
 class CallbackEmulator(QObject):
-    qtcb_data = pyqtSignal(object)
-    qtcb_error = pyqtSignal()
+    qtcb_result = pyqtSignal(object)
+    qtcb_error = pyqtSignal(object)
+    qtcb_error_with_exception = pyqtSignal(object, object)
 
-    def __init__(self, data_getter, data_callback, error_callback, use_data_signal=True,
-                 ignore_last_data=False, debug_exception=False):
+    def __init__(self, function, arguments, result_callback, error_callback,
+                 pass_arguments_to_result_callback=False, pass_exception_to_error_callback=False,
+                 expand_arguments_tuple_for_callback=False, expand_result_tuple_for_callback=False,
+                 use_result_signal=True, ignore_last_result=False, debug_exception=False):
         super().__init__()
 
+        if pass_arguments_to_result_callback:
+            assert arguments != None
+
+        self.function = function
+        self.arguments = arguments
+        self.result_callback = result_callback
+        self.error_callback = error_callback
+        self.pass_arguments_to_result_callback = pass_arguments_to_result_callback
+        self.pass_exception_to_error_callback = pass_exception_to_error_callback
+        self.expand_arguments_tuple_for_callback = expand_arguments_tuple_for_callback
+        self.expand_result_tuple_for_callback = expand_result_tuple_for_callback
+        self.use_result_signal = use_result_signal
+        self.ignore_last_result = ignore_last_result
+        self.debug_exception = debug_exception
         self.thread = None
         self.thread_id = 0
-        self.data_getter = data_getter
-        self.use_data_signal = use_data_signal
-        self.data_callback = data_callback
-        self.error_callback = error_callback
-        self.ignore_last_data = ignore_last_data
-        self.debug_exception = debug_exception
-        self.last_data = None
+        self.last_result = None
 
-        if self.use_data_signal:
-            self.qtcb_data.connect(self.data_callback)
+        if self.use_result_signal:
+            self.qtcb_result.connect(self.cb_result)
 
-        if error_callback != None:
-            self.qtcb_error.connect(self.error_callback)
+        if self.error_callback != None:
+            if self.pass_exception_to_error_callback:
+                self.qtcb_error_with_exception.connect(self.error_callback)
+            else:
+                self.qtcb_error.connect(self.error_callback)
 
     def set_period(self, period): # milliseconds
         self.thread_id += 1 # force current thread (if any) to exit eventually
@@ -60,10 +74,30 @@ class CallbackEmulator(QObject):
             self.thread = threading.Thread(target=self.loop, args=(self.thread_id, period), daemon=True)
             self.thread.start()
 
+    def cb_result(self, result):
+        arguments = tuple()
+
+        if self.pass_arguments_to_result_callback:
+            if self.expand_arguments_tuple_for_callback:
+                assert isinstance(self.arguments, tuple)
+
+                arguments += self.arguments
+            elif self.arguments != None:
+                arguments += (self.arguments,)
+
+        if self.expand_result_tuple_for_callback:
+            assert isinstance(result, tuple)
+
+            arguments += result
+        elif result != None:
+            arguments += (result,)
+
+        self.result_callback(*arguments)
+
     def loop(self, thread_id, period):
         monotonic_timestamp = time.monotonic()
         first = True
-        ignore_last_data_override = True
+        ignore_last_result_override = True
 
         while thread_id == self.thread_id:
             if not first:
@@ -79,20 +113,29 @@ class CallbackEmulator(QObject):
                 break
 
             try:
-                data = self.data_getter()
-            except Error:
+                if self.arguments == None:
+                    result = self.function()
+                elif isinstance(self.arguments, tuple):
+                    result = self.function(*self.arguments)
+                else:
+                    result = self.function(self.arguments)
+            except Exception as e:
                 if self.debug_exception:
-                    logging.exception('Error while getting callback data')
+                    logging.exception('Error while getting callback result')
 
-                self.qtcb_error.emit()
+                if self.pass_exception_to_error_callback:
+                    self.qtcb_error_with_exception.emit(e)
+                else:
+                    self.qtcb_error.emit(e)
+
                 continue
 
-            if self.ignore_last_data or ignore_last_data_override or self.last_data != data:
-                self.last_data = data
+            if self.ignore_last_result or ignore_last_result_override or self.last_result != result:
+                self.last_result = result
 
-                if self.use_data_signal:
-                    self.qtcb_data.emit(data)
+                if self.use_result_signal:
+                    self.qtcb_result.emit(result)
                 else:
-                    self.data_callback(data)
+                    self.cb_result(result)
 
-            ignore_last_data_override = False
+            ignore_last_result_override = False

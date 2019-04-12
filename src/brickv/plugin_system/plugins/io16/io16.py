@@ -22,8 +22,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import functools
-
 from PyQt5.QtCore import pyqtSignal, QTimer
 
 from brickv.plugin_system.plugin_base import PluginBase
@@ -45,12 +43,16 @@ class IO16(PluginBase, Ui_IO16):
 
         self.has_monoflop = self.firmware_version >= (1, 1, 2)
 
-        self.cbe_port_a = CallbackEmulator(functools.partial(self.io.get_port, 'a'),
-                                           functools.partial(self.cb_port, 'a'),
-                                           self.increase_error_count)
-        self.cbe_port_b = CallbackEmulator(functools.partial(self.io.get_port, 'b'),
-                                           functools.partial(self.cb_port, 'b'),
-                                           self.increase_error_count)
+        self.cbe_port_a = CallbackEmulator(self.io.get_port,
+                                           'a',
+                                           self.cb_port,
+                                           self.increase_error_count,
+                                           pass_arguments_to_result_callback=True)
+        self.cbe_port_b = CallbackEmulator(self.io.get_port,
+                                           'b',
+                                           self.cb_port,
+                                           self.increase_error_count,
+                                           pass_arguments_to_result_callback=True)
 
         self.port_value = {'a': [self.av0, self.av1, self.av2, self.av3,
                                  self.av4, self.av5, self.av6, self.av7],

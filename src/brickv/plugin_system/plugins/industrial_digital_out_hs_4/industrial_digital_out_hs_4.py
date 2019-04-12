@@ -101,19 +101,20 @@ class IndustrialDigitalOutHS4(COMCUPluginBase, Ui_IndustrialDigitalOutHS4):
 
         # Measurements
         self.cbe_measurements = CallbackEmulator(self.ido4.get_measurements,
+                                                 None,
                                                  self.cb_measurements,
                                                  self.increase_error_count)
 
-    def cb_measurements(self, m):
-        self.lbl_vol[0].setText('{0:.2f} V'.format(m.voltage[0]/1000.0))
-        self.lbl_vol[1].setText('{0:.2f} V'.format(m.voltage[0]/1000.0))
-        self.lbl_vol[2].setText('{0:.2f} V'.format(m.voltage[1]/1000.0))
-        self.lbl_vol[3].setText('{0:.2f} V'.format(m.voltage[1]/1000.0))
+    def cb_measurements(self, measurements):
+        self.lbl_vol[0].setText('{0:.2f} V'.format(measurements.voltage[0] / 1000.0))
+        self.lbl_vol[1].setText('{0:.2f} V'.format(measurements.voltage[0] / 1000.0))
+        self.lbl_vol[2].setText('{0:.2f} V'.format(measurements.voltage[1] / 1000.0))
+        self.lbl_vol[3].setText('{0:.2f} V'.format(measurements.voltage[1] / 1000.0))
 
-        self.lbl_cur[0].setText('{0} mA'.format(m.current[0]))
-        self.lbl_cur[1].setText('{0} mA'.format(m.current[1]))
-        self.lbl_cur[2].setText('{0} mA'.format(m.current[2]))
-        self.lbl_cur[3].setText('{0} mA'.format(m.current[3]))
+        self.lbl_cur[0].setText('{0} mA'.format(measurements.current[0]))
+        self.lbl_cur[1].setText('{0} mA'.format(measurements.current[1]))
+        self.lbl_cur[2].setText('{0} mA'.format(measurements.current[2]))
+        self.lbl_cur[3].setText('{0} mA'.format(measurements.current[3]))
 
     def get_value_async(self, value):
         for i, b in enumerate(self.btn_v_c):
@@ -149,10 +150,9 @@ class IndustrialDigitalOutHS4(COMCUPluginBase, Ui_IndustrialDigitalOutHS4):
     def start(self):
         async_call(self.ido4.get_value, None, self.get_value_async, self.increase_error_count)
 
-        async_call(self.ido4.get_channel_led_config, 0, lambda x: self.get_channel_led_config_async(0, x), self.increase_error_count)
-        async_call(self.ido4.get_channel_led_config, 1, lambda x: self.get_channel_led_config_async(1, x), self.increase_error_count)
-        async_call(self.ido4.get_channel_led_config, 2, lambda x: self.get_channel_led_config_async(2, x), self.increase_error_count)
-        async_call(self.ido4.get_channel_led_config, 3, lambda x: self.get_channel_led_config_async(3, x), self.increase_error_count)
+        for channel in range(4):
+            async_call(self.ido4.get_channel_led_config, channel, self.get_channel_led_config_async, self.increase_error_count,
+                       pass_arguments_to_result_callback=True)
 
         self.cbe_measurements.set_period(250)
 
@@ -209,10 +209,6 @@ class IndustrialDigitalOutHS4(COMCUPluginBase, Ui_IndustrialDigitalOutHS4):
             self.sbox_m_t.setValue(self.monoflop_time_before[current_channel])
             self.sbox_m_t.setEnabled(True)
 
-    def monoflop_channel_changed_async(self, monoflop):
-        _, _, time_remaining = monoflop
-        self.sbox_m_t.setValue(time_remaining)
-
     def cbox_m_c_changed(self):
         try:
             channel = self.cbox_m_c.currentIndex()
@@ -220,7 +216,8 @@ class IndustrialDigitalOutHS4(COMCUPluginBase, Ui_IndustrialDigitalOutHS4):
             return
 
         if self.monoflop_pending[channel]:
-            async_call(self.ido4.get_monoflop, channel, self.monoflop_channel_changed_async, self.increase_error_count)
+            async_call(self.ido4.get_monoflop, channel, self.get_monoflop_async, self.increase_error_count,
+                       pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
             self.sbox_m_t.setEnabled(False)
         else:
             self.sbox_m_t.setValue(self.monoflop_time_before[channel])
@@ -251,7 +248,7 @@ class IndustrialDigitalOutHS4(COMCUPluginBase, Ui_IndustrialDigitalOutHS4):
 
         self.update_timer.start()
 
-    def update_async(self, channel, _value, _time, time_remaining):
+    def get_monoflop_async(self, channel, _value, _time, time_remaining):
         if self.monoflop_pending[channel]:
             self.sbox_m_t.setValue(time_remaining)
 
@@ -261,4 +258,5 @@ class IndustrialDigitalOutHS4(COMCUPluginBase, Ui_IndustrialDigitalOutHS4):
         except ValueError:
             return
 
-        async_call(self.ido4.get_monoflop, channel, lambda monoflop: self.update_async(channel, *monoflop), self.increase_error_count)
+        async_call(self.ido4.get_monoflop, channel, self.get_monoflop_async, self.increase_error_count,
+                   pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)

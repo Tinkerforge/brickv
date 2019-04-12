@@ -59,6 +59,7 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
         async_call(self.idi4.get_available_for_group, None, self.get_available_for_group_aysnc, self.increase_error_count)
 
         self.cbe_value = CallbackEmulator(self.idi4.get_value,
+                                          None,
                                           self.cb_value,
                                           self.increase_error_count)
 

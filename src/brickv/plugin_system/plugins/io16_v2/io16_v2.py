@@ -254,7 +254,7 @@ class IO16V2(COMCUPluginBase, Ui_IO16V2):
 
         yield
 
-        for i in range(0, 16):
+        for i in range(16):
             async_call(self.io.get_configuration,
                        i,
                        async_get_configuration,
@@ -284,7 +284,8 @@ class IO16V2(COMCUPluginBase, Ui_IO16V2):
                     self.lbl_st_ch_v[i].setText('Low')
 
                 if self.async_data_store['all_ch_status_update']['monoflop'][i]['running']:
-                    async_call(self.io.get_monoflop, i, lambda x, idx=i: async_get_monoflop(idx, x), self.increase_error_count)
+                    async_call(self.io.get_monoflop, i, async_get_monoflop, self.increase_error_count,
+                               pass_arguments_to_result_callback=True)
 
                     yield
 
@@ -312,11 +313,12 @@ class IO16V2(COMCUPluginBase, Ui_IO16V2):
 
         yield
 
-        for i in range(0, 16):
+        for i in range(16):
             async_call(self.io.get_configuration,
                        i,
-                       lambda config, idx=i: async_get_configuration(idx, config),
-                       self.increase_error_count)
+                       async_get_configuration,
+                       self.increase_error_count,
+                       pass_arguments_to_result_callback=True)
 
             yield
 

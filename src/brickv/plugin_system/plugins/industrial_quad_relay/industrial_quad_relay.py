@@ -31,7 +31,7 @@ from brickv.async_call import async_call
 from brickv.load_pixmap import load_masked_pixmap
 
 class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
-    qtcb_monoflop = pyqtSignal(int, int)
+    qtcb_monoflop_done = pyqtSignal(int, int)
 
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletIndustrialQuadRelay, *args)
@@ -68,9 +68,9 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         for i in range(len(self.relay_buttons)):
             self.relay_buttons[i].clicked.connect(get_button_lambda(i))
 
-        self.qtcb_monoflop.connect(self.cb_monoflop)
+        self.qtcb_monoflop_done.connect(self.cb_monoflop_done)
         self.iqr.register_callback(self.iqr.CALLBACK_MONOFLOP_DONE,
-                                   self.qtcb_monoflop.emit)
+                                   self.qtcb_monoflop_done.emit)
 
         self.set_group.clicked.connect(self.set_group_clicked)
 
@@ -127,9 +127,8 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
 
             index = self.monoflop_pin.findText('Pin {0}'.format(pin))
             if index >= 0:
-                def get_monoflop_lambda(pin):
-                    return lambda monoflop: self.reconfigure_everything_async3(pin, *monoflop)
-                async_call(self.iqr.get_monoflop, pin, get_monoflop_lambda(pin), self.increase_error_count)
+                async_call(self.iqr.get_monoflop, pin, self.reconfigure_everything_async3, self.increase_error_count,
+                           pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
 
     def reconfigure_everything_async1(self, group):
         for i in range(4):
@@ -244,7 +243,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         self.monoflop_time.setValue(self.monoflop_time_before[pin])
         self.monoflop_time.setEnabled(True)
 
-    def cb_monoflop(self, pin_mask, value_mask):
+    def cb_monoflop_done(self, pin_mask, value_mask):
         for pin in range(16):
             if (1 << pin) & pin_mask:
                 self.monoflop_pending[pin] = False
@@ -264,10 +263,6 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
             self.monoflop_time.setValue(self.monoflop_time_before[current_pin])
             self.monoflop_time.setEnabled(True)
 
-    def monoflop_pin_changed_async(self, monoflop):
-        _, _, time_remaining = monoflop
-        self.monoflop_time.setValue(time_remaining)
-
     def monoflop_pin_changed(self):
         try:
             pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
@@ -275,7 +270,8 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
             return
 
         if self.monoflop_pending[pin]:
-            async_call(self.iqr.get_monoflop, pin, self.monoflop_pin_changed_async, self.increase_error_count)
+            async_call(self.iqr.get_monoflop, pin, self.get_monoflop_async, self.increase_error_count,
+                       pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
             self.monoflop_time.setEnabled(False)
         else:
             self.monoflop_time.setValue(self.monoflop_time_before[pin])
@@ -304,7 +300,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
 
         self.update_timer.start()
 
-    def update_async(self, pin, _value, _time, time_remaining):
+    def get_monoflop_async(self, pin, _value, _time, time_remaining):
         if self.monoflop_pending[pin]:
             self.monoflop_time.setValue(time_remaining)
 
@@ -314,4 +310,5 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         except ValueError:
             return
 
-        async_call(self.iqr.get_monoflop, pin, lambda monoflop: self.update_async(pin, *monoflop), self.increase_error_count)
+        async_call(self.iqr.get_monoflop, pin, self.get_monoflop_async, self.increase_error_count,
+                   pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)

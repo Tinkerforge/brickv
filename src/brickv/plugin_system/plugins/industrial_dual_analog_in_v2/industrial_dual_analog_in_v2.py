@@ -21,8 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import functools
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QObject
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QGridLayout, \
@@ -37,9 +35,6 @@ from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_modeless_dialog_flags
 from brickv.plugin_system.plugins.industrial_dual_analog_in.ui_calibration import Ui_Calibration
 from brickv.utils import format_voltage
-
-CH_0 = 0
-CH_1 = 1
 
 def is_int32(value):
     return value >= -2147483648 and value <= 2147483647
@@ -60,6 +55,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.button_cal_gain.clicked.connect(self.gain_clicked)
 
         self.cbe_adc_values = CallbackEmulator(self.parent.analog_in.get_adc_values,
+                                               None,
                                                self.cb_adc_values,
                                                self.parent.increase_error_count)
 
@@ -136,13 +132,17 @@ class IndustrialDualAnalogInV2(COMCUPluginBase):
 
         self.analog_in = self.device
 
-        self.cbe_voltage0 = CallbackEmulator(functools.partial(self.analog_in.get_voltage, 0),
-                                             functools.partial(self.cb_voltage, 0),
-                                             self.increase_error_count)
+        self.cbe_voltage0 = CallbackEmulator(self.analog_in.get_voltage,
+                                             0,
+                                             self.cb_voltage,
+                                             self.increase_error_count,
+                                             pass_arguments_to_result_callback=True)
 
-        self.cbe_voltage1 = CallbackEmulator(functools.partial(self.analog_in.get_voltage, 1),
-                                             functools.partial(self.cb_voltage, 1),
-                                             self.increase_error_count)
+        self.cbe_voltage1 = CallbackEmulator(self.analog_in.get_voltage,
+                                             1,
+                                             self.cb_voltage,
+                                             self.increase_error_count,
+                                             pass_arguments_to_result_callback=True)
 
         self.calibration = None
 
@@ -320,22 +320,12 @@ class IndustrialDualAnalogInV2(COMCUPluginBase):
 
     def start(self):
         async_call(self.analog_in.get_sample_rate, None, self.get_sample_rate_async, self.increase_error_count)
-        async_call(self.analog_in.get_channel_led_config,
-                   CH_0,
-                   lambda config: self.get_channel_led_config_async(CH_0, config),
-                   self.increase_error_count)
-        async_call(self.analog_in.get_channel_led_status_config,
-                   CH_0,
-                   lambda config: self.get_channel_led_status_config_async(CH_0, config),
-                   self.increase_error_count)
-        async_call(self.analog_in.get_channel_led_config,
-                   CH_1,
-                   lambda config: self.get_channel_led_config_async(CH_1, config),
-                   self.increase_error_count)
-        async_call(self.analog_in.get_channel_led_status_config,
-                   CH_1,
-                   lambda config: self.get_channel_led_status_config_async(CH_1, config),
-                   self.increase_error_count)
+
+        for channel in range(2):
+            async_call(self.analog_in.get_channel_led_config, channel, self.get_channel_led_config_async, self.increase_error_count,
+                       pass_arguments_to_result_callback=True)
+            async_call(self.analog_in.get_channel_led_status_config, channel, self.get_channel_led_status_config_async, self.increase_error_count,
+                       pass_arguments_to_result_callback=True)
 
         self.cbe_voltage0.set_period(100)
         self.cbe_voltage1.set_period(100)
@@ -374,7 +364,7 @@ class IndustrialDualAnalogInV2(COMCUPluginBase):
             for e in self.ui_group_ch_status_ch0:
                 e.setEnabled(True)
 
-        self.analog_in.set_channel_led_config(CH_0, index)
+        self.analog_in.set_channel_led_config(0, index)
 
     def led_config_ch1_combo_changed(self, index):
         if index != self.analog_in.CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS:
@@ -384,16 +374,16 @@ class IndustrialDualAnalogInV2(COMCUPluginBase):
             for e in self.ui_group_ch_status_ch1:
                 e.setEnabled(True)
 
-        self.analog_in.set_channel_led_config(CH_1, index)
+        self.analog_in.set_channel_led_config(1, index)
 
     def led_status_config_ch0_combo_changed(self, index):
-        self.analog_in.set_channel_led_status_config(CH_0,
+        self.analog_in.set_channel_led_status_config(0,
                                                      self.led_status_config_ch0_min_sbox.value(),
                                                      self.led_status_config_ch0_max_sbox.value(),
                                                      index)
 
     def led_status_config_ch1_combo_changed(self, index):
-        self.analog_in.set_channel_led_status_config(CH_1,
+        self.analog_in.set_channel_led_status_config(1,
                                                      self.led_status_config_ch1_min_sbox.value(),
                                                      self.led_status_config_ch1_max_sbox.value(),
                                                      index)
@@ -401,7 +391,7 @@ class IndustrialDualAnalogInV2(COMCUPluginBase):
     def led_status_config_ch0_min_sbox_changed(self, value):
         QObject.sender(self).blockSignals(True)
 
-        self.analog_in.set_channel_led_status_config(CH_0,
+        self.analog_in.set_channel_led_status_config(0,
                                                      self.led_status_config_ch0_min_sbox.value(),
                                                      self.led_status_config_ch0_max_sbox.value(),
                                                      self.led_status_config_ch0_combo.currentIndex())
@@ -411,7 +401,7 @@ class IndustrialDualAnalogInV2(COMCUPluginBase):
     def led_status_config_ch0_max_sbox_changed(self, value):
         QObject.sender(self).blockSignals(True)
 
-        self.analog_in.set_channel_led_status_config(CH_0,
+        self.analog_in.set_channel_led_status_config(0,
                                                      self.led_status_config_ch0_min_sbox.value(),
                                                      self.led_status_config_ch0_max_sbox.value(),
                                                      self.led_status_config_ch0_combo.currentIndex())
@@ -422,7 +412,7 @@ class IndustrialDualAnalogInV2(COMCUPluginBase):
         QObject.sender(self).blockSignals(True)
 
 
-        self.analog_in.set_channel_led_status_config(CH_1,
+        self.analog_in.set_channel_led_status_config(1,
                                                      self.led_status_config_ch1_min_sbox.value(),
                                                      self.led_status_config_ch1_max_sbox.value(),
                                                      self.led_status_config_ch1_combo.currentIndex())
@@ -432,7 +422,7 @@ class IndustrialDualAnalogInV2(COMCUPluginBase):
     def led_status_config_ch1_max_sbox_changed(self, value):
         QObject.sender(self).blockSignals(True)
 
-        self.analog_in.set_channel_led_status_config(CH_1,
+        self.analog_in.set_channel_led_status_config(1,
                                                      self.led_status_config_ch1_min_sbox.value(),
                                                      self.led_status_config_ch1_max_sbox.value(),
                                                      self.led_status_config_ch1_combo.currentIndex())
@@ -456,9 +446,9 @@ class IndustrialDualAnalogInV2(COMCUPluginBase):
         self.led_config_ch0_combo.blockSignals(True)
         self.led_config_ch1_combo.blockSignals(True)
 
-        if channel == CH_0:
+        if channel == 0:
             self.led_config_ch0_combo.setCurrentIndex(config)
-        elif channel == CH_1:
+        elif channel == 1:
             self.led_config_ch1_combo.setCurrentIndex(config)
 
         self.led_config_ch0_combo.blockSignals(False)
@@ -468,11 +458,11 @@ class IndustrialDualAnalogInV2(COMCUPluginBase):
         self.led_status_config_ch0_combo.blockSignals(True)
         self.led_status_config_ch1_combo.blockSignals(True)
 
-        if channel == CH_0:
+        if channel == 0:
             self.led_status_config_ch0_combo.setCurrentIndex(config.config)
             self.led_status_config_ch0_max_sbox.setValue(config.max)
             self.led_status_config_ch0_min_sbox.setValue(config.min)
-        elif channel == CH_1:
+        elif channel == 1:
             self.led_status_config_ch1_combo.setCurrentIndex(config.config)
             self.led_status_config_ch1_max_sbox.setValue(config.max)
             self.led_status_config_ch1_min_sbox.setValue(config.min)

@@ -35,12 +35,16 @@ class DualButtonV2(COMCUPluginBase, Ui_DualButtonV2):
         self.button = self.device
 
         self.cbe_button_state = CallbackEmulator(self.button.get_button_state,
+                                                 None,
                                                  self.cb_button_state,
-                                                 self.increase_error_count)
+                                                 self.increase_error_count,
+                                                 expand_result_tuple_for_callback=True)
 
         self.cbe_led_state = CallbackEmulator(self.button.get_led_state,
+                                              None,
                                               self.cb_led_state,
-                                              self.increase_error_count)
+                                              self.increase_error_count,
+                                              expand_result_tuple_for_callback=True)
 
         self.led_r = BrickletDualButtonV2.LED_STATE_OFF
         self.led_l = BrickletDualButtonV2.LED_STATE_OFF
@@ -56,8 +60,9 @@ class DualButtonV2(COMCUPluginBase, Ui_DualButtonV2):
 
         self.count = 0
 
-    def cb_button_state(self, state):
-        self.button_l, self.button_r = state
+    def cb_button_state(self, button_l, button_r):
+        self.button_l = button_l
+        self.button_r = button_r
         led_text_button_l = ''
         led_text_button_r = ''
 
@@ -140,9 +145,11 @@ class DualButtonV2(COMCUPluginBase, Ui_DualButtonV2):
             self.button_led_on_button_l.setEnabled(True)
             self.button_led_off_button_l.setEnabled(True)
 
-    def cb_led_state(self, led):
-        self.led_l, self.led_r = led
-        self.cb_button_state((self.button_l, self.button_r))
+    def cb_led_state(self, led_l, led_r):
+        self.led_l = led_l
+        self.led_r = led_r
+
+        self.cb_button_state(self.button_l, self.button_r)
 
     def start(self):
         self.cbe_button_state.set_period(200)

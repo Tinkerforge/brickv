@@ -32,7 +32,7 @@ from brickv.async_call import async_call
 from brickv.load_pixmap import load_masked_pixmap
 
 class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
-    qtcb_monoflop = pyqtSignal(bool)
+    qtcb_monoflop_done = pyqtSignal(bool)
 
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletSolidStateRelay, *args)
@@ -41,9 +41,9 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
 
         self.ssr = self.device
 
-        self.qtcb_monoflop.connect(self.cb_monoflop)
+        self.qtcb_monoflop_done.connect(self.cb_monoflop_done)
         self.ssr.register_callback(self.ssr.CALLBACK_MONOFLOP_DONE,
-                                   self.qtcb_monoflop.emit)
+                                   self.qtcb_monoflop_done.emit)
 
         self.ssr_button.clicked.connect(self.ssr_clicked)
         self.go_button.clicked.connect(self.go_clicked)
@@ -71,8 +71,7 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
             self.ssr_button.setText('Switch On')
             self.ssr_image.setPixmap(self.b_pixmap)
 
-    def get_monoflop_async(self, monoflop):
-        state, time, time_remaining = monoflop
+    def get_monoflop_async_foobar(self, state, time, time_remaining):
         if time > 0:
             self.timebefore = time
             self.time_spinbox.setValue(self.timebefore)
@@ -85,7 +84,9 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
 
     def start(self):
         async_call(self.ssr.get_state, None, self.get_state_async, self.increase_error_count)
-        async_call(self.ssr.get_monoflop, None, self.get_monoflop_async, self.increase_error_count)
+        async_call(self.ssr.get_monoflop, None, self.get_monoflop_async_foobar, self.increase_error_count,
+                   expand_result_tuple_for_callback=True)
+
         self.update_timer.start()
 
     def stop(self):
@@ -145,7 +146,7 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
         except ip_connection.Error:
             return
 
-    def cb_monoflop(self, state):
+    def cb_monoflop_done(self, state):
         self.monoflop = False
         self.time_spinbox.setValue(self.timebefore)
         self.time_spinbox.setEnabled(True)
@@ -157,13 +158,11 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
             self.ssr_button.setText('Switch On')
             self.ssr_image.setPixmap(self.b_pixmap)
 
-    def update_time_remaining(self, time_remaining):
+    def get_monoflop_async(self, _state, _time, time_remaining):
         if self.monoflop:
             self.time_spinbox.setValue(time_remaining)
 
     def update(self):
         if self.monoflop:
-            try:
-                async_call(self.ssr.get_monoflop, None, lambda a: self.update_time_remaining(a[2]), self.increase_error_count)
-            except ip_connection.Error:
-                pass
+            async_call(self.ssr.get_monoflop, None, self.get_monoflop_async, self.increase_error_count,
+                       expand_result_tuple_for_callback=True)

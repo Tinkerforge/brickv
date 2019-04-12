@@ -47,17 +47,19 @@ class ExtensionType(QDialog, Ui_ExtensionType):
     def popup_fail(self):
         QMessageBox.critical(get_main_window(), "Extension Type", "Could not save extension type", QMessageBox.Ok)
 
-    def index_changed_async(self, ext):
-        if ext < 0 or ext > (self.type_box.count() - 1):
-            ext = 0
-        self.type_box.setCurrentIndex(ext)
+    def get_extension_type_async(self, extension_type):
+        if extension_type < 0 or extension_type > (self.type_box.count() - 1):
+            extension_type = 0
+
+        self.type_box.setCurrentIndex(extension_type)
 
     def index_changed(self, index):
-        async_call(self.master.get_extension_type, index, self.index_changed_async, self.parent.increase_error_count)
+        async_call(self.master.get_extension_type, index, self.get_extension_type_async, self.parent.increase_error_count)
 
     def save_clicked(self):
         extension = self.combo_extension.currentIndex()
         typ = self.type_box.currentIndex()
+
         try:
             self.master.set_extension_type(extension, typ)
         except:

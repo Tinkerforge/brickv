@@ -49,9 +49,9 @@ class Calibration(QDialog, Ui_Calibration):
         self.setupUi(self)
 
         # Synced voltage, current and power. Updated with callbacks.
-        self.v = 0
-        self.c = 0
-        self.p = 0
+        self.voltage = 0
+        self.current = 0
+        self.power = 0
 
         # Synced calibration parameters. Updated with get_calibration() calls.
         self.cal_v_mul = 1
@@ -63,24 +63,27 @@ class Calibration(QDialog, Ui_Calibration):
         self.btn_cal_c.clicked.connect(self.cal_c_clicked)
         self.btn_cal_rst.clicked.connect(self.cal_rst_clicked)
 
-        self.cbe_v = CallbackEmulator(self.parent.vc.get_voltage,
-                                      self.cb_voltage,
-                                      self.parent.increase_error_count)
+        self.cbe_voltage = CallbackEmulator(self.parent.vc.get_voltage,
+                                            None,
+                                            self.cb_voltage,
+                                            self.parent.increase_error_count)
 
-        self.cbe_c = CallbackEmulator(self.parent.vc.get_current,
-                                      self.cb_current,
-                                      self.parent.increase_error_count)
+        self.cbe_current = CallbackEmulator(self.parent.vc.get_current,
+                                            None,
+                                            self.cb_current,
+                                            self.parent.increase_error_count)
 
-        self.cbe_p = CallbackEmulator(self.parent.vc.get_power,
-                                      self.cb_power,
-                                      self.parent.increase_error_count)
+        self.cbe_power = CallbackEmulator(self.parent.vc.get_power,
+                                          None,
+                                          self.cb_power,
+                                          self.parent.increase_error_count)
 
     def show(self):
         QDialog.show(self)
 
-        self.cbe_v.set_period(100)
-        self.cbe_c.set_period(100)
-        self.cbe_p.set_period(100)
+        self.cbe_voltage.set_period(100)
+        self.cbe_current.set_period(100)
+        self.cbe_power.set_period(100)
 
         async_call(self.parent.vc.get_calibration,
                    None,
@@ -96,7 +99,7 @@ class Calibration(QDialog, Ui_Calibration):
                    self.parent.increase_error_count)
 
     def cal_v_clicked(self):
-        self.parent.vc.set_calibration(self.sbox_cal_v_mul.value(), self.v, 1, 1)
+        self.parent.vc.set_calibration(self.sbox_cal_v_mul.value(), self.voltage, 1, 1)
 
         async_call(self.parent.vc.get_calibration,
                    None,
@@ -107,7 +110,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.parent.vc.set_calibration(self.cal_v_mul,
                                        self.cal_v_div,
                                        self.sbox_cal_c_mul.value(),
-                                       self.c)
+                                       self.current)
 
         async_call(self.parent.vc.get_calibration,
                    None,
@@ -123,35 +126,35 @@ class Calibration(QDialog, Ui_Calibration):
         self.sbox_cal_v_mul.setValue(self.cal_v_mul)
         self.sbox_cal_c_mul.setValue(self.cal_c_mul)
 
-    def cb_voltage(self, value):
-        self.v = value
+    def cb_voltage(self, voltage):
+        self.voltage = voltage
 
-        if (self.v / 1000.0) < 1.0:
-            self.lbl_v.setText(str(self.v) + ' mV')
+        if (self.voltage / 1000.0) < 1.0:
+            self.lbl_voltage.setText(str(self.voltage) + ' mV')
         else:
-            self.lbl_v.setText(str(self.v / 1000.0) + ' V')
+            self.lbl_voltage.setText(str(self.voltage / 1000.0) + ' V')
 
-    def cb_current(self, value):
-        self.c = value
+    def cb_current(self, current):
+        self.current = current
 
-        if (self.c / 1000.0) < 1.0:
-            self.lbl_c.setText(str(self.c) + ' mA')
+        if (self.current / 1000.0) < 1.0:
+            self.lbl_current.setText(str(self.current) + ' mA')
         else:
-            self.lbl_c.setText(str(self.c / 1000.0) + ' A')
+            self.lbl_current.setText(str(self.current / 1000.0) + ' A')
 
-    def cb_power(self, value):
-        self.p = value
+    def cb_power(self, power):
+        self.power = power
 
-        if (self.p / 1000.0) < 1.0:
-            self.lbl_p.setText(str(self.p) + ' mW')
+        if (self.power / 1000.0) < 1.0:
+            self.lbl_power.setText(str(self.power) + ' mW')
         else:
-            self.lbl_p.setText(str(self.p / 1000.0) + ' W')
+            self.lbl_power.setText(str(self.power / 1000.0) + ' W')
 
     def closeEvent(self, event):
+        self.cbe_voltage.set_period(0)
+        self.cbe_current.set_period(0)
+        self.cbe_power.set_period(0)
         self.parent.button_calibration.setEnabled(True)
-        self.cbe_v.set_period(0)
-        self.cbe_c.set_period(0)
-        self.cbe_p.set_period(0)
 
 class VoltageCurrentV2(COMCUPluginBase, Ui_VoltageCurrentV2):
     def __init__(self, *args):
@@ -161,13 +164,16 @@ class VoltageCurrentV2(COMCUPluginBase, Ui_VoltageCurrentV2):
 
         self.vc = self.device
 
-        self.cbe_current = CallbackEmulator(self.vc.get_current,
-                                            self.cb_current,
-                                            self.increase_error_count)
         self.cbe_voltage = CallbackEmulator(self.vc.get_voltage,
+                                            None,
                                             self.cb_voltage,
                                             self.increase_error_count)
+        self.cbe_current = CallbackEmulator(self.vc.get_current,
+                                            None,
+                                            self.cb_current,
+                                            self.increase_error_count)
         self.cbe_power = CallbackEmulator(self.vc.get_power,
+                                          None,
                                           self.cb_power,
                                           self.increase_error_count)
 
@@ -221,7 +227,8 @@ class VoltageCurrentV2(COMCUPluginBase, Ui_VoltageCurrentV2):
         self.plot_widget_power.stop = True
 
     def destroy(self):
-        pass
+        if self.calibration != None:
+            self.calibration.close()
 
     @staticmethod
     def has_device_identifier(device_identifier):

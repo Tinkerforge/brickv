@@ -31,7 +31,7 @@ from brickv.async_call import async_call
 from brickv.load_pixmap import load_masked_pixmap
 
 class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
-    qtcb_monoflop = pyqtSignal(int, bool)
+    qtcb_monoflop_done = pyqtSignal(int, bool)
 
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletIndustrialDualRelay, *args)
@@ -40,9 +40,9 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
 
         self.idr = self.device
 
-        self.qtcb_monoflop.connect(self.cb_monoflop)
+        self.qtcb_monoflop_done.connect(self.cb_monoflop_done)
         self.idr.register_callback(self.idr.CALLBACK_MONOFLOP_DONE,
-                                   self.qtcb_monoflop.emit)
+                                   self.qtcb_monoflop_done.emit)
 
         self.ch0_button.clicked.connect(self.ch0_clicked)
         self.ch1_button.clicked.connect(self.ch1_clicked)
@@ -92,9 +92,7 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
             self.ch1_button.setText('Switch On')
             self.ch1_image.setPixmap(self.b1_pixmap)
 
-    def get_monoflop_async(self, monoflop, channel):
-        value, time, time_remaining = monoflop
-
+    def get_monoflop_async_foobar(self, channel, value, time, time_remaining):
         if channel == 0:
             if time > 0:
                 self.ch0_timebefore = time
@@ -108,8 +106,6 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
                 self.time0_spinbox.setEnabled(False)
                 self.value0_combobox.setEnabled(False)
         elif channel == 1:
-            value, time, time_remaining = self.idr.get_monoflop(1) # FIXME: why if this getter necessary?
-
             if time > 0:
                 self.ch1_timebefore = time
                 self.time1_spinbox.setValue(self.ch1_timebefore)
@@ -124,8 +120,11 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
 
     def start(self):
         async_call(self.idr.get_value, None, self.get_value_async, self.increase_error_count)
-        async_call(self.idr.get_monoflop, 0, lambda x: self.get_monoflop_async(x, 0), self.increase_error_count)
-        async_call(self.idr.get_monoflop, 1, lambda x: self.get_monoflop_async(x, 1), self.increase_error_count)
+
+        for channel in [0, 1]:
+            async_call(self.idr.get_monoflop, channel, self.get_monoflop_async_foobar, self.increase_error_count,
+                       pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
+
         self.update_timer.start()
 
     def stop(self):
@@ -138,7 +137,7 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialDualRelay.DEVICE_IDENTIFIER
 
-    def get_value_ch0_clicked(self, value):
+    def get_value_ch0_async(self, value):
         ch0, ch1 = value
 
         try:
@@ -164,9 +163,9 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
             self.ch0_button.setText('Switch On')
             self.ch0_image.setPixmap(self.b0_pixmap)
 
-        async_call(self.idr.get_value, None, self.get_value_ch0_clicked, self.increase_error_count)
+        async_call(self.idr.get_value, None, self.get_value_ch0_async, self.increase_error_count)
 
-    def get_value_ch1_clicked(self, value):
+    def get_value_ch1_async(self, value):
         ch0, ch1 = value
 
         try:
@@ -192,7 +191,7 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
             self.ch1_button.setText('Switch On')
             self.ch1_image.setPixmap(self.b1_pixmap)
 
-        async_call(self.idr.get_value, None, self.get_value_ch1_clicked, self.increase_error_count)
+        async_call(self.idr.get_value, None, self.get_value_ch1_async, self.increase_error_count)
 
     def go0_clicked(self):
         time = self.time0_spinbox.value()
@@ -244,7 +243,7 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
         except ip_connection.Error:
             return
 
-    def cb_monoflop(self, channel, value):
+    def cb_monoflop_done(self, channel, value):
         if channel == 0:
             self.ch0_monoflop = False
             self.time0_spinbox.setValue(self.ch0_timebefore)
@@ -270,7 +269,7 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
                 self.ch1_button.setText('Switch On')
                 self.ch1_image.setPixmap(self.b1_pixmap)
 
-    def update_time_remaining(self, channel, time_remaining):
+    def get_monoflop_async(self, channel, _state, _time, time_remaining):
         if channel == 0:
             if self.ch0_monoflop:
                 self.time0_spinbox.setValue(time_remaining)
@@ -280,13 +279,9 @@ class IndustrialDualRelay(COMCUPluginBase, Ui_IndustrialDualRelay):
 
     def update(self):
         if self.ch0_monoflop:
-            try:
-                async_call(self.idr.get_monoflop, 0, lambda a: self.update_time_remaining(0, a[2]), self.increase_error_count)
-            except ip_connection.Error:
-                pass
+            async_call(self.idr.get_monoflop, 0, self.get_monoflop_async, self.increase_error_count,
+                       pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
 
         if self.ch1_monoflop:
-            try:
-                async_call(self.idr.get_monoflop, 1, lambda a: self.update_time_remaining(1, a[2]), self.increase_error_count)
-            except ip_connection.Error:
-                pass
+            async_call(self.idr.get_monoflop, 1, self.get_monoflop_async, self.increase_error_count,
+                       pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)

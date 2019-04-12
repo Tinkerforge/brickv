@@ -117,9 +117,11 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
         self.write_line_response_expected = None
 
         self.cbe_touch_position = CallbackEmulator(self.lcd.get_touch_position,
+                                                   None,
                                                    self.scribble_widget.touch_position,
                                                    self.increase_error_count)
         self.cbe_touch_gesture = CallbackEmulator(self.lcd.get_touch_gesture,
+                                                  None,
                                                   self.scribble_widget.touch_gesture,
                                                   self.increase_error_count)
 
@@ -173,12 +175,12 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
 
         self.lcd.write_pixels(0, 0, 127, 63, data)
 
-    def cb_display_configuration(self, conf):
+    def get_display_configuration_async(self, conf):
         self.contrast_slider.setValue(conf.contrast)
         self.backlight_slider.setValue(conf.backlight)
         self.invert_checkbox.setChecked(conf.invert)
 
-    def cb_read_pixels(self, pixels):
+    def read_pixels_async(self, pixels):
         for i in range(64):
             for j in range(128):
                 if pixels[i * 128 + j]:
@@ -194,8 +196,8 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
         self.write_line_response_expected = self.lcd.get_response_expected(self.lcd.FUNCTION_WRITE_LINE)
         self.lcd.set_response_expected(self.lcd.FUNCTION_WRITE_LINE, True)
 
-        async_call(self.lcd.get_display_configuration, None, self.cb_display_configuration, self.increase_error_count)
-        async_call(self.lcd.read_pixels, (0, 0, 127, 63), self.cb_read_pixels, self.increase_error_count)
+        async_call(self.lcd.get_display_configuration, None, self.get_display_configuration_async, self.increase_error_count)
+        async_call(self.lcd.read_pixels, (0, 0, 127, 63), self.read_pixels_async, self.increase_error_count)
 
         self.cbe_touch_position.set_period(25)
         self.cbe_touch_gesture.set_period(25)

@@ -96,20 +96,20 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
         self.counter_timer.stop()
         value = ([0xFF, 0xFF, 0xFF, 0xFF], self.brightness, True)
         self.sd4x7.set_segments(*value)
-        self.cb_get_segments(value)
+        self.get_segments_async(value)
 
     def all_segments_off_clicked(self):
         self.counter_timer.stop()
         value = ([0, 0, 0, 0], self.brightness, False)
         self.sd4x7.set_segments(*value)
-        self.cb_get_segments(value)
+        self.get_segments_async(value)
 
     def cb_counter_finished(self):
         self.counter_timer.stop()
-        async_call(self.sd4x7.get_segments, None, self.cb_get_segments, self.increase_error_count)
+        async_call(self.sd4x7.get_segments, None, self.get_segments_async, self.increase_error_count)
 
     def update_counter(self):
-        async_call(self.sd4x7.get_segments, None, self.cb_get_segments, self.increase_error_count)
+        async_call(self.sd4x7.get_segments, None, self.get_segments_async, self.increase_error_count)
 
     def start_clicked(self):
         fr = self.box_from.value()
@@ -173,7 +173,7 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
 
         self.sd4x7.set_segments(segments, self.brightness, self.digit_state[4][0])
 
-    def cb_get_segments(self, value):
+    def get_segments_async(self, value):
         segments, brightness, colon = value
 
         self.brightness = brightness
@@ -200,7 +200,7 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
                     self.digits[d][s].setStyleSheet(self.STYLE_OFF)
 
     def start(self):
-        async_call(self.sd4x7.get_segments, None, self.cb_get_segments, self.increase_error_count)
+        async_call(self.sd4x7.get_segments, None, self.get_segments_async, self.increase_error_count)
 
     def stop(self):
         self.counter_timer.stop()

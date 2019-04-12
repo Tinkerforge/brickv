@@ -65,10 +65,13 @@ class JoystickV2(COMCUPluginBase):
         self.js = self.device
 
         self.cbe_position = CallbackEmulator(self.js.get_position,
+                                             None,
                                              self.cb_position,
-                                             self.increase_error_count)
+                                             self.increase_error_count,
+                                             expand_result_tuple_for_callback=True)
 
         self.cbe_pressed = CallbackEmulator(self.js.is_pressed,
+                                            None,
                                             self.cb_pressed,
                                             self.increase_error_count)
 
@@ -122,8 +125,7 @@ class JoystickV2(COMCUPluginBase):
         except ip_connection.Error:
             return
 
-    def cb_position(self, data):
-        x, y = data
+    def cb_position(self, x, y):
         self.current_x.value = x
         self.current_y.value = y
         self.joystick_frame.set_position(x, y)

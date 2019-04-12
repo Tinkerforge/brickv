@@ -22,8 +22,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import functools
-
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QFrame
 
@@ -56,12 +54,16 @@ class IndustrialDual020mA(PluginBase):
         self.str_connected = 'Sensor {0} is <font color="green">connected</font>'
         self.str_not_connected = 'Sensor {0} is <font color="red">not connected</font>'
 
-        self.cbe_current0 = CallbackEmulator(functools.partial(self.dual020.get_current, 0),
-                                             functools.partial(self.cb_current, 0),
-                                             self.increase_error_count)
-        self.cbe_current1 = CallbackEmulator(functools.partial(self.dual020.get_current, 1),
-                                             functools.partial(self.cb_current, 1),
-                                             self.increase_error_count)
+        self.cbe_current0 = CallbackEmulator(self.dual020.get_current,
+                                             0,
+                                             self.cb_current,
+                                             self.increase_error_count,
+                                             pass_arguments_to_result_callback=True)
+        self.cbe_current1 = CallbackEmulator(self.dual020.get_current,
+                                             1,
+                                             self.cb_current,
+                                             self.increase_error_count,
+                                             pass_arguments_to_result_callback=True)
 
         self.connected_labels = [FixedSizeLabel(self.str_not_connected.format(0)),
                                  FixedSizeLabel(self.str_not_connected.format(1))]

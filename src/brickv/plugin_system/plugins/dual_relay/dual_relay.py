@@ -74,7 +74,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.go1_button.setEnabled(False)
             self.go2_button.setEnabled(False)
 
-    def get_state_async(self, state):
+    def get_state_async(self, dr1, dr2):
         width = self.dr1_button.width()
         if self.dr1_button.minimumWidth() < width:
             self.dr1_button.setMinimumWidth(width)
@@ -83,7 +83,6 @@ class DualRelay(PluginBase, Ui_DualRelay):
         if self.dr2_button.minimumWidth() < width:
             self.dr2_button.setMinimumWidth(width)
 
-        dr1, dr2 = state
         if dr1:
             self.dr1_button.setText('Switch Off')
             self.dr1_image.setPixmap(self.a1_pixmap)
@@ -97,9 +96,8 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.dr2_button.setText('Switch On')
             self.dr2_image.setPixmap(self.b2_pixmap)
 
-    def get_monoflop_async(self, monoflop, index):
-        state, time, time_remaining = monoflop
-        if index == 1:
+    def get_monoflop_async_foobar(self, relay, state, time, time_remaining):
+        if relay == 1:
             if time > 0:
                 self.r1_timebefore = time
                 self.time1_spinbox.setValue(self.r1_timebefore)
@@ -109,8 +107,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
                 self.r1_monoflop = True
                 self.time1_spinbox.setEnabled(False)
                 self.state1_combobox.setEnabled(False)
-        elif index == 2:
-            state, time, time_remaining = self.dr.get_monoflop(2)
+        elif relay == 2:
             if time > 0:
                 self.r2_timebefore = time
                 self.time2_spinbox.setValue(self.r2_timebefore)
@@ -122,10 +119,14 @@ class DualRelay(PluginBase, Ui_DualRelay):
                 self.state2_combobox.setEnabled(False)
 
     def start(self):
-        async_call(self.dr.get_state, None, self.get_state_async, self.increase_error_count)
+        async_call(self.dr.get_state, None, self.get_state_async, self.increase_error_count,
+                   expand_result_tuple_for_callback=True)
+
         if self.has_monoflop:
-            async_call(self.dr.get_monoflop, 1, lambda x: self.get_monoflop_async(x, 1), self.increase_error_count)
-            async_call(self.dr.get_monoflop, 2, lambda x: self.get_monoflop_async(x, 2), self.increase_error_count)
+            for relay in [1, 2]:
+                async_call(self.dr.get_monoflop, relay, self.get_monoflop_async_foobar, self.increase_error_count,
+                           pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
+
             self.update_timer.start()
 
     def stop(self):
@@ -138,9 +139,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletDualRelay.DEVICE_IDENTIFIER
 
-    def get_state_dr1_clicked(self, state):
-        dr1, dr2 = state
-
+    def get_state_dr1_async(self, dr1, dr2):
         try:
             self.dr.set_state(not dr1, dr2)
         except ip_connection.Error:
@@ -163,11 +162,10 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.dr1_button.setText('Switch On')
             self.dr1_image.setPixmap(self.b1_pixmap)
 
-        async_call(self.dr.get_state, None, self.get_state_dr1_clicked, self.increase_error_count)
+        async_call(self.dr.get_state, None, self.get_state_dr1_async, self.increase_error_count,
+                   expand_result_tuple_for_callback=True)
 
-    def get_state_dr2_clicked(self, state):
-        dr1, dr2 = state
-
+    def get_state_dr2_async(self, dr1, dr2):
         try:
             self.dr.set_state(dr1, not dr2)
         except ip_connection.Error:
@@ -190,7 +188,8 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.dr2_button.setText('Switch On')
             self.dr2_image.setPixmap(self.b2_pixmap)
 
-        async_call(self.dr.get_state, None, self.get_state_dr2_clicked, self.increase_error_count)
+        async_call(self.dr.get_state, None, self.get_state_dr2_async, self.increase_error_count,
+                   expand_result_tuple_for_callback=True)
 
     def go1_clicked(self):
         time = self.time1_spinbox.value()
@@ -264,7 +263,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
                 self.dr2_button.setText('Switch On')
                 self.dr2_image.setPixmap(self.b2_pixmap)
 
-    def update_time_remaining(self, relay, time_remaining):
+    def get_monoflop_async(self, relay, _state, _time, time_remaining):
         if relay == 1:
             if self.r1_monoflop:
                 self.time1_spinbox.setValue(time_remaining)
@@ -275,11 +274,14 @@ class DualRelay(PluginBase, Ui_DualRelay):
     def update(self):
         if self.r1_monoflop:
             try:
-                async_call(self.dr.get_monoflop, 1, lambda a: self.update_time_remaining(1, a[2]), self.increase_error_count)
+                async_call(self.dr.get_monoflop, 1, self.get_monoflop_async, self.increase_error_count,
+                           pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
             except ip_connection.Error:
                 pass
+
         if self.r2_monoflop:
             try:
-                async_call(self.dr.get_monoflop, 2, lambda a: self.update_time_remaining(2, a[2]), self.increase_error_count)
+                async_call(self.dr.get_monoflop, 2, self.get_monoflop_async, self.increase_error_count,
+                           pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
             except ip_connection.Error:
                 pass

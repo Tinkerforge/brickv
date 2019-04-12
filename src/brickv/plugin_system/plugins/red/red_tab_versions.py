@@ -46,7 +46,6 @@ class REDTabVersions(REDTab, Ui_REDTabVersions):
         self.package_list = [[] for i in range(NUM_TABS)]
 
         self.language_packages = None
-        self.language_packages_file = None
 
         languages = 'C/C++', 'C#/Mono', 'Delphi/Lazarus', 'Java', 'JavaScript', 'Octave', 'Perl', 'PHP', 'Python', 'Ruby', 'Shell', 'VB.NET'
 
@@ -161,26 +160,25 @@ class REDTabVersions(REDTab, Ui_REDTabVersions):
         else:
             self.update_language_table(language)
 
-    def update_language_packages_read(self, language, result):
-        self.language_packages_file.release()
-
-        if result.error == None:
-            self.language_packages = json.loads(result.data.decode('utf-8'))
-            self.update_language_table(language)
-
-    def update_language_packages_open(self, language, result):
-        self.language_packages_file.read_async(64000, lambda x: self.update_language_packages_read(language, x))
-
-    def update_language_packages_error(self):
-        # TODO: Error popup for user?
-        pass
-
     def update_language_packages(self, language):
-        self.language_packages_file = REDFile(self.session)
-        async_call(self.language_packages_file.open,
+        def cb_open(red_file):
+            def cb_read(result):
+                red_file.release()
+
+                if result.error == None:
+                    self.language_packages = json.loads(result.data.decode('utf-8'))
+
+                    self.update_language_table(language)
+
+            red_file.read_async(64000, cb_read)
+
+        def cb_open_error(error):
+            # TODO: Error popup for user?
+            pass
+
+        async_call(REDFile(self.session).open,
                    ("/etc/tf_installed_versions", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                   lambda x: self.update_language_packages_open(language, x),
-                   self.update_language_packages_error)
+                   cb_open, cb_open_error, pass_exception_to_error_callback=True)
 
     def update_table(self):
         tab_data = self.tab_data[self.tabs.currentIndex()]

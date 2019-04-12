@@ -44,8 +44,10 @@ class HallEffect(PluginBase):
         self.hf = self.device
 
         self.cbe_edge_count = CallbackEmulator(self.get_edge_count,
+                                               False,
                                                self.cb_edge_count,
-                                               self.increase_error_count)
+                                               self.increase_error_count,
+                                               expand_result_tuple_for_callback=True)
 
         self.current_value = CurveValueWrapper()
 
@@ -95,30 +97,34 @@ class HallEffect(PluginBase):
     def edge_changed(self, _value):
         self.hf.set_edge_count_config(self.combo_edge_type.currentIndex(), self.spin_debounce.value())
 
-    def get_edge_count(self):
-        return self.hf.get_edge_count(False), self.hf.get_value()
+    def get_edge_count(self, reset):
+        edge_count = self.hf.get_edge_count(reset)
+        value = self.hf.get_value()
 
-    def cb_edge_count(self, data):
-        count, value = data
+        if reset:
+            edge_count = 0
 
+        return edge_count, value
+
+    def cb_edge_count(self, edge_count, value):
         if value:
             self.current_value.value = 1
         else:
             self.current_value.value = 0
 
-        self.label_count.setText(count)
+        self.label_count.setText(edge_count)
 
-    def get_edge_count_config_async(self, data):
-        edge_type, debounce = data
-
+    def get_edge_count_config_async(self, edge_type, debounce):
         self.combo_edge_type.setCurrentIndex(edge_type)
         self.spin_debounce.setValue(debounce)
 
     def reset_count(self):
-        self.hf.get_edge_count(True)
+        async_call(self.get_edge_count, True, self.cb_edge_count, self.increase_error_count,
+                   expand_result_tuple_for_callback=True)
 
     def start(self):
-        async_call(self.hf.get_edge_count_config, None, self.get_edge_count_config_async, self.increase_error_count)
+        async_call(self.hf.get_edge_count_config, None, self.get_edge_count_config_async, self.increase_error_count,
+                   expand_result_tuple_for_callback=True)
 
         self.cbe_edge_count.set_period(50)
 

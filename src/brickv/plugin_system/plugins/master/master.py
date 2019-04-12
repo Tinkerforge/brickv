@@ -209,7 +209,7 @@ class Master(PluginBase, Ui_Master):
             async_call(self.master.is_wifi2_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_WIFI2, 'WIFI Extension 2.0'), self.increase_error_count)
             async_call(self.master.get_connection_type, None, get_connection_type_async, self.increase_error_count)
 
-        async_call(lambda: None, None, lambda: get_main_window().update_tree_view(), None)
+        async_call(lambda: None, None, get_main_window().update_tree_view, None)
 
     def get_wifi2_firmware_version_async(self, version):
         self.wifi2_firmware_version = version

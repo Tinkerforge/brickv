@@ -32,7 +32,7 @@ from queue import Queue
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QThread, QEvent, QTimer
 
-from brickv.bindings import ip_connection
+from brickv.bindings.ip_connection import Error
 
 ASYNC_EVENT = 12345
 
@@ -41,18 +41,25 @@ async_event_queue = Queue()
 async_session_lock = Lock()
 async_session_id = 1
 
-AsyncCall = namedtuple('AsyncCall', 'function parameter result_callback error_callback pass_exception_to_error_callback debug_exception session_id')
+AsyncCall = namedtuple('AsyncCall', 'function arguments result_callback error_callback pass_arguments_to_result_callback pass_exception_to_error_callback expand_arguments_tuple_for_callback expand_result_tuple_for_callback debug_exception session_id')
 
 def async_stop_thread():
     async_call_queue.put(None)
 
-def async_call(function, parameter=None, result_callback=None, error_callback=None,
-               pass_exception_to_error_callback=False, debug_exception=False, delay=None):
+def async_call(function, arguments, result_callback, error_callback,
+               pass_arguments_to_result_callback=False, pass_exception_to_error_callback=False,
+               expand_arguments_tuple_for_callback=False, expand_result_tuple_for_callback=False,
+               debug_exception=False, delay=None):
+    if pass_arguments_to_result_callback:
+        assert arguments != None
+
     with async_session_lock:
         session_id = async_session_id
 
-    ac = AsyncCall(function, parameter, result_callback, error_callback,
-                   pass_exception_to_error_callback, debug_exception, session_id)
+    ac = AsyncCall(function, arguments, result_callback, error_callback,
+                   pass_arguments_to_result_callback, pass_exception_to_error_callback,
+                   expand_arguments_tuple_for_callback, expand_result_tuple_for_callback,
+                   debug_exception, session_id)
 
     if delay != None:
         QTimer.singleShot(delay * 1000, functools.partial(async_call_queue.put, ac))
@@ -62,18 +69,46 @@ def async_call(function, parameter=None, result_callback=None, error_callback=No
 def async_event_handler():
     while not async_event_queue.empty():
         try:
-            function = async_event_queue.get(False)
+            event = async_event_queue.get(False)
 
-            if function != None:
-                function()
+            if event == None:
+                continue
+
+            ac, success, result = event
+
+            if not success:
+                if ac.pass_exception_to_error_callback:
+                    ac.error_callback(result)
+                else:
+                    ac.error_callback()
+            else:
+                arguments = tuple()
+
+                if ac.pass_arguments_to_result_callback:
+                    if ac.expand_arguments_tuple_for_callback:
+                        assert isinstance(ac.arguments, tuple)
+
+                        arguments += ac.arguments
+                    elif ac.arguments != None:
+                        arguments += (ac.arguments,)
+
+                if ac.expand_result_tuple_for_callback:
+                    assert isinstance(result, tuple)
+
+                    arguments += result
+                elif result != None:
+                    arguments += (result,)
+
+                ac.result_callback(*arguments)
         except StopIteration:
             pass
         except:
             sys.excepthook(*sys.exc_info())
 
 def async_next_session():
+    global async_session_id
+
     with async_session_lock:
-        global async_session_id
         async_session_id += 1
 
         with async_call_queue.mutex:
@@ -98,12 +133,12 @@ def async_start_thread(parent):
                 result = None
 
                 try:
-                    if ac.parameter == None:
+                    if ac.arguments == None:
                         result = ac.function()
-                    elif isinstance(ac.parameter, tuple):
-                        result = ac.function(*ac.parameter)
+                    elif isinstance(ac.arguments, tuple):
+                        result = ac.function(*ac.arguments)
                     else:
-                        result = ac.function(ac.parameter)
+                        result = ac.function(ac.arguments)
                 except Exception as e:
                     if ac.error_callback != None:
                         with async_session_lock:
@@ -113,12 +148,10 @@ def async_start_thread(parent):
                         if ac.debug_exception:
                             logging.exception('Error while doing async call')
 
-                        if ac.pass_exception_to_error_callback:
-                            async_event_queue.put(functools.partial(ac.error_callback, e))
-                        else:
-                            async_event_queue.put(ac.error_callback)
+                        if ac.error_callback != None:
+                            async_event_queue.put((ac, False, e))
 
-                        if isinstance(e, ip_connection.Error):
+                        if isinstance(e, Error):
                             # clear the async call queue if an IPConnection
                             # error occurred. in this case we assume that the
                             # next calls will also fail
@@ -134,10 +167,7 @@ def async_start_thread(parent):
                         if ac.session_id != async_session_id:
                             continue
 
-                    if result != None:
-                        async_event_queue.put(functools.partial(ac.result_callback, result))
-                    else:
-                        async_event_queue.put(ac.result_callback)
+                    async_event_queue.put((ac, True, result))
 
                     QApplication.postEvent(self, QEvent(ASYNC_EVENT))
 

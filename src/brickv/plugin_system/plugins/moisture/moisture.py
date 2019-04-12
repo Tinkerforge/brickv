@@ -36,28 +36,29 @@ class Moisture(PluginBase):
 
         self.moisture = self.device
 
-        self.cbe_moisture = CallbackEmulator(self.moisture.get_moisture_value,
-                                             self.cb_moisture,
-                                             self.increase_error_count)
+        self.cbe_moisture_value = CallbackEmulator(self.moisture.get_moisture_value,
+                                                   None,
+                                                   self.cb_moisture_value,
+                                                   self.increase_error_count)
 
-        self.current_moisture = CurveValueWrapper()
+        self.current_moisture_value = CurveValueWrapper()
 
-        plots = [('Moisture Value', Qt.red, self.current_moisture, str)]
+        plots = [('Moisture Value', Qt.red, self.current_moisture_value, str)]
         self.plot_widget = PlotWidget('Moisture Value', plots, y_resolution=1.0)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)
 
-    def cb_moisture(self, moisture):
-        self.current_moisture.value = moisture
+    def cb_moisture_value(self, moisture_value):
+        self.current_moisture_value.value = moisture_value
 
     def start(self):
-        self.cbe_moisture.set_period(100)
+        self.cbe_moisture_value.set_period(100)
 
         self.plot_widget.stop = False
 
     def stop(self):
-        self.cbe_moisture.set_period(0)
+        self.cbe_moisture_value.set_period(0)
 
         self.plot_widget.stop = True
 

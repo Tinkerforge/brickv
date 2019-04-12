@@ -69,8 +69,10 @@ class Joystick(PluginBase):
         self.js = self.device
 
         self.cbe_position = CallbackEmulator(self.js.get_position,
+                                             None,
                                              self.cb_position,
-                                             self.increase_error_count)
+                                             self.increase_error_count,
+                                             expand_result_tuple_for_callback=True)
 
         self.qtcb_pressed.connect(self.cb_pressed)
         self.js.register_callback(self.js.CALLBACK_PRESSED,
@@ -134,8 +136,7 @@ class Joystick(PluginBase):
     def cb_released(self):
         self.joystick_frame.set_pressed(False)
 
-    def cb_position(self, data):
-        x, y = data
+    def cb_position(self, x, y):
         self.current_x.value = x
         self.current_y.value = y
         self.joystick_frame.set_position(x, y)

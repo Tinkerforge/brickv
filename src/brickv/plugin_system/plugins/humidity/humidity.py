@@ -37,6 +37,7 @@ class Humidity(PluginBase):
         self.hum = self.device
 
         self.cbe_humidity = CallbackEmulator(self.hum.get_humidity,
+                                             None,
                                              self.cb_humidity,
                                              self.increase_error_count)
 

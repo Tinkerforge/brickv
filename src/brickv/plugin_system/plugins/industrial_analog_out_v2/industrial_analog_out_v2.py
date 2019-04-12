@@ -72,9 +72,9 @@ class IndustrialAnalogOutV2(COMCUPluginBase, Ui_IndustrialAnalogOutV2):
     def start(self):
         async_call(self.ao.get_voltage, None, self.new_voltage, self.increase_error_count)
         async_call(self.ao.get_current, None, self.new_current, self.increase_error_count)
-        async_call(self.ao.get_enabled, None, self.cb_get_enabled, self.increase_error_count)
-        async_call(self.ao.get_configuration, None, self.cb_get_configuration, self.increase_error_count)
-        async_call(self.ao.get_out_led_config, None, self.cb_get_out_led_config, self.increase_error_count)
+        async_call(self.ao.get_enabled, None, self.get_enabled_async, self.increase_error_count)
+        async_call(self.ao.get_configuration, None, self.get_configuration_async, self.increase_error_count)
+        async_call(self.ao.get_out_led_config, None, self.get_out_led_config_async, self.increase_error_count)
 
     def stop(self):
         pass
@@ -201,7 +201,7 @@ class IndustrialAnalogOutV2(COMCUPluginBase, Ui_IndustrialAnalogOutV2):
             self.mode_current()
             async_call(self.ao.get_current, None, self.new_current, self.increase_error_count)
 
-        async_call(self.ao.get_out_led_config, None, self.cb_get_out_led_config, self.increase_error_count)
+        async_call(self.ao.get_out_led_config, None, self.get_out_led_config_async, self.increase_error_count)
 
     def voltage_changed(self, value):
         try:
@@ -306,12 +306,12 @@ class IndustrialAnalogOutV2(COMCUPluginBase, Ui_IndustrialAnalogOutV2):
         async_call(self.ao.get_voltage, None, self.new_voltage, self.increase_error_count)
         async_call(self.ao.get_current, None, self.new_current, self.increase_error_count)
 
-    def cb_get_configuration(self, conf):
+    def get_configuration_async(self, conf):
         self.box_voltage_range.setCurrentIndex(conf.voltage_range)
         self.box_current_range.setCurrentIndex(conf.current_range)
         self.new_configuration()
 
-    def cb_get_enabled(self, enabled):
+    def get_enabled_async(self, enabled):
         self.checkbox_enable.setChecked(enabled)
 
         if enabled:
@@ -321,7 +321,7 @@ class IndustrialAnalogOutV2(COMCUPluginBase, Ui_IndustrialAnalogOutV2):
             for e in self.ui_grp_show_ch_status:
                 e.setEnabled(False)
 
-    def cb_get_out_led_config(self, config):
+    def get_out_led_config_async(self, config):
         if config == BrickletIndustrialAnalogOutV2.OUT_LED_CONFIG_OFF:
             for e in self.ui_grp_show_ch_status:
                 e.setEnabled(False)

@@ -21,8 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import functools
-
 from PyQt5.QtCore import Qt, QSize, QObject
 from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QGridLayout, \
                         QFrame, QSizePolicy, QDoubleSpinBox
@@ -32,9 +30,6 @@ from brickv.bindings.bricklet_industrial_dual_0_20ma_v2 import BrickletIndustria
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
-
-CH_0 = 0
-CH_1 = 1
 
 class FixedSizeLabel(QLabel):
     maximum_size_hint = None
@@ -59,25 +54,29 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         self.str_connected = 'Channel {0} is <font color="green">connected</font>'
         self.str_not_connected = 'Channel {0} is <font color="red">not connected</font>'
 
-        self.cbe_current0 = CallbackEmulator(functools.partial(self.dual020.get_current, CH_0),
-                                             functools.partial(self.cb_current, CH_0),
-                                             self.increase_error_count)
-        self.cbe_current1 = CallbackEmulator(functools.partial(self.dual020.get_current, CH_1),
-                                             functools.partial(self.cb_current, CH_1),
-                                             self.increase_error_count)
+        self.cbe_current0 = CallbackEmulator(self.dual020.get_current,
+                                             0,
+                                             self.cb_current,
+                                             self.increase_error_count,
+                                             pass_arguments_to_result_callback=True)
+        self.cbe_current1 = CallbackEmulator(self.dual020.get_current,
+                                             1,
+                                             self.cb_current,
+                                             self.increase_error_count,
+                                             pass_arguments_to_result_callback=True)
 
-        self.connected_labels = [FixedSizeLabel(self.str_not_connected.format(CH_0)),
-                                 FixedSizeLabel(self.str_not_connected.format(CH_1))]
+        self.connected_labels = [FixedSizeLabel(self.str_not_connected.format(0)),
+                                 FixedSizeLabel(self.str_not_connected.format(1))]
 
         self.current_current = [CurveValueWrapper(), CurveValueWrapper()] # float, mA
 
         plots = [('Channel 0',
                   Qt.red,
-                  self.current_current[CH_0],
+                  self.current_current[0],
                   lambda value: '{:.03f} mA'.format(round(value, 3))),
                  ('Channel 1',
                   Qt.blue,
-                  self.current_current[CH_1],
+                  self.current_current[1],
                   lambda value: '{:.03f} mA'.format(round(value, 3)))]
 
         self.plot_widget = PlotWidget('Current [mA]', plots,
@@ -253,24 +252,28 @@ class IndustrialDual020mAV2(COMCUPluginBase):
                    self.increase_error_count)
 
         async_call(self.dual020.get_channel_led_config,
-                   CH_0,
-                   lambda config: self.get_channel_led_config_async(CH_0, config),
-                   self.increase_error_count)
+                   0,
+                   self.get_channel_led_config_async,
+                   self.increase_error_count,
+                   pass_arguments_to_result_callback=True)
 
         async_call(self.dual020.get_channel_led_status_config,
-                   CH_0,
-                   lambda config: self.get_channel_led_status_config_async(CH_0, config),
-                   self.increase_error_count)
+                   0,
+                   self.get_channel_led_status_config_async,
+                   self.increase_error_count,
+                   pass_arguments_to_result_callback=True)
 
         async_call(self.dual020.get_channel_led_config,
-                   CH_1,
-                   lambda config: self.get_channel_led_config_async(CH_1, config),
-                   self.increase_error_count)
+                   1,
+                   self.get_channel_led_config_async,
+                   self.increase_error_count,
+                   pass_arguments_to_result_callback=True)
 
         async_call(self.dual020.get_channel_led_status_config,
-                   CH_1,
-                   lambda config: self.get_channel_led_status_config_async(CH_1, config),
-                   self.increase_error_count)
+                   1,
+                   self.get_channel_led_status_config_async,
+                   self.increase_error_count,
+                   pass_arguments_to_result_callback=True)
 
         self.cbe_current0.set_period(100)
         self.cbe_current1.set_period(100)
@@ -305,7 +308,7 @@ class IndustrialDual020mAV2(COMCUPluginBase):
     def led_status_config_ch0_min_sbox_changed(self, _value):
         QObject.sender(self).blockSignals(True)
 
-        self.dual020.set_channel_led_status_config(CH_0,
+        self.dual020.set_channel_led_status_config(0,
                                                    self.led_status_config_ch0_min_sbox.value() * 1000000,
                                                    self.led_status_config_ch0_max_sbox.value() * 1000000,
                                                    self.led_status_config_ch0_combo.currentIndex())
@@ -315,7 +318,7 @@ class IndustrialDual020mAV2(COMCUPluginBase):
     def led_status_config_ch0_max_sbox_changed(self, _value):
         QObject.sender(self).blockSignals(True)
 
-        self.dual020.set_channel_led_status_config(CH_0,
+        self.dual020.set_channel_led_status_config(0,
                                                    self.led_status_config_ch0_min_sbox.value() * 1000000,
                                                    self.led_status_config_ch0_max_sbox.value() * 1000000,
                                                    self.led_status_config_ch0_combo.currentIndex())
@@ -326,7 +329,7 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         QObject.sender(self).blockSignals(True)
 
 
-        self.dual020.set_channel_led_status_config(CH_1,
+        self.dual020.set_channel_led_status_config(1,
                                                    self.led_status_config_ch1_min_sbox.value() * 1000000,
                                                    self.led_status_config_ch1_max_sbox.value() * 1000000,
                                                    self.led_status_config_ch1_combo.currentIndex())
@@ -336,7 +339,7 @@ class IndustrialDual020mAV2(COMCUPluginBase):
     def led_status_config_ch1_max_sbox_changed(self, _value):
         QObject.sender(self).blockSignals(True)
 
-        self.dual020.set_channel_led_status_config(CH_1,
+        self.dual020.set_channel_led_status_config(1,
                                                    self.led_status_config_ch1_min_sbox.value() * 1000000,
                                                    self.led_status_config_ch1_max_sbox.value() * 1000000,
                                                    self.led_status_config_ch1_combo.currentIndex())
@@ -344,13 +347,13 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         QObject.sender(self).blockSignals(False)
 
     def led_status_config_ch0_combo_changed(self, index):
-        self.dual020.set_channel_led_status_config(CH_0,
+        self.dual020.set_channel_led_status_config(0,
                                                    self.led_status_config_ch0_min_sbox.value() * 1000000,
                                                    self.led_status_config_ch0_max_sbox.value() * 1000000,
                                                    index)
 
     def led_status_config_ch1_combo_changed(self, index):
-        self.dual020.set_channel_led_status_config(CH_1,
+        self.dual020.set_channel_led_status_config(1,
                                                    self.led_status_config_ch1_min_sbox.value() * 1000000,
                                                    self.led_status_config_ch1_max_sbox.value() * 1000000,
                                                    index)
@@ -363,7 +366,7 @@ class IndustrialDual020mAV2(COMCUPluginBase):
             for e in self.ui_group_ch_status_ch0:
                 e.setEnabled(True)
 
-        self.dual020.set_channel_led_config(CH_0, index)
+        self.dual020.set_channel_led_config(0, index)
 
     def led_config_ch1_combo_changed(self, index):
         if index != self.dual020.CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS:
@@ -373,7 +376,7 @@ class IndustrialDual020mAV2(COMCUPluginBase):
             for e in self.ui_group_ch_status_ch1:
                 e.setEnabled(True)
 
-        self.dual020.set_channel_led_config(CH_1, index)
+        self.dual020.set_channel_led_config(1, index)
 
     def cb_current(self, channel, current):
         value = current / 1000000.0
@@ -391,20 +394,20 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         self.gain_combo.setCurrentIndex(rate)
 
     def get_channel_led_config_async(self, channel, config):
-        if channel == CH_0:
+        if channel == 0:
             self.led_config_ch0_combo.setCurrentIndex(config)
             self.led_config_ch0_combo_changed(config)
-        elif channel == CH_1:
+        elif channel == 1:
             self.led_config_ch1_combo.setCurrentIndex(config)
             self.led_config_ch1_combo_changed(config)
 
     def get_channel_led_status_config_async(self, channel, config):
-        if channel == CH_0:
+        if channel == 0:
             self.led_status_config_ch0_combo.setCurrentIndex(config.config)
             self.led_status_config_ch0_combo_changed(config.config)
             self.led_status_config_ch0_max_sbox.setValue(config.max / 1000000.0)
             self.led_status_config_ch0_min_sbox.setValue(config.min / 1000000.0)
-        elif channel == CH_1:
+        elif channel == 1:
             self.led_status_config_ch1_combo.setCurrentIndex(config.config)
             self.led_status_config_ch1_combo_changed(config.config)
             self.led_status_config_ch1_max_sbox.setValue(config.max / 1000000.0)

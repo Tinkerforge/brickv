@@ -41,9 +41,7 @@ class WifiStatus(QDialog, Ui_WifiStatus):
 
         self.update_status()
 
-    def update_status_async(self, status):
-        mac, bssid, channel, rssi, ip, sub, gw, rx, tx, state = status
-
+    def get_wifi_status_async(self, mac, bssid, channel, rssi, ip, sub, gw, rx, tx, state):
         self.wifi_status_mac.setText("%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x" % mac[::-1])
         self.wifi_status_bssid.setText("%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x" % bssid[::-1])
         self.wifi_status_channel.setText(str(channel))
@@ -54,7 +52,6 @@ class WifiStatus(QDialog, Ui_WifiStatus):
         self.wifi_status_rx.setText(str(rx))
         self.wifi_status_tx.setText(str(tx))
 
-        state_str = "None"
         if state == 0:
             state_str = "Disassociated"
         elif state == 1:
@@ -65,8 +62,11 @@ class WifiStatus(QDialog, Ui_WifiStatus):
             state_str = "Startup Error"
         elif state == 255:
             state_str = "No Startup"
+        else:
+            state_str = "None"
 
         self.wifi_status_state.setText(state_str)
 
     def update_status(self):
-        async_call(self.master.get_wifi_status, None, self.update_status_async, self.parent.parent.increase_error_count)
+        async_call(self.master.get_wifi_status, None, self.get_wifi_status_async, self.parent.parent.increase_error_count,
+                   expand_result_tuple_for_callback=True)

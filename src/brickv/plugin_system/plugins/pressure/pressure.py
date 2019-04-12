@@ -37,6 +37,7 @@ class Pressure(PluginBase):
         self.p = self.device
 
         self.cbe_pressure = CallbackEmulator(self.p.get_pressure,
+                                             None,
                                              self.cb_pressure,
                                              self.increase_error_count)
 

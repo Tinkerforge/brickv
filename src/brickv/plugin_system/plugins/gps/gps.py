@@ -41,8 +41,10 @@ class GPS(PluginBase, Ui_GPS):
         self.gps = self.device
 
         self.cbe_universal = CallbackEmulator(self.get_universal,
+                                              None,
                                               self.cb_universal,
-                                              self.increase_error_count)
+                                              self.increase_error_count,
+                                              expand_result_tuple_for_callback=True)
 
         self.format_combobox.currentIndexChanged.connect(self.format_changed)
         self.show_pos.clicked.connect(self.show_pos_clicked)
@@ -65,9 +67,7 @@ class GPS(PluginBase, Ui_GPS):
     def get_universal(self):
         return self.gps.get_coordinates(), self.gps.get_status(), self.gps.get_altitude(), self.gps.get_motion(), self.gps.get_date_time()
 
-    def cb_universal(self, data):
-        coordinates, status, altitude, motion, date_time = data
-
+    def cb_universal(self, coordinates, status, altitude, motion, date_time):
         self.cb_coordinates(*coordinates)
         self.cb_status(*status)
         self.cb_altitude(*altitude)

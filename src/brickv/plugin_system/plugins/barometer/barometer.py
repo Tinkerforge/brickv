@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QPushButton, \
                         QSpinBox, QFrame, QDoubleSpinBox
 
@@ -54,11 +54,17 @@ class Barometer(PluginBase):
         self.average_temperature = 10
 
         self.cbe_air_pressure = CallbackEmulator(self.barometer.get_air_pressure,
+                                                 None,
                                                  self.cb_air_pressure,
                                                  self.increase_error_count)
         self.cbe_altitude = CallbackEmulator(self.barometer.get_altitude,
+                                             None,
                                              self.cb_altitude,
                                              self.increase_error_count)
+        self.cbe_chip_temperature = CallbackEmulator(self.barometer.get_chip_temperature,
+                                                     None,
+                                                     self.cb_chip_temperature,
+                                                     self.increase_error_count)
 
         self.chip_temperature_label = ChipTemperatureLabel()
 
@@ -156,10 +162,6 @@ class Barometer(PluginBase):
 
             layout.addLayout(layout_h3)
 
-        self.chip_temp_timer = QTimer(self)
-        self.chip_temp_timer.timeout.connect(self.update_chip_temp)
-        self.chip_temp_timer.setInterval(100)
-
     def start(self):
         if self.has_averaging:
             async_call(self.barometer.get_averaging, None, self.get_averaging_async, self.increase_error_count)
@@ -169,21 +171,18 @@ class Barometer(PluginBase):
 
         self.cbe_air_pressure.set_period(100)
         self.cbe_altitude.set_period(100)
+        self.cbe_chip_temperature.set_period(100)
 
         self.air_pressure_plot_widget.stop = False
         self.altitude_plot_widget.stop = False
 
-        self.update_chip_temp()
-        self.chip_temp_timer.start()
-
     def stop(self):
         self.cbe_air_pressure.set_period(0)
         self.cbe_altitude.set_period(0)
+        self.cbe_chip_temperature.set_period(0)
 
         self.air_pressure_plot_widget.stop = True
         self.altitude_plot_widget.stop = True
-
-        self.chip_temp_timer.stop()
 
     def destroy(self):
         pass
@@ -235,14 +234,11 @@ class Barometer(PluginBase):
     def reference_box_finished(self):
         self.barometer.set_reference_air_pressure(self.reference_box.value() * 1000.0)
 
-    def update_chip_temp_async(self, temp):
-        self.chip_temperature_label.setText('{:.2f}'.format(temp / 100.0))
-
-    def update_chip_temp(self):
-        async_call(self.barometer.get_chip_temperature, None, self.update_chip_temp_async, self.increase_error_count)
-
     def cb_air_pressure(self, air_pressure):
         self.current_air_pressure.value = air_pressure / 1000.0
 
     def cb_altitude(self, altitude):
         self.current_altitude.value = altitude / 100.0
+
+    def cb_chip_temperature(self, temperature):
+        self.chip_temperature_label.setText('{:.2f}'.format(temperature / 100.0))

@@ -74,7 +74,8 @@ class RGBLED(PluginBase, Ui_RGBLED):
         self.set_rgb_value_response_expected = self.rgb_led.get_response_expected(self.rgb_led.FUNCTION_SET_RGB_VALUE)
         self.rgb_led.set_response_expected(self.rgb_led.FUNCTION_SET_RGB_VALUE, True)
 
-        async_call(self.rgb_led.get_rgb_value, None, self.get_rgb_value_async, self.increase_error_count)
+        async_call(self.rgb_led.get_rgb_value, None, self.get_rgb_value_async, self.increase_error_count,
+                   expand_result_tuple_for_callback=True)
 
     def stop(self):
         if self.set_rgb_value_response_expected != None:
@@ -117,12 +118,13 @@ class RGBLED(PluginBase, Ui_RGBLED):
         self.rgb_led.set_rgb_value(r, g, b)
         self.label_color.setStyleSheet('QLabel {{ background: #{:02x}{:02x}{:02x} }}'.format(r, g, b))
 
-    def get_rgb_value_async(self, rgb):
+    def get_rgb_value_async(self, r, g, b):
         self.changing = True
-        self.spin_r.setValue(rgb.r)
-        self.spin_g.setValue(rgb.g)
-        self.spin_b.setValue(rgb.b)
+        self.spin_r.setValue(r)
+        self.spin_g.setValue(g)
+        self.spin_b.setValue(b)
         self.changing = False
+
         self.rgb_changed()
 
     def destroy(self):

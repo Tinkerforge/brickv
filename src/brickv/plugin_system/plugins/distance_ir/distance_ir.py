@@ -147,9 +147,11 @@ class DistanceIR(PluginBase):
         self.dist = self.device
 
         self.cbe_distance = CallbackEmulator(self.dist.get_distance,
+                                             None,
                                              self.cb_distance,
                                              self.increase_error_count)
         self.cbe_analog_value = CallbackEmulator(self.dist.get_analog_value,
+                                                 None,
                                                  self.cb_analog_value,
                                                  self.increase_error_count)
 

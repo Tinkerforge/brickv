@@ -40,6 +40,7 @@ class HAT(COMCUPluginBase, Ui_HAT):
         self.hat = self.device
 
         self.cbe_voltages = CallbackEmulator(self.hat.get_voltages,
+                                             None,
                                              self.cb_voltages,
                                              self.increase_error_count)
 

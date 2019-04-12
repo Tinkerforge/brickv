@@ -37,10 +37,13 @@ class ParticulateMatter(COMCUPluginBase):
         self.pm = self.device
 
         self.cbe_pm_concentration = CallbackEmulator(self.pm.get_pm_concentration,
+                                                     None,
                                                      self.cb_pm_concentration,
-                                                     self.increase_error_count)
+                                                     self.increase_error_count,
+                                                     expand_result_tuple_for_callback=True)
 
         self.cbe_pm_count = CallbackEmulator(self.pm.get_pm_count,
+                                             None,
                                              self.cb_pm_count,
                                              self.increase_error_count)
 
@@ -128,10 +131,10 @@ class ParticulateMatter(COMCUPluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletParticulateMatter.DEVICE_IDENTIFIER
 
-    def cb_pm_concentration(self, pm_concentration):
-        self.current_pm_concentration_pm10.value = pm_concentration.pm10
-        self.current_pm_concentration_pm25.value = pm_concentration.pm25
-        self.current_pm_concentration_pm100.value = pm_concentration.pm100
+    def cb_pm_concentration(self, pm10, pm25, pm100):
+        self.current_pm_concentration_pm10.value = pm10
+        self.current_pm_concentration_pm25.value = pm25
+        self.current_pm_concentration_pm100.value = pm100
 
     def cb_pm_count(self, pm_count):
         self.label_count_value.setText(', '.join(map(str, pm_count)))

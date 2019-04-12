@@ -99,7 +99,7 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
         self.epaper.write_color(0, 0, WIDTH-1, HEIGHT-1, red)
         self.epaper.draw()
 
-    def cb_read_bw(self, pixels):
+    def read_black_white_async(self, pixels):
         for i in range(HEIGHT):
             for j in range(WIDTH):
                 if pixels[i*WIDTH + j]:
@@ -107,9 +107,9 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
                 else:
                     self.scribble_widget.image().setPixel(j, i, 0)
 
-        async_call(self.epaper.read_color, (0, 0, WIDTH - 1, HEIGHT - 1), self.cb_read_color, self.increase_error_count)
+        async_call(self.epaper.read_color, (0, 0, WIDTH - 1, HEIGHT - 1), self.read_color_async, self.increase_error_count)
 
-    def cb_read_color(self, pixels):
+    def read_color_async(self, pixels):
         if pixels:
             for i in range(HEIGHT):
                 for j in range(WIDTH):
@@ -121,7 +121,7 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
 
         self.scribble_widget.update()
 
-    def cb_get_display(self, display):
+    def get_display_async(self, display):
         self.display = display
 
         if display == 0:
@@ -135,8 +135,8 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
         self.color_combo.insertItem(2, color)
 
     def start(self):
-        async_call(self.epaper.get_display, None, self.cb_get_display, self.increase_error_count)
-        async_call(self.epaper.read_black_white, (0, 0, WIDTH - 1, HEIGHT - 1), self.cb_read_bw, self.increase_error_count)
+        async_call(self.epaper.get_display, None, self.get_display_async, self.increase_error_count)
+        async_call(self.epaper.read_black_white, (0, 0, WIDTH - 1, HEIGHT - 1), self.read_black_white_async, self.increase_error_count)
 
     def stop(self):
         pass

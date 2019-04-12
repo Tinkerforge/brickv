@@ -41,6 +41,7 @@ class HeartRate(PluginBase):
         self.hr = self.device
 
         self.cbe_heart_rate = CallbackEmulator(self.hr.get_heart_rate,
+                                               None,
                                                self.cb_heart_rate,
                                                self.increase_error_count)
 

@@ -224,12 +224,6 @@ class Chibi(QWidget, Ui_Chibi):
             else:
                 self.popup_fail()
 
-    def index_changed_async(self, addr):
-        self.slave_address_spinbox.setValue(addr)
-
-    def index_changed(self, index):
-        async_call(self.master.get_chibi_slave_address, index, self.index_changed_async, self.parent.increase_error_count)
-
     def chibi_frequency_changed(self, index):
         self.new_max_count()
 
@@ -250,9 +244,8 @@ class Chibi(QWidget, Ui_Chibi):
             self.lineedit_slave_address.show()
             self.label_slave_addresses_help.show()
 
-    def signal_strength_update(self, ss):
-        ss_str = "%g dBm"  % (ss,)
-        self.signal_strength_label.setText(ss_str)
+    def get_chibi_signal_strength_async(self, signal_strength):
+        self.signal_strength_label.setText("%g dBm" % signal_strength)
 
     def update_data(self):
-        async_call(self.master.get_chibi_signal_strength, None, self.signal_strength_update, self.parent.increase_error_count)
+        async_call(self.master.get_chibi_signal_strength, None, self.get_chibi_signal_strength_async, self.parent.increase_error_count)

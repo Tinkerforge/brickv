@@ -127,9 +127,8 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
 
             index = self.monoflop_pin.findText('Pin {0}'.format(pin))
             if index >= 0:
-                def get_monoflop_lambda(pin):
-                    return lambda monoflop: self.reconfigure_everything_async3(pin, *monoflop)
-                async_call(self.ido4.get_monoflop, pin, get_monoflop_lambda(pin), self.increase_error_count)
+                async_call(self.ido4.get_monoflop, pin, self.reconfigure_everything_async3, self.increase_error_count,
+                           pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
 
     def reconfigure_everything_async1(self, group):
         for i in range(4):
@@ -302,10 +301,12 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
 
         self.update_timer.start()
 
-    def update_async(self, pin, value, time, time_remaining):
+    def get_monoflop_async(self, pin, _value, _time, time_remaining):
         if self.monoflop_pending[pin]:
             self.monoflop_time.setValue(time_remaining)
 
     def update(self):
         pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
-        async_call(self.ido4.get_monoflop, pin, lambda monoflop: self.update_async(pin, *monoflop), self.increase_error_count)
+
+        async_call(self.ido4.get_monoflop, pin, self.get_monoflop_async, self.increase_error_count,
+                   pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)

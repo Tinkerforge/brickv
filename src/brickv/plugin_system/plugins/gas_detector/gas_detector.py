@@ -38,6 +38,7 @@ class GasDetector(PluginBase):
         self.gas_detector = self.device
 
         self.cbe_value = CallbackEmulator(self.gas_detector.get_value,
+                                          None,
                                           self.cb_value,
                                           self.increase_error_count)
 
@@ -84,18 +85,12 @@ class GasDetector(PluginBase):
     def get_detector_type_async(self, detector_type):
         self.type_combo.setCurrentIndex(detector_type)
 
-    def is_heater_on_async(self, heater):
-        if heater:
-            self.heater_checkbox.setChecked(True)
-        else:
-            self.heater_checkbox.setChecked(False)
-
     def cb_value(self, value):
         self.current_value.value = value
 
     def start(self):
         async_call(self.gas_detector.get_detector_type, None, self.get_detector_type_async, self.increase_error_count)
-        async_call(self.gas_detector.is_heater_on, None, self.is_heater_on_async, self.increase_error_count)
+        async_call(self.gas_detector.is_heater_on, None, self.heater_checkbox.setChecked, self.increase_error_count)
 
         self.cbe_value.set_period(100)
 

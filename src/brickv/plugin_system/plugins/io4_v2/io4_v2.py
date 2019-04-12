@@ -228,7 +228,7 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
 
         yield
 
-        for i in range(0, 4):
+        for i in range(4):
             async_call(self.io.get_configuration,
                        i,
                        lambda config: async_get_configuration(i, config),

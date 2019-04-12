@@ -104,12 +104,12 @@ class OLED64x48(PluginBase, Ui_OLED64x48):
         for i in range(6):
             self.oled.write(lcd[i])
 
-    def cb_display_configuration(self, conf):
+    def get_display_configuration_async(self, conf):
         self.contrast_slider.setValue(conf.contrast)
         self.invert_checkbox.setChecked(conf.invert)
 
     def start(self):
-        async_call(self.oled.get_display_configuration, None, self.cb_display_configuration, self.increase_error_count)
+        async_call(self.oled.get_display_configuration, None, self.get_display_configuration_async, self.increase_error_count)
 
     def stop(self):
         pass

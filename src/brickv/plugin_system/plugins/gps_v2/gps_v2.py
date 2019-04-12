@@ -44,14 +44,17 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
         self.gps = self.device
 
         self.cbe_universal = CallbackEmulator(self.get_universal,
+                                              None,
                                               self.cb_universal,
                                               self.increase_error_count)
 
         self.cbe_universal_gps = CallbackEmulator(self.get_universal_gps,
+                                                  None,
                                                   self.cb_universal_gps,
                                                   self.increase_error_count)
 
         self.cbe_universal_glo = CallbackEmulator(self.get_universal_glo,
+                                                  None,
                                                   self.cb_universal_glo,
                                                   self.increase_error_count)
 

@@ -39,6 +39,7 @@ class ACCurrent(PluginBase):
         self.acc = self.device
 
         self.cbe_current = CallbackEmulator(self.acc.get_current,
+                                            None,
                                             self.cb_current,
                                             self.increase_error_count)
 

@@ -36,6 +36,7 @@ class MultiTouchV2(COMCUPluginBase, Ui_MultiTouchV2):
         self.mt = self.device
 
         self.cbe_touch_state = CallbackEmulator(self.mt.get_touch_state,
+                                                None,
                                                 self.cb_touch_state,
                                                 self.increase_error_count)
 

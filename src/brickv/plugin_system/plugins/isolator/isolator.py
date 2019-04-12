@@ -37,6 +37,7 @@ class Isolator(COMCUPluginBase, Ui_Isolator):
         self.isolator = self.device
 
         self.cbe_statistics = CallbackEmulator(self.isolator.get_statistics,
+                                               None,
                                                self.cb_statistics,
                                                self.increase_error_count)
 

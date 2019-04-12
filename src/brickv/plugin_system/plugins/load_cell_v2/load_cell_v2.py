@@ -82,6 +82,7 @@ class LoadCellV2(COMCUPluginBase):
         self.lc = self.device
 
         self.cbe_weight = CallbackEmulator(self.lc.get_weight,
+                                           None,
                                            self.cb_weight,
                                            self.increase_error_count)
 

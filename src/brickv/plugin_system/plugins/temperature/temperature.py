@@ -37,6 +37,7 @@ class Temperature(PluginBase):
         self.tem = self.device
 
         self.cbe_temperature = CallbackEmulator(self.tem.get_temperature,
+                                                None,
                                                 self.cb_temperature,
                                                 self.increase_error_count)
 

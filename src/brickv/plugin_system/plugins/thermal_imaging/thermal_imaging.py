@@ -365,12 +365,12 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
     def cb_high_contrast_image(self, image):
         if image != None:
             self.thermal_image.new_image(image)
-            async_call(self.thermal_imaging.get_statistics, None, self.cb_statistics, self.increase_error_count)
+            async_call(self.thermal_imaging.get_statistics, None, self.get_statistics_async, self.increase_error_count)
 
     def cb_temperature_image(self, image):
         if image != None:
             self.thermal_image.new_image(image, is_16bit=True)
-            async_call(self.thermal_imaging.get_statistics, None, self.cb_statistics, self.increase_error_count)
+            async_call(self.thermal_imaging.get_statistics, None, self.get_statistics_async, self.increase_error_count)
 
     def kelvin_to_degstr(self, value, res=None):
         if res == None:
@@ -381,21 +381,24 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
         else:
             return "{0:.2f}".format(value / 100.0 - 273.15)
 
-    def cb_statistics(self, data):
-        self.valid_resolution = data.resolution
-        spot_mean = self.kelvin_to_degstr(data.spotmeter_statistics[0])
-        spot_max = self.kelvin_to_degstr(data.spotmeter_statistics[1])
-        spot_min = self.kelvin_to_degstr(data.spotmeter_statistics[2])
-        spot_pix = str(data.spotmeter_statistics[3])
+    def get_statistics_async(self, statistics):
+        self.valid_resolution = statistics.resolution
+
+        spot_mean = self.kelvin_to_degstr(statistics.spotmeter_statistics[0])
+        spot_max = self.kelvin_to_degstr(statistics.spotmeter_statistics[1])
+        spot_min = self.kelvin_to_degstr(statistics.spotmeter_statistics[2])
+        spot_pix = str(statistics.spotmeter_statistics[3])
+
         self.spotmeter_mean_label.setText(spot_mean)
         self.spotmeter_minimum_label.setText(spot_min)
         self.spotmeter_maximum_label.setText(spot_max)
         self.spotmeter_pixel_count_label.setText(spot_pix)
 
-        temp_fpa = self.kelvin_to_degstr(data.temperatures[0], 1)
-        temp_fpa_ffc = self.kelvin_to_degstr(data.temperatures[1], 1)
-        temp_housing = self.kelvin_to_degstr(data.temperatures[2], 1)
-        temp_housing_ffc = self.kelvin_to_degstr(data.temperatures[3], 1)
+        temp_fpa = self.kelvin_to_degstr(statistics.temperatures[0], 1)
+        temp_fpa_ffc = self.kelvin_to_degstr(statistics.temperatures[1], 1)
+        temp_housing = self.kelvin_to_degstr(statistics.temperatures[2], 1)
+        temp_housing_ffc = self.kelvin_to_degstr(statistics.temperatures[3], 1)
+
         self.temp_fpa_label.setText(temp_fpa)
         self.temp_fpa_ffc_label.setText(temp_fpa_ffc)
         self.temp_housing_label.setText(temp_housing)
@@ -405,52 +408,57 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
         sheet_orange = "QLabel { color: orange; }"
         sheet_red    = "QLabel { color: red; }"
 
-        if data.ffc_status == 0b00:
+        if statistics.ffc_status == 0b00:
             self.ffc_state_label.setStyleSheet(sheet_orange)
             self.ffc_state_label.setText('Never Commanded')
-        elif data.ffc_status == 0b01:
+        elif statistics.ffc_status == 0b01:
             self.ffc_state_label.setStyleSheet(sheet_orange)
             self.ffc_state_label.setText('Imminent')
-        elif data.ffc_status == 0b10:
+        elif statistics.ffc_status == 0b10:
             self.ffc_state_label.setStyleSheet(sheet_orange)
             self.ffc_state_label.setText('In Progress')
-        elif data.ffc_status == 0b11:
+        elif statistics.ffc_status == 0b11:
             self.ffc_state_label.setStyleSheet(sheet_green)
             self.ffc_state_label.setText('Complete')
 
-        if data.temperature_warning[0]:
+        if statistics.temperature_warning[0]:
             self.shutter_lockout_label.setStyleSheet(sheet_red)
             self.shutter_lockout_label.setText('Yes')
         else:
             self.shutter_lockout_label.setStyleSheet(sheet_green)
             self.shutter_lockout_label.setText('No')
 
-        if data.temperature_warning[1]:
+        if statistics.temperature_warning[1]:
             self.overtemp_label.setStyleSheet(sheet_red)
             self.overtemp_label.setText('Yes')
         else:
             self.overtemp_label.setStyleSheet(sheet_green)
             self.overtemp_label.setText('No')
 
-    def cb_get_high_contrast_config(self, data):
-        self.thermal_image.agc_roi_from = QPoint(data.region_of_interest[0]*self.thermal_image.image_pixel_width,data.region_of_interest[1]*self.thermal_image.image_pixel_width)
-        self.thermal_image.agc_roi_to   = QPoint(data.region_of_interest[2]*self.thermal_image.image_pixel_width,data.region_of_interest[3]*self.thermal_image.image_pixel_width)
-        self.agc_clip_limit_high_spin.setValue(data.clip_limit[0])
-        self.agc_clip_limit_low_spin.setValue(data.clip_limit[1])
-        self.agc_dampening_factor_spin.setValue(data.dampening_factor)
-        self.agc_empty_counts_spin.setValue(data.empty_counts)
+    def get_high_contrast_config_async(self, config):
+        self.thermal_image.agc_roi_from = QPoint(config.region_of_interest[0] * self.thermal_image.image_pixel_width,
+                                                 config.region_of_interest[1] * self.thermal_image.image_pixel_width)
+        self.thermal_image.agc_roi_to   = QPoint(config.region_of_interest[2] * self.thermal_image.image_pixel_width,
+                                                 config.region_of_interest[3] * self.thermal_image.image_pixel_width)
+        self.agc_clip_limit_high_spin.setValue(config.clip_limit[0])
+        self.agc_clip_limit_low_spin.setValue(config.clip_limit[1])
+        self.agc_dampening_factor_spin.setValue(config.dampening_factor)
+        self.agc_empty_counts_spin.setValue(config.empty_counts)
 
-    def cb_get_spotmeter_config(self, data):
-        self.thermal_image.spotmeter_roi_from = QPoint(data[0]*self.thermal_image.image_pixel_width,data[1]*self.thermal_image.image_pixel_width)
-        self.thermal_image.spotmeter_roi_to   = QPoint(data[2]*self.thermal_image.image_pixel_width,data[3]*self.thermal_image.image_pixel_width)
+    def get_spotmeter_config_async(self, config):
+        self.thermal_image.spotmeter_roi_from = QPoint(config[0] * self.thermal_image.image_pixel_width,
+                                                       config[1] * self.thermal_image.image_pixel_width)
+        self.thermal_image.spotmeter_roi_to   = QPoint(config[2] * self.thermal_image.image_pixel_width,
+                                                       config[3] * self.thermal_image.image_pixel_width)
 
-    def cb_get_resolution(self, data):
-        self.resolution_box.setCurrentIndex(data)
+    def get_resolution_async(self, resolution):
+        self.resolution_box.setCurrentIndex(resolution)
 
     def start(self):
-        async_call(self.thermal_imaging.get_high_contrast_config, None, self.cb_get_high_contrast_config, self.increase_error_count)
-        async_call(self.thermal_imaging.get_spotmeter_config, None, self.cb_get_spotmeter_config, self.increase_error_count)
-        async_call(self.thermal_imaging.get_resolution, None, self.cb_get_resolution, self.increase_error_count)
+        async_call(self.thermal_imaging.get_high_contrast_config, None, self.get_high_contrast_config_async, self.increase_error_count)
+        async_call(self.thermal_imaging.get_spotmeter_config, None, self.get_spotmeter_config_async, self.increase_error_count)
+        async_call(self.thermal_imaging.get_resolution, None, self.get_resolution_async, self.increase_error_count)
+
         self.thermal_imaging.set_image_transfer_config(BrickletThermalImaging.IMAGE_TRANSFER_CALLBACK_HIGH_CONTRAST_IMAGE)
         self.thermal_imaging.register_callback(self.thermal_imaging.CALLBACK_HIGH_CONTRAST_IMAGE, self.qtcb_high_contrast_image.emit)
         self.thermal_imaging.register_callback(self.thermal_imaging.CALLBACK_TEMPERATURE_IMAGE, self.qtcb_temperature_image.emit)

@@ -306,9 +306,11 @@ class RealTimeClockV2(COMCUPluginBase, Ui_RealTimeClockV2):
         self.rtc = self.device
 
         self.cbe_date_time = CallbackEmulator(self.rtc.get_date_time,
+                                              None,
                                               self.cb_date_time,
                                               self.increase_error_count,
-                                              ignore_last_data=True)
+                                              expand_result_tuple_for_callback=True,
+                                              ignore_last_result=True)
 
         self.calibration = None
         self.offset = 0
@@ -353,7 +355,8 @@ class RealTimeClockV2(COMCUPluginBase, Ui_RealTimeClockV2):
 
     def start(self):
         async_call(self.rtc.get_offset, None, self.get_offset_async, self.increase_error_count)
-        async_call(self.rtc.get_alarm, None, self.get_alarm_async, self.increase_error_count)
+        async_call(self.rtc.get_alarm, None, self.get_alarm_async, self.increase_error_count,
+                   expand_result_tuple_for_callback=True)
 
         self.cbe_date_time.set_period(50)
 
@@ -413,9 +416,7 @@ class RealTimeClockV2(COMCUPluginBase, Ui_RealTimeClockV2):
         index = self.combo_weekday_manual.findData(weekday)
         self.combo_weekday_manual.setCurrentIndex(index)
 
-    def cb_date_time(self, date_time):
-        year, month, day, hour, minute, second, centisecond, weekday, tiemstamp = date_time
-
+    def cb_date_time(self, year, month, day, hour, minute, second, centisecond, weekday, _timestamp):
         self.label_year_bricklet.setText(str(year))
         self.label_month_bricklet.setText('%02d' % month)
         self.label_day_bricklet.setText('%02d' % day)
@@ -485,9 +486,7 @@ class RealTimeClockV2(COMCUPluginBase, Ui_RealTimeClockV2):
     def clear_alarms(self):
         self.list_alarms.clear()
 
-    def get_alarm_async(self, alarm):
-        month, day, hour, minute, second, weekday, interval = alarm
-
+    def get_alarm_async(self, month, day, hour, minute, second, weekday, interval):
         self.spin_alarm_month.setValue(month)
         self.spin_alarm_day.setValue(day)
         self.spin_alarm_hour.setValue(hour)
@@ -502,7 +501,8 @@ class RealTimeClockV2(COMCUPluginBase, Ui_RealTimeClockV2):
         self.spin_alarm_interval.setValue(interval)
 
     def cb_alarm(self, year, month, day, hour, minute, second, centisecond, weekday, interval):
-        async_call(self.rtc.get_alarm, None, self.get_alarm_async, self.increase_error_count)
+        async_call(self.rtc.get_alarm, None, self.get_alarm_async, self.increase_error_count,
+                   expand_result_tuple_for_callback=True)
 
         self.list_alarms.addItem('{0}-{1}-{2} T {3:02}:{4:02}:{5:02}.{6:02} {7}'
                                  .format(year, month, day, hour, minute, second, centisecond, WEEKDAY_BY_NUMBER[weekday]))

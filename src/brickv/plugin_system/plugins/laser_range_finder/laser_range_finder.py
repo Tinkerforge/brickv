@@ -45,9 +45,11 @@ class LaserRangeFinder(PluginBase):
         self.lrf = self.device
 
         self.cbe_distance = CallbackEmulator(self.lrf.get_distance,
+                                             None,
                                              self.cb_distance,
                                              self.increase_error_count)
         self.cbe_velocity = CallbackEmulator(self.lrf.get_velocity,
+                                             None,
                                              self.cb_velocity,
                                              self.increase_error_count)
 
@@ -187,7 +189,7 @@ class LaserRangeFinder(PluginBase):
             async_call(self.lrf.get_configuration, None, self.get_configuration_async, self.increase_error_count)
 
         async_call(self.lrf.get_mode, None, self.get_mode_async, self.increase_error_count)
-        async_call(self.lrf.is_laser_enabled, None, self.is_laser_enabled_async, self.increase_error_count)
+        async_call(self.lrf.is_laser_enabled, None, self.enable_laser.setChecked, self.increase_error_count)
         async_call(self.lrf.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
 
         self.cbe_distance.set_period(25)
@@ -209,12 +211,6 @@ class LaserRangeFinder(PluginBase):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletLaserRangeFinder.DEVICE_IDENTIFIER
-
-    def is_laser_enabled_async(self, enabled):
-        if enabled:
-            self.enable_laser.setChecked(True)
-        else:
-            self.enable_laser.setChecked(False)
 
     def enable_laser_changed(self, state):
         if state == Qt.Checked:

@@ -266,63 +266,57 @@ class Servo(PluginBase, Ui_Servo):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickServo.DEVICE_IDENTIFIER
 
-    def get_period_async(self, per):
-        self.period_spin.setValue(per)
-        self.period_slider.setValue(per)
+    def get_period_async(self, period):
+        self.period_spin.setValue(period)
+        self.period_slider.setValue(period)
 
-    def is_enabled_async(self, ena):
-        self.enable_checkbox.setChecked(ena)
+    def is_enabled_async(self, enabled):
+        self.enable_checkbox.setChecked(enabled)
 
-    def get_position_async(self, pos):
-        self.position_spin.setValue(pos)
-        self.position_slider.setValue(pos)
+    def get_position_async(self, position):
+        self.position_spin.setValue(position)
+        self.position_slider.setValue(position)
 
-    def get_velocity_async(self, vel):
-        self.velocity_spin.setValue(vel)
-        self.velocity_slider.setValue(vel)
+    def get_velocity_async(self, velocity):
+        self.velocity_spin.setValue(velocity)
+        self.velocity_slider.setValue(velocity)
 
-    def get_acceleration_async(self, acc):
-        self.acceleration_spin.setValue(acc)
-        self.acceleration_slider.setValue(acc)
+    def get_acceleration_async(self, acceleration):
+        self.acceleration_spin.setValue(acceleration)
+        self.acceleration_slider.setValue(acceleration)
 
-    def get_degree_async(self, deg, i):
-        deg_min, deg_max = deg
+    def get_degree_async(self, servo, degree_min, degree_max):
+        self.degree_min_spin.setValue(degree_min)
+        self.degree_max_spin.setValue(degree_max)
 
-        self.degree_min_spin.setValue(deg_min)
-        self.degree_max_spin.setValue(deg_max)
+        self.position_slider.setMinimum(degree_min)
+        self.position_slider.setMaximum(degree_max)
+        self.position_spin.setMinimum(degree_min)
+        self.position_spin.setMaximum(degree_max)
 
-        self.position_slider.setMinimum(deg_min)
-        self.position_slider.setMaximum(deg_max)
-        self.position_spin.setMinimum(deg_min)
-        self.position_spin.setMaximum(deg_max)
+        self.position_list[servo].set_total_angle((degree_max - degree_min) / 100)
+        self.position_list[servo].set_range(degree_min / 100, degree_max / 100)
 
-        self.position_list[i].set_total_angle((deg_max - deg_min)/100)
-        self.position_list[i].set_range(deg_min/100, deg_max/100)
-
-    def get_pulse_width_async(self, pulse):
-        pulse_min, pulse_max = pulse
-        self.pulse_width_min_spin.setValue(pulse_min)
-        self.pulse_width_max_spin.setValue(pulse_max)
-
+    def get_pulse_width_async(self, pulse_width_min, pulse_width_max):
+        self.pulse_width_min_spin.setValue(pulse_width_min)
+        self.pulse_width_max_spin.setValue(pulse_width_max)
 
     def update_servo_specific(self):
-        i = self.selected_servo()
-        if i == 255:
+        servo = self.selected_servo()
+
+        if servo == 255:
             self.enable_checkbox.setChecked(False)
             return
 
-        async_call(self.servo.get_position, i, self.get_position_async, self.increase_error_count)
-        async_call(self.servo.get_velocity, i, self.get_velocity_async, self.increase_error_count)
-        async_call(self.servo.get_acceleration, i, self.get_acceleration_async, self.increase_error_count)
-        async_call(self.servo.get_period, i, self.get_period_async, self.increase_error_count)
-        async_call(self.servo.is_enabled, i, self.is_enabled_async, self.increase_error_count)
-        def get_lambda_deg(i):
-            return lambda x: self.get_degree_async(x, i)
-        async_call(self.servo.get_degree, i, get_lambda_deg(i), self.increase_error_count)
-        async_call(self.servo.get_pulse_width, i, self.get_pulse_width_async, self.increase_error_count)
-
-    def error_handler(self, error):
-        pass
+        async_call(self.servo.get_position, servo, self.get_position_async, self.increase_error_count)
+        async_call(self.servo.get_velocity, servo, self.get_velocity_async, self.increase_error_count)
+        async_call(self.servo.get_acceleration, servo, self.get_acceleration_async, self.increase_error_count)
+        async_call(self.servo.get_period, servo, self.get_period_async, self.increase_error_count)
+        async_call(self.servo.is_enabled, servo, self.is_enabled_async, self.increase_error_count)
+        async_call(self.servo.get_degree, servo, self.get_degree_async, self.increase_error_count,
+                   pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
+        async_call(self.servo.get_pulse_width, servo, self.get_pulse_width_async, self.increase_error_count,
+                   expand_result_tuple_for_callback=True)
 
     def servo_current_update(self, value):
         self.current_label.setText(str(value) + "mA")
@@ -343,24 +337,24 @@ class Servo(PluginBase, Ui_Servo):
         mv_str = "%gV" % round(mv/1000.0, 1)
         self.minimum_voltage_label.setText(mv_str)
 
-    def position_update(self, i, pos):
-        self.position_list[i].set_value(pos/100)
+    def position_update(self, servo, position):
+        self.position_list[servo].set_value(position / 100)
 
-    def velocity_update(self, i, vel):
-        self.velocity_list[i].set_height(vel*100//0xFFFF)
+    def velocity_update(self, servo, velocity):
+        self.velocity_list[servo].set_height(velocity * 100 // 0xFFFF)
 
-    def acceleration_update(self, i, acc):
-        self.acceleration_list[i].set_height(acc*100//0xFFFF)
+    def acceleration_update(self, servo, acceleration):
+        self.acceleration_list[servo].set_height(acceleration * 100 // 0xFFFF)
 
-    def deactivate_servo(self, i):
-        if self.enable_list[i].text().replace('&', '') != 'Off':
-            self.velocity_list[i].grey()
-            self.acceleration_list[i].grey()
+    def deactivate_servo(self, servo):
+        if self.enable_list[servo].text().replace('&', '') != 'Off':
+            self.velocity_list[servo].grey()
+            self.acceleration_list[servo].grey()
 
-    def activate_servo(self, i):
-        if self.enable_list[i].text().replace('&', '') != 'On':
-            self.velocity_list[i].color()
-            self.acceleration_list[i].color()
+    def activate_servo(self, servo):
+        if self.enable_list[servo].text().replace('&', '') != 'On':
+            self.velocity_list[servo].color()
+            self.acceleration_list[servo].color()
 
     def selected_servo(self):
         try:

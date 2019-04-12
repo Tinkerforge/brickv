@@ -80,20 +80,20 @@ class SegmentDisplay4x7V2(COMCUPluginBase, Ui_SegmentDisplay4x7V2):
         self.counter_timer.stop()
         value = ([True]*8, [True]*8, [True]*8, [True]*8, [True]*2, True)
         self.sd4x7.set_segments(*value)
-        self.cb_get_segments(value)
+        self.get_segments_async(value)
 
     def all_segments_off_clicked(self):
         self.counter_timer.stop()
         value = ([False]*8, [False]*8, [False]*8, [False]*8, [False]*2, False)
         self.sd4x7.set_segments(*value)
-        self.cb_get_segments(value)
+        self.get_segments_async(value)
 
     def cb_counter_finished(self):
         self.counter_timer.stop()
-        async_call(self.sd4x7.get_segments, None, self.cb_get_segments, self.increase_error_count)
+        async_call(self.sd4x7.get_segments, None, self.get_segments_async, self.increase_error_count)
 
     def update_counter(self):
-        async_call(self.sd4x7.get_segments, None, self.cb_get_segments, self.increase_error_count)
+        async_call(self.sd4x7.get_segments, None, self.get_segments_async, self.increase_error_count)
 
     def start_clicked(self):
         fr = self.box_from.value()
@@ -137,11 +137,11 @@ class SegmentDisplay4x7V2(COMCUPluginBase, Ui_SegmentDisplay4x7V2):
 
         self.sd4x7.set_segments(values[0:8], values[8:16], values[16:24], values[24:32], values[32:34], values[34])
 
-    def cb_get_brightness(self, brightness):
+    def get_brightness_async(self, brightness):
         self.brightness = brightness
         self.box_brightness.setCurrentIndex(brightness)
 
-    def cb_get_segments(self, value):
+    def get_segments_async(self, value):
         digit0, digit1, digit2, digit3, colon, tick = value
 
         values = []
@@ -159,8 +159,8 @@ class SegmentDisplay4x7V2(COMCUPluginBase, Ui_SegmentDisplay4x7V2):
                 self.segments[i].setStyleSheet(self.STYLE_OFF)
 
     def start(self):
-        async_call(self.sd4x7.get_segments, None, self.cb_get_segments, self.increase_error_count)
-        async_call(self.sd4x7.get_brightness, None, self.cb_get_brightness, self.increase_error_count)
+        async_call(self.sd4x7.get_segments, None, self.get_segments_async, self.increase_error_count)
+        async_call(self.sd4x7.get_brightness, None, self.get_brightness_async, self.increase_error_count)
 
     def stop(self):
         self.counter_timer.stop()
