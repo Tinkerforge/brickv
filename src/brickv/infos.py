@@ -174,6 +174,11 @@ class BrickMasterInfo(BrickInfo):
         self.bricklet_ports = ('a', 'b', 'c', 'd')
         self.extensions = {'ext0': None, 'ext1': None}
 
+class BrickletIsolatorInfo(BrickletInfo):
+    def __init__(self):
+        super().__init__()
+        self.bricklet_ports = {'z'}
+
 
 class BrickREDInfo(BrickInfo):
     def __init__(self):

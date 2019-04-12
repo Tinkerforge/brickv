@@ -47,6 +47,7 @@ from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
 from brickv.bindings.brick_hat import BrickHAT
 from brickv.bindings.brick_hat_zero import BrickHATZero
+from brickv.bindings.bricklet_isolator import BrickletIsolator
 from brickv.plugin_system.plugins.red import RED
 from brickv import config
 from brickv import infos
@@ -749,6 +750,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     device_info = infos.BrickHATInfo()
                 elif device_identifier == BrickHATZero.DEVICE_IDENTIFIER:
                     device_info = infos.BrickHATZeroInfo()
+                elif device_identifier == BrickletIsolator.DEVICE_IDENTIFIER:
+                    device_info = infos.BrickletIsolatorInfo()
                 elif '0' <= position <= '9':
                     device_info = infos.BrickInfo()
                     something_changed_ref[0] = True
