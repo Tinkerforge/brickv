@@ -85,7 +85,7 @@ class ColorBar(QWidget):
         for i in l:
             if self.orientation == Qt.Horizontal:
                 section.setRect(rect.x() + i, rect.y(),
-                                1, rect.heigh())
+                                1, rect.height())
             else:
                 section.setRect(rect.x(), rect.y() + i,
                                 rect.width(), 1)
