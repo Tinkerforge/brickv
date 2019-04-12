@@ -282,7 +282,7 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
         return device_identifier == BrickletGPSV2.DEVICE_IDENTIFIER
 
     def make_ddmm_mmmmm(self, degree):
-        dd = degree / 1000000
+        dd = degree // 1000000
         mm = (degree % 1000000) * 60 / 1000000.0
         mmmmm = (mm - int(mm)) * 100000
 
@@ -305,7 +305,7 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
             return '%2.6f°' % (degree / 1000000.0)
 
     def make_ddmmss_sss(self, degree):
-        dd = degree / 1000000
+        dd = degree // 1000000
         mm = (degree % 1000000) * 60 / 1000000.0
         ss = (mm - int(mm)) * 60
         sss = (ss - int(ss)) * 1000
@@ -384,16 +384,16 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
     def cb_date_time(self, date, time):
         yy = date % 100
         yy += 2000
-        date /= 100
+        date //= 100
         mm = date % 100
-        date /= 100
+        date //= 100
         dd = date
 
-        time /= 1000
+        time //= 1000
         ss = time % 100
-        time /= 100
+        time //= 100
         mins = time % 100
-        time /= 100
+        time //= 100
         hh = time
 
         try:
