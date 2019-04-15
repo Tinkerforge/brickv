@@ -462,6 +462,17 @@
 - Unify update and setup tab device tree sorting
 - Properly close detached tab window if corresponding device is removed
 
+2019-04-16: 2.4.2 (<unknown>)
+- Minor tweaks in RED Brick Tinkerforge Software update detection
+- Fix crash in IO-16 Bricklet 2.0 plugin
+- Add Alt-S shortcut for switching to setup tab
+- Fix hacks for progress bar text in Fusion style on macOS
+- Show proper error message if trying to start/install on unsupported macOS
+  (< 10.11) or Windows (< 7) version
+- Fix crash in RED Brick date/time settings tab
+- Fix integer/float division mixups
+- Improve error reporting for Brick flashing and RED Brick serial console
+
 <unknown>: 2.4.x (<unknown>)
 - Add Data Logger support for CO2 2.0, Hall Effect 2.0, Linear Poti 2.0,
   Joystick 2.0 and Segment Display 4x7 2.0 Bricklet
