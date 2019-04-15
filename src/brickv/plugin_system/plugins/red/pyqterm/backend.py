@@ -1135,11 +1135,12 @@ class SerialSession(QObject):
         try:
             if self.serial is not None:
                 self.serial.close()
-            if self.thread is not None:
-                self.thread.join()
         except:
             # Report the exception without unwinding the call stack.
             sys.excepthook(*sys.exc_info())
+
+        if self.thread is not None:
+            self.thread.join()
 
     def dump(self):
         if self.term == None:
