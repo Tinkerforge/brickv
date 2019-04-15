@@ -1133,12 +1133,13 @@ class SerialSession(QObject):
         self.read_loop_stopped = 1
 
         try:
-            self.serial.close()
+            if self.serial is not None:
+                self.serial.close()
+            if self.thread is not None:
+                self.thread.join()
         except:
             # Report the exception without unwinding the call stack.
             sys.excepthook(*sys.exc_info())
-
-        self.thread.join()
 
     def dump(self):
         if self.term == None:
