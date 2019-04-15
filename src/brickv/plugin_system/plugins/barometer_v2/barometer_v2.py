@@ -33,6 +33,8 @@ from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_modeless_dialog_flags
 from brickv.plugin_system.plugins.barometer_v2.ui_calibration import Ui_Calibration
 
+METER_TO_FEET_DIVISOR = 0.3048
+
 class Calibration(QDialog, Ui_Calibration):
     def __init__(self, parent):
         QDialog.__init__(self, parent, get_modeless_dialog_flags())
@@ -94,7 +96,7 @@ class Calibration(QDialog, Ui_Calibration):
         if cal.measured_air_pressure == 0 and cal.actual_air_pressure == 0:
             self.sbox_cal_actual_air_pressure.setValue(1013.250)
         else:
-            self.sbox_cal_actual_air_pressure.setValue(cal.actual_air_pressure/1000.0)
+            self.sbox_cal_actual_air_pressure.setValue(cal.actual_air_pressure / 1000.0)
 
     def cb_get_p(self, air_pressure):
         self.p = air_pressure / 1000.0
@@ -102,10 +104,10 @@ class Calibration(QDialog, Ui_Calibration):
 
     def cb_get_a(self, altitude):
         self.a = altitude / 1000.0
-        self.lbl_a.setText('{:.3f} m ({:.3f} ft)'.format(self.a, self.a/0.3048))
+        self.lbl_a.setText('{:.3f} m ({:.3f} ft)'.format(self.a, self.a / METER_TO_FEET_DIVISOR))
 
     def cb_get_t(self, temperature):
-        self.t = temperature/100.0
+        self.t = temperature / 100.0
         self.lbl_t.setText('{:.2f} °C'.format(self.t))
 
     def closeEvent(self, _event):
@@ -113,6 +115,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.cbe_a.set_period(0)
         self.cbe_t.set_period(0)
         self.parent.btn_calibration.setEnabled(True)
+
 
 class BarometerV2(COMCUPluginBase):
     def __init__(self, *args):
@@ -174,7 +177,7 @@ class BarometerV2(COMCUPluginBase):
         plot_config_altitude = [('Altitude',
                                  Qt.darkGreen,
                                  self.current_altitude,
-                                 lambda value: '{:.3f} m ({:.3f} ft)'.format(value, value / 0.3048))]
+                                 lambda value: '{:.3f} m ({:.3f} ft)'.format(value, value / METER_TO_FEET_DIVISOR))]
 
         self.plot_widget_air_pressure = PlotWidget('Air Pressure [mbar]',
                                                    plot_config_air_pressure,

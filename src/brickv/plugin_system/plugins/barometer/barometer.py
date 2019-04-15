@@ -38,6 +38,8 @@ class ChipTemperatureLabel(QLabel):
         text = "Chip Temperature: " + text + " %cC" % 0xB0
         super().setText(text)
 
+METER_TO_FEET_DIVISOR = 0.3048
+
 class Barometer(PluginBase):
     def __init__(self, *args):
         super().__init__(BrickletBarometer, *args)
@@ -68,7 +70,7 @@ class Barometer(PluginBase):
         plots = [('Air Pressure', Qt.red, self.current_air_pressure, '{:.3f} mbar (QFE)'.format)]
         self.air_pressure_plot_widget = PlotWidget('Air Pressure [mbar]', plots, self.clear_graphs_button, y_resolution=0.001)
 
-        plots = [('Altitude', Qt.darkGreen, self.current_altitude, lambda value: '{:.2f} m ({:.2f} ft)'.format(value, value / 0.3048))]
+        plots = [('Altitude', Qt.darkGreen, self.current_altitude, lambda value: '{:.2f} m ({:.2f} ft)'.format(value, value / METER_TO_FEET_DIVISOR))]
         self.altitude_plot_widget = PlotWidget('Altitude [m]', plots, self.clear_graphs_button, y_resolution=0.01)
 
         if self.has_calibrate:
