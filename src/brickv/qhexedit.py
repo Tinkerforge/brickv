@@ -87,8 +87,8 @@ class QHexeditWidget(QAbstractScrollArea):
         return (ch in string.printable) and (not ch in ('\n', '\r', '\t', '\x0b', '\x0c'))
 
     '''
-    // Name: add_toggle_action_to_menu(QMenu *menu, const str &caption, bool checked, QObject *receiver, const char *slot)
-    // Desc: convenience function used to add a checkable menu item to the context menu
+    Name: add_toggle_action_to_menu(QMenu *menu, const str &caption, bool checked, QObject *receiver, const char *slot)
+    Desc: convenience function used to add a checkable menu item to the context menu
     '''
     def add_toggle_action_to_menu(self, menu, caption, checked, call):
         action = QAction(caption, menu)
@@ -197,8 +197,8 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    // Name: clear()
-    // Desc: clears all data from the view
+    Name: clear()
+    Desc: clears all data from the view
     '''
     def clear(self):
         self.data = ""
@@ -206,15 +206,15 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    // Name: hasSelectedText() const
-    // Desc: returns true if any text is selected
+    Name: hasSelectedText() const
+    Desc: returns true if any text is selected
     '''
     def hasSelectedText(self):
         return not (self.selection_start == -1 or self.selection_end == -1)
 
     '''
-    // Name: isInViewableArea(int index) const
-    // Desc: returns true if the word at the given index is in the viewable area
+    Name: isInViewableArea(int index) const
+    Desc: returns true if the word at the given index is in the viewable area
     '''
     def isInViewableArea(self, index):
         firstViewableWord = self.verticalScrollBar().value() * self.row_width
@@ -224,8 +224,8 @@ class QHexeditWidget(QAbstractScrollArea):
         return index >= firstViewableWord and index < lastViewableWord
 
     '''
-    // Name: keyPressEvent(QKeyEvent *event)
-    // Desc:
+    Name: keyPressEvent(QKeyEvent *event)
+    Desc:
     '''
     def keyPressEvent(self, event):
         if event.modifiers() & Qt.ControlModifier:
@@ -263,8 +263,8 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    // Name: line3() const
-    // Desc: returns the x coordinate of the 3rd line
+    Name: line3() const
+    Desc: returns the x coordinate of the 3rd line
     '''
     def line3(self):
         if self.show_ascii:
@@ -274,8 +274,8 @@ class QHexeditWidget(QAbstractScrollArea):
             return self.line2()
 
     '''
-    // Name: line2() const
-    // Desc: returns the x coordinate of the 2nd line
+    Name: line2() const
+    Desc: returns the x coordinate of the 2nd line
     '''
     def line2(self):
         if self.show_hex:
@@ -286,8 +286,8 @@ class QHexeditWidget(QAbstractScrollArea):
 
 
     '''
-    // Name: line1() const
-    // Desc: returns the x coordinate of the 1st line
+    Name: line1() const
+    Desc: returns the x coordinate of the 1st line
     '''
     def line1(self):
         if self.show_address:
@@ -297,29 +297,29 @@ class QHexeditWidget(QAbstractScrollArea):
 
 
     '''
-    // Name: hexDumpLeft() const
-    // Desc: returns the x coordinate of the hex-dump field left edge
+    Name: hexDumpLeft() const
+    Desc: returns the x coordinate of the hex-dump field left edge
     '''
     def hexDumpLeft(self):
         return self.line1() + (self.font_width / 2)
 
     '''
-    // Name: asciiDumpLeft() const
-    // Desc: returns the x coordinate of the ascii-dump field left edge
+    Name: asciiDumpLeft() const
+    Desc: returns the x coordinate of the ascii-dump field left edge
     '''
     def asciiDumpLeft(self):
         return self.line2() + (self.font_width / 2)
 
     '''
-    // Name: charsPerWord() const
-    // Desc: returns how many characters each word takes up
+    Name: charsPerWord() const
+    Desc: returns how many characters each word takes up
     '''
     def charsPerWord(self):
         return self.word_width * 2
 
     '''
-    // Name: addressLen() const
-    // Desc: returns the lenth in characters the address will take up
+    Name: addressLen() const
+    Desc: returns the lenth in characters the address will take up
     '''
     def addressLen(self):
         addressLength = 8
@@ -329,8 +329,8 @@ class QHexeditWidget(QAbstractScrollArea):
 
 
     '''
-    // Name: updateScrollbars()
-    // Desc: recalculates scrollbar maximum value base on lines total and lines viewable
+    Name: updateScrollbars()
+    Desc: recalculates scrollbar maximum value base on lines total and lines viewable
     '''
     def updateScrollbars(self):
         sz = self.dataSize()
@@ -345,8 +345,8 @@ class QHexeditWidget(QAbstractScrollArea):
 
 
     '''
-    // Name: scrollTo( offset)
-    // Desc: scrolls view to given byte offset
+    Name: scrollTo( offset)
+    Desc: scrolls view to given byte offset
     '''
     def scrollTo(self, offset):
         bpr = self.bytesPerRow()
@@ -369,8 +369,8 @@ class QHexeditWidget(QAbstractScrollArea):
 
 
     '''
-    // Name: setShowAddress(bool show)
-    // Desc: sets if we are to display the address column
+    Name: setShowAddress(bool show)
+    Desc: sets if we are to display the address column
     '''
     def setShowAddress(self, show):
         self.show_address = show
@@ -379,8 +379,8 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    // Name: setShowHexDump(bool show)
-    // Desc: sets if we are to display the hex-dump column
+    Name: setShowHexDump(bool show)
+    Desc: sets if we are to display the hex-dump column
     '''
     def setShowHexDump(self, show):
         self.show_hex = show
@@ -389,8 +389,8 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    // Name: setShowAsciiDump(bool show)
-    // Desc: sets if we are to display the ascii-dump column
+    Name: setShowAsciiDump(bool show)
+    Desc: sets if we are to display the ascii-dump column
     '''
     def setShowAsciiDump(self, show):
         self.show_ascii = show
@@ -399,8 +399,8 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    // Name: setRowWidth(int rowWidth)
-    // Desc: sets the row width (units is words)
+    Name: setRowWidth(int rowWidth)
+    Desc: sets the row width (units is words)
     '''
     def setRowWidth(self, rowWidth):
         self.row_width = rowWidth
@@ -409,8 +409,8 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    // Name: setWordWidth(int wordWidth)
-    // Desc: sets how many bytes represent a word
+    Name: setWordWidth(int wordWidth)
+    Desc: sets how many bytes represent a word
     '''
     def setWordWidth(self, wordWidth):
         self.word_width = wordWidth
@@ -419,59 +419,59 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    // Name: bytesPerRow() const
+    Name: bytesPerRow() const
     '''
     def bytesPerRow(self):
         return self.row_width * self.word_width
 
 
     '''
-    // Name: pixelToWord(int x, int y) const
+    Name: pixelToWord(int x, int y) const
     '''
     def pixelToWord(self, x, y):
 
         if self.highlighting == self.highlightingData:
-            #// the right edge of a box is kinda quirky, so we pretend there is one
-            #// extra character there
+            # the right edge of a box is kinda quirky, so we pretend there is one
+            # extra character there
             x = qBound(self.line1(), x, self.line2() + self.font_width)
 
-            #// the selection is in the data view portion
+            # the selection is in the data view portion
             x -= self.line1()
 
-            #// scale x/y down to character from pixels
+            # scale x/y down to character from pixels
             if x % self.font_width >= self.font_width // 2:
                 x = x // self.font_width + 1
             else:
                 x = x // self.font_width
             y //= self.font_height
 
-            #// make x relative to rendering mode of the bytes
+            # make x relative to rendering mode of the bytes
             x //= (self.charsPerWord() + 1)
         elif self.highlighting == self.highlightingAscii:
             x = qBound(self.asciiDumpLeft(), x, self.line3())
 
-            #// the selection is in the ascii view portion
+            # the selection is in the ascii view portion
             x -= self.asciiDumpLeft()
 
-            #// scale x/y down to character from pixels
+            # scale x/y down to character from pixels
             x //= self.font_width
             y //= self.font_height
 
-            #// make x relative to rendering mode of the bytes
+            # make x relative to rendering mode of the bytes
             x //= self.word_width
         else:
             pass
 
-        #// starting offset in bytes
+        # starting offset in bytes
         start_offset = self.verticalScrollBar().value() * self.bytesPerRow()
 
-        #// take into account the origin
+        # take into account the origin
         if self.origin != 0:
             if start_offset > 0:
                 start_offset += self.origin
                 start_offset -= self.bytesPerRow()
 
-        #// convert byte offset to word offset, rounding up
+        # convert byte offset to word offset, rounding up
         start_offset //= self.word_width
 
         if (self.origin % self.word_width) != 0:
@@ -483,7 +483,7 @@ class QHexeditWidget(QAbstractScrollArea):
 
 
     '''
-    // Name: mouseDoubleClickEvent(QMouseEvent *event)
+    Name: mouseDoubleClickEvent(QMouseEvent *event)
     '''
     def mouseDoubleClickEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -503,7 +503,7 @@ class QHexeditWidget(QAbstractScrollArea):
 
 
     '''
-    // Name: mousePressEvent(QMouseEvent *event)
+    Name: mousePressEvent(QMouseEvent *event)
     '''
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -528,7 +528,7 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    // Name: mouseMoveEvent(QMouseEvent *event)
+    Name: mouseMoveEvent(QMouseEvent *event)
     '''
     def mouseMoveEvent(self, event):
         if self.highlighting != self.highlightingNone:
@@ -549,13 +549,13 @@ class QHexeditWidget(QAbstractScrollArea):
                 if self.selection_end < 0:
                     self.selection_end = 0
                 if not self.isInViewableArea(self.selection_end):
-                    #// TODO: scroll to an appropriate location
+                    # TODO: scroll to an appropriate location
                     pass
             self.repaint()
         return
 
     '''
-    // Name: mouseReleaseEvent(QMouseEvent *event)
+    Name: mouseReleaseEvent(QMouseEvent *event)
     '''
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -571,21 +571,21 @@ class QHexeditWidget(QAbstractScrollArea):
         self.repaint()
 
     '''
-    // Name: resizeEvent(QResizeEvent *)
+    Name: resizeEvent(QResizeEvent *)
     '''
     def resizeEvent(self, _event):
         self.updateScrollbars()
         return
 
     '''
-    // Name: setAddressOffset(address_t offset)
+    Name: setAddressOffset(address_t offset)
     '''
     def setAddressOffset(self, offset):
         self.address_offset = offset
         return
 
     '''
-    // Name: isSelected(int index) const
+    Name: isSelected(int index) const
     '''
     def isSelected(self, index):
         ret = False
@@ -598,10 +598,10 @@ class QHexeditWidget(QAbstractScrollArea):
         return ret
 
     '''
-    // Name: drawAsciiDumpToBuffer(QTextStream &stream, offset, int size, const QByteArray &row_data) const
+    Name: drawAsciiDumpToBuffer(QTextStream &stream, offset, int size, const QByteArray &row_data) const
     '''
     def drawAsciiDumpToBuffer(self, stream, offset, size, row_data):
-        #// i is the byte index
+        # i is the byte index
         chars_per_row = self.bytesPerRow()
         for i in range(0, chars_per_row):
             index = offset + i
@@ -620,11 +620,11 @@ class QHexeditWidget(QAbstractScrollArea):
         return stream
 
     '''
-    // Name: format_bytes(const C &data_ref, int index) const
-    // Desc: formats bytes in a way that's suitable for rendering in a hexdump
-    //             having self as a separate function serves two purposes.
-    //             #1 no code duplication between the buffer and QPainter versions
-    //             #2 self encourages NRVO of the return value more than an integrated
+    Name: format_bytes(const C &data_ref, int index) const
+    Desc: formats bytes in a way that's suitable for rendering in a hexdump
+                having self as a separate function serves two purposes.
+                #1 no code duplication between the buffer and QPainter versions
+                #2 self encourages NRVO of the return value more than an integrated
     '''
     def format_bytes(self, row_data, index):
         #union:
@@ -648,8 +648,8 @@ class QHexeditWidget(QAbstractScrollArea):
             value |= (ord(row_data[index + 3]) & 0xff) << 24
             byte_buffer = "%08x" % value
         elif self.word_width == 8:
-            #// we need the cast to ensure that it won't assume 32-bit
-            #// and drop bits shifted more that 31
+            # we need the cast to ensure that it won't assume 32-bit
+            # and drop bits shifted more that 31
             value |= (ord(row_data[index + 0]) & 0xff)
             value |= (ord(row_data[index + 1]) & 0xff) << 8
             value |= (ord(row_data[index + 2]) & 0xff) << 16
@@ -662,16 +662,16 @@ class QHexeditWidget(QAbstractScrollArea):
         return byte_buffer
 
     '''
-    // Name: drawHexDumpToBuffer(QTextStream &stream,    offset, int size, const QByteArray &row_data) const
+    Name: drawHexDumpToBuffer(QTextStream &stream,    offset, int size, const QByteArray &row_data) const
     '''
     def drawHexDumpToBuffer(self, stream, offset, size, row_data):
-        #// i is the word we are currently rendering
+        # i is the word we are currently rendering
         for i in range(0, self.row_width):
-            #// index of first byte of current 'word'
+            # index of first byte of current 'word'
             index = offset + (i * self.word_width)
-            #// equal <=, not < because we want to test the END of the word we
-            #// about to render, not the start, it's allowed to end at the very last
-            #// byte
+            # equal <=, not < because we want to test the END of the word we
+            # about to render, not the start, it's allowed to end at the very last
+            # byte
             if index + self.word_width <= size:
                 byteBuffer = str(self.format_bytes(row_data, i * self.word_width))
                 if self.isSelected(index):
@@ -686,17 +686,17 @@ class QHexeditWidget(QAbstractScrollArea):
         return stream
 
     '''
-    // Name: drawHexDump(QPainter &painter, offset, row, int size, int &word_count, const QByteArray &row_data) const
+    Name: drawHexDump(QPainter &painter, offset, row, int size, int &word_count, const QByteArray &row_data) const
     '''
     def drawHexDump(self, painter, offset, row, size, word_count, row_data):
         hex_dump_left = self.hexDumpLeft()
-        #// i is the word we are currently rendering
+        # i is the word we are currently rendering
         for i in range(0, self.row_width):
-            #// index of first byte of current 'word'
+            # index of first byte of current 'word'
             index = offset + (i * self.word_width)
-            #// equal <=, not < because we want to test the END of the word we
-            #// about to render, not the start, it's allowed to end at the very last
-            #// byte
+            # equal <=, not < because we want to test the END of the word we
+            # about to render, not the start, it's allowed to end at the very last
+            # byte
             if index + self.word_width <= size:
                 byteBuffer = str(self.format_bytes(row_data, i * self.word_width))
                 drawLeft = hex_dump_left + (i * (self.charsPerWord() + 1) * self.font_width)
@@ -709,7 +709,7 @@ class QHexeditWidget(QAbstractScrollArea):
                         self.palette().highlight()
                     )
 
-                    #// should be highlight the space between us and the next word?
+                    # should be highlight the space between us and the next word?
                     if i != (self.row_width - 1):
                         if self.isSelected(index + 1):
                             painter.fillRect(
@@ -739,12 +739,12 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    // Name: drawAsciiDump(QPainter &painter, offset, row, int size, const QByteArray &row_data) const
+    Name: drawAsciiDump(QPainter &painter, offset, row, int size, const QByteArray &row_data) const
     '''
     def drawAsciiDump(self, painter, offset, row, size, row_data):
         ascii_dump_left = self.asciiDumpLeft()
 
-        #// i is the byte index
+        # i is the byte index
         chars_per_row = self.bytesPerRow()
         for i in range(0, chars_per_row):
             index = offset + i
@@ -752,7 +752,7 @@ class QHexeditWidget(QAbstractScrollArea):
                 ch = row_data[i]
                 drawLeft = ascii_dump_left + i * self.font_width
                 printable = self.is_printable(ch)
-                #// drawing a selected character
+                # drawing a selected character
                 if self.isSelected(index):
                     painter.fillRect(
                         drawLeft,
@@ -784,17 +784,17 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    // Name: paintEvent(QPaintEvent *)
+    Name: paintEvent(QPaintEvent *)
     '''
     def paintEvent(self, event):
         painter = QPainter(self.viewport())
         painter.translate(-self.horizontalScrollBar().value() * self.font_width, 0)
         word_count = 0
 
-        #// pixel offset of self row
+        # pixel offset of self row
         row = 0
         chars_per_row = self.bytesPerRow()
-        #// current actual offset (in bytes)
+        # current actual offset (in bytes)
         offset = self.verticalScrollBar().value() * chars_per_row
 
         if self.origin != 0:
@@ -842,7 +842,7 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    // Name: selectAll()
+    Name: selectAll()
     '''
     def selectAll(self):
         self.selection_start = 0
@@ -850,7 +850,7 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    // Name: deselect()
+    Name: deselect()
     '''
     def deselect(self):
         self.selection_start = -1
@@ -858,13 +858,13 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    // Name: allBytes() const
+    Name: allBytes() const
     '''
     def allBytes(self):
         return self.data
 
     '''
-    // Name: selectedBytes() const
+    Name: selectedBytes() const
     '''
     def selectedBytes(self):
         if self.hasSelectedText():
@@ -875,14 +875,14 @@ class QHexeditWidget(QAbstractScrollArea):
         return []
 
     '''
-    // Name: selectedBytesAddress() const
+    Name: selectedBytesAddress() const
     '''
     def selectedBytesAddress(self):
         select_base = min(self.selection_start, self.selection_end)
         return select_base + self.address_offset
 
     '''
-    // Name: selectedBytesSize() const
+    Name: selectedBytesSize() const
     '''
     def selectedBytesSize(self):
         if self.selection_end > self.selection_start:
@@ -892,52 +892,52 @@ class QHexeditWidget(QAbstractScrollArea):
         return ret
 
     '''
-    // Name: addressOffset() const
+    Name: addressOffset() const
     '''
     def addressOffset(self):
         return self.address_offset
 
     '''
-    // Name: showHexDump() const
+    Name: showHexDump() const
     '''
     def showHexDump(self):
         return self.show_hex
 
     '''
-    // Name: showAddress() const
+    Name: showAddress() const
     '''
     def showAddress(self):
         return self.show_address
 
     '''
-    // Name: showAsciiDump() const
+    Name: showAsciiDump() const
     '''
     def showAsciiDump(self):
         return self.show_ascii
 
     '''
-    // Name: showComments() const
+    Name: showComments() const
     '''
     def mshowComments(self):
         return self.show_comments
 
     '''
-    // Name: wordWidth() const
+    Name: wordWidth() const
     '''
     def wordWidth(self):
         return self.word_width
 
     '''
-    // Name: rowWidth() const
+    Name: rowWidth() const
     '''
     def rowWidth(self):
         return self.row_width
 
     '''wf
-    // Name: firstVisibleAddress() const
+    Name: firstVisibleAddress() const
     '''
     def firstVisibleAddress(self):
-        #// current actual offset (in bytes)
+        # current actual offset (in bytes)
         chars_per_row = self.bytesPerRow()
         offset = self.verticalScrollBar().value() * chars_per_row
         if self.origin != 0:
