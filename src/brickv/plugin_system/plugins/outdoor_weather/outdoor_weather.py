@@ -47,6 +47,7 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
                                                        self.increase_error_count)
 
         self.combo_identifier_station.currentIndexChanged.connect(self.update_station)
+        self.combo_identifier_sensor.currentIndexChanged.connect(self.update_sensor)
 
         self.identifiers_station = []
         self.identifiers_sensor = []
