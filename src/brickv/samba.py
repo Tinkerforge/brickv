@@ -170,9 +170,6 @@ class SAMBAException(Exception):
 
         return message
 
-class SAMBANoBrickError(SAMBAException):
-    pass
-
 class SAMBARebootError(SAMBAException):
     pass
 
@@ -198,7 +195,7 @@ class SAMBA:
             self.change_mode('T')
             self.change_mode('N')
         except Exception as e:
-            raise SAMBANoBrickError('No Brick in Bootloader found') from e
+            raise SAMBAException('No Brick in Bootloader found') from e
 
         chipid_cidr = self.read_uint32(CHIPID_CIDR)
         chipid_exid = self.read_uint32(CHIPID_EXID)
