@@ -201,7 +201,7 @@ class ColorV2(COMCUPluginBase):
         r, g, b, c = data
 
         self.current_color_r.value = r
-        self.current_color_g.value = b
+        self.current_color_g.value = g
         self.current_color_b.value = b
         self.current_color_c.value = c
 

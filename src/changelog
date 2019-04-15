@@ -472,6 +472,7 @@
 - Fix crash in RED Brick date/time settings tab
 - Fix integer/float division mixups
 - Improve error reporting for Brick flashing and RED Brick serial console
+- Fix blue/green channel mixup in Color Bricklet plugin
 
 <unknown>: 2.4.x (<unknown>)
 - Add Data Logger support for CO2 2.0, Hall Effect 2.0, Linear Poti 2.0,
