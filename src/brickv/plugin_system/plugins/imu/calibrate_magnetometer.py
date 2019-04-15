@@ -83,7 +83,7 @@ in the Im/Export tab."""
     def calc(self):
         for i in range(3):
             self.acc_bias[i] = ((500  - self.mag_max[i]) +
-                                (-500 - self.mag_min[i]))/2
+                                (-500 - self.mag_min[i]))//2
 
             self.acc_gain_mult[i] = 500
             self.acc_gain_div[i] = self.mag_max[i] + self.acc_bias[i]

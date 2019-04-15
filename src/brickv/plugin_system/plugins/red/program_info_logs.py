@@ -184,10 +184,11 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                         continue
 
                     try:
-                        timestamp = int(file_name_parts[1].split('+')[0]) / 1000000
+                        timestamp = int(file_name_parts[1].split('+')[0]) // 1000000
                     except ValueError:
                         continue
 
+                    #FIXME: fromTime_t is obsolete: https://doc.qt.io/qt-5/qdatetime-obsolete.html#toTime_t
                     date      = QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd')
                     time      = QDateTime.fromTime_t(timestamp).toString('HH:mm:ss')
                     date_time = date + 'T' + time

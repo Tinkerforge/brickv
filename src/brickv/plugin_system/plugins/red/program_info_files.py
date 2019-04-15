@@ -85,6 +85,7 @@ def get_full_item_path(item):
 
 def expand_walk_to_model(walk, model, folder_icon, file_icon):
     def create_last_modified_item(last_modified):
+        #FIXME: fromTime_t is obsolete: https://doc.qt.io/qt-5/qdatetime-obsolete.html#toTime_t
         item = QStandardItem(QDateTime.fromTime_t(last_modified).toString('yyyy-MM-dd HH:mm:ss'))
         item.setData(last_modified, USER_ROLE_LAST_MODIFIED)
 

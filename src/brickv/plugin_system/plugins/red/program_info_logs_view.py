@@ -54,7 +54,7 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
             self.continuous = True
         else:
             try:
-                timestamp = int(source_name_parts[1].split('+')[0]) / 1000000
+                timestamp = int(source_name_parts[1].split('+')[0]) // 1000000
             except ValueError:
                 timestamp = 0
 

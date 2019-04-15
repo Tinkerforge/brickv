@@ -124,7 +124,7 @@ class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
         left, right, bottom = self.spin_left.value(), self.spin_right.value(), self.spin_bottom.value()
 
         self.changing = True
-        self.spin_all.setValue((left+right+bottom)/3)
+        self.spin_all.setValue((left+right+bottom)//3)
         self.changing = False
 
         self.indicator_value = [left, right, bottom]

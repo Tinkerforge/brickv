@@ -141,7 +141,7 @@ in the Im/Export tab.""")
             self.imu.set_angular_velocity_period(1)
             self.start_button.setEnabled(False)
         if self.state == 5:
-            self.gyr[1] = self.gyr_sum[1]/self.NUM_AVG
+            self.gyr[1] = self.gyr_sum[1]//self.NUM_AVG
             self.calc(1)
             self.text_label.setText("Turn IMU Brick 45%c/s around Z-axis." % 0xB0)
             self.start_button.setText("Start Z Calibration")
@@ -150,7 +150,7 @@ in the Im/Export tab.""")
             self.imu.set_angular_velocity_period(1)
             self.start_button.setEnabled(False)
         if self.state == 7:
-            self.gyr[2] = self.gyr_sum[2]/self.NUM_AVG
+            self.gyr[2] = self.gyr_sum[2]//self.NUM_AVG
             self.calc(2)
             self.text_label.setText("""Ready. Press "Save Calibration" to \
 upload the new calibration.""")

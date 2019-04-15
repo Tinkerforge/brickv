@@ -38,7 +38,7 @@ class AnalogLabel(FixedSizeLabel):
 
 class DistanceIRV2(COMCUPluginBase):
     NUM_VALUES = 512
-    DIVIDER = 2**12/NUM_VALUES
+    DIVIDER = 2**12//NUM_VALUES
 
     def __init__(self, *args):
         super().__init__(BrickletDistanceIRV2, *args)

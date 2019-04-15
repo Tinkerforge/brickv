@@ -83,7 +83,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.update_calibration()
 
     def offset_clicked(self):
-        self.parent.analog_in.set_calibration((-sum(self.values0)/10, -sum(self.values1)/10), (self.current_gain0, self.current_gain1))
+        self.parent.analog_in.set_calibration((-sum(self.values0)//10, -sum(self.values1)//10), (self.current_gain0, self.current_gain1))
         self.update_calibration()
 
     def gain_clicked(self):
@@ -123,8 +123,8 @@ class Calibration(QDialog, Ui_Calibration):
         if self.values_index >= 10:
             self.values_index = 0
 
-        self.label_adc0.setText(str(sum(self.values0)/10))
-        self.label_adc1.setText(str(sum(self.values1)/10))
+        self.label_adc0.setText(str(sum(self.values0)//10))
+        self.label_adc1.setText(str(sum(self.values1)//10))
 
     def closeEvent(self, event):
         self.parent.calibration_button.setEnabled(True)

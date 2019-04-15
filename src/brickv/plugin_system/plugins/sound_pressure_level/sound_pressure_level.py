@@ -63,7 +63,7 @@ class TuningThermo(QWidget):
         painter.setPen(QColor(190, 190, 190))
         painter.drawRect(0, 0, width - 1, height - 1)
 
-        filled_bar_width = round(float(width - self.border * 2 - 1) * self.value / self.max_value + 1)
+        filled_bar_width = int(round(float(width - self.border * 2 - 1) * self.value / self.max_value + 1))
 
         painter.fillRect(self.border, self.border, filled_bar_width, height - self.border * 2, self.gradient)
 
@@ -95,7 +95,7 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
                                                x_diff=20480, x_scale_title_text='Frequency [Hz]',
                                                x_scale_skip_last_tick=False, key=None, y_resolution=0.1,
                                                y_scale_shrinkable=False)
-        self.plot_widget_spectrum.set_x_scale(512*40/5, 1)
+        self.plot_widget_spectrum.set_x_scale(512*40//5, 1)
 
         self.combo_fft_size.currentIndexChanged.connect(self.config_changed)
         self.combo_weighting.currentIndexChanged.connect(self.config_changed)

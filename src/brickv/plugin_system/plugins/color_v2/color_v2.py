@@ -213,12 +213,12 @@ class ColorV2(COMCUPluginBase):
             self.plot_widget_color_temperature.get_key_item(0).setStyleSheet('')
 
         normalize = 0xFFFF
-        self.color_frame.set_color(r * 255.0 / normalize, g * 255.0 / normalize, b * 255.0 / normalize)
+        self.color_frame.set_color(r * 255 // normalize, g * 255 // normalize, b * 255 // normalize)
 
     def cb_illuminance(self, illuminance):
-        self.current_illuminance.value = round(illuminance * 700.0 / float(self.current_gain_factor) / float(self.current_conversion_time), 1)
+        self.current_illuminance.value = round(illuminance * 700.0 / self.current_gain_factor / self.current_conversion_time, 1)
 
-        i = self.current_illuminance.value * 255 / 20000
+        i = int(self.current_illuminance.value) * 255 // 20000
 
         if i > 255:
             i = 255

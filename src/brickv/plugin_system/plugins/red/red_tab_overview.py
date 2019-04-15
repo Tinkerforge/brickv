@@ -103,7 +103,7 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
 
     def refresh_clicked(self):
         self.refresh_timer.stop()
-        self.refresh_counter = REFRESH_TIME/REFRESH_TIMEOUT
+        self.refresh_counter = REFRESH_TIME//REFRESH_TIMEOUT
         self.cb_refresh()
 
     def change_process_sort_order(self):
@@ -115,7 +115,7 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
     # the callbacks
     def cb_refresh(self):
         self.refresh_counter += 1
-        if self.refresh_counter >= REFRESH_TIME/REFRESH_TIMEOUT:
+        if self.refresh_counter >= REFRESH_TIME//REFRESH_TIMEOUT:
             self.refresh_counter = 0
             self.refresh_timer.stop()
             self.button_refresh.setText('Collecting data...')
@@ -124,7 +124,7 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
                                                max_length=1024*1024, decode_output_as_utf8=False)
         else:
             self.button_refresh.setDisabled(False)
-            self.button_refresh.setText('Refresh in ' + str((REFRESH_TIME/REFRESH_TIMEOUT - self.refresh_counter)/2.0) + "...")
+            self.button_refresh.setText('Refresh in ' + str((REFRESH_TIME//REFRESH_TIMEOUT - self.refresh_counter)/2.0) + "...")
 
     def cb_overview(self, result):
         # check if the tab is still on view or not
@@ -220,7 +220,7 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
         self.nic_item_model.removeRows(0, self.nic_item_model.rowCount())
 
         def _get_nic_transfer_rate(bytes_now, bytes_previous, delta_time):
-            return "%.1f" % float(((bytes_now - bytes_previous) / delta_time) / 1024)
+            return "%.1f" % float(((bytes_now - bytes_previous) / delta_time) / 1024.0)
 
         new_time = time.time()
         delta = new_time - self.nic_time

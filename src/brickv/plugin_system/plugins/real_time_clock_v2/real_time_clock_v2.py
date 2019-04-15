@@ -216,7 +216,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.label_new_offset.setText('%s%.02f ppm</font>' % (color, new_offset * 2.17))
 
     def optimize(self):
-        self.spin_new_offset.setValue(self.parent.offset + round(self.measured_ppm_avg / 2.17))
+        self.spin_new_offset.setValue(self.parent.offset + int(round(self.measured_ppm_avg / 2.17)))
 
     def save(self):
         self.parent.offset = self.spin_new_offset.value()
@@ -231,15 +231,15 @@ class Calibration(QDialog, Ui_Calibration):
         self.label_current_offset.setText('%s%.02f ppm</font> (%d)' % (color, self.parent.offset * 2.17, self.parent.offset))
 
     def cb_measured_duration(self, local_duration, rtc_duration):
-        rtc_hour = int(rtc_duration) / 3600
-        rtc_minute = int(rtc_duration) / 60 % 60
+        rtc_hour = int(rtc_duration) // 3600
+        rtc_minute = int(rtc_duration) // 60 % 60
         rtc_second = int(rtc_duration) % 60
         rtc_centisecond = int((rtc_duration % 1) * 100)
 
         self.label_measured_rtc_duration.setText('%d:%02d:%02d.%02d' % (rtc_hour, rtc_minute, rtc_second, rtc_centisecond))
 
-        local_hour = int(local_duration) / 3600
-        local_minute = int(local_duration) / 60 % 60
+        local_hour = int(local_duration) // 3600
+        local_minute = int(local_duration) // 60 % 60
         local_second = int(local_duration) % 60
         local_microsecond = int((local_duration % 1) * 1000000)
 

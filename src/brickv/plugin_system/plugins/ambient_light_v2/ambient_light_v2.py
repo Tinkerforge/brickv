@@ -185,5 +185,5 @@ class AmbientLightV2(PluginBase):
                 self.out_of_range_label.hide()
                 self.saturated_label.hide()
 
-        value = min(max(illuminance * 255 / max_illuminance, 0), 255)
+        value = min(max(illuminance * 255 // max_illuminance, 0), 255)
         self.alf.set_color(value, value, value)

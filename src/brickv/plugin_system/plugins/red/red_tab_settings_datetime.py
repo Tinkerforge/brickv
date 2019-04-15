@@ -123,6 +123,7 @@ class REDTabSettingsDateTime(QWidget, Ui_REDTabSettingsDateTime):
         self.time_update_gui()
 
     def time_update_gui(self):
+        #FIXME: fromTime_t is obsolete: https://doc.qt.io/qt-5/qdatetime-obsolete.html#toTime_t
         t = QDateTime.fromTime_t(self.time_local_old)
         self.time_date_local.setDateTime(t)
         self.time_time_local.setDateTime(t)

@@ -124,7 +124,7 @@ Please make sure that your internet connection is working.'
                 self.set_current_state(self.STATE_UPDATE_DONE)
                 self.tedit_main.setText(self.MESSAGE_INFO_STATE_UPDATE_DONE)
         else:
-            self.pbar.setValue(75 + int((float(self.update_info['processed']) / float(self.update_info['updates_total'])) * 25.0))
+            self.pbar.setValue(75 + int(float(self.update_info['processed']) / float(self.update_info['updates_total']) * 25.0))
             # Go for the next update to be installed.
             self.do_next_update_install()
 
@@ -249,7 +249,7 @@ Please make sure that your internet connection is working.'
                                                              'temp_dir': self.update_info['temp_dir'],
                                                              'temp_dir_abs_path': posixpath.join(self.update_info['temp_dir'], 'tinkerforge_' + d['name'] + '_bindings_latest.zip')})
 
-        self.pbar.setValue(50 + (((self.update_info['processed'] * 100.00) / self.update_info['updates_total']) / 6))
+        self.pbar.setValue(50 + int(self.update_info['processed'] * 100.00 / self.update_info['updates_total'] / 6.0))
         self.label_pbar.setText('Stored ' + display_name)
 
         if self.update_info['processed'] == self.update_info['updates_total']:
@@ -421,7 +421,7 @@ Please make sure that your internet connection is working.'
 
                     break
 
-        self.pbar.setValue(((self.update_info['processed'] * 100.00) / self.update_info['updates_total']) / 2)
+        self.pbar.setValue(int(self.update_info['processed'] * 100.00 / self.update_info['updates_total'] / 2.0))
         self.label_pbar.setText('Downloaded ' + display_name)
 
         self.update_info['processed'] = self.update_info['processed'] + 1
@@ -455,7 +455,7 @@ Please make sure that your internet connection is working.'
 
                 break
 
-        self.pbar.setValue(((self.update_info['processed'] * 100.00) / self.update_info['updates_total']) / 2)
+        self.pbar.setValue(int(self.update_info['processed'] * 100.00 / self.update_info['updates_total'] / 2.0))
         self.label_pbar.setText('Downloaded ' + display_name)
 
         self.update_info['error_messages'] += _exception + '\n\n'

@@ -77,6 +77,7 @@ class REDTabSettingsAPDhcpLeasesDialog(QDialog, Ui_REDTabSettingsAPDhcpLeasesDia
                         continue
 
                     if j == 0:
+                        #FIXME: fromTime_t is obsolete: https://doc.qt.io/qt-5/qdatetime-obsolete.html#toTime_t
                         leases_model.setItem(i, 3, QStandardItem(QDateTime.fromTime_t(int(l_split[j])).toString('yyyy-MM-dd HH:mm:ss')))
                     elif j == 3:
                         leases_model.setItem(i, 0, QStandardItem(l_split[j]))

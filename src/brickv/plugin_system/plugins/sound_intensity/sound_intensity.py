@@ -59,7 +59,7 @@ class TuningThermo(QWidget):
         painter.setPen(QColor(190, 190, 190))
         painter.drawRect(0, 0, width - 1, height - 1)
 
-        filled_bar_width = round(float(width - self.border * 2 - 1) * self.value / self.max_value + 1)
+        filled_bar_width = int(round(float(width - self.border * 2 - 1) * self.value / self.max_value + 1))
 
         painter.fillRect(self.border, self.border, filled_bar_width, height - self.border * 2, self.gradient)
 

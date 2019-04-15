@@ -65,4 +65,4 @@ class DistanceUSV2(COMCUPluginBase):
         return device_identifier == BrickletDistanceUSV2.DEVICE_IDENTIFIER
 
     def cb_distance(self, distance):
-        self.current_distance.value = distance/10.0
+        self.current_distance.value = distance / 10.0

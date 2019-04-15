@@ -599,11 +599,11 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         span_minimum = widget_spin_span.span_slider.minimum()
         span_maximum = widget_spin_span.span_slider.maximum()
         span = abs(span_minimum - span_maximum)
-        span_mid = span/2
+        span_mid = span//2
         widget_spin_span.sbox_upper.setValue(0)
         widget_spin_span.sbox_lower.setValue(0)
-        widget_spin_span.sbox_upper.setValue(span_mid + abs(span_mid - span_maximum)/2)
-        widget_spin_span.sbox_lower.setValue(span_minimum + abs(span_mid - span_minimum)/2)
+        widget_spin_span.sbox_upper.setValue(span_mid + abs(span_mid - span_maximum)//2)
+        widget_spin_span.sbox_lower.setValue(span_minimum + abs(span_mid - span_minimum)//2)
 
     def set_default_col_width_hosts(self):
         self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_USED, DEFAULT_COL_WIDTH_HOSTS_USED)

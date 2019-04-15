@@ -1217,7 +1217,7 @@ class ChunkedDownloaderBase:
         self.next_progress_update += download_size - self.last_download_size
         self.last_download_size    = download_size
 
-        if self.current_progress / (100 * 1024) != self.next_progress_update / (100 * 1024):
+        if self.current_progress // (100 * 1024) != self.next_progress_update // (100 * 1024):
             self.current_progress = self.next_progress_update
 
             self.set_progress_value(self.next_progress_update,
@@ -1340,7 +1340,7 @@ class ChunkedUploaderBase:
         self.next_progress_update += upload_size - self.last_upload_size
         self.last_upload_size = upload_size
 
-        if self.current_progress / (100 * 1024) != self.next_progress_update / (100 * 1024):
+        if self.current_progress // (100 * 1024) != self.next_progress_update // (100 * 1024):
             self.current_progress = self.next_progress_update
 
             self.set_progress_value(self.next_progress_update,
@@ -1491,6 +1491,7 @@ def set_current_combo_index_from_data(combo, data):
 
 
 def timestamp_to_date_at_time(timestamp):
+    #FIXME: fromTime_t is obsolete: https://doc.qt.io/qt-5/qdatetime-obsolete.html#toTime_t
     date = QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd')
     time = QDateTime.fromTime_t(timestamp).toString('HH:mm:ss')
 

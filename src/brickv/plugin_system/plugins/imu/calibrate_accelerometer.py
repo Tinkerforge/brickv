@@ -71,7 +71,7 @@ class CalibrateAccelerometer(QWidget, Ui_calibrate_accelerometer):
 
     def calc(self, i):
         self.acc_bias[i] = ((1000  - self.acc_avg_p[i]) +
-                            (-1000 - self.acc_avg_m[i]))/2
+                            (-1000 - self.acc_avg_m[i]))//2
 
         self.acc_gain_mult[i] = 1000
         self.acc_gain_div[i] = self.acc_avg_p[i] + self.acc_bias[i]
@@ -168,7 +168,7 @@ following way:
             self.start_button.setEnabled(False)
 
         if self.state == 3:
-            self.acc_avg_p[0] = self.acc_sum[0]/self.NUM_AVG
+            self.acc_avg_p[0] = self.acc_sum[0]//self.NUM_AVG
             self.text_label.setText("""Please hold the IMU Brick in the \
 following way:
 
@@ -182,7 +182,7 @@ following way:
             self.start_button.setEnabled(False)
 
         if self.state == 5:
-            self.acc_avg_m[0] = self.acc_sum[0]/self.NUM_AVG
+            self.acc_avg_m[0] = self.acc_sum[0]//self.NUM_AVG
             self.calc(0)
             self.text_label.setText("""Please hold the IMU Brick in the \
 following way:
@@ -196,7 +196,7 @@ following way:
             self.imu.set_acceleration_period(1)
             self.start_button.setEnabled(False)
         if self.state == 7:
-            self.acc_avg_p[1] = self.acc_sum[1]/self.NUM_AVG
+            self.acc_avg_p[1] = self.acc_sum[1]//self.NUM_AVG
             self.text_label.setText("""Please hold the IMU Brick in the \
 following way:
 
@@ -210,7 +210,7 @@ following way:
             self.start_button.setEnabled(False)
 
         if self.state == 9:
-            self.acc_avg_m[1] = self.acc_sum[1]/self.NUM_AVG
+            self.acc_avg_m[1] = self.acc_sum[1]//self.NUM_AVG
             self.calc(1)
             self.text_label.setText("""Please hold the IMU Brick in the \
 following way:
@@ -225,7 +225,7 @@ following way:
             self.start_button.setEnabled(False)
 
         if self.state == 11:
-            self.acc_avg_p[2] = self.acc_sum[2]/self.NUM_AVG
+            self.acc_avg_p[2] = self.acc_sum[2]//self.NUM_AVG
             self.text_label.setText("""Please hold the IMU Brick in the \
 following way:
 
@@ -239,7 +239,7 @@ following way:
             self.start_button.setEnabled(False)
 
         if self.state == 13:
-            self.acc_avg_m[2] = self.acc_sum[2]/self.NUM_AVG
+            self.acc_avg_m[2] = self.acc_sum[2]//self.NUM_AVG
             self.calc(2)
             self.text_label.setText("""Press "Save Calibration" to upload \
 the accelerometer calibration data to the IMU Brick""")

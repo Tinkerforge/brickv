@@ -91,5 +91,5 @@ class AmbientLight(PluginBase):
     def cb_illuminance(self, illuminance):
         self.current_illuminance.value = illuminance / 10.0
 
-        value = illuminance * 255 / 9000
+        value = illuminance * 255 // 9000
         self.alf.set_color(value, value, value)

@@ -109,7 +109,7 @@ temperature for one of the sampling points.
     def calc(self):
         if self.state == 2:
             for i in range(3):
-                self.gyr_bias_low[i] = self.gyr_sum[i]/self.NUM_AVG
+                self.gyr_bias_low[i] = self.gyr_sum[i]//self.NUM_AVG
 
                 if i == 0:
                     self.bias_low_x.setText(str(self.gyr_bias_low[i]))
@@ -119,7 +119,7 @@ temperature for one of the sampling points.
                     self.bias_low_z.setText(str(self.gyr_bias_low[i]))
         else:
             for i in range(3):
-                self.gyr_bias_high[i] = self.gyr_sum[i]/self.NUM_AVG
+                self.gyr_bias_high[i] = self.gyr_sum[i]//self.NUM_AVG
 
                 if i == 0:
                     self.bias_high_x.setText(str(self.gyr_bias_high[i]))
@@ -141,11 +141,11 @@ temperature for one of the sampling points.
             bias = [self.gyr_bias_low[0],
                     self.gyr_bias_low[1],
                     self.gyr_bias_low[2],
-                    (self.t_raw_start_low + self.t_raw_end_low)/2,
+                    (self.t_raw_start_low + self.t_raw_end_low)//2,
                     self.gyr_bias_high[0],
                     self.gyr_bias_high[1],
                     self.gyr_bias_high[2],
-                    (self.t_raw_start_high + self.t_raw_end_high)/2,
+                    (self.t_raw_start_high + self.t_raw_end_high)//2,
                     0, 0]
 
             self.imu.set_calibration(self.TYPE_GYR_BIAS, bias)

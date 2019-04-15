@@ -328,19 +328,19 @@ class Servo(PluginBase, Ui_Servo):
         self.current_label.setText(str(value) + "mA")
 
     def stack_input_voltage_update(self, sv):
-        sv_str = "%gV"  % round(sv/1000.0, 1)
+        sv_str = "%gV" % round(sv/1000.0, 1)
         self.stack_voltage_label.setText(sv_str)
 
     def external_input_voltage_update(self, ev):
-        ev_str = "%gV"  % round(ev/1000.0, 1)
+        ev_str = "%gV" % round(ev/1000.0, 1)
         self.external_voltage_label.setText(ev_str)
 
     def output_voltage_update(self, ov):
-        ov_str = "%gV"  % round(ov/1000.0, 1)
+        ov_str = "%gV" % round(ov/1000.0, 1)
         self.output_voltage_label.setText(ov_str)
 
     def minimum_voltage_update(self, mv):
-        mv_str = "%gV"  % round(mv/1000.0, 1)
+        mv_str = "%gV" % round(mv/1000.0, 1)
         self.minimum_voltage_label.setText(mv_str)
 
     def position_update(self, i, pos):
@@ -563,24 +563,24 @@ class Servo(PluginBase, Ui_Servo):
             return
 
     def degree_spin_finished(self):
-        min = self.degree_min_spin.value()
-        max = self.degree_max_spin.value()
+        min_ = self.degree_min_spin.value()
+        max_ = self.degree_max_spin.value()
         servo = self.selected_servo()
 
-        self.position_slider.setMinimum(min)
-        self.position_slider.setMaximum(max)
-        self.position_spin.setMinimum(min)
-        self.position_spin.setMaximum(max)
+        self.position_slider.setMinimum(min_)
+        self.position_slider.setMaximum(max_)
+        self.position_spin.setMinimum(min_)
+        self.position_spin.setMaximum(max_)
         if servo == 255:
             for i in range(7):
-                self.position_list[i].set_total_angle((max - min)/100)
-                self.position_list[i].set_range(min/100, max/100)
+                self.position_list[i].set_total_angle((max_ - min_)/100)
+                self.position_list[i].set_range(min_/100, max_/100)
         else:
-            self.position_list[servo].set_total_angle((max - min)/100)
-            self.position_list[servo].set_range(min/100, max/100)
+            self.position_list[servo].set_total_angle((max_ - min_)/100)
+            self.position_list[servo].set_range(min_/100, max_/100)
 
         try:
-            self.servo.set_degree(servo, min, max)
+            self.servo.set_degree(servo, min_, max_)
         except ip_connection.Error:
             return
 

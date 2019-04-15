@@ -159,6 +159,7 @@ class REDTabImportExportExport(QWidget, Ui_REDTabImportExportExport):
         async_call(refresh_async, None, cb_success, cb_error, pass_exception_to_error_callback=True)
 
     def export_archive(self):
+        #FIXME: fromTime_t is obsolete: https://doc.qt.io/qt-5/qdatetime-obsolete.html#toTime_t
         timestamp   = QDateTime.fromTime_t(int(time.time())).toString('yyyyMMdd-HHmmss')
         target_path = os.path.join(self.last_directory, 'red-brick-export-{0}.tfrba'.format(timestamp))
         target_path = get_save_file_name(get_main_window(), 'Save Archive', target_path, '*.tfrba')
