@@ -41,7 +41,7 @@ from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.ip_connection import IPConnection, Error, base58encode, \
                                           base58decode, BASE58, uid64_to_uid32
 from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
-from brickv.samba import SAMBA, SAMBAException, SAMBANoBrickError, SAMBARebootError, get_serial_ports
+from brickv.samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_ports
 from brickv.infos import get_version_string
 from brickv.utils import get_home_path, get_open_file_name, \
                          get_modeless_dialog_flags
@@ -629,7 +629,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         try:
             samba = SAMBA(port_name)
-        except SAMBANoBrickError as e:
+        except SAMBAException as e:
             self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not connect to Brick: {0}'.format(str(e)))
             return
