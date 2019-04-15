@@ -535,7 +535,7 @@ class Wifi(QWidget, Ui_Wifi):
                 chunks.append(cert_chunk)
 
                 position += 1
-                progress.setValue(1000*position//(length_certificate//32)))
+                progress.setValue(1000*position//(length_certificate//32))
 
             progress.setLabelText('Verifying Certificate...')
             progress.setValue(0)
