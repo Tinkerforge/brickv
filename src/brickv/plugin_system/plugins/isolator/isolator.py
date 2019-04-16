@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
-from brickv.plugin_system.plugins.isolator.ui_isolator import Ui_Isolator 
+from brickv.plugin_system.plugins.isolator.ui_isolator import Ui_Isolator
 from brickv.bindings.bricklet_isolator import BrickletIsolator
 from brickv.callback_emulator import CallbackEmulator
 

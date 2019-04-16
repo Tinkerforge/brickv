@@ -613,10 +613,10 @@ class REDList(REDObject):
         return items
 
 
-def _get_zero_padded_chunk(data, max_chunk_length, start = 0):
+def _get_zero_padded_chunk(data, max_chunk_length, start=0):
     chunk        = data[start:start + max_chunk_length]
     chunk_length = len(chunk)
-    chunk       += b'\0'*(max_chunk_length - chunk_length)
+    chunk       += b'\0' * (max_chunk_length - chunk_length)
 
     return chunk, chunk_length
 
@@ -1754,7 +1754,7 @@ class REDProgram(REDProgramBase):
     def _attach_callbacks(self):
         self._qtcb_scheduler_state_changed.connect(self._cb_scheduler_state_changed, Qt.QueuedConnection)
         self._cb_scheduler_state_changed_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED,
-                                                                                          self._cb_scheduler_state_changed_emit)
+                                                                                         self._cb_scheduler_state_changed_emit)
 
         self._qtcb_lite_scheduler_state_changed.connect(self._cb_lite_scheduler_state_changed, Qt.QueuedConnection)
         self._cb_lite_scheduler_state_changed_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED,

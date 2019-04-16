@@ -115,10 +115,10 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
                         self.destroy_session()
                         if isinstance(e, OSError) and e.errno == 16:
                             QMessageBox.critical(get_main_window(), 'Serial Connect Error',
-                                             'Could not connect to serial console:\n\n{0}\n\nMaybe some other process is currently probing the serial port. Please try again later.'.format(e))
+                                                 'Could not connect to serial console:\n\n{0}\n\nMaybe some other process is currently probing the serial port. Please try again later.'.format(e))
                         else:
                             QMessageBox.critical(get_main_window(), 'Serial Connect Error',
-                                                'Could not connect to serial console:\n\n{0}'.format(e))
+                                                 'Could not connect to serial console:\n\n{0}'.format(e))
 
             def cb_pkill_ttyGS0(result):
                 if result == None or result.exit_code not in [0, 1]: # 0 == no error, 1 == nothing killed

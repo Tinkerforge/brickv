@@ -222,7 +222,7 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
                                          'Error checking access point mode.')
                 elif not ap_mode_status['ap_incomplete_config'] and \
                      not ap_mode_status['ap_hardware_or_config_problem']:
-                        self.label_ap_status.setText('Active')
+                    self.label_ap_status.setText('Active')
                 elif ap_mode_status['ap_first_time']:
                     self.label_ap_status.setText('Inactive - Select an interface and click save')
                 elif ap_mode_status['ap_incomplete_config']:
@@ -274,10 +274,10 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
 
                 if ap_mode_status['ap_incomplete_config'] or \
                    ap_mode_status['ap_hardware_or_config_problem']:
-                        apply_dict['hostapd_driver'] = 'driver=rtl871xdrv'
-                        self.script_manager.execute_script('settings_ap_apply',
-                                                           cb_settings_ap_apply_2,
-                                                           [json.dumps(apply_dict)])
+                    apply_dict['hostapd_driver'] = 'driver=rtl871xdrv'
+                    self.script_manager.execute_script('settings_ap_apply',
+                                                       cb_settings_ap_apply_2,
+                                                       [json.dumps(apply_dict)])
                 else:
                     gui_after_apply(result)
             else:
@@ -591,10 +591,11 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
                         dhcp_range_end = dhcp_range[1]
 
                     elif l_split[0].strip(' ') == 'domain':
-                        domain= l_split[1].strip(' ')
+                        domain = l_split[1].strip(' ')
 
                     elif l_split[0].strip(' ') == 'dhcp-option':
                         dhcp_option = l_split[1].strip(' ').split(',')
+
                         if len(dhcp_option) == 2:
                             if dhcp_option[0].strip(' ') == 'option:netmask':
                                 dhcp_option_netmask = dhcp_option[1]

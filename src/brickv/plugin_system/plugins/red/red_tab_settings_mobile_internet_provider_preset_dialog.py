@@ -61,17 +61,17 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QDialog, Ui_REDTabSetting
            not dict_country or \
            len(dict_provider) == 0 or \
            len(dict_country) == 0:
-                self.label_mi_preview_dial.setText('-')
-                self.label_mi_preview_apn.setText('-')
-                self.label_mi_preview_username.setText('-')
-                self.label_mi_preview_password.setText('-')
-                self.cbox_mi_presets_country.clear()
-                self.cbox_mi_presets_provider.clear()
-                self.cbox_mi_presets_plan.clear()
-                self.pbutton_mi_presets_select.setEnabled(False)
-                self.cbox_mi_presets_country.setEnabled(False)
-                self.cbox_mi_presets_provider.setEnabled(False)
-                self.cbox_mi_presets_plan.setEnabled(False)
+            self.label_mi_preview_dial.setText('-')
+            self.label_mi_preview_apn.setText('-')
+            self.label_mi_preview_username.setText('-')
+            self.label_mi_preview_password.setText('-')
+            self.cbox_mi_presets_country.clear()
+            self.cbox_mi_presets_provider.clear()
+            self.cbox_mi_presets_plan.clear()
+            self.pbutton_mi_presets_select.setEnabled(False)
+            self.cbox_mi_presets_country.setEnabled(False)
+            self.cbox_mi_presets_provider.setEnabled(False)
+            self.cbox_mi_presets_plan.setEnabled(False)
         else:
             self.populate_cbox_mi_presets_country()
 

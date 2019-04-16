@@ -137,7 +137,7 @@ class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
         if self.changing:
             return
 
-        x =  self.spin_all.value()
+        x = self.spin_all.value()
 
         self.changing = True
         self.spin_left.setValue(x)

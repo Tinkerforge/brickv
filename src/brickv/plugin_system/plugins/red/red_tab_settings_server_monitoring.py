@@ -625,7 +625,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_EMAIL_NOTIFICATIONS, DEFAULT_COL_WIDTH_RULES_EMAIL_NOTIFICATIONS)
         self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_REMOVE, DEFAULT_COL_WIDTH_RULES_REMOVE)
 
-    def cb_settings_server_monitoring_enumerate(self, add_rule, result, refresh_uids = False):
+    def cb_settings_server_monitoring_enumerate(self, add_rule, result, refresh_uids=False):
         def restore_gui_on_exception():
             if refresh_uids or not add_rule and self.remaining_enumerations < 1:
                 self.update_gui(EVENT_RETURNED_REFRESH_GENERIC)
@@ -707,27 +707,27 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                dict_rule['bricklet'] == 'ptc_3_wire' or\
                dict_rule['bricklet'] == 'ptc_4_wire' and\
                dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['ptc']:
-                    self.dict_hosts[dict_rule['host']]['ptc'].insert(0, dict_rule['uid'])
+                self.dict_hosts[dict_rule['host']]['ptc'].insert(0, dict_rule['uid'])
 
             elif dict_rule['bricklet'] == 'temperature' and\
                  dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['temperature']:
-                    self.dict_hosts[dict_rule['host']]['temperature'].insert(0, dict_rule['uid'])
+                self.dict_hosts[dict_rule['host']]['temperature'].insert(0, dict_rule['uid'])
 
             elif dict_rule['bricklet'] == 'humidity' and\
                  dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['humidity']:
-                    self.dict_hosts[dict_rule['host']]['humidity'].insert(0, dict_rule['uid'])
+                self.dict_hosts[dict_rule['host']]['humidity'].insert(0, dict_rule['uid'])
 
             elif dict_rule['bricklet'] == 'ambient_light' and\
                  dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['ambient_light']:
-                    self.dict_hosts[dict_rule['host']]['ambient_light'].insert(0, dict_rule['uid'])
+                self.dict_hosts[dict_rule['host']]['ambient_light'].insert(0, dict_rule['uid'])
 
             elif dict_rule['bricklet'] == 'io4' and\
                  dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['io4']:
-                    self.dict_hosts[dict_rule['host']]['io4'].insert(0, dict_rule['uid'])
+                self.dict_hosts[dict_rule['host']]['io4'].insert(0, dict_rule['uid'])
 
             elif dict_rule['bricklet'] == 'idi4' and\
                  dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['idi4']:
-                    self.dict_hosts[dict_rule['host']]['idi4'].insert(0, dict_rule['uid'])
+                self.dict_hosts[dict_rule['host']]['idi4'].insert(0, dict_rule['uid'])
 
             self.add_new_rule(dict_rule['name'],
                               dict_rule['host'],
@@ -1006,7 +1006,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                 return None, None, CHECK_FAILED_EMAIL_FROM_EMPTY
 
             elif not self.is_ascii(email_from):
-                return None, None,  CHECK_FAILED_EMAIL_FROM_NON_ASCII
+                return None, None, CHECK_FAILED_EMAIL_FROM_NON_ASCII
 
             elif ' ' in email_from:
                 return None, None, CHECK_FAILED_EMAIL_FROM_WHITESPACE

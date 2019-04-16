@@ -146,8 +146,8 @@ class REDTabSettingsFileSystem(QWidget, Ui_REDTabSettingsFileSystem):
                 return
 
             QMessageBox.information(get_main_window(),
-                                          'Settings | Services',
-                                          'File system expansion will be complete after reboot, rebooting RED Brick now.')
+                                    'Settings | Services',
+                                    'File system expansion will be complete after reboot, rebooting RED Brick now.')
 
             self.script_manager.execute_script('restart_reboot_shutdown_systemd',
                                                cb_restart_reboot_shutdown, ['1'])
