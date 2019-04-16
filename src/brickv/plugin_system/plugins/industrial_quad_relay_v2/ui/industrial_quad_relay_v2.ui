@@ -101,7 +101,7 @@
        </property>
       </widget>
      </item>
-     <item row="9" column="1" colspan="2">
+     <item row="9" column="1" colspan="3">
       <widget class="QSpinBox" name="monoflop_time">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -133,7 +133,7 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="1" colspan="2">
+     <item row="8" column="1" colspan="3">
       <widget class="QComboBox" name="monoflop_pin">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -166,10 +166,10 @@
        </item>
       </widget>
      </item>
-     <item row="8" column="3" rowspan="3" colspan="2">
+     <item row="8" column="4" rowspan="3">
       <widget class="QPushButton" name="monoflop_go">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -476,7 +476,7 @@
        </item>
       </widget>
      </item>
-     <item row="10" column="1" colspan="2">
+     <item row="10" column="1" colspan="3">
       <widget class="QComboBox" name="monoflop_state">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
