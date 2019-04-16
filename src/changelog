@@ -470,6 +470,7 @@
 - Show proper error message if trying to start/install on unsupported macOS
   (< 10.11) or Windows (< 7) version
 - Fix crash in RED Brick date/time settings tab
+- Fix flashing of Bricklets connected to Isolator Bricklets
 - Fix integer/float division mixups
 - Improve error reporting for Brick flashing and RED Brick serial console
 - Fix blue/green channel mixup in Color Bricklet plugin
