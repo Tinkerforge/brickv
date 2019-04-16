@@ -305,45 +305,28 @@ class IndustrialDual020mAV2(COMCUPluginBase):
                    self.increase_error_count)
 
     def led_status_config_ch0_min_sbox_changed(self, _value):
-        QObject.sender(self).blockSignals(True)
-
         self.dual020.set_channel_led_status_config(0,
                                                    self.led_status_config_ch0_min_sbox.value() * 1000000,
                                                    self.led_status_config_ch0_max_sbox.value() * 1000000,
                                                    self.led_status_config_ch0_combo.currentIndex())
-
-        QObject.sender(self).blockSignals(False)
 
     def led_status_config_ch0_max_sbox_changed(self, _value):
-        QObject.sender(self).blockSignals(True)
-
         self.dual020.set_channel_led_status_config(0,
                                                    self.led_status_config_ch0_min_sbox.value() * 1000000,
                                                    self.led_status_config_ch0_max_sbox.value() * 1000000,
                                                    self.led_status_config_ch0_combo.currentIndex())
 
-        QObject.sender(self).blockSignals(False)
-
     def led_status_config_ch1_min_sbox_changed(self, _value):
-        QObject.sender(self).blockSignals(True)
-
-
         self.dual020.set_channel_led_status_config(1,
                                                    self.led_status_config_ch1_min_sbox.value() * 1000000,
                                                    self.led_status_config_ch1_max_sbox.value() * 1000000,
                                                    self.led_status_config_ch1_combo.currentIndex())
-
-        QObject.sender(self).blockSignals(False)
 
     def led_status_config_ch1_max_sbox_changed(self, _value):
-        QObject.sender(self).blockSignals(True)
-
         self.dual020.set_channel_led_status_config(1,
                                                    self.led_status_config_ch1_min_sbox.value() * 1000000,
                                                    self.led_status_config_ch1_max_sbox.value() * 1000000,
                                                    self.led_status_config_ch1_combo.currentIndex())
-
-        QObject.sender(self).blockSignals(False)
 
     def led_status_config_ch0_combo_changed(self, index):
         self.dual020.set_channel_led_status_config(0,

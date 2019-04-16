@@ -389,45 +389,28 @@ class IndustrialDualAnalogInV2(COMCUPluginBase):
                                                      index)
 
     def led_status_config_ch0_min_sbox_changed(self, value):
-        QObject.sender(self).blockSignals(True)
-
         self.analog_in.set_channel_led_status_config(0,
                                                      self.led_status_config_ch0_min_sbox.value(),
                                                      self.led_status_config_ch0_max_sbox.value(),
                                                      self.led_status_config_ch0_combo.currentIndex())
-
-        QObject.sender(self).blockSignals(False)
 
     def led_status_config_ch0_max_sbox_changed(self, value):
-        QObject.sender(self).blockSignals(True)
-
         self.analog_in.set_channel_led_status_config(0,
                                                      self.led_status_config_ch0_min_sbox.value(),
                                                      self.led_status_config_ch0_max_sbox.value(),
                                                      self.led_status_config_ch0_combo.currentIndex())
 
-        QObject.sender(self).blockSignals(False)
-
     def led_status_config_ch1_min_sbox_changed(self, value):
-        QObject.sender(self).blockSignals(True)
-
-
         self.analog_in.set_channel_led_status_config(1,
                                                      self.led_status_config_ch1_min_sbox.value(),
                                                      self.led_status_config_ch1_max_sbox.value(),
                                                      self.led_status_config_ch1_combo.currentIndex())
-
-        QObject.sender(self).blockSignals(False)
 
     def led_status_config_ch1_max_sbox_changed(self, value):
-        QObject.sender(self).blockSignals(True)
-
         self.analog_in.set_channel_led_status_config(1,
                                                      self.led_status_config_ch1_min_sbox.value(),
                                                      self.led_status_config_ch1_max_sbox.value(),
                                                      self.led_status_config_ch1_combo.currentIndex())
-
-        QObject.sender(self).blockSignals(False)
 
     def get_voltage_value0(self):
         return self.voltage_value[0]
