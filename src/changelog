@@ -463,7 +463,7 @@
 - Properly close detached tab window if corresponding device is removed
 
 2019-04-16: 2.4.2 (<unknown>)
-- Minor tweaks in RED Brick Tinkerforge Software update detection
+- Minor tweaks in RED Brick Tinkerforge software update detection
 - Fix crash in IO-16 Bricklet 2.0 plugin
 - Add Alt-S shortcut for switching to setup tab
 - Fix hacks for progress bar text in Fusion GUI style on macOS
