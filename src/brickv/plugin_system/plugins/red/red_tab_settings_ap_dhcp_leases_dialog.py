@@ -29,7 +29,6 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_ap_dhcp_leases_dialog import Ui_REDTabSettingsAPDhcpLeasesDialog
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import TextFile
-from brickv.async_call import async_call
 from brickv.utils import get_main_window
 
 DNSMASQ_LEASES_FILE = '/var/lib/misc/dnsmasq.leases'

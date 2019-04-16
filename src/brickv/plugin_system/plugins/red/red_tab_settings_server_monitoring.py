@@ -33,7 +33,6 @@ from brickv.plugin_system.plugins.red.ui_red_tab_settings_server_monitoring impo
 from brickv.plugin_system.plugins.red.red_tab_settings_server_monitoring_add_host_dialog import\
      REDTabSettingsServerMonitoringAddHostDialog
 from brickv.plugin_system.plugins.red.api import *
-from brickv.async_call import async_call
 from brickv.utils import get_main_window
 from brickv.bindings.ip_connection import BASE58
 from brickv.plugin_system.plugins.red.script_manager import report_script_result

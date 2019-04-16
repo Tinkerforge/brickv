@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 import math
 
-from PyQt5.QtCore import pyqtSignal, Qt, QPoint
+from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QWidget, QSizePolicy
 from PyQt5.QtGui import QLinearGradient, QPainter, QColor
 

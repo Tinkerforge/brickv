@@ -27,7 +27,6 @@ import weakref
 import sys
 import threading
 import time
-import traceback
 
 from PyQt5.QtCore import pyqtSignal, Qt, QObject
 

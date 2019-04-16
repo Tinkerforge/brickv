@@ -22,11 +22,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import html
+
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_csharp import Ui_ProgramPageCSharp
 from brickv.plugin_system.plugins.red.script_manager import check_script_result
-import html
 
 def get_mono_versions(script_manager, callback):
     def cb_versions(result):

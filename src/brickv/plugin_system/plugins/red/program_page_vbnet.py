@@ -22,11 +22,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import html
+
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_vbnet import Ui_ProgramPageVBNET
-
-import html
 
 class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
     def __init__(self, title_prefix=''):
