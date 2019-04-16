@@ -149,8 +149,8 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
         self.cbe_identifiers_station.set_period(10000)
         self.cbe_identifiers_sensor.set_period(10000)
 
-        self.data_timer_station.start(1000)
-        self.data_timer_sensor.start(1000)
+        self.data_timer_station.start(250)
+        self.data_timer_sensor.start(250)
 
     def stop(self):
         self.cbe_identifiers_station.set_period(0)
