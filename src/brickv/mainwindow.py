@@ -45,8 +45,16 @@ from brickv.data_logger.setup_dialog import SetupDialog as DataLoggerWindow
 from brickv.async_call import async_start_thread, async_next_session, async_call, async_stop_thread
 from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
-from brickv.bindings.brick_hat import BrickHAT
-from brickv.bindings.brick_hat_zero import BrickHATZero
+try:
+    from brickv.bindings.brick_hat import BrickHAT
+    hat_brick_supported = True
+except ImportError:
+    hat_brick_supported = False
+try:
+    from brickv.bindings.brick_hat_zero import BrickHATZero
+    hat_zero_brick_supported = True
+except ImportError:
+    hat_zero_brick_supported = False
 from brickv.bindings.bricklet_isolator import BrickletIsolator
 from brickv.plugin_system.plugins.red import RED
 from brickv import config
@@ -746,9 +754,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     device_info = infos.BrickMasterInfo()
                 elif device_identifier == BrickRED.DEVICE_IDENTIFIER:
                     device_info = infos.BrickREDInfo()
-                elif device_identifier == BrickHAT.DEVICE_IDENTIFIER:
+                elif hat_brick_supported and device_identifier == BrickHAT.DEVICE_IDENTIFIER:
                     device_info = infos.BrickHATInfo()
-                elif device_identifier == BrickHATZero.DEVICE_IDENTIFIER:
+                elif hat_zero_brick_supported and device_identifier == BrickHATZero.DEVICE_IDENTIFIER:
                     device_info = infos.BrickHATZeroInfo()
                 elif device_identifier == BrickletIsolator.DEVICE_IDENTIFIER:
                     device_info = infos.BrickletIsolatorInfo()
