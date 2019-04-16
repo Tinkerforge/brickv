@@ -466,7 +466,7 @@
 - Minor tweaks in RED Brick Tinkerforge Software update detection
 - Fix crash in IO-16 Bricklet 2.0 plugin
 - Add Alt-S shortcut for switching to setup tab
-- Fix hacks for progress bar text in Fusion style on macOS
+- Fix hacks for progress bar text in Fusion GUI style on macOS
 - Show proper error message if trying to start/install on unsupported macOS
   (< 10.11) or Windows (< 7) version
 - Fix crash in RED Brick date/time settings tab
