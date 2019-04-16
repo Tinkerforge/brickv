@@ -479,7 +479,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if self.combo_parent.count() == 0:
             self.combo_parent.addItem(NO_BRICK, None)
 
-        if self.combo_parent.itemText(0) == 'None':
+        if self.combo_parent.itemText(0) == 'None' and self.combo_parent.count() > 1:
             self.combo_parent.insertSeparator(1)
 
         self.update_ui_state()
