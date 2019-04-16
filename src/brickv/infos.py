@@ -186,6 +186,7 @@ class BrickREDInfo(BrickInfo):
         self.bindings_infos = []
         self.brickv_info = ToolInfo()
         self.brickv_info.name = "Brick Viewer"
+        self.bricklet_ports = ()
 
 def get_bindings_name(url_part):
     # These are all bindings supported on the red brick.
