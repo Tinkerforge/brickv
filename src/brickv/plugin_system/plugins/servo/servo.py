@@ -363,13 +363,13 @@ class Servo(PluginBase, Ui_Servo):
             return 255
 
     def enable_state_changed(self, state):
-        s = self.selected_servo()
+        servo = self.selected_servo()
 
         try:
             if state == Qt.Checked:
-                self.servo.enable(s)
+                self.servo.enable(servo)
             elif state == Qt.Unchecked:
-                self.servo.disable(s)
+                self.servo.disable(servo)
         except ip_connection.Error:
             return
 
@@ -568,30 +568,32 @@ class Servo(PluginBase, Ui_Servo):
             return
 
     def degree_spin_finished(self):
-        min_ = self.degree_min_spin.value()
-        max_ = self.degree_max_spin.value()
+        degree_min = self.degree_min_spin.value()
+        degree_max = self.degree_max_spin.value()
         servo = self.selected_servo()
 
-        self.position_slider.setMinimum(min_)
-        self.position_slider.setMaximum(max_)
-        self.position_spin.setMinimum(min_)
-        self.position_spin.setMaximum(max_)
+        self.position_slider.setMinimum(degree_min)
+        self.position_slider.setMaximum(degree_max)
+        self.position_spin.setMinimum(degree_min)
+        self.position_spin.setMaximum(degree_max)
+
         if servo == 255:
             for i in range(7):
-                self.position_list[i].set_total_angle((max_ - min_)/100)
-                self.position_list[i].set_range(min_/100, max_/100)
+                self.position_list[i].set_total_angle((degree_max - degree_min) / 100)
+                self.position_list[i].set_range(degree_min / 100, degree_max / 100)
         else:
-            self.position_list[servo].set_total_angle((max_ - min_)/100)
-            self.position_list[servo].set_range(min_/100, max_/100)
+            self.position_list[servo].set_total_angle((degree_max - degree_min) / 100)
+            self.position_list[servo].set_range(degree_min / 100, degree_max / 100)
 
         try:
-            self.servo.set_degree(servo, min_, max_)
+            self.servo.set_degree(servo, degree_min, degree_max)
         except ip_connection.Error:
             return
 
     def cb_under_voltage(self, ov):
         mv_str = self.minimum_voltage_label.text()
-        ov_str = "%gV"  % round(ov/1000.0, 1)
+        ov_str = "%gV" % round(ov / 1000.0, 1)
+
         if not self.qem.isVisible():
             self.qem.showMessage("Under Voltage: Output Voltage of " + ov_str +
                                  " is below minimum voltage of " + mv_str,

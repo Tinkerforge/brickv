@@ -64,8 +64,7 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
         if self.ssr_button.minimumWidth() < width:
             self.ssr_button.setMinimumWidth(width)
 
-        s = state
-        if s:
+        if state:
             self.ssr_button.setText('Switch Off')
             self.ssr_image.setPixmap(self.a_pixmap)
         else:
