@@ -24,14 +24,16 @@ Boston, MA 02111-1307, USA.
 
 import re
 import json
+import html
 import queue
 import urllib.request
 import urllib.error
 import posixpath
 import functools
+import traceback
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QMessageBox, QLabel, QVBoxLayout, QAction
+from PyQt5.QtWidgets import QDialog, QMessageBox, QLabel, QVBoxLayout, QAction, QTextBrowser
 from PyQt5.QtGui import QFont
 
 # As a work-around for https://github.com/pyinstaller/pyinstaller/issues/4064 use a local copy of distutils.version.
@@ -1030,20 +1032,19 @@ class RED(PluginBase, Ui_RED):
             self.session = REDSession(self.device, self.increase_error_count).create()
         except Exception as e:
             self.session = None
+            self.report_fatal_error('Could not create session', str(e), traceback.format_exc())
+            return
 
-            label = QLabel('Could not create session:\n\n{0}'.format(e))
-            label.setAlignment(Qt.AlignHCenter)
-
-            layout = QVBoxLayout(self)
-            layout.addStretch()
-            layout.addWidget(label)
-            layout.addStretch()
-
+        try:
+            self.script_manager = ScriptManager(self.session)
+        except Exception as e:
+            self.session.expire()
+            self.session = None
+            self.report_fatal_error('Could not create script manager', str(e), traceback.format_exc())
             return
 
         self.image_version  = ImageVersion()
         self.label_version  = None
-        self.script_manager = ScriptManager(self.session)
         self.tabs           = []
 
         self.setupUi(self)
@@ -1077,7 +1078,28 @@ class RED(PluginBase, Ui_RED):
         #        all devices connected to a RED Brick properly
         self.ipcon.enumerate()
 
+    def report_fatal_error(self, title, message, trace):
+        trace = '<pre>{}</pre>'.format(html.escape(trace).replace('\n', '<br>'))
+
+        label_title = QLabel(title)
+
+        font = label_title.font()
+        font.setBold(True)
+        label_title.setFont(font)
+
+        label_message = QLabel('Error: ' + message)
+        browser_trace = QTextBrowser()
+        browser_trace.setHtml(trace)
+
+        layout = QVBoxLayout(self)
+        layout.addWidget(label_title)
+        layout.addWidget(label_message)
+        layout.addWidget(browser_trace)
+
     def get_image_version_async(self):
+        if self.session == None:
+            return
+
         def read_image_version_async(red_file):
             return red_file.open('/etc/tf_image_version',
                                  REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING,
@@ -1132,12 +1154,16 @@ class RED(PluginBase, Ui_RED):
         brickv.infos.get_infos_changed_signal().emit(self.device_info.uid)
 
     def get_bindings_versions_async(self):
+        if self.session == None:
+            return
+
         self.script_manager.execute_script('update_tf_software_get_installed_versions',
                                            self.bindings_version_success)
 
     def show_bindings_update(self, bindings=True, brickv=False):
         button_text = ""
         tool_tip_text = ""
+
         if bindings and brickv:
             button_text = "Update Bindings and Brick Viewer for RED Brick"
             tool_tip_text = "Binding and Brick Viewer Updates for RED Brick available"
