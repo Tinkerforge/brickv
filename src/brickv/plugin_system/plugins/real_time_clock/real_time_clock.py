@@ -509,5 +509,5 @@ class RealTimeClock(PluginBase, Ui_RealTimeClock):
         async_call(self.rtc.get_alarm, None, self.get_alarm_async, self.increase_error_count,
                    expand_result_tuple_for_callback=True)
 
-        self.list_alarms.addItem('{0}-{1}-{2} T {3:02}:{4:02}:{5:02}.{6:02} {7}'
+        self.list_alarms.addItem('{0}-{1:02}-{2:02} T {3:02}:{4:02}:{5:02}.{6:02} {7}'
                                  .format(year, month, day, hour, minute, second, centisecond, WEEKDAY_BY_NUMBER[weekday]))
