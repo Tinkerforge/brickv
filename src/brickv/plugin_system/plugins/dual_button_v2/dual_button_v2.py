@@ -63,6 +63,9 @@ class DualButtonV2(COMCUPluginBase, Ui_DualButtonV2):
     def cb_button_state(self, button_l, button_r):
         self.button_l = button_l
         self.button_r = button_r
+        self.update_labels()
+
+    def update_labels(self):
         led_text_button_l = ''
         led_text_button_r = ''
 
@@ -92,31 +95,37 @@ class DualButtonV2(COMCUPluginBase, Ui_DualButtonV2):
         self.led_l = BrickletDualButtonV2.LED_STATE_ON
         self.button.set_led_state(BrickletDualButtonV2.LED_STATE_ON, self.led_r)
         self.update_buttons()
+        self.update_labels()
 
     def on_button_r_clicked(self):
         self.led_r = BrickletDualButtonV2.LED_STATE_ON
         self.button.set_led_state(self.led_l, BrickletDualButtonV2.LED_STATE_ON)
         self.update_buttons()
+        self.update_labels()
 
     def off_button_l_clicked(self):
         self.led_l = BrickletDualButtonV2.LED_STATE_OFF
         self.button.set_led_state(BrickletDualButtonV2.LED_STATE_OFF, self.led_r)
         self.update_buttons()
+        self.update_labels()
 
     def off_button_r_clicked(self):
         self.led_r = BrickletDualButtonV2.LED_STATE_OFF
         self.button.set_led_state(self.led_l, BrickletDualButtonV2.LED_STATE_OFF)
         self.update_buttons()
+        self.update_labels()
 
     def toggle_button_l_clicked(self):
         self.led_l = BrickletDualButtonV2.LED_STATE_AUTO_TOGGLE_OFF
         self.button.set_led_state(BrickletDualButtonV2.LED_STATE_AUTO_TOGGLE_OFF, self.led_r)
         self.update_buttons()
+        self.update_labels()
 
     def toggle_button_r_clicked(self):
         self.led_r = BrickletDualButtonV2.LED_STATE_AUTO_TOGGLE_OFF
         self.button.set_led_state(self.led_l, BrickletDualButtonV2.LED_STATE_AUTO_TOGGLE_OFF)
         self.update_buttons()
+        self.update_labels()
 
     def update_buttons(self):
         if self.led_r == BrickletDualButtonV2.LED_STATE_ON:

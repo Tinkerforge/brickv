@@ -69,31 +69,37 @@ class DualButton(PluginBase, Ui_DualButton):
         self.led_l = DualButton.ON
         self.button.set_led_state(DualButton.ON, self.led_r)
         self.update_buttons()
+        self.update_labels()
 
     def on_button_r_clicked(self):
         self.led_r = DualButton.ON
         self.button.set_led_state(self.led_l, DualButton.ON)
         self.update_buttons()
+        self.update_labels()
 
     def off_button_l_clicked(self):
         self.led_l = DualButton.OFF
         self.button.set_led_state(DualButton.OFF, self.led_r)
         self.update_buttons()
+        self.update_labels()
 
     def off_button_r_clicked(self):
         self.led_r = DualButton.OFF
         self.button.set_led_state(self.led_l, DualButton.OFF)
         self.update_buttons()
+        self.update_labels()
 
     def toggle_button_l_clicked(self):
         self.led_l = DualButton.AT_OFF
         self.button.set_led_state(DualButton.AT_OFF, self.led_r)
         self.update_buttons()
+        self.update_labels()
 
     def toggle_button_r_clicked(self):
         self.led_r = DualButton.AT_OFF
         self.button.set_led_state(self.led_l, DualButton.AT_OFF)
         self.update_buttons()
+        self.update_labels()
 
     def update_buttons(self):
         if self.led_r == DualButton.ON:
@@ -136,6 +142,10 @@ class DualButton(PluginBase, Ui_DualButton):
     def get_button_state_async(self, button_l, button_r):
         self.button_l = button_l
         self.button_r = button_r
+
+        self.update_labels()
+
+    def update_labels(self):
         led_text_button_l = ''
         led_text_button_r = ''
 
