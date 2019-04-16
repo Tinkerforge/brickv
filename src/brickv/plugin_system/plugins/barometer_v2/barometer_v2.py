@@ -97,7 +97,7 @@ class Calibration(QDialog, Ui_Calibration):
 
     def get_calibration_async(self, cal):
         if cal.measured_air_pressure == 0 and cal.actual_air_pressure == 0:
-            self.sbox_cal_actual_air_pressure.setValue(1013.250)
+            self.sbox_cal_actual_air_pressure.setValue(1013.25)
         else:
             self.sbox_cal_actual_air_pressure.setValue(cal.actual_air_pressure / 1000.0)
 
