@@ -45,7 +45,6 @@ class OneWire(COMCUPluginBase, Ui_OneWire):
         self.button_write_command.clicked.connect(self.button_write_command_clicked)
 
         self.start_time = time.time()
-
         self.ids = [0]
 
     def get_status_text(self, status):
@@ -65,11 +64,12 @@ class OneWire(COMCUPluginBase, Ui_OneWire):
     def update_id_list(self):
         self.combo_box_write_command.clear()
         self.combo_box_write_command.addItem('Skip ID')
+
         for i in self.ids[1:]:
             self.combo_box_write_command.addItem('Match ID {0:X}'.format((i >> 8) & 0xFFFFFFFFFFFF))
 
     def add_to_list(self, command, value, status):
-        self.tree_widget.insertTopLevelItem(0, QTreeWidgetItem([str(round(time.time()-self.start_time, 2)), command, value, self.get_status_text(status)]))
+        self.tree_widget.insertTopLevelItem(0, QTreeWidgetItem([str(round(time.time() - self.start_time, 2)), command, value, self.get_status_text(status)]))
 
     def reset_bus_async(self, status):
         self.add_to_list('Reset Bus', '-', status)
@@ -84,9 +84,12 @@ class OneWire(COMCUPluginBase, Ui_OneWire):
 
         self.ids = [0]
         i = 0
+
         for identifier in data.identifier:
             self.ids.append(identifier)
+
             s = 'Family: {0:X}, ID: {1:X}, CRC: {2:X}'.format(identifier & 0xFF, (identifier >> 8) & 0xFFFFFFFFFFFF, identifier >> 56)
+
             if len(data.identifier) == 1:
                 self.add_to_list('Search Bus', s, data.status)
             else:

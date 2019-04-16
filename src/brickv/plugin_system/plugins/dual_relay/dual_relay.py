@@ -76,10 +76,12 @@ class DualRelay(PluginBase, Ui_DualRelay):
 
     def get_state_async(self, dr1, dr2):
         width = self.dr1_button.width()
+
         if self.dr1_button.minimumWidth() < width:
             self.dr1_button.setMinimumWidth(width)
 
         width = self.dr2_button.width()
+
         if self.dr2_button.minimumWidth() < width:
             self.dr2_button.setMinimumWidth(width)
 
@@ -89,6 +91,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
         else:
             self.dr1_button.setText('Switch On')
             self.dr1_image.setPixmap(self.b1_pixmap)
+
         if dr2:
             self.dr2_button.setText('Switch Off')
             self.dr2_image.setPixmap(self.a2_pixmap)
@@ -101,9 +104,11 @@ class DualRelay(PluginBase, Ui_DualRelay):
             if time > 0:
                 self.r1_timebefore = time
                 self.time1_spinbox.setValue(self.r1_timebefore)
+
             if time_remaining > 0:
                 if not state:
                     self.state1_combobox.setCurrentIndex(0)
+
                 self.r1_monoflop = True
                 self.time1_spinbox.setEnabled(False)
                 self.state1_combobox.setEnabled(False)
@@ -111,9 +116,11 @@ class DualRelay(PluginBase, Ui_DualRelay):
             if time > 0:
                 self.r2_timebefore = time
                 self.time2_spinbox.setValue(self.r2_timebefore)
+
             if time_remaining > 0:
                 if not state:
                     self.state2_combobox.setCurrentIndex(1)
+
                 self.r2_monoflop = True
                 self.time2_spinbox.setEnabled(False)
                 self.state2_combobox.setEnabled(False)

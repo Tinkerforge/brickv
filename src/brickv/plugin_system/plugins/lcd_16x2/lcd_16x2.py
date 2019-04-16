@@ -299,7 +299,8 @@ class LCD16x2(PluginBase):
             return
 
     def char_index_save_clicked(self):
-        char = [0]*8
+        char = [0] * 8
+
         for i in range(len(self.character_boxes)):
             for j in range(len(self.character_boxes[i])):
                 if self.character_boxes_bool[i][j]:
@@ -310,8 +311,10 @@ class LCD16x2(PluginBase):
 
     def show_clicked(self):
         self.lcd.clear_display()
+
         line1 = '0:{0} 1:{1} 2:{2} 3:{3}'.format(chr(8), chr(9), chr(10), chr(11))
         line2 = '4:{0} 5:{1} 6:{2} 7:{3}'.format(chr(12), chr(13), chr(14), chr(15))
+
         self.lcd.write_line(0, 0, line1)
         self.lcd.write_line(1, 0, line2)
 

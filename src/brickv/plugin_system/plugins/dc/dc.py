@@ -254,7 +254,7 @@ class DC(PluginBase, Ui_DC):
 
     def current_consumption_update(self, cc):
         if cc >= 1000:
-            cc_str = "%gA"  % round(cc/1000.0, 1)
+            cc_str = "%gA" % round(cc / 1000.0, 1)
         else:
             cc_str = "%gmA" % cc
 

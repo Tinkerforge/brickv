@@ -84,8 +84,8 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
         self.start()
 
     def draw_clicked(self):
-        bw = [False]*WIDTH*HEIGHT
-        red = [False]*WIDTH*HEIGHT
+        bw = [False] * WIDTH * HEIGHT
+        red = [False] * WIDTH * HEIGHT
 
         for i in range(HEIGHT):
             for j in range(WIDTH):
@@ -95,14 +95,14 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
                 if QColor(self.scribble_widget.image().pixel(j, i)) in (Qt.red, Qt.darkGray):
                     red[i * WIDTH + j] = True
 
-        self.epaper.write_black_white(0, 0, WIDTH-1, HEIGHT-1, bw)
-        self.epaper.write_color(0, 0, WIDTH-1, HEIGHT-1, red)
+        self.epaper.write_black_white(0, 0, WIDTH - 1, HEIGHT - 1, bw)
+        self.epaper.write_color(0, 0, WIDTH - 1, HEIGHT - 1, red)
         self.epaper.draw()
 
     def read_black_white_async(self, pixels):
         for i in range(HEIGHT):
             for j in range(WIDTH):
-                if pixels[i*WIDTH + j]:
+                if pixels[i * WIDTH + j]:
                     self.scribble_widget.image().setPixel(j, i, 0xFFFFFF)
                 else:
                     self.scribble_widget.image().setPixel(j, i, 0)

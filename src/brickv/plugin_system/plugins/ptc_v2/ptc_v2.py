@@ -116,7 +116,7 @@ class PTCV2(COMCUPluginBase):
         async_call(self.ptc.is_sensor_connected, None, self.is_sensor_connected_async, self.increase_error_count)
 
     def wire_combo_index_changed(self, index):
-        async_call(self.ptc.set_wire_mode, index+2, None, self.increase_error_count)
+        async_call(self.ptc.set_wire_mode, index + 2, None, self.increase_error_count)
 
     def noise_combo_index_changed(self, index):
         async_call(self.ptc.set_noise_rejection_filter, index, None, self.increase_error_count)

@@ -87,6 +87,7 @@ class Ethernet(QWidget, Ui_Ethernet):
 
     def get_ethernet_authentication_secret_async(self, secret):
         self.ethernet_secret.setText(secret)
+
         if secret == '':
             self.ethernet_show_characters.hide()
             self.ethernet_secret_label.hide()
@@ -97,6 +98,7 @@ class Ethernet(QWidget, Ui_Ethernet):
             self.ethernet_secret_label.show()
             self.ethernet_secret.show()
             self.ethernet_use_auth.setChecked(True)
+
             if self.ethernet_show_characters.isChecked():
                 self.ethernet_secret.setEchoMode(QLineEdit.Normal)
             else:
@@ -107,6 +109,7 @@ class Ethernet(QWidget, Ui_Ethernet):
             self.ethernet_show_characters.show()
             self.ethernet_secret_label.show()
             self.ethernet_secret.show()
+
             if self.ethernet_show_characters.isChecked():
                 self.ethernet_secret.setEchoMode(QLineEdit.Normal)
             else:
@@ -302,6 +305,7 @@ class Ethernet(QWidget, Ui_Ethernet):
 
     def update_data(self):
         self.update_data_counter += 1
+
         if self.update_data_counter == 0 or self.update_data_counter == 10:
             self.update_data_counter = 0
             async_call(self.master.get_ethernet_status, None, self.get_ethernet_status_async, self.parent.increase_error_count)

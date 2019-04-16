@@ -99,20 +99,20 @@ class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
 
     def cb_energy_data(self, data):
         if self.voltage_connected:
-            self.label_voltage.setText('{0:.2f}'.format(data.voltage/100))
+            self.label_voltage.setText('{0:.2f}'.format(data.voltage / 100))
         else:
             self.label_voltage.setText('NC')
         if self.current_connected:
-            self.label_current.setText('{0:.2f}'.format(data.current/100))
+            self.label_current.setText('{0:.2f}'.format(data.current / 100))
         else:
             self.label_current.setText('NC')
 
-        self.label_energy.setText('{0:.2f}'.format(data.energy/100))
-        self.label_real_power.setText('{0:.2f}'.format(data.real_power/100))
-        self.label_apparent_power.setText('{0:.2f}'.format(data.apparent_power/100))
-        self.label_reactive_power.setText('{0:.2f}'.format(data.reactive_power/100))
-        self.label_power_factor.setText('{0:.2f}'.format((data.power_factor//10)/100))
-        self.label_frequency.setText('{0:.2f}'.format(data.frequency/100))
+        self.label_energy.setText('{0:.2f}'.format(data.energy / 100))
+        self.label_real_power.setText('{0:.2f}'.format(data.real_power / 100))
+        self.label_apparent_power.setText('{0:.2f}'.format(data.apparent_power / 100))
+        self.label_reactive_power.setText('{0:.2f}'.format(data.reactive_power / 100))
+        self.label_power_factor.setText('{0:.2f}'.format((data.power_factor // 10) / 100))
+        self.label_frequency.setText('{0:.2f}'.format(data.frequency / 100))
 
     def cb_transformer_status(self, status):
         self.voltage_connected = status.voltage_transformer_connected

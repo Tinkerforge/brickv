@@ -322,19 +322,19 @@ class Servo(PluginBase, Ui_Servo):
         self.current_label.setText(str(value) + "mA")
 
     def stack_input_voltage_update(self, sv):
-        sv_str = "%gV" % round(sv/1000.0, 1)
+        sv_str = "%gV" % round(sv / 1000.0, 1)
         self.stack_voltage_label.setText(sv_str)
 
     def external_input_voltage_update(self, ev):
-        ev_str = "%gV" % round(ev/1000.0, 1)
+        ev_str = "%gV" % round(ev / 1000.0, 1)
         self.external_voltage_label.setText(ev_str)
 
     def output_voltage_update(self, ov):
-        ov_str = "%gV" % round(ov/1000.0, 1)
+        ov_str = "%gV" % round(ov / 1000.0, 1)
         self.output_voltage_label.setText(ov_str)
 
     def minimum_voltage_update(self, mv):
-        mv_str = "%gV" % round(mv/1000.0, 1)
+        mv_str = "%gV" % round(mv / 1000.0, 1)
         self.minimum_voltage_label.setText(mv_str)
 
     def position_update(self, servo, position):
@@ -364,6 +364,7 @@ class Servo(PluginBase, Ui_Servo):
 
     def enable_state_changed(self, state):
         s = self.selected_servo()
+
         try:
             if state == Qt.Checked:
                 self.servo.enable(s)
@@ -381,6 +382,7 @@ class Servo(PluginBase, Ui_Servo):
         self.external_input_voltage_update(self.up_eiv)
         self.output_voltage_update(self.up_opv)
         self.minimum_voltage_update(self.up_mv)
+
         for i in range(7):
             if self.up_ena[i]:
                 self.activate_servo(i)
@@ -438,6 +440,7 @@ class Servo(PluginBase, Ui_Servo):
                     self.servo.enable(num)
                 else:
                     self.servo.disable(num)
+
                 self.servo.set_acceleration(num, acc)
                 self.servo.set_velocity(num, vel)
                 self.servo.set_position(num, pos)
@@ -460,16 +463,20 @@ class Servo(PluginBase, Ui_Servo):
             # Full Speed left for 2 seconds
             for i in range(7):
                 test(i, True, 65535, 65535, 9000)
+
             time.sleep(2)
             self.test_event.wait()
+
             if not self.alive:
                 return
 
             # Full Speed right for 2 seconds
             for i in range(7):
                 test(i, True, 65535, 65535, -9000)
+
             time.sleep(2)
             self.test_event.wait()
+
             if not self.alive:
                 return
 
@@ -477,12 +484,15 @@ class Servo(PluginBase, Ui_Servo):
             for i in range(19):
                 for j in range(7):
                     test(j, True, 65535, 65535*i/18, -9000+i*1000)
+
                 time.sleep(0.1)
                 self.test_event.wait()
+
                 if not self.alive:
                     return
             time.sleep(1)
             self.test_event.wait()
+
             if not self.alive:
                 return
 
@@ -492,6 +502,7 @@ class Servo(PluginBase, Ui_Servo):
 
             time.sleep(3)
             self.test_event.wait()
+
             if not self.alive:
                 return
 

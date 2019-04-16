@@ -54,7 +54,7 @@ class HATZero(COMCUPluginBase, Ui_HATZero):
         self.update_timer.timeout.connect(self.update_bricklets)
 
     def cb_usb_voltage(self, voltage):
-        self.label_usb_voltage.setText('{:.2f}V'.format(voltage/1000))
+        self.label_usb_voltage.setText('{:.2f}V'.format(voltage / 1000))
 
     def port_clicked(self):
         uid = self.sender().property('_bricklet_uid')

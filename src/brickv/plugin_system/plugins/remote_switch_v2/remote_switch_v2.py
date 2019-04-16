@@ -82,26 +82,26 @@ class RemoteSwitchV2(COMCUPluginBase, Ui_RemoteSwitchV2):
         self.timer_get_remote_input.setInterval(50)
 
         self.last_remote_input = {
-                                  'a': {
-                                    'house_code': None,
-                                    'receiver_code': None,
-                                    'switch_to': None,
-                                    'repeats': None
-                                  },
-                                  'b': {
-                                    'address': None,
-                                    'unit': None,
-                                    'switch_to': None,
-                                    'dim_value': None,
-                                    'repeats': None
-                                  },
-                                  'c': {
-                                    'system_code': None,
-                                    'device_code': None,
-                                    'switch_to': None,
-                                    'repeats': None
-                                  },
-                                 }
+            'a': {
+                'house_code': None,
+                'receiver_code': None,
+                'switch_to': None,
+                'repeats': None
+            },
+            'b': {
+                'address': None,
+                'unit': None,
+                'switch_to': None,
+                'dim_value': None,
+                'repeats': None
+            },
+            'c': {
+                'system_code': None,
+                'device_code': None,
+                'switch_to': None,
+                'repeats': None
+            }
+        }
 
         self.type_a_widgets = [self.label_house_code,
                                self.h_check_a,

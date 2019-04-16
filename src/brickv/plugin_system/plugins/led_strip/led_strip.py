@@ -222,7 +222,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.box_frame_duration.setValue(duration)
 
     def get_supply_voltage_async(self, voltage):
-        self.label_voltage.setText(str(voltage/1000.0) + 'V')
+        self.label_voltage.setText(str(voltage / 1000.0) + 'V')
 
     def cb_frame_rendered(self):
         if self.state == self.STATE_COLOR_SINGLE:

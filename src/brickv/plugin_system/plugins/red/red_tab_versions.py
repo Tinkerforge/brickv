@@ -149,6 +149,7 @@ class REDTabVersions(REDTab, Ui_REDTabVersions):
         packages = self.language_packages[language[1]]
 
         self.tab_data[index]['list'] = []
+
         for package in packages['packages']:
             self.tab_data[index]['list'].append({'name': package[0], 'version': package[1], 'description': package[2]})
 

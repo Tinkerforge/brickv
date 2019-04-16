@@ -127,7 +127,6 @@ class MotorizedLinearPoti(COMCUPluginBase):
         self.motor_hold_position.blockSignals(False)
         self.motor_drive_mode.blockSignals(False)
 
-
     def motor_slider_value_changed(self, position):
         self.motor_position_label.setText(str(position))
         self.mp.set_motor_position(self.motor_slider.value(), self.motor_drive_mode.currentIndex(), self.motor_hold_position.isChecked())

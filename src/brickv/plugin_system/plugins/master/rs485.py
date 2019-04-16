@@ -101,12 +101,14 @@ class RS485(QWidget, Ui_RS485):
 
     def get_rs485_configuration_async(self, speed, parity, stopbits):
         self.speed_spinbox.setValue(speed)
+
         if parity == 'e':
             self.parity_combobox.setCurrentIndex(1)
         elif parity == 'o':
             self.parity_combobox.setCurrentIndex(2)
         else:
             self.parity_combobox.setCurrentIndex(0)
+
         self.stopbits_spinbox.setValue(stopbits)
 
     def popup_ok(self):

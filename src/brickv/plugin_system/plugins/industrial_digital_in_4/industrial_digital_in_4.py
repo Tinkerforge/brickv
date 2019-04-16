@@ -96,6 +96,7 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
             else:
                 item = 'Port ' + group[i].upper()
                 index = self.groups[i].findText(item, Qt.MatchStartsWith)
+
                 if index == -1:
                     self.groups[i].setCurrentIndex(0)
                 else:
@@ -117,6 +118,7 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
         for i in range(4):
             self.groups[i].clear()
             self.groups[i].addItem('Off')
+
             for j in range(4):
                 if self.available_ports & (1 << j):
                     item = 'Port ' + chr(ord('A') + j)
@@ -144,8 +146,10 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
 
     def set_group_clicked(self):
         group = ['n', 'n', 'n', 'n']
+
         for i in range(len(self.groups)):
             text = self.groups[i].currentText()
+
             if 'Port A' in text:
                 group[i] = 'a'
             elif 'Port B' in text:

@@ -121,7 +121,7 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
         async_call(self.rgb_led_matrix.set_blue, b, None, self.increase_error_count)
 
     def cb_supply_voltage(self, voltage):
-        self.label_voltage.setText(str(voltage/1000.0) + 'V')
+        self.label_voltage.setText(str(voltage / 1000.0) + 'V')
 
     def cb_frame_started(self):
         if self.state == self.STATE_COLOR_GRADIENT:

@@ -80,9 +80,10 @@ class HallEffectV2(COMCUPluginBase, Ui_HallEffectV2):
         return device_identifier == BrickletHallEffectV2.DEVICE_IDENTIFIER
 
     def new_config(self):
-        high     = self.spinbox_high.value()
-        low      = self.spinbox_low.value()
+        high = self.spinbox_high.value()
+        low = self.spinbox_low.value()
         debounce = self.spinbox_debounce.value()
+
         self.hf.set_counter_config(high, low, debounce)
 
     def button_reset_clicked(self):

@@ -60,6 +60,7 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
 
     def get_state_async(self, state):
         width = self.ssr_button.width()
+
         if self.ssr_button.minimumWidth() < width:
             self.ssr_button.setMinimumWidth(width)
 
@@ -75,9 +76,11 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
         if time > 0:
             self.timebefore = time
             self.time_spinbox.setValue(self.timebefore)
+
         if time_remaining > 0:
             if not state:
                 self.state_combobox.setCurrentIndex(0)
+
             self.monoflop = True
             self.time_spinbox.setEnabled(False)
             self.state_combobox.setEnabled(False)
@@ -151,6 +154,7 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
         self.time_spinbox.setValue(self.timebefore)
         self.time_spinbox.setEnabled(True)
         self.state_combobox.setEnabled(True)
+
         if state:
             self.ssr_button.setText('Switch Off')
             self.ssr_image.setPixmap(self.a_pixmap)

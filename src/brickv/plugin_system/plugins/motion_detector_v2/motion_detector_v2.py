@@ -94,6 +94,7 @@ class MotionDetectorV2(COMCUPluginBase, Ui_MotionDetectorV2):
         if self.indicator_update:
             self.indicator_update = False
             self.motion_detector_v2.set_indicator(*self.indicator_value)
+
         if self.sensitivity_update:
             self.sensitivity_update = False
             self.motion_detector_v2.set_sensitivity(self.sensitivity_value)

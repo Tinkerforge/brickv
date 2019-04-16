@@ -44,8 +44,8 @@ class Calibration(QDialog, Ui_Calibration):
         QDialog.__init__(self, parent, get_modeless_dialog_flags())
         self.parent = parent
 
-        self.values0 = [0]*10
-        self.values1 = [0]*10
+        self.values0 = [0] * 10
+        self.values1 = [0] * 10
         self.values_index = 0
 
         self.setupUi(self)
@@ -114,8 +114,8 @@ class Calibration(QDialog, Ui_Calibration):
     def cb_adc_values(self, values):
         self.values0[self.values_index] = values[0]
         self.values1[self.values_index] = values[1]
-
         self.values_index += 1
+
         if self.values_index >= 10:
             self.values_index = 0
 

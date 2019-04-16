@@ -307,10 +307,10 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
 
     def get_spotmeter_roi(self):
         if self.thermal_image.spotmeter_roi_from != None and self.thermal_image.spotmeter_roi_to != None:
-            from_x = self.thermal_image.spotmeter_roi_from.x()//self.thermal_image.image_pixel_width
-            from_y = self.thermal_image.spotmeter_roi_from.y()//self.thermal_image.image_pixel_width
-            to_x   = self.thermal_image.spotmeter_roi_to.x()//self.thermal_image.image_pixel_width
-            to_y   = self.thermal_image.spotmeter_roi_to.y()//self.thermal_image.image_pixel_width
+            from_x = self.thermal_image.spotmeter_roi_from.x() // self.thermal_image.image_pixel_width
+            from_y = self.thermal_image.spotmeter_roi_from.y() // self.thermal_image.image_pixel_width
+            to_x   = self.thermal_image.spotmeter_roi_to.x() // self.thermal_image.image_pixel_width
+            to_y   = self.thermal_image.spotmeter_roi_to.y() // self.thermal_image.image_pixel_width
         else:
             from_x = 0
             from_y = 0

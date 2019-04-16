@@ -90,6 +90,7 @@ class MultiTouch(PluginBase, Ui_MultiTouch):
 
     def state_changed(self, _state):
         enabled_electrodes = 0
+
         for i in range(13):
             if self.cbs[i].isChecked():
                 enabled_electrodes |= 1 << i

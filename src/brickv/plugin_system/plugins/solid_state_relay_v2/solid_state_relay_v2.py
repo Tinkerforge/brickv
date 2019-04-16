@@ -59,6 +59,7 @@ class SolidStateRelayV2(COMCUPluginBase, Ui_SolidStateRelayV2):
 
     def get_state_async(self, state):
         width = self.ssr_button.width()
+
         if self.ssr_button.minimumWidth() < width:
             self.ssr_button.setMinimumWidth(width)
 
@@ -72,12 +73,15 @@ class SolidStateRelayV2(COMCUPluginBase, Ui_SolidStateRelayV2):
 
     def get_monoflop_async(self, monoflop):
         state, time, time_remaining = monoflop
+
         if time > 0:
             self.timebefore = time
             self.time_spinbox.setValue(self.timebefore)
+
         if time_remaining > 0:
             if not state:
                 self.state_combobox.setCurrentIndex(0)
+
             self.monoflop = True
             self.time_spinbox.setEnabled(False)
             self.state_combobox.setEnabled(False)
@@ -85,6 +89,7 @@ class SolidStateRelayV2(COMCUPluginBase, Ui_SolidStateRelayV2):
     def start(self):
         async_call(self.ssr.get_state, None, self.get_state_async, self.increase_error_count)
         async_call(self.ssr.get_monoflop, None, self.get_monoflop_async, self.increase_error_count)
+
         self.update_timer.start()
 
     def stop(self):
@@ -110,6 +115,7 @@ class SolidStateRelayV2(COMCUPluginBase, Ui_SolidStateRelayV2):
             self.ssr_image.setPixmap(self.b_pixmap)
 
         state = not 'On' in self.ssr_button.text().replace('&', '')
+
         try:
             self.ssr.set_state(state)
         except ip_connection.Error:

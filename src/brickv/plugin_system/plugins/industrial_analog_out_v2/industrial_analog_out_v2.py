@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 """
 Industrial Analog Out 2.0 Plugin
 Copyright (C) 2018 Olaf Lüke <olaf@tinkerforge.com>

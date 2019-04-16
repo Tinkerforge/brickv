@@ -91,6 +91,7 @@ class OLED128x64V2(COMCUPluginBase, Ui_OLED128x64V2):
 
     def draw_clicked(self):
         data = []
+
         for i in range(64):
             for j in range(128):
                 if QColor(self.scribble_widget.image().pixel(j, i)) == Qt.white:

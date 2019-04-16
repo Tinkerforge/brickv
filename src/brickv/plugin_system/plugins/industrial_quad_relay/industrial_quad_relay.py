@@ -103,6 +103,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
 
     def reconfigure_everything_async3(self, pin, _value, time, time_remaining):
         index = self.monoflop_pin.findText('Pin {0}'.format(pin))
+
         if index >= 0:
             if time_remaining > 0:
                 self.monoflop_pending[pin] = True
@@ -126,6 +127,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
                 self.relay_button_icons[pin].setPixmap(self.open_pixmap)
 
             index = self.monoflop_pin.findText('Pin {0}'.format(pin))
+
             if index >= 0:
                 async_call(self.iqr.get_monoflop, pin, self.reconfigure_everything_async3, self.increase_error_count,
                            pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
@@ -137,6 +139,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
             else:
                 item = 'Port ' + group[i].upper()
                 index = self.groups[i].findText(item, Qt.MatchStartsWith)
+
                 if index == -1:
                     self.groups[i].setCurrentIndex(0)
                 else:
@@ -160,6 +163,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
                 else:
                     for j in range(4):
                         self.monoflop_pin.addItem('Pin ' + str(i*4+j))
+
                     self.show_buttons(i)
 
         self.monoflop_pin.setCurrentIndex(0)
@@ -170,6 +174,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         for i in range(4):
             self.groups[i].clear()
             self.groups[i].addItem('Off')
+
             for j in range(4):
                 if self.available_ports & (1 << j):
                     item = 'Port ' + chr(ord('A') + j)
@@ -198,16 +203,21 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
     def get_current_value(self):
         value = 0
         i = 0
+
         for b in self.relay_buttons:
             if 'Off' in b.text().replace('&', ''):
                 value |= (1 << i)
+
             i += 1
+
         return value
 
     def set_group_clicked(self):
         group = ['n', 'n', 'n', 'n']
+
         for i in range(len(self.groups)):
             text = self.groups[i].currentText()
+
             if 'Port A' in text:
                 group[i] = 'a'
             elif 'Port B' in text:
@@ -259,6 +269,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
             self.update_timer.stop()
 
         current_pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+
         if (1 << current_pin) & pin_mask:
             self.monoflop_time.setValue(self.monoflop_time_before[current_pin])
             self.monoflop_time.setEnabled(True)
@@ -279,6 +290,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
 
     def monoflop_go_clicked(self):
         pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+
         if self.monoflop_pending[pin]:
             time = self.monoflop_time_before[pin]
         else:

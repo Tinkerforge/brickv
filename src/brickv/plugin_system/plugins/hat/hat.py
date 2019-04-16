@@ -95,8 +95,8 @@ class HAT(COMCUPluginBase, Ui_HAT):
         self.bricklet_power_checkbox.setChecked(power)
 
     def cb_voltages(self, voltages):
-        self.label_voltage_usb.setText('{:.2f}V'.format(voltages.voltage_usb/1000.0))
-        self.label_voltage_dc.setText('{:.2f}V'.format(voltages.voltage_dc/1000.0))
+        self.label_voltage_usb.setText('{:.2f}V'.format(voltages.voltage_usb / 1000.0))
+        self.label_voltage_dc.setText('{:.2f}V'.format(voltages.voltage_dc / 1000.0))
 
         self.update_bricklets()
 

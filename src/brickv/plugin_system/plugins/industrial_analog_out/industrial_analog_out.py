@@ -144,6 +144,7 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
     def config_changed(self, _value):
         voltage_range = self.box_voltage_range.currentIndex()
         current_range = self.box_current_range.currentIndex()
+
         try:
             self.ao.set_configuration(voltage_range, current_range)
             async_call(self.ao.get_voltage, None, self.new_voltage, self.increase_error_count)

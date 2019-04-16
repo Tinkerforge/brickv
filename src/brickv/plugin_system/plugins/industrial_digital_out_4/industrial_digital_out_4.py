@@ -103,6 +103,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
 
     def reconfigure_everything_async3(self, pin, value, time, time_remaining):
         index = self.monoflop_pin.findText('Pin {0}'.format(pin))
+
         if index >= 0:
             if time_remaining > 0:
                 self.monoflop_pending[pin] = True
@@ -126,6 +127,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
                 self.pin_button_icons[pin].setPixmap(self.gnd_pixmap)
 
             index = self.monoflop_pin.findText('Pin {0}'.format(pin))
+
             if index >= 0:
                 async_call(self.ido4.get_monoflop, pin, self.reconfigure_everything_async3, self.increase_error_count,
                            pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
@@ -170,6 +172,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
         for i in range(4):
             self.groups[i].clear()
             self.groups[i].addItem('Off')
+
             for j in range(4):
                 if self.available_ports & (1 << j):
                     item = 'Port ' + chr(ord('A') + j)
@@ -280,6 +283,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
 
     def monoflop_go_clicked(self):
         pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+
         if self.monoflop_pending[pin]:
             time = self.monoflop_time_before[pin]
         else:

@@ -91,9 +91,11 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
         self.combo_identifier_station.clear()
 
         self.identifiers_station = identifiers
+
         for index, identifier in enumerate(identifiers):
             new_text = str(identifier)
             self.combo_identifier_station.addItem(new_text)
+
             if new_text == old_text:
                 self.combo_identifier_station.setCurrentIndex(index)
 
@@ -108,9 +110,11 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
         self.combo_identifier_sensor.clear()
 
         self.identifiers_sensor = identifiers
+
         for index, identifier in enumerate(identifiers):
             new_text = str(identifier)
             self.combo_identifier_sensor.addItem(new_text)
+
             if new_text == old_text:
                 self.combo_identifier_sensor.setCurrentIndex(index)
 

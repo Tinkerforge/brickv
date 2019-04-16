@@ -88,6 +88,7 @@ class Calibration(QDialog, Ui_Calibration):
             else:
                 measured0 = (sum(self.values0)/10.0)*244/38588
                 measured1 = (sum(self.values1)/10.0)*244/38588
+
             factor0 = self.spinbox_voltage_ch0.value()/measured0
             factor1 = self.spinbox_voltage_ch1.value()/measured1
             gain0 = int((factor0-1)*2**23)
@@ -116,8 +117,8 @@ class Calibration(QDialog, Ui_Calibration):
     def cb_adc_values(self, values):
         self.values0[self.values_index] = values[0]
         self.values1[self.values_index] = values[1]
-
         self.values_index += 1
+
         if self.values_index >= 10:
             self.values_index = 0
 
