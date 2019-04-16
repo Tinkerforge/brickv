@@ -59,7 +59,7 @@ for dirpath, dirnames, filenames in os.walk(brickv):
         # (e.g. the directory in which the package was built)
         # Thus use the relative path here, as pyuic writes the in_file path it is called with into the out file.
         in_file = os.path.relpath(in_file, basedir)
-        print('building ' + os.path.relpath(in_file, basedir))
+        print('building ' + in_file)
         os.chdir(basedir)
         system(sys.executable + " pyuic5-fixed.py -o " + out_file + " " + in_file)
 
