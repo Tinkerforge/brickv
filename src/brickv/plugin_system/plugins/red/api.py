@@ -218,7 +218,7 @@ class REDSession(QObject):
 
         try:
             error_code = self._brick.keep_session_alive(self._session_id, REDSession.LIFETIME)
-            self._last_keep_alive = time.time() # FIXME: use time.monotonic() in Python 3
+            self._last_keep_alive = time.monotonic()
         except Error:
             # just report IPConnection-level error, but don't re-raise it
             self.increase_error_count()
@@ -227,8 +227,7 @@ class REDSession(QObject):
             # session got expired during the keep-alive call, don't keep it alive any longer
             return
 
-        # FIXME: use time.monotonic() in Python 3
-        if abs(time.time() - self._last_keep_alive) > (REDSession.LIFETIME - REDSession.KEEP_ALIVE_INTERVAL * 2):
+        if abs(time.monotonic() - self._last_keep_alive) > (REDSession.LIFETIME - REDSession.KEEP_ALIVE_INTERVAL * 2):
             self._qtcb_lost.emit(self._brick._uid_str)
             return
 
