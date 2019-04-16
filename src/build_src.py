@@ -54,6 +54,11 @@ for dirpath, dirnames, filenames in os.walk(brickv):
 
         out_file = os.path.normpath(os.path.join(dirpath, "..", "ui_" + name + ".py"))
         in_file = os.path.join(dirpath, filename)
+
+        # Arch Linux complains, if a built package contains references to $SRCDIR.
+        # (e.g. the directory in which the package was built)
+        # Thus use the relative path here, as pyuic writes the in_file path it is called with into the out file.
+        in_file = os.path.relpath(in_file, basedir)
         print('building ' + os.path.relpath(in_file, basedir))
         os.chdir(basedir)
         system(sys.executable + " pyuic5-fixed.py -o " + out_file + " " + in_file)
