@@ -520,13 +520,14 @@ class Servo(PluginBase, Ui_Servo):
 
     def output_voltage_button_clicked(self):
         qid = QInputDialog(self)
+        qid.setWindowTitle('Servo Brick')
         qid.setInputMode(QInputDialog.IntInput)
         qid.setIntMinimum(2000)
         qid.setIntMaximum(9000)
         qid.setIntStep(100)
         async_call(self.servo.get_output_voltage, None, qid.setIntValue, self.increase_error_count)
         qid.intValueSelected.connect(self.output_voltage_selected)
-        qid.setLabelText("Choose Output Voltage in mV.")
+        qid.setLabelText("Choose Output Voltage in mV:")
         qid.open()
 
     def output_voltage_selected(self, value):
@@ -607,11 +608,12 @@ class Servo(PluginBase, Ui_Servo):
 
     def minimum_voltage_button_clicked(self):
         qid = QInputDialog(self)
+        qid.setWindowTitle('Servo Brick')
         qid.setInputMode(QInputDialog.IntInput)
         qid.setIntMinimum(5000)
         qid.setIntMaximum(0xFFFF)
         qid.setIntStep(100)
         async_call(self.servo.get_minimum_voltage, None, qid.setIntValue, self.increase_error_count)
         qid.intValueSelected.connect(self.minimum_voltage_selected)
-        qid.setLabelText("Choose minimum servo voltage in mV.")
+        qid.setLabelText("Choose Minimum Servo Voltage in mV:")
         qid.open()
