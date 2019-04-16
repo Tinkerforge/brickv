@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-04-16.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -102,10 +102,8 @@ class BrickletMotionDetectorV2(Device):
 
     def get_motion_detected(self):
         """
-        Returns 1 if a motion was detected. How long this returns 1 after a motion
-        was detected can be adjusted with one of the small potentiometers on the
-        Motion Detector Bricklet, see :ref:`here
-        <motion_detector_bricklet_sensitivity_delay_block_time>`.
+        Returns 1 if a motion was detected. It returns 1 approx. for 1.8 seconds
+        until the sensor checks for a new movement.
 
         There is also a blue LED on the Bricklet that is on as long as the Bricklet is
         in the "motion detected" state.

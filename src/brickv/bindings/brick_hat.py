@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-04-05.      #
+# This file was automatically generated on 2019-04-16.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -25,7 +25,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickHAT(Device):
     """
-
+    HAT for Raspberry Pi with 8 Bricklets ports
     """
 
     DEVICE_IDENTIFIER = 111
@@ -99,7 +99,24 @@ class BrickHAT(Device):
 
     def set_sleep_mode(self, power_off_delay, power_off_duration, raspberry_pi_off, bricklets_off, enable_sleep_indicator):
         """
-        Enable Sleep Indicator => status led blinks in 1s interval => ~0.3mA
+        Sets the sleep mode.
+
+        Parameters:
+
+        * Power Off Delay: Time before the RPi/Bricklets are powered off in seconds.
+        * Power Off Duration: Duration that the RPi/Bricklets are powered off in seconds.
+        * Raspberry Pi Off: RPi if powereed off if set to true.
+        * Bricklets Off: Bricklets are powered off if set to true.
+        * Enable Sleep Indicator: If set to true, the LED will blink in a 1s interval
+          during the whole power off duration. This will draw an additional 0.3mA.
+
+        Example: To turn RPi and Bricklets off in 5 seconds for 10 minutes with sleep
+        indicator enabled call (5, 60*10, true, true, true).
+
+        This function can also be used to implement a watchdog. To do this you can
+        write a program that calls this function once per second in a loop with
+        (10, 2, true, false, false). If the RPi crashes or gets stuck
+        the HAT will reset the RPi after 10 seconds.
         """
         power_off_delay = int(power_off_delay)
         power_off_duration = int(power_off_duration)
@@ -111,13 +128,15 @@ class BrickHAT(Device):
 
     def get_sleep_mode(self):
         """
-
+        Returns the sleep mode settings as set by :func:`Set Sleep Mode`.
         """
         return GetSleepMode(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_SLEEP_MODE, (), '', 'I I ! ! !'))
 
     def set_bricklet_power(self, bricklet_power):
         """
+        Set to true/false to turn the power supply of the Bricklets on/off.
 
+        By default the Bricklets are on.
         """
         bricklet_power = bool(bricklet_power)
 
@@ -125,13 +144,26 @@ class BrickHAT(Device):
 
     def get_bricklet_power(self):
         """
-
+        Returns the bricklet power status as set by :func:`Set Bricklet Power`.
         """
         return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_BRICKLET_POWER, (), '', '!')
 
     def get_voltages(self):
         """
+        Returns the USB supply voltage and the DC input supply voltage in mV.
 
+        There are three possible combinations:
+
+        * Only USB connected: The USB supply voltage will be fed back to the
+          DC input connector. You will reed the USB voltage and a slightly lower
+          voltage on the DC input.
+        * Only DC input connected: The DC voltage will not be fed back to the
+          USB connector. You will read the DC input voltage and the USB voltage
+          will be 0.
+        * USB and DC input connected: You will read both voltages. In this case
+          the USB supply will be without load, but it will work as backup if you
+          disconnect the DC input (or if the DC input voltage falls below the
+          USB voltage).
         """
         return GetVoltages(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_VOLTAGES, (), '', 'H H'))
 

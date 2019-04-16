@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-04-16.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -157,7 +157,7 @@ class BrickletThermalImaging(Device):
         bottom right.
 
         Each 16-bit value represents one temperature measurement in either
-        Kelvin/10 or Kelvin/100 (depending on the resolution set with:func:`Set Resolution`).
+        Kelvin/10 or Kelvin/100 (depending on the resolution set with :func:`Set Resolution`).
 
         Before you can use this function you have to enable it with
         :func:`Set Image Transfer Config`.
@@ -524,7 +524,7 @@ class BrickletThermalImaging(Device):
         bottom right.
 
         Each 16-bit value represents one temperature measurement in either
-        Kelvin/10 or Kelvin/100 (depending on the resolution set with:func:`Set Resolution`).
+        Kelvin/10 or Kelvin/100 (depending on the resolution set with :func:`Set Resolution`).
 
         Before you can use this function you have to enable it with
         :func:`Set Image Transfer Config`.

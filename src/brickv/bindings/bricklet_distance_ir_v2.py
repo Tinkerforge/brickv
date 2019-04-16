@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-04-16.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -252,7 +252,7 @@ class BrickletDistanceIRV2(Device):
     def set_moving_average_configuration(self, moving_average_length):
         """
         Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
-        for the resistance and temperature.
+        for the distance.
 
         Setting the length to 1 will turn the averaging off. With less averaging, there
         is more noise on the data.

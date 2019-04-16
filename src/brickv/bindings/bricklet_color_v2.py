@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-04-08.      #
+# This file was automatically generated on 2019-04-16.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -153,7 +153,7 @@ class BrickletColorV2(Device):
 
         If you want to get the color periodically, it is recommended
         to use the :cb:`Color` callback and set the period with
-        :func:`Set Color Callback Period`.
+        :func:`Set Color Callback Configuration`.
         """
         return GetColor(*self.ipcon.send_request(self, BrickletColorV2.FUNCTION_GET_COLOR, (), '', 'H H H H'))
 
@@ -312,7 +312,7 @@ class BrickletColorV2(Device):
 
     def set_light(self, enable):
         """
-
+        Turns the white LED on the Bricklet on/off.
         """
         enable = bool(enable)
 
@@ -320,7 +320,7 @@ class BrickletColorV2(Device):
 
     def get_light(self):
         """
-
+        Returns the value as set by :func:`Set Light`.
         """
         return self.ipcon.send_request(self, BrickletColorV2.FUNCTION_GET_LIGHT, (), '', '!')
 

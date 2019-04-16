@@ -306,11 +306,22 @@ class Error(Exception):
     UNKNOWN_ERROR_CODE = -11
     STREAM_OUT_OF_SYNC = -12
 
-    def __init__(self, value, description):
+    def __init__(self, value, description, suppress_context=False):
         Exception.__init__(self, '{0} ({1})'.format(description, value))
 
         self.value = value
         self.description = description
+
+        if sys.hexversion >= 0x03000000 and suppress_context:
+            # this is a Python 2 syntax compatible form of the "raise ... from None"
+            # syntax in Python 3. especially the timeout error shows in Python 3
+            # the queue.Empty exception as its context. this is confusing and doesn't
+            # help much. the "raise ... from None" syntax in Python 3 stops the
+            # default traceback printer from outputting the context of the exception
+            # while keeping the queue.Empty exception in the __context__ field for
+            # debugging purposes.
+            self.__cause__ = None
+            self.__suppress_context__ = True
 
 class Device(object):
     RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0
@@ -1129,7 +1140,7 @@ class IPConnection(object):
                             continue
             except socket.error:
                 self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR, None, True)
-                raise Error(Error.NOT_CONNECTED, 'Not connected')
+                raise Error(Error.NOT_CONNECTED, 'Not connected', suppress_context=True)
 
             self.disconnect_probe_flag = False
 
@@ -1170,7 +1181,7 @@ class IPConnection(object):
                             break
                 except queue.Empty:
                     msg = 'Did not receive response for function {0} in time'.format(function_id)
-                    raise Error(Error.TIMEOUT, msg)
+                    raise Error(Error.TIMEOUT, msg, suppress_context=True)
                 finally:
                     device.expected_response_function_id = None
                     device.expected_response_sequence_number = None

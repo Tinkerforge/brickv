@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-04-05.      #
+# This file was automatically generated on 2019-04-16.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -23,7 +23,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickHATZero(Device):
     """
-
+    HAT for Raspberry Pi Zero with 4 Bricklets ports
     """
 
     DEVICE_IDENTIFIER = 112
@@ -89,7 +89,7 @@ class BrickHATZero(Device):
 
     def get_usb_voltage(self):
         """
-        Returns the USB supply voltage of the Raspberry Pi in mv.
+        Returns the USB supply voltage of the Raspberry Pi in mV.
         """
         return self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_USB_VOLTAGE, (), '', 'H')
 

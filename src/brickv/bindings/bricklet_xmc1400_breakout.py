@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-03-20.      #
+# This file was automatically generated on 2019-04-16.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -195,7 +195,7 @@ class BrickletXMC1400Breakout(Device):
 
         This example function also has a corresponding callback.
 
-        See :func:`Set ADC Values Callback Configuration` and :cb:`ADC Values`.
+        See :func:`Set ADC Values Callback Configuration` and :cb:`ADC Values` callback.
         """
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_VALUES, (), '', '8H')
 

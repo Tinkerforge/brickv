@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-04-09.      #
+# This file was automatically generated on 2019-04-16.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -114,18 +114,15 @@ class BrickletMultiTouchV2(Device):
 
     def get_touch_state(self):
         """
-        Returns the current touch state. The state is given as a bitfield.
+        Returns the current touch state. The state is given as a array of
+        bools.
 
-        Bits 0 to 11 represent the 12 electrodes and bit 12 represents
+        Element 0 to 11 represent the 12 electrodes and element 12 represents
         the proximity.
 
-        If an electrode is touched, the corresponding bit is *true*. If
-        a hand or similar is in proximity to the electrodes, bit 12 is
+        If an electrode is touched, the corresponding element is *true*. If
+        a hand or similar is in proximity to the electrodes, element 12 is
         *true*.
-
-        Example: The state 4103 = 0x1007 = 0b1000000000111 means that
-        electrodes 0, 1 and 2 are touched and that something is in the
-        proximity of the electrodes.
 
         The proximity is activated with a distance of 1-2cm. An electrode
         is already counted as touched if a finger is nearly touching the
@@ -170,20 +167,20 @@ class BrickletMultiTouchV2(Device):
 
     def set_electrode_config(self, enabled_electrodes):
         """
-        Enables/disables electrodes with a bitfield (see :func:`Get Touch State`).
+        Enables/disables electrodes with a bool array (see :func:`Get Touch State`).
 
         *True* enables the electrode, *false* disables the electrode. A
         disabled electrode will always return *false* as its state. If you
         don't need all electrodes you can disable the electrodes that are
         not needed.
 
-        It is recommended that you disable the proximity bit (bit 12) if
+        It is recommended that you disable the proximity electrode (element 12) if
         the proximity feature is not needed. This will reduce the amount of
         traffic that is produced by the :cb:`Touch State` callback.
 
         Disabling electrodes will also reduce power consumption.
 
-        Default: 8191 = 0x1FFF = 0b1111111111111 (all electrodes enabled)
+        Default: All electrodes enabled.
         """
         enabled_electrodes = list(map(bool, enabled_electrodes))
 

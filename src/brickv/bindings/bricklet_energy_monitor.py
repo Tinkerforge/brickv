@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-03-28.      #
+# This file was automatically generated on 2019-04-16.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -28,7 +28,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletEnergyMonitor(Device):
     """
-    TBD
+    Measures Voltage, Current, Energy, Real/Apparent/Reactive Power, Power Factor and Frequency
     """
 
     DEVICE_IDENTIFIER = 2152
@@ -112,31 +112,72 @@ class BrickletEnergyMonitor(Device):
 
     def get_energy_data(self):
         """
-        frequency calculated every 6 seconds
+        Returns all of the measurements that are done by the Energy Monitor Bricklet.
+
+        * Voltage (V): Voltage RMS with a resolution of 10mV (example: 230.05V = 23005)
+        * Current (A): Current RMS with a resolution of 10mA (example: 1.42A = 142)
+        * Energy (Wh): Energy (integrated over time) with a resoluton of 10mWh (example: 1.1kWh = 110000)
+        * Real Power (W): Real Power with a resolution of 10mW (example: 1234.56W = 123456)
+        * Apparent Power (VA): Apparent Power with a resolution of 10mVA (example: 1234.56VA = 123456)
+        * Reactive Power (VAR): Reactive Power with a resolution of 10mVAR (example: 1234.56VAR = 123456)
+        * Power Factor: Power Factor with a resolution of 1/1000 (example: PF 0.995 = 995)
+        * Frequency (Hz): AC Frequency of the mains voltage with a resolution of 1/100 Hz (example: 50Hz = 5000)
+
+        The frequency is recalculated every 6s.
+
+        All other values are integrated over 10 zero-crossings of the voltage sine wave.
+        With a standard AC mains voltage frequecy of 50Hz this results in a 5 measurements
+        per second (or an integration time of 200ms per measurement).
+
+        If no voltage transformer is connected, the Bricklet will use the current waveform
+        to calculate the frequency and it will use an integration time of
+        10 zero-crossings of the current waveform.
         """
         return GetEnergyData(*self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_ENERGY_DATA, (), '', 'i i i i i i H H'))
 
     def reset_energy(self):
         """
-
+        Sets the energy value (see :func:`Get Energy Data`) back to 0Wh.
         """
         self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_RESET_ENERGY, (), '', '')
 
     def get_waveform_low_level(self):
         """
+        Returns a snapshot of the voltage and current waveform. The values
+        in the returned array alternate between voltage and current. The data from
+        one getter call contains 768 data points for voltage and current, which
+        correspond to about 3 full sine waves.
 
+        The voltage is given with a resolution of 100mV and the current is given
+        with a resolution of 10mA.
+
+        This data is meant to be used for a non-realtime graphical representation of
+        the voltage and current waveforms.
         """
         return GetWaveformLowLevel(*self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_WAVEFORM_LOW_LEVEL, (), '', 'H 30h'))
 
     def get_transformer_status(self):
         """
-
+        Returns *true* if a voltage/current transformer is connected to the Bricklet.
         """
         return GetTransformerStatus(*self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_TRANSFORMER_STATUS, (), '', '! !'))
 
     def set_transformer_calibration(self, voltage_ratio, current_ratio, phase_shift):
         """
+        Sets the transformer ratio for the voltage and current transformer in 1/100 form.
 
+        Example: If your mains voltage is 230V, you use 9V voltage transformer and a
+        1V:30A current clamp your voltage ratio is 230/9 = 25.56 and your current ratio
+        is 30/1 = 30.
+
+        In this case you have to set the values 2556 and 3000 for voltage ratio and current
+        ratio.
+
+        The calibration is saved in non-volatile memory, you only have to set it once.
+
+        By default the voltage ratio is set to TODO and the current ratio is set to TODO.
+
+        Set the phase shift to 0. It is for future use and currently not supported by the Bricklet.
         """
         voltage_ratio = int(voltage_ratio)
         current_ratio = int(current_ratio)
@@ -146,13 +187,22 @@ class BrickletEnergyMonitor(Device):
 
     def get_transformer_calibration(self):
         """
-
+        Returns the transformer calibration as set by :func:`Set Transformer Calibration`.
         """
         return GetTransformerCalibration(*self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_TRANSFORMER_CALIBRATION, (), '', 'H H h'))
 
     def calibrate_offset(self):
         """
+        Calling this function will start an offset calibration. The offset calibration will
+        integrate the voltage and current waveform over a longer time period to find the 0
+        transition point in the sine wave.
 
+        The Bricklet comes with a factory-calibrated offset value, you should not have to
+        call this function.
+
+        If you want to re-calibrate the offset we recommend that you connect a load that
+        has a smooth sinusoidal voltage and current waveform. Alternatively you can also
+        short both inputs.
         """
         self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_CALIBRATE_OFFSET, (), '', '')
 
@@ -324,7 +374,16 @@ class BrickletEnergyMonitor(Device):
 
     def get_waveform(self):
         """
+        Returns a snapshot of the voltage and current waveform. The values
+        in the returned array alternate between voltage and current. The data from
+        one getter call contains 768 data points for voltage and current, which
+        correspond to about 3 full sine waves.
 
+        The voltage is given with a resolution of 100mV and the current is given
+        with a resolution of 10mA.
+
+        This data is meant to be used for a non-realtime graphical representation of
+        the voltage and current waveforms.
         """
         waveform_length = 1536
 
