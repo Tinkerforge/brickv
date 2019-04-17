@@ -53,7 +53,7 @@ class CAN(PluginBase, Ui_CAN):
         self.filter1 = 0
         self.filter2 = 0
 
-        self.frame_read_callback_was_enabled = False
+        self.frame_read_callback_was_enabled = None
 
         self.tree_frames.header().resizeSection(0, 150)
         self.tree_frames.header().resizeSection(1, 135)
@@ -96,7 +96,7 @@ class CAN(PluginBase, Ui_CAN):
         self.filter_mode_changed()
 
     def start(self):
-        self.frame_read_callback_was_enabled = False
+        self.frame_read_callback_was_enabled = None
 
         async_call(self.can.is_frame_read_callback_enabled, None, self.is_frame_read_callback_enabled_async, self.increase_error_count)
         async_call(self.can.get_configuration, None, self.get_configuration_async, self.increase_error_count)
@@ -108,11 +108,8 @@ class CAN(PluginBase, Ui_CAN):
     def stop(self):
         self.error_log_timer.stop()
 
-        if not self.frame_read_callback_was_enabled:
-            try:
-                self.can.disable_frame_read_callback()
-            except:
-                pass
+        if self.frame_read_callback_was_enabled == False: # intentionally check for False to distinguish from None
+            async_call(self.can.disable_frame_read_callback, None, None, self.increase_error_count)
 
     def destroy(self):
         pass
@@ -160,7 +157,9 @@ class CAN(PluginBase, Ui_CAN):
 
     def is_frame_read_callback_enabled_async(self, enabled):
         self.frame_read_callback_was_enabled = enabled
-        self.can.enable_frame_read_callback()
+
+        if not enabled:
+            async_call(self.can.enable_frame_read_callback, None, None, self.increase_error_count)
 
     def get_configuration_async(self, conf):
         self.combo_baud_rate.setCurrentIndex(conf.baud_rate)

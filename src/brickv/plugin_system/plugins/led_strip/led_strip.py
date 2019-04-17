@@ -506,7 +506,9 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
 
     def is_frame_rendered_callback_enabled_async(self, enabled):
         self.frame_rendered_callback_was_enabled = enabled
-        self.led_strip.enable_frame_rendered_callback()
+
+        if not enabled:
+            async_call(self.led_strip.enable_frame_rendered_callback, None, None, self.increase_error_count)
 
     def start(self):
         if self.has_chip_type:
@@ -519,6 +521,8 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             async_call(self.led_strip.get_channel_mapping, None, self.get_channel_mapping_async, self.increase_error_count)
 
         if self.has_configurable_frame_rendered_callback:
+            self.frame_rendered_callback_was_enabled = None
+
             async_call(self.led_strip.is_frame_rendered_callback_enabled, None, self.is_frame_rendered_callback_enabled_async, self.increase_error_count)
 
         async_call(self.led_strip.get_supply_voltage, None, self.get_supply_voltage_async, self.increase_error_count)
@@ -532,11 +536,8 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.voltage_timer.stop()
         self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_RENDERED, None)
 
-        if self.has_configurable_frame_rendered_callback and self.frame_rendered_callback_was_enabled == False:
-            try:
-                self.led_strip.disable_frame_rendered_callback()
-            except ip_connection.Error:
-                pass
+        if self.has_configurable_frame_rendered_callback and self.frame_rendered_callback_was_enabled == False: # intentionally check for False to distinguish from None
+            async_call(self.led_strip.disable_frame_rendered_callback, None, None, self.increase_error_count)
 
     def destroy(self):
         pass

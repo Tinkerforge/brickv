@@ -50,7 +50,7 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
 
         self.last_filename = os.path.join(get_home_path(), 'can_bricklet_v2_history.log')
 
-        self.frame_read_callback_was_enabled = False
+        self.frame_read_callback_was_enabled = None
 
         self.tree_frames.header().resizeSection(0, 150)
         self.tree_frames.header().resizeSection(1, 170)
@@ -129,12 +129,11 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
                                                   self.error_led_show_error_action])]
 
     def start(self):
-        async_call(self.can.get_communication_led_config, None, self.get_communication_led_config_async, self.increase_error_count)
-        async_call(self.can.get_error_led_config, None, self.get_error_led_config_async, self.increase_error_count)
-
-        self.frame_read_callback_was_enabled = False
+        self.frame_read_callback_was_enabled = None
 
         async_call(self.can.get_frame_read_callback_configuration, None, self.get_frame_read_callback_configuration_async, self.increase_error_count)
+        async_call(self.can.get_communication_led_config, None, self.get_communication_led_config_async, self.increase_error_count)
+        async_call(self.can.get_error_led_config, None, self.get_error_led_config_async, self.increase_error_count)
         async_call(self.can.get_transceiver_configuration, None, self.get_transceiver_configuration_async, self.increase_error_count)
         async_call(self.can.get_queue_configuration, None, self.get_queue_configuration_async, self.increase_error_count)
 
@@ -148,13 +147,8 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
     def stop(self):
         self.error_log_timer.stop()
 
-        if not self.frame_read_callback_was_enabled:
-            try:
-                self.can.set_response_expected(self.can.FUNCTION_SET_FRAME_READ_CALLBACK_CONFIGURATION, False)
-                self.can.set_frame_read_callback_configuration(False)
-                self.can.set_response_expected(self.can.FUNCTION_SET_FRAME_READ_CALLBACK_CONFIGURATION, True)
-            except ip_connection.Error:
-                pass
+        if self.frame_read_callback_was_enabled == False: # intentionally check for False to distinguish from None
+            async_call(self.can.set_frame_read_callback_configuration, False, None, self.increase_error_count)
 
     def destroy(self):
         pass
@@ -217,7 +211,9 @@ class CANV2(COMCUPluginBase, Ui_CANV2):
 
     def get_frame_read_callback_configuration_async(self, enabled):
         self.frame_read_callback_was_enabled = enabled
-        self.can.set_frame_read_callback_configuration(True)
+
+        if not enabled:
+            async_call(self.can.set_frame_read_callback_configuration, True, None, self.increase_error_count)
 
     def get_transceiver_configuration_async(self, config):
         self.spin_baud_rate.setValue(config.baud_rate)

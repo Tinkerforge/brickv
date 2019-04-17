@@ -53,7 +53,7 @@ class RS232(PluginBase, Ui_RS232):
 
         self.rs232 = self.device
 
-        self.read_callback_was_enabled = False
+        self.read_callback_was_enabled = None
 
         self.qtcb_read.connect(self.cb_read)
         self.rs232.register_callback(self.rs232.CALLBACK_READ,
@@ -235,20 +235,19 @@ class RS232(PluginBase, Ui_RS232):
 
     def is_read_callback_enabled_async(self, enabled):
         self.read_callback_was_enabled = enabled
-        self.rs232.enable_read_callback()
+
+        if not enabled:
+            async_call(self.rs232.enable_read_callback, None, None, self.increase_error_count)
 
     def start(self):
-        self.read_callback_was_enabled = False
+        self.read_callback_was_enabled = None
 
         async_call(self.rs232.is_read_callback_enabled, None, self.is_read_callback_enabled_async, self.increase_error_count)
         async_call(self.rs232.get_configuration, None, self.get_configuration_async, self.increase_error_count)
 
     def stop(self):
-        if not self.read_callback_was_enabled:
-            try:
-                self.rs232.disable_read_callback()
-            except ip_connection.Error:
-                pass
+        if self.read_callback_was_enabled == False: # intentionally check for False to distinguish from None
+            async_call(self.rs232.enable_read_callback, None, None, self.increase_error_count)
 
     def destroy(self):
         pass

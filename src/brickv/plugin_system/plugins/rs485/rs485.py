@@ -85,7 +85,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                        self.cb_modbus_common_error_count,
                                                        self.increase_error_count)
 
-        self.read_callback_was_enabled = False
+        self.read_callback_was_enabled = None
 
         self.qtcb_read.connect(self.cb_read)
 
@@ -1179,7 +1179,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
     def is_read_callback_enabled_async(self, enabled):
         self.read_callback_was_enabled = enabled
-        self.rs485.enable_read_callback()
+
+        if not enabled:
+            async_call(self.rs485.enable_read_callback, None, None, self.increase_error_count)
 
     def cb_error_count(self, error_count):
         self.label_error_overrun.setText(str(error_count.overrun_error_count))
@@ -1215,12 +1217,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.error_led_show_error_action.trigger()
 
     def start(self):
-        async_call(self.rs485.get_communication_led_config, None, self.get_communication_led_config_async, self.increase_error_count)
-        async_call(self.rs485.get_error_led_config, None, self.get_error_led_config_async, self.increase_error_count)
-
-        self.read_callback_was_enabled = False
+        self.read_callback_was_enabled = None
 
         async_call(self.rs485.is_read_callback_enabled, None, self.is_read_callback_enabled_async, self.increase_error_count)
+        async_call(self.rs485.get_communication_led_config, None, self.get_communication_led_config_async, self.increase_error_count)
+        async_call(self.rs485.get_error_led_config, None, self.get_error_led_config_async, self.increase_error_count)
         async_call(self.rs485.get_rs485_configuration, None, self.get_rs485_configuration_async, self.increase_error_count)
         async_call(self.rs485.get_modbus_configuration, None, self.get_modbus_configuration_async, self.increase_error_count)
         async_call(self.rs485.get_mode, None, self.get_mode_async, self.increase_error_count)
@@ -1232,11 +1233,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.cbe_error_count.set_period(0)
         self.cbe_error_count_modbus.set_period(0)
 
-        if not self.read_callback_was_enabled:
-            try:
-                async_call(self.rs485.disable_read_callback, None, None, None)
-            except:
-                pass
+        if self.read_callback_was_enabled == False: # intentionally check for False to distinguish from None
+            async_call(self.rs485.disable_read_callback, None, None, self.increase_error_count)
 
     def destroy(self):
         pass

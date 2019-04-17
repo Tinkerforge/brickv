@@ -51,7 +51,7 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
 
         self.led_strip = self.device
 
-        self.frame_read_callback_was_enabled = False
+        self.frame_read_callback_was_enabled = None
 
         self.qtcb_frame_started.connect(self.cb_frame_started)
 
@@ -420,14 +420,17 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
 
     def get_frame_started_callback_configuration_async(self, enabled):
         self.frame_started_callback_was_enabled = enabled
-        self.led_strip.set_frame_started_callback_configuration(True)
+
+        if not enabled:
+            async_call(self.led_strip.set_frame_started_callback_configuration, True, None, self.increase_error_count)
 
     def start(self):
+        self.frame_started_callback_was_enabled = None
+
+        async_call(self.led_strip.get_frame_started_callback_configuration, None, self.get_frame_started_callback_configuration_async, self.increase_error_count)
         async_call(self.led_strip.get_chip_type, None, self.get_chip_type_async, self.increase_error_count)
         async_call(self.led_strip.get_clock_frequency, None, self.get_clock_frequency_async, self.increase_error_count)
         async_call(self.led_strip.get_channel_mapping, None, self.get_channel_mapping_async, self.increase_error_count)
-        async_call(self.led_strip.get_frame_started_callback_configuration, None, self.get_frame_started_callback_configuration_async, self.increase_error_count)
-
         async_call(self.led_strip.get_supply_voltage, None, self.get_supply_voltage_async, self.increase_error_count)
         async_call(self.led_strip.get_frame_duration, None, self.get_frame_duration_async, self.increase_error_count)
 
@@ -439,11 +442,8 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
         self.voltage_timer.stop()
         self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_STARTED, None)
 
-        if self.frame_started_callback_was_enabled == False:
-            try:
-                self.led_strip.set_frame_started_callback_configuration(False)
-            except:
-                pass
+        if self.frame_started_callback_was_enabled == False: # intentionally check for False to distinguish from None
+            async_call(self.led_strip.set_frame_started_callback_configuration, False, None, self.increase_error_count)
 
     def destroy(self):
         pass
