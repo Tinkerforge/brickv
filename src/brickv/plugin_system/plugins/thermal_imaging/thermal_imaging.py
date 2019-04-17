@@ -260,6 +260,8 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
         self.setupUi(self)
         self.thermal_imaging = self.device
 
+        self.previous_image_transfer_config = None
+
         self.thermal_image = ThermalImage(80, 60, self)
         self.thermal_image_layout.insertWidget(0, self.thermal_image)
         self.thermal_image_bar = ThermalImageBar(80, 20, self.thermal_image, self)
@@ -267,6 +269,9 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
 
         self.agc_roi_button.clicked.connect(self.cb_roi_button)
         self.spotmeter_roi_button.clicked.connect(self.cb_roi_button)
+
+        self.image_combo.setItemData(0, BrickletThermalImaging.IMAGE_TRANSFER_CALLBACK_HIGH_CONTRAST_IMAGE)
+        self.image_combo.setItemData(1, BrickletThermalImaging.IMAGE_TRANSFER_CALLBACK_TEMPERATURE_IMAGE)
 
         self.agc_clip_limit_high_spin.editingFinished.connect(self.update_agc_data)
         self.agc_clip_limit_low_spin.editingFinished.connect(self.update_agc_data)
@@ -326,12 +331,11 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
         return from_x, from_y, to_x, to_y
 
     def update_image_combo(self):
-        if self.image_combo.currentIndex() == 0:
-            async_call(self.thermal_imaging.set_image_transfer_config, BrickletThermalImaging.IMAGE_TRANSFER_CALLBACK_HIGH_CONTRAST_IMAGE, None, self.increase_error_count)
-            self.high_contrast_groupbox.show()
-        else:
-            self.high_contrast_groupbox.hide()
-            async_call(self.thermal_imaging.set_image_transfer_config, BrickletThermalImaging.IMAGE_TRANSFER_CALLBACK_TEMPERATURE_IMAGE, None, self.increase_error_count)
+        config = self.image_combo.itemData(self.image_combo.currentIndex())
+
+        async_call(self.thermal_imaging.set_image_transfer_config, config, None, self.increase_error_count)
+
+        self.high_contrast_groupbox.setVisible(config == BrickletThermalImaging.IMAGE_TRANSFER_CALLBACK_HIGH_CONTRAST_IMAGE)
 
     def update_resolution(self):
         self.thermal_image.wait_for_minmax = 2
@@ -435,6 +439,11 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
             self.overtemp_label.setStyleSheet(sheet_green)
             self.overtemp_label.setText('No')
 
+    def get_image_transfer_config_async(self, config):
+        self.previous_image_transfer_config = config
+
+        self.update_image_combo()
+
     def get_high_contrast_config_async(self, config):
         self.thermal_image.agc_roi_from = QPoint(config.region_of_interest[0] * self.thermal_image.image_pixel_width,
                                                  config.region_of_interest[1] * self.thermal_image.image_pixel_width)
@@ -455,15 +464,20 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
         self.resolution_box.setCurrentIndex(resolution)
 
     def start(self):
+        self.previous_image_transfer_config = None
+
+        async_call(self.thermal_imaging.get_image_transfer_config, None, self.get_image_transfer_config_async, self.increase_error_count)
         async_call(self.thermal_imaging.get_high_contrast_config, None, self.get_high_contrast_config_async, self.increase_error_count)
         async_call(self.thermal_imaging.get_spotmeter_config, None, self.get_spotmeter_config_async, self.increase_error_count)
         async_call(self.thermal_imaging.get_resolution, None, self.get_resolution_async, self.increase_error_count)
 
-        self.thermal_imaging.set_image_transfer_config(BrickletThermalImaging.IMAGE_TRANSFER_CALLBACK_HIGH_CONTRAST_IMAGE)
         self.thermal_imaging.register_callback(self.thermal_imaging.CALLBACK_HIGH_CONTRAST_IMAGE, self.qtcb_high_contrast_image.emit)
         self.thermal_imaging.register_callback(self.thermal_imaging.CALLBACK_TEMPERATURE_IMAGE, self.qtcb_temperature_image.emit)
 
     def stop(self):
+        if self.previous_image_transfer_config != None:
+            async_call(self.thermal_imaging.set_image_transfer_config, self.previous_image_transfer_config, None, self.increase_error_count)
+
         self.thermal_imaging.register_callback(self.thermal_imaging.CALLBACK_HIGH_CONTRAST_IMAGE, None)
         self.thermal_imaging.register_callback(self.thermal_imaging.CALLBACK_TEMPERATURE_IMAGE, None)
 
