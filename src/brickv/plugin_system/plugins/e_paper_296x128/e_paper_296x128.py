@@ -55,7 +55,7 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
         self.color_radio_white.toggled.connect(self.radio_toggled)
         self.color_radio_red.toggled.connect(self.radio_toggled)
 
-        self.display = self.epaper.DISPLAY_BLACK_WHITE_RED
+        self.display_type = self.epaper.DISPLAY_BLACK_WHITE_RED
 
     def radio_toggled(self):
         if self.color_radio_black.isChecked():
@@ -63,7 +63,7 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
         elif self.color_radio_white.isChecked():
             self.scribble_widget.set_foreground_color(QColor(Qt.white))
         elif self.color_radio_red.isChecked():
-            if self.display == self.epaper.DISPLAY_BLACK_WHITE_RED:
+            if self.display_type == self.epaper.DISPLAY_BLACK_WHITE_RED:
                 self.scribble_widget.set_foreground_color(QColor(Qt.red))
             else:
                 self.scribble_widget.set_foreground_color(QColor(Qt.darkGray))
@@ -114,17 +114,17 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
             for i in range(HEIGHT):
                 for j in range(WIDTH):
                     if pixels[i * WIDTH + j]:
-                        if self.display == self.epaper.DISPLAY_BLACK_WHITE_RED:
+                        if self.display_type == self.epaper.DISPLAY_BLACK_WHITE_RED:
                             self.scribble_widget.image().setPixel(j, i, 0xFF0000)
                         else:
                             self.scribble_widget.image().setPixel(j, i, 0x808080)
 
         self.scribble_widget.update()
 
-    def get_display_async(self, display):
-        self.display = display
+    def get_display_type_async(self, display_type):
+        self.display_type = display_type
 
-        if display == 0:
+        if display_type == self.epaper.DISPLAY_BLACK_WHITE_RED:
             color = 'Red'
         else:
             color = 'Grey'
@@ -135,7 +135,7 @@ class EPaper296x128(COMCUPluginBase, Ui_EPaper296x128):
         self.color_combo.insertItem(2, color)
 
     def start(self):
-        async_call(self.epaper.get_display, None, self.get_display_async, self.increase_error_count)
+        async_call(self.epaper.get_display_type, None, self.get_display_type_async, self.increase_error_count)
         async_call(self.epaper.read_black_white, (0, 0, WIDTH - 1, HEIGHT - 1), self.read_black_white_async, self.increase_error_count)
 
     def stop(self):

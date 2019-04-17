@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-03-14.      #
+# This file was automatically generated on 2019-04-17.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -47,8 +47,8 @@ class BrickletEPaper296x128(Device):
     FUNCTION_DRAW_BOX = 10
     FUNCTION_SET_UPDATE_MODE = 12
     FUNCTION_GET_UPDATE_MODE = 13
-    FUNCTION_SET_DISPLAY = 14
-    FUNCTION_GET_DISPLAY = 15
+    FUNCTION_SET_DISPLAY_TYPE = 14
+    FUNCTION_GET_DISPLAY_TYPE = 15
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -84,8 +84,8 @@ class BrickletEPaper296x128(Device):
     UPDATE_MODE_DEFAULT = 0
     UPDATE_MODE_BLACK_WHITE = 1
     UPDATE_MODE_DELTA = 2
-    DISPLAY_BLACK_WHITE_RED = 0
-    DISPLAY_BLACK_WHITE_GRAY = 1
+    DISPLAY_TYPE_BLACK_WHITE_RED = 0
+    DISPLAY_TYPE_BLACK_WHITE_GRAY = 1
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -123,8 +123,8 @@ class BrickletEPaper296x128(Device):
         self.response_expected[BrickletEPaper296x128.FUNCTION_DRAW_BOX] = BrickletEPaper296x128.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEPaper296x128.FUNCTION_SET_UPDATE_MODE] = BrickletEPaper296x128.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEPaper296x128.FUNCTION_GET_UPDATE_MODE] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletEPaper296x128.FUNCTION_SET_DISPLAY] = BrickletEPaper296x128.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletEPaper296x128.FUNCTION_GET_DISPLAY] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEPaper296x128.FUNCTION_SET_DISPLAY_TYPE] = BrickletEPaper296x128.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEPaper296x128.FUNCTION_GET_DISPLAY_TYPE] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEPaper296x128.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEPaper296x128.FUNCTION_SET_BOOTLOADER_MODE] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEPaper296x128.FUNCTION_GET_BOOTLOADER_MODE] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -155,11 +155,11 @@ class BrickletEPaper296x128(Device):
         Returns one of three draw statuses:
 
         * Idle
-        * Copying: Data is beeing copied from the buffer of the Bricklet to the buffer of the display.
+        * Copying: Data is being copied from the buffer of the Bricklet to the buffer of the display.
         * Drawing: The display is updating its content (during this phase the flickering etc happens).
 
         You can write to the buffer (through one of the write or draw functions) when the status is
-        either *idle* or *drawing*. You should not write to the buffer while it is beeing copied to the
+        either *idle* or *drawing*. You should not write to the buffer while it is being *copied* to the
         display. There is no double-buffering.
         """
         return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_DRAW_STATUS, (), '', 'B')
@@ -172,10 +172,11 @@ class BrickletEPaper296x128(Device):
         into the window line by line top to bottom and each line is written from left to
         right.
 
-        A 0 (false) corresponds to a black pixel and a 1 (true) to a white pixel.
+        The value 0 (false) corresponds to a black pixel and the value 1 (true) to a
+        white pixel.
 
-        This function writes the pixels into the black/white pixel buffer, to draw the buffer
-        to the display use :func:`Draw`.
+        This function writes the pixels into the black/white pixel buffer, to draw the
+        buffer to the display use :func:`Draw`.
 
         Use :func:`Write Color` to write red or gray pixels.
         """
@@ -199,8 +200,7 @@ class BrickletEPaper296x128(Device):
 
         The current content of the buffer does not have to be the current content of the display.
         It is possible that the data was not drawn to the display yet and after a restart of
-        the Bricklet the buffer will be reset to black, while the e-paper dislay retains its
-        content.
+        the Bricklet the buffer will be reset to black, while the display retains its content.
         """
         x_start = int(x_start)
         y_start = int(y_start)
@@ -219,8 +219,8 @@ class BrickletEPaper296x128(Device):
         into the window line by line top to bottom and each line is written from left to
         right.
 
-        A 0 (false) means that this pixel does not have color. It will be either black
-        or white (see :func:`Write Black White`). A 1 (true) correponds to a red or gray
+        The value 0 (false) means that this pixel does not have color. It will be either black
+        or white (see :func:`Write Black White`). The value 1 (true) corresponds to a red or gray
         pixel, depending on the Bricklet model.
 
         This function writes the pixels into the red or gray pixel buffer, to draw the buffer
@@ -248,8 +248,7 @@ class BrickletEPaper296x128(Device):
 
         The current content of the buffer does not have to be the current content of the display.
         It is possible that the data was not drawn to the display yet and after a restart of
-        the Bricklet the buffer will be reset to black, while the e-paper dislay retains its
-        content.
+        the Bricklet the buffer will be reset to black, while the display retains its content.
         """
         x_start = int(x_start)
         y_start = int(y_start)
@@ -320,7 +319,6 @@ class BrickletEPaper296x128(Device):
     def set_update_mode(self, update_mode):
         """
         .. note::
-
          The default update mode corresponds to the default e-paper display
          manufacturer settings. All of the other modes are experimental and
          will result in increased ghosting and possibly other long-term
@@ -336,15 +334,13 @@ class BrickletEPaper296x128(Device):
 
         * Default: Settings as given by the manufacturer. An update will take about
           7.5 seconds and during the update the screen will flicker several times.
-
         * Black/White: This will only update the black/white pixel. It uses the manufacturer
-          settings for black/white and ignrers the red or gray pixel buffer. With this mode the
+          settings for black/white and ignores the red or gray pixel buffer. With this mode the
           display will flicker once and it takes about 2.5 seconds. Compared to the default settings
           there is more ghosting.
-
-        * Delta: This will only update the black/white pixel. It uses an agressive method where
+        * Delta: This will only update the black/white pixel. It uses an aggressive method where
           the changes are not applied for a whole buffer but only for the delta between the last
-          and the next buffer. With this mode the  display will not flicker during an update and
+          and the next buffer. With this mode the display will not flicker during an update and
           it takes about 900-950ms. Compared to the other two settings there is more ghosting. This
           mode can be used for something like a flicker-free live update of a temperature.
 
@@ -367,23 +363,23 @@ class BrickletEPaper296x128(Device):
         """
         return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_UPDATE_MODE, (), '', 'B')
 
-    def set_display(self, display):
+    def set_display_type(self, display_type):
         """
         Sets the type of the display. The e-paper display is available
         in black/white/red and black/white/gray. This will be factory set
         during the flashing and testing phase. The value is saved in
         non-volatile memory and will stay after a power cycle.
         """
-        display = int(display)
+        display_type = int(display_type)
 
-        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_DISPLAY, (display,), 'B', '')
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_DISPLAY_TYPE, (display_type,), 'B', '')
 
-    def get_display(self):
+    def get_display_type(self):
         """
         Returns the type of the e-paper display. It can either be
         black/white/red or black/white/gray.
         """
-        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_DISPLAY, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_DISPLAY_TYPE, (), '', 'B')
 
     def get_spitfp_error_count(self):
         """
@@ -533,10 +529,11 @@ class BrickletEPaper296x128(Device):
         into the window line by line top to bottom and each line is written from left to
         right.
 
-        A 0 (false) corresponds to a black pixel and a 1 (true) to a white pixel.
+        The value 0 (false) corresponds to a black pixel and the value 1 (true) to a
+        white pixel.
 
-        This function writes the pixels into the black/white pixel buffer, to draw the buffer
-        to the display use :func:`Draw`.
+        This function writes the pixels into the black/white pixel buffer, to draw the
+        buffer to the display use :func:`Draw`.
 
         Use :func:`Write Color` to write red or gray pixels.
         """
@@ -574,8 +571,7 @@ class BrickletEPaper296x128(Device):
 
         The current content of the buffer does not have to be the current content of the display.
         It is possible that the data was not drawn to the display yet and after a restart of
-        the Bricklet the buffer will be reset to black, while the e-paper dislay retains its
-        content.
+        the Bricklet the buffer will be reset to black, while the display retains its content.
         """
         x_start = int(x_start)
         y_start = int(y_start)
@@ -613,8 +609,8 @@ class BrickletEPaper296x128(Device):
         into the window line by line top to bottom and each line is written from left to
         right.
 
-        A 0 (false) means that this pixel does not have color. It will be either black
-        or white (see :func:`Write Black White`). A 1 (true) correponds to a red or gray
+        The value 0 (false) means that this pixel does not have color. It will be either black
+        or white (see :func:`Write Black White`). The value 1 (true) corresponds to a red or gray
         pixel, depending on the Bricklet model.
 
         This function writes the pixels into the red or gray pixel buffer, to draw the buffer
@@ -656,8 +652,7 @@ class BrickletEPaper296x128(Device):
 
         The current content of the buffer does not have to be the current content of the display.
         It is possible that the data was not drawn to the display yet and after a restart of
-        the Bricklet the buffer will be reset to black, while the e-paper dislay retains its
-        content.
+        the Bricklet the buffer will be reset to black, while the display retains its content.
         """
         x_start = int(x_start)
         y_start = int(y_start)
