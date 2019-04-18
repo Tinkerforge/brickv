@@ -21,7 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import QTimer, pyqtSignal
+from PyQt5.QtCore import QTimer, pyqtSignal, Qt
+from PyQt5.QtGui import QColor
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.segment_display_4x7_v2.ui_segment_display_4x7_v2 import Ui_SegmentDisplay4x7V2
@@ -30,15 +31,15 @@ from brickv.async_call import async_call
 
 class SegmentDisplay4x7V2(COMCUPluginBase, Ui_SegmentDisplay4x7V2):
     qtcb_finished = pyqtSignal()
-    STYLE_OFF = "QPushButton { background-color: grey; color: grey; }"
-    STYLE_ON = ["QPushButton { background-color: #880000; color: #880000; }",
-                "QPushButton { background-color: #990000; color: #990000; }",
-                "QPushButton { background-color: #AA0000; color: #AA0000; }",
-                "QPushButton { background-color: #BB0000; color: #BB0000; }",
-                "QPushButton { background-color: #CC0000; color: #CC0000; }",
-                "QPushButton { background-color: #DD0000; color: #DD0000; }",
-                "QPushButton { background-color: #EE0000; color: #EE0000; }",
-                "QPushButton { background-color: #FF0000; color: #FF0000; }"]
+    STYLE_OFF = QColor(Qt.gray)
+    STYLE_ON = [QColor(0x88, 0, 0),
+                QColor(0x99, 0, 0),
+                QColor(0xAA, 0, 0),
+                QColor(0xBB, 0, 0),
+                QColor(0xCC, 0, 0),
+                QColor(0xDD, 0, 0),
+                QColor(0xEE, 0, 0),
+                QColor(0xFF, 0, 0)]
 
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletSegmentDisplay4x7V2, *args)
@@ -69,7 +70,8 @@ class SegmentDisplay4x7V2(COMCUPluginBase, Ui_SegmentDisplay4x7V2):
             return lambda: self.button_clicked(segment)
 
         for i, segment in enumerate(self.segments):
-            segment.setStyleSheet(self.STYLE_OFF)
+            is_circular = i % 8 == 7 or i >= 32
+            segment.initialize(self.STYLE_ON, self.STYLE_OFF, style='circular' if is_circular else 'rectangular')
             segment.clicked.connect(get_clicked_func(i))
 
         self.counter_timer = QTimer(self)
@@ -117,23 +119,23 @@ class SegmentDisplay4x7V2(COMCUPluginBase, Ui_SegmentDisplay4x7V2):
 
     def update_colors(self):
         for segment in self.segments:
-            if segment.styleSheet() != self.STYLE_OFF:
-                segment.setStyleSheet(self.STYLE_ON[self.brightness])
+            if segment.on:
+                segment.set_brightness(self.brightness)
 
     def button_clicked(self, segment):
         self.counter_timer.stop()
 
-        if self.segments[segment].styleSheet() == self.STYLE_OFF:
-            self.segments[segment].setStyleSheet(self.STYLE_ON[self.brightness])
+        if not self.segments[segment].on:
+            self.segments[segment].switch_on(self.brightness)
         else:
-            self.segments[segment].setStyleSheet(self.STYLE_OFF)
+            self.segments[segment].switch_off()
 
         self.update_segments()
 
     def update_segments(self):
         values = []
         for segment in self.segments:
-            values.append(segment.styleSheet() != self.STYLE_OFF)
+            values.append(segment.on)
 
         self.sd4x7.set_segments(values[0:8], values[8:16], values[16:24], values[24:32], values[32:34], values[34])
 
@@ -154,9 +156,9 @@ class SegmentDisplay4x7V2(COMCUPluginBase, Ui_SegmentDisplay4x7V2):
 
         for i in range(len(self.segments)):
             if values[i]:
-                self.segments[i].setStyleSheet(self.STYLE_ON[self.brightness])
+                self.segments[i].switch_on(self.brightness)
             else:
-                self.segments[i].setStyleSheet(self.STYLE_OFF)
+                self.segments[i].switch_off()
 
     def start(self):
         async_call(self.sd4x7.get_segments, None, self.get_segments_async, self.increase_error_count)

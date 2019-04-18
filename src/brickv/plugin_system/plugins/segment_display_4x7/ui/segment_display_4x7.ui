@@ -48,7 +48,7 @@
         <number>2</number>
        </property>
        <item row="3" column="0">
-        <widget class="QPushButton" name="digit0_segment4">
+        <widget class="ColorButton" name="digit0_segment4">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -73,7 +73,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QPushButton" name="digit0_segment5">
+        <widget class="ColorButton" name="digit0_segment5">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -98,7 +98,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QPushButton" name="digit0_segment6">
+        <widget class="ColorButton" name="digit0_segment6">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -123,7 +123,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QPushButton" name="digit0_segment0">
+        <widget class="ColorButton" name="digit0_segment0">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -148,7 +148,7 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QPushButton" name="digit0_segment3">
+        <widget class="ColorButton" name="digit0_segment3">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -173,7 +173,7 @@
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QPushButton" name="digit0_segment1">
+        <widget class="ColorButton" name="digit0_segment1">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -198,7 +198,7 @@
         </widget>
        </item>
        <item row="3" column="2">
-        <widget class="QPushButton" name="digit0_segment2">
+        <widget class="ColorButton" name="digit0_segment2">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -243,7 +243,7 @@
         <number>2</number>
        </property>
        <item row="3" column="0">
-        <widget class="QPushButton" name="digit1_segment4">
+        <widget class="ColorButton" name="digit1_segment4">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -268,7 +268,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QPushButton" name="digit1_segment5">
+        <widget class="ColorButton" name="digit1_segment5">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -293,7 +293,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QPushButton" name="digit1_segment6">
+        <widget class="ColorButton" name="digit1_segment6">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -318,7 +318,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QPushButton" name="digit1_segment0">
+        <widget class="ColorButton" name="digit1_segment0">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -343,7 +343,7 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QPushButton" name="digit1_segment3">
+        <widget class="ColorButton" name="digit1_segment3">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -368,7 +368,7 @@
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QPushButton" name="digit1_segment1">
+        <widget class="ColorButton" name="digit1_segment1">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -393,7 +393,7 @@
         </widget>
        </item>
        <item row="3" column="2">
-        <widget class="QPushButton" name="digit1_segment2">
+        <widget class="ColorButton" name="digit1_segment2">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -441,7 +441,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="point0">
+        <widget class="ColorButton" name="point0">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -479,7 +479,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="point1">
+        <widget class="ColorButton" name="point1">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -524,7 +524,7 @@
         <number>2</number>
        </property>
        <item row="3" column="0">
-        <widget class="QPushButton" name="digit2_segment4">
+        <widget class="ColorButton" name="digit2_segment4">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -549,7 +549,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QPushButton" name="digit2_segment5">
+        <widget class="ColorButton" name="digit2_segment5">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -574,7 +574,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QPushButton" name="digit2_segment6">
+        <widget class="ColorButton" name="digit2_segment6">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -599,7 +599,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QPushButton" name="digit2_segment0">
+        <widget class="ColorButton" name="digit2_segment0">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -624,7 +624,7 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QPushButton" name="digit2_segment3">
+        <widget class="ColorButton" name="digit2_segment3">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -649,7 +649,7 @@
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QPushButton" name="digit2_segment1">
+        <widget class="ColorButton" name="digit2_segment1">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -674,7 +674,7 @@
         </widget>
        </item>
        <item row="3" column="2">
-        <widget class="QPushButton" name="digit2_segment2">
+        <widget class="ColorButton" name="digit2_segment2">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -719,7 +719,7 @@
         <number>2</number>
        </property>
        <item row="3" column="0">
-        <widget class="QPushButton" name="digit3_segment4">
+        <widget class="ColorButton" name="digit3_segment4">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -744,7 +744,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QPushButton" name="digit3_segment5">
+        <widget class="ColorButton" name="digit3_segment5">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -769,7 +769,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QPushButton" name="digit3_segment6">
+        <widget class="ColorButton" name="digit3_segment6">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -794,7 +794,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QPushButton" name="digit3_segment0">
+        <widget class="ColorButton" name="digit3_segment0">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -819,7 +819,7 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QPushButton" name="digit3_segment3">
+        <widget class="ColorButton" name="digit3_segment3">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -844,7 +844,7 @@
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QPushButton" name="digit3_segment1">
+        <widget class="ColorButton" name="digit3_segment1">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -869,7 +869,7 @@
         </widget>
        </item>
        <item row="3" column="2">
-        <widget class="QPushButton" name="digit3_segment2">
+        <widget class="ColorButton" name="digit3_segment2">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -1127,6 +1127,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ColorButton</class>
+   <extends>QPushButton</extends>
+   <header>brickv.colorbutton</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

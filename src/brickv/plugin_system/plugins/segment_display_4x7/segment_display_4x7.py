@@ -22,24 +22,26 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import QTimer, pyqtSignal
+from PyQt5.QtCore import QTimer, pyqtSignal, Qt
+from PyQt5.QtGui import QColor
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.segment_display_4x7.ui_segment_display_4x7 import Ui_SegmentDisplay4x7
 from brickv.bindings.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
 from brickv.async_call import async_call
 
+
 class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
     qtcb_finished = pyqtSignal()
-    STYLE_OFF = "QPushButton { background-color: grey; color: grey; }"
-    STYLE_ON = ["QPushButton { background-color: #880000; color: #880000; }",
-                "QPushButton { background-color: #990000; color: #990000; }",
-                "QPushButton { background-color: #AA0000; color: #AA0000; }",
-                "QPushButton { background-color: #BB0000; color: #BB0000; }",
-                "QPushButton { background-color: #CC0000; color: #CC0000; }",
-                "QPushButton { background-color: #DD0000; color: #DD0000; }",
-                "QPushButton { background-color: #EE0000; color: #EE0000; }",
-                "QPushButton { background-color: #FF0000; color: #FF0000; }"]
+    STYLE_OFF = QColor(Qt.gray)
+    STYLE_ON = [QColor(0x88, 0, 0),
+                QColor(0x99, 0, 0),
+                QColor(0xAA, 0, 0),
+                QColor(0xBB, 0, 0),
+                QColor(0xCC, 0, 0),
+                QColor(0xDD, 0, 0),
+                QColor(0xEE, 0, 0),
+                QColor(0xFF, 0, 0)]
 
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletSegmentDisplay4x7, *args)
@@ -80,12 +82,13 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
         for d in range(4):
             for i in range(7):
                 button = self.digits[d][i]
-                button.setStyleSheet(self.STYLE_OFF)
+                button.initialize(self.STYLE_ON, self.STYLE_OFF)
+
                 button.clicked.connect(get_clicked_func(d, i))
 
         for i in range(2):
             button = self.points[i]
-            button.setStyleSheet(self.STYLE_OFF)
+            button.initialize(self.STYLE_ON, self.STYLE_OFF, style='circular')
             button.clicked.connect(get_clicked_func(4, i))
 
         self.counter_timer = QTimer(self)
@@ -133,33 +136,33 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
 
     def update_colors(self):
         if self.digit_state[4][0]:
-            self.digits[4][0].setStyleSheet(self.STYLE_ON[self.brightness])
-            self.digits[4][1].setStyleSheet(self.STYLE_ON[self.brightness])
+            self.digits[4][0].switch_on(self.brightness)
+            self.digits[4][1].switch_on(self.brightness)
 
         for d in range(4):
             for s in range(7):
                 if self.digit_state[d][s]:
-                    self.digits[d][s].setStyleSheet(self.STYLE_ON[self.brightness])
+                    self.digits[d][s].switch_on(self.brightness)
 
     def button_clicked(self, digit, segment):
         self.counter_timer.stop()
         if digit == 4:
             if self.digit_state[4][0]:
-                self.digits[4][0].setStyleSheet(self.STYLE_OFF)
-                self.digits[4][1].setStyleSheet(self.STYLE_OFF)
+                self.digits[4][0].switch_off()
+                self.digits[4][1].switch_off()
                 self.digit_state[4][0] = False
                 self.digit_state[4][1] = False
             else:
-                self.digits[4][0].setStyleSheet(self.STYLE_ON[self.brightness])
-                self.digits[4][1].setStyleSheet(self.STYLE_ON[self.brightness])
+                self.digits[4][0].switch_on(self.brightness)
+                self.digits[4][1].switch_on(self.brightness)
                 self.digit_state[4][0] = True
                 self.digit_state[4][1] = True
         else:
             if self.digit_state[digit][segment]:
-                self.digits[digit][segment].setStyleSheet(self.STYLE_OFF)
+                self.digits[digit][segment].switch_off()
                 self.digit_state[digit][segment] = False
             else:
-                self.digits[digit][segment].setStyleSheet(self.STYLE_ON[self.brightness])
+                self.digits[digit][segment].switch_on(self.brightness)
                 self.digit_state[digit][segment] = True
 
         self.update_segments()
@@ -181,23 +184,23 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
 
         if colon:
             self.digit_state[4][0] = True
-            self.digits[4][0].setStyleSheet(self.STYLE_ON[self.brightness])
+            self.digits[4][0].switch_on(self.brightness)
             self.digit_state[4][0] = True
-            self.digits[4][1].setStyleSheet(self.STYLE_ON[self.brightness])
+            self.digits[4][1].switch_on(self.brightness)
         else:
             self.digit_state[4][0] = False
-            self.digits[4][0].setStyleSheet(self.STYLE_OFF)
+            self.digits[4][0].switch_off()
             self.digit_state[4][0] = False
-            self.digits[4][1].setStyleSheet(self.STYLE_OFF)
+            self.digits[4][1].switch_off()
 
         for d in range(4):
             for s in range(7):
                 if segments[d] & (1 << s):
                     self.digit_state[d][s] = True
-                    self.digits[d][s].setStyleSheet(self.STYLE_ON[self.brightness])
+                    self.digits[d][s].switch_on(self.brightness)
                 else:
                     self.digit_state[d][s] = False
-                    self.digits[d][s].setStyleSheet(self.STYLE_OFF)
+                    self.digits[d][s].switch_off()
 
     def start(self):
         async_call(self.sd4x7.get_segments, None, self.get_segments_async, self.increase_error_count)
