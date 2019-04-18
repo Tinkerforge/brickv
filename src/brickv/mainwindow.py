@@ -728,6 +728,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def show_plugin(self, uid):
         i = self.tab_for_uid(uid)
+        if infos.get_info(uid) is None:
+            return
         tab_window = infos.get_info(uid).tab_window
 
         if i > 0 and self.tab_widget.isTabEnabled(i):

@@ -1608,7 +1608,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 parent = [QStandardItem(info.name),
                           QStandardItem(info.uid),
-                          QStandardItem('0'),
+                          QStandardItem(info.position.title()),
                           QStandardItem(get_version_string(info.firmware_version_installed, replace_unknown=replace_unknown, is_red_brick=is_red_brick)),
                           QStandardItem(get_version_string(info.firmware_version_latest, replace_unknown="Unknown", is_red_brick=is_red_brick))]
 
