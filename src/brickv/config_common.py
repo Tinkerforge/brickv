@@ -45,3 +45,6 @@ DEFAULT_HOST_INFO = 'localhost|4223|0|0|'
 DEFAULT_USE_FUSION_GUI_STYLE = sys.platform == 'darwin'
 
 DEFAULT_AUTO_SEARCH_FOR_UPDATES = True
+
+IS_INTERNAL = True
+COMMIT_ID = 'e79bc2b7'

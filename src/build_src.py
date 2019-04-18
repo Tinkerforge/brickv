@@ -67,3 +67,20 @@ args = ' '.join(sys.argv[1:])
 print('calling build_plugin_list.py ' + args)
 os.chdir(basedir)
 system(sys.executable + ' build_plugin_list.py ' + args)
+
+if os.path.exists(os.path.join(brickv, 'config_common.py')):
+    with open(os.path.join(brickv, 'config_common.py'), 'r') as f:
+        contents = f.readlines()
+    with open(os.path.join(brickv, 'config_common.py'), 'w') as f:
+        for line in contents:
+            if line.startswith('IS_INTERNAL'):
+                f.write('IS_INTERNAL = {}\n'.format(not 'release' in args))
+            elif line.startswith('COMMIT_ID'):
+                try:
+                    import subprocess
+                    commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+                    f.write("COMMIT_ID = '{}'".format(commit_id[:8].decode('utf-8')))
+                except Exception as e:
+                    f.write("COMMIT_ID = 'Unknown'")
+            else:
+                f.write(line)

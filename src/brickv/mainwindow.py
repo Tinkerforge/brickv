@@ -79,8 +79,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         signal.signal(signal.SIGTERM, self.exit_brickv)
 
         self.async_thread = async_start_thread(self)
-
-        self.setWindowTitle('Brick Viewer ' + config.BRICKV_VERSION)
+        title = 'Brick Viewer ' + config.BRICKV_VERSION
+        if config.IS_INTERNAL:
+            title += ' INTERNAL VERSION {} - DO NOT RELEASE'.format(config.COMMIT_ID)
+        self.setWindowTitle(title)
 
         self.tree_view_model_labels = ['Name', 'UID', 'Position', 'FW Version']
         self.tree_view_model = QStandardItemModel(self)

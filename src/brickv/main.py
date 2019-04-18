@@ -208,7 +208,10 @@ def main():
 
         splash = QSplashScreen(load_pixmap('splash.png'), Qt.WindowStaysOnTopHint)
         splash.show()
-        splash.showMessage('Starting Brick Viewer ' + config.BRICKV_VERSION, Qt.AlignHCenter | Qt.AlignBottom, Qt.white)
+        splashMessage = 'Starting Brick Viewer ' + config.BRICKV_VERSION
+        if config.IS_INTERNAL:
+            splashMessage += ' INTERNAL VERSION {} - DO NOT RELEASE'.format(config.COMMIT_ID)
+        splash.showMessage(splashMessage, Qt.AlignHCenter | Qt.AlignBottom, Qt.white)
 
         brick_viewer.processEvents()
 
