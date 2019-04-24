@@ -1,5 +1,15 @@
 # -*- mode: python -*-
 
+# work-around for https://github.com/pyinstaller/pyinstaller/issues/4064
+# Before virtualenv 16.4.0 distutils_path was set to the directory distutils is found in.
+# Since virtualenv 16.4.0 distutils_path points to the __init__.py file inside this directory.
+# PyInstaller's distutils-hook still expectes the old format; fake it here.
+# Also under macOS the distutils_path attribute is not available, but the work-around seems
+# to be not necessary here.
+import distutils
+if hasattr(distutils, 'distutils_path') and distutils.distutils_path.endswith('__init__.py'):
+    distutils.distutils_path = os.path.dirname(distutils.distutils_path)
+
 import os
 import sys
 sys.path.insert(0, '..') # Ensure to use the brickv source, not an installed version

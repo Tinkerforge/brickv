@@ -22,6 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from distutils.version import StrictVersion
 import json
 import queue
 import urllib.request
@@ -37,8 +38,6 @@ from brickv.async_call import async_call
 from brickv.plugin_system.plugins.red.ui_red_update_tinkerforge_software import Ui_REDUpdateTinkerforgeSoftware
 import brickv.infos
 
-# As a work-around for https://github.com/pyinstaller/pyinstaller/issues/4064 use a local copy of distutils.version.
-from .version import StrictVersion
 
 class REDUpdateTinkerforgeSoftwareDialog(QDialog, Ui_REDUpdateTinkerforgeSoftware):
     # States.
