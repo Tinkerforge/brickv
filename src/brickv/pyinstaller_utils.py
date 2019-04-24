@@ -188,8 +188,8 @@ class PyinstallerUtils:
             if prepare_script_working_dir is not None:
                 os.chdir(prepare_script_working_dir)
 
-            print('calling {} release'.format(prepare_script))
-            system([sys.executable, prepare_script, 'release'], stdout=subprocess.DEVNULL)
+            print('calling {}'.format(prepare_script))
+            system([sys.executable, prepare_script], stdout=subprocess.DEVNULL)
 
             if prepare_script_working_dir is not None:
                 os.chdir(self.root_path)
@@ -199,17 +199,7 @@ class PyinstallerUtils:
     def strip_binaries(self, binaries, patterns):
         return [x for x in binaries if all(pattern not in x[0].lower() for pattern in patterns)]
 
-    def post_generate(self, undo_script_working_dir=None, undo_script=None):
-        if undo_script is not None:
-            if undo_script_working_dir is not None:
-                os.chdir(undo_script_working_dir)
-
-            print('calling {} to undo previous release run'.format(undo_script))
-            system([sys.executable, undo_script], stdout=subprocess.DEVNULL)
-
-            if undo_script_working_dir is not None:
-                os.chdir(self.root_path)
-
+    def post_generate(self):
         if self.windows:
             self.post_generate_windows()
         elif self.macos:

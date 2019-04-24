@@ -79,15 +79,16 @@ def specialize_template(template_filename, destination_filename, replacements):
     destination_file.close()
 
 
-def prepare_manifest(root_path, no_release=False):
+def prepare_manifest(root_path, internal=False):
     bindings_path = os.path.join(root_path, 'brickv', 'bindings')
     plugins_path = os.path.join(root_path, 'brickv', 'plugin_system', 'plugins')
     excluded_patterns = []
 
-    if not no_release:
+    if not internal:
         for plugin_name in sorted(os.listdir(plugins_path)):
             if '__pycache__' in plugin_name:
                 continue
+
             plugin_path = os.path.join(plugins_path, plugin_name)
 
             if not os.path.isdir(plugin_path):
@@ -115,7 +116,7 @@ def prepare_manifest(root_path, no_release=False):
                         {'<<EXCLUDES>>': '\n'.join(excluded_patterns)})
 
 
-def build_linux_pkg(no_release=False):
+def build_linux_pkg(internal=False):
     print('building brickv Debian package')
     root_path = os.getcwd()
 
@@ -129,22 +130,14 @@ def build_linux_pkg(no_release=False):
     if os.path.exists(egg_info_path):
         shutil.rmtree(egg_info_path)
 
-    if no_release:
-        print('calling build_src.py')
-        system(['python3', 'build_src.py'])
-    else:
-        print('calling build_src.py release')
-        system(['python3', 'build_src.py', 'release'])
+    print('calling build_src.py')
+    system(['python3', 'build_src.py'])
 
     print('preparing manifest')
-    prepare_manifest(root_path, no_release)
+    prepare_manifest(root_path, internal)
 
     print('calling setup.py sdist')
     system(['python3', 'setup.py', 'sdist'])
-
-    if not no_release:
-        print('calling build_plugin_list.py to undo previous release run')
-        system(['python3', 'build_plugin_list.py'])
 
     if os.path.exists(egg_info_path):
         shutil.rmtree(egg_info_path)
@@ -163,11 +156,27 @@ def build_linux_pkg(no_release=False):
     shutil.copytree(unpacked_path, linux_share_path)
 
     print('creating DEBIAN/control from template')
+
+    if internal:
+        with open(os.path.join(linux_share_path, 'internal'), 'w') as f:
+            try:
+                commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8')[:7]
+            except Exception:
+                commit_id = 'unknown'
+
+            f.write(commit_id)
+    else:
+        commit_id = None
+
     installed_size = int(subprocess.check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split(b'\t')[0])
     control_path = os.path.join(linux_path, 'DEBIAN', 'control')
     specialize_template(control_path, control_path,
-                        {'<<VERSION>>': BRICKV_VERSION,
+                        {'<<VERSION>>': '{0}{1}'.format(BRICKV_VERSION, '~' + commit_id if commit_id != None else ''),
                          '<<INSTALLED_SIZE>>': str(installed_size)})
+
+    if not internal:
+        print('patching plugins list for release')
+        shutil.copy(os.path.join(root_path, 'released_plugins.py'), os.path.join(linux_share_path, 'plugin_system', 'plugins', '__init__.py'))
 
     print('changing directory modes to 0755')
     system(['find', 'dist/linux', '-type', 'd', '-exec', 'chmod', '0755', '{}', ';'])
@@ -182,14 +191,17 @@ def build_linux_pkg(no_release=False):
     system(['sudo', 'chown', '-R', 'root:root', 'dist/linux'])
 
     print('building Debian package')
-    system(['dpkg', '-b', 'dist/linux', 'brickv-{0}_all{1}.deb'.format(BRICKV_VERSION, '_DO_NOT_RELEASE' if no_release else '')])
+
+    deb_name = 'brickv-{0}{1}_all.deb'.format(BRICKV_VERSION, '~' + commit_id if commit_id != None else '')
+
+    system(['dpkg', '-b', 'dist/linux', deb_name])
 
     print('changing owner back to original user')
     system(['sudo', 'chown', '-R', '{}:{}'.format(user, group), 'dist/linux'])
 
     if os.path.exists('/usr/bin/lintian'):
         print('checking Debian package')
-        system(['lintian', '--pedantic', 'brickv-{0}_all.deb'.format(BRICKV_VERSION)])
+        system(['lintian', '--pedantic', deb_name])
     else:
         print('skipping lintian check')
 
@@ -325,7 +337,7 @@ if __name__ == '__main__':
         if 'flash' in sys.argv:
             build_linux_flash_pkg()
         else:
-            build_linux_pkg(no_release='--no-release' in sys.argv)
+            build_linux_pkg(internal='--internal' in sys.argv)
     elif sys.platform == 'win32' or sys.platform == 'darwin' or '--no-deb' in sys.argv:
         if '--no-deb' not in sys.argv:
             in_virtualenv = hasattr(sys, 'real_prefix')

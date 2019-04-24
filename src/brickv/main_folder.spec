@@ -119,4 +119,4 @@ if utils.macos:
                      'CFBundleShortVersionString': BRICKV_VERSION
                  })
 
-utils.post_generate(os.path.join(utils.root_path, '..'), 'build_plugin_list.py')
+utils.post_generate()

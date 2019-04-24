@@ -37,9 +37,11 @@ def system(command):
 basedir = os.path.dirname(os.path.realpath(__file__))
 brickv = os.path.join(basedir, 'brickv')
 
+# build .ui files and call build_extra.py scripts
 for dirpath, dirnames, filenames in os.walk(brickv):
     if 'build_extra.py' in filenames:
         print('calling build_extra.py in ' + os.path.relpath(dirpath, basedir))
+
         os.chdir(dirpath)
         system(sys.executable + ' build_extra.py')
 
@@ -59,28 +61,57 @@ for dirpath, dirnames, filenames in os.walk(brickv):
         # (e.g. the directory in which the package was built)
         # Thus use the relative path here, as pyuic writes the in_file path it is called with into the out file.
         in_file = os.path.relpath(in_file, basedir)
+
         print('building ' + in_file)
+
         os.chdir(basedir)
         system(sys.executable + " pyuic5-fixed.py -o " + out_file + " " + in_file)
 
-args = ' '.join(sys.argv[1:])
-print('calling build_plugin_list.py ' + args)
-os.chdir(basedir)
-system(sys.executable + ' build_plugin_list.py ' + args)
+# build plugins list
+imports_all = []
+imports_released = []
+device_classes_all = []
+device_classes_released = []
+plugins = os.path.join(basedir, 'brickv', 'plugin_system', 'plugins')
+bindings = os.path.join(basedir, 'brickv', 'bindings')
 
-if os.path.exists(os.path.join(brickv, 'config_common.py')):
-    with open(os.path.join(brickv, 'config_common.py'), 'r') as f:
-        contents = f.readlines()
-    with open(os.path.join(brickv, 'config_common.py'), 'w') as f:
-        for line in contents:
-            if line.startswith('IS_INTERNAL'):
-                f.write('IS_INTERNAL = {}\n'.format(not 'release' in args))
-            elif line.startswith('COMMIT_ID'):
-                try:
-                    import subprocess
-                    commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
-                    f.write("COMMIT_ID = '{}'".format(commit_id[:8].decode('utf-8')))
-                except Exception as e:
-                    f.write("COMMIT_ID = 'Unknown'")
-            else:
-                f.write(line)
+for plugin in sorted(os.listdir(plugins)):
+    if '__pycache__' in plugin:
+        continue
+
+    if not os.path.isfile(os.path.join(plugins, plugin, '__init__.py')):
+        continue
+
+    brick_binding = os.path.join(bindings, 'brick_{0}.py'.format(plugin))
+    bricklet_binding = os.path.join(bindings, 'bricklet_{0}.py'.format(plugin))
+    released = True
+
+    if os.path.isfile(brick_binding):
+        with open(brick_binding, 'r') as f:
+            released = not '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read()
+    elif os.path.isfile(bricklet_binding):
+        with open(bricklet_binding, 'r') as f:
+            released = not '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read()
+    else:
+        raise Exception('No bindings found corresponding to plugin ' + plugin)
+
+    import_ = 'from brickv.plugin_system.plugins.{0} import device_class as {0}\n'.format(plugin)
+    device_class = '    {0},\n'.format(plugin)
+
+    imports_all.append(import_)
+    device_classes_all.append(device_class)
+
+    if released:
+        imports_released.append(import_)
+        device_classes_released.append(device_class)
+
+for path, imports, device_classes in [(os.path.join(plugins, '__init__.py'), imports_all, device_classes_all),
+                                      (os.path.join(basedir, 'released_plugins.py'), imports_released, device_classes_released)]:
+    print('building ' + os.path.relpath(path, basedir))
+
+    with open(path, 'w') as f:
+        f.writelines(imports)
+        f.write('\n')
+        f.write('device_classes = [\n')
+        f.writelines(device_classes)
+        f.write(']\n')
