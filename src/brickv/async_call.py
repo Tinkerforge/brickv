@@ -114,67 +114,67 @@ def async_next_session():
         with async_call_queue.mutex:
             async_call_queue.queue.clear()
 
-def async_start_thread(parent):
-    class AsyncThread(QThread):
-        def run(self):
-            while True:
-                ac = async_call_queue.get()
+class AsyncThread(QThread):
+    def run(self):
+        while True:
+            ac = async_call_queue.get()
 
-                if ac == None:
-                    break
+            if ac == None:
+                break
 
-                if ac.function == None:
+            if ac.function == None:
+                continue
+
+            with async_session_lock:
+                if ac.session_id != async_session_id:
                     continue
 
+            result = None
+
+            try:
+                retry_on_exception = ac.retry_on_exception
+
+                for _ in range(2):
+                    try:
+                        if ac.arguments == None:
+                            result = ac.function()
+                        elif isinstance(ac.arguments, tuple):
+                            result = ac.function(*ac.arguments)
+                        else:
+                            result = ac.function(ac.arguments)
+                    except:
+                        if not retry_on_exception:
+                            raise
+
+                        retry_on_exception = False
+                        continue
+
+                    break
+            except Exception as e:
                 with async_session_lock:
                     if ac.session_id != async_session_id:
                         continue
 
-                result = None
+                if ac.debug_exception:
+                    logging.exception('Error while doing async call')
 
-                try:
-                    retry_on_exception = ac.retry_on_exception
-
-                    for _ in range(2):
-                        try:
-                            if ac.arguments == None:
-                                result = ac.function()
-                            elif isinstance(ac.arguments, tuple):
-                                result = ac.function(*ac.arguments)
-                            else:
-                                result = ac.function(ac.arguments)
-                        except:
-                            if not retry_on_exception:
-                                raise
-
-                            retry_on_exception = False
-                            continue
-
-                        break
-                except Exception as e:
-                    with async_session_lock:
-                        if ac.session_id != async_session_id:
-                            continue
-
-                    if ac.debug_exception:
-                        logging.exception('Error while doing async call')
-
-                    if ac.error_callback != None:
-                        async_event_queue.put((ac, False, e))
-
-                        QApplication.postEvent(self, QEvent(ASYNC_EVENT))
-
-                    continue
-
-                if ac.result_callback != None:
-                    with async_session_lock:
-                        if ac.session_id != async_session_id:
-                            continue
-
-                    async_event_queue.put((ac, True, result))
+                if ac.error_callback != None:
+                    async_event_queue.put((ac, False, e))
 
                     QApplication.postEvent(self, QEvent(ASYNC_EVENT))
 
+                continue
+
+            if ac.result_callback != None:
+                with async_session_lock:
+                    if ac.session_id != async_session_id:
+                        continue
+
+                async_event_queue.put((ac, True, result))
+
+                QApplication.postEvent(self, QEvent(ASYNC_EVENT))
+
+def async_start_thread(parent):
     async_thread = AsyncThread(parent)
     async_thread.start()
 
