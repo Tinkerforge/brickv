@@ -64,6 +64,7 @@ def by_ext(exts):
             ext = ext[1:]
 
             return ext in exts
+
     return fn
 
 def by_name(name):
@@ -89,8 +90,8 @@ class PyinstallerUtils:
         self.build_path = PyInstaller.config.CONF['workpath']
         self.dist_path = PyInstaller.config.CONF['distpath']
 
-        self.linux_build_data_path =   os.path.normpath(os.path.join(self.root_path, '..', 'build_data', 'linux'))
-        self.mac_build_data_path =     os.path.normpath(os.path.join(self.root_path, '..', 'build_data', 'macos'))
+        self.linux_build_data_path = os.path.normpath(os.path.join(self.root_path, '..', 'build_data', 'linux'))
+        self.mac_build_data_path = os.path.normpath(os.path.join(self.root_path, '..', 'build_data', 'macos'))
         self.windows_build_data_path = os.path.normpath(os.path.join(self.root_path, '..', 'build_data', 'windows'))
 
         self.windows = sys.platform == 'win32'
@@ -115,29 +116,36 @@ class PyinstallerUtils:
 
     def get_unreleased_bindings(self):
         print("Searching unreleased devices.")
+
         to_exclude = ['brickv.build_ui', 'brickv.build_scripts']
         counter = 0
+
         for dirpath, _directories, files in os.walk(self.root_path):
             if os.path.basename(dirpath) == '__pycache__':
                 continue
 
             dirname = os.path.basename(dirpath)
+
             if "bindings" not in dirname and "tinkerforge" not in dirname:
                 continue
 
             for file in files:
                 if "brick" not in file:
                     continue
+
                 if not file.endswith(".py"):
                     continue
                 full_name = os.path.join(dirpath, file)
+
                 with open(full_name, 'r') as f:
                     if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
                         module_name = self.path_rel_to_root(full_name).replace("\\", "/").replace("/", ".").replace(".py", "")
                         to_exclude.append(module_name)
                         to_exclude.append(module_name.replace("bricklet_", "").replace("brick_", "").replace(".bindings", ".plugin_system.plugins"))
                         counter += 1
+
         print("Excluded {} unreleased devices.".format(counter))
+
         return to_exclude
 
     def path_rel_to_root(self, path):
@@ -145,7 +153,9 @@ class PyinstallerUtils:
 
     def collect_data(self, pred):
         print("Collecting data")
+
         result = []
+
         for dirpath, _directories, files in os.walk(self.root_path):
             for file in files:
                 full_name = os.path.join(dirpath, file)
@@ -153,17 +163,20 @@ class PyinstallerUtils:
                 if pred(full_name):
                     path_rel_to_root = self.path_rel_to_root(full_name)
                     result.append((path_rel_to_root, path_rel_to_root, 'DATA'))
+
         return result
 
     def win_build_installer(self):
         nsis_template_path = os.path.join(self.windows_build_data_path, 'nsis', self.UNDERSCORE_NAME + '_installer.nsi.template')
         nsis_path = os.path.join(self.dist_path, 'nsis', self.UNDERSCORE_NAME + '.nsi')
+
         specialize_template(nsis_template_path, nsis_path,
                             {'<<DOT_VERSION>>': self.VERSION,
                              '<<UNDERSCORE_VERSION>>': self.VERSION.replace('.', '_')})
-        system(['C:\\Program Files (x86)\\NSIS\\makensis.exe', nsis_path])
-        installer = '{}_windows_{}.exe'.format(self.UNDERSCORE_NAME, self.VERSION.replace('.', '_'))
 
+        system(['C:\\Program Files (x86)\\NSIS\\makensis.exe', nsis_path])
+
+        installer = '{}_windows_{}.exe'.format(self.UNDERSCORE_NAME, self.VERSION.replace('.', '_'))
         installer_target_path = os.path.join(self.root_path, '..', installer)
 
         if os.path.exists(installer_target_path):
