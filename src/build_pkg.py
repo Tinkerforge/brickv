@@ -50,33 +50,28 @@ def system(command):
 
 
 def specialize_template(template_filename, destination_filename, replacements):
-    template_file = open(template_filename, 'r')
     lines = []
     replaced = set()
 
-    for line in template_file.readlines():
-        for key in replacements:
-            replaced_line = line.replace(key, replacements[key])
+    with open(template_filename, 'r') as f:
+        for line in f.readlines():
+            for key in replacements:
+                replaced_line = line.replace(key, replacements[key])
 
-            if replaced_line != line:
-                replaced.add(key)
+                if replaced_line != line:
+                    replaced.add(key)
 
-            line = replaced_line
+                line = replaced_line
 
-        lines.append(line)
-
-    template_file.close()
+            lines.append(line)
 
     if replaced != set(replacements.keys()):
         raise Exception('Not all replacements for {0} have been applied'.format(template_filename))
 
-    try:
-        os.makedirs(os.path.dirname(destination_filename))
-    except:
-        pass
-    destination_file = open(destination_filename, 'w+')
-    destination_file.writelines(lines)
-    destination_file.close()
+    os.makedirs(os.path.dirname(destination_filename), exist_ok=True)
+
+    with open(destination_filename, 'w+') as f:
+        f.writelines(lines)
 
 
 def prepare_manifest(root_path, internal=False):
