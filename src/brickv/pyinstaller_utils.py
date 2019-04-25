@@ -157,8 +157,8 @@ class PyinstallerUtils:
         result = []
 
         for dirpath, _directories, files in os.walk(self.root_path):
-            for file in files:
-                full_name = os.path.join(dirpath, file)
+            for file_ in files:
+                full_name = os.path.join(dirpath, file_)
 
                 if pred(full_name):
                     path_rel_to_root = self.path_rel_to_root(full_name)
