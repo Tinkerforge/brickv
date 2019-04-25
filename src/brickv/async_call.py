@@ -41,7 +41,7 @@ async_event_queue = Queue()
 async_session_lock = Lock()
 async_session_id = 1
 
-AsyncCall = namedtuple('AsyncCall', 'function arguments result_callback error_callback pass_arguments_to_result_callback pass_exception_to_error_callback expand_arguments_tuple_for_callback expand_result_tuple_for_callback debug_exception session_id')
+AsyncCall = namedtuple('AsyncCall', 'function arguments result_callback error_callback pass_arguments_to_result_callback pass_exception_to_error_callback expand_arguments_tuple_for_callback expand_result_tuple_for_callback debug_exception retry_on_exception session_id')
 
 def async_stop_thread():
     async_call_queue.put(None)
@@ -49,7 +49,7 @@ def async_stop_thread():
 def async_call(function, arguments, result_callback, error_callback,
                pass_arguments_to_result_callback=False, pass_exception_to_error_callback=False,
                expand_arguments_tuple_for_callback=False, expand_result_tuple_for_callback=False,
-               debug_exception=False, delay=None):
+               debug_exception=False, retry_on_exception=False, delay=None):
     if pass_arguments_to_result_callback:
         assert arguments != None
 
@@ -59,7 +59,7 @@ def async_call(function, arguments, result_callback, error_callback,
     ac = AsyncCall(function, arguments, result_callback, error_callback,
                    pass_arguments_to_result_callback, pass_exception_to_error_callback,
                    expand_arguments_tuple_for_callback, expand_result_tuple_for_callback,
-                   debug_exception, session_id)
+                   debug_exception, retry_on_exception, session_id)
 
     if delay != None:
         QTimer.singleShot(delay * 1000, functools.partial(async_call_queue.put, ac))
@@ -133,12 +133,24 @@ def async_start_thread(parent):
                 result = None
 
                 try:
-                    if ac.arguments == None:
-                        result = ac.function()
-                    elif isinstance(ac.arguments, tuple):
-                        result = ac.function(*ac.arguments)
-                    else:
-                        result = ac.function(ac.arguments)
+                    retry_on_exception = ac.retry_on_exception
+
+                    for _ in range(2):
+                        try:
+                            if ac.arguments == None:
+                                result = ac.function()
+                            elif isinstance(ac.arguments, tuple):
+                                result = ac.function(*ac.arguments)
+                            else:
+                                result = ac.function(ac.arguments)
+                        except:
+                            if not retry_on_exception:
+                                raise
+
+                            retry_on_exception = False
+                            continue
+
+                        break
                 except Exception as e:
                     if ac.error_callback != None:
                         with async_session_lock:
