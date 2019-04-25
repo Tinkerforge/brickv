@@ -152,16 +152,15 @@ def async_start_thread(parent):
 
                         break
                 except Exception as e:
+                    with async_session_lock:
+                        if ac.session_id != async_session_id:
+                            continue
+
+                    if ac.debug_exception:
+                        logging.exception('Error while doing async call')
+
                     if ac.error_callback != None:
-                        with async_session_lock:
-                            if ac.session_id != async_session_id:
-                                continue
-
-                        if ac.debug_exception:
-                            logging.exception('Error while doing async call')
-
-                        if ac.error_callback != None:
-                            async_event_queue.put((ac, False, e))
+                        async_event_queue.put((ac, False, e))
 
                         if isinstance(e, Error):
                             # clear the async call queue if an IPConnection
