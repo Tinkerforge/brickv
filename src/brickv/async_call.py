@@ -162,13 +162,6 @@ def async_start_thread(parent):
                     if ac.error_callback != None:
                         async_event_queue.put((ac, False, e))
 
-                        if isinstance(e, Error):
-                            # clear the async call queue if an IPConnection
-                            # error occurred. in this case we assume that the
-                            # next calls will also fail
-                            with async_call_queue.mutex:
-                                async_call_queue.queue.clear()
-
                         QApplication.postEvent(self, QEvent(ASYNC_EVENT))
 
                     continue
