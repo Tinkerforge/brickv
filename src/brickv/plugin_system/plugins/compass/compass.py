@@ -160,7 +160,7 @@ class Compass(COMCUPluginBase):
 
         self.calibration = None
 
-        self.current_mfd_x = CurveValueWrapper() # int mG
+        self.current_mfd_x = CurveValueWrapper() # int, mG
         self.current_mfd_y = CurveValueWrapper() # int, mG
         self.current_mfd_z = CurveValueWrapper() # int, mG
 
