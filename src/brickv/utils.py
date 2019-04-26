@@ -40,7 +40,10 @@ def get_resources_path(relative_path):
 
     # If the path still doesn't exist, this function won't help you
     if not os.path.exists(path):
-        print("Resource not found: " + relative_path)
+        # Don't print the error if the requested file is the internal
+        # version marker, as it does not exist when run from source.
+        if relative_path != 'internal':
+            print("Resource not found: " + relative_path)
         return None
 
     return path
