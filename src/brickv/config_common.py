@@ -49,7 +49,8 @@ DEFAULT_USE_FUSION_GUI_STYLE = sys.platform == 'darwin'
 DEFAULT_AUTO_SEARCH_FOR_UPDATES = True
 
 try:
-    internal_path = get_resources_path('internal')
+    # Don't warn if the internal file is missing, as it is expected when run from source.
+    internal_path = get_resources_path('internal', warn_on_missing_file=False)
     if internal_path is not None:
         with open(internal_path, 'r') as f:
             INTERNAL = f.read().strip()
