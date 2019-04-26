@@ -61,7 +61,7 @@ class CompassWidget(QWidget):
         painter.scale(scale, scale)
 
         font = QFont(self.font())
-        font.setPixelSize(10)
+        font.setPixelSize(12)
         metrics = QFontMetricsF(font)
 
         painter.setFont(font)
