@@ -40,7 +40,7 @@ def get_resources_path(relative_path, warn_on_missing_file=True):
 
     # If the path still doesn't exist, this function won't help you
     if not os.path.exists(path):
-        if not warn_on_missing_file:
+        if warn_on_missing_file:
             print("Resource not found: " + relative_path)
         return None
 
