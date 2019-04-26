@@ -23,8 +23,9 @@ Boston, MA 02111-1307, USA.
 
 import math
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QFrame, QPushButton, QDialog
+from PyQt5.QtCore import Qt, pyqtProperty, pyqtSignal, pyqtSlot, QPoint, QSize
+from PyQt5.QtGui import QPainter, QFont, QFontMetricsF, QPalette, QPolygon, QPen
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QFrame, QPushButton, QDialog, QWidget
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_compass import BrickletCompass
@@ -33,6 +34,84 @@ from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.plugin_system.plugins.compass.ui_calibration import Ui_Calibration
 from brickv.utils import get_modeless_dialog_flags
+
+class CompassWidget(QWidget):
+    angle_changed = pyqtSignal(float)
+
+    def __init__(self, parent = None):
+        QWidget.__init__(self, parent)
+        self._angle = 0.0
+        self._margins = 10
+        self._point_text = {0: "N", 45: "NE", 90: "E", 135: "SE", 180: "S", 225: "SW", 270: "W", 315: "NW"}
+
+    def paintEvent(self, event):
+        painter = QPainter()
+        painter.begin(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        self.draw_markings(painter)
+        self.draw_needle(painter)
+
+        painter.end()
+
+    def draw_markings(self, painter):
+        painter.save()
+        painter.translate(self.width()/2, self.height()/2)
+        scale = min((self.width() - self._margins)/120.0, (self.height() - self._margins)/120.0)
+        painter.scale(scale, scale)
+
+        font = QFont(self.font())
+        font.setPixelSize(10)
+        metrics = QFontMetricsF(font)
+
+        painter.setFont(font)
+        painter.setPen(self.palette().color(QPalette.WindowText))
+
+        i = 0
+        while i < 360:
+            if i % 45 == 0:
+                painter.drawLine(0, -40, 0, -50)
+                painter.drawText(-metrics.width(self._point_text[i])/2.0, -52, self._point_text[i])
+            else:
+                painter.drawLine(0, -45, 0, -50)
+
+            painter.rotate(15)
+            i += 15
+
+        painter.restore()
+
+    def draw_needle(self, painter):
+        painter.save()
+        painter.translate(self.width()/2, self.height()/2)
+        painter.rotate(self._angle)
+        scale = min((self.width() - self._margins)/120.0, (self.height() - self._margins)/120.0)
+        painter.scale(scale, scale)
+
+        painter.setPen(QPen(Qt.NoPen))
+        painter.setBrush(self.palette().brush(QPalette.WindowText))
+
+        painter.drawPolygon(QPolygon([QPoint(-10, 0), QPoint(0, -45), QPoint(10, 0), QPoint(0, 45), QPoint(-10, 0)]))
+
+        painter.setBrush(self.palette().brush(QPalette.Highlight))
+
+        painter.drawPolygon(QPolygon([QPoint(-5, -25), QPoint(0, -45), QPoint(5, -25), QPoint(0, -30), QPoint(-5, -25)]))
+
+        painter.restore()
+
+    def sizeHint(self):
+        return QSize(100, 100)
+
+    def angle(self):
+        return self._angle
+
+    @pyqtSlot(float)
+    def set_angle(self, angle):
+        if angle != self._angle:
+            self._angle = angle
+            self.angle_changed.emit(angle)
+            self.update()
+
+    angle = pyqtProperty(float, angle, set_angle)
 
 class Calibration(QDialog, Ui_Calibration):
     def __init__(self, parent):
@@ -128,27 +207,14 @@ class Calibration(QDialog, Ui_Calibration):
         self.cbe_mfd.set_period(0)
 
 class HeadingLabel(FixedSizeLabel):
-    def setText(self, x, y, z):
-        try:
-            heading = int(round(math.atan2(y, x)*180/math.pi, 0))
-            if heading < 0:
-                heading += 360
-            text = 'Heading: {}°'.format(heading)
-            super().setText(text)
-        except (ZeroDivisionError, ValueError):
-            # In case of division by 0 or similar we simply don't update the text
-            pass
+    def setText(self, heading):
+        text = 'Heading: {}°'.format(heading)
+        super().setText(text)
 
 class InclinationLabel(FixedSizeLabel):
-    def setText(self, x, y, z):
-        try:
-            inclination = int(round(180/math.pi * math.atan2(z, math.hypot(y, x)), 0))
-            text = 'Inclination: {}°'.format(inclination)
-            super().setText(text)
-        except (ZeroDivisionError, ValueError):
-            # In case of division by 0 or similar we simply don't update the text
-            pass
-
+    def setText(self, inclination):
+        text = 'Inclination: {}°'.format(inclination)
+        super().setText(text)
 
 class Compass(COMCUPluginBase):
     def __init__(self, *args):
@@ -160,6 +226,10 @@ class Compass(COMCUPluginBase):
 
         self.calibration = None
 
+        self.compass_widget = CompassWidget()
+
+
+
         self.current_mfd_x = CurveValueWrapper() # int, mG
         self.current_mfd_y = CurveValueWrapper() # int, mG
         self.current_mfd_z = CurveValueWrapper() # int, mG
@@ -167,10 +237,16 @@ class Compass(COMCUPluginBase):
         self.heading_label = HeadingLabel()
         self.inclination_label = InclinationLabel()
 
+        self.label_widget = QWidget()
+        self.label_layout = QVBoxLayout()
+        self.label_layout.addWidget(self.heading_label)
+        self.label_layout.addWidget(self.inclination_label)
+        self.label_widget.setLayout(self.label_layout)
+
         plots = [('X', Qt.red, self.current_mfd_x, '{0} mG'.format),
                  ('Y', Qt.darkGreen, self.current_mfd_y, '{0} mG'.format),
                  ('Z', Qt.blue, self.current_mfd_z, '{0} mG'.format)]
-        self.plot_widget = PlotWidget('Magnetic Flux Density [mG]', plots, extra_key_widgets=[self.heading_label, self.inclination_label],
+        self.plot_widget = PlotWidget('Magnetic Flux Density [mG]', plots, extra_key_widgets=[self.compass_widget, self.label_widget],
                                       update_interval=0.1, y_resolution=1)
 
         self.dr_label = QLabel('Data Rate:')
@@ -216,11 +292,17 @@ class Compass(COMCUPluginBase):
 
     def cb_mfd(self, data):
         x, y, z = data
+        inclination = int(round(180/math.pi * math.atan2(z, math.hypot(y, x)), 0))
+        heading = int(round(math.atan2(y, x)*180/math.pi, 0))
+        if heading < 0:
+            heading += 360
+
         self.current_mfd_x.value = int(round(x / 10.0, 0))
         self.current_mfd_y.value = int(round(y / 10.0, 0))
         self.current_mfd_z.value = int(round(z / 10.0, 0))
-        self.heading_label.setText(x, y, z)
-        self.inclination_label.setText(x, y, z)
+        self.heading_label.setText(heading)
+        self.compass_widget.set_angle(heading)
+        self.inclination_label.setText(inclination)
 
     def get_configuration_async(self, conf):
         self.dr_combo.setCurrentIndex(conf.data_rate)
