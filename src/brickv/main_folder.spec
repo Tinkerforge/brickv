@@ -17,9 +17,9 @@ from brickv.pyinstaller_utils import *
 from brickv.config import BRICKV_VERSION
 
 utils = PyinstallerUtils(['brickv'], BRICKV_VERSION)
-utils.prepare(os.path.join(utils.root_path, '..'), 'build_src.py')
+utils.prepare(os.path.join(utils.root_path, '..'))
 
-excludes = utils.get_unreleased_bindings() + ['wx', 'gtk+', '_gtkagg', 'gtk', 'gdk', 'gtk2', 'gtk3', 'cairo', 'wayland', 'xinerama', 'share', 'icons', 'atk', 'pango', 'pil', 'PIL',
+excludes = ['wx', 'gtk+', '_gtkagg', 'gtk', 'gdk', 'gtk2', 'gtk3', 'cairo', 'wayland', 'xinerama', 'share', 'icons', 'atk', 'pango', 'pil', 'PIL',
             '_tkagg',
             'Tkconstants',
             'Tkinter',

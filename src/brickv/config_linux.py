@@ -36,12 +36,6 @@ else:
 
 CONFIG_DIRNAME = os.path.dirname(CONFIG_FILENAME)
 
-try:
-    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'internal'), 'r') as f:
-        INTERNAL = f.read().strip()
-except FileNotFoundError:
-    pass
-
 def get_config_value(section, option, default):
     scp = configparser.SafeConfigParser()
     scp.read(CONFIG_FILENAME)

@@ -24,6 +24,8 @@ Boston, MA 02111-1307, USA.
 import sys
 import logging
 
+from brickv.utils import get_resources_path
+
 LOGGING_LEVEL = logging.ERROR
 LOGGING_FORMAT = '%(asctime)s <%(levelname)s> <%(filename)s:%(lineno)s> %(message)s'
 LOGGING_DATEFMT = '%Y-%m-%d %H:%M:%S'
@@ -46,4 +48,12 @@ DEFAULT_USE_FUSION_GUI_STYLE = sys.platform == 'darwin'
 
 DEFAULT_AUTO_SEARCH_FOR_UPDATES = True
 
-INTERNAL = None
+try:
+    internal_path = get_resources_path('internal')
+    if internal_path is not None:
+        with open(internal_path, 'r') as f:
+            INTERNAL = f.read().strip()
+    else:
+        INTERNAL=None
+except FileNotFoundError:
+    INTERNAL = None

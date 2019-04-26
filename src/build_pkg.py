@@ -110,11 +110,7 @@ def prepare_manifest(root_path, internal=False):
     specialize_template(os.path.join(root_path, 'MANIFEST.in.template'), os.path.join(root_path, 'MANIFEST.in'),
                         {'<<EXCLUDES>>': '\n'.join(excluded_patterns)})
 
-
-def build_linux_pkg(internal=False):
-    print('building brickv Debian package')
-    root_path = os.getcwd()
-
+def run_sdist(platform, root_path, internal=False):
     print('removing old build directories')
     dist_path = os.path.join(root_path, 'dist')
     egg_info_path = os.path.join(root_path, 'brickv.egg-info')
@@ -126,34 +122,26 @@ def build_linux_pkg(internal=False):
         shutil.rmtree(egg_info_path)
 
     print('calling build_src.py')
-    system(['python3', 'build_src.py'])
+    if platform == 'windows':
+        system(['python', 'build_src.py'])
+    else:
+        system(['python3', 'build_src.py'])
 
     print('preparing manifest')
     prepare_manifest(root_path, internal)
 
     print('calling setup.py sdist')
-    system(['python3', 'setup.py', 'sdist'])
+    if platform == 'windows':
+        system(['python', 'setup.py', 'sdist', '--formats=zip'])
+    else:
+        system(['python3', 'setup.py', 'sdist'])
 
     if os.path.exists(egg_info_path):
         shutil.rmtree(egg_info_path)
 
-    print('copying build data')
-    build_data_path = os.path.join(root_path, 'build_data', 'linux', 'brickv')
-    linux_path = os.path.join(dist_path, 'linux')
-    shutil.copytree(build_data_path, linux_path)
-
-    print('unpacking sdist tar file')
-    system(['tar', '-x', '-C', dist_path, '-f', '{0}/brickv-{1}.tar.gz'.format(dist_path, BRICKV_VERSION), 'brickv-{}/brickv'.format(BRICKV_VERSION)])
-
-    print('copying unpacked brickv source')
-    unpacked_path = os.path.join(dist_path, 'brickv-{0}'.format(BRICKV_VERSION), 'brickv')
-    linux_share_path = os.path.join(linux_path, 'usr', 'share', 'brickv')
-    shutil.copytree(unpacked_path, linux_share_path)
-
-    print('creating DEBIAN/control from template')
-
+def write_and_get_commit_id(brickv_src_path, internal):
     if internal:
-        with open(os.path.join(linux_share_path, 'internal'), 'w') as f:
+        with open(os.path.join(brickv_src_path, 'internal'), 'w') as f:
             try:
                 commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8')[:7]
             except Exception:
@@ -162,16 +150,65 @@ def build_linux_pkg(internal=False):
             f.write(commit_id)
     else:
         commit_id = None
+    return commit_id
 
+def patch_plugin_list(root_path, brickv_src_path, internal):
+    if not internal:
+        print('patching plugins list for release')
+        shutil.copy(os.path.join(root_path, 'released_plugins.py'), os.path.join(brickv_src_path, 'plugin_system', 'plugins', '__init__.py'))
+
+def build_pyinstaller_pkg(platform, internal=False):
+    if platform not in ['macos', 'windows']:
+        print('Building a {} package with pyinstaller is not supported.'.format(platform))
+        sys.exit(1)
+
+    print('building brickv {} package'.format(platform))
+    root_path = os.getcwd()
+
+    run_sdist(platform, root_path, internal)
+
+    print('copying build data')
+    build_data_path = os.path.join(root_path, 'build_data', platform)
+    dist_path = os.path.join(root_path, 'dist')
+    platform_path = os.path.join(dist_path, platform)
+    shutil.copytree(build_data_path, os.path.join(platform_path, 'build_data', platform))
+
+    if platform == 'macos':
+        print('unpacking sdist tar file')
+        system(['tar', '-x', '-C', dist_path, '-f', '{0}/brickv-{1}.tar.gz'.format(dist_path, BRICKV_VERSION), 'brickv-{}/brickv'.format(BRICKV_VERSION)])
+    elif platform == 'windows':
+        print('unpacking sdist zip file')
+        import zipfile
+        with zipfile.ZipFile(os.path.join(dist_path, 'brickv-'+BRICKV_VERSION+'.zip')) as f:
+            f.extractall(os.path.join(dist_path, 'brickv'))
+
+    print('copying unpacked brickv source')
+    if platform == 'macos':
+        unpacked_path = os.path.join(dist_path, 'brickv-{0}'.format(BRICKV_VERSION), 'brickv')
+    elif platform == 'windows':
+        unpacked_path = os.path.join(dist_path, 'brickv', 'brickv-{0}'.format(BRICKV_VERSION), 'brickv')
+
+    brickv_src_path = os.path.join(platform_path, 'brickv')
+    shutil.copytree(unpacked_path, brickv_src_path)
+
+    commit_id = write_and_get_commit_id(brickv_src_path, internal)
+    patch_plugin_list(root_path, brickv_src_path, internal)
+
+    print('copying pyinstaller spec-file')
+    shutil.copy(os.path.join(root_path, 'brickv', 'main_folder.spec'), os.path.join(brickv_src_path, 'main_folder.spec'))
+
+    print('running pyinstaller')
+    os.chdir(brickv_src_path)
+    system(['pyinstaller', '--distpath', '../dist', '--workpath', '../build', 'main_folder.spec', '--'] + sys.argv)
+    os.chdir(root_path)
+
+def build_debian_pkg(linux_path, executable_name, version, commit_id, internal):
+    print('creating DEBIAN/control from template')
     installed_size = int(subprocess.check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split(b'\t')[0])
     control_path = os.path.join(linux_path, 'DEBIAN', 'control')
     specialize_template(control_path, control_path,
-                        {'<<VERSION>>': '{0}{1}'.format(BRICKV_VERSION, '~' + commit_id if commit_id != None else ''),
+                        {'<<VERSION>>': '{0}{1}'.format(version, '~' + commit_id if commit_id != None else ''),
                          '<<INSTALLED_SIZE>>': str(installed_size)})
-
-    if not internal:
-        print('patching plugins list for release')
-        shutil.copy(os.path.join(root_path, 'released_plugins.py'), os.path.join(linux_share_path, 'plugin_system', 'plugins', '__init__.py'))
 
     print('changing directory modes to 0755')
     system(['find', 'dist/linux', '-type', 'd', '-exec', 'chmod', '0755', '{}', ';'])
@@ -186,9 +223,7 @@ def build_linux_pkg(internal=False):
     system(['sudo', 'chown', '-R', 'root:root', 'dist/linux'])
 
     print('building Debian package')
-
-    deb_name = 'brickv-{0}{1}_all.deb'.format(BRICKV_VERSION, '~' + commit_id if commit_id != None else '')
-
+    deb_name = '{executable}-{version}{commit_id}_all.deb'.format(executable=executable_name, version=version, commit_id='~' + commit_id if commit_id != None else '')
     system(['dpkg', '-b', 'dist/linux', deb_name])
 
     print('changing owner back to original user')
@@ -199,6 +234,31 @@ def build_linux_pkg(internal=False):
         system(['lintian', '--pedantic', deb_name])
     else:
         print('skipping lintian check')
+
+def build_linux_pkg(internal=False):
+    print('building brickv Debian package')
+    root_path = os.getcwd()
+
+    run_sdist('Debian', root_path, internal)
+
+    print('copying build data')
+    build_data_path = os.path.join(root_path, 'build_data', 'linux', 'brickv')
+    dist_path = os.path.join(root_path, 'dist')
+    linux_path = os.path.join(dist_path, 'linux')
+    shutil.copytree(build_data_path, linux_path)
+
+    print('unpacking sdist tar file')
+    system(['tar', '-x', '-C', dist_path, '-f', '{0}/brickv-{1}.tar.gz'.format(dist_path, BRICKV_VERSION), 'brickv-{}/brickv'.format(BRICKV_VERSION)])
+
+    print('copying unpacked brickv source')
+    unpacked_path = os.path.join(dist_path, 'brickv-{0}'.format(BRICKV_VERSION), 'brickv')
+    linux_share_path = os.path.join(linux_path, 'usr', 'share', 'brickv')
+    shutil.copytree(unpacked_path, linux_share_path)
+
+    commit_id = write_and_get_commit_id(linux_share_path, internal)
+    patch_plugin_list(root_path, linux_share_path, internal)
+
+    build_debian_pkg(linux_path, 'brickv', BRICKV_VERSION, commit_id, internal)
 
 
 BRICK_FLASH_VERSION = '1.0.1'
@@ -239,38 +299,10 @@ def build_linux_flash_pkg():
 
     with open(os.path.join(linux_path, 'usr', 'bin', 'brick-flash'), 'w') as f:
         f.write(template)
+    print('changing binary mode to 0755')
+    system(['chmod', '0755', os.path.join(linux_path, 'usr', 'bin', 'brick-flash')])
 
-    print('creating DEBIAN/control from template')
-    installed_size = int(subprocess.check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split(b'\t')[0])
-    control_path = os.path.join(linux_path, 'DEBIAN', 'control')
-    specialize_template(control_path, control_path,
-                        {'<<VERSION>>': BRICK_FLASH_VERSION,
-                         '<<INSTALLED_SIZE>>': str(installed_size)})
-
-    print('changing binary and directory modes to 0755')
-    system(['chmod', '0755', 'dist/linux/usr/bin/brick-flash'])
-    system(['find', 'dist/linux', '-type', 'd', '-exec', 'chmod', '0755', '{}', ';'])
-
-    print('changing file modes')
-    system(['find', 'dist/linux', '-type', 'f', '-perm', '664', '-exec', 'chmod', '0644', '{}', ';'])
-    system(['find', 'dist/linux', '-type', 'f', '-perm', '775', '-exec', 'chmod', '0755', '{}', ';'])
-
-    print('changing owner to root')
-    stat = os.stat('dist/linux')
-    user, group = stat.st_uid, stat.st_gid
-    system(['sudo', 'chown', '-R', 'root:root', 'dist/linux'])
-
-    print('building Debian package')
-    system(['dpkg', '-b', 'dist/linux', 'brick-flash-{0}_all.deb'.format(BRICK_FLASH_VERSION)])
-
-    print('changing owner back to original user')
-    system(['sudo', 'chown', '-R', '{}:{}'.format(user, group), 'dist/linux'])
-
-    if os.path.exists('/usr/bin/lintian'):
-        print('checking Debian package')
-        system(['lintian', '--pedantic', 'brick-flash-{0}_all.deb'.format(BRICK_FLASH_VERSION)])
-    else:
-        print('skipping lintian check')
+    build_debian_pkg(linux_path, 'brick-flash', BRICK_FLASH_VERSION, None, False)
 
 
 BRICK_LOGGER_VERSION = '2.0.9'
@@ -320,34 +352,40 @@ def build_logger_zip():
     os.chdir(dist_path)
     system(['zip', '-q', '../{}'.format(zip_name), 'brick-logger.py'])
 
-# run 'python build_pkg.py' to build the windows/linux/macos package
-if __name__ == '__main__':
+def main():
     if sys.platform != 'win32' and os.geteuid() == 0:
         print('error: must not be started as root, exiting')
-        sys.exit(1)
+        return 1
 
     if 'logger' in sys.argv:
         build_logger_zip()
-    elif sys.platform.startswith('linux') and '--no-deb' not in sys.argv:
-        if 'flash' in sys.argv:
-            build_linux_flash_pkg()
-        else:
-            build_linux_pkg(internal='--internal' in sys.argv)
-    elif sys.platform == 'win32' or sys.platform == 'darwin' or '--no-deb' in sys.argv:
-        if '--no-deb' not in sys.argv:
-            in_virtualenv = hasattr(sys, 'real_prefix')
-            in_pyvenv = hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix
+        return 0
 
-            if not in_virtualenv and not in_pyvenv:
-                print('error: Please build Windows or macOS binaries in the correct virtualenv.')
-                sys.exit(1)
+    if sys.platform.startswith('linux') and 'flash' in sys.argv:
+        build_linux_flash_pkg()
+        return 0
 
-        root_path = os.getcwd()
-        os.chdir(os.path.join(root_path, 'brickv'))
-        system(['pyinstaller', '--distpath', '../dist', '--workpath', '../build', 'main_folder.spec', '--'] + sys.argv)
-        os.chdir(root_path)
-    else:
-        print('error: unsupported platform: ' + sys.platform)
-        sys.exit(1)
+    if sys.platform.startswith('linux'):
+        build_linux_pkg(internal='--internal' in sys.argv)
+        return 0
 
-    print('done')
+    if sys.platform == 'win32' or sys.platform == 'darwin':
+        in_virtualenv = hasattr(sys, 'real_prefix')
+        in_pyvenv = hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix
+
+        if not in_virtualenv and not in_pyvenv:
+            print('error: Please build Windows or macOS binaries in the correct virtualenv.')
+            return 1
+        platform_dict = {'win32': 'windows', 'darwin': 'macos'}
+        build_pyinstaller_pkg(platform_dict[sys.platform], internal='--internal' in sys.argv)
+        return 0
+
+    print('error: unsupported platform: ' + sys.platform)
+    return 0
+
+# run 'python build_pkg.py' to build the windows/linux/macos package
+if __name__ == '__main__':
+    exit_code = main()
+    if exit_code == 0:
+        print('done')
+    sys.exit(exit_code)

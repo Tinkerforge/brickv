@@ -114,40 +114,6 @@ class PyinstallerUtils:
 
         self.datas = []
 
-    def get_unreleased_bindings(self):
-        print("Searching unreleased devices.")
-
-        to_exclude = ['brickv.build_ui', 'brickv.build_scripts']
-        counter = 0
-
-        for dirpath, _directories, files in os.walk(self.root_path):
-            if os.path.basename(dirpath) == '__pycache__':
-                continue
-
-            dirname = os.path.basename(dirpath)
-
-            if "bindings" not in dirname and "tinkerforge" not in dirname:
-                continue
-
-            for file in files:
-                if "brick" not in file:
-                    continue
-
-                if not file.endswith(".py"):
-                    continue
-                full_name = os.path.join(dirpath, file)
-
-                with open(full_name, 'r') as f:
-                    if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
-                        module_name = self.path_rel_to_root(full_name).replace("\\", "/").replace("/", ".").replace(".py", "")
-                        to_exclude.append(module_name)
-                        to_exclude.append(module_name.replace("bricklet_", "").replace("brick_", "").replace(".bindings", ".plugin_system.plugins"))
-                        counter += 1
-
-        print("Excluded {} unreleased devices.".format(counter))
-
-        return to_exclude
-
     def path_rel_to_root(self, path):
         return path.replace('\\', '/').replace(self.root_path.replace('\\', '/') + '/', '')
 
@@ -203,6 +169,7 @@ class PyinstallerUtils:
                 os.chdir(self.root_path)
 
         self.datas = self.collect_data(by_ext(['bmp', 'jpg', 'png', 'svg']))
+        self.datas += self.collect_data(by_name('internal'))
 
     def strip_binaries(self, binaries, patterns):
         return [x for x in binaries if all(pattern not in x[0].lower() for pattern in patterns)]
