@@ -29,7 +29,7 @@ import bisect
 from collections import namedtuple
 import time
 
-from PyQt5.QtCore import pyqtSignal, Qt, QObject, QTimer, QSize, QRectF, QLineF, QPoint
+from PyQt5.QtCore import pyqtSignal, Qt, QObject, QTimer, QSize, QRectF, QLineF, QPoint, QPointF
 from PyQt5.QtGui import QPainter, QFontMetrics, QPixmap, QIcon, QColor, \
                         QPainterPath, QTransform, QPen
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
@@ -40,6 +40,8 @@ MovingAverageConfig = namedtuple('MovingAverageConfig', 'min_length max_length c
 
 EPSILON = 0.000001
 DEBUG = False
+CURVE_Y_OFFSET_COMPENSATION = 0.5
+CURVE_HEIGHT_COMPENSATION = 1.0
 
 def istr(i):
     return str(int(i))
@@ -140,7 +142,7 @@ class XScale(Scale):
             self.tick_value_to_str = fstr
 
     def draw(self, painter, width, factor, value_min, value_max):
-        factor_int = int(math.floor(factor))
+        factor_int = int(factor)
 
         # axis line
         painter.drawLine(0, 0, width - 1, 0)
@@ -157,7 +159,7 @@ class XScale(Scale):
         value = value_min - (value_min % self.step_size)
 
         while fuzzy_leq(value, value_max):
-            x = int(round((value - value_min) * factor))
+            x = int((value - value_min) * factor)
 
             if width - x <= 2: # accept 2px jitter
                 if self.tick_skip_last:
@@ -191,7 +193,7 @@ class XScale(Scale):
                 if not fuzzy_leq(subvalue, value_max):
                     break
 
-                subx = int(round((subvalue - value_min) * factor))
+                subx = int((subvalue - value_min) * factor)
 
                 if subx >= -2: # accept 2px jitter
                     if width - subx <= 2 and self.tick_skip_last: # accept 2px jitter
@@ -313,10 +315,55 @@ class YScale(Scale):
             self.total_width_changed.emit()
 
     def draw(self, painter, height, factor):
+        painter.save()
+        painter.translate(0, -CURVE_Y_OFFSET_COMPENSATION)
+        painter.scale(1, -factor)
+        painter.translate(0, -self.value_min)
+
+        pen = QPen()
+        pen.setCosmetic(True)
+        pen.setWidth(0)
+        pen.setColor(Qt.black)
+
+        painter.setPen(pen)
+
+        if DEBUG:
+            painter.fillRect(QRectF(0, self.value_min,
+                                    -self.axis_line_thickness - self.tick_mark_size_large, self.value_max - self.value_min),
+                             Qt.cyan)
+
         # axis line
-        painter.drawLine(-self.axis_line_thickness, 0, -self.axis_line_thickness, -height + 1)
+        painter.drawLine(QLineF(-self.axis_line_thickness, self.value_min,
+                                -self.axis_line_thickness, self.value_max))
 
         # ticks
+        tick_text_values = []
+        value = self.value_min
+
+        while fuzzy_leq(value, self.value_max):
+            tick_text_values.append(value)
+
+            painter.drawLine(QLineF(-self.axis_line_thickness, value,
+                                    -self.axis_line_thickness - self.tick_mark_size_large, value))
+
+            for i in range(1, self.step_subdivision_count):
+                subvalue = value + (self.step_size * i / self.step_subdivision_count)
+
+                if not fuzzy_leq(subvalue, self.value_max):
+                    break
+
+                if i % 2 == 0 and self.step_subdivision_count % 2 == 0:
+                    tick_mark_size = self.tick_mark_size_medium
+                else:
+                    tick_mark_size = self.tick_mark_size_small
+
+                painter.drawLine(QLineF(-self.axis_line_thickness, subvalue,
+                                        -self.axis_line_thickness - tick_mark_size, subvalue))
+
+            value += self.step_size
+
+        painter.restore()
+
         painter.setFont(self.tick_text_font)
 
         tick_text_x = -self.axis_line_thickness - \
@@ -326,15 +373,17 @@ class YScale(Scale):
         tick_text_width = self.tick_text_max_width
         tick_text_height = self.tick_text_height_half * 2
 
-        value = self.value_min
+        transform = QTransform()
 
-        while fuzzy_leq(value, self.value_max):
-            y = -int(round((value - self.value_min) * factor))
+        transform.translate(0, -CURVE_Y_OFFSET_COMPENSATION)
+        transform.scale(1, -factor)
+        transform.translate(0, -self.value_min)
 
-            painter.drawLine(-self.axis_line_thickness, y,
-                             -self.axis_line_thickness - self.tick_mark_size_large, y)
+        for value in tick_text_values:
+            tick_text_point = transform.map(QPointF(tick_text_x, value))
 
-            tick_text_y = y - self.tick_text_height_half
+            tick_text_x = tick_text_point.x()
+            tick_text_y = tick_text_point.y() - self.tick_text_height_half
 
             if DEBUG:
                 painter.fillRect(tick_text_x, tick_text_y,
@@ -344,24 +393,6 @@ class YScale(Scale):
             painter.drawText(tick_text_x, tick_text_y, tick_text_width, tick_text_height,
                              Qt.TextDontClip | Qt.AlignRight | Qt.AlignVCenter,
                              self.tick_value_to_str(value))
-
-            for i in range(1, self.step_subdivision_count):
-                subvalue = value + (self.step_size * i / self.step_subdivision_count)
-
-                if not fuzzy_leq(subvalue, self.value_max):
-                    break
-
-                suby = -int(round((subvalue - self.value_min) * factor))
-
-                if i % 2 == 0 and self.step_subdivision_count % 2 == 0:
-                    tick_mark_size = self.tick_mark_size_medium
-                else:
-                    tick_mark_size = self.tick_mark_size_small
-
-                painter.drawLine(-self.axis_line_thickness, suby,
-                                 -self.axis_line_thickness - tick_mark_size, suby)
-
-            value += self.step_size
 
         # title
         title_width = height
@@ -427,8 +458,8 @@ class CurveArea(QWidget):
         y_min_scale = self.plot.y_scale.value_min
         y_max_scale = self.plot.y_scale.value_max
 
-        factor_x = float(width) / self.plot.x_diff
-        factor_y = float(height - 1) / max(y_max_scale - y_min_scale, EPSILON) # -1 to accommodate the 1px width of the curve
+        factor_x = width / self.plot.x_diff
+        factor_y = (height - CURVE_HEIGHT_COMPENSATION) / max(y_max_scale - y_min_scale, EPSILON)
 
         if self.plot.x_min != None and self.plot.x_max != None:
             x_min = self.plot.x_min
@@ -441,8 +472,7 @@ class CurveArea(QWidget):
 
             transform = QTransform()
 
-            transform.translate(curve_x_offset,
-                                height - 1 + self.plot.curve_y_offset) # -1 to accommodate the 1px width of the curve
+            transform.translate(curve_x_offset, height - CURVE_Y_OFFSET_COMPENSATION)
             transform.scale(factor_x, -factor_y)
             transform.translate(-x_min, -y_min_scale)
 
@@ -451,9 +481,11 @@ class CurveArea(QWidget):
 
             painter.save()
             painter.setTransform(transform)
+
             pen = QPen()
             pen.setCosmetic(True)
             pen.setWidth(0)
+
             painter.setPen(pen)
 
             if False and self.plot.curves_visible[0]:
@@ -536,13 +568,6 @@ class Plot(QWidget):
             self.curve_outer_border = 5 # px, fixed
         else:
             self.curve_outer_border = 0 # px, fixed
-
-        if sys.platform == 'darwin':
-            # FIXME: there is a 1px vertical offset in the curve drawing on macOS.
-            #        it's not clear what the reason is, just workaround it for now
-            self.curve_y_offset = 1
-        else:
-            self.curve_y_offset = 0
 
         self.curve_motion_granularity = curve_motion_granularity
         self.curve_to_scale = 8 # px, fixed
@@ -632,7 +657,7 @@ class Plot(QWidget):
 
         # draw scales
         if self.x_scale_visible:
-            factor_x = float(curve_width) / self.x_diff
+            factor_x = curve_width / self.x_diff
 
             self.draw_x_scale(painter, curve_width, factor_x)
 
@@ -640,7 +665,7 @@ class Plot(QWidget):
             y_min_scale = self.y_scale.value_min
             y_max_scale = self.y_scale.value_max
 
-            factor_y = float(curve_height - 1) / max(y_max_scale - y_min_scale, EPSILON) # -1 to accommodate the 1px width of the curve
+            factor_y = (curve_height - CURVE_HEIGHT_COMPENSATION) / max(y_max_scale - y_min_scale, EPSILON)
 
             self.draw_y_scale(painter, curve_height, factor_y)
 
@@ -708,9 +733,9 @@ class Plot(QWidget):
         offset_x = self.y_scale.total_width
 
         if self.x_scale_visible:
-            offset_y = self.height() - self.x_scale.total_height - self.curve_to_scale - 1
+            offset_y = self.height() - self.x_scale.total_height - self.curve_to_scale
         else:
-            offset_y = self.height() - self.y_scale_height_offset - 1
+            offset_y = self.height() - self.y_scale_height_offset
 
         painter.save()
         painter.translate(offset_x, offset_y)
