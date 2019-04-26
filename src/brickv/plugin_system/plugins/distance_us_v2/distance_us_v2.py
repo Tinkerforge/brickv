@@ -22,12 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QComboBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_distance_us_v2 import BrickletDistanceUSV2
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.callback_emulator import CallbackEmulator
+from brickv.async_call import async_call
 
 class DistanceUSV2(COMCUPluginBase):
     def __init__(self, *args):
@@ -45,10 +46,32 @@ class DistanceUSV2(COMCUPluginBase):
         plots = [('Distance', Qt.red, self.current_distance, '{:.1f} cm'.format)]
         self.plot_widget = PlotWidget('Distance [cm]', plots, y_resolution=1.0)
 
+
+        self.update_rate_label = QLabel('Update Rate:')
+        self.update_rate_combo = QComboBox()
+        self.update_rate_combo.addItem(" 2 Hz")
+        self.update_rate_combo.addItem("10 Hz")
+
+        self.update_rate_combo.currentIndexChanged.connect(self.new_update_rate)
+
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(self.update_rate_label)
+        hlayout.addWidget(self.update_rate_combo)
+        hlayout.addStretch()
+
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)
+        layout.addLayout(hlayout)
+
+    def new_update_rate(self):
+        update_rate = self.update_rate_combo.currentIndex()
+        self.dist.set_update_rate(update_rate)
+
+    def get_update_rate_async(self, update_rate):
+        self.update_rate_combo.setCurrentIndex(update_rate)
 
     def start(self):
+        async_call(self.dist.get_update_rate, None, self.get_update_rate_async, self.increase_error_count)
         self.cbe_distance.set_period(100)
 
         self.plot_widget.stop = False

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-03-18.      #
+# This file was automatically generated on 2019-04-26.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -37,6 +37,10 @@ class BrickletDistanceUSV2(Device):
     FUNCTION_GET_DISTANCE = 1
     FUNCTION_SET_DISTANCE_CALLBACK_CONFIGURATION = 2
     FUNCTION_GET_DISTANCE_CALLBACK_CONFIGURATION = 3
+    FUNCTION_SET_UPDATE_RATE = 5
+    FUNCTION_GET_UPDATE_RATE = 6
+    FUNCTION_SET_DISTANCE_LED_CONFIG = 7
+    FUNCTION_GET_DISTANCE_LED_CONFIG = 8
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -55,6 +59,12 @@ class BrickletDistanceUSV2(Device):
     THRESHOLD_OPTION_INSIDE = 'i'
     THRESHOLD_OPTION_SMALLER = '<'
     THRESHOLD_OPTION_GREATER = '>'
+    UPDATE_RATE_2_HZ = 0
+    UPDATE_RATE_10_HZ = 1
+    DISTANCE_LED_CONFIG_OFF = 0
+    DISTANCE_LED_CONFIG_ON = 1
+    DISTANCE_LED_CONFIG_SHOW_HEARTBEAT = 2
+    DISTANCE_LED_CONFIG_SHOW_DISTANCE = 3
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -83,6 +93,10 @@ class BrickletDistanceUSV2(Device):
         self.response_expected[BrickletDistanceUSV2.FUNCTION_GET_DISTANCE] = BrickletDistanceUSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDistanceUSV2.FUNCTION_SET_DISTANCE_CALLBACK_CONFIGURATION] = BrickletDistanceUSV2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletDistanceUSV2.FUNCTION_GET_DISTANCE_CALLBACK_CONFIGURATION] = BrickletDistanceUSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletDistanceUSV2.FUNCTION_SET_UPDATE_RATE] = BrickletDistanceUSV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletDistanceUSV2.FUNCTION_GET_UPDATE_RATE] = BrickletDistanceUSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletDistanceUSV2.FUNCTION_SET_DISTANCE_LED_CONFIG] = BrickletDistanceUSV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletDistanceUSV2.FUNCTION_GET_DISTANCE_LED_CONFIG] = BrickletDistanceUSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDistanceUSV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletDistanceUSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDistanceUSV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletDistanceUSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDistanceUSV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletDistanceUSV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -155,6 +169,37 @@ class BrickletDistanceUSV2(Device):
         Returns the callback configuration as set by :func:`Set Distance Callback Configuration`.
         """
         return GetDistanceCallbackConfiguration(*self.ipcon.send_request(self, BrickletDistanceUSV2.FUNCTION_GET_DISTANCE_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
+
+    def set_update_rate(self, update_rate):
+        """
+
+        """
+        update_rate = int(update_rate)
+
+        self.ipcon.send_request(self, BrickletDistanceUSV2.FUNCTION_SET_UPDATE_RATE, (update_rate,), 'B', '')
+
+    def get_update_rate(self):
+        """
+        Returns the sensor type as set by :func:`Set Update Rate`.
+        """
+        return self.ipcon.send_request(self, BrickletDistanceUSV2.FUNCTION_GET_UPDATE_RATE, (), '', 'B')
+
+    def set_distance_led_config(self, config):
+        """
+        Configures the distance LED to be either turned off, turned on, blink in
+        heartbeat mode or show the distance (brighter = object is nearer).
+
+        The default value is 3 (show distance).
+        """
+        config = int(config)
+
+        self.ipcon.send_request(self, BrickletDistanceUSV2.FUNCTION_SET_DISTANCE_LED_CONFIG, (config,), 'B', '')
+
+    def get_distance_led_config(self):
+        """
+        Returns the LED configuration as set by :func:`Set Distance LED Config`
+        """
+        return self.ipcon.send_request(self, BrickletDistanceUSV2.FUNCTION_GET_DISTANCE_LED_CONFIG, (), '', 'B')
 
     def get_spitfp_error_count(self):
         """
