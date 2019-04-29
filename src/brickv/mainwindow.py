@@ -74,7 +74,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QMainWindow.__init__(self, parent)
 
         self.setupUi(self)
-
+        self.setMinimumSize(600, 440)
         signal.signal(signal.SIGINT, self.exit_brickv)
         signal.signal(signal.SIGTERM, self.exit_brickv)
 
