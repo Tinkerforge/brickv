@@ -977,6 +977,7 @@ Please make sure that your internet connection is working.'
 
                                     if updates_available:
                                         updates_available_main = True
+                    self.red_plugin.bindings_version_success(result)
                 else:
                     if result and result.stderr:
                         msg = self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + ':\n' + result.stderr + '\n\n'
@@ -988,7 +989,7 @@ Please make sure that your internet connection is working.'
 
                     return
 
-                self.red_plugin.bindings_version_success(result)
+
 
                 _check_update_available = self.check_update_available(update_info)
 

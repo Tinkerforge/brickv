@@ -151,8 +151,24 @@ class RED(PluginBase, Ui_RED):
         async_call(read_image_version_async, REDFile(self.session), cb_success, None)
 
     def bindings_version_success(self, result):
+        if result is None or result.stdout is None or result.exit_code != 0:
+            error_message = "Unknown error."
+            if result is None and result.error is not None:
+                error_message = result.error
+            if result.exit_code is not None:
+                error_message += ' (Exit Code {})'.format(result.exit_code)
+            get_main_window().show_status('Failed to query RED Brick bindings versions: '+ error_message, message_id='red_bindings_version_success_error')
+            return
+
+        try:
+            versions = json.loads(result.stdout)
+        except Exception as e:
+            get_main_window().show_status('Failed to parse RED Brick bindings versions as JSON: '+ str(e), message_id='red_bindings_version_success_error')
+            return
+
+        get_main_window().hide_status('red_bindings_version_success_error')
+
         self.device_info.bindings_infos = []
-        versions = json.loads(result.stdout)
         for url_part, version in versions['bindings'].items():
             info = brickv.infos.BindingInfo()
             info.name = brickv.infos.get_bindings_name(url_part)
