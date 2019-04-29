@@ -206,6 +206,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_update_pixmap_normal = load_pixmap('update-icon-normal.png')
         self.button_update_pixmap_hover = load_pixmap('update-icon-hover.png')
 
+        self.last_status_message_id = ''
+
         infos.get_infos_changed_signal().connect(self.update_red_brick_version)
 
     def update_red_brick_version(self, uid):
@@ -750,6 +752,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def cb_enumerate(self, uid, connected_uid, position,
                      hardware_version, firmware_version,
                      device_identifier, enumeration_type):
+
         if self.ipcon.get_connection_state() != IPConnection.CONNECTION_STATE_CONNECTED:
             # ignore enumerate callbacks that arrived after the connection got closed
             return
@@ -1111,16 +1114,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.flashing_window is not None and self.flashing_window.isVisible():
             self.flashing_window.refresh_update_tree_view()
 
+    def show_status(self, message, icon='warning', message_id=''):
+        self.setStatusBar(None)
+        if icon != 'none':
+            icon_dict = {
+                'warning': 'warning-icon-16.png',
+            }
+            icon_label = QLabel()
+            icon_label.setPixmap(load_pixmap(icon_dict[icon]))
+            self.statusBar().addWidget(icon_label)
+        self.statusBar()
+        self.message_label = QLabel(message)
+        self.message_label.setOpenExternalLinks(True)
+        self.statusBar().addWidget(self.message_label, 1)
+
+        self.last_status_message_id = message_id
+
+    def hide_status(self, message_id):
+        if self.last_status_message_id == message_id:
+            self.setStatusBar(None)
+
     def fw_versions_fetched(self, firmware_info):
         if isinstance(firmware_info, int):
             if firmware_info > 0:
-                self.setStatusBar(None)
-
-                label_icon = QLabel()
-                label_icon.setPixmap(load_pixmap('warning-icon-16.png'))
-
-                self.statusBar().addWidget(label_icon)
-
                 if firmware_info == 1:
                     message = 'Update information could not be downloaded from tinkerforge.com.<br/>' + \
                               'Is your computer connected to the Internet?'
@@ -1129,14 +1145,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                "(error code {0}).<br/>Please report this error to " +
                                "<a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>.").format(firmware_info)
 
-                label_message = QLabel(message)
-                label_message.setOpenExternalLinks(True)
-
-                self.statusBar().addWidget(label_message)
+                self.show_status(message, message_id='fw_versions_fetched_error')
 
             infos.reset_latest_fws()
         else:
-            self.setStatusBar(None)
+            self.hide_status('fw_versions_fetched_error')
             infos.update_latest_fws(firmware_info)
 
         self.update_tree_view()
