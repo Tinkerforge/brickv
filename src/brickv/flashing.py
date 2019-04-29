@@ -1639,7 +1639,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                     # Use cached latest fw, as the one in info.brickv_info is not updated when still querying
                     row_color = brickv_row[4].data(Qt.BackgroundRole)
-                    brickv_row[4] = QStandardItem(get_version_string(self.tool_infos['brickv'].firmware_version_latest, replace_unknown="Unknown"))
+                    brickv_version = self.tool_infos['brickv'].firmware_version_latest if 'brickv' in self.tool_infos else (0, 0, 0)
+                    brickv_row[4] = QStandardItem(get_version_string(brickv_version, replace_unknown="Unknown"))
                     brickv_row[4].setData(row_color, Qt.BackgroundRole)
                     parent[0].appendRow(brickv_row)
 
