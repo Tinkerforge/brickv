@@ -544,6 +544,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             self.update_ui_state()
 
+        progress.cancel()
+
         # For some reason the progress dialog is not hidden if the parent is not removed.
         # Other approaches such as hide, close, cancel, reset, QApplication.processEvents,
         # a single shot timer and setting progress to None don't work everytime.
