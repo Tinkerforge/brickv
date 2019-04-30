@@ -516,18 +516,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.update_ui_state()
             self.popup_fail('Brick', 'Could not discover serial ports')
         else:
-            preferred_index = None
-
             for port in ports:
-                if preferred_index is None:
-                    if 'ttyACM' in port[0] or \
-                       'ttyUSB' in port[0] or \
-                       'usbmodem' in port[0] or \
-                       'AT91 USB to Serial Converter' in port[1] or \
-                       'GPS Camera Detect' in port[1] or \
-                       'Bossa Program Port' in port[1]:
-                        preferred_index = self.combo_serial_port.count()
-
                 if len(port[1]) > 0 and port[0] != port[1]:
                     self.combo_serial_port.addItem('{0} - {1}'.format(port[0], port[1]), port[0])
                 else:
@@ -535,12 +524,14 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             if self.combo_serial_port.count() == 0:
                 self.combo_serial_port.addItem(NO_BOOTLOADER)
-            elif preferred_index is not None:
-                self.combo_serial_port.setCurrentIndex(preferred_index)
             else:
-                index = self.combo_serial_port.findText(current_text)
-                if index >= 0:
-                    self.combo_serial_port.setCurrentIndex(index)
+                self.combo_serial_port.insertItem(0, SELECT)
+                self.combo_serial_port.insertSeparator(1)
+                self.combo_serial_port.setCurrentIndex(0)
+                if current_text != '':
+                    index = self.combo_serial_port.findText(current_text)
+                    if index >= 0:
+                        self.combo_serial_port.setCurrentIndex(index)
 
             self.update_ui_state()
 
