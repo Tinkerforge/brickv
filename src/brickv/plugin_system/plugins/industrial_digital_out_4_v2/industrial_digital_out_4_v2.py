@@ -98,9 +98,11 @@ class IndustrialDigitalOut4V2(COMCUPluginBase, Ui_IndustrialDigitalOut4V2):
     def get_value_async(self, value):
         for i, b in enumerate(self.btn_v_c):
             if value[i]:
+                b['state'] = True
                 b['btn'].setText('Set Low')
                 self.lbl_s_i_c[i].setPixmap(self.pixmap_high)
             else:
+                b['state'] = False
                 b['btn'].setText('Set High')
                 self.lbl_s_i_c[i].setPixmap(self.pixmap_low)
 
