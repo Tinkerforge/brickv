@@ -28,6 +28,8 @@ from PyQt5.QtWidgets import QDialog
 
 from brickv.plugin_system.plugins.red.ui_program_info_c_compile import Ui_ProgramInfoCCompile
 
+from brickv.plugin_system.plugins.red.script_manager import check_script_result
+
 class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
     def __init__(self, parent, script_manager, program):
         QDialog.__init__(self, parent)
@@ -65,25 +67,28 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
         # FIXME: it would be better to read the output incremental instead of
         #        waiting for make to exit and then display it in a burst
         def cb_make_helper(result):
-            aborted = self.script_instance.abort
-            self.script_instance = None
-
-            if result != None:
-                for s in result.stdout.rstrip().split('\n'):
-                    self.log(s, pre=True)
-
-                if result.exit_code != 0:
-                    self.log('...error', bold=True)
-                else:
-                    self.log('...done')
-            elif aborted:
-                self.log('...canceled', bold=True)
-            else:
-                self.log('...error', bold=True)
-
             self.button_make.setEnabled(True)
             self.button_clean.setEnabled(True)
             self.button_cancel.setEnabled(False)
+
+            aborted = self.script_instance.abort
+            self.script_instance = None
+
+            okay, message = check_script_result(result, stderr_is_redirected=True)
+            if not okay:
+                self.log(message, pre=True)
+                self.log('...error' if not aborted else '...canceled', bold=True)
+                return
+
+            for s in result.stdout.rstrip().split('\n'):
+                self.log(s, pre=True)
+
+            if aborted:
+                self.log('...canceled', bold=True)
+            elif result.exit_code != 0:
+                self.log('...error', bold=True)
+            else:
+                self.log('...done')
 
         if target != None:
             self.log('Executing make {0}...'.format(target))

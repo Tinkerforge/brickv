@@ -640,7 +640,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         # in which we usually ignore errors occured while enumeration
         # and only consider an error if the script was called with wrong
         # arguments. Therefore we only need to check the exit code.
-        if result and result.exit_code != 0:
+        if result.exit_code is not None and result.exit_code != 0:
             QMessageBox.critical(get_main_window(),
                                  MESSAGEBOX_TITLE,
                                  MESSAGE_ERROR_ENUMERATION_ERROR)

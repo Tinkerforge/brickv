@@ -28,6 +28,7 @@ from PyQt5.QtWidgets import QDialog
 
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_info_delphi_compile import Ui_ProgramInfoDelphiCompile
+from brickv.plugin_system.plugins.red.script_manager import check_script_result
 
 class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
     def __init__(self, parent, script_manager, program):
@@ -77,25 +78,28 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
         # FIXME: it would be better to read the output incremental instead of
         #        waiting for make to exit and then display it in a burst
         def cb_fpcmake_helper(result):
-            aborted = self.script_instance.abort
-            self.script_instance = None
-
-            if result != None:
-                for s in result.stdout.rstrip().split('\n'):
-                    self.log(s, pre=True)
-
-                if result.exit_code != 0:
-                    self.log('...error', bold=True)
-                else:
-                    self.log('...done')
-            elif aborted:
-                self.log('...canceled', bold=True)
-            else:
-                self.log('...error', bold=True)
-
             self.button_make.setEnabled(True)
             self.button_clean.setEnabled(True)
             self.button_cancel.setEnabled(False)
+
+            aborted = self.script_instance.abort
+            self.script_instance = None
+
+            okay, message = check_script_result(result, stderr_is_redirected=True)
+            if not okay:
+                self.log(message, pre=True)
+                self.log('...error' if not aborted else '...canceled', bold=True)
+                return
+
+            for s in result.stdout.rstrip().split('\n'):
+                self.log(s, pre=True)
+
+            if aborted:
+                self.log('...canceled', bold=True)
+            elif result.exit_code != 0:
+                self.log('...error', bold=True)
+            else:
+                self.log('...done')
 
         if target != None:
             self.log('Executing fpcmake and make {0}...'.format(target))
@@ -120,32 +124,37 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
         # FIXME: it would be better to read the output incremental instead of
         #        waiting for make to exit and then display it in a burst
         def cb_lazbuild_helper(result):
-            aborted = self.script_instance.abort
-            self.script_instance = None
+            def remove_whitespace(message):
+                message_old = message
+                message_new = message_old.replace('\n\n\n', '\n')
 
-            if result != None:
-                stdout_old = result.stdout
-                stdout_new = stdout_old.replace('\n\n\n', '\n')
-
-                while stdout_old != stdout_new:
-                    stdout_old = stdout_new
-                    stdout_new = stdout_old.replace('\n\n\n', '\n')
-
-                for s in stdout_new.rstrip().split('\n'):
-                    self.log(s, pre=True)
-
-                if result.exit_code != 0:
-                    self.log('...error', bold=True)
-                else:
-                    self.log('...done')
-            elif aborted:
-                self.log('...canceled', bold=True)
-            else:
-                self.log('...error', bold=True)
+                while message_old != message_new:
+                    message_old = message_new
+                    message_new = message_old.replace('\n\n\n', '\n')
+                return message_new
 
             self.button_compile.setEnabled(True)
             self.button_recompile_all.setEnabled(True)
             self.button_cancel.setEnabled(False)
+
+            aborted = self.script_instance.abort
+            self.script_instance = None
+
+            okay, message = check_script_result(result, stderr_is_redirected=True)
+            if not okay:
+                self.log(remove_whitespace(message), pre=True)
+                self.log('...error' if not aborted else '...canceled', bold=True)
+                return
+
+            for s in remove_whitespace(result.stdout.rstrip()).split('\n'):
+                self.log(s, pre=True)
+
+            if aborted:
+                self.log('...canceled', bold=True)
+            elif result.exit_code != 0:
+                self.log('...error', bold=True)
+            else:
+                self.log('...done')
 
         if len(additional_options):
             self.log('Executing lazbuild {0}...'.format(' '.join(additional_options)))

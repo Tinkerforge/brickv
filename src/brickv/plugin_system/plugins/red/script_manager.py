@@ -93,9 +93,10 @@ class ScriptInstance(QObject):
             self.stderr = None
 
     def report_result(self, result):
-        # if result is None then an error during script upload
-        # occurred and the upload has to be done again
-        if result == None:
+        assert result is not None, "result of script execution was None, this was refactored incompletly"
+        # if result.error is not None then an error occurred during
+        # script upload and the upload has to be done again
+        if result.error is not None:
             self.script.uploaded = False
 
         self.qtcb_result.emit(result)
@@ -123,7 +124,7 @@ class ScriptManager:
 
     # Call with a script name from the scripts/ folder.
     # The stdout and stderr from the script will be given back to result_callback.
-    # If there is an error, result_callback will report None.
+    # If there is an error, result_callback will report an ScriptResult with an error.
     def execute_script(self, script_name, result_callback, params=None, max_length=65536,
                        decode_output_as_utf8=True, redirect_stderr_to_stdout=False,
                        execute_as_user=False):
@@ -346,30 +347,33 @@ class ScriptManager:
         except Exception as e:
             self._report_result_and_cleanup(si, ScriptResult('Could not execute script "{0}": {1}'.format(si.name, e), None, None, None))
 
-def check_script_result(result, decode_stderr=False):
-    if result == None:
-        return (False, 'Script error 1001: Unexpected internal error')
-    elif result.error != None:
+def check_script_result(result, decode_stderr=False, stderr_is_redirected=False, add_stdout_to_message=False):
+    assert result is not None, "result of script execution was None, this was refactored incompletly"
+    if result.error is not None:
         return (False, 'Script error 100X: {0}'.format(result.error))
-    elif result.stdout == None:
-        return (False, 'Script error 1002: Stdout not UTF-8 encoded')
-    elif result.stderr == None:
-        return (False, 'Script error 1003: Stderr not UTF-8 encoded')
-    elif result.exit_code != 0:
+    assert result.stdout is not None, "ScriptResult error was not set, but stdout was None, this was refactored incompletly"
+    assert result.stderr is not None, "ScriptResult error was not set, but stderr was None, this was refactored incompletly"
+
+    if add_stdout_to_message:
+        messages = result.stdout + result.stderr
+    else:
+        messages = result.stdout if stderr_is_redirected else result.stderr
+
+    if result.exit_code != 0:
         if decode_stderr:
             try:
-                stderr = result.stderr.decode('utf-8').strip()
+                stderr = messages.decode('utf-8').strip()
             except UnicodeDecodeError:
                 stderr = '<error message not UTF-8 encoded>'
         else:
-            stderr = result.stderr.strip()
+            stderr = messages.strip()
 
         if len(stderr) == 0:
             stderr = '<empty error message>'
 
         return (False, 'Script error {0}: {1}'.format(result.exit_code, stderr))
-    else:
-        return (True, None)
+
+    return (True, None)
 
 def report_script_result(result, title, message_header, decode_stderr=False, before_message_box=None):
     okay, message = check_script_result(result, decode_stderr)

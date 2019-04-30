@@ -30,7 +30,7 @@ from brickv.plugin_system.plugins.red.script_manager import check_script_result
 
 def get_python_versions(script_manager, callback):
     def cb_versions(result):
-        okay, _ = check_script_result(result)
+        okay, _ = check_script_result(result, stderr_is_redirected=True)
 
         if okay:
             try:

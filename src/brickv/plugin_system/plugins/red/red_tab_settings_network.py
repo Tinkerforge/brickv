@@ -36,6 +36,7 @@ from brickv.plugin_system.plugins.red.ui_red_tab_settings_network_wireless_conne
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import TextFile
 from brickv.plugin_system.plugins.red import config_parser
+from brickv.plugin_system.plugins.red.script_manager import report_script_result, check_script_result
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
 
@@ -399,15 +400,13 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
         def cb_settings_network_apply(result):
             self.is_connecting = False
             self.update_gui(WORKING_STATE_DONE)
-            if result and result.stderr == '' and result.exit_code == 0:
-                QMessageBox.information(get_main_window(),
-                                        'Settings | Network',
-                                        'Configuration saved.')
-                self.slot_network_conf_refresh_clicked()
-            else:
-                QMessageBox.critical(get_main_window(),
-                                     'Settings | Network',
-                                     'Error saving configuration:\n\n' + result.stderr)
+            if not report_script_result(result, 'Settings | Network', 'Error saving configuration:'):
+                return
+
+            QMessageBox.information(get_main_window(),
+                                    'Settings | Network',
+                                    'Configuration saved.')
+            self.slot_network_conf_refresh_clicked()
 
         def cb_open(config, stage, red_file, iname_previous):
             def cb_write(red_file, stage, result, iname_previous):
@@ -474,15 +473,12 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
     def connect_wireless_hidden(self, parameters):
         def cb_settings_network_apply_nm(result):
             self.update_gui(WORKING_STATE_DONE)
-            if result and result.stderr == '' and result.exit_code == 0:
-                QMessageBox.information(get_main_window(),
-                                        'Settings | Network',
-                                        'Configuration saved.')
-                self.slot_network_conf_refresh_clicked()
-            else:
-                QMessageBox.critical(get_main_window(),
-                                     'Settings | Network',
-                                     'Error saving configuration:\n\n' + result.stderr)
+            if not report_script_result(result, 'Settings | Network', 'Error saving configuration:'):
+                return
+            QMessageBox.information(get_main_window(),
+                                    'Settings | Network',
+                                    'Configuration saved.')
+            self.slot_network_conf_refresh_clicked()
 
         if self.image_version_lt_1_10:
             cbox_cidx = self.cbox_net_intf.currentIndex()
@@ -676,53 +672,58 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
         if not self.is_tab_on_focus and self.ap_mode:
             return
 
-        if result and result.stdout and not result.stderr and result.exit_code == 0:
-            self.network_all_data['status'] = json.loads(result.stdout)
+        okay, _ = check_script_result(result)
 
-            # Populating the current network status section and hostname
-            if self.is_connecting and not self.image_version_lt_1_10:
-                self.label_net_gen_cstat_status.setText('Connecting')
-                self.label_net_gen_cstat_intf.setText('-')
-                self.label_net_gen_cstat_ip.setText('-')
-                self.label_net_gen_cstat_mask.setText('-')
-                self.label_net_gen_cstat_gateway.setText('-')
-                self.label_net_gen_cstat_dns.setText('-')
-            elif self.network_all_data['status'] is not None:
-                self.label_net_hostname.setText(self.network_all_data['status']['cstat_hostname'])
+        if not okay:
+            self.network_stat_refresh_timer.start(NETWORK_STAT_REFRESH_INTERVAL)
+            return
 
-                self.label_net_gen_cstat_status.setText(str(self.network_all_data['status']['cstat_status']))
+        self.network_all_data['status'] = json.loads(result.stdout)
 
-                if self.network_all_data['status']['cstat_intf_active']['name'] is not None:
-                    if self.network_all_data['status']['cstat_intf_active']['type'] == INTERFACE_TYPE_WIRELESS:
-                        intf_stat_str = str(self.network_all_data['status']['cstat_intf_active']['name']) + ' : Wireless'
-                        self.label_net_gen_cstat_intf.setText(intf_stat_str)
-                    else:
-                        intf_stat_str = str(self.network_all_data['status']['cstat_intf_active']['name']) + ' : Wired'
-                        self.label_net_gen_cstat_intf.setText(intf_stat_str)
+        # Populating the current network status section and hostname
+        if self.is_connecting and not self.image_version_lt_1_10:
+            self.label_net_gen_cstat_status.setText('Connecting')
+            self.label_net_gen_cstat_intf.setText('-')
+            self.label_net_gen_cstat_ip.setText('-')
+            self.label_net_gen_cstat_mask.setText('-')
+            self.label_net_gen_cstat_gateway.setText('-')
+            self.label_net_gen_cstat_dns.setText('-')
+        elif self.network_all_data['status'] is not None:
+            self.label_net_hostname.setText(self.network_all_data['status']['cstat_hostname'])
 
-                    self.label_net_gen_cstat_ip.setText(self.network_all_data['status']['cstat_intf_active']['ip'])
-                    self.label_net_gen_cstat_mask.setText(self.network_all_data['status']['cstat_intf_active']['mask'])
+            self.label_net_gen_cstat_status.setText(str(self.network_all_data['status']['cstat_status']))
+
+            if self.network_all_data['status']['cstat_intf_active']['name'] is not None:
+                if self.network_all_data['status']['cstat_intf_active']['type'] == INTERFACE_TYPE_WIRELESS:
+                    intf_stat_str = str(self.network_all_data['status']['cstat_intf_active']['name']) + ' : Wireless'
+                    self.label_net_gen_cstat_intf.setText(intf_stat_str)
                 else:
-                    self.label_net_gen_cstat_intf.setText('-')
-                    self.label_net_gen_cstat_ip.setText('-')
-                    self.label_net_gen_cstat_mask.setText('-')
+                    intf_stat_str = str(self.network_all_data['status']['cstat_intf_active']['name']) + ' : Wired'
+                    self.label_net_gen_cstat_intf.setText(intf_stat_str)
 
-                if self.network_all_data['status']['cstat_gateway'] is not None:
-                    self.label_net_gen_cstat_gateway.setText(self.network_all_data['status']['cstat_gateway'])
-                else:
-                    self.label_net_gen_cstat_gateway.setText('-')
-
-                if self.network_all_data['status']['cstat_dns'] is not None:
-                    self.label_net_gen_cstat_dns.setText(self.network_all_data['status']['cstat_dns'].strip())
-                else:
-                    self.label_net_gen_cstat_dns.setText('-')
+                self.label_net_gen_cstat_ip.setText(self.network_all_data['status']['cstat_intf_active']['ip'])
+                self.label_net_gen_cstat_mask.setText(self.network_all_data['status']['cstat_intf_active']['mask'])
             else:
-                self.label_net_hostname.setText('-')
                 self.label_net_gen_cstat_intf.setText('-')
                 self.label_net_gen_cstat_ip.setText('-')
                 self.label_net_gen_cstat_mask.setText('-')
+
+            if self.network_all_data['status']['cstat_gateway'] is not None:
+                self.label_net_gen_cstat_gateway.setText(self.network_all_data['status']['cstat_gateway'])
+            else:
                 self.label_net_gen_cstat_gateway.setText('-')
+
+            if self.network_all_data['status']['cstat_dns'] is not None:
+                self.label_net_gen_cstat_dns.setText(self.network_all_data['status']['cstat_dns'].strip())
+            else:
                 self.label_net_gen_cstat_dns.setText('-')
+        else:
+            self.label_net_hostname.setText('-')
+            self.label_net_gen_cstat_intf.setText('-')
+            self.label_net_gen_cstat_ip.setText('-')
+            self.label_net_gen_cstat_mask.setText('-')
+            self.label_net_gen_cstat_gateway.setText('-')
+            self.label_net_gen_cstat_dns.setText('-')
 
         self.network_stat_refresh_timer.start(NETWORK_STAT_REFRESH_INTERVAL)
 
@@ -1346,13 +1347,13 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
                 self.update_gui(WORKING_STATE_DONE)
                 if not self.is_tab_on_focus:
                     return
-                if result and result.stdout and not result.stderr and result.exit_code == 0:
-                    self.network_all_data['scan_result'] = json.loads(result.stdout)
-                    self.update_access_points(self.network_all_data['scan_result'])
-                else:
-                    QMessageBox.critical(get_main_window(),
-                                         'Settings | Network',
-                                         'Wireless scan failed:\n\n' + result.stderr)
+
+                if not report_script_result(result, 'Settings | Network', 'Wireless scan failed:'):
+                    self.update_connect_button_state()
+                    return
+
+                self.network_all_data['scan_result'] = json.loads(result.stdout)
+                self.update_access_points(self.network_all_data['scan_result'])
                 self.update_connect_button_state()
 
             if self.image_version_lt_1_10:
@@ -1404,17 +1405,12 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
             if self.network_refresh_tasks_error_occured:
                 return
 
-            if result and result.stdout and not result.stderr and result.exit_code == 0:
-                self.network_all_data['status'] = json.loads(result.stdout)
+            if not report_script_result(result, 'Settings | Network', 'Error executing network status script:',
+                                        before_message_box=lambda: network_refresh_task_done(False)):
+                return
 
-                network_refresh_task_done(True)
-            else:
-                network_refresh_task_done(False)
-
-                if result and result.stderr:
-                    QMessageBox.critical(get_main_window(),
-                                         'Settings | Network',
-                                         'Error executing network status script:\n\n' + result.stderr)
+            self.network_all_data['status'] = json.loads(result.stdout)
+            network_refresh_task_done(True)
 
         def cb_settings_network_get_interfaces(result):
             if not self.is_tab_on_focus:
@@ -1424,28 +1420,23 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
             if self.network_refresh_tasks_error_occured:
                 return
 
-            if result and result.stdout and not result.stderr and result.exit_code == 0:
-                self.network_all_data['interfaces'] = json.loads(result.stdout)
+            if not report_script_result(result, 'Settings | Network', 'Error executing network get interfaces script:',
+                                        before_message_box=lambda: network_refresh_task_done(False)):
+                return
 
-                if self.image_version_lt_1_10:
-                    self.update_gui(WORKING_STATE_SCAN)
+            self.network_all_data['interfaces'] = json.loads(result.stdout)
 
-                    self.script_manager.execute_script('settings_network_wireless_scan_cache',
-                                                       cb_settings_network_wireless_scan_cache)
+            if self.image_version_lt_1_10:
+                self.update_gui(WORKING_STATE_SCAN)
 
-                    network_refresh_task_done(True)
-                else:
-                    self.script_manager.execute_script('settings_network_wireless_scan_nm',
-                                                       cb_settings_network_wireless_scan_cache)
-                    network_refresh_task_done(True)
+                self.script_manager.execute_script('settings_network_wireless_scan_cache',
+                                                    cb_settings_network_wireless_scan_cache)
 
+                network_refresh_task_done(True)
             else:
-                network_refresh_task_done(False)
-
-                if result and result.stderr:
-                    QMessageBox.critical(get_main_window(),
-                                         'Settings | Network',
-                                         'Error executing network get interfaces script:\n\n' + result.stderr)
+                self.script_manager.execute_script('settings_network_wireless_scan_nm',
+                                                    cb_settings_network_wireless_scan_cache)
+                network_refresh_task_done(True)
 
         def cb_settings_network_wireless_scan_cache(result):
             if not self.is_tab_on_focus:
@@ -1455,18 +1446,14 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
             if self.network_refresh_tasks_error_occured:
                 return
 
-            if result and result.stdout and not result.stderr and result.exit_code == 0:
-                self.network_all_data['scan_result_cache'] = json.loads(result.stdout)
-                self.update_access_points(self.network_all_data['scan_result_cache'])
+            if not report_script_result(result, 'Settings | Network', 'Error executing wireless scan cache script:',
+                                        before_message_box=lambda: network_refresh_task_done(False)):
+                return
 
-                network_refresh_task_done(True)
-            else:
-                network_refresh_task_done(False)
+            self.network_all_data['scan_result_cache'] = json.loads(result.stdout)
+            self.update_access_points(self.network_all_data['scan_result_cache'])
 
-                if result and result.stderr:
-                    QMessageBox.critical(get_main_window(),
-                                         'Settings | Network',
-                                         'Error executing wireless scan cache script:\n\n' + result.stderr)
+            network_refresh_task_done(True)
 
         def cb_text_file_content(key, content):
             if not self.is_tab_on_focus:
@@ -1611,17 +1598,15 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
     def slot_network_connect_clicked(self):
         def cb_settings_network_apply_nm(result):
             self.update_gui(WORKING_STATE_DONE)
-            if result and result.stderr == '' and result.exit_code == 0:
-                QMessageBox.information(get_main_window(),
-                                        'Settings | Network',
-                                        'Configuration saved.')
-                self.is_connecting = False
-                self.slot_network_conf_refresh_clicked()
-            else:
-                self.is_connecting = False
-                QMessageBox.critical(get_main_window(),
-                                     'Settings | Network',
-                                     'Error saving configuration:\n\n' + result.stderr)
+            self.is_connecting = False
+
+            if not report_script_result(result, 'Settings | Network', 'Error saving configuration:'):
+                return
+
+            QMessageBox.information(get_main_window(),
+                                    'Settings | Network',
+                                    'Configuration saved.')
+            self.slot_network_conf_refresh_clicked()
 
         cbox_cidx = self.cbox_net_intf.currentIndex()
         iname = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE)
@@ -1836,15 +1821,8 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
             if not self.is_tab_on_focus:
                 return
 
-            if result.exit_code != 0:
-                err_msg = 'Error occured while changing hostname.'
-
-                if result.stderr:
-                    err_msg = err_msg + '\n\n' + str(result.stderr)
-
-                QMessageBox.critical(get_main_window(),
-                                     'Settings | Network',
-                                     err_msg)
+            if not report_script_result(result, 'Settings | Network', 'Error occured while changing hostname.'):
+                return
 
             self.slot_network_conf_refresh_clicked()
 

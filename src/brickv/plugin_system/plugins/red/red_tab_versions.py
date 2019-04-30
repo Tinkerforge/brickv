@@ -29,6 +29,7 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_versions import Ui_REDTabVersions
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.script_manager import check_script_result
 from brickv.async_call import async_call
 
 DEFAULT_NAME_HEADER_WIDTH = 200
@@ -126,7 +127,8 @@ class REDTabVersions(REDTab, Ui_REDTabVersions):
 
     def update_main(self):
         def cb_update_main(result):
-            if result == None:
+            okay, _ = check_script_result(result)
+            if not okay:
                 return
 
             versions = result.stdout.split('\n')

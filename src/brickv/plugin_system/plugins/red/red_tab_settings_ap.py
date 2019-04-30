@@ -31,6 +31,7 @@ from brickv.plugin_system.plugins.red.ui_red_tab_settings_ap import Ui_REDTabSet
 from brickv.plugin_system.plugins.red.red_tab_settings_ap_dhcp_leases_dialog import REDTabSettingsAPDhcpLeasesDialog
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import TextFile
+from brickv.plugin_system.plugins.red.script_manager import check_script_result, report_script_result
 from brickv.utils import get_main_window
 
 BUTTON_STATE_DEFAULT = 1
@@ -208,34 +209,32 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
             if not self.is_tab_on_focus:
                 return
 
-            if result and not result.stderr and result.exit_code == 0:
-                ap_mode_status = json.loads(result.stdout)
+            if not report_script_result(result, 'Settings | Access Point', 'Error checking access point mode:',
+                                        before_message_box=lambda: self.label_ap_status.setText('-')):
+                return
 
-                if ap_mode_status is None or \
-                   ap_mode_status['ap_first_time'] is None or \
-                   ap_mode_status['ap_incomplete_config'] is None or \
-                   ap_mode_status['ap_hardware_or_config_problem'] is None:
-                    self.label_ap_status.setText('-')
-                    QMessageBox.critical(get_main_window(),
-                                         'Settings | Access Point',
-                                         'Error checking access point mode.')
-                elif not ap_mode_status['ap_incomplete_config'] and \
-                     not ap_mode_status['ap_hardware_or_config_problem']:
-                    self.label_ap_status.setText('Active')
-                elif ap_mode_status['ap_first_time']:
-                    self.label_ap_status.setText('Inactive - Select an interface and click save')
-                elif ap_mode_status['ap_incomplete_config']:
-                    self.label_ap_status.setText('Inactive - Incomplete configuration, check your configuration and click save')
-                elif ap_mode_status['ap_hardware_or_config_problem']:
-                    self.label_ap_status.setText('Inactive - Hardware not supported or wrong configuration')
+            ap_mode_status = json.loads(result.stdout)
 
-                self.update_ui_state()
-                self.read_config_files()
-            else:
+            if ap_mode_status is None or \
+                ap_mode_status['ap_first_time'] is None or \
+                ap_mode_status['ap_incomplete_config'] is None or \
+                ap_mode_status['ap_hardware_or_config_problem'] is None:
                 self.label_ap_status.setText('-')
                 QMessageBox.critical(get_main_window(),
-                                     'Settings | Access Point',
-                                     'Error checking access point mode:\n\n' + result.stderr)
+                                        'Settings | Access Point',
+                                        'Error checking access point mode.')
+            elif not ap_mode_status['ap_incomplete_config'] and \
+                    not ap_mode_status['ap_hardware_or_config_problem']:
+                self.label_ap_status.setText('Active')
+            elif ap_mode_status['ap_first_time']:
+                self.label_ap_status.setText('Inactive - Select an interface and click save')
+            elif ap_mode_status['ap_incomplete_config']:
+                self.label_ap_status.setText('Inactive - Incomplete configuration, check your configuration and click save')
+            elif ap_mode_status['ap_hardware_or_config_problem']:
+                self.label_ap_status.setText('Inactive - Hardware not supported or wrong configuration')
+
+            self.update_ui_state()
+            self.read_config_files()
 
         self.update_button_text_state(BUTTON_STATE_REFRESH)
         self.label_working_wait.show()
@@ -253,22 +252,21 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
             self.sarea_ap.setEnabled(True)
             self.update_button_text_state(BUTTON_STATE_DEFAULT)
 
-            if result and result.exit_code == 0:
-                self.slot_pbutton_ap_refresh_clicked()
+            if not report_script_result(result, 'Settings | Access Point', 'Error saving access point settings:'):
+                return
 
-                QMessageBox.information(get_main_window(),
-                                        'Settings | Access Point',
-                                        'Access point settings saved.')
-            else:
-                QMessageBox.critical(get_main_window(),
-                                     'Settings | Access Point',
-                                     'Error saving access point settings:\n\n' + result.stderr)
+            self.slot_pbutton_ap_refresh_clicked()
+
+            QMessageBox.information(get_main_window(),
+                                    'Settings | Access Point',
+                                    'Access point settings saved.')
 
         def cb_settings_ap_apply_2(result):
             gui_after_apply(result)
 
         def cb_settings_ap_status(result):
-            if result and not result.stderr and result.exit_code == 0:
+            okay, _ = check_script_result(result)
+            if okay:
                 ap_mode_status = json.loads(result.stdout)
 
                 if ap_mode_status['ap_incomplete_config'] or \
@@ -284,7 +282,8 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
 
         def cb_settings_ap_apply(result):
             if self.image_version.number >= (1, 10):
-                if result and not result.stderr and result.exit_code == 0:
+                okay, _ = check_script_result(result)
+                if okay:
                     self.script_manager.execute_script('settings_ap_status',
                                                        cb_settings_ap_status)
                 else:
@@ -455,66 +454,64 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
                 if not self.is_tab_on_focus:
                     return
 
-                if result and not result.stderr and result.exit_code == 0:
-                    ap_mode_interfaces = json.loads(result.stdout)
+                if not report_script_result(result, 'Settings | Access Point', 'Error getting access point interfaces:'):
+                    return
 
-                    if len(ap_mode_interfaces) <= 0:
-                        self.label_ap_status.setText('Inactive - No wireless interface available')
-                        self.cbox_ap_interface.clear()
-                        self.pbutton_ap_save.setEnabled(False)
-                        self.update_ui_state()
-                        return
+                ap_mode_interfaces = json.loads(result.stdout)
 
-                    self.pbutton_ap_save.setEnabled(True)
+                if len(ap_mode_interfaces) <= 0:
+                    self.label_ap_status.setText('Inactive - No wireless interface available')
                     self.cbox_ap_interface.clear()
+                    self.pbutton_ap_save.setEnabled(False)
+                    self.update_ui_state()
+                    return
 
-                    self.cbox_ap_interface.currentIndexChanged.disconnect()
+                self.pbutton_ap_save.setEnabled(True)
+                self.cbox_ap_interface.clear()
 
-                    for intf in ap_mode_interfaces:
-                        self.cbox_ap_interface.addItem(intf)
-                        current_item_index = self.cbox_ap_interface.count() - 1
+                self.cbox_ap_interface.currentIndexChanged.disconnect()
 
-                        if ap_mode_interfaces[intf]['ip']:
-                            self.cbox_ap_interface.setItemData(current_item_index,
-                                                               ap_mode_interfaces[intf]['ip'],
-                                                               AP_INTERFACE_IP_USER_ROLE)
-                        else:
-                            self.cbox_ap_interface.setItemData(current_item_index,
-                                                               '192.168.42.1',
-                                                               AP_INTERFACE_IP_USER_ROLE)
+                for intf in ap_mode_interfaces:
+                    self.cbox_ap_interface.addItem(intf)
+                    current_item_index = self.cbox_ap_interface.count() - 1
 
-                        if ap_mode_interfaces[intf]['mask']:
-                            self.cbox_ap_interface.setItemData(current_item_index,
-                                                               ap_mode_interfaces[intf]['mask'],
-                                                               AP_INTERFACE_MASK_USER_ROLE)
+                    if ap_mode_interfaces[intf]['ip']:
+                        self.cbox_ap_interface.setItemData(current_item_index,
+                                                            ap_mode_interfaces[intf]['ip'],
+                                                            AP_INTERFACE_IP_USER_ROLE)
+                    else:
+                        self.cbox_ap_interface.setItemData(current_item_index,
+                                                            '192.168.42.1',
+                                                            AP_INTERFACE_IP_USER_ROLE)
 
-                        else:
-                            self.cbox_ap_interface.setItemData(current_item_index,
-                                                               '255.255.255.0',
-                                                               AP_INTERFACE_MASK_USER_ROLE)
-                    self.cbox_ap_interface.setCurrentIndex(-1)
-                    self.cbox_ap_interface.currentIndexChanged.connect(self.slot_cbox_ap_interface_current_index_changed)
-
-                    if not interface:
-                        self.cbox_ap_interface.setCurrentIndex(0)
-
-                    elif not interface and self.cbox_ap_interface.count() > 0:
-                        self.cbox_ap_interface.setCurrentIndex(0)
+                    if ap_mode_interfaces[intf]['mask']:
+                        self.cbox_ap_interface.setItemData(current_item_index,
+                                                            ap_mode_interfaces[intf]['mask'],
+                                                            AP_INTERFACE_MASK_USER_ROLE)
 
                     else:
-                        broke = False
-                        for i in range(0, self.cbox_ap_interface.count()):
-                            if self.cbox_ap_interface.itemText(i) == interface:
-                                self.cbox_ap_interface.setCurrentIndex(i)
-                                broke = True
-                                break
+                        self.cbox_ap_interface.setItemData(current_item_index,
+                                                            '255.255.255.0',
+                                                            AP_INTERFACE_MASK_USER_ROLE)
+                self.cbox_ap_interface.setCurrentIndex(-1)
+                self.cbox_ap_interface.currentIndexChanged.connect(self.slot_cbox_ap_interface_current_index_changed)
 
-                        if not broke:
-                            self.cbox_ap_interface.setCurrentIndex(0)
+                if not interface:
+                    self.cbox_ap_interface.setCurrentIndex(0)
+
+                elif not interface and self.cbox_ap_interface.count() > 0:
+                    self.cbox_ap_interface.setCurrentIndex(0)
+
                 else:
-                    QMessageBox.critical(get_main_window(),
-                                         'Settings | Access Point',
-                                         'Error getting access point interfaces:\n\n' + result.stderr)
+                    broke = False
+                    for i in range(0, self.cbox_ap_interface.count()):
+                        if self.cbox_ap_interface.itemText(i) == interface:
+                            self.cbox_ap_interface.setCurrentIndex(i)
+                            broke = True
+                            break
+
+                    if not broke:
+                        self.cbox_ap_interface.setCurrentIndex(0)
 
                 self.update_ui_state()
 

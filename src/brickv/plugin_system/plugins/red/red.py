@@ -33,7 +33,7 @@ from PyQt5.QtWidgets import QMessageBox, QLabel, QVBoxLayout, QAction, QTextBrow
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.red.ui_red import Ui_RED
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.script_manager import ScriptManager
+from brickv.plugin_system.plugins.red.script_manager import ScriptManager, check_script_result
 from brickv.async_call import async_call
 from brickv.plugin_system.plugins.red.red_update_tinkerforge_software_dialog import REDUpdateTinkerforgeSoftwareDialog
 import brickv.infos
@@ -151,13 +151,9 @@ class RED(PluginBase, Ui_RED):
         async_call(read_image_version_async, REDFile(self.session), cb_success, None)
 
     def bindings_version_success(self, result):
-        if result is None or result.stdout is None or result.exit_code != 0:
-            error_message = "Unknown error."
-            if result is None and result.error is not None:
-                error_message = result.error
-            if result.exit_code is not None:
-                error_message += ' (Exit Code {})'.format(result.exit_code)
-            get_main_window().show_status('Failed to query RED Brick bindings versions: '+ error_message, message_id='red_bindings_version_success_error')
+        okay, message = check_script_result(result)
+        if not okay:
+            get_main_window().show_status('Failed to query RED Brick bindings versions: '+ message, message_id='red_bindings_version_success_error')
             return
 
         try:
@@ -326,29 +322,15 @@ class RED(PluginBase, Ui_RED):
 
         # Restart Brick Daemon
         if param == 0:
-            def cb(result):
-                if result and (result.exit_code == None or result.exit_code != 0):
-                    if result.stderr:
-                        QMessageBox.critical(get_main_window(), 'Failed to restart Brick Daemon', result.stderr)
-                    else:
-                        QMessageBox.critical(get_main_window(), 'Failed to restart Brick Daemon', result.error)
-
             self.script_manager.execute_script('restart_brickd', None)
 
         # Reboot or shutdown RED Brick
         elif param == 1 or param == 2:
             def cb(result):
-                if result and (result.exit_code == None or result.exit_code != 0):
-                    if param == 1:
-                        if result.stderr:
-                            QMessageBox.critical(get_main_window(), 'Failed to reboot RED Brick', result.stderr)
-                        else:
-                            QMessageBox.critical(get_main_window(), 'Failed to reboot RED Brick', result.error)
-                    else:
-                        if result.stderr:
-                            QMessageBox.critical(get_main_window(), 'Failed to shutdown RED Brick', result.stderr)
-                        else:
-                            QMessageBox.critical(get_main_window(), 'Failed to shutdown RED Brick', result.error)
+                okay, message = check_script_result(result)
+                if not okay:
+                    op = 'reboot' if param == 1 else 'shutdown'
+                    QMessageBox.critical(get_main_window(), 'Failed to {} RED Brick'.format(op), message)
 
             self.script_manager.execute_script('restart_reboot_shutdown_systemd', cb, [str(param)])
 

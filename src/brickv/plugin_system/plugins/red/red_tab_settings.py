@@ -27,6 +27,7 @@ import json
 
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_settings import Ui_REDTabSettings
+from brickv.plugin_system.plugins.red.script_manager import check_script_result
 
 class ServiceState:
     fetched          = False
@@ -64,40 +65,40 @@ class REDTabSettings(REDTab, Ui_REDTabSettings):
 
         if not self.service_state.fetched:
             def cb_settings_services_check(result):
-                if result and result.stdout and not result.stderr and result.exit_code == 0:
-                    services_check_result = json.loads(result.stdout)
+                okay, message = check_script_result(result)
+                if not okay:
+                    self.label_discovering.setText('Error getting current services status:\n\n' + message)
 
-                    if services_check_result:
-                        if services_check_result['gpu'] is None or \
-                           services_check_result['desktopenv'] is None or \
-                           services_check_result['webserver'] is None or \
-                           services_check_result['splashscreen'] is None or \
-                           services_check_result['ap'] is None or \
-                           services_check_result['servermonitoring'] is None or \
-                           services_check_result['openhab'] is None or \
-                           services_check_result['mobileinternet'] is None:
-                            self.label_discovering.setText('Received incomplete current services status.')
-                        else:
-                            self.service_state.fetched          = True
-                            self.service_state.gpu              = services_check_result['gpu']
-                            self.service_state.desktopenv       = services_check_result['desktopenv']
-                            self.service_state.webserver        = services_check_result['webserver']
-                            self.service_state.splashscreen     = services_check_result['splashscreen']
-                            self.service_state.ap               = services_check_result['ap']
-                            self.service_state.servermonitoring = services_check_result['servermonitoring']
-                            self.service_state.openhab          = services_check_result['openhab']
-                            self.service_state.mobileinternet   = services_check_result['mobileinternet']
+                services_check_result = json.loads(result.stdout)
 
-                            if self.image_version.number < (1, 4):
-                                self.service_state.desktopenv = self.image_version.flavor == 'full'
+                if services_check_result:
+                    if services_check_result['gpu'] is None or \
+                        services_check_result['desktopenv'] is None or \
+                        services_check_result['webserver'] is None or \
+                        services_check_result['splashscreen'] is None or \
+                        services_check_result['ap'] is None or \
+                        services_check_result['servermonitoring'] is None or \
+                        services_check_result['openhab'] is None or \
+                        services_check_result['mobileinternet'] is None:
+                        self.label_discovering.setText('Received incomplete current services status.')
+                    else:
+                        self.service_state.fetched          = True
+                        self.service_state.gpu              = services_check_result['gpu']
+                        self.service_state.desktopenv       = services_check_result['desktopenv']
+                        self.service_state.webserver        = services_check_result['webserver']
+                        self.service_state.splashscreen     = services_check_result['splashscreen']
+                        self.service_state.ap               = services_check_result['ap']
+                        self.service_state.servermonitoring = services_check_result['servermonitoring']
+                        self.service_state.openhab          = services_check_result['openhab']
+                        self.service_state.mobileinternet   = services_check_result['mobileinternet']
 
-                            self.label_discovering.hide()
-                            self.tab_widget.show()
-                            self.tab_widget.currentWidget().tab_on_focus()
-                elif result and result.stderr:
-                    self.label_discovering.setText('Error getting current services status:\n\n' + result.stderr)
-                else:
-                    self.label_discovering.setText('Error getting current services status.')
+                        if self.image_version.number < (1, 4):
+                            self.service_state.desktopenv = self.image_version.flavor == 'full'
+
+                        self.label_discovering.hide()
+                        self.tab_widget.show()
+                        self.tab_widget.currentWidget().tab_on_focus()
+
 
             self.script_manager.execute_script('settings_services',
                                                cb_settings_services_check,

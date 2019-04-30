@@ -643,13 +643,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
     def compile_make(self):
         def cb_make_helper(result):
-            if result == None:
-                self.upload_warning('...warning: Could not execute make helper script')
-                self.upload_done()
-                return
-
-            if result.stdout == None:
-                self.upload_warning('...warning: Output of make helper script is not UTF-8 encoded')
+            if result.error is not None:
+                self.upload_warning('...warning: Could not execute make helper script: {}'.format(result.error))
                 self.upload_done()
                 return
 
@@ -657,7 +652,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 self.log(s, pre=True)
 
             if result.exit_code != 0:
-                self.upload_warning('...warning: Could not compile source code')
+                self.upload_warning('...warning: Could not compile source code: exit code {}'.format(result.exit_code))
                 self.upload_done()
             else:
                 self.log('...done')
@@ -674,13 +669,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
     def compile_fpcmake(self):
         def cb_fpcmake_helper(result):
-            if result == None:
-                self.upload_warning('...warning: Could not execute fpcmake helper script')
-                self.upload_done()
-                return
-
-            if result.stdout == None:
-                self.upload_warning('...warning: Output of fpcmake helper script is not UTF-8 encoded')
+            if result.error is not None:
+                self.upload_warning('...warning: Could not execute fpcmake helper script: {}'.format(result.error))
                 self.upload_done()
                 return
 
@@ -688,7 +678,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 self.log(s, pre=True)
 
             if result.exit_code != 0:
-                self.upload_warning('...warning: Could not compile source code')
+                self.upload_warning('...warning: Could not compile source code: exit code {}'.format(result.exit_code))
                 self.upload_done()
             else:
                 self.log('...done')
@@ -705,13 +695,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
     def compile_lazbuild(self):
         def cb_lazbuild_helper(result):
-            if result == None:
-                self.upload_warning('...warning: Could not execute lazbuild helper script')
-                self.upload_done()
-                return
-
-            if result.stdout == None:
-                self.upload_warning('...warning: Output of lazbuild helper script is not UTF-8 encoded')
+            if result.error is not None:
+                self.upload_warning('...warning: Could not execute lazbuild helper script: {}'.format(result.error))
                 self.upload_done()
                 return
 
@@ -722,11 +707,11 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 stdout_old = stdout_new
                 stdout_new = stdout_old.replace('\n\n\n', '\n')
 
-            for s in stdout_new.rstrip().split('\n'):
+            for s in result.stdout.rstrip().split('\n'):
                 self.log(s, pre=True)
 
             if result.exit_code != 0:
-                self.upload_warning('...warning: Could not compile source code')
+                self.upload_warning('...warning: Could not compile source code: exit code {}'.format(result.exit_code))
                 self.upload_done()
             else:
                 self.log('...done')

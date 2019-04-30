@@ -32,7 +32,7 @@ from brickv.plugin_system.plugins.red.red_tab_settings_mobile_internet_provider_
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import TextFile
 from brickv.plugin_system.plugins.red import config_parser
-from brickv.plugin_system.plugins.red.script_manager import report_script_result
+from brickv.plugin_system.plugins.red.script_manager import report_script_result, check_script_result
 from brickv.plugin_system.plugins.red.serviceprovider_data import dict_provider, dict_country
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
@@ -56,6 +56,7 @@ MESSAGE_ERROR_REFERSH = 'Error occurred while refreshing.'
 MESSAGE_ERROR_REFERSH_DECODE = 'Error occurred while decoding refresh data.'
 MESSAGE_ERROR_STATUS_DECODE = 'Error occurred while decoding status data.'
 MESSAGE_ERROR_CONNECT = 'Error occurred while connecting.'
+MESSAGE_ERROR_CONNECT_SCRIPT_EXECUTION = 'Error occured while connecting. Could not execute script.'
 MESSAGE_ERROR_CONNECT_TEST = 'Error occurred while connecting. Make sure the configuration \
 is correct, the device is working properly, signal is strong enough and the modem is getting enough power. Try unplugging and re-plugging the modem.'
 MESSAGE_ERROR_CONNECT_TEST_PIN = 'Error occurred while connecting. Wrong SIM card PIN.'
@@ -258,7 +259,8 @@ class REDTabSettingsMobileInternet(QWidget, Ui_REDTabSettingsMobileInternet):
         if not self.is_tab_on_focus:
             return
 
-        if not result or result.exit_code != 0:
+        okay, _ = check_script_result(result)
+        if not okay:
             self.status_refresh_timer.start(INTERVAL_REFRESH_STATUS)
             return
 
@@ -312,6 +314,12 @@ class REDTabSettingsMobileInternet(QWidget, Ui_REDTabSettingsMobileInternet):
 
     def cb_settings_mobile_internet_connect(self, result):
         self.update_gui(EVENT_GUI_CONNECT_RETURNED)
+
+        if result.error is not None:
+            QMessageBox.critical(get_main_window(),
+                                    MESSAGEBOX_TITLE,
+                                    MESSAGE_ERROR_CONNECT_SCRIPT_EXECUTION + ': ' + result.error)
+            return
 
         if result.exit_code == 2:
             QMessageBox.critical(get_main_window(),

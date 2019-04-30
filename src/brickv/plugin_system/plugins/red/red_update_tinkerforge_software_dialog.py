@@ -33,10 +33,11 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QFont
 
-from brickv.plugin_system.plugins.red.api import *
 from brickv.async_call import async_call
-from brickv.plugin_system.plugins.red.ui_red_update_tinkerforge_software import Ui_REDUpdateTinkerforgeSoftware
 import brickv.infos
+from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.ui_red_update_tinkerforge_software import Ui_REDUpdateTinkerforgeSoftware
+from brickv.plugin_system.plugins.red.script_manager import check_script_result
 
 
 class REDUpdateTinkerforgeSoftwareDialog(QDialog, Ui_REDUpdateTinkerforgeSoftware):
@@ -120,17 +121,10 @@ Please make sure that your internet connection is working.'
         if not self.dialog_session:
             return
 
-        if not result or result.exit_code != 0:
+        okay, message = check_script_result(result, add_stdout_to_message=True)
+        if not okay:
             self.update_info['error'] = True
-            self.update_info['error_messages'] += 'Error while copying bindings:\n'
-
-            if result.stdout:
-                self.update_info['error_messages'] += result.stdout
-
-            if result.stderr:
-                self.update_info['error_messages'] += result.stderr
-
-            self.update_info['error_messages'] += '\n\n'
+            self.update_info['error_messages'] += message + '\n\n'
 
         self.handle_update_tf_software_install_cb()
 
@@ -152,20 +146,10 @@ Please make sure that your internet connection is working.'
 
                 break
 
-        if not result or result.exit_code != 0:
+        okay, message = check_script_result(result, add_stdout_to_message=True)
+        if not okay:
             self.update_info['error'] = True
-            self.update_info['error_messages'] += 'Error while installing ' + display_name + ':\n'
-
-            if (not result.stdout) and (not result.stderr):
-                self.update_info['error_messages'] += 'Unknown error.\n'
-            elif result.stdout and (not result.stderr):
-                self.update_info['error_messages'] += result.stdout
-            elif (not result.stdout) and result.stderr:
-                self.update_info['error_messages'] += result.stderr
-            else:
-                self.update_info['error_messages'] += result.stdout + '\n' + result.stderr
-
-            self.update_info['error_messages'] += '\n\n'
+            self.update_info['error_messages'] += 'Error while installing ' + display_name + ':\n' + message + '\n\n'
 
             self.handle_update_tf_software_install_cb()
         else:
@@ -347,34 +331,31 @@ Please make sure that your internet connection is working.'
             def cb_update_tf_software_mkdtemp(result):
                 if not self.dialog_session:
                     return
+                okay, message = check_script_result(result)
 
-                if result and result.stdout and result.exit_code == 0:
-                    self.update_info['processed'] = 0
-                    self.update_info['error'] = False
-                    self.update_info['error_messages'] = ''
-                    self.update_info['temp_dir'] = result.stdout.strip()
-
-                    if self.update_info['brickv']['update']:
-                        self.do_open_update_file(REDFile(self.session),
-                                                 'brickv',
-                                                 posixpath.join(self.update_info['temp_dir'], 'brickv_linux_latest.deb'))
-
-                    for d in self.update_info['bindings']:
-                        if not d['update']:
-                            continue
-
-                        self.do_open_update_file(REDFile(self.session),
-                                                 d['name'],
-                                                 posixpath.join(self.update_info['temp_dir'], 'tinkerforge_' + d['name'] + '_bindings_latest.zip'))
-
-                else:
-                    if result.stderr:
-                        msg = self.MESSAGE_ERR_UPDATE + ':\n' + result.stderr + '\n\n'
-                    else:
-                        msg = self.MESSAGE_ERR_UPDATE + '.\n\n'
-
+                if not okay:
+                    self.MESSAGE_ERR_UPDATE + ':\n' + message + '\n\n'
                     self.set_current_state(self.STATE_INIT)
                     self.tedit_main.setText(msg)
+                    return
+
+                self.update_info['processed'] = 0
+                self.update_info['error'] = False
+                self.update_info['error_messages'] = ''
+                self.update_info['temp_dir'] = result.stdout.strip()
+
+                if self.update_info['brickv']['update']:
+                    self.do_open_update_file(REDFile(self.session),
+                                                'brickv',
+                                                posixpath.join(self.update_info['temp_dir'], 'brickv_linux_latest.deb'))
+
+                for d in self.update_info['bindings']:
+                    if not d['update']:
+                        continue
+
+                    self.do_open_update_file(REDFile(self.session),
+                                                d['name'],
+                                                posixpath.join(self.update_info['temp_dir'], 'tinkerforge_' + d['name'] + '_bindings_latest.zip'))
 
             self.script_manager.execute_script('update_tf_software_mkdtemp',
                                                cb_update_tf_software_mkdtemp)
@@ -695,301 +676,295 @@ Please make sure that your internet connection is working.'
 
                 self.set_current_state(self.STATE_NO_UPDATES_AVAILABLE)
 
-                if result and result.stdout and result.exit_code == 0:
-                    updates_available_main = False
-                    update_info = {'brickv': {},
-                                   'processed': 0,
-                                   'temp_dir': '',
-                                   'bindings': [],
-                                   'error': False,
-                                   'updates_total': 0,
-                                   'error_messages': ''}
+                okay, message = check_script_result(result)
+                if not okay:
+                    msg = self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + ':\n' + message + '\n\n'
+                    self.set_current_state(self.STATE_INIT)
+                    self.tedit_main.setText(msg)
+                    return
 
-                    installed_versions = json.loads(result.stdout)
+                updates_available_main = False
+                update_info = {'brickv': {},
+                                'processed': 0,
+                                'temp_dir': '',
+                                'bindings': [],
+                                'error': False,
+                                'updates_total': 0,
+                                'error_messages': ''}
 
-                    if not isinstance(installed_versions, dict):
-                        self.set_current_state(self.STATE_INIT)
-                        self.tedit_main.setText(self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + '.')
+                installed_versions = json.loads(result.stdout)
 
-                        return
+                if not isinstance(installed_versions, dict):
+                    self.set_current_state(self.STATE_INIT)
+                    self.tedit_main.setText(self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + '.')
 
-                    for key, value in installed_versions.items():
-                        if key == 'brickv':
-                            update_info['brickv']['to'] = '0'
-                            update_info['brickv']['name'] = '-'
-                            update_info['brickv']['from'] = '0'
-                            update_info['brickv']['data'] = None
-                            update_info['brickv']['update'] = False
-                            update_info['brickv']['display_name'] = '-'
+                    return
 
-                            if isinstance(value, str) and value != '' and value != '-':
-                                update_info['brickv']['from'] = value
-                                update_info['brickv']['name'] = 'brickv'
+                for key, value in installed_versions.items():
+                    if key == 'brickv':
+                        update_info['brickv']['to'] = '0'
+                        update_info['brickv']['name'] = '-'
+                        update_info['brickv']['from'] = '0'
+                        update_info['brickv']['data'] = None
+                        update_info['brickv']['update'] = False
+                        update_info['brickv']['display_name'] = '-'
 
-                                continue
-                            else:
-                                self.set_current_state(self.STATE_INIT)
-                                self.tedit_main.setText(self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + '.')
+                        if isinstance(value, str) and value != '' and value != '-':
+                            update_info['brickv']['from'] = value
+                            update_info['brickv']['name'] = 'brickv'
 
-                                return
-
-                        elif key == 'bindings':
-                            if isinstance(value, dict) and value:
-                                for k, v in value.items():
-                                    d = {}
-
-                                    d['to'] = '0'
-                                    d['name'] = '-'
-                                    d['from'] = '0'
-                                    d['data'] = None
-                                    d['update'] = False
-                                    d['display_name'] = '-'
-
-                                    if isinstance(v, str) and v != '' and v != '-':
-                                        d['from'] = v
-                                        d['name'] = k.strip()
-
-                                        update_info['bindings'].append(d)
-                                    else:
-                                        self.set_current_state(self.STATE_INIT)
-                                        self.tedit_main.setText(self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + '.')
-
-                                        return
-                                continue
-                            else:
-                                self.set_current_state(self.STATE_INIT)
-                                self.tedit_main.setText(self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + '.')
-
-                                return
+                            continue
                         else:
                             self.set_current_state(self.STATE_INIT)
                             self.tedit_main.setText(self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + '.')
 
                             return
 
-                    # Try to get the latest version numbers.
-                    try:
-                        response = urllib.request.urlopen(self.URL_LATEST_VERSIONS, timeout=10)
-                        response_data = response.read().decode('utf-8')
-                    except urllib.error.URLError:
-                        self.set_current_state(self.STATE_INIT)
-                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+                    elif key == 'bindings':
+                        if isinstance(value, dict) and value:
+                            for k, v in value.items():
+                                d = {}
 
-                        return
+                                d['to'] = '0'
+                                d['name'] = '-'
+                                d['from'] = '0'
+                                d['data'] = None
+                                d['update'] = False
+                                d['display_name'] = '-'
 
-                    response_data_lines = response_data.splitlines()
+                                if isinstance(v, str) and v != '' and v != '-':
+                                    d['from'] = v
+                                    d['name'] = k.strip()
 
-                    if len(response_data_lines) < 1:
-                        self.set_current_state(self.STATE_INIT)
-                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+                                    update_info['bindings'].append(d)
+                                else:
+                                    self.set_current_state(self.STATE_INIT)
+                                    self.tedit_main.setText(self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + '.')
 
-                        return
-
-                    for l in response_data_lines:
-                        l_split = l.strip().split(':')
-
-                        if len(l_split) != 3:
+                                    return
+                            continue
+                        else:
                             self.set_current_state(self.STATE_INIT)
-                            self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+                            self.tedit_main.setText(self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + '.')
 
                             return
-                        else:
-                            if l_split[0] == 'tools' and l_split[1] == 'brickv':
-                                update_info['brickv']['to'] = l_split[2]
-                                update_info['brickv']['display_name'] = 'Brick Viewer'
-                                version_to = StrictVersion(l_split[2].strip())
-                                version_from = StrictVersion(update_info['brickv']['from'].strip())
-
-                                if version_to > version_from:
-                                    updates_available_main = True
-                                    update_info['brickv']['update'] = True
-                                else:
-                                    update_info['brickv']['update'] = False
-
-                                continue
-
-                            elif l_split[0] == 'bindings':
-                                if l_split[1] == 'c':
-                                    found, updates_available = self.update_latest_version_info(update_info,
-                                                                                               l_split[1],
-                                                                                               l_split[2],
-                                                                                               'C/C++ Bindings')
-
-                                    if not found:
-                                        self.set_current_state(self.STATE_INIT)
-                                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
-
-                                        return
-
-                                    if updates_available:
-                                        updates_available_main = True
-
-                                elif l_split[1] == 'csharp':
-                                    found, updates_available = self.update_latest_version_info(update_info,
-                                                                                               l_split[1],
-                                                                                               l_split[2],
-                                                                                               'C#/Mono Bindings')
-                                    if not found:
-                                        self.set_current_state(self.STATE_INIT)
-                                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
-
-                                        return
-
-                                    if updates_available:
-                                        updates_available_main = True
-
-                                elif l_split[1] == 'delphi':
-                                    found, updates_available = self.update_latest_version_info(update_info,
-                                                                                               l_split[1],
-                                                                                               l_split[2],
-                                                                                               'Delphi/Lazarus Bindings')
-                                    if not found:
-                                        self.set_current_state(self.STATE_INIT)
-                                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
-
-                                        return
-
-                                    if updates_available:
-                                        updates_available_main = True
-
-                                elif l_split[1] == 'java':
-                                    found, updates_available = self.update_latest_version_info(update_info,
-                                                                                               l_split[1],
-                                                                                               l_split[2],
-                                                                                               'Java Bindings')
-                                    if not found:
-                                        self.set_current_state(self.STATE_INIT)
-                                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
-
-                                        return
-
-                                    if updates_available:
-                                        updates_available_main = True
-
-                                elif l_split[1] == 'javascript':
-                                    found, updates_available = self.update_latest_version_info(update_info,
-                                                                                               l_split[1],
-                                                                                               l_split[2],
-                                                                                               'JavaScript Bindings')
-                                    if not found:
-                                        self.set_current_state(self.STATE_INIT)
-                                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
-
-                                        return
-
-                                    if updates_available:
-                                        updates_available_main = True
-
-                                elif l_split[1] == 'matlab':
-                                    found, updates_available = self.update_latest_version_info(update_info,
-                                                                                               l_split[1],
-                                                                                               l_split[2],
-                                                                                               'Octave Bindings')
-                                    if not found:
-                                        self.set_current_state(self.STATE_INIT)
-                                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
-
-                                        return
-
-                                    if updates_available:
-                                        updates_available_main = True
-
-                                elif l_split[1] == 'perl':
-                                    found, updates_available = self.update_latest_version_info(update_info,
-                                                                                               l_split[1],
-                                                                                               l_split[2],
-                                                                                               'Perl Bindings')
-                                    if not found:
-                                        self.set_current_state(self.STATE_INIT)
-                                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
-
-                                        return
-
-                                    if updates_available:
-                                        updates_available_main = True
-
-                                elif l_split[1] == 'php':
-                                    found, updates_available = self.update_latest_version_info(update_info,
-                                                                                               l_split[1],
-                                                                                               l_split[2],
-                                                                                               'PHP Bindings')
-                                    if not found:
-                                        self.set_current_state(self.STATE_INIT)
-                                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
-
-                                        return
-
-                                    if updates_available:
-                                        updates_available_main = True
-
-                                elif l_split[1] == 'python':
-                                    found, updates_available = self.update_latest_version_info(update_info,
-                                                                                               l_split[1],
-                                                                                               l_split[2],
-                                                                                               'Python Bindings')
-                                    if not found:
-                                        self.set_current_state(self.STATE_INIT)
-                                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
-
-                                        return
-
-                                    if updates_available:
-                                        updates_available_main = True
-
-                                elif l_split[1] == 'ruby':
-                                    found, updates_available = self.update_latest_version_info(update_info,
-                                                                                               l_split[1],
-                                                                                               l_split[2],
-                                                                                               'Ruby Bindings')
-                                    if not found:
-                                        self.set_current_state(self.STATE_INIT)
-                                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
-
-                                        return
-
-                                    if updates_available:
-                                        updates_available_main = True
-
-                                elif l_split[1] == 'shell':
-                                    found, updates_available = self.update_latest_version_info(update_info,
-                                                                                               l_split[1],
-                                                                                               l_split[2],
-                                                                                               'Shell Bindings')
-                                    if not found:
-                                        self.set_current_state(self.STATE_INIT)
-                                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
-
-                                        return
-
-                                    if updates_available:
-                                        updates_available_main = True
-
-                                elif l_split[1] == 'vbnet':
-                                    found, updates_available = self.update_latest_version_info(update_info,
-                                                                                               l_split[1],
-                                                                                               l_split[2],
-                                                                                               'VB.NET Bindings')
-                                    if not found:
-                                        self.set_current_state(self.STATE_INIT)
-                                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
-
-                                        return
-
-                                    if updates_available:
-                                        updates_available_main = True
-                    self.red_plugin.bindings_version_success(result)
-                else:
-                    if result and result.stderr:
-                        msg = self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + ':\n' + result.stderr + '\n\n'
                     else:
-                        msg = self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + '.\n\n'
+                        self.set_current_state(self.STATE_INIT)
+                        self.tedit_main.setText(self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + '.')
 
+                        return
+
+                # Try to get the latest version numbers.
+                try:
+                    response = urllib.request.urlopen(self.URL_LATEST_VERSIONS, timeout=10)
+                    response_data = response.read().decode('utf-8')
+                except urllib.error.URLError:
                     self.set_current_state(self.STATE_INIT)
-                    self.tedit_main.setText(msg)
+                    self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
 
                     return
 
+                response_data_lines = response_data.splitlines()
 
+                if len(response_data_lines) < 1:
+                    self.set_current_state(self.STATE_INIT)
+                    self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+
+                    return
+
+                for l in response_data_lines:
+                    l_split = l.strip().split(':')
+
+                    if len(l_split) != 3:
+                        self.set_current_state(self.STATE_INIT)
+                        self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+
+                        return
+                    else:
+                        if l_split[0] == 'tools' and l_split[1] == 'brickv':
+                            update_info['brickv']['to'] = l_split[2]
+                            update_info['brickv']['display_name'] = 'Brick Viewer'
+                            version_to = StrictVersion(l_split[2].strip())
+                            version_from = StrictVersion(update_info['brickv']['from'].strip())
+
+                            if version_to > version_from:
+                                updates_available_main = True
+                                update_info['brickv']['update'] = True
+                            else:
+                                update_info['brickv']['update'] = False
+
+                            continue
+
+                        elif l_split[0] == 'bindings':
+                            if l_split[1] == 'c':
+                                found, updates_available = self.update_latest_version_info(update_info,
+                                                                                            l_split[1],
+                                                                                            l_split[2],
+                                                                                            'C/C++ Bindings')
+
+                                if not found:
+                                    self.set_current_state(self.STATE_INIT)
+                                    self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+
+                                    return
+
+                                if updates_available:
+                                    updates_available_main = True
+
+                            elif l_split[1] == 'csharp':
+                                found, updates_available = self.update_latest_version_info(update_info,
+                                                                                            l_split[1],
+                                                                                            l_split[2],
+                                                                                            'C#/Mono Bindings')
+                                if not found:
+                                    self.set_current_state(self.STATE_INIT)
+                                    self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+
+                                    return
+
+                                if updates_available:
+                                    updates_available_main = True
+
+                            elif l_split[1] == 'delphi':
+                                found, updates_available = self.update_latest_version_info(update_info,
+                                                                                            l_split[1],
+                                                                                            l_split[2],
+                                                                                            'Delphi/Lazarus Bindings')
+                                if not found:
+                                    self.set_current_state(self.STATE_INIT)
+                                    self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+
+                                    return
+
+                                if updates_available:
+                                    updates_available_main = True
+
+                            elif l_split[1] == 'java':
+                                found, updates_available = self.update_latest_version_info(update_info,
+                                                                                            l_split[1],
+                                                                                            l_split[2],
+                                                                                            'Java Bindings')
+                                if not found:
+                                    self.set_current_state(self.STATE_INIT)
+                                    self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+
+                                    return
+
+                                if updates_available:
+                                    updates_available_main = True
+
+                            elif l_split[1] == 'javascript':
+                                found, updates_available = self.update_latest_version_info(update_info,
+                                                                                            l_split[1],
+                                                                                            l_split[2],
+                                                                                            'JavaScript Bindings')
+                                if not found:
+                                    self.set_current_state(self.STATE_INIT)
+                                    self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+
+                                    return
+
+                                if updates_available:
+                                    updates_available_main = True
+
+                            elif l_split[1] == 'matlab':
+                                found, updates_available = self.update_latest_version_info(update_info,
+                                                                                            l_split[1],
+                                                                                            l_split[2],
+                                                                                            'Octave Bindings')
+                                if not found:
+                                    self.set_current_state(self.STATE_INIT)
+                                    self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+
+                                    return
+
+                                if updates_available:
+                                    updates_available_main = True
+
+                            elif l_split[1] == 'perl':
+                                found, updates_available = self.update_latest_version_info(update_info,
+                                                                                            l_split[1],
+                                                                                            l_split[2],
+                                                                                            'Perl Bindings')
+                                if not found:
+                                    self.set_current_state(self.STATE_INIT)
+                                    self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+
+                                    return
+
+                                if updates_available:
+                                    updates_available_main = True
+
+                            elif l_split[1] == 'php':
+                                found, updates_available = self.update_latest_version_info(update_info,
+                                                                                            l_split[1],
+                                                                                            l_split[2],
+                                                                                            'PHP Bindings')
+                                if not found:
+                                    self.set_current_state(self.STATE_INIT)
+                                    self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+
+                                    return
+
+                                if updates_available:
+                                    updates_available_main = True
+
+                            elif l_split[1] == 'python':
+                                found, updates_available = self.update_latest_version_info(update_info,
+                                                                                            l_split[1],
+                                                                                            l_split[2],
+                                                                                            'Python Bindings')
+                                if not found:
+                                    self.set_current_state(self.STATE_INIT)
+                                    self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+
+                                    return
+
+                                if updates_available:
+                                    updates_available_main = True
+
+                            elif l_split[1] == 'ruby':
+                                found, updates_available = self.update_latest_version_info(update_info,
+                                                                                            l_split[1],
+                                                                                            l_split[2],
+                                                                                            'Ruby Bindings')
+                                if not found:
+                                    self.set_current_state(self.STATE_INIT)
+                                    self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+
+                                    return
+
+                                if updates_available:
+                                    updates_available_main = True
+
+                            elif l_split[1] == 'shell':
+                                found, updates_available = self.update_latest_version_info(update_info,
+                                                                                            l_split[1],
+                                                                                            l_split[2],
+                                                                                            'Shell Bindings')
+                                if not found:
+                                    self.set_current_state(self.STATE_INIT)
+                                    self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+
+                                    return
+
+                                if updates_available:
+                                    updates_available_main = True
+
+                            elif l_split[1] == 'vbnet':
+                                found, updates_available = self.update_latest_version_info(update_info,
+                                                                                            l_split[1],
+                                                                                            l_split[2],
+                                                                                            'VB.NET Bindings')
+                                if not found:
+                                    self.set_current_state(self.STATE_INIT)
+                                    self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
+
+                                    return
+
+                                if updates_available:
+                                    updates_available_main = True
+                self.red_plugin.bindings_version_success(result)
 
                 _check_update_available = self.check_update_available(update_info)
 
