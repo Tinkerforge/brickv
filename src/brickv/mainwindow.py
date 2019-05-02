@@ -74,7 +74,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QMainWindow.__init__(self, parent)
 
         self.setupUi(self)
-        self.setMinimumSize(600, 440)
+
+        # Setting the minimum width of the setup tab ensures, that other tabs can grow
+        # the window if more space is required, but we have a sane default for status
+        # messages. Setting the minimum width of the main window itself would enfoce
+        # it, even if children (i.e. tabs) need more space.
+        self.tab_setup.setMinimumWidth(550)
+
         signal.signal(signal.SIGINT, self.exit_brickv)
         signal.signal(signal.SIGTERM, self.exit_brickv)
 
