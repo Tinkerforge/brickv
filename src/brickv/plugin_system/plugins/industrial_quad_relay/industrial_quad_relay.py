@@ -83,8 +83,6 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         self.update_timer.timeout.connect(self.update)
         self.update_timer.setInterval(50)
 
-        self.reconfigure_everything()
-
     def get_available_for_group_aysnc(self, available_ports):
         self.available_ports = available_ports
 
