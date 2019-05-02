@@ -771,6 +771,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # If the enum_type is CONNECTED, the bricklet was restarted externally.
             # The plugin could now be in an inconsistent state.
             if enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED:
+                info = infos.get_info(uid)
+                if info is not None and info.position != position:
+                    self.show_status("Hot plugging is not supported! Please reset the brick {} and restart brick viewer.".format(info.connected_uid))
                 self.remove_device_tab(uid)
 
             if device_info == None:
