@@ -598,7 +598,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         idx = self.tab_widget.currentIndex()
         self.tab_widget.setTabEnabled(2, self.combo_parent.count() > 0 and self.combo_parent.itemText(0) != 'No Brick found')
         self.tab_widget.setTabEnabled(3, len(self.extension_infos) > 0)
-        self.tab_widget.setCurrentIndex(idx)
+        if self.tab_widget.widget(idx).isEnabled():
+            self.tab_widget.setCurrentIndex(idx)
         self.ignore_tab_changed_event = False
 
     def firmware_changed(self, _index):
