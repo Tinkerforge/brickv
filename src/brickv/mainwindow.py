@@ -96,7 +96,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.set_tree_view_defaults()
 
         self.tab_widget.removeTab(1) # remove dummy tab
-        self.tab_widget.setUsesScrollButtons(True) # force scroll buttons, otherwise they will be missing on macOS
+        self.tab_widget.setUsesScrollButtons(True) # force scroll buttons
 
         self.update_tab_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')),
                                             QIcon(load_pixmap('update-icon-hover.png')),
