@@ -90,9 +90,12 @@ class PyinstallerUtils:
         self.build_path = PyInstaller.config.CONF['workpath']
         self.dist_path = PyInstaller.config.CONF['distpath']
 
-        self.linux_build_data_path = os.path.normpath(os.path.join(self.root_path, '..', 'build_data', 'linux'))
-        self.mac_build_data_path = os.path.normpath(os.path.join(self.root_path, '..', 'build_data', 'macos'))
-        self.windows_build_data_path = os.path.normpath(os.path.join(self.root_path, '..', 'build_data', 'windows'))
+        build_data_base_path = ''
+        for arg in sys.argv:
+            if arg.startswith('--build-data-path='):
+                build_data_base_path = arg.replace('--build-data-path=', '')
+
+        self.build_data_path = os.path.normpath(os.path.join(build_data_base_path))
 
         self.windows = sys.platform == 'win32'
         self.macos = sys.platform == 'darwin'
@@ -105,12 +108,13 @@ class PyinstallerUtils:
         else:
             self.pathex = [self.root_path]
 
+
         if self.windows:
-            self.icon = os.path.join(self.windows_build_data_path, self.UNDERSCORE_NAME+'-icon.ico')
+            self.icon = os.path.join(self.build_data_path, self.UNDERSCORE_NAME+'-icon.ico')
         elif self.linux:
             self.icon = self.UNDERSCORE_NAME+'-icon.png'
         else:
-            self.icon = os.path.join(self.mac_build_data_path, self.UNDERSCORE_NAME+'-icon.icns')
+            self.icon = os.path.join(self.build_data_path, self.UNDERSCORE_NAME+'-icon.icns')
 
         self.datas = []
 
@@ -133,7 +137,7 @@ class PyinstallerUtils:
         return result
 
     def win_build_installer(self):
-        nsis_template_path = os.path.join(self.windows_build_data_path, 'nsis', self.UNDERSCORE_NAME + '_installer.nsi.template')
+        nsis_template_path = os.path.join(self.build_data_path, 'nsis', self.UNDERSCORE_NAME + '_installer.nsi.template')
         nsis_path = os.path.join(self.dist_path, 'nsis', self.UNDERSCORE_NAME + '.nsi')
 
         specialize_template(nsis_template_path, nsis_path,
@@ -196,7 +200,7 @@ class PyinstallerUtils:
             print("skipping win_sign for installer")
 
     def post_generate_macos(self):
-        build_data = os.path.join(self.mac_build_data_path, '*')
+        build_data = os.path.join(self.build_data_path, '*')
         app_name = self.CAMEL_CASE_NAME + '.app'
         resources_path = os.path.join(self.dist_path, app_name, 'Contents', 'Resources')
         system(['bash', '-c', 'cp -R {} {}'.format(build_data.replace(" ", "\\ "), resources_path.replace(" ", "\\ "))])

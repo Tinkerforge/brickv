@@ -43,43 +43,15 @@ import shutil
 import subprocess
 from brickv.config import BRICKV_VERSION
 
+from build_pkg_utils import *
 
-def system(command):
-    if subprocess.call(command) != 0:
-        sys.exit(1)
-
-
-def specialize_template(template_filename, destination_filename, replacements):
-    lines = []
-    replaced = set()
-
-    with open(template_filename, 'r') as f:
-        for line in f.readlines():
-            for key in replacements:
-                replaced_line = line.replace(key, replacements[key])
-
-                if replaced_line != line:
-                    replaced.add(key)
-
-                line = replaced_line
-
-            lines.append(line)
-
-    if replaced != set(replacements.keys()):
-        raise Exception('Not all replacements for {0} have been applied'.format(template_filename))
-
-    os.makedirs(os.path.dirname(destination_filename), exist_ok=True)
-
-    with open(destination_filename, 'w+') as f:
-        f.writelines(lines)
-
-
-def prepare_manifest(root_path, internal=False):
-    bindings_path = os.path.join(root_path, 'brickv', 'bindings')
-    plugins_path = os.path.join(root_path, 'brickv', 'plugin_system', 'plugins')
+def prepare_manifest(utils):
+    print('preparing manifest')
+    bindings_path = os.path.join(utils.source_path, 'bindings')
+    plugins_path = os.path.join(utils.source_path, 'plugin_system', 'plugins')
     excluded_patterns = []
 
-    if not internal:
+    if not utils.internal:
         for plugin_name in sorted(os.listdir(plugins_path)):
             if '__pycache__' in plugin_name:
                 continue
@@ -96,195 +68,75 @@ def prepare_manifest(root_path, internal=False):
                 with open(brick_binding, 'r') as f:
                     if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
                         print('excluding unreleased plugin and binding: ' + plugin_name)
-                        excluded_patterns.append('prune brickv/plugin_system/plugins/{0}'.format(plugin_name))
-                        excluded_patterns.append('recursive-exclude brickv/bindings brick_{0}.py'.format(plugin_name))
+                        excluded_patterns.append('prune {source_folder}/plugin_system/plugins/{plugin_name}'.format(source_folder=utils.source_path, plugin_name=plugin_name))
+                        excluded_patterns.append('recursive-exclude {source_folder}/bindings brick_{plugin_name}.py'.format(source_folder=utils.source_path, plugin_name=plugin_name))
             elif os.path.isfile(bricklet_binding):
                 with open(bricklet_binding, 'r') as f:
                     if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
                         print('excluding unreleased plugin and binding: ' + plugin_name)
-                        excluded_patterns.append('prune brickv/plugin_system/plugins/{0}'.format(plugin_name))
-                        excluded_patterns.append('recursive-exclude brickv/bindings bricklet_{0}.py'.format(plugin_name))
+                        excluded_patterns.append('prune {source_folder}/plugin_system/plugins/{plugin_name}'.format(source_folder=utils.source_path, plugin_name=plugin_name))
+                        excluded_patterns.append('recursive-exclude {source_folder}/bindings bricklet_{plugin_name}.py'.format(source_folder=utils.source_path, plugin_name=plugin_name))
             else:
                 raise Exception('No bindings found corresponding to plugin {0}'.format(plugin_name))
 
-    specialize_template(os.path.join(root_path, 'MANIFEST.in.template'), os.path.join(root_path, 'MANIFEST.in'),
+    specialize_template(os.path.join(utils.root_path, 'MANIFEST.in.template'), os.path.join(utils.root_path, 'MANIFEST.in'),
                         {'<<EXCLUDES>>': '\n'.join(excluded_patterns)})
 
-def run_sdist(platform, root_path, internal=False):
-    print('removing old build directories')
-    dist_path = os.path.join(root_path, 'dist')
-    egg_info_path = os.path.join(root_path, 'brickv.egg-info')
-
-    if os.path.exists(dist_path):
-        shutil.rmtree(dist_path)
-
-    if os.path.exists(egg_info_path):
-        shutil.rmtree(egg_info_path)
-
-    print('calling build_src.py')
-    if platform == 'windows':
-        system(['python', 'build_src.py'])
-    else:
-        system(['python3', 'build_src.py'])
-
-    print('preparing manifest')
-    prepare_manifest(root_path, internal)
-
-    print('calling setup.py sdist')
-    if platform == 'windows':
-        system(['python', 'setup.py', 'sdist', '--formats=zip'])
-    else:
-        system(['python3', 'setup.py', 'sdist'])
-
-    if os.path.exists(egg_info_path):
-        shutil.rmtree(egg_info_path)
-
-def write_and_get_commit_id(brickv_src_path, internal):
-    if internal:
-        with open(os.path.join(brickv_src_path, 'internal'), 'w') as f:
-            try:
-                commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8')[:7]
-            except Exception:
-                commit_id = 'unknown'
-
+def write_commit_id_and_patch_plugins(utils):
+    if utils.internal:
+        commit_id = get_commit_id()
+        with open(os.path.join(utils.unpacked_source_path, 'internal'), 'w') as f:
             f.write(commit_id)
     else:
         commit_id = None
-    return commit_id
-
-def patch_plugin_list(root_path, brickv_src_path, internal):
-    if not internal:
         print('patching plugins list for release')
-        shutil.copy(os.path.join(root_path, 'released_plugins.py'), os.path.join(brickv_src_path, 'plugin_system', 'plugins', '__init__.py'))
+        shutil.copy(os.path.join(utils.root_path, 'released_plugins.py'), os.path.join(utils.unpacked_source_path, 'plugin_system', 'plugins', '__init__.py'))
 
-def build_pyinstaller_pkg(platform, internal=False):
-    if platform not in ['macos', 'windows']:
-        print('Building a {} package with pyinstaller is not supported.'.format(platform))
-        sys.exit(1)
+    if commit_id is not None:
+        utils.version = BRICKV_VERSION + '~'+commit_id
 
-    print('building brickv {} package'.format(platform))
-    root_path = os.getcwd()
-
-    run_sdist(platform, root_path, internal)
-
-    print('copying build data')
-    build_data_path = os.path.join(root_path, 'build_data', platform)
-    dist_path = os.path.join(root_path, 'dist')
-    platform_path = os.path.join(dist_path, platform)
-    shutil.copytree(build_data_path, os.path.join(platform_path, 'build_data', platform))
-
-    if platform == 'macos':
-        print('unpacking sdist tar file')
-        system(['tar', '-x', '-C', dist_path, '-f', '{0}/brickv-{1}.tar.gz'.format(dist_path, BRICKV_VERSION), 'brickv-{}/brickv'.format(BRICKV_VERSION)])
-    elif platform == 'windows':
-        print('unpacking sdist zip file')
-        import zipfile
-        with zipfile.ZipFile(os.path.join(dist_path, 'brickv-'+BRICKV_VERSION+'.zip')) as f:
-            f.extractall(os.path.join(dist_path, 'brickv'))
-
-    print('copying unpacked brickv source')
-    if platform == 'macos':
-        unpacked_path = os.path.join(dist_path, 'brickv-{0}'.format(BRICKV_VERSION), 'brickv')
-    elif platform == 'windows':
-        unpacked_path = os.path.join(dist_path, 'brickv', 'brickv-{0}'.format(BRICKV_VERSION), 'brickv')
-
-    brickv_src_path = os.path.join(platform_path, 'brickv')
-    shutil.copytree(unpacked_path, brickv_src_path)
-
-    commit_id = write_and_get_commit_id(brickv_src_path, internal)
-    patch_plugin_list(root_path, brickv_src_path, internal)
-
-    print('copying pyinstaller spec-file')
-    shutil.copy(os.path.join(root_path, 'brickv', 'main_folder.spec'), os.path.join(brickv_src_path, 'main_folder.spec'))
-
-    print('running pyinstaller')
-    os.chdir(brickv_src_path)
-    system(['pyinstaller', '--distpath', '../dist', '--workpath', '../build', 'main_folder.spec', '--'] + sys.argv)
-    os.chdir(root_path)
-
-def build_debian_pkg(linux_path, executable_name, version, commit_id, internal):
-    print('creating DEBIAN/control from template')
-    installed_size = int(subprocess.check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split(b'\t')[0])
-    control_path = os.path.join(linux_path, 'DEBIAN', 'control')
-    specialize_template(control_path, control_path,
-                        {'<<VERSION>>': '{0}{1}'.format(version, '~' + commit_id if commit_id != None else ''),
-                         '<<INSTALLED_SIZE>>': str(installed_size)})
-
-    print('changing directory modes to 0755')
-    system(['find', 'dist/linux', '-type', 'd', '-exec', 'chmod', '0755', '{}', ';'])
-
-    print('changing file modes')
-    system(['find', 'dist/linux', '-type', 'f', '-perm', '664', '-exec', 'chmod', '0644', '{}', ';'])
-    system(['find', 'dist/linux', '-type', 'f', '-perm', '775', '-exec', 'chmod', '0755', '{}', ';'])
-
-    print('changing owner to root')
-    stat = os.stat('dist/linux')
-    user, group = stat.st_uid, stat.st_gid
-    system(['sudo', 'chown', '-R', 'root:root', 'dist/linux'])
-
-    print('building Debian package')
-    deb_name = '{executable}-{version}{commit_id}_all.deb'.format(executable=executable_name, version=version, commit_id='~' + commit_id if commit_id != None else '')
-    system(['dpkg', '-b', 'dist/linux', deb_name])
-
-    print('changing owner back to original user')
-    system(['sudo', 'chown', '-R', '{}:{}'.format(user, group), 'dist/linux'])
-
-    if os.path.exists('/usr/bin/lintian'):
-        print('checking Debian package')
-        system(['lintian', '--pedantic', deb_name])
-    else:
-        print('skipping lintian check')
-
-def build_linux_pkg(internal=False):
+def build_linux_pkg():
     print('building brickv Debian package')
-    root_path = os.getcwd()
+    utils = BuildPkgUtils('brickv', 'linux', BRICKV_VERSION, '--internal' in sys.argv)
 
-    run_sdist('Debian', root_path, internal)
+    utils.run_sdist(pre_sdist=lambda: prepare_manifest(utils), prepare_script=os.path.join(utils.root_path, 'build_src.py'))
+    utils.copy_build_data()
+    utils.unpack_sdist()
 
-    print('copying build data')
-    build_data_path = os.path.join(root_path, 'build_data', 'linux', 'brickv')
-    dist_path = os.path.join(root_path, 'dist')
-    linux_path = os.path.join(dist_path, 'linux')
-    shutil.copytree(build_data_path, linux_path)
+    write_commit_id_and_patch_plugins(utils)
 
-    print('unpacking sdist tar file')
-    system(['tar', '-x', '-C', dist_path, '-f', '{0}/brickv-{1}.tar.gz'.format(dist_path, BRICKV_VERSION), 'brickv-{}/brickv'.format(BRICKV_VERSION)])
+    utils.build_debian_pkg()
 
-    print('copying unpacked brickv source')
-    unpacked_path = os.path.join(dist_path, 'brickv-{0}'.format(BRICKV_VERSION), 'brickv')
-    linux_share_path = os.path.join(linux_path, 'usr', 'share', 'brickv')
-    shutil.copytree(unpacked_path, linux_share_path)
+def build_pyinstaller_pkg():
+    platform_dict = {'win32': 'windows', 'darwin': 'macos'}
 
-    commit_id = write_and_get_commit_id(linux_share_path, internal)
-    patch_plugin_list(root_path, linux_share_path, internal)
+    utils = BuildPkgUtils('brickv', platform_dict[sys.platform], BRICKV_VERSION, '--internal' in sys.argv)
+    utils.exit_if_not_venv()
 
-    build_debian_pkg(linux_path, 'brickv', BRICKV_VERSION, commit_id, internal)
+    utils.build_pyinstaller_pkg(prepare_script=os.path.join(utils.root_path, 'build_src.py'),
+                            pre_sdist=lambda: prepare_manifest(utils),
+                            pre_pyinstaller=lambda: write_commit_id_and_patch_plugins(utils))
 
+    utils.copy_build_artefact()
 
 BRICK_FLASH_VERSION = '1.0.1'
 
 def build_linux_flash_pkg():
     print('building brick-flash Debian package')
-    root_path = os.getcwd()
+    utils = BuildPkgUtils('brick-flash', 'linux', BRICK_FLASH_VERSION, False)
 
     print('removing old build directories')
-    dist_path = os.path.join(root_path, 'dist')
 
-    if os.path.exists(dist_path):
-        shutil.rmtree(dist_path)
+    if os.path.exists(utils.dist_path):
+        shutil.rmtree(utils.dist_path)
 
-    os.makedirs(dist_path)
+    os.makedirs(utils.dist_path)
 
-    print('copying build data')
-    build_data_path = os.path.join(root_path, 'build_data', 'linux', 'brick-flash')
-    linux_path = os.path.join(dist_path, 'linux')
-    shutil.copytree(build_data_path, linux_path)
+    utils.copy_build_data()
 
     print('creating brick-flash from template')
-    with open(os.path.join(root_path, 'brickv', 'brick-flash.template'), 'r') as f:
-        template = f.read()
-
-    with open(os.path.join(root_path, 'brickv', 'samba.py'), 'r') as f:
+    os.makedirs(os.path.join(utils.build_data_dest_path, 'usr', 'bin'), exist_ok=True)
+    with open(os.path.join(utils.root_path, 'brickv', 'samba.py'), 'r') as f:
         samba_lines = f.readlines()
 
     while len(samba_lines) > 0 and not samba_lines[0].startswith('#### skip here for brick-flash ####'):
@@ -293,40 +145,36 @@ def build_linux_flash_pkg():
     if len(samba_lines) > 0 and samba_lines[0].startswith('#### skip here for brick-flash ####'):
         del samba_lines[0]
 
-    template = template.replace('<<VERSION>>', BRICK_FLASH_VERSION).replace('#### insert samba module here ####', ''.join(samba_lines))
+    specialize_template(os.path.join(utils.root_path, 'brickv', 'brick-flash.template'),
+                        os.path.join(utils.build_data_dest_path, 'usr', 'bin', 'brick-flash'),
+                        {
+                            '<<VERSION>>': BRICK_FLASH_VERSION,
+                            '#### insert samba module here ####': ''.join(samba_lines)
+                        })
 
-    os.makedirs(os.path.join(linux_path, 'usr', 'bin'))
-
-    with open(os.path.join(linux_path, 'usr', 'bin', 'brick-flash'), 'w') as f:
-        f.write(template)
     print('changing binary mode to 0755')
-    system(['chmod', '0755', os.path.join(linux_path, 'usr', 'bin', 'brick-flash')])
+    system(['chmod', '0755', os.path.join(utils.build_data_dest_path, 'usr', 'bin', 'brick-flash')])
 
-    build_debian_pkg(linux_path, 'brick-flash', BRICK_FLASH_VERSION, None, False)
+    utils.build_debian_pkg()
 
 
 BRICK_LOGGER_VERSION = '2.0.9'
 
 def build_logger_zip():
     print('building brick-logger ZIP file')
-    root_path = os.getcwd()
+    utils = BuildPkgUtils('brick-logger', 'linux', BRICK_LOGGER_VERSION, False)
 
     print('removing old build directories')
-    dist_path = os.path.join(root_path, 'dist')
+    if os.path.exists(utils.dist_path):
+        shutil.rmtree(utils.dist_path)
 
-    if os.path.exists(dist_path):
-        shutil.rmtree(dist_path)
-
-    os.makedirs(dist_path)
+    os.makedirs(utils.dist_path)
 
     print('creating brick-logger.py from template')
-    with open(os.path.join(root_path, 'brickv', 'data_logger', 'brick-logger.py.template'), 'r') as f:
-        template = f.read()
-
-    template = template.replace('<<VERSION>>', BRICK_LOGGER_VERSION)
+    replacements = {'<<VERSION>>': BRICK_LOGGER_VERSION}
 
     for module in ['configuration', 'data_logger', 'event_logger', 'loggable_devices', 'job', 'main', 'utils']:
-        with open(os.path.join(root_path, 'brickv', 'data_logger', module + '.py'), 'r') as f:
+        with open(os.path.join(utils.root_path, 'brickv', 'data_logger', module + '.py'), 'r') as f:
             lines = f.readlines()
 
         while len(lines) > 0 and not lines[0].startswith('#### skip here for brick-logger ####'):
@@ -334,11 +182,11 @@ def build_logger_zip():
 
         if len(lines) > 0 and lines[0].startswith('#### skip here for brick-logger ####'):
             del lines[0]
+        replacements['#### insert {0} module here ####'.format(module)] = ''.join(lines)
 
-        template = template.replace('#### insert {0} module here ####'.format(module), ''.join(lines))
-
-    with open(os.path.join(dist_path, 'brick-logger.py'), 'w') as f:
-        f.write(template)
+    specialize_template(os.path.join(utils.root_path, 'brickv', 'data_logger', 'brick-logger.py.template'),
+                        os.path.join(utils.dist_path, 'brick-logger.py'),
+                        replacements)
 
     print('changing brick-logger.py mode to 0755')
     system(['chmod', '0755', 'dist/brick-logger.py'])
@@ -349,7 +197,7 @@ def build_logger_zip():
     if os.path.exists(zip_name):
         os.remove(zip_name)
 
-    os.chdir(dist_path)
+    os.chdir(utils.dist_path)
     system(['zip', '-q', '../{}'.format(zip_name), 'brick-logger.py'])
 
 def main():
@@ -366,22 +214,15 @@ def main():
         return 0
 
     if sys.platform.startswith('linux'):
-        build_linux_pkg(internal='--internal' in sys.argv)
+        build_linux_pkg()
         return 0
 
     if sys.platform == 'win32' or sys.platform == 'darwin':
-        in_virtualenv = hasattr(sys, 'real_prefix')
-        in_pyvenv = hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix
-
-        if not in_virtualenv and not in_pyvenv:
-            print('error: Please build Windows or macOS binaries in the correct virtualenv.')
-            return 1
-        platform_dict = {'win32': 'windows', 'darwin': 'macos'}
-        build_pyinstaller_pkg(platform_dict[sys.platform], internal='--internal' in sys.argv)
+        build_pyinstaller_pkg()
         return 0
 
     print('error: unsupported platform: ' + sys.platform)
-    return 0
+    return 1
 
 # run 'python build_pkg.py' to build the windows/linux/macos package
 if __name__ == '__main__':
