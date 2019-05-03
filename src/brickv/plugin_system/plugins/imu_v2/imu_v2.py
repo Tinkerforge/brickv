@@ -34,7 +34,7 @@ from brickv.bindings.brick_imu_v2 import BrickIMUV2
 from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.callback_emulator import CallbackEmulator
-from brickv.utils import get_modeless_dialog_flags
+from brickv.utils import get_modeless_dialog_flags, get_main_window
 from brickv import config
 
 class Calibration(QDialog, Ui_Calibration):
@@ -279,6 +279,8 @@ class IMUV2(PluginBase, Ui_IMUV2):
             self.save_orientation.hide()
             self.button_detach_3d_view.hide()
             self.orientation_label.hide()
+            get_main_window().show_status("Only OpenGLES is supported. Disabling the IMU 2.0 3D rendering.", message_id='imu_v2_no_gl_support')
+            QTimer.singleShot(10000, lambda: get_main_window().hide_status('imu_v2_no_gl_support'))
 
 
     def restart_gl(self):
