@@ -46,10 +46,13 @@ if sys.platform.startswith('linux'):
     if libGL_path != None:
         libGL = ctypes.CDLL(libGL_path, mode=ctypes.RTLD_GLOBAL)
 
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QOpenGLWidget
 from PyQt5.QtGui import QOpenGLVersionProfile, QSurfaceFormat
 
 class IMUV2GLWidget(QOpenGLWidget):
+    qtcb_gl_initialized = pyqtSignal(bool)
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -157,6 +160,12 @@ class IMUV2GLWidget(QOpenGLWidget):
         if not self.initialized:
             self.gl.initializeOpenGLFunctions()
             self.initialized = True
+
+        if self.context().isOpenGLES():
+            self.setDisabled(True)
+            self.hide()
+            self.qtcb_gl_initialized.emit(False)
+            return
 
         gl = self.gl
         gl.glClearColor(0.85, 0.85, 0.85, 1.0)
@@ -373,6 +382,7 @@ class IMUV2GLWidget(QOpenGLWidget):
         gl.glPopMatrix()
 
         gl.glEndList()
+        self.qtcb_gl_initialized.emit(True)
 
     def perspective(self, fov_y, aspect, z_near, z_far):
         f_height = math.tan(fov_y / 2 * (math.pi / 180)) * z_near
@@ -380,6 +390,9 @@ class IMUV2GLWidget(QOpenGLWidget):
         self.gl.glFrustum(-f_width, f_width, -f_height, f_height, z_near, z_far)
 
     def resizeGL(self, width, height):
+        if not self.isEnabled():
+            return
+
         if height == 0:
             height = 1
 
@@ -393,6 +406,9 @@ class IMUV2GLWidget(QOpenGLWidget):
 
     # main drawing function.
     def paintGL(self):
+        if not self.isEnabled():
+            return
+
         gl = self.gl
 
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)

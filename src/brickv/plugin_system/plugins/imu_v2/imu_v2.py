@@ -161,6 +161,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
                                              self.increase_error_count)
 
         self.imu_gl = IMUV2GLWidget(self)
+        self.imu_gl.qtcb_gl_initialized.connect(self.on_gl_initialized)
         self.imu_gl.setFixedSize(200, 200)
 
         self.imu_gl_wrapper = None
@@ -240,16 +241,11 @@ class IMUV2(PluginBase, Ui_IMUV2):
 
         self.data_grid.setColumnMinimumWidth(2, 75)
 
-        self.gl_layout = QVBoxLayout()
-        self.gl_layout.addWidget(self.imu_gl)
+        self.save_orientation.hide()
+        self.button_detach_3d_view.hide()
 
-        self.v_layout = QVBoxLayout()
-        self.layout_bottom.addLayout(self.gl_layout)
-
-        self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
         self.checkbox_leds.stateChanged.connect(self.led_clicked)
         self.button_calibration.clicked.connect(self.calibration_clicked)
-        self.button_detach_3d_view.clicked.connect(self.detach_3d_view_clicked)
         self.calibration_color = [Qt.red, QColor(0xFF, 0xA0, 0x00), Qt.yellow, Qt.darkGreen]
 
         self.calibration = None
@@ -265,11 +261,32 @@ class IMUV2(PluginBase, Ui_IMUV2):
         reset.triggered.connect(self.imu.reset)
         self.set_actions([(0, None, [reset])])
 
+    def on_gl_initialized(self, gl_supported):
+        if gl_supported:
+            self.gl_layout = QVBoxLayout()
+            self.gl_layout.addWidget(self.imu_gl)
+            self.layout_bottom.addLayout(self.gl_layout)
+            self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
+            self.button_detach_3d_view.clicked.connect(self.detach_3d_view_clicked)
+            self.save_orientation.show()
+            self.button_detach_3d_view.show()
+
+            self.parent().set_callback_post_untab(lambda x: self.restart_gl())
+            self.parent().set_callback_post_tab(lambda x: self.restart_gl())
+
+            self.gl_layout.activate()
+        else:
+            self.save_orientation.hide()
+            self.button_detach_3d_view.hide()
+            self.orientation_label.hide()
+
+
     def restart_gl(self):
         state = self.imu_gl.get_state()
         self.imu_gl.hide()
 
         self.imu_gl = IMUV2GLWidget()
+
         self.imu_gl.setFixedSize(200, 200)
         self.gl_layout.addWidget(self.imu_gl)
         self.imu_gl.show()
@@ -281,13 +298,9 @@ class IMUV2(PluginBase, Ui_IMUV2):
         if not self.alive:
             return
 
-        self.parent().set_callback_post_untab(lambda x: self.restart_gl())
-        self.parent().set_callback_post_tab(lambda x: self.restart_gl())
-
         async_call(self.imu.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
         async_call(self.imu.are_leds_on, None, self.checkbox_leds.setChecked, self.increase_error_count)
 
-        self.gl_layout.activate()
         self.cbe_all_data.set_period(50)
 
         for w in self.data_plot_widget:
