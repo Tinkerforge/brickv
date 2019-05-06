@@ -49,7 +49,7 @@ excludes = ['wx', 'gtk+', '_gtkagg', 'gtk', 'gdk', 'gtk2', 'gtk3', 'cairo', 'way
             'PyQt5.QtDesigner',
             'PyQt5.QtHelp',
             'PyQt5.QtLocation',
-            'PyQt5.QtMacExtras',
+            #'PyQt5.QtMacExtras',
             'PyQt5.QtMultimedia',
             'PyQt5.QtMultimediaWidgets',
             'PyQt5.QtNetwork',

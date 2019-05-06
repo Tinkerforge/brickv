@@ -128,7 +128,14 @@ class BrickViewer(QApplication):
 def error_report_main():
     error_message = sys.stdin.read()
     error_message = "<pre>{}</pre>".format(html.escape(error_message).replace("\n", "<br>"))
+
     app = QApplication(sys.argv)
+
+    if sys.platform == 'darwin':
+        # workaround macOS QTBUG-61562
+        from brickv.mac_pasteboard_mime_fixed import MacPasteboardMimeFixed
+        mac_pasteboard_mime_fixed = MacPasteboardMimeFixed()
+
     window = QMainWindow()
     window.setWindowTitle('Error - Brick Viewer ' + config.BRICKV_VERSION)
     window.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
@@ -205,6 +212,11 @@ def main():
         QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 
         brick_viewer = BrickViewer(sys.argv)
+
+        if sys.platform == 'darwin':
+            # workaround macOS QTBUG-61562
+            from brickv.mac_pasteboard_mime_fixed import MacPasteboardMimeFixed
+            mac_pasteboard_mime_fixed = MacPasteboardMimeFixed()
 
         splash = QSplashScreen(load_pixmap('splash.png'), Qt.WindowStaysOnTopHint)
         splash.show()
