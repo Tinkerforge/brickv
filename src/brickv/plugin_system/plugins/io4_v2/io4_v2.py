@@ -21,13 +21,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QSpinBox, QComboBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.io4_v2.ui_io4_v2 import Ui_IO4V2
-from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_io4_v2 import BrickletIO4V2
 from brickv.async_call import async_call
+from brickv.callback_emulator import CallbackEmulator
+from brickv.monoflop import Monoflop
 
 class IO4V2(COMCUPluginBase, Ui_IO4V2):
     def __init__(self, *args):
@@ -37,54 +38,17 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
 
         self.io = self.device
 
-        self.on_focus = False
+        self.has_monoflop_abort_by_set_configuration = self.firmware_version >= (2, 0, 3)
 
-        self.ch_current_config = {
-                                    0: None,
-                                    1: None,
-                                    2: None,
-                                    3: None
-                                 }
+        self.io.set_response_expected(self.io.FUNCTION_SET_CONFIGURATION, True)
 
-        self.async_data_store = {
-                                    'all_ch_status_update': {
-                                        'ch_values': None,
-                                        'ch_config': None,
-                                        'monoflop': {
-                                            0: { 'running': False, 'start_time_remaining': 500 },
-                                            1: { 'running': False, 'start_time_remaining': 500 },
-                                            2: { 'running': False, 'start_time_remaining': 500 },
-                                            3: { 'running': False, 'start_time_remaining': 500 }
-                                        }
-                                    },
-                                    'update_current_channel_info': {
-                                        'value': None,
-                                        'config': None,
-                                    },
-                                    'iv_cb': {
-                                        'direction': {
-                                            0: None,
-                                            1: None,
-                                            2: None,
-                                            3: None
-                                        },
-                                        'values': None
-                                    }
-                                }
+        self.cbe_value = CallbackEmulator(self.io.get_value,
+                                          None,
+                                          self.cb_value,
+                                          self.increase_error_count)
 
-        self.gui_grp_cfg_ch_in = [self.lbl_cfg_ch_in_v,
-                                  self.cbox_cfg_ch_in_v]
-
-        self.gui_grp_cfg_ch_out = [self.lbl_cfg_ch_out_v,
-                                   self.cbox_cfg_ch_out_v,
-                                   self.lbl_monoflop,
-                                   self.cbox_monoflop_v,
-                                   self.sbox_monoflop_t,
-                                   self.btn_monoflop_go]
-
-        self.gui_grp_monoflop = [self.cbox_monoflop_v,
-                                 self.sbox_monoflop_t,
-                                 self.btn_monoflop_go]
+        self.config_direction = [None] * 4
+        self.config_value = [None] * 4
 
         self.lbl_st_ch_v = [self.lbl_st_ch0_v,
                             self.lbl_st_ch1_v,
@@ -106,27 +70,78 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
                                      self.lbl_st_ch2_monoflop_t,
                                      self.lbl_st_ch3_monoflop_t]
 
-        self.ch_status_update_timer = QTimer(self)
-        self.ch_status_update_timer.timeout.connect(self.ch_status_update_timeout)
+        self.cbox_cfg_ch_dir.setItemData(0, self.io.DIRECTION_IN)
+        self.cbox_cfg_ch_dir.setItemData(1, self.io.DIRECTION_OUT)
 
-        self.iv_cb_timer = QTimer(self)
-        self.iv_cb_timer.timeout.connect(self.iv_cb_timeout)
+        self.cbox_cfg_ch_v.setItemData(0, True)
+        self.cbox_cfg_ch_v.setItemData(1, False)
 
         self.btn_monoflop_go.clicked.connect(self.btn_monoflop_go_clicked)
-        self.btn_cfg_ch_apply.clicked.connect(self.btn_cfg_ch_apply_clicked)
+        self.btn_cfg_ch_save.clicked.connect(self.btn_cfg_ch_save_clicked)
         self.cbox_cfg_ch.currentIndexChanged.connect(self.cbox_cfg_ch_changed)
         self.cbox_cfg_ch_dir.currentIndexChanged.connect(self.cbox_cfg_ch_dir_changed)
 
+        self.monoflop_values = []
+        self.monoflop_times = []
+
+        for i in range(4):
+            monoflop_value = QComboBox()
+            monoflop_value.addItem('High', 1)
+            monoflop_value.addItem('Low', 0)
+
+            self.monoflop_values.append(monoflop_value)
+            self.monoflop_value_stack.addWidget(monoflop_value)
+
+            monoflop_time = QSpinBox()
+            monoflop_time.setRange(1, (1 << 31) - 1)
+            monoflop_time.setValue(1000)
+
+            self.monoflop_times.append(monoflop_time)
+            self.monoflop_time_stack.addWidget(monoflop_time)
+
+        self.monoflop = Monoflop(self.io,
+                                 [0, 1, 2, 3],
+                                 self.monoflop_values,
+                                 self.cb_value_change_by_monoflop,
+                                 self.monoflop_times,
+                                 self.lbl_st_ch_monoflop_t,
+                                 self,
+                                 handle_get_monoflop_invalid_parameter_as_abort=True)
+
+    def get_configuration_async(self, channel, direction, value):
+        self.config_direction[channel] = direction
+        self.config_value[channel] = value
+
+        if direction == self.io.DIRECTION_IN:
+            self.lbl_st_ch_d[channel].setText('Input')
+
+            if value:
+                self.lbl_st_ch_cfg[channel].setText('Pull-Up')
+            else:
+                self.lbl_st_ch_cfg[channel].setText('Default')
+        else:
+            self.lbl_st_ch_d[channel].setText('Output')
+            self.lbl_st_ch_cfg[channel].setText('-')
+
+        if None not in self.config_direction: # got all channel data
+            self.cbox_cfg_ch_changed(self.cbox_cfg_ch.currentIndex())
+
     def start(self):
-        self.on_focus = True
-        self.cbox_cfg_ch_changed(self.cbox_cfg_ch.currentIndex())
-        self.ch_status_update_timeout()
-        self.iv_cb_timeout()
+        self.config_direction = [None] * 4
+        self.config_value = [None] * 4
+
+        for channel in range(4):
+            async_call(self.io.get_configuration, channel, self.get_configuration_async, self.increase_error_count,
+                       pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
+
+        self.cbe_value.set_period(50)
+
+        self.monoflop.start()
 
     def stop(self):
-        self.on_focus = False
-        self.ch_status_update_timer.stop()
-        self.iv_cb_timer.stop()
+        self.cbe_value.set_period(0)
+
+        self.monoflop.stop()
 
     def destroy(self):
         pass
@@ -135,271 +150,85 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIO4V2.DEVICE_IDENTIFIER
 
-    def generator_ch_status_update_timeout(self):
-        def async_get_value(value):
-            self.async_data_store['all_ch_status_update']['ch_values'] = value
-            next(self.gen_ch_status_update_timeout)
-
-        def async_get_configuration(config):
-            self.async_data_store['all_ch_status_update']['ch_config'] = config
-            next(self.gen_ch_status_update_timeout)
-
-        def async_get_monoflop(channel, monoflop):
-            if self.async_data_store['all_ch_status_update']['monoflop'][channel]['running']:
-                if monoflop.time_remaining > 0:
-                    if self.cbox_cfg_ch.currentIndex() == channel:
-                        for e in self.gui_grp_monoflop:
-                            e.setEnabled(False)
-
-                        self.sbox_monoflop_t.setValue(monoflop.time_remaining)
-
-                    self.lbl_st_ch_monoflop_t[channel].setText(str(monoflop.time_remaining))
-                else:
-                    if self.cbox_cfg_ch.currentIndex() == channel:
-                        for e in self.gui_grp_monoflop:
-                            e.setEnabled(True)
-
-                        self.sbox_monoflop_t.setValue(self.async_data_store['all_ch_status_update']['monoflop'][channel]['start_time_remaining'])
-
-                    self.async_data_store['all_ch_status_update']['monoflop'][i]['running'] = False
-                    self.lbl_st_ch_monoflop_t[channel].setText('0')
-
-            next(self.gen_ch_status_update_timeout)
-
-        async_call(self.io.get_value, None, async_get_value, self.increase_error_count)
-
-        yield
-
-        for i in range(0, 4):
-            async_call(self.io.get_configuration,
-                       i,
-                       async_get_configuration,
-                       self.increase_error_count)
-
-            yield
-
-            if self.async_data_store['all_ch_status_update']['ch_config'].direction == self.io.DIRECTION_IN:
-                self.lbl_st_ch_d[i].setText('Input')
-
-                if self.async_data_store['all_ch_status_update']['ch_config'].value:
-                    self.lbl_st_ch_cfg[i].setText('Pull-Up')
-                else:
-                    self.lbl_st_ch_cfg[i].setText('Default')
-
-                if self.async_data_store['all_ch_status_update']['ch_values'][i]:
-                    self.lbl_st_ch_v[i].setText('High')
-                else:
-                    self.lbl_st_ch_v[i].setText('Low')
-            else:
-                self.lbl_st_ch_cfg[i].setText('-')
-                self.lbl_st_ch_d[i].setText('Output')
-
-                if self.async_data_store['all_ch_status_update']['ch_values'][i]:
-                    self.lbl_st_ch_v[i].setText('High')
-                else:
-                    self.lbl_st_ch_v[i].setText('Low')
-
-                if self.async_data_store['all_ch_status_update']['monoflop'][i]['running']:
-                    async_call(self.io.get_monoflop, i, lambda x: async_get_monoflop(i, x), self.increase_error_count)
-
-                    yield
-
-        self.ch_status_update_timer.start(50)
-
-    def ch_status_update_timeout(self):
-        self.ch_status_update_timer.stop()
-
-        if not self.on_focus:
-            return
-
-        self.gen_ch_status_update_timeout = self.generator_ch_status_update_timeout()
-        next(self.gen_ch_status_update_timeout)
-
-    def generator_iv_cb_timeout(self):
-        def async_get_value(value):
-            self.async_data_store['iv_cb']['values'] = value
-            next(self.gen_iv_cb_timeout)
-
-        def async_get_configuration(channel, config):
-            self.async_data_store['iv_cb']['direction'][channel] = config.direction
-            next(self.gen_iv_cb_timeout)
-
-        async_call(self.io.get_value, None, async_get_value, self.increase_error_count)
-
-        yield
-
+    def cb_value(self, value):
         for i in range(4):
-            async_call(self.io.get_configuration,
-                       i,
-                       lambda config: async_get_configuration(i, config),
-                       self.increase_error_count)
-
-            yield
-
-            if self.async_data_store['iv_cb']['direction'][i] == self.io.DIRECTION_OUT:
-                continue
-
-            if self.async_data_store['iv_cb']['values'][i]:
+            if value[i]:
                 self.lbl_st_ch_v[i].setText('High')
             else:
                 self.lbl_st_ch_v[i].setText('Low')
 
-        self.iv_cb_timer.start(100)
-
-    def iv_cb_timeout(self):
-        self.iv_cb_timer.stop()
-
-        if not self.on_focus:
-            return
-
-        self.gen_iv_cb_timeout = self.generator_iv_cb_timeout()
-        next(self.gen_iv_cb_timeout)
+    def cb_value_change_by_monoflop(self, channel, value):
+        if value:
+            self.lbl_st_ch_v[channel].setText('High')
+        else:
+            self.lbl_st_ch_v[channel].setText('Low')
 
     def btn_monoflop_go_clicked(self):
         channel = self.cbox_cfg_ch.currentIndex()
-        monoflop_time = self.sbox_monoflop_t.value()
-        direction = self.cbox_cfg_ch_dir.currentIndex()
-        monoflop_value = self.cbox_monoflop_v.currentIndex()
 
-        if direction != 1:
+        if channel < 0:
             return
 
-        try:
-            if monoflop_value == 0:
-                value = False
-            else:
-                value = True
+        self.monoflop.trigger(channel)
 
-            self.io.set_monoflop(channel, value, monoflop_time)
+    def set_configuration_async(self, channel, direction, value):
+        if not self.has_monoflop_abort_by_set_configuration and direction == self.io.DIRECTION_OUT and self.monoflop.active(channel):
+            # the set-configuration function in firmware version < 2.0.3 doesn't
+            # abort monoflops, call the set-selected-value that does abort an active monoflop
+            async_call(self.io.set_selected_value, (channel, value), None, self.increase_error_count)
 
-            self.async_data_store['all_ch_status_update']['monoflop'][channel]['running'] = True
-            self.async_data_store['all_ch_status_update']['monoflop'][channel]['start_time_remaining'] = monoflop_time
-            self.lbl_st_ch_monoflop_t[channel].setText(str(monoflop_time))
-
-            for e in self.gui_grp_monoflop:
-                e.setEnabled(False)
-        except ip_connection.Error:
-            self.async_data_store['all_ch_status_update']['monoflop'][channel]['running'] = False
-            self.async_data_store['all_ch_status_update']['monoflop'][channel]['start_time_remaining'] = 0
-            self.lbl_st_ch_monoflop_t[channel].setText('0')
-
-            for e in self.gui_grp_monoflop:
-                e.setEnabled(True)
-
-    def btn_cfg_ch_apply_clicked(self):
-        self.btn_cfg_ch_apply.setEnabled(False)
-
+    def btn_cfg_ch_save_clicked(self):
         channel = self.cbox_cfg_ch.currentIndex()
+        direction = self.cbox_cfg_ch_dir.currentData()
+        value = self.cbox_cfg_ch_v.currentData()
 
-        if self.cbox_cfg_ch_dir.currentIndex() == 0:
-            try:
-                if self.cbox_cfg_ch_in_v.currentIndex() == 0:
-                    value = False
-                else:
-                    value = True
+        if channel < 0 or direction == None or value == None:
+            return
 
-                self.io.set_configuration(channel, self.io.DIRECTION_IN, value)
+        async_call(self.io.set_configuration, (channel, direction, value), self.set_configuration_async, self.increase_error_count,
+                   pass_arguments_to_result_callback=True, expand_arguments_tuple_for_callback=True)
+        async_call(self.io.get_configuration, channel, self.get_configuration_async, self.increase_error_count,
+                   pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
 
-                self.lbl_st_ch_monoflop_t[channel].setText('0')
-                self.async_data_store['all_ch_status_update']['monoflop'][channel]['running'] = False
-            except ip_connection.Error:
-                return
-        else:
-            try:
-                if self.cbox_cfg_ch_out_v.currentIndex() == 0:
-                    value = False
-                else:
-                    value = True
+    def cbox_cfg_ch_changed(self, channel):
+        if channel < 0:
+            return
 
-                self.io.set_configuration(channel, self.io.DIRECTION_OUT, value)
-            except ip_connection.Error:
-                return
+        direction = self.config_direction[channel]
+        direction_index = self.cbox_cfg_ch_dir.findData(direction)
 
-        self.cbox_cfg_ch.setCurrentIndex(channel)
-        self.cbox_cfg_ch_changed(channel)
-        self.btn_cfg_ch_apply.setEnabled(True)
+        self.cbox_cfg_ch_dir.setCurrentIndex(direction_index)
+        self.cbox_cfg_ch_dir_changed(direction_index)
 
-    def cbox_cfg_ch_changed(self, index):
-        self.update_current_channel_info(index)
+        value = self.config_value[channel]
+        value_index = self.cbox_cfg_ch_v.findData(value)
+
+        self.cbox_cfg_ch_v.setCurrentIndex(value_index)
+
+        self.monoflop_time_stack.setCurrentIndex(channel)
+        self.monoflop_value_stack.setCurrentIndex(channel)
+
+        self.btn_monoflop_go.setEnabled(direction == self.io.DIRECTION_OUT)
 
     def cbox_cfg_ch_dir_changed(self, index):
-        if index == 0:
-            for e in self.gui_grp_cfg_ch_in:
-                e.show()
+        channel = self.cbox_cfg_ch.currentIndex()
+        direction = self.cbox_cfg_ch_dir.currentData()
 
-            for e in self.gui_grp_cfg_ch_out:
-                e.hide()
-        elif index == 1:
-            for e in self.gui_grp_cfg_ch_in:
-                e.hide()
+        if channel < 0 or direction == None:
+            return
 
-            for e in self.gui_grp_cfg_ch_out:
-                e.show()
+        self.cbox_cfg_ch_v.clear()
 
-    def update_ch_config_gui(self, index):
-        if self.ch_current_config[index]['direction'] == self.io.DIRECTION_IN:
-            if self.async_data_store['update_current_channel_info']['config'].value:
-                self.cbox_cfg_ch_in_v.setCurrentIndex(1)
-            else:
-                self.cbox_cfg_ch_in_v.setCurrentIndex(0)
-
-            for e in self.gui_grp_monoflop:
-                e.setEnabled(False)
-
-            self.sbox_monoflop_t.setValue(self.async_data_store['all_ch_status_update']['monoflop'][index]['start_time_remaining'])
+        if direction == self.io.DIRECTION_IN:
+            self.lbl_cfg_ch_v.setText('Configuration:')
+            self.cbox_cfg_ch_v.addItem('Pull-Up', True)
+            self.cbox_cfg_ch_v.addItem('Default', False)
         else:
-            if self.ch_current_config[index]['value']:
-                self.cbox_cfg_ch_out_v.setCurrentIndex(1)
-            else:
-                self.cbox_cfg_ch_out_v.setCurrentIndex(0)
+            self.lbl_cfg_ch_v.setText('Value:')
+            self.cbox_cfg_ch_v.addItem('High', True)
+            self.cbox_cfg_ch_v.addItem('Low', False)
 
-            if self.async_data_store['all_ch_status_update']['monoflop'][index]['running']:
-                for e in self.gui_grp_monoflop:
-                    e.setEnabled(False)
-            else:
-                for e in self.gui_grp_monoflop:
-                    e.setEnabled(True)
+        value = self.config_value[channel]
+        value_index = self.cbox_cfg_ch_v.findData(value)
 
-                self.sbox_monoflop_t.setValue(self.async_data_store['all_ch_status_update']['monoflop'][index]['start_time_remaining'])
-
-    def generator_update_current_channel_info(self, ch_index):
-        ch_config_d = {
-                        'direction': None,
-                        'value': None
-                      }
-
-        def async_get_configuration(config):
-            self.async_data_store['update_current_channel_info']['config'] = config
-            next(self.gen_update_current_channel_info)
-
-        def async_get_value(value):
-            self.async_data_store['update_current_channel_info']['value'] = value
-            next(self.gen_update_current_channel_info)
-
-        async_call(self.io.get_configuration, ch_index, async_get_configuration, self.increase_error_count)
-
-        yield
-
-        async_call(self.io.get_value, None, lambda value: async_get_value(value[ch_index]), self.increase_error_count)
-
-        yield
-
-        if self.async_data_store['update_current_channel_info']['config'].direction == self.io.DIRECTION_IN:
-            ch_config_d['direction'] = self.io.DIRECTION_IN
-        else:
-            ch_config_d['direction'] = self.io.DIRECTION_OUT
-
-        ch_config_d['value'] = self.async_data_store['update_current_channel_info']['value']
-        self.ch_current_config[ch_index] = ch_config_d
-        self.update_ch_config_gui(ch_index)
-
-        if self.ch_current_config[ch_index]['direction'] == self.io.DIRECTION_IN:
-            self.cbox_cfg_ch_dir.setCurrentIndex(0)
-            self.cbox_cfg_ch_dir_changed(0)
-        else:
-            self.cbox_cfg_ch_dir.setCurrentIndex(1)
-            self.cbox_cfg_ch_dir_changed(1)
-
-    def update_current_channel_info(self, ch_index):
-        self.gen_update_current_channel_info = self.generator_update_current_channel_info(ch_index)
-        next(self.gen_update_current_channel_info)
+        self.cbox_cfg_ch_v.setCurrentIndex(value_index)

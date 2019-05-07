@@ -22,17 +22,19 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import Qt, pyqtSignal, QTimer
+import functools
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QSpinBox, QComboBox
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.industrial_quad_relay.ui_industrial_quad_relay import Ui_IndustrialQuadRelay
 from brickv.bindings.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
 from brickv.async_call import async_call
 from brickv.load_pixmap import load_masked_pixmap
+from brickv.monoflop import Monoflop
 
 class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
-    qtcb_monoflop_done = pyqtSignal(int, int)
-
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletIndustrialQuadRelay, *args)
 
@@ -47,6 +49,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         self.relay_button_icons = [self.b0_icon, self.b1_icon, self.b2_icon, self.b3_icon, self.b4_icon, self.b5_icon, self.b6_icon, self.b7_icon, self.b8_icon, self.b9_icon, self.b10_icon, self.b11_icon, self.b12_icon, self.b13_icon, self.b14_icon, self.b15_icon]
         self.relay_button_labels = [self.b0_label, self.b1_label, self.b2_label, self.b3_label, self.b4_label, self.b5_label, self.b6_label, self.b7_label, self.b8_label, self.b9_label, self.b10_label, self.b11_label, self.b12_label, self.b13_label, self.b14_label, self.b15_label]
         self.groups = [self.group0, self.group1, self.group2, self.group3]
+
         for icon in self.relay_button_icons:
             icon.setPixmap(self.open_pixmap)
             icon.show()
@@ -55,42 +58,55 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
                       [self.line1, self.line1a, self.line1b, self.line1c],
                       [self.line2, self.line2a, self.line2b, self.line2c],
                       [self.line3, self.line3a, self.line3b, self.line3c]]
+
         for lines in self.lines:
             for line in lines:
                 line.setVisible(False)
 
         self.available_ports = 0
-        async_call(self.iqr.get_available_for_group, None, self.get_available_for_group_aysnc, self.increase_error_count)
 
-        def get_button_lambda(button):
-            return lambda: self.relay_button_clicked(button)
+        for i in range(16):
+            self.relay_buttons[i].clicked.connect(functools.partial(self.relay_button_clicked, i))
 
-        for i in range(len(self.relay_buttons)):
-            self.relay_buttons[i].clicked.connect(get_button_lambda(i))
+        self.monoflop_values = []
+        self.monoflop_times = []
 
-        self.qtcb_monoflop_done.connect(self.cb_monoflop_done)
-        self.iqr.register_callback(self.iqr.CALLBACK_MONOFLOP_DONE,
-                                   self.qtcb_monoflop_done.emit)
+        for i in range(16):
+            monoflop_value = QComboBox()
+            monoflop_value.addItem('On', 1)
+            monoflop_value.addItem('Off', 0)
+
+            self.monoflop_values.append(monoflop_value)
+            self.monoflop_value_stack.addWidget(monoflop_value)
+
+            monoflop_time = QSpinBox()
+            monoflop_time.setRange(1, (1 << 31) - 1)
+            monoflop_time.setValue(1000)
+
+            self.monoflop_times.append(monoflop_time)
+            self.monoflop_time_stack.addWidget(monoflop_time)
+
+        self.monoflop = Monoflop(self.iqr,
+                                 list(range(16)),
+                                 self.monoflop_values,
+                                 self.cb_value_change_by_monoflop,
+                                 self.monoflop_times,
+                                 None,
+                                 self,
+                                 setter_uses_bitmasks=True,
+                                 callback_uses_bitmasks=True,
+                                 handle_get_monoflop_invalid_parameter_as_abort=True)
 
         self.set_group.clicked.connect(self.set_group_clicked)
 
         self.monoflop_pin.currentIndexChanged.connect(self.monoflop_pin_changed)
         self.monoflop_go.clicked.connect(self.monoflop_go_clicked)
-        self.monoflop_time_before = [1000] * 16
-        self.monoflop_pending = [False] * 16
-
-        self.update_timer = QTimer(self)
-        self.update_timer.timeout.connect(self.update)
-        self.update_timer.setInterval(50)
-
-    def get_available_for_group_aysnc(self, available_ports):
-        self.available_ports = available_ports
 
     def start(self):
         self.reconfigure_everything()
 
     def stop(self):
-        self.update_timer.stop()
+        self.monoflop.stop()
 
     def destroy(self):
         pass
@@ -99,23 +115,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialQuadRelay.DEVICE_IDENTIFIER
 
-    def reconfigure_everything_async3(self, pin, _value, time, time_remaining):
-        index = self.monoflop_pin.findText('Pin {0}'.format(pin))
-
-        if index >= 0:
-            if time_remaining > 0:
-                self.monoflop_pending[pin] = True
-                self.monoflop_time_before[pin] = time
-
-                self.monoflop_pin.setCurrentIndex(index)
-                self.monoflop_time.setValue(time_remaining)
-                self.monoflop_time.setEnabled(False)
-
-                self.update_timer.start()
-            else:
-                self.monoflop_pending[pin] = False
-
-    def reconfigure_everything_async2(self, value_mask):
+    def get_value_async(self, value_mask):
         for pin in range(16):
             if value_mask & (1 << pin):
                 self.relay_buttons[pin].setText('Switch Off')
@@ -124,13 +124,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
                 self.relay_buttons[pin].setText('Switch On')
                 self.relay_button_icons[pin].setPixmap(self.open_pixmap)
 
-            index = self.monoflop_pin.findText('Pin {0}'.format(pin))
-
-            if index >= 0:
-                async_call(self.iqr.get_monoflop, pin, self.reconfigure_everything_async3, self.increase_error_count,
-                           pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
-
-    def reconfigure_everything_async1(self, group):
+    def get_group_async(self, group):
         for i in range(4):
             if group[i] == 'n':
                 self.groups[i].setCurrentIndex(0)
@@ -150,25 +144,30 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
             self.hide_buttons(1)
             self.hide_buttons(2)
             self.hide_buttons(3)
-            self.monoflop_pin.addItem('Pin 0')
-            self.monoflop_pin.addItem('Pin 1')
-            self.monoflop_pin.addItem('Pin 2')
-            self.monoflop_pin.addItem('Pin 3')
+
+            for pin in range(4):
+                self.monoflop_pin.addItem('Pin {0}'.format(pin), pin)
         else:
             for i in range(4):
                 if group[i] == 'n':
                     self.hide_buttons(i)
                 else:
                     for j in range(4):
-                        self.monoflop_pin.addItem('Pin ' + str(i*4+j))
+                        pin = i * 4 + j
+
+                        self.monoflop_pin.addItem('Pin {0}'.format(pin), pin)
 
                     self.show_buttons(i)
 
         self.monoflop_pin.setCurrentIndex(0)
 
-        async_call(self.iqr.get_value, None, self.reconfigure_everything_async2, self.increase_error_count)
+        async_call(self.iqr.get_value, None, self.get_value_async, self.increase_error_count)
 
-    def reconfigure_everything(self):
+        self.monoflop.start()
+
+    def get_available_for_group_aysnc(self, available_ports):
+        self.available_ports = available_ports
+
         for i in range(4):
             self.groups[i].clear()
             self.groups[i].addItem('Off')
@@ -178,10 +177,13 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
                     item = 'Port ' + chr(ord('A') + j)
                     self.groups[i].addItem(item)
 
-        async_call(self.iqr.get_group, None, self.reconfigure_everything_async1, self.increase_error_count)
+        async_call(self.iqr.get_group, None, self.get_group_async, self.increase_error_count)
+
+    def reconfigure_everything(self):
+        async_call(self.iqr.get_available_for_group, None, self.get_available_for_group_aysnc, self.increase_error_count)
 
     def show_buttons(self, num):
-        for i in range(num*4, (num+1)*4):
+        for i in range(num * 4, (num + 1) * 4):
             self.relay_buttons[i].setVisible(True)
             self.relay_button_icons[i].setVisible(True)
             self.relay_button_labels[i].setVisible(True)
@@ -190,25 +192,13 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
             line.setVisible(True)
 
     def hide_buttons(self, num):
-        for i in range(num*4, (num+1)*4):
+        for i in range(num * 4, (num + 1) * 4):
             self.relay_buttons[i].setVisible(False)
             self.relay_button_icons[i].setVisible(False)
             self.relay_button_labels[i].setVisible(False)
 
         for line in self.lines[num]:
             line.setVisible(False)
-
-    def get_current_value(self):
-        value = 0
-        i = 0
-
-        for b in self.relay_buttons:
-            if 'Off' in b.text().replace('&', ''):
-                value |= (1 << i)
-
-            i += 1
-
-        return value
 
     def set_group_clicked(self):
         group = ['n', 'n', 'n', 'n']
@@ -225,82 +215,38 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
             elif 'Port D' in text:
                 group[i] = 'd'
 
+        if group != ['n', 'n', 'n', 'n']:
+            abort_group = group
+        else:
+            abort_group = ['x', 'n', 'n', 'n']
+
+        for i, g in enumerate(abort_group):
+            if g == 'n':
+                for j in range(4):
+                    pin = i * 4 + j
+
+                    # changing grouping doesn't abort active monoflops. manually
+                    # abort tracking for monoflops that are out of scope now
+                    self.monoflop.abort_tracking(pin)
+
         self.iqr.set_group(group)
         self.reconfigure_everything()
 
     def relay_button_clicked(self, button):
-        value = self.get_current_value()
+        selection = 1 << button
+        value = 0
 
         if 'On' in self.relay_buttons[button].text().replace('&', ''):
-            value |= (1 << button)
+            value |= 1 << button
             self.relay_buttons[button].setText('Switch Off')
             self.relay_button_icons[button].setPixmap(self.close_pixmap)
         else:
-            value &= ~(1 << button)
             self.relay_buttons[button].setText('Switch On')
             self.relay_button_icons[button].setPixmap(self.open_pixmap)
 
-        self.iqr.set_value(value)
+        async_call(self.iqr.set_selected_values, (selection, value), None, self.increase_error_count)
 
-        self.update_timer.stop()
-
-        for pin in range(16):
-            self.monoflop_pending[pin] = False
-
-        pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
-        self.monoflop_time.setValue(self.monoflop_time_before[pin])
-        self.monoflop_time.setEnabled(True)
-
-    def cb_monoflop_done(self, pin_mask, value_mask):
-        for pin in range(16):
-            if (1 << pin) & pin_mask:
-                self.monoflop_pending[pin] = False
-
-                if (1 << pin) & value_mask:
-                    self.relay_buttons[pin].setText('Switch Off')
-                    self.relay_button_icons[pin].setPixmap(self.close_pixmap)
-                else:
-                    self.relay_buttons[pin].setText('Switch On')
-                    self.relay_button_icons[pin].setPixmap(self.open_pixmap)
-
-        if sum(self.monoflop_pending) == 0:
-            self.update_timer.stop()
-
-        current_pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
-
-        if (1 << current_pin) & pin_mask:
-            self.monoflop_time.setValue(self.monoflop_time_before[current_pin])
-            self.monoflop_time.setEnabled(True)
-
-    def monoflop_pin_changed(self):
-        try:
-            pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
-        except ValueError:
-            return
-
-        if self.monoflop_pending[pin]:
-            async_call(self.iqr.get_monoflop, pin, self.get_monoflop_async, self.increase_error_count,
-                       pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
-            self.monoflop_time.setEnabled(False)
-        else:
-            self.monoflop_time.setValue(self.monoflop_time_before[pin])
-            self.monoflop_time.setEnabled(True)
-
-    def monoflop_go_clicked(self):
-        pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
-
-        if self.monoflop_pending[pin]:
-            time = self.monoflop_time_before[pin]
-        else:
-            time = self.monoflop_time.value()
-
-        value = self.monoflop_state.currentIndex() == 0
-
-        self.monoflop_time.setEnabled(False)
-        self.monoflop_time_before[pin] = time
-        self.monoflop_pending[pin] = True
-        self.iqr.set_monoflop(1 << pin, value << pin, time)
-
+    def cb_value_change_by_monoflop(self, pin, value):
         if value:
             self.relay_buttons[pin].setText('Switch Off')
             self.relay_button_icons[pin].setPixmap(self.close_pixmap)
@@ -308,17 +254,19 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
             self.relay_buttons[pin].setText('Switch On')
             self.relay_button_icons[pin].setPixmap(self.open_pixmap)
 
-        self.update_timer.start()
+    def monoflop_pin_changed(self):
+        pin = self.monoflop_pin.currentData()
 
-    def get_monoflop_async(self, pin, _value, _time, time_remaining):
-        if self.monoflop_pending[pin]:
-            self.monoflop_time.setValue(time_remaining)
-
-    def update(self):
-        try:
-            pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
-        except ValueError:
+        if pin == None:
             return
 
-        async_call(self.iqr.get_monoflop, pin, self.get_monoflop_async, self.increase_error_count,
-                   pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
+        self.monoflop_time_stack.setCurrentIndex(pin)
+        self.monoflop_value_stack.setCurrentIndex(pin)
+
+    def monoflop_go_clicked(self):
+        pin = self.monoflop_pin.currentData()
+
+        if pin == None:
+            return
+
+        self.monoflop.trigger(pin)

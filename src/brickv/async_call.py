@@ -32,8 +32,6 @@ from queue import Queue
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QThread, QEvent, QTimer
 
-from brickv.bindings.ip_connection import Error
-
 ASYNC_EVENT = 12345
 
 async_call_queue = Queue()
@@ -41,23 +39,23 @@ async_event_queue = Queue()
 async_session_lock = Lock()
 async_session_id = 1
 
-AsyncCall = namedtuple('AsyncCall', 'function arguments result_callback error_callback pass_arguments_to_result_callback pass_exception_to_error_callback expand_arguments_tuple_for_callback expand_result_tuple_for_callback debug_exception retry_on_exception session_id')
+AsyncCall = namedtuple('AsyncCall', 'function arguments result_callback error_callback pass_arguments_to_result_callback pass_arguments_to_error_callback pass_exception_to_error_callback expand_arguments_tuple_for_callback expand_result_tuple_for_callback debug_exception retry_on_exception session_id')
 
 def async_stop_thread():
     async_call_queue.put(None)
 
 def async_call(function, arguments, result_callback, error_callback,
-               pass_arguments_to_result_callback=False, pass_exception_to_error_callback=False,
+               pass_arguments_to_result_callback=False, pass_arguments_to_error_callback=False, pass_exception_to_error_callback=False,
                expand_arguments_tuple_for_callback=False, expand_result_tuple_for_callback=False,
                debug_exception=False, retry_on_exception=False, delay=None):
-    if pass_arguments_to_result_callback:
+    if pass_arguments_to_result_callback or pass_arguments_to_error_callback:
         assert arguments != None
 
     with async_session_lock:
         session_id = async_session_id
 
     ac = AsyncCall(function, arguments, result_callback, error_callback,
-                   pass_arguments_to_result_callback, pass_exception_to_error_callback,
+                   pass_arguments_to_result_callback, pass_arguments_to_error_callback, pass_exception_to_error_callback,
                    expand_arguments_tuple_for_callback, expand_result_tuple_for_callback,
                    debug_exception, retry_on_exception, session_id)
 
@@ -77,10 +75,20 @@ def async_event_handler():
             ac, success, result = event
 
             if not success:
+                arguments = tuple()
+
+                if ac.pass_arguments_to_error_callback:
+                    if ac.expand_arguments_tuple_for_callback:
+                        assert isinstance(ac.arguments, tuple)
+
+                        arguments += ac.arguments
+                    elif ac.arguments != None:
+                        arguments += (ac.arguments,)
+
                 if ac.pass_exception_to_error_callback:
-                    ac.error_callback(result)
-                else:
-                    ac.error_callback()
+                    arguments += (result,)
+
+                ac.error_callback(*arguments)
             else:
                 arguments = tuple()
 

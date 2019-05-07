@@ -21,17 +21,18 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import pyqtSignal, QTimer
+import functools
+
+from PyQt5.QtWidgets import QSpinBox, QComboBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.industrial_quad_relay_v2.ui_industrial_quad_relay_v2 import Ui_IndustrialQuadRelayV2
 from brickv.bindings.bricklet_industrial_quad_relay_v2 import BrickletIndustrialQuadRelayV2
 from brickv.async_call import async_call
 from brickv.load_pixmap import load_masked_pixmap
+from brickv.monoflop import Monoflop
 
 class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
-    qtcb_monoflop_done = pyqtSignal(int, int)
-
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletIndustrialQuadRelayV2, *args)
 
@@ -50,24 +51,39 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
             icon.setPixmap(self.open_pixmap)
             icon.show()
 
-        def get_button_lambda(button):
-            return lambda: self.relay_button_clicked(button)
-
         for i in range(len(self.relay_buttons)):
-            self.relay_buttons[i].clicked.connect(get_button_lambda(i))
+            self.relay_buttons[i].clicked.connect(functools.partial(self.relay_button_clicked, i))
 
-        self.qtcb_monoflop_done.connect(self.cb_monoflop_done)
-        self.iqr.register_callback(self.iqr.CALLBACK_MONOFLOP_DONE,
-                                   self.qtcb_monoflop_done.emit)
+        self.monoflop_values = []
+        self.monoflop_times = []
 
-        self.monoflop_pin.currentIndexChanged.connect(self.monoflop_pin_changed)
+        for i in range(4):
+            self.monoflop_channel.setItemData(i, i)
+
+            monoflop_value = QComboBox()
+            monoflop_value.addItem('On', True)
+            monoflop_value.addItem('Off', False)
+
+            self.monoflop_values.append(monoflop_value)
+            self.monoflop_value_stack.addWidget(monoflop_value)
+
+            monoflop_time = QSpinBox()
+            monoflop_time.setRange(1, (1 << 31) - 1)
+            monoflop_time.setValue(1000)
+
+            self.monoflop_times.append(monoflop_time)
+            self.monoflop_time_stack.addWidget(monoflop_time)
+
+        self.monoflop = Monoflop(self.iqr,
+                                 [0, 1, 2, 3],
+                                 self.monoflop_values,
+                                 self.cb_value_change_by_monoflop,
+                                 self.monoflop_times,
+                                 None,
+                                 self)
+
+        self.monoflop_channel.currentIndexChanged.connect(self.monoflop_channel_changed)
         self.monoflop_go.clicked.connect(self.monoflop_go_clicked)
-        self.monoflop_time_before = [1000] * 4
-        self.monoflop_pending = [False] * 4
-
-        self.update_timer = QTimer(self)
-        self.update_timer.timeout.connect(self.update)
-        self.update_timer.setInterval(50)
 
         self.cbox_cs0_cfg.currentIndexChanged.connect(self.cbox_cs0_cfg_changed)
         self.cbox_cs1_cfg.currentIndexChanged.connect(self.cbox_cs1_cfg_changed)
@@ -112,8 +128,10 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
             async_call(self.iqr.get_channel_led_config, channel, self.get_channel_led_config_async, self.increase_error_count,
                        pass_arguments_to_result_callback=True)
 
+        self.monoflop.start()
+
     def stop(self):
-        self.update_timer.stop()
+        self.monoflop.stop()
 
     def destroy(self):
         pass
@@ -123,91 +141,38 @@ class IndustrialQuadRelayV2(COMCUPluginBase, Ui_IndustrialQuadRelayV2):
         return device_identifier == BrickletIndustrialQuadRelayV2.DEVICE_IDENTIFIER
 
     def relay_button_clicked(self, button):
-        if 'On' in self.relay_buttons[button].text().replace('&', ''):
-            value = True
+        value = 'On' in self.relay_buttons[button].text().replace('&', '')
+
+        if value:
             self.relay_buttons[button].setText('Switch Off')
             self.relay_button_icons[button].setPixmap(self.close_pixmap)
         else:
-            value = False
             self.relay_buttons[button].setText('Switch On')
             self.relay_button_icons[button].setPixmap(self.open_pixmap)
 
         self.iqr.set_selected_value(button, value)
 
-        self.update_timer.stop()
-
-        for pin in range(4):
-            self.monoflop_pending[pin] = False
-
-        pin = self.monoflop_pin.currentIndex()
-        self.monoflop_time.setValue(self.monoflop_time_before[pin])
-        self.monoflop_time.setEnabled(True)
-
-    def cb_monoflop_done(self, pin, value):
-        self.monoflop_pending[pin] = False
-
+    def cb_value_change_by_monoflop(self, channel, value):
         if value:
-            self.relay_buttons[pin].setText('Switch Off')
-            self.relay_button_icons[pin].setPixmap(self.close_pixmap)
+            self.relay_buttons[channel].setText('Switch Off')
+            self.relay_button_icons[channel].setPixmap(self.close_pixmap)
         else:
-            self.relay_buttons[pin].setText('Switch On')
-            self.relay_button_icons[pin].setPixmap(self.open_pixmap)
+            self.relay_buttons[channel].setText('Switch On')
+            self.relay_button_icons[channel].setPixmap(self.open_pixmap)
 
-        if sum(self.monoflop_pending) == 0:
-            self.update_timer.stop()
+    def monoflop_channel_changed(self):
+        channel = self.monoflop_channel.currentData()
 
-        current_pin = self.monoflop_pin.currentIndex()
-        if current_pin == pin:
-            self.monoflop_time.setValue(self.monoflop_time_before[current_pin])
-            self.monoflop_time.setEnabled(True)
-
-    def monoflop_pin_changed(self):
-        try:
-            pin = self.monoflop_pin.currentIndex()
-        except ValueError:
+        if channel == None:
             return
 
-        if self.monoflop_pending[pin]:
-            async_call(self.iqr.get_monoflop, pin, self.get_monoflop_async, self.increase_error_count,
-                       pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
-            self.monoflop_time.setEnabled(False)
-        else:
-            self.monoflop_time.setValue(self.monoflop_time_before[pin])
-            self.monoflop_time.setEnabled(True)
+        self.monoflop_time_stack.setCurrentIndex(channel)
+        self.monoflop_value_stack.setCurrentIndex(channel)
 
     def monoflop_go_clicked(self):
-        pin = self.monoflop_pin.currentIndex()
+        channel = self.monoflop_channel.currentData()
 
-        if self.monoflop_pending[pin]:
-            time = self.monoflop_time_before[pin]
-        else:
-            time = self.monoflop_time.value()
-
-        value = self.monoflop_state.currentIndex() == 0
-
-        self.monoflop_time.setEnabled(False)
-        self.monoflop_time_before[pin] = time
-        self.monoflop_pending[pin] = True
-        self.iqr.set_monoflop(pin, value, time)
-
-        if value:
-            self.relay_buttons[pin].setText('Switch Off')
-            self.relay_button_icons[pin].setPixmap(self.close_pixmap)
-        else:
-            self.relay_buttons[pin].setText('Switch On')
-            self.relay_button_icons[pin].setPixmap(self.open_pixmap)
-
-        self.update_timer.start()
-
-    def get_monoflop_async(self, pin, _state, _time, time_remaining):
-        if self.monoflop_pending[pin]:
-            self.monoflop_time.setValue(time_remaining)
-
-    def update(self):
-        try:
-            pin = self.monoflop_pin.currentIndex()
-        except ValueError:
+        if channel == None:
             return
 
-        async_call(self.iqr.get_monoflop, pin, self.get_monoflop_async, self.increase_error_count,
-                   pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
+        self.monoflop.trigger(channel)

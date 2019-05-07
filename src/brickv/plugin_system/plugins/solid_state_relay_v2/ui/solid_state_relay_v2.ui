@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>408</width>
-    <height>127</height>
+    <width>454</width>
+    <height>184</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -82,16 +82,16 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="label_4">
            <property name="text">
-            <string>Time [ms]:</string>
+            <string>State:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_4">
+          <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>State:</string>
+            <string>Time [ms]:</string>
            </property>
           </widget>
          </item>
@@ -102,25 +102,6 @@
          <property name="sizeConstraint">
           <enum>QLayout::SetDefaultConstraint</enum>
          </property>
-         <item>
-          <widget class="QSpinBox" name="time_spinbox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-             <horstretch>1</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimum">
-            <number>1</number>
-           </property>
-           <property name="maximum">
-            <number>2147483647</number>
-           </property>
-           <property name="value">
-            <number>500</number>
-           </property>
-          </widget>
-         </item>
          <item>
           <widget class="QComboBox" name="state_combobox">
            <property name="sizePolicy">
@@ -141,10 +122,35 @@
            </item>
           </widget>
          </item>
+         <item>
+          <widget class="QSpinBox" name="time_spinbox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>2147483647</number>
+           </property>
+           <property name="value">
+            <number>1000</number>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
         <widget class="QPushButton" name="go_button">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Go</string>
          </property>

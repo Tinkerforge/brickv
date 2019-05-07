@@ -21,7 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import pyqtSignal, QTimer
+import functools
+
+from PyQt5.QtWidgets import QSpinBox, QComboBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.industrial_digital_out_hs_4.ui_industrial_digital_out_hs_4 import Ui_IndustrialDigitalOutHS4
@@ -29,10 +31,9 @@ from brickv.bindings.bricklet_industrial_digital_out_hs_4 import BrickletIndustr
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.load_pixmap import load_masked_pixmap
+from brickv.monoflop import Monoflop
 
 class IndustrialDigitalOutHS4(COMCUPluginBase, Ui_IndustrialDigitalOutHS4):
-    qtcb_monoflop = pyqtSignal(int, int)
-
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletIndustrialDigitalOutHS4, *args)
 
@@ -43,25 +44,7 @@ class IndustrialDigitalOutHS4(COMCUPluginBase, Ui_IndustrialDigitalOutHS4):
         self.pixmap_low = load_masked_pixmap('plugin_system/plugins/industrial_digital_out_hs_4/ido4_low.bmp')
         self.pixmap_high = load_masked_pixmap('plugin_system/plugins/industrial_digital_out_hs_4/ido4_high.bmp')
 
-        self.btn_v_c = [
-            {
-                'btn': self.btn_v_c0,
-                'state': False
-            },
-            {
-                'btn': self.btn_v_c1,
-                'state': False
-            },
-            {
-                'btn': self.btn_v_c2,
-                'state': False
-            },
-            {
-                'btn': self.btn_v_c3,
-                'state': False
-            }
-        ]
-
+        self.btn_v_c = [self.btn_v_c0, self.btn_v_c1, self.btn_v_c2, self.btn_v_c3]
         self.lbl_s_i_c = [self.lbl_s_i_c0, self.lbl_s_i_c1, self.lbl_s_i_c2, self.lbl_s_i_c3]
         self.cbox_clc_c = [self.cbox_clc_c0, self.cbox_clc_c1, self.cbox_clc_c2, self.cbox_clc_c3]
 
@@ -72,26 +55,41 @@ class IndustrialDigitalOutHS4(COMCUPluginBase, Ui_IndustrialDigitalOutHS4):
         for lbl in self.lbl_s_i_c:
             lbl.setPixmap(self.pixmap_low)
 
-        def get_button_lambda(channel):
-            return lambda: self.btn_v_c_clicked(channel)
-
         # Register value toggle button slots
         for c, b in enumerate(self.btn_v_c):
-            b['btn'].clicked.connect(get_button_lambda(c))
+            b.clicked.connect(functools.partial(self.btn_v_c_clicked, c))
 
         # Monoflop
-        self.qtcb_monoflop.connect(self.cb_monoflop_done)
-        self.ido4.register_callback(self.ido4.CALLBACK_MONOFLOP_DONE,
-                                    self.qtcb_monoflop.emit)
-
         self.cbox_m_c.currentIndexChanged.connect(self.cbox_m_c_changed)
         self.btn_m_go.clicked.connect(self.btn_m_go_clicked)
-        self.monoflop_time_before = [1000] * 4
-        self.monoflop_pending = [False] * 4
 
-        self.update_timer = QTimer(self)
-        self.update_timer.timeout.connect(self.update)
-        self.update_timer.setInterval(50)
+        self.monoflop_values = []
+        self.monoflop_times = []
+
+        for i in range(4):
+            self.cbox_m_c.setItemData(i, i)
+
+            monoflop_value = QComboBox()
+            monoflop_value.addItem('High', True)
+            monoflop_value.addItem('Low', False)
+
+            self.monoflop_values.append(monoflop_value)
+            self.monoflop_value_stack.addWidget(monoflop_value)
+
+            monoflop_time = QSpinBox()
+            monoflop_time.setRange(1, (1 << 31) - 1)
+            monoflop_time.setValue(1000)
+
+            self.monoflop_times.append(monoflop_time)
+            self.monoflop_time_stack.addWidget(monoflop_time)
+
+        self.monoflop = Monoflop(self.ido4,
+                                 [0, 1, 2, 3],
+                                 self.monoflop_values,
+                                 self.cb_value_change_by_monoflop,
+                                 self.monoflop_times,
+                                 None,
+                                 self)
 
         # Channel status LED config
         self.cbox_clc_c0.currentIndexChanged.connect(self.cbox_clc_c0_changed)
@@ -119,10 +117,10 @@ class IndustrialDigitalOutHS4(COMCUPluginBase, Ui_IndustrialDigitalOutHS4):
     def get_value_async(self, value):
         for i, b in enumerate(self.btn_v_c):
             if value[i]:
-                b['btn'].setText('Set Low')
+                b.setText('Set Low')
                 self.lbl_s_i_c[i].setPixmap(self.pixmap_high)
             else:
-                b['btn'].setText('Set High')
+                b.setText('Set High')
                 self.lbl_s_i_c[i].setPixmap(self.pixmap_low)
 
     def get_channel_led_config_async(self, channel, config):
@@ -156,10 +154,12 @@ class IndustrialDigitalOutHS4(COMCUPluginBase, Ui_IndustrialDigitalOutHS4):
 
         self.cbe_measurements.set_period(250)
 
-    def stop(self):
-        self.update_timer.stop()
+        self.monoflop.start()
 
+    def stop(self):
         self.cbe_measurements.set_period(0)
+
+        self.monoflop.stop()
 
     def destroy(self):
         pass
@@ -169,94 +169,38 @@ class IndustrialDigitalOutHS4(COMCUPluginBase, Ui_IndustrialDigitalOutHS4):
         return device_identifier == BrickletIndustrialDigitalOutHS4.DEVICE_IDENTIFIER
 
     def btn_v_c_clicked(self, channel):
-        if self.btn_v_c[channel]['state']:
-            self.btn_v_c[channel]['state'] = False
-            self.btn_v_c[channel]['btn'].setText('Set High')
-            self.lbl_s_i_c[channel].setPixmap(self.pixmap_low)
-        else:
-            self.btn_v_c[channel]['state'] = True
-            self.btn_v_c[channel]['btn'].setText('Set Low')
-            self.lbl_s_i_c[channel].setPixmap(self.pixmap_high)
-
-        self.ido4.set_selected_value(channel, self.btn_v_c[channel]['state'])
-
-        self.update_timer.stop()
-
-        for c in range(4):
-            self.monoflop_pending[c] = False
-
-        channel = self.cbox_m_c.currentIndex()
-
-        self.sbox_m_t.setValue(self.monoflop_time_before[channel])
-        self.sbox_m_t.setEnabled(True)
-
-    def cb_monoflop_done(self, channel, value):
-        self.monoflop_pending[channel] = False
+        value = 'High' in self.btn_v_c[channel].text().replace('&', '')
 
         if value:
-            self.btn_v_c[channel]['btn'].setText('Set Low')
+            self.btn_v_c[channel].setText('Set Low')
             self.lbl_s_i_c[channel].setPixmap(self.pixmap_high)
         else:
-            self.btn_v_c[channel]['btn'].setText('Set High')
+            self.btn_v_c[channel].setText('Set High')
             self.lbl_s_i_c[channel].setPixmap(self.pixmap_low)
 
-        if sum(self.monoflop_pending) == 0:
-            self.update_timer.stop()
+        async_call(self.ido4.set_selected_value, (channel, value), None, self.increase_error_count)
 
-        current_channel = self.cbox_m_c.currentIndex()
-
-        if current_channel == channel:
-            self.sbox_m_t.setValue(self.monoflop_time_before[current_channel])
-            self.sbox_m_t.setEnabled(True)
+    def cb_value_change_by_monoflop(self, channel, value):
+        if value:
+            self.btn_v_c[channel].setText('Set Low')
+            self.lbl_s_i_c[channel].setPixmap(self.pixmap_high)
+        else:
+            self.btn_v_c[channel].setText('Set High')
+            self.lbl_s_i_c[channel].setPixmap(self.pixmap_low)
 
     def cbox_m_c_changed(self):
-        try:
-            channel = self.cbox_m_c.currentIndex()
-        except ValueError:
+        channel = self.cbox_m_c.currentIndex()
+
+        if channel < 0:
             return
 
-        if self.monoflop_pending[channel]:
-            async_call(self.ido4.get_monoflop, channel, self.get_monoflop_async, self.increase_error_count,
-                       pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
-            self.sbox_m_t.setEnabled(False)
-        else:
-            self.sbox_m_t.setValue(self.monoflop_time_before[channel])
-            self.sbox_m_t.setEnabled(True)
+        self.monoflop_time_stack.setCurrentIndex(channel)
+        self.monoflop_value_stack.setCurrentIndex(channel)
 
     def btn_m_go_clicked(self):
         channel = self.cbox_m_c.currentIndex()
 
-        if self.monoflop_pending[channel]:
-            time = self.monoflop_time_before[channel]
-        else:
-            time = self.sbox_m_t.value()
-
-        value = self.cbox_m_v.currentIndex() == 1
-
-        self.sbox_m_t.setEnabled(False)
-        self.monoflop_time_before[channel] = time
-        self.monoflop_pending[channel] = True
-
-        self.ido4.set_monoflop(channel, value, time)
-
-        if value:
-            self.btn_v_c[channel]['btn'].setText('Set Low')
-            self.lbl_s_i_c[channel].setPixmap(self.pixmap_high)
-        else:
-            self.btn_v_c[channel]['btn'].setText('Set High')
-            self.lbl_s_i_c[channel].setPixmap(self.pixmap_low)
-
-        self.update_timer.start()
-
-    def get_monoflop_async(self, channel, _value, _time, time_remaining):
-        if self.monoflop_pending[channel]:
-            self.sbox_m_t.setValue(time_remaining)
-
-    def update(self):
-        try:
-            channel = self.cbox_m_c.currentIndex()
-        except ValueError:
+        if channel < 0:
             return
 
-        async_call(self.ido4.get_monoflop, channel, self.get_monoflop_async, self.increase_error_count,
-                   pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
+        self.monoflop.trigger(channel)

@@ -22,26 +22,22 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import pyqtSignal, QTimer
+from PyQt5.QtWidgets import QSpinBox, QComboBox
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.io4.ui_io4 import Ui_IO4
-from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_io4 import BrickletIO4
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
+from brickv.monoflop import Monoflop
 
 class IO4(PluginBase, Ui_IO4):
-    qtcb_monoflop = pyqtSignal(int, int)
-
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletIO4, *args)
 
         self.setupUi(self)
 
         self.io = self.device
-
-        self.has_monoflop = self.firmware_version >= (1, 1, 1)
 
         self.cbe_value = CallbackEmulator(self.io.get_value,
                                           None,
@@ -53,27 +49,39 @@ class IO4(PluginBase, Ui_IO4):
         self.port_config = [self.ac0, self.ac1, self.ac2, self.ac3]
         self.port_time = [self.at0, self.at1, self.at2, self.at3]
 
-        self.monoflop_active = [False, False, False, False]
-        self.monoflop_timebefore = [500, 500, 500, 500]
-
         self.save_button.clicked.connect(self.save_clicked)
         self.pin_box.currentIndexChanged.connect(self.pin_changed)
         self.direction_box.currentIndexChanged.connect(self.direction_changed)
         self.debounce_save.clicked.connect(self.debounce_save_clicked)
-        self.time_spinbox.valueChanged.connect(self.time_changed)
         self.go_button.clicked.connect(self.go_clicked)
 
-        self.qtcb_monoflop.connect(self.cb_monoflop)
-        self.io.register_callback(self.io.CALLBACK_MONOFLOP_DONE,
-                                  self.qtcb_monoflop.emit)
+        self.monoflop_values = []
+        self.monoflop_times = []
 
-        self.update_timer = QTimer(self)
-        self.update_timer.timeout.connect(self.update)
-        self.update_timer.setInterval(50)
+        for i in range(4):
+            monoflop_value = QComboBox()
+            monoflop_value.addItem('High', 1)
+            monoflop_value.addItem('Low', 0)
 
-        if not self.has_monoflop:
-            self.go_button.setText("Go (FW Versiom >= 1.1.1 required)")
-            self.go_button.setEnabled(False)
+            self.monoflop_values.append(monoflop_value)
+            self.monoflop_value_stack.addWidget(monoflop_value)
+
+            monoflop_time = QSpinBox()
+            monoflop_time.setRange(1, (1 << 31) - 1)
+            monoflop_time.setValue(1000)
+
+            self.monoflop_times.append(monoflop_time)
+            self.monoflop_time_stack.addWidget(monoflop_time)
+
+        self.monoflop = Monoflop(self.io,
+                                 [0, 1, 2, 3],
+                                 self.monoflop_values,
+                                 self.cb_value_change_by_monoflop,
+                                 self.monoflop_times,
+                                 self.port_time,
+                                 self,
+                                 setter_uses_bitmasks=True,
+                                 callback_uses_bitmasks=True)
 
         self.pin_changed(0)
 
@@ -81,7 +89,6 @@ class IO4(PluginBase, Ui_IO4):
         self.init_value = 0
         self.init_dir = 0
         self.init_config = 0
-        self.init_monoflop = 0
 
         def get_port_async(value):
             self.init_value = value
@@ -91,31 +98,17 @@ class IO4(PluginBase, Ui_IO4):
             self.init_dir, self.init_config = conf
             next(self.init_async_generator)
 
-        def get_monoflop_async(init_monoflop):
-            self.init_monoflop = init_monoflop
-            next(self.init_async_generator)
-
         def get_debounce_period_async(debounce_period):
             self.debounce_edit.setText(str(debounce_period))
             self.pin_changed(0)
 
         async_call(self.io.get_value, None, get_port_async, self.increase_error_count)
         yield
+
         async_call(self.io.get_configuration, None, get_port_configuration_async, self.increase_error_count)
         yield
 
-        time = [0, 0, 0, 0]
-        time_remaining = [0, 0, 0, 0]
-
-        if self.has_monoflop:
-            for pin in range(4):
-                async_call(self.io.get_monoflop, pin, get_monoflop_async, self.increase_error_count)
-                yield
-
-                time[pin] = self.init_monoflop.time
-                time_remaining[pin] = self.init_monoflop.time_remaining
-
-        self.init_values(self.init_value, self.init_dir, self.init_config, time, time_remaining)
+        self.init_values(self.init_value, self.init_dir, self.init_config)
 
         async_call(self.io.get_debounce_period, None, get_debounce_period_async, self.increase_error_count)
 
@@ -125,13 +118,12 @@ class IO4(PluginBase, Ui_IO4):
 
         self.cbe_value.set_period(50)
 
-        if self.has_monoflop:
-            self.update_timer.start()
+        self.monoflop.start()
 
     def stop(self):
         self.cbe_value.set_period(0)
 
-        self.update_timer.stop()
+        self.monoflop.stop()
 
     def destroy(self):
         pass
@@ -140,7 +132,7 @@ class IO4(PluginBase, Ui_IO4):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIO4.DEVICE_IDENTIFIER
 
-    def init_values(self, value, direction, config, time, time_remaining):
+    def init_values(self, value, direction, config):
         for i in range(4):
             if direction & (1 << i):
                 self.port_direction[i].setText('Input')
@@ -151,60 +143,38 @@ class IO4(PluginBase, Ui_IO4):
                     self.port_config[i].setText('Default')
             else:
                 self.port_direction[i].setText('Output')
-
-                if config & (1 << i):
-                    self.port_config[i].setText('High')
-                else:
-                    self.port_config[i].setText('Low')
+                self.port_config[i].setText('-')
 
             if value & (1 << i):
                 self.port_value[i].setText('High')
             else:
                 self.port_value[i].setText('Low')
 
-            self.port_time[i].setText(str(time_remaining[i]))
-
-            if time[i] > 0:
-                self.monoflop_timebefore[i] = time[i]
-
-            if time_remaining[i] > 0:
-                self.monoflop_active[i] = True
-
         self.update_monoflop_ui_state()
 
     def update_monoflop_ui_state(self):
         pin = int(self.pin_box.currentText())
 
-        if self.port_direction[pin].text().replace('&', '') == 'Output' and \
-           self.direction_box.currentText() == 'Output' and \
-           self.has_monoflop:
-            self.time_spinbox.setEnabled(not self.monoflop_active[pin])
-            self.go_button.setEnabled(True)
-        else:
-            self.time_spinbox.setEnabled(False)
-            self.go_button.setEnabled(False)
-
-        self.time_spinbox.setValue(self.monoflop_timebefore[pin])
+        self.go_button.setEnabled(self.port_direction[pin].text().replace('&', '') == 'Output')
 
     def save_clicked(self):
         pin = int(self.pin_box.currentText())
         direction = self.direction_box.currentText()[0].lower()
+
         if direction == 'o':
             value = self.value_box.currentText() == 'High'
             self.port_value[pin].setText(self.value_box.currentText())
         else:
             value = self.value_box.currentText() == 'Pull-Up'
 
-        try:
-            self.io.set_configuration(1 << pin, direction, value)
-        except ip_connection.Error:
-            return
+        async_call(self.io.set_configuration, (1 << pin, direction, value), None, self.increase_error_count)
 
         self.port_direction[pin].setText(self.direction_box.currentText())
-        self.port_config[pin].setText(self.value_box.currentText())
 
-        self.monoflop_active[pin] = False
-        self.port_time[pin].setText('0')
+        if direction == 'i':
+            self.port_config[pin].setText(self.value_box.currentText())
+        else:
+            self.port_config[pin].setText('-')
 
         self.update_monoflop_ui_state()
 
@@ -223,6 +193,10 @@ class IO4(PluginBase, Ui_IO4):
 
         self.direction_box.setCurrentIndex(index)
         self.direction_changed(index)
+
+        self.monoflop_time_stack.setCurrentIndex(pin)
+        self.monoflop_value_stack.setCurrentIndex(pin)
+
         self.update_monoflop_ui_state()
 
     def direction_changed(self, direction):
@@ -231,14 +205,16 @@ class IO4(PluginBase, Ui_IO4):
         self.value_box.clear()
 
         if direction == 1:
+            self.value_label.setText('Value:')
             self.value_box.addItem('High')
             self.value_box.addItem('Low')
 
-            if self.port_config[pin].text().replace('&', '') == 'High':
+            if self.port_value[pin].text().replace('&', '') == 'High':
                 self.value_box.setCurrentIndex(0)
             else:
                 self.value_box.setCurrentIndex(1)
         else:
+            self.value_label.setText('Config:')
             self.value_box.addItem('Pull-Up')
             self.value_box.addItem('Default')
 
@@ -251,72 +227,26 @@ class IO4(PluginBase, Ui_IO4):
 
     def debounce_save_clicked(self):
         debounce = int(self.debounce_edit.text())
-        try:
-            self.io.set_debounce_period(debounce)
-        except ip_connection.Error:
-            return
 
-    def time_changed(self, time):
-        pin = int(self.pin_box.currentText())
-
-        if not self.monoflop_active[pin]:
-            self.monoflop_timebefore[pin] = time
+        async_call(self.io.set_debounce_period, debounce, None, self.increase_error_count)
 
     def go_clicked(self):
         pin = int(self.pin_box.currentText())
 
-        if self.value_box.currentText() == 'High':
-            value = 1
+        self.monoflop.trigger(pin)
+
+    def cb_value_change_by_monoflop(self, pin, value):
+        if value:
+            self.port_value[pin].setText('High')
         else:
-            value = 0
+            self.port_value[pin].setText('Low')
 
-        try:
-            time = self.monoflop_timebefore[pin]
-            self.io.set_monoflop(1 << pin, value << pin, time)
+        self.port_config[pin].setText('-')
 
-            if value:
-                self.port_value[pin].setText('High')
-                self.port_config[pin].setText('High')
-            else:
-                self.port_value[pin].setText('Low')
-                self.port_config[pin].setText('Low')
-
-            self.monoflop_active[pin] = True
-            self.time_spinbox.setEnabled(False)
-            self.port_time[pin].setText(str(time))
-        except ip_connection.Error:
-            return
-
-    def cb_monoflop(self, pin_mask, value_mask):
-        for pin in range(4):
-            if pin_mask & (1 << pin):
-                self.monoflop_active[pin] = False
-                self.port_time[pin].setText('0')
-
-                if pin == int(self.pin_box.currentText()):
-                    self.time_spinbox.setValue(self.monoflop_timebefore[pin])
-                    self.time_spinbox.setEnabled(True)
-
-                if value_mask & (1 << pin):
-                    self.port_value[pin].setText('High')
-                    self.port_config[pin].setText('High')
-                else:
-                    self.port_value[pin].setText('Low')
-                    self.port_config[pin].setText('Low')
-
-    def update_async(self, pin, monoflop):
         selected_pin = int(self.pin_box.currentText())
 
-        _, _, time_remaining = monoflop
-        if pin == selected_pin and self.monoflop_active[pin]:
-            self.time_spinbox.setValue(time_remaining)
-
-        self.port_time[pin].setText(str(time_remaining))
-
-    def update(self):
-        for pin in range(4):
-            if self.monoflop_active[pin]:
-                def get_lambda(pin):
-                    return lambda x: self.update_async(pin, x)
-
-                async_call(self.io.get_monoflop, pin, get_lambda(pin), self.increase_error_count)
+        if pin == selected_pin:
+            if value:
+                self.value_box.setCurrentIndex(0)
+            else:
+                self.value_box.setCurrentIndex(1)
