@@ -1140,10 +1140,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             icon_label.setPixmap(load_pixmap(icon_dict[icon]))
 
             self.statusBar().addWidget(icon_label)
-        self.statusBar()
-        self.message_label = QLabel(message)
-        self.message_label.setOpenExternalLinks(True)
-        self.statusBar().addWidget(self.message_label, 1)
+
+        message_label = QLabel(message)
+        message_label.setOpenExternalLinks(True)
+
+        self.statusBar().addWidget(message_label, 1)
 
         self.last_status_message_id = message_id
 
