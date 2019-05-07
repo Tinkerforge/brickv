@@ -1430,12 +1430,12 @@ class REDTabSettingsNetwork(QWidget, Ui_REDTabSettingsNetwork):
                 self.update_gui(WORKING_STATE_SCAN)
 
                 self.script_manager.execute_script('settings_network_wireless_scan_cache',
-                                                    cb_settings_network_wireless_scan_cache)
+                                                   cb_settings_network_wireless_scan_cache)
 
                 network_refresh_task_done(True)
             else:
                 self.script_manager.execute_script('settings_network_wireless_scan_nm',
-                                                    cb_settings_network_wireless_scan_cache)
+                                                   cb_settings_network_wireless_scan_cache)
                 network_refresh_task_done(True)
 
         def cb_settings_network_wireless_scan_cache(result):

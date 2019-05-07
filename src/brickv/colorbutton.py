@@ -3,7 +3,7 @@ from PyQt5.QtGui import QPen, QPalette, QPainter, QBrush
 from PyQt5.QtWidgets import QPushButton
 
 class ColorButton(QPushButton):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.on = False
 
@@ -40,13 +40,11 @@ class ColorButton(QPushButton):
         painter.setPen(self.border_pen)
         draw_fn(QRect(0, 0, self.width() - 1, self.height() - 1), self.border_pen.color())
 
-
-
     def switch_off(self):
         self.on = False
         self.update()
 
-    def switch_on(self, brightness = None):
+    def switch_on(self, brightness=None):
         self.on = True
         if brightness is not None:
             self.brightness = brightness

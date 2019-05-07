@@ -38,7 +38,7 @@ from brickv.utils import get_modeless_dialog_flags
 class CompassWidget(QWidget):
     angle_changed = pyqtSignal(float)
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self._angle = 0.0
         self._margins = 10

@@ -346,16 +346,16 @@ Please make sure that your internet connection is working.'
 
                 if self.update_info['brickv']['update']:
                     self.do_open_update_file(REDFile(self.session),
-                                                'brickv',
-                                                posixpath.join(self.update_info['temp_dir'], 'brickv_linux_latest.deb'))
+                                             'brickv',
+                                             posixpath.join(self.update_info['temp_dir'], 'brickv_linux_latest.deb'))
 
                 for d in self.update_info['bindings']:
                     if not d['update']:
                         continue
 
                     self.do_open_update_file(REDFile(self.session),
-                                                d['name'],
-                                                posixpath.join(self.update_info['temp_dir'], 'tinkerforge_' + d['name'] + '_bindings_latest.zip'))
+                                             d['name'],
+                                             posixpath.join(self.update_info['temp_dir'], 'tinkerforge_' + d['name'] + '_bindings_latest.zip'))
 
             self.script_manager.execute_script('update_tf_software_mkdtemp',
                                                cb_update_tf_software_mkdtemp)
@@ -685,12 +685,12 @@ Please make sure that your internet connection is working.'
 
                 updates_available_main = False
                 update_info = {'brickv': {},
-                                'processed': 0,
-                                'temp_dir': '',
-                                'bindings': [],
-                                'error': False,
-                                'updates_total': 0,
-                                'error_messages': ''}
+                               'processed': 0,
+                               'temp_dir': '',
+                               'bindings': [],
+                               'error': False,
+                               'updates_total': 0,
+                               'error_messages': ''}
 
                 installed_versions = json.loads(result.stdout)
 
@@ -798,9 +798,9 @@ Please make sure that your internet connection is working.'
                         elif l_split[0] == 'bindings':
                             if l_split[1] == 'c':
                                 found, updates_available = self.update_latest_version_info(update_info,
-                                                                                            l_split[1],
-                                                                                            l_split[2],
-                                                                                            'C/C++ Bindings')
+                                                                                           l_split[1],
+                                                                                           l_split[2],
+                                                                                           'C/C++ Bindings')
 
                                 if not found:
                                     self.set_current_state(self.STATE_INIT)
@@ -813,9 +813,10 @@ Please make sure that your internet connection is working.'
 
                             elif l_split[1] == 'csharp':
                                 found, updates_available = self.update_latest_version_info(update_info,
-                                                                                            l_split[1],
-                                                                                            l_split[2],
-                                                                                            'C#/Mono Bindings')
+                                                                                           l_split[1],
+                                                                                           l_split[2],
+                                                                                           'C#/Mono Bindings')
+
                                 if not found:
                                     self.set_current_state(self.STATE_INIT)
                                     self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -827,9 +828,10 @@ Please make sure that your internet connection is working.'
 
                             elif l_split[1] == 'delphi':
                                 found, updates_available = self.update_latest_version_info(update_info,
-                                                                                            l_split[1],
-                                                                                            l_split[2],
-                                                                                            'Delphi/Lazarus Bindings')
+                                                                                           l_split[1],
+                                                                                           l_split[2],
+                                                                                           'Delphi/Lazarus Bindings')
+
                                 if not found:
                                     self.set_current_state(self.STATE_INIT)
                                     self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -841,9 +843,10 @@ Please make sure that your internet connection is working.'
 
                             elif l_split[1] == 'java':
                                 found, updates_available = self.update_latest_version_info(update_info,
-                                                                                            l_split[1],
-                                                                                            l_split[2],
-                                                                                            'Java Bindings')
+                                                                                           l_split[1],
+                                                                                           l_split[2],
+                                                                                           'Java Bindings')
+
                                 if not found:
                                     self.set_current_state(self.STATE_INIT)
                                     self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -855,9 +858,10 @@ Please make sure that your internet connection is working.'
 
                             elif l_split[1] == 'javascript':
                                 found, updates_available = self.update_latest_version_info(update_info,
-                                                                                            l_split[1],
-                                                                                            l_split[2],
-                                                                                            'JavaScript Bindings')
+                                                                                           l_split[1],
+                                                                                           l_split[2],
+                                                                                           'JavaScript Bindings')
+
                                 if not found:
                                     self.set_current_state(self.STATE_INIT)
                                     self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -869,9 +873,10 @@ Please make sure that your internet connection is working.'
 
                             elif l_split[1] == 'matlab':
                                 found, updates_available = self.update_latest_version_info(update_info,
-                                                                                            l_split[1],
-                                                                                            l_split[2],
-                                                                                            'Octave Bindings')
+                                                                                           l_split[1],
+                                                                                           l_split[2],
+                                                                                           'Octave Bindings')
+
                                 if not found:
                                     self.set_current_state(self.STATE_INIT)
                                     self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -883,9 +888,10 @@ Please make sure that your internet connection is working.'
 
                             elif l_split[1] == 'perl':
                                 found, updates_available = self.update_latest_version_info(update_info,
-                                                                                            l_split[1],
-                                                                                            l_split[2],
-                                                                                            'Perl Bindings')
+                                                                                           l_split[1],
+                                                                                           l_split[2],
+                                                                                           'Perl Bindings')
+
                                 if not found:
                                     self.set_current_state(self.STATE_INIT)
                                     self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -897,9 +903,10 @@ Please make sure that your internet connection is working.'
 
                             elif l_split[1] == 'php':
                                 found, updates_available = self.update_latest_version_info(update_info,
-                                                                                            l_split[1],
-                                                                                            l_split[2],
-                                                                                            'PHP Bindings')
+                                                                                           l_split[1],
+                                                                                           l_split[2],
+                                                                                           'PHP Bindings')
+
                                 if not found:
                                     self.set_current_state(self.STATE_INIT)
                                     self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -911,9 +918,10 @@ Please make sure that your internet connection is working.'
 
                             elif l_split[1] == 'python':
                                 found, updates_available = self.update_latest_version_info(update_info,
-                                                                                            l_split[1],
-                                                                                            l_split[2],
-                                                                                            'Python Bindings')
+                                                                                           l_split[1],
+                                                                                           l_split[2],
+                                                                                           'Python Bindings')
+
                                 if not found:
                                     self.set_current_state(self.STATE_INIT)
                                     self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -925,9 +933,10 @@ Please make sure that your internet connection is working.'
 
                             elif l_split[1] == 'ruby':
                                 found, updates_available = self.update_latest_version_info(update_info,
-                                                                                            l_split[1],
-                                                                                            l_split[2],
-                                                                                            'Ruby Bindings')
+                                                                                           l_split[1],
+                                                                                           l_split[2],
+                                                                                           'Ruby Bindings')
+
                                 if not found:
                                     self.set_current_state(self.STATE_INIT)
                                     self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -939,9 +948,10 @@ Please make sure that your internet connection is working.'
 
                             elif l_split[1] == 'shell':
                                 found, updates_available = self.update_latest_version_info(update_info,
-                                                                                            l_split[1],
-                                                                                            l_split[2],
-                                                                                            'Shell Bindings')
+                                                                                           l_split[1],
+                                                                                           l_split[2],
+                                                                                           'Shell Bindings')
+
                                 if not found:
                                     self.set_current_state(self.STATE_INIT)
                                     self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -953,9 +963,10 @@ Please make sure that your internet connection is working.'
 
                             elif l_split[1] == 'vbnet':
                                 found, updates_available = self.update_latest_version_info(update_info,
-                                                                                            l_split[1],
-                                                                                            l_split[2],
-                                                                                            'VB.NET Bindings')
+                                                                                           l_split[1],
+                                                                                           l_split[2],
+                                                                                           'VB.NET Bindings')
+
                                 if not found:
                                     self.set_current_state(self.STATE_INIT)
                                     self.tedit_main.setText(self.MESSAGE_ERR_CHECK_LATEST_VERSIONS)
@@ -964,6 +975,7 @@ Please make sure that your internet connection is working.'
 
                                 if updates_available:
                                     updates_available_main = True
+
                 self.red_plugin.bindings_version_success(result)
 
                 _check_update_available = self.check_update_available(update_info)

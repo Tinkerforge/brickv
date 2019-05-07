@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt5.QtCore import Qt, QSize, QObject
 from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QGridLayout, \
-                        QFrame, QSizePolicy, QDoubleSpinBox
+                            QFrame, QSizePolicy, QDoubleSpinBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_industrial_dual_0_20ma_v2 import BrickletIndustrialDual020mAV2

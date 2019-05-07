@@ -1130,12 +1130,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def show_status(self, message, icon='warning', message_id=''):
         self.setStatusBar(None)
+
         if icon != 'none':
             icon_dict = {
                 'warning': 'warning-icon-16.png',
             }
+
             icon_label = QLabel()
             icon_label.setPixmap(load_pixmap(icon_dict[icon]))
+
             self.statusBar().addWidget(icon_label)
         self.statusBar()
         self.message_label = QLabel(message)

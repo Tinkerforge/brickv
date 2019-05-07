@@ -267,18 +267,17 @@ class RemoteSwitchV2(COMCUPluginBase, Ui_RemoteSwitchV2):
            self.last_remote_input['a']['receiver_code'] == remote_config.receiver_code and \
            self.last_remote_input['a']['switch_to'] == remote_config.switch_to and \
            self.last_remote_input['a']['repeats'] == remote_config.repeats:
-                return
+            return
 
         if self.last_remote_input['a']['house_code'] == None and \
            self.last_remote_input['a']['receiver_code'] == None and \
            self.last_remote_input['a']['switch_to'] == None and \
            self.last_remote_input['a']['repeats'] == None:
-                self.last_remote_input['a']['house_code'] = remote_config.house_code
-                self.last_remote_input['a']['receiver_code'] = remote_config.receiver_code
-                self.last_remote_input['a']['switch_to'] = remote_config.switch_to
-                self.last_remote_input['a']['repeats'] = remote_config.repeats
-
-                return
+            self.last_remote_input['a']['house_code'] = remote_config.house_code
+            self.last_remote_input['a']['receiver_code'] = remote_config.receiver_code
+            self.last_remote_input['a']['switch_to'] = remote_config.switch_to
+            self.last_remote_input['a']['repeats'] = remote_config.repeats
+            return
 
         self.last_remote_input['a']['house_code'] = remote_config.house_code
         self.last_remote_input['a']['receiver_code'] = remote_config.receiver_code
@@ -308,20 +307,19 @@ Reapeats = {repeats}
            self.last_remote_input['b']['switch_to'] == remote_config.switch_to and \
            self.last_remote_input['b']['dim_value'] == remote_config.dim_value and \
            self.last_remote_input['b']['repeats'] == remote_config.repeats:
-                return
+            return
 
         if self.last_remote_input['b']['address'] == None and \
            self.last_remote_input['b']['unit'] == None and \
            self.last_remote_input['b']['switch_to'] == None and \
            self.last_remote_input['b']['dim_value'] == None and \
            self.last_remote_input['b']['repeats'] == None:
-                self.last_remote_input['b']['address'] = remote_config.address
-                self.last_remote_input['b']['unit'] = remote_config.unit
-                self.last_remote_input['b']['switch_to'] = remote_config.switch_to
-                self.last_remote_input['b']['dim_value'] = remote_config.dim_value
-                self.last_remote_input['b']['repeats'] = remote_config.repeats
-
-                return
+            self.last_remote_input['b']['address'] = remote_config.address
+            self.last_remote_input['b']['unit'] = remote_config.unit
+            self.last_remote_input['b']['switch_to'] = remote_config.switch_to
+            self.last_remote_input['b']['dim_value'] = remote_config.dim_value
+            self.last_remote_input['b']['repeats'] = remote_config.repeats
+            return
 
         self.last_remote_input['b']['address'] = remote_config.address
         self.last_remote_input['b']['unit'] = remote_config.unit
@@ -353,18 +351,17 @@ Repeats = {repeats}
            self.last_remote_input['c']['device_code'] == remote_config.device_code and \
            self.last_remote_input['c']['switch_to'] == remote_config.switch_to and \
            self.last_remote_input['c']['repeats'] == remote_config.repeats:
-                return
+            return
 
         if self.last_remote_input['c']['system_code'] == None and \
            self.last_remote_input['c']['device_code'] == None and \
            self.last_remote_input['c']['switch_to'] == None and \
            self.last_remote_input['c']['repeats'] == None:
-                self.last_remote_input['c']['system_code'] = remote_config.system_code
-                self.last_remote_input['c']['device_code'] = remote_config.device_code
-                self.last_remote_input['c']['switch_to'] = remote_config.switch_to
-                self.last_remote_input['c']['repeats'] = remote_config.repeats
-
-                return
+            self.last_remote_input['c']['system_code'] = remote_config.system_code
+            self.last_remote_input['c']['device_code'] = remote_config.device_code
+            self.last_remote_input['c']['switch_to'] = remote_config.switch_to
+            self.last_remote_input['c']['repeats'] = remote_config.repeats
+            return
 
         self.last_remote_input['c']['system_code'] = remote_config.system_code
         self.last_remote_input['c']['device_code'] = remote_config.device_code
