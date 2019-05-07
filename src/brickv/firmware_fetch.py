@@ -101,6 +101,8 @@ def refresh_plugin_info(url_part, latest_version):
         name = name.replace('midi_', 'MIDI_')
     elif name.startswith('hat_'):
         name = name.replace('hat_', 'HAT_')
+    elif name.startswith('co2_'):
+        name = name.replace('co2_', 'CO2_')
 
     words = name.split('_')
     parts = []
@@ -113,6 +115,7 @@ def refresh_plugin_info(url_part, latest_version):
     name = name.replace('Nfc Rfid', 'NFC/RFID')
     name = name.replace('0 20ma', '0-20mA')
     name = name.replace('Real Time', 'Real-Time')
+    name = name.replace('E Paper', 'E-Paper')
 
     plugin_info = infos.PluginInfo()
     plugin_info.name = name
