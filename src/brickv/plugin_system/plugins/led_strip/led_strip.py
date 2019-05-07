@@ -32,7 +32,6 @@ from PyQt5.QtCore import pyqtSignal, QTimer
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.led_strip.ui_led_strip import Ui_LEDStrip
 from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
-from brickv.bindings import ip_connection
 from brickv.async_call import async_call
 
 class LEDStrip(PluginBase, Ui_LEDStrip):

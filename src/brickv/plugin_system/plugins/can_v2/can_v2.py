@@ -27,7 +27,6 @@ from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMessageBox, QTreeWidgetItem, QAction
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
-from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_can_v2 import BrickletCANV2, GetReadFilterConfiguration
 from brickv.plugin_system.plugins.can_v2.ui_can_v2 import Ui_CANV2
 from brickv.async_call import async_call

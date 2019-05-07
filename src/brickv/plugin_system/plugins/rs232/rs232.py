@@ -27,7 +27,6 @@ from PyQt5.QtCore import pyqtSignal
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_rs232 import BrickletRS232
-from brickv.bindings import ip_connection
 from brickv.plugin_system.plugins.rs232.ui_rs232 import Ui_RS232
 from brickv.async_call import async_call
 from brickv.hex_validator import HexValidator

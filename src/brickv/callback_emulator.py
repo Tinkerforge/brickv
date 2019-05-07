@@ -27,8 +27,6 @@ import time
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from brickv.bindings.ip_connection import Error
-
 class CallbackEmulator(QObject):
     qtcb_result = pyqtSignal(object)
     qtcb_error = pyqtSignal(object)

@@ -26,7 +26,7 @@ import posixpath
 import time
 import html
 
-from PyQt5.QtCore import Qt, QTimer, QDateTime
+from PyQt5.QtCore import QTimer, QDateTime
 from PyQt5.QtWidgets import QWidget, QTreeWidgetItem, QMessageBox
 
 from brickv.async_call import async_call

@@ -8,9 +8,9 @@
 
 import array
 import threading
-import serial
 import sys
-import traceback
+
+import serial
 
 from PyQt5.QtCore import pyqtSignal, QObject
 
