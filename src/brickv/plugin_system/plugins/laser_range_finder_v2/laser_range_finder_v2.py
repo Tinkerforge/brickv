@@ -249,5 +249,4 @@ class LaserRangeFinderV2(COMCUPluginBase):
         self.spin_average_velocity.setValue(avg.velocity_average_length)
 
     def spin_average_finished(self):
-        print(self.spin_average_distance.value(), self.spin_average_velocity.value())
         self.lrf.set_moving_average(self.spin_average_distance.value(), self.spin_average_velocity.value())
