@@ -334,7 +334,7 @@ Please make sure that your internet connection is working.'
                 okay, message = check_script_result(result)
 
                 if not okay:
-                    self.MESSAGE_ERR_UPDATE + ':\n' + message + '\n\n'
+                    msg = self.MESSAGE_ERR_UPDATE + ':\n' + message + '\n\n'
                     self.set_current_state(self.STATE_INIT)
                     self.tedit_main.setText(msg)
                     return
