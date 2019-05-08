@@ -462,7 +462,7 @@
 - Unify update and setup tab device tree sorting
 - Properly close detached tab window if corresponding device is removed
 
-2019-04-16: 2.4.2 (<unknown>)
+2019-04-16: 2.4.2 (0103143)
 - Minor tweaks in RED Brick Tinkerforge software update detection
 - Fix crash in IO-16 Bricklet 2.0 plugin
 - Add Alt-S shortcut for switching to setup tab
@@ -474,6 +474,16 @@
 - Fix integer/float division mixups
 - Improve error reporting for Brick flashing and RED Brick serial console
 - Fix blue/green channel mixup in Color Bricklet plugin
+
+<unknown>: 2.4.3 (<unknown>)
+- Fix date display format for triggered Real-Time Clock Bricklet (2.0) alarms
+- Always show correct Dual Button Bricklet (2.0) button state
+- Don't leave Thermal Imaging Bricklet image callback enabled on exit
+- Fix off-by-one errors in plot curves and y-axis
+- Improve RED Brick communication error handling
+- Stop preselecting serial port for Brick flashing
+- Stop Qt from adding UTF-8 BOM when copying text to the clipboard on macOS
+- Fix Ethernet Extension configuration check
 
 <unknown>: 2.4.x (<unknown>)
 - Add Data Logger support for CO2 2.0, Hall Effect 2.0, Linear Poti 2.0,
