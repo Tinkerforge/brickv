@@ -25,7 +25,7 @@ Boston, MA 02111-1307, USA.
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
-                        QLineEdit, QComboBox, QFrame
+                            QLineEdit, QComboBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
@@ -33,7 +33,6 @@ from brickv.bindings.bricklet_lcd_20x4 import BrickletLCD20x4
 from brickv.bindings.ks0066u import unicode_to_ks0066u
 from brickv.async_call import async_call
 from brickv.scribblewidget import ScribbleWidget
-
 
 class LCD20x4(PluginBase):
     MAX_LINE = 4
@@ -60,11 +59,13 @@ class LCD20x4(PluginBase):
 
         self.line_label = QLabel('Line:')
         self.line_combo = QComboBox()
+
         for i  in range(LCD20x4.MAX_LINE):
             self.line_combo.addItem(str(i))
 
         self.pos_label = QLabel('Position:')
         self.pos_combo = QComboBox()
+
         for i in range(LCD20x4.MAX_POSITION):
             self.pos_combo.addItem(str(i))
 

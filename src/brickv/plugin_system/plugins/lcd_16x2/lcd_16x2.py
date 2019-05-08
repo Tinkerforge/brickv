@@ -58,11 +58,13 @@ class LCD16x2(PluginBase):
 
         self.line_label = QLabel('Line:')
         self.line_combo = QComboBox()
+
         for i  in range(LCD16x2.MAX_LINE):
             self.line_combo.addItem(str(i))
 
         self.pos_label = QLabel('Position:')
         self.pos_combo = QComboBox()
+
         for i  in range(LCD16x2.MAX_POSITION):
             self.pos_combo.addItem(str(i))
 
@@ -165,8 +167,8 @@ class LCD16x2(PluginBase):
         if self.has_custom_character:
             layout.addWidget(line)
             layout.addLayout(self.char_main_layout)
-        layout.addStretch(1)
 
+        layout.addStretch(1)
 
     def is_backlight_on_async(self, on):
         if on:

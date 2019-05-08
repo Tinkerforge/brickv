@@ -79,7 +79,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QDialog, Ui_REDTabSetting
         self.populate_cbox_mi_presets_provider()
 
     def cbox_mi_presets_provider_current_index_changed(self, index):
-         self.populate_cbox_mi_presets_plan()
+        self.populate_cbox_mi_presets_plan()
 
     def cbox_mi_presets_plan_current_index_changed(self, index):
         apn = self.cbox_mi_presets_plan.itemData(index, USER_ROLE_APN)

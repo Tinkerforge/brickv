@@ -42,8 +42,8 @@ class Calibration(QDialog, Ui_Calibration):
         QDialog.__init__(self, parent, get_modeless_dialog_flags())
         self.parent = parent
 
-        self.values0 = [0]*10
-        self.values1 = [0]*10
+        self.values0 = [0] * 10
+        self.values1 = [0] * 10
         self.values_index = 0
 
         self.setupUi(self)
@@ -77,22 +77,22 @@ class Calibration(QDialog, Ui_Calibration):
         self.update_calibration()
 
     def offset_clicked(self):
-        self.parent.analog_in.set_calibration((-sum(self.values0)//10, -sum(self.values1)//10), (self.current_gain0, self.current_gain1))
+        self.parent.analog_in.set_calibration((-sum(self.values0) // 10, -sum(self.values1) // 10), (self.current_gain0, self.current_gain1))
         self.update_calibration()
 
     def gain_clicked(self):
         try:
             if self.parent.has_fixed_calibration:
-                measured0 = (sum(self.values0)/10.0)*244/44983
-                measured1 = (sum(self.values1)/10.0)*244/44983
+                measured0 = (sum(self.values0) / 10.0) * 244 / 44983
+                measured1 = (sum(self.values1) / 10.0) * 244 / 44983
             else:
-                measured0 = (sum(self.values0)/10.0)*244/38588
-                measured1 = (sum(self.values1)/10.0)*244/38588
+                measured0 = (sum(self.values0) / 10.0) * 244 / 38588
+                measured1 = (sum(self.values1) / 10.0) * 244 / 38588
 
             factor0 = self.spinbox_voltage_ch0.value()/measured0
             factor1 = self.spinbox_voltage_ch1.value()/measured1
-            gain0 = int((factor0-1)*2**23)
-            gain1 = int((factor1-1)*2**23)
+            gain0 = int((factor0 - 1) * 2 ** 23)
+            gain1 = int((factor1 - 1) * 2 ** 23)
 
             if not is_int32(gain0) or not is_int32(gain1):
                 raise ValueError("Out of range")
@@ -122,8 +122,8 @@ class Calibration(QDialog, Ui_Calibration):
         if self.values_index >= 10:
             self.values_index = 0
 
-        self.label_adc0.setText(str(sum(self.values0)//10))
-        self.label_adc1.setText(str(sum(self.values1)//10))
+        self.label_adc0.setText(str(sum(self.values0) // 10))
+        self.label_adc1.setText(str(sum(self.values1) // 10))
 
     def closeEvent(self, event):
         self.parent.calibration_button.setEnabled(True)

@@ -358,8 +358,7 @@ class RealTimeClock(PluginBase, Ui_RealTimeClock):
             self.spin_alarm_interval.valueChanged.connect(self.check_alarm)
 
             self.qtcb_alarm.connect(self.cb_alarm)
-            self.rtc.register_callback(self.rtc.CALLBACK_ALARM,
-                                       self.qtcb_alarm.emit)
+            self.rtc.register_callback(self.rtc.CALLBACK_ALARM, self.qtcb_alarm.emit)
 
     def start(self):
         async_call(self.rtc.get_offset, None, self.get_offset_async, self.increase_error_count)

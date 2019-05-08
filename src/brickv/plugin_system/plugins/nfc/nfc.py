@@ -642,15 +642,15 @@ class NFC(COMCUPluginBase, Ui_NFC):
 
             if self.combo_box_mode.currentIndex() == self.nfc.MODE_P2P and \
                self.combo_p2p_operation.currentIndex() == 0:
-                    t = self.textedit_p2p_read.toPlainText()
+                t = self.textedit_p2p_read.toPlainText()
 
-                    if t == '':
-                        t = repr(map(chr, self.nfc.p2p_read_ndef()))
-                    else:
-                        t += '\n\n' + repr(map(chr, self.nfc.p2p_read_ndef()))
+                if t == '':
+                    t = repr(map(chr, self.nfc.p2p_read_ndef()))
+                else:
+                    t += '\n\n' + repr(map(chr, self.nfc.p2p_read_ndef()))
 
-                    self.textedit_p2p_read.setText(t)
-                    self.textedit_p2p_read.moveCursor(QTextCursor.End)
+                self.textedit_p2p_read.setText(t)
+                self.textedit_p2p_read.moveCursor(QTextCursor.End)
 
             self.nfc.p2p_start_discovery()
         elif state == self.nfc.P2P_STATE_TRANSFER_NDEF_ERROR:
@@ -672,6 +672,7 @@ class NFC(COMCUPluginBase, Ui_NFC):
         def tag_id_as_byte_string(tag_id):
             tag_bytes_format = ' '.join("{{{}:02X}}".format(i) for i in range(0, len(tag_id)))
             return tag_bytes_format.format(*tag_id)
+
         self.current_state['reader'] = state
 
         if self.current_mode != self.nfc.MODE_READER:
@@ -748,7 +749,7 @@ class NFC(COMCUPluginBase, Ui_NFC):
 
             if self.current_mode == self.nfc.MODE_READER and \
                self.combo_reader_tag_type.currentIndex() == self.nfc.TAG_TYPE_TYPE4:
-                    self.nfc.reader_request_tag_id()
+                self.nfc.reader_request_tag_id()
         elif state == self.nfc.READER_STATE_WRITE_PAGE_ERROR:
             self.frame_mode_reader.setEnabled(True)
             self.label_status.setText('Reader: Write page error')

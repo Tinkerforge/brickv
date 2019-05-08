@@ -107,18 +107,19 @@ class PluginBase(QWidget):
         self.hardware_version = self.device_info.hardware_version
         self.firmware_version = self.device_info.firmware_version_installed
         self.label_version.setText(brickv.infos.get_version_string(self.firmware_version))
+
         if self.button_parent is not None:
             self.button_parent.setText(self.device_info.connected_uid)
             self.button_parent.clicked.connect(lambda: get_main_window().show_plugin(self.device_info.connected_uid))
         if self.label_position is not None:
             self.label_position.setText(self.device_info.position.title())
 
-
     def show_update(self):
         self.device_info.tab_window.button_update.show()
 
         self.update_tab_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')))
         self.update_tab_button.setToolTip('Update available')
+
         if self.device_info.type == 'brick':
             self.update_tab_button.clicked.connect(lambda: get_main_window().show_brick_update(self.device_info.url_part))
 

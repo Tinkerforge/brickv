@@ -80,6 +80,7 @@ class Chibi(QWidget, Ui_Chibi):
         yield
 
         address_slave = []
+
         for i in range(32):
             async_call(self.master.get_chibi_slave_address, i, get_chibi_slave_address_async, self.parent.increase_error_count)
             yield
@@ -93,12 +94,15 @@ class Chibi(QWidget, Ui_Chibi):
 
         async_call(self.master.get_chibi_master_address, None, get_chibi_master_address_async, self.parent.increase_error_count)
         yield
+
         async_call(self.master.get_chibi_frequency, None, get_chibi_frequency_async, self.parent.increase_error_count)
         yield
+
         async_call(self.master.get_chibi_channel, None, get_chibi_channel_async, self.parent.increase_error_count)
         yield
 
         typ = 0
+
         if self.update_address == self.update_chibi_master_address:
             typ = 1
 
@@ -141,6 +145,7 @@ class Chibi(QWidget, Ui_Chibi):
 
         if index == 0:
             self.chibi_channel.addItem("0")
+
             if channel != 0:
                 channel = 0
         elif index in (1, 3):
@@ -155,6 +160,7 @@ class Chibi(QWidget, Ui_Chibi):
             self.chibi_channel.addItem("8")
             self.chibi_channel.addItem("9")
             self.chibi_channel.addItem("10")
+
             if not channel in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
                 channel = 0
         elif index == 2:
@@ -162,6 +168,7 @@ class Chibi(QWidget, Ui_Chibi):
             self.chibi_channel.addItem("1")
             self.chibi_channel.addItem("2")
             self.chibi_channel.addItem("3")
+
             if not channel in (0, 1, 2, 3):
                 channel = 0
 
@@ -172,11 +179,14 @@ class Chibi(QWidget, Ui_Chibi):
         typ = self.chibi_type.currentIndex()
         frequency = self.chibi_frequency.currentIndex()
         channel = self.chibi_channel.currentIndex()
+
         if frequency in (1, 3):
             channel += 1
+
         address = self.address_spinbox.value()
         address_master = self.master_address_spinbox.value()
         address_slave_text = self.lineedit_slave_address.text().replace(' ', '')
+
         if address_slave_text == '':
             address_slave = []
         else:
@@ -185,23 +195,28 @@ class Chibi(QWidget, Ui_Chibi):
             except:
                 QMessageBox.critical(get_main_window(), "Configuration", "Could not save configuration: Slave address list was not a list of integers separated by ','", QMessageBox.Ok)
                 return
+
             address_slave.append(0)
 
         self.master.set_chibi_frequency(frequency)
         self.master.set_chibi_channel(channel)
         self.master.set_chibi_address(address)
+
         if typ == 0:
             self.master.set_chibi_master_address(address_master)
         else:
             self.master.set_chibi_master_address(address)
+
             for i in range(len(address_slave)):
                 self.master.set_chibi_slave_address(i, address_slave[i])
 
         new_frequency = self.master.get_chibi_frequency()
         new_channel = self.master.get_chibi_channel()
         new_address = self.master.get_chibi_address()
+
         if typ == 0:
             new_address_master = self.master.get_chibi_master_address()
+
             if new_frequency == frequency and \
                new_channel == channel and \
                new_address == address and \
@@ -212,8 +227,10 @@ class Chibi(QWidget, Ui_Chibi):
         else:
             new_address_master = self.master.get_chibi_master_address()
             new_address_slave = []
+
             for i in range(len(address_slave)):
                 new_address_slave.append(self.master.get_chibi_slave_address(i))
+
             if new_frequency == frequency and \
                new_channel == channel and \
                new_address == address and \

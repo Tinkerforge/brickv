@@ -924,7 +924,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         if SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'ptc_2_wire' or\
            SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'ptc_3_wire' or\
            SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'ptc_4_wire':
-                populate_and_select('ptc')
+            populate_and_select('ptc')
 
         elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'temperature':
             populate_and_select('temperature')
@@ -2225,19 +2225,19 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
 
                 if widget_email_notifications.currentIndex() == INDEX_EMAIL_NO_NOTIFICATIONS or\
                    not self.chkbox_sm_email_enable.isChecked():
-                        notification_options  = 'c,r'
-                        notifications_enabled = '0'
-                        contact_groups        = 'admins'
+                    notification_options  = 'c,r'
+                    notifications_enabled = '0'
+                    contact_groups        = 'admins'
 
                 elif widget_email_notifications.currentIndex() == INDEX_EMAIL_CRITICAL:
-                        notification_options  = 'c,r'
-                        notifications_enabled = '1'
-                        contact_groups        = 'tinkerforge-contact-group'
+                    notification_options  = 'c,r'
+                    notifications_enabled = '1'
+                    contact_groups        = 'tinkerforge-contact-group'
 
                 elif widget_email_notifications.currentIndex() == INDEX_EMAIL_WARNING_CRITICAL:
-                        notification_options  = 'w,c,r'
-                        notifications_enabled = '1'
-                        contact_groups        = 'tinkerforge-contact-group'
+                    notification_options  = 'w,c,r'
+                    notifications_enabled = '1'
+                    contact_groups        = 'tinkerforge-contact-group'
 
                 service_description   = widget_name.text()
                 command_line          = command_line
