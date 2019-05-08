@@ -326,13 +326,14 @@ class RED(PluginBase, Ui_RED):
 
         # Reboot or shutdown RED Brick
         elif param == 1 or param == 2:
-            def cb(result):
+            def cb_success(result):
                 okay, message = check_script_result(result)
+
                 if not okay:
                     op = 'reboot' if param == 1 else 'shutdown'
                     QMessageBox.critical(get_main_window(), 'Failed to {} RED Brick'.format(op), message)
 
-            self.script_manager.execute_script('restart_reboot_shutdown_systemd', cb, [str(param)])
+            self.script_manager.execute_script('restart_reboot_shutdown_systemd', cb_success, [str(param)])
 
         # Update Tinkerforge software
         elif param == 3:

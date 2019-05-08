@@ -161,7 +161,7 @@ class Chibi(QWidget, Ui_Chibi):
             self.chibi_channel.addItem("9")
             self.chibi_channel.addItem("10")
 
-            if not channel in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
+            if channel not in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
                 channel = 0
         elif index == 2:
             self.chibi_channel.addItem("0")
@@ -169,7 +169,7 @@ class Chibi(QWidget, Ui_Chibi):
             self.chibi_channel.addItem("2")
             self.chibi_channel.addItem("3")
 
-            if not channel in (0, 1, 2, 3):
+            if channel not in (0, 1, 2, 3):
                 channel = 0
 
         self.chibi_channel.setCurrentIndex(channel)
