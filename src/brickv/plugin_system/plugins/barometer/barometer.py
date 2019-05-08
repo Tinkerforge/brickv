@@ -27,7 +27,6 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QHBoxLayout, QPushButton, \
                         QSpinBox, QFrame, QDoubleSpinBox
 
 from brickv.plugin_system.plugin_base import PluginBase
-from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_barometer import BrickletBarometer
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
@@ -205,14 +204,6 @@ class Barometer(PluginBase):
 
     def save_new_averaging(self):
         self.barometer.set_averaging(self.moving_average_pressure, self.average_pressure, self.average_temperature)
-
-    def calibrate_clicked(self):
-        try:
-            # Call set_reference_air_pressure that has the same function ID as
-            # calibrate_altitude the extra parameter will just be ignored
-            self.barometer.set_reference_air_pressure(0)
-        except ip_connection.Error:
-            pass
 
     def get_reference_air_pressure_async(self, reference):
         self.reference_box.setValue(reference / 1000.0)
