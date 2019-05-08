@@ -24,10 +24,10 @@ Boston, MA 02111-1307, USA.
 
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QComboBox, QFrame
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
+                            QLineEdit, QComboBox, QFrame
 
 from brickv.plugin_system.plugin_base import PluginBase
-from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_lcd_16x2 import BrickletLCD16x2
 from brickv.bindings.ks0066u import unicode_to_ks0066u
 from brickv.async_call import async_call
@@ -219,15 +219,12 @@ class LCD16x2(PluginBase):
             self.b2_label.setText('Button 2: Released')
 
     def bl_clicked(self):
-        try:
-            if self.bl_button.text().replace('&', '') == 'Backlight On':
-                self.lcd.backlight_on()
-                self.bl_button.setText('Backlight Off')
-            else:
-                self.lcd.backlight_off()
-                self.bl_button.setText('Backlight On')
-        except ip_connection.Error:
-            return
+        if self.bl_button.text().replace('&', '') == 'Backlight On':
+            async_call(self.lcd.backlight_on, None, None, self.increase_error_count)
+            self.bl_button.setText('Backlight Off')
+        else:
+            async_call(self.lcd.backlight_off, None, None, self.increase_error_count)
+            self.bl_button.setText('Backlight On')
 
     def get_config(self):
         cursor = self.cursor_button.text().replace('&', '') == 'Cursor Off'
@@ -238,10 +235,7 @@ class LCD16x2(PluginBase):
     def cursor_clicked(self):
         cursor, blink = self.get_config()
 
-        try:
-            self.lcd.set_config(not cursor, blink)
-        except ip_connection.Error:
-            return
+        async_call(self.lcd.set_config, (not cursor, blink), None, self.increase_error_count)
 
         if cursor:
             self.cursor_button.setText('Cursor On')
@@ -250,10 +244,8 @@ class LCD16x2(PluginBase):
 
     def blink_clicked(self):
         cursor, blink = self.get_config()
-        try:
-            self.lcd.set_config(cursor, not blink)
-        except ip_connection.Error:
-            return
+
+        async_call(self.lcd.set_config, (cursor, not blink), None, self.increase_error_count)
 
         if blink:
             self.blink_button.setText('Blink On')
@@ -261,10 +253,7 @@ class LCD16x2(PluginBase):
             self.blink_button.setText('Blink Off')
 
     def clear_clicked(self):
-        try:
-            self.lcd.clear_display()
-        except ip_connection.Error:
-            return
+        async_call(self.lcd.clear_display, None, None, self.increase_error_count)
 
     def text_clicked(self):
         line = int(self.line_combo.currentText())
@@ -273,32 +262,31 @@ class LCD16x2(PluginBase):
 
         if self.has_custom_character:
             for i in range(8):
-                text = text.replace('\\' + str(i), chr(i+8))
-        try:
-            self.lcd.write_line(line, position, unicode_to_ks0066u(text))
-        except ip_connection.Error:
-            return
+                text = text.replace('\\' + str(i), chr(i + 8))
+
+        async_call(self.lcd.write_line, (line, position, unicode_to_ks0066u(text)), None, self.increase_error_count)
 
     def char_index_save_clicked(self):
         char = [0] * 8
-
         img = self.scribble_widget.image()
+
         for j in range(img.height()):
             for i in range(img.width() - 1, -1, -1):
                 if img.pixel(i, j) == self.scribble_widget.foreground_color().rgb():
                     char[j] |= 1 << (4 - i)
 
         index = int(self.char_index_combo.currentText())
-        self.lcd.set_custom_character(index, char)
+
+        async_call(self.lcd.set_custom_character, (index, char), None, self.increase_error_count)
 
     def show_clicked(self):
-        self.lcd.clear_display()
+        async_call(self.lcd.clear_display, None, None, self.increase_error_count)
 
         line1 = '0:{0} 1:{1} 2:{2} 3:{3}'.format(chr(8), chr(9), chr(10), chr(11))
         line2 = '4:{0} 5:{1} 6:{2} 7:{3}'.format(chr(12), chr(13), chr(14), chr(15))
 
-        self.lcd.write_line(0, 0, line1)
-        self.lcd.write_line(1, 0, line2)
+        async_call(self.lcd.write_line, (0, 0, line1), None, self.increase_error_count)
+        async_call(self.lcd.write_line, (1, 0, line2), None, self.increase_error_count)
 
     def custom_character_async(self, characters):
         r = []
