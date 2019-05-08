@@ -286,7 +286,7 @@ class Ethernet(QWidget, Ui_Ethernet):
         port_websocket_old = port_websocket
 
         if self.parent.firmware_version >= (2, 2, 0):
-            secret_old = self.master.get_ethernet_authentication_secret().encode('ascii')
+            secret_old = self.master.get_ethernet_authentication_secret()
             websocket_connections, port_websocket = self.master.get_ethernet_websocket_configuration()
 
         saved_conf = self.master.get_ethernet_configuration()
