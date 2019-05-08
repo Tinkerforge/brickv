@@ -770,7 +770,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                 IPConnection.ENUMERATION_TYPE_CONNECTED]:
             device_info = infos.get_info(uid)
             something_changed_ref = [False]
-            existing_plugin_was_paused = False
+
             # If the enum_type is CONNECTED, the bricklet was restarted externally.
             # The plugin could now be in an inconsistent state.
             if enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED and device_info is not None:
