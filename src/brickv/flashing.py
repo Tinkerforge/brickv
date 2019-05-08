@@ -161,8 +161,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_tree_view_proxy_model = DevicesProxyModel(self)
         self.update_tree_view_proxy_model.setSourceModel(self.update_tree_view_model)
         self.update_tree_view.setModel(self.update_tree_view_proxy_model)
-
-        #self.update_tree_view.setModel(self.update_tree_view_model)
         self.update_tree_view.setSortingEnabled(True)
         self.update_tree_view.header().setSortIndicator(2, Qt.AscendingOrder)
         self.update_tree_view.activated.connect(self.update_tree_view_clicked)
@@ -171,7 +169,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_button_refresh.clicked.connect(self.refresh_updates_clicked)
         self.update_button_bricklets.clicked.connect(self.auto_update_bricklets_clicked)
 
-        self.edit_custom_plugin.textChanged.connect(self.edit_custom_plugin_text_changed)
+        self.combo_serial_port.currentIndexChanged.connect(self.update_ui_state)
+        self.edit_custom_firmware.textChanged.connect(self.update_ui_state)
+        self.edit_custom_plugin.textChanged.connect(self.update_ui_state)
+        self.edit_custom_extension_firmware.textChanged.connect(self.update_ui_state)
 
         get_main_window().fw_version_fetcher.fw_versions_avail.connect(self.fw_versions_fetched)
 
@@ -179,12 +180,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.update_bricks()
         self.update_extensions()
-
-    def edit_custom_plugin_text_changed(self, text):
-        self.button_plugin_save.setEnabled(os.path.isfile(text))
-
-        if len(text) > 0:
-            QTimer.singleShot(5000, lambda: self.edit_custom_plugin_text_changed(self.edit_custom_plugin.text()))
 
     def update_tree_view_clicked(self, idx):
         name, uid, _current_version, _latest_version = [idx.sibling(idx.row(), i).data() for i in range(0, 4)]
@@ -543,36 +538,68 @@ class FlashingWindow(QDialog, Ui_Flashing):
         progress.setParent(None)
 
     def update_ui_state(self):
+        # bricks
+        is_no_bootloader = self.combo_serial_port.currentText() == NO_BOOTLOADER
+        is_serial_port_select = self.combo_serial_port.currentText() == SELECT
         is_firmware_select = self.combo_firmware.currentText() == SELECT
         is_firmware_custom = self.combo_firmware.currentText() == CUSTOM
-        is_no_bootloader = self.combo_serial_port.currentText() == NO_BOOTLOADER
-        has_bricklet_ports = self.combo_port.count() > 0
+        custom_firmware_path = self.edit_custom_firmware.text()
+
         self.combo_serial_port.setEnabled(not is_no_bootloader)
-        self.combo_port.setEnabled(has_bricklet_ports)
-        self.combo_plugin.setEnabled(has_bricklet_ports)
-        self.button_firmware_save.setEnabled(not is_firmware_select and not is_no_bootloader)
+
+        if len(custom_firmware_path) == 0:
+            custom_firmware_is_valid = False
+
+            self.label_custom_firmware_invalid.hide()
+        else:
+            custom_firmware_is_valid = os.path.isfile(custom_firmware_path)
+
+            self.label_custom_firmware_invalid.setVisible(is_firmware_custom and not custom_firmware_is_valid)
+
+        self.button_firmware_save.setEnabled(not is_no_bootloader and not is_serial_port_select and \
+                                             ((not is_firmware_select and not is_firmware_custom) or \
+                                              (is_firmware_custom and custom_firmware_is_valid)))
+
         self.edit_custom_firmware.setEnabled(is_firmware_custom)
         self.button_firmware_browse.setEnabled(is_firmware_custom)
+
+        # bricklets
+        is_no_brick = self.combo_parent.currentText() == NO_BRICK
+        has_bricklet_ports = self.combo_port.count() > 0
+        is_plugin_select = self.combo_plugin.currentText() == SELECT
+        is_plugin_custom = self.combo_plugin.currentText() == CUSTOM
+        custom_plugin_path = self.edit_custom_plugin.text()
+
+        self.combo_parent.setEnabled(not is_no_brick)
+        self.combo_port.setEnabled(has_bricklet_ports)
+        self.combo_plugin.setEnabled(has_bricklet_ports)
         self.edit_uid.setEnabled(has_bricklet_ports)
         self.button_uid_load.setEnabled(has_bricklet_ports)
         self.button_uid_save.setEnabled(has_bricklet_ports)
 
-        is_plugin_select = self.combo_plugin.currentText() == SELECT
-        is_plugin_custom = self.combo_plugin.currentText() == CUSTOM
-        is_no_brick = self.combo_parent.currentText() == NO_BRICK
-        self.combo_parent.setEnabled(not is_no_brick)
-        self.button_plugin_save.setEnabled(not is_plugin_select and not is_no_brick)
+        if len(custom_plugin_path) == 0:
+            custom_plugin_is_valid = False
+
+            self.label_custom_plugin_invalid.hide()
+        else:
+            custom_plugin_is_valid = os.path.isfile(custom_plugin_path)
+
+            self.label_custom_plugin_invalid.setVisible(is_plugin_custom and not custom_plugin_is_valid)
+
+        self.button_plugin_save.setEnabled(not is_no_brick and has_bricklet_ports and \
+                                           ((not is_plugin_select and not is_plugin_custom) or \
+                                            (is_plugin_custom and custom_plugin_is_valid)))
+
         self.edit_custom_plugin.setEnabled(is_plugin_custom)
-
-        if is_plugin_custom:
-            self.button_plugin_save.setEnabled(False)
-            self.edit_custom_plugin_text_changed(self.edit_custom_plugin.text())
-
         self.button_plugin_browse.setEnabled(is_plugin_custom)
 
+        # extensions
         is_extension_firmware_select = self.combo_extension_firmware.currentText() == SELECT
         is_extension_firmware_custom = self.combo_extension_firmware.currentText() == CUSTOM
         is_no_extension = self.combo_extension.currentText() == NO_EXTENSION
+        custom_extension_firmware_path = self.edit_custom_extension_firmware.text()
+
+        self.combo_extension.setEnabled(not is_no_extension)
 
         try:
             extension_connection_type = self.extension_infos[self.combo_extension.currentIndex()].master_info.connection_type
@@ -584,11 +611,23 @@ class FlashingWindow(QDialog, Ui_Flashing):
         else:
             is_extension_connection_type_usb = extension_connection_type == BrickMaster.CONNECTION_TYPE_USB
 
-        self.combo_extension.setEnabled(not is_no_extension)
-        self.button_extension_firmware_save.setEnabled(not is_extension_firmware_select and not is_no_extension and is_extension_connection_type_usb)
+        self.label_extension_firmware_usb_hint.setVisible(not is_extension_connection_type_usb)
+
+        if len(custom_extension_firmware_path) == 0:
+            custom_extension_firmware_is_valid = False
+
+            self.label_custom_extension_firmware_invalid.hide()
+        else:
+            custom_extension_firmware_is_valid = os.path.isfile(custom_extension_firmware_path)
+
+            self.label_custom_extension_firmware_invalid.setVisible(is_extension_firmware_custom and not custom_extension_firmware_is_valid)
+
+        self.button_extension_firmware_save.setEnabled(not is_no_extension and is_extension_connection_type_usb and \
+                                                       ((not is_extension_firmware_select and not is_extension_firmware_custom) or \
+                                                        (is_extension_firmware_custom and custom_extension_firmware_is_valid)))
+
         self.edit_custom_extension_firmware.setEnabled(is_extension_firmware_custom)
         self.button_extension_firmware_browse.setEnabled(is_extension_firmware_custom)
-        self.label_extension_firmware_usb_hint.setVisible(not is_extension_connection_type_usb)
 
         # setTabEnabled sets the current index to the modified tab if enabled is true.
         # Restore the old selected tab after enabling.
@@ -616,12 +655,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         filename = get_open_file_name(self, 'Open Firmware', last_dir, '*.bin')
 
         if len(filename) > 0:
-            # If the file was already selected, the text_changed signal is not sent.
-            # Call the slot manually to enable the flash button if the file exists.
-            if filename == self.edit_custom_plugin.text():
-                self.edit_custom_plugin_text_changed(filename)
-            else:
-                self.edit_custom_firmware.setText(filename)
+            self.edit_custom_firmware.setText(filename)
 
     def firmware_save_clicked(self):
         port_name = self.combo_serial_port.itemData(self.combo_serial_port.currentIndex())
@@ -824,6 +858,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             # the brick while the dialog is open will force it to show up as ttyACM1
             samba = None
             progress.cancel()
+            self.refresh_serial_ports()
             report_result(True)
         except SAMBARebootError as e:
             samba = None
@@ -842,6 +877,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.refresh_serial_ports()
             # Report the exception without unwinding the call stack
             sys.excepthook(*exc_info)
+
+        self.refresh_serial_ports()
 
     def read_current_uid(self):
         if self.current_bricklet_has_comcu():

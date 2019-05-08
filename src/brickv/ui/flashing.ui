@@ -39,34 +39,21 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0" colspan="2">
-          <widget class="QLabel" name="label_no_update_connection">
-           <property name="styleSheet">
-            <string notr="true">color:red;</string>
-           </property>
-           <property name="text">
-            <string>Could not connect to tinkerforge.com to get the list of available updates. Is your Internet connection working?</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
+         <item row="4" column="0">
           <widget class="QPushButton" name="update_button_refresh">
            <property name="text">
             <string>Search for Updates</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="4" column="1">
           <widget class="QPushButton" name="update_button_bricklets">
            <property name="text">
             <string>Auto-Update all Bricklets</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="0" colspan="2">
+         <item row="2" column="0" colspan="2">
           <widget class="QLabel" name="label_update_tool">
            <property name="text">
             <string>&lt;html&gt;&lt;body&gt;&lt;p&gt;Download the latest Brick Daemon and Brick Viewer from &lt;a href=&quot;https://www.tinkerforge.com/en/doc/Downloads.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;tinkerforge.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -75,6 +62,19 @@
             <bool>true</bool>
            </property>
            <property name="openExternalLinks">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="QLabel" name="label_no_update_connection">
+           <property name="styleSheet">
+            <string notr="true">color:red;</string>
+           </property>
+           <property name="text">
+            <string>Could not connect to tinkerforge.com to get the list of available updates. Is your Internet connection working?</string>
+           </property>
+           <property name="wordWrap">
             <bool>true</bool>
            </property>
           </widget>
@@ -110,7 +110,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="4" column="1">
           <widget class="QLineEdit" name="edit_custom_firmware"/>
          </item>
          <item row="1" column="0" colspan="3">
@@ -120,7 +120,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="2">
+         <item row="4" column="2">
           <widget class="QPushButton" name="button_firmware_browse">
            <property name="text">
             <string>Browse</string>
@@ -131,19 +131,6 @@
           <widget class="QPushButton" name="button_serial_port_refresh">
            <property name="text">
             <string>Refresh</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1" colspan="2">
-          <widget class="QLabel" name="label_no_firmware_connection">
-           <property name="styleSheet">
-            <string notr="true">color:red;</string>
-           </property>
-           <property name="text">
-            <string>Could not connect to tinkerforge.com to get the list of available firmwares. Is your Internet connection working?</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -167,13 +154,36 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1" colspan="2">
+         <item row="6" column="1" colspan="2">
           <widget class="QLabel" name="label_update_instructions">
            <property name="text">
             <string>To update your Brick, please follow the instructions &lt;a href=https://www.tinkerforge.com/en/doc/Software/Brickv.html#brick-firmware-flashing&gt;here&lt;/a&gt;.</string>
            </property>
            <property name="openExternalLinks">
             <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" colspan="2">
+          <widget class="QLabel" name="label_no_firmware_connection">
+           <property name="styleSheet">
+            <string notr="true">color:red;</string>
+           </property>
+           <property name="text">
+            <string>Could not connect to tinkerforge.com to get the list of available firmwares. Is your Internet connection working?</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1" colspan="2">
+          <widget class="QLabel" name="label_custom_firmware_invalid">
+           <property name="styleSheet">
+            <string notr="true">color:red;</string>
+           </property>
+           <property name="text">
+            <string>Specified custom firmware file is missing or not a regular file!</string>
            </property>
           </widget>
          </item>
@@ -268,17 +278,58 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="5" column="1">
           <widget class="QLineEdit" name="edit_custom_plugin"/>
          </item>
-         <item row="4" column="2" colspan="2">
+         <item row="5" column="2" colspan="2">
           <widget class="QPushButton" name="button_plugin_browse">
            <property name="text">
             <string>Browse</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="1" colspan="3">
+         <item row="2" column="0" colspan="4">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QLineEdit" name="edit_uid"/>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="label_bricklet_uid">
+           <property name="text">
+            <string>UID:</string>
+           </property>
+           <property name="buddy">
+            <cstring>edit_uid</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="2">
+          <widget class="QPushButton" name="button_uid_load">
+           <property name="text">
+            <string>Load UID</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="3">
+          <widget class="QPushButton" name="button_uid_save">
+           <property name="text">
+            <string>Save UID</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0" colspan="4">
+          <widget class="Line" name="line_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1" colspan="3">
           <widget class="QLabel" name="label_no_plugin_connection">
            <property name="styleSheet">
             <string notr="true">color:red;</string>
@@ -291,44 +342,13 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0" colspan="4">
-          <widget class="Line" name="line">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+         <item row="7" column="1" colspan="3">
+          <widget class="QLabel" name="label_custom_plugin_invalid">
+           <property name="styleSheet">
+            <string notr="true">color:red;</string>
            </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
-          <widget class="QLineEdit" name="edit_uid"/>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="label_bricklet_uid">
            <property name="text">
-            <string>UID:</string>
-           </property>
-           <property name="buddy">
-            <cstring>edit_uid</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="2">
-          <widget class="QPushButton" name="button_uid_load">
-           <property name="text">
-            <string>Load UID</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="3">
-          <widget class="QPushButton" name="button_uid_save">
-           <property name="text">
-            <string>Save UID</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0" colspan="4">
-          <widget class="Line" name="line_3">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <string>Specified custom plugin file is missing or not a regular file!</string>
            </property>
           </widget>
          </item>
@@ -363,7 +383,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
             <string>Firmware:</string>
@@ -373,25 +393,32 @@
          <item row="0" column="1" colspan="2">
           <widget class="QComboBox" name="combo_extension"/>
          </item>
-         <item row="2" column="1">
+         <item row="3" column="1">
           <widget class="QComboBox" name="combo_extension_firmware"/>
          </item>
-         <item row="2" column="2">
+         <item row="3" column="2">
           <widget class="QPushButton" name="button_extension_firmware_save">
            <property name="text">
             <string>Flash</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="2">
+         <item row="5" column="2">
           <widget class="QPushButton" name="button_extension_firmware_browse">
            <property name="text">
             <string>Browse</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="5" column="1">
           <widget class="QLineEdit" name="edit_custom_extension_firmware"/>
+         </item>
+         <item row="2" column="0" colspan="3">
+          <widget class="Line" name="line_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
          </item>
          <item row="4" column="1" colspan="2">
           <widget class="QLabel" name="label_no_extension_firmware_connection">
@@ -487,27 +514,30 @@
             </palette>
            </property>
            <property name="text">
-            <string>Could not connect to tinkerforge.com to get the list of available extension firmwares. Is your Internet connection working?</string>
+            <string>Could not connect to tinkerforge.com to get the list of available firmwares. Is your Internet connection working?</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="1" column="0" colspan="3">
-          <widget class="Line" name="line_4">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+         <item row="6" column="1" colspan="2">
+          <widget class="QLabel" name="label_custom_extension_firmware_invalid">
+           <property name="styleSheet">
+            <string notr="true">color:red;</string>
+           </property>
+           <property name="text">
+            <string>Specified custom firmware file is missing or not a regular file!</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="1" colspan="2">
+         <item row="1" column="1" colspan="2">
           <widget class="QLabel" name="label_extension_firmware_usb_hint">
            <property name="styleSheet">
             <string notr="true">color: red;</string>
            </property>
            <property name="text">
-            <string>Master Brick has to be directly connected to USB to flash Extension.</string>
+            <string>Master Brick has to be directly connected to USB to flash this Extension.</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
