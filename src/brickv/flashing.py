@@ -32,7 +32,7 @@ import time
 import struct
 from io import BytesIO as FileLike
 
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QStandardItemModel, QStandardItem, QBrush
 from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox, QProgressDialog
 

@@ -25,7 +25,6 @@ import json
 import posixpath
 import html
 
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QDialog, QInputDialog, QPlainTextEdit, QLabel, QMessageBox
 from PyQt5.QtGui import QFont, QTextOption
 
@@ -33,7 +32,7 @@ from brickv.async_call import async_call
 from brickv.utils import get_main_window
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_openhab import Ui_REDTabSettingsOpenHAB
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog, ExpandingInputDialog
+from brickv.plugin_system.plugins.red.program_utils import ExpandingInputDialog
 from brickv.plugin_system.plugins.red.script_manager import check_script_result, report_script_result
 
 class ConfigFile:
