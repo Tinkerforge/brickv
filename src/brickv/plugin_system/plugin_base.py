@@ -48,6 +48,7 @@ class PluginBase(QWidget):
         self.label_timeouts = None
         self.label_version = None
         self.button_parent = None
+        self.label_position = None
         self.device_class = device_class
         self.ipcon = ipcon
         self.device_info = device_info
@@ -109,6 +110,8 @@ class PluginBase(QWidget):
         if self.button_parent is not None:
             self.button_parent.setText(self.device_info.connected_uid)
             self.button_parent.clicked.connect(lambda: get_main_window().show_plugin(self.device_info.connected_uid))
+        if self.label_position is not None:
+            self.label_position.setText(self.device_info.position.title())
 
 
     def show_update(self):
@@ -174,7 +177,10 @@ class PluginBase(QWidget):
     def pause_plugin(self):
         if self.plugin_state == PluginBase.PLUGIN_STATE_RUNNING:
             try:
-                self.stop()
+                if hasattr(self, 'stop_comcu'):
+                    self.stop_comcu()
+                else:
+                    self.stop()
             except:
                 # Report the exception without unwinding the call stack.
                 sys.excepthook(*sys.exc_info())
@@ -184,7 +190,10 @@ class PluginBase(QWidget):
     def resume_plugin(self):
         if self.plugin_state == PluginBase.PLUGIN_STATE_PAUSED:
             try:
-                self.start()
+                if hasattr(self, 'start_comcu'):
+                    self.start_comcu()
+                else:
+                    self.start()
             except:
                 # Report the exception without unwinding the call stack.
                 sys.excepthook(*sys.exc_info())

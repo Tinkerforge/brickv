@@ -593,7 +593,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # position
         info_bars[1].addWidget(QLabel('Position:'))
-        info_bars[1].addWidget(QLabel('{0}'.format(device_info.position.upper())))
+        label_position = QLabel('{0}'.format(device_info.position.title()))
+        device_info.plugin.label_position = label_position
+        info_bars[1].addWidget(label_position)
         info_bars[1].addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
         # configs
@@ -768,27 +770,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                 IPConnection.ENUMERATION_TYPE_CONNECTED]:
             device_info = infos.get_info(uid)
             something_changed_ref = [False]
-
+            existing_plugin_was_paused = False
             # If the enum_type is CONNECTED, the bricklet was restarted externally.
             # The plugin could now be in an inconsistent state.
-            if enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED:
-                info = infos.get_info(uid)
-                if info is not None:
-                    if info.connected_uid != connected_uid:
-                        # Fix connections if bricklet was connected to another brick.
-                        parent_info = infos.get_info(info.connected_uid)
-                        if parent_info is not None:
-                            parent_info.connections.remove((info.position, info))
-                            self.show_status("Hot plugging is not supported! Please reset the brick {} and restart brick viewer.".format(info.connected_uid))
-                        info.reverse_connection = connected_uid
-                    elif info.position != position:
-                        # Bricklet was connected to the same brick, but to another port
-                        self.show_status("Hot plugging is not supported! Please reset the brick {} and restart brick viewer.".format(info.connected_uid))
+            if enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED and device_info is not None:
+                if device_info.connected_uid != connected_uid:
+                    # Fix connections if bricklet was connected to another brick.
+                    parent_info = infos.get_info(device_info.connected_uid)
+                    if parent_info is not None:
+                        parent_info.connections.remove((device_info.position, device_info))
+                        self.show_status("Hot plugging is not supported! Please reset the brick {} and restart brick viewer.".format(device_info.connected_uid))
+                    device_info.reverse_connection = connected_uid
+                elif device_info.position != position:
+                    # Bricklet was connected to the same brick, but to another port
+                    self.show_status("Hot plugging is not supported! Please reset the brick {} and restart brick viewer.".format(device_info.connected_uid))
 
-                    # If the plugin is not running, pause and resume will do nothing, so it is save to always call them.
-                    if info.plugin is not None:
-                        info.plugin.pause_plugin()
-                        info.plugin.resume_plugin()
+                # If the plugin is not running, pause will do nothing, so it is always save to call it.
+                # The plugin will be (unconditionally) resumed later, as resume also only does something
+                # if it was paused before (e.g. here).
+                if device_info.plugin is not None:
+                    device_info.plugin.pause_plugin()
 
             if device_info == None:
                 if device_identifier == BrickMaster.DEVICE_IDENTIFIER:
@@ -862,6 +863,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if device_identifier == BrickRED.DEVICE_IDENTIFIER and isinstance(plugin, RED):
                     plugin.get_image_version_async()
                     plugin.get_bindings_versions_async()
+
+            # The plugin was paused before if it was reconnected.
+            device_info.plugin.resume_plugin()
 
             if something_changed_ref[0]:
                 self.update_tree_view()
