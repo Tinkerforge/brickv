@@ -586,6 +586,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             button = QToolButton()
             button.setText(device_info.connected_uid)
             button.clicked.connect(lambda: self.show_plugin(device_info.connected_uid))
+            device_info.plugin.button_parent = button
 
             info_bars[1].addWidget(button)
             info_bars[1].addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Preferred))
@@ -679,6 +680,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         line.setFrameShadow(QFrame.Sunken)
 
         device_info.plugin.label_timeouts = label_timeouts
+        device_info.plugin.label_version = label_version
         device_info.plugin.layout().setContentsMargins(0, 0, 0, 0)
 
         layout.addWidget(line)
@@ -758,7 +760,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def cb_enumerate(self, uid, connected_uid, position,
                      hardware_version, firmware_version,
                      device_identifier, enumeration_type):
-
         if self.ipcon.get_connection_state() != IPConnection.CONNECTION_STATE_CONNECTED:
             # ignore enumerate callbacks that arrived after the connection got closed
             return
@@ -772,9 +773,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # The plugin could now be in an inconsistent state.
             if enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED:
                 info = infos.get_info(uid)
-                if info is not None and info.position != position:
-                    self.show_status("Hot plugging is not supported! Please reset the brick {} and restart brick viewer.".format(info.connected_uid))
-                self.remove_device_tab(uid)
+                if info is not None:
+                    if info.connected_uid != connected_uid:
+                        # Fix connections if bricklet was connected to another brick.
+                        parent_info = infos.get_info(info.connected_uid)
+                        if parent_info is not None:
+                            parent_info.connections.remove((info.position, info))
+                            self.show_status("Hot plugging is not supported! Please reset the brick {} and restart brick viewer.".format(info.connected_uid))
+                        info.reverse_connection = connected_uid
+                    elif info.position != position:
+                        # Bricklet was connected to the same brick, but to another port
+                        self.show_status("Hot plugging is not supported! Please reset the brick {} and restart brick viewer.".format(info.connected_uid))
+
+                    # If the plugin is not running, pause and resume will do nothing, so it is save to always call them.
+                    if info.plugin is not None:
+                        info.plugin.pause_plugin()
+                        info.plugin.resume_plugin()
 
             if device_info == None:
                 if device_identifier == BrickMaster.DEVICE_IDENTIFIER:

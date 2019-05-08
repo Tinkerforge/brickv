@@ -46,6 +46,8 @@ class PluginBase(QWidget):
         self.has_comcu = False # Will be overwritten if plugin has comcu
         self.plugin_state = PluginBase.PLUGIN_STATE_STOPPED
         self.label_timeouts = None
+        self.label_version = None
+        self.button_parent = None
         self.device_class = device_class
         self.ipcon = ipcon
         self.device_info = device_info
@@ -100,6 +102,13 @@ class PluginBase(QWidget):
             self.show_update()
         else:
             self.hide_update()
+
+        self.hardware_version = self.device_info.hardware_version
+        self.firmware_version = self.device_info.firmware_version_installed
+        self.label_version.setText(brickv.infos.get_version_string(self.firmware_version))
+        if self.button_parent is not None:
+            self.button_parent.setText(self.device_info.connected_uid)
+            self.button_parent.clicked.connect(lambda: get_main_window().show_plugin(self.device_info.connected_uid))
 
 
     def show_update(self):
