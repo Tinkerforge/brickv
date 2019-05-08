@@ -44,6 +44,12 @@ class LaserRangeFinder(PluginBase):
 
         self.lrf = self.device
 
+        # the firmware version of a EEPROM Bricklet can (under common circumstances)
+        # not change during the lifetime of an EEPROM Bricklet plugin. therefore,
+        # it's okay to make final decisions based on it here
+        self.has_sensor_hardware_version_api = self.firmware_version >= (2, 0, 3)
+        self.has_configuration_api = self.firmware_version >= (2, 0, 3)
+
         self.cbe_distance = CallbackEmulator(self.lrf.get_distance,
                                              None,
                                              self.cb_distance,
@@ -175,9 +181,6 @@ class LaserRangeFinder(PluginBase):
         layout.addLayout(layout_h2)
         layout.addLayout(layout_h3)
         layout.addLayout(layout_h4)
-
-        self.has_sensor_hardware_version_api = self.firmware_version >= (2, 0, 3)
-        self.has_configuration_api = self.firmware_version >= (2, 0, 3)
 
     def start(self):
         if self.has_sensor_hardware_version_api:

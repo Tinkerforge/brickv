@@ -38,6 +38,9 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
 
         self.rs = self.device
 
+        # the firmware version of a EEPROM Bricklet can (under common circumstances)
+        # not change during the lifetime of an EEPROM Bricklet plugin. therefore,
+        # it's okay to make final decisions based on it here
         self.has_more_types = self.firmware_version >= (2, 0, 1)
 
         self.qtcb_switching_done.connect(self.cb_switching_done)

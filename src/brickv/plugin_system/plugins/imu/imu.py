@@ -43,6 +43,11 @@ class IMU(PluginBase, Ui_IMU):
 
         self.imu = self.device
 
+        # the firmware version of a Brick can (under common circumstances) not
+        # change during the lifetime of a Brick plugin. therefore, it's okay to
+        # make final decisions based on it here
+        self.has_status_led = self.firmware_version >= (2, 3, 1)
+
         self.acc_x = CurveValueWrapper()
         self.acc_y = CurveValueWrapper()
         self.acc_z = CurveValueWrapper()
@@ -148,7 +153,7 @@ class IMU(PluginBase, Ui_IMU):
         self.calibrate = None
         self.alive = True
 
-        if self.firmware_version >= (2, 3, 1):
+        if self.has_status_led:
             self.status_led_action = QAction('Status LED', self)
             self.status_led_action.setCheckable(True)
             self.status_led_action.toggled.connect(lambda checked: self.imu.enable_status_led() if checked else self.imu.disable_status_led())
@@ -156,10 +161,9 @@ class IMU(PluginBase, Ui_IMU):
         else:
             self.status_led_action = None
 
-        if self.firmware_version >= (1, 0, 7):
-            reset = QAction('Reset', self)
-            reset.triggered.connect(self.imu.reset)
-            self.set_actions([(0, None, [reset])])
+        reset = QAction('Reset', self)
+        reset.triggered.connect(self.imu.reset)
+        self.set_actions([(0, None, [reset])])
 
     def restart_gl(self):
         state = self.imu_gl.get_state()
@@ -181,7 +185,7 @@ class IMU(PluginBase, Ui_IMU):
         self.parent().set_callback_post_untab(lambda x: self.restart_gl())
         self.parent().set_callback_post_tab(lambda x: self.restart_gl())
 
-        if self.firmware_version >= (2, 3, 1):
+        if self.has_status_led:
             async_call(self.imu.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
 
         self.gl_layout.activate()

@@ -55,37 +55,23 @@ class Wifi(QWidget, Ui_Wifi):
 
         self.wifi_status = None
 
-
     def start(self):
-        if self.parent.firmware_version >= (1, 3, 0):
-            if self.parent.firmware_version < (1, 3, 3):
-                # AP and Ad Hoc was added in 1.3.3
-                while self.wifi_connection.count() > 2:
-                    self.wifi_connection.removeItem(self.wifi_connection.count() - 1)
+        async_call(self.master.get_wifi_configuration, None, self.get_wifi_configuration_async, self.parent.increase_error_count,
+                   expand_result_tuple_for_callback=True)
+        async_call(self.master.get_wifi_certificate, 0xFFFF, self.update_username_async, self.parent.increase_error_count)
+        async_call(self.master.get_wifi_certificate, 0xFFFE, self.update_password_async, self.parent.increase_error_count)
+        async_call(self.master.get_wifi_power_mode, None, self.wifi_power_mode.setCurrentIndex, self.parent.increase_error_count)
+        async_call(self.master.get_wifi_regulatory_domain, None, self.wifi_domain.setCurrentIndex, self.parent.increase_error_count)
+        async_call(self.master.get_wifi_encryption, None, self.get_wifi_encryption_async, self.parent.increase_error_count,
+                   expand_result_tuple_for_callback=True)
 
-            async_call(self.master.get_wifi_configuration, None, self.get_wifi_configuration_async, self.parent.increase_error_count,
-                       expand_result_tuple_for_callback=True)
-            async_call(self.master.get_wifi_certificate, 0xFFFF, self.update_username_async, self.parent.increase_error_count)
-            async_call(self.master.get_wifi_certificate, 0xFFFE, self.update_password_async, self.parent.increase_error_count)
-            async_call(self.master.get_wifi_power_mode, None, self.wifi_power_mode.setCurrentIndex, self.parent.increase_error_count)
-
-            if self.parent.firmware_version >= (1, 3, 4):
-                async_call(self.master.get_wifi_regulatory_domain, None, self.wifi_domain.setCurrentIndex, self.parent.increase_error_count)
-            else:
-                self.wifi_domain.setEnabled(False)
-                self.wifi_domain.clear()
-                self.wifi_domain.addItem("FW Version >= 1.3.4 required")
-
-            async_call(self.master.get_wifi_encryption, None, self.get_wifi_encryption_async, self.parent.increase_error_count,
-                       expand_result_tuple_for_callback=True)
-
-            if self.parent.firmware_version < (2, 0, 5):
-                self.wifi_hostname.setDisabled(True)
-                self.wifi_hostname.setMaxLength(50)
-                self.wifi_hostname.setText("FW Version >= 2.0.5 required")
-                self.wifi_hostname_label.setDisabled(True)
-            else:
-                async_call(self.master.get_wifi_hostname, None, self.get_wifi_hostname_async, self.parent.increase_error_count)
+        if self.parent.firmware_version < (2, 0, 5):
+            self.wifi_hostname.setDisabled(True)
+            self.wifi_hostname.setMaxLength(50)
+            self.wifi_hostname.setText("FW Version >= 2.0.5 required")
+            self.wifi_hostname_label.setDisabled(True)
+        else:
+            async_call(self.master.get_wifi_hostname, None, self.get_wifi_hostname_async, self.parent.increase_error_count)
 
         if self.parent.firmware_version >= (2, 2, 0):
             self.wifi_use_auth.stateChanged.connect(self.wifi_auth_changed)
@@ -717,7 +703,7 @@ class Wifi(QWidget, Ui_Wifi):
             if username_old == username and password_old == password:
                 test_ok = True
 
-        if self.parent.firmware_version >= (1, 3, 4) and test_ok:
+        if test_ok:
             self.master.set_wifi_regulatory_domain(self.wifi_domain.currentIndex())
 
             if self.master.get_wifi_regulatory_domain() != self.wifi_domain.currentIndex():

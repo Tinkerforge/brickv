@@ -38,6 +38,12 @@ class AnalogIn(PluginBase):
 
         self.ai = self.device
 
+        # the firmware version of a EEPROM Bricklet can (under common circumstances)
+        # not change during the lifetime of an EEPROM Bricklet plugin. therefore,
+        # it's okay to make final decisions based on it here
+        self.has_range = self.firmware_version >= (2, 0, 1)
+        self.has_averaging = self.firmware_version >= (2, 0, 3)
+
         self.cbe_voltage = CallbackEmulator(self.ai.get_voltage,
                                             None,
                                             self.cb_voltage,
@@ -51,11 +57,13 @@ class AnalogIn(PluginBase):
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot_widget)
 
-        if self.firmware_version >= (2, 0, 1):
+        if self.has_range:
             self.combo_range = QComboBox()
             self.combo_range.addItem('Automatic', BrickletAnalogIn.RANGE_AUTOMATIC)
-            if self.firmware_version >= (2, 0, 3):
+
+            if self.has_averaging:
                 self.combo_range.addItem('0 - 3.30 V', BrickletAnalogIn.RANGE_UP_TO_3V)
+
             self.combo_range.addItem('0 - 6.05 V', BrickletAnalogIn.RANGE_UP_TO_6V)
             self.combo_range.addItem('0 - 10.32 V', BrickletAnalogIn.RANGE_UP_TO_10V)
             self.combo_range.addItem('0 - 36.30 V', BrickletAnalogIn.RANGE_UP_TO_36V)
@@ -67,7 +75,7 @@ class AnalogIn(PluginBase):
             hlayout.addWidget(self.combo_range)
             hlayout.addStretch()
 
-            if self.firmware_version >= (2, 0, 3):
+            if self.has_averaging:
                 self.spin_average = QSpinBox()
                 self.spin_average.setMinimum(0)
                 self.spin_average.setMaximum(255)
@@ -93,11 +101,11 @@ class AnalogIn(PluginBase):
         self.spin_average.setValue(average)
 
     def start(self):
-        if self.firmware_version >= (2, 0, 1):
+        if self.has_range:
             async_call(self.ai.get_range, None, self.get_range_async, self.increase_error_count)
 
-            if self.firmware_version >= (2, 0, 3):
-                async_call(self.ai.get_averaging, None, self.get_averaging_async, self.increase_error_count)
+        if self.has_averaging:
+            async_call(self.ai.get_averaging, None, self.get_averaging_async, self.increase_error_count)
 
         self.cbe_voltage.set_period(100)
 
@@ -119,7 +127,7 @@ class AnalogIn(PluginBase):
         self.current_voltage.value = voltage / 1000.0
 
     def range_changed(self, index):
-        if index >= 0 and self.firmware_version >= (2, 0, 1):
+        if index >= 0 and self.has_range:
             range_ = self.combo_range.itemData(index)
             async_call(self.ai.set_range, range_, None, self.increase_error_count)
 

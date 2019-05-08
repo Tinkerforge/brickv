@@ -44,6 +44,11 @@ class LCD16x2(PluginBase):
 
         self.lcd = self.device
 
+        # the firmware version of a EEPROM Bricklet can (under common circumstances)
+        # not change during the lifetime of an EEPROM Bricklet plugin. therefore,
+        # it's okay to make final decisions based on it here
+        self.has_custom_character = self.firmware_version >= (2, 0, 1)
+
         self.qtcb_pressed.connect(self.cb_pressed)
         self.lcd.register_callback(self.lcd.CALLBACK_BUTTON_PRESSED,
                                    self.qtcb_pressed.emit)
@@ -103,7 +108,7 @@ class LCD16x2(PluginBase):
         self.bl_button.clicked.connect(self.bl_clicked)
         self.text_button.clicked.connect(self.text_clicked)
 
-        if self.firmware_version >= (2, 0, 1):
+        if self.has_custom_character:
             line = QFrame()
             line.setObjectName("line")
             line.setFrameShape(QFrame.HLine)
@@ -157,7 +162,7 @@ class LCD16x2(PluginBase):
         layout.addLayout(self.onofflayout)
         layout.addLayout(self.buttonlayout)
 
-        if self.firmware_version >= (2, 0, 1):
+        if self.has_custom_character:
             layout.addWidget(line)
             layout.addLayout(self.char_main_layout)
         layout.addStretch(1)
@@ -263,7 +268,8 @@ class LCD16x2(PluginBase):
         line = int(self.line_combo.currentText())
         position = int(self.pos_combo.currentText())
         text = self.text_edit.text()
-        if self.firmware_version >= (2, 0, 1):
+
+        if self.has_custom_character:
             for i in range(8):
                 text = text.replace('\\' + str(i), chr(i+8))
         try:

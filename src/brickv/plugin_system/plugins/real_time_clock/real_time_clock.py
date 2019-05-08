@@ -305,6 +305,11 @@ class RealTimeClock(PluginBase, Ui_RealTimeClock):
 
         self.rtc = self.device
 
+        # the firmware version of a EEPROM Bricklet can (under common circumstances)
+        # not change during the lifetime of an EEPROM Bricklet plugin. therefore,
+        # it's okay to make final decisions based on it here
+        self.has_alarm = self.firmware_version >= (2, 0, 1)
+
         self.cbe_date_time = CallbackEmulator(self.rtc.get_date_time,
                                               None,
                                               self.cb_date_time,
@@ -340,7 +345,7 @@ class RealTimeClock(PluginBase, Ui_RealTimeClock):
         self.combo_alarm_weekday.addItem('Saturday', BrickletRealTimeClock.WEEKDAY_SATURDAY)
         self.combo_alarm_weekday.addItem('Sunday', BrickletRealTimeClock.WEEKDAY_SUNDAY)
 
-        if self.firmware_version < (2, 0, 1):
+        if not self.has_alarm:
             self.group_alarm.setTitle('Alarm (FW Version >= 2.0.1 required)')
             self.group_alarm.setEnabled(False)
         else:
@@ -359,7 +364,7 @@ class RealTimeClock(PluginBase, Ui_RealTimeClock):
     def start(self):
         async_call(self.rtc.get_offset, None, self.get_offset_async, self.increase_error_count)
 
-        if self.firmware_version >= (2, 0, 1):
+        if self.has_alarm:
             async_call(self.rtc.get_alarm, None, self.get_alarm_async, self.increase_error_count,
                        expand_result_tuple_for_callback=True)
 

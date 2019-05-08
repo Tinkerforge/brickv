@@ -46,9 +46,8 @@ class Chibi(QWidget, Ui_Chibi):
         self.update_generator = None
 
     def start(self):
-        if self.parent.firmware_version >= (1, 1, 0):
-            self.update_generator = self.start_async()
-            next(self.update_generator)
+        self.update_generator = self.start_async()
+        next(self.update_generator)
 
     def start_async(self):
         self.update_address = 0

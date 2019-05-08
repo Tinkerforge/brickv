@@ -41,6 +41,11 @@ class RotaryEncoder(PluginBase):
 
         self.re = self.device
 
+        # the firmware version of a EEPROM Bricklet can (under common circumstances)
+        # not change during the lifetime of an EEPROM Bricklet plugin. therefore,
+        # it's okay to make final decisions based on it here
+        self.has_fixed_is_pressed = self.firmware_version >= (2, 0, 2) # is_pressed return value was inverted before
+
         self.cbe_count = CallbackEmulator(self.get_count,
                                           False,
                                           self.cb_count,
@@ -100,10 +105,14 @@ class RotaryEncoder(PluginBase):
     def reset_clicked(self):
         async_call(self.get_count, True, self.cb_count, self.increase_error_count)
 
+    def is_pressed_async(self, is_pressed):
+        if self.has_fixed_is_pressed:
+            self.encoder_knob.set_pressed(is_pressed)
+        else:
+            self.encoder_knob.set_pressed(not is_pressed)
+
     def start(self):
-        if self.firmware_version >= (2, 0, 2):
-            # firmware 2.0.2 fixed the is_pressed return value, it was inverted before
-            async_call(self.re.is_pressed, None, self.encoder_knob.set_pressed, self.increase_error_count)
+        async_call(self.re.is_pressed, None, self.is_pressed_async, self.increase_error_count)
 
         self.cbe_count.set_period(25)
 

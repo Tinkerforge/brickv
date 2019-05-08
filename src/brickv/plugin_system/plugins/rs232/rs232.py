@@ -45,7 +45,10 @@ class RS232(PluginBase, Ui_RS232):
 
         self.setupUi(self)
 
-        has_errors = self.firmware_version >= (2, 0, 1)
+        # the firmware version of a EEPROM Bricklet can (under common circumstances)
+        # not change during the lifetime of an EEPROM Bricklet plugin. therefore,
+        # it's okay to make final decisions based on it here
+        self.has_error_callback = self.firmware_version >= (2, 0, 1)
 
         self.text.setReadOnly(True)
 
@@ -57,7 +60,7 @@ class RS232(PluginBase, Ui_RS232):
         self.rs232.register_callback(self.rs232.CALLBACK_READ,
                                      self.qtcb_read.emit)
 
-        if has_errors:
+        if self.has_error_callback:
             self.label_no_error_support.hide()
             self.qtcb_error.connect(self.cb_error)
             self.rs232.register_callback(self.rs232.CALLBACK_ERROR,

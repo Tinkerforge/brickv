@@ -40,7 +40,7 @@ class IndustrialDigitalOut4V2(COMCUPluginBase, Ui_IndustrialDigitalOut4V2):
 
         self.ido4 = self.device
 
-        self.has_monoflop_abort = self.firmware_version >= (2, 0, 1)
+        self.has_monoflop_abort = None
 
         self.pixmap_low = load_masked_pixmap('plugin_system/plugins/industrial_digital_out_4_v2/ido4_low.bmp')
         self.pixmap_high = load_masked_pixmap('plugin_system/plugins/industrial_digital_out_4_v2/ido4_high.bmp')
@@ -127,6 +127,12 @@ class IndustrialDigitalOut4V2(COMCUPluginBase, Ui_IndustrialDigitalOut4V2):
         self.ido4.set_channel_led_config(3, config)
 
     def start(self):
+        # the firmware version might change between init and start of a Co-MCU
+        # Bricklet plugin, because a Co-MCU Bricklet can be restarted without
+        # recreating the plugin. therefore, the firmware version has to be checked
+        # on every start
+        self.has_monoflop_abort = self.firmware_version >= (2, 0, 1)
+
         async_call(self.ido4.get_value, None, self.get_value_async, self.increase_error_count)
 
         for channel in range(4):

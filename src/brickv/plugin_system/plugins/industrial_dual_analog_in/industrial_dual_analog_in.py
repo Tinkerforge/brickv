@@ -82,7 +82,7 @@ class Calibration(QDialog, Ui_Calibration):
 
     def gain_clicked(self):
         try:
-            if self.parent.firmware_version >= (2, 0, 1): # fixed computation in 2.0.1
+            if self.parent.has_fixed_calibration:
                 measured0 = (sum(self.values0)/10.0)*244/44983
                 measured1 = (sum(self.values1)/10.0)*244/44983
             else:
@@ -134,6 +134,11 @@ class IndustrialDualAnalogIn(PluginBase):
         super().__init__(BrickletIndustrialDualAnalogIn, *args)
 
         self.analog_in = self.device
+
+        # the firmware version of a EEPROM Bricklet can (under common circumstances)
+        # not change during the lifetime of an EEPROM Bricklet plugin. therefore,
+        # it's okay to make final decisions based on it here
+        self.has_fixed_calibration = self.firmware_version >= (2, 0, 1)
 
         self.cbe_voltage0 = CallbackEmulator(self.analog_in.get_voltage,
                                              0,

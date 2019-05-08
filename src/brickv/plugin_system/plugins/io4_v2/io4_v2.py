@@ -38,7 +38,7 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
 
         self.io = self.device
 
-        self.has_monoflop_abort_by_set_configuration = self.firmware_version >= (2, 0, 3)
+        self.has_monoflop_abort_by_set_configuration = None
 
         self.io.set_response_expected(self.io.FUNCTION_SET_CONFIGURATION, True)
 
@@ -127,6 +127,12 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
             self.cbox_cfg_ch_changed(self.cbox_cfg_ch.currentIndex())
 
     def start(self):
+        # the firmware version might change between init and start of a Co-MCU
+        # Bricklet plugin, because a Co-MCU Bricklet can be restarted without
+        # recreating the plugin. therefore, the firmware version has to be checked
+        # on every start
+        self.has_monoflop_abort_by_set_configuration = self.firmware_version >= (2, 0, 3)
+
         self.config_direction = [None] * 4
         self.config_value = [None] * 4
 

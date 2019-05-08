@@ -40,14 +40,17 @@ class PiezoSpeaker(PluginBase):
 
         self.ps = self.device
 
+        # the firmware version of a EEPROM Bricklet can (under common circumstances)
+        # not change during the lifetime of an EEPROM Bricklet plugin. therefore,
+        # it's okay to make final decisions based on it here
+        self.has_stoppable_beep = self.firmware_version >= (2, 0, 2)
+
         self.qtcb_beep_finished.connect(self.cb_beep)
         self.ps.register_callback(self.ps.CALLBACK_BEEP_FINISHED,
                                   self.qtcb_beep_finished.emit)
         self.qtcb_morse_finished.connect(self.cb_morse)
         self.ps.register_callback(self.ps.CALLBACK_MORSE_CODE_FINISHED,
                                   self.qtcb_morse_finished.emit)
-
-        self.has_stoppable_beep = self.firmware_version >= (2, 0, 2)
 
         self.frequency_label = QLabel('Frequency (585 - 7100 Hz):')
         self.frequency_box = QSpinBox()

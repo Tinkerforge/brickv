@@ -49,6 +49,11 @@ class Master(PluginBase, Ui_Master):
 
         self.master = self.device
 
+        # the firmware version of a Brick can (under common circumstances) not
+        # change during the lifetime of a Brick plugin. therefore, it's okay to
+        # make final decisions based on it here
+        self.has_status_led = self.firmware_version >= (2, 3, 2)
+
         self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_data)
 
@@ -72,14 +77,10 @@ class Master(PluginBase, Ui_Master):
         self.tab_widget.removeTab(0)
         self.tab_widget.hide()
 
-        if self.firmware_version >= (1, 1, 0):
-            self.check_extensions = True
-            self.extension_type_button.clicked.connect(self.extension_clicked)
-        else:
-            self.check_extensions = False
-            self.extension_type_button.setEnabled(False)
+        self.check_extensions = True
+        self.extension_type_button.clicked.connect(self.extension_clicked)
 
-        if self.firmware_version >= (2, 3, 2):
+        if self.has_status_led:
             self.status_led_action = QAction('Status LED', self)
             self.status_led_action.setCheckable(True)
             self.status_led_action.toggled.connect(lambda checked: self.master.enable_status_led() if checked else self.master.disable_status_led())
@@ -87,10 +88,9 @@ class Master(PluginBase, Ui_Master):
         else:
             self.status_led_action = None
 
-        if self.firmware_version >= (1, 2, 1):
-            reset = QAction('Reset', self)
-            reset.triggered.connect(self.master.reset)
-            self.set_actions([(0, None, [reset])])
+        reset = QAction('Reset', self)
+        reset.triggered.connect(self.master.reset)
+        self.set_actions([(0, None, [reset])])
 
         self.extension_type_preset = [None,  # None
                                       False, # Chibi
@@ -193,14 +193,9 @@ class Master(PluginBase, Ui_Master):
             self.device_info.connection_type = connection_type
             infos.update_info(self.uid)
 
-        if self.firmware_version >= (1, 1, 0):
-            async_call(self.master.is_chibi_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_CHIBI, 'Chibi Extension'), self.increase_error_count)
-
-        if self.firmware_version >= (1, 2, 0):
-            async_call(self.master.is_rs485_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_RS485, 'RS485 Extension'), self.increase_error_count)
-
-        if self.firmware_version >= (1, 3, 0):
-            async_call(self.master.is_wifi_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_WIFI, 'WIFI Extension'), self.increase_error_count)
+        async_call(self.master.is_chibi_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_CHIBI, 'Chibi Extension'), self.increase_error_count)
+        async_call(self.master.is_rs485_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_RS485, 'RS485 Extension'), self.increase_error_count)
+        async_call(self.master.is_wifi_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_WIFI, 'WIFI Extension'), self.increase_error_count)
 
         if self.firmware_version >= (2, 1, 0):
             async_call(self.master.is_ethernet_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_ETHERNET, 'Ethernet Extension'), self.increase_error_count)
@@ -275,7 +270,7 @@ class Master(PluginBase, Ui_Master):
             self.label_no_extension.hide()
 
     def start(self):
-        if self.firmware_version >= (2, 3, 2):
+        if self.has_status_led:
             async_call(self.master.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
 
         if self.check_extensions:

@@ -46,7 +46,9 @@ class Barometer(PluginBase):
 
         self.barometer = self.device
 
-        self.has_calibrate = self.firmware_version == (1, 0, 0)
+        # the firmware version of a EEPROM Bricklet can (under common circumstances)
+        # not change during the lifetime of an EEPROM Bricklet plugin. therefore,
+        # it's okay to make final decisions based on it here
         self.has_averaging = self.firmware_version >= (2, 0, 2)
 
         self.moving_average_pressure = 25
@@ -79,21 +81,17 @@ class Barometer(PluginBase):
         plots = [('Altitude', Qt.darkGreen, self.current_altitude, lambda value: '{:.2f} m ({:.2f} ft)'.format(value, value / METER_TO_FEET_DIVISOR))]
         self.altitude_plot_widget = PlotWidget('Altitude [m]', plots, self.clear_graphs_button, y_resolution=0.01)
 
-        if self.has_calibrate:
-            self.calibrate_button = QPushButton('Calibrate Altitude')
-            self.calibrate_button.clicked.connect(self.calibrate_clicked)
-        else:
-            self.reference_label = QLabel('Reference Air Pressure [mbar]:')
+        self.reference_label = QLabel('Reference Air Pressure [mbar]:')
 
-            self.reference_box = QDoubleSpinBox()
-            self.reference_box.setMinimum(10)
-            self.reference_box.setMaximum(1200)
-            self.reference_box.setDecimals(3)
-            self.reference_box.setValue(1013.25)
-            self.reference_box.editingFinished.connect(self.reference_box_finished)
+        self.reference_box = QDoubleSpinBox()
+        self.reference_box.setMinimum(10)
+        self.reference_box.setMaximum(1200)
+        self.reference_box.setDecimals(3)
+        self.reference_box.setValue(1013.25)
+        self.reference_box.editingFinished.connect(self.reference_box_finished)
 
-            self.use_current_button = QPushButton('Use Current')
-            self.use_current_button.clicked.connect(self.use_current_clicked)
+        self.use_current_button = QPushButton('Use Current')
+        self.use_current_button.clicked.connect(self.use_current_clicked)
 
         if self.has_averaging:
             self.avg_pressure_box = QSpinBox()
@@ -131,21 +129,14 @@ class Barometer(PluginBase):
 
         layout.addWidget(line)
 
-        if self.has_calibrate:
-            layout_h2 = QHBoxLayout()
-            layout_h2.addWidget(self.chip_temperature_label)
-            layout_h2.addStretch()
-            layout_h2.addWidget(self.calibrate_button)
-            layout_h2.addWidget(self.clear_graphs_button)
-        else:
-            layout_h2 = QHBoxLayout()
-            layout_h2.addWidget(self.reference_label)
-            layout_h2.addWidget(self.reference_box)
-            layout_h2.addWidget(self.use_current_button)
-            layout_h2.addStretch()
-            layout_h2.addWidget(self.chip_temperature_label)
-            layout_h2.addStretch()
-            layout_h2.addWidget(self.clear_graphs_button)
+        layout_h2 = QHBoxLayout()
+        layout_h2.addWidget(self.reference_label)
+        layout_h2.addWidget(self.reference_box)
+        layout_h2.addWidget(self.use_current_button)
+        layout_h2.addStretch()
+        layout_h2.addWidget(self.chip_temperature_label)
+        layout_h2.addStretch()
+        layout_h2.addWidget(self.clear_graphs_button)
 
         layout.addLayout(layout_h2)
 
@@ -166,8 +157,7 @@ class Barometer(PluginBase):
         if self.has_averaging:
             async_call(self.barometer.get_averaging, None, self.get_averaging_async, self.increase_error_count)
 
-        if not self.has_calibrate:
-            async_call(self.barometer.get_reference_air_pressure, None, self.get_reference_air_pressure_async, self.increase_error_count)
+        async_call(self.barometer.get_reference_air_pressure, None, self.get_reference_air_pressure_async, self.increase_error_count)
 
         self.cbe_air_pressure.set_period(100)
         self.cbe_altitude.set_period(100)

@@ -44,6 +44,11 @@ class Stepper(PluginBase, Ui_Stepper):
 
         self.stepper = self.device
 
+        # the firmware version of a Brick can (under common circumstances) not
+        # change during the lifetime of a Brick plugin. therefore, it's okay to
+        # make final decisions based on it here
+        self.has_status_led = self.firmware_version >= (2, 3, 1)
+
         self.endis_all(False)
 
         self.update_timer = QTimer(self)
@@ -107,7 +112,7 @@ class Stepper(PluginBase, Ui_Stepper):
         self.mv  = 0
         self.mod = 0
 
-        if self.firmware_version >= (2, 3, 1):
+        if self.has_status_led:
             self.status_led_action = QAction('Status LED', self)
             self.status_led_action.setCheckable(True)
             self.status_led_action.toggled.connect(lambda checked: self.stepper.enable_status_led() if checked else self.stepper.disable_status_led())
@@ -115,13 +120,12 @@ class Stepper(PluginBase, Ui_Stepper):
         else:
             self.status_led_action = None
 
-        if self.firmware_version >= (1, 1, 4):
-            reset = QAction('Reset', self)
-            reset.triggered.connect(lambda: self.stepper.reset())
-            self.set_actions([(0, None, [reset])])
+        reset = QAction('Reset', self)
+        reset.triggered.connect(lambda: self.stepper.reset())
+        self.set_actions([(0, None, [reset])])
 
     def start(self):
-        if self.firmware_version >= (2, 3, 1):
+        if self.has_status_led:
             async_call(self.stepper.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
 
         self.update_timer.start(100)

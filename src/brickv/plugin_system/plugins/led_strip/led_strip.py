@@ -50,6 +50,9 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
 
         self.led_strip = self.device
 
+        # the firmware version of a EEPROM Bricklet can (under common circumstances)
+        # not change during the lifetime of an EEPROM Bricklet plugin. therefore,
+        # it's okay to make final decisions based on it here
         self.has_clock_frequency = self.firmware_version >= (2, 0, 1)
         self.has_chip_type = self.firmware_version >= (2, 0, 2)
         self.has_more_chip_types = self.firmware_version >= (2, 0, 6)

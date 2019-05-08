@@ -46,11 +46,10 @@ class RS485(QWidget, Ui_RS485):
         self.update_generator = None
 
     def start(self):
-        if self.parent.firmware_version >= (1, 2, 0):
-            async_call(self.master.get_rs485_configuration, None, self.get_rs485_configuration_async, self.parent.increase_error_count,
-                       expand_result_tuple_for_callback=True)
-            self.update_generator = self.start_async()
-            next(self.update_generator)
+        async_call(self.master.get_rs485_configuration, None, self.get_rs485_configuration_async, self.parent.increase_error_count,
+                   expand_result_tuple_for_callback=True)
+        self.update_generator = self.start_async()
+        next(self.update_generator)
 
     def start_async(self):
         self.update_address = 0
