@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-IMU Plugin
+IMU 2.0 Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
 
-imu_v2_gl_widget.py: IMU 2.0 OpenGL representation
+imu_v2_3d_widget.py: IMU 2.0 OpenGL representation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
