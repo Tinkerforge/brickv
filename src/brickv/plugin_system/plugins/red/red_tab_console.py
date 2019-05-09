@@ -56,7 +56,15 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
         self.copy_button.setFocusPolicy(Qt.NoFocus)
         self.setFocusPolicy(Qt.NoFocus)
 
+        self.combo_serial_port.currentIndexChanged.connect(self.selected_serial_port_changed)
+
         self.refresh_ports()
+
+    def selected_serial_port_changed(self, index):
+        if index > 0:
+            self.connect_button.setEnabled(True)
+        else:
+            self.connect_button.setEnabled(False)
 
     def refresh_ports(self):
         current_text = self.combo_serial_port.currentText()
@@ -74,11 +82,10 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
 
         self.combo_serial_port.setEnabled(self.combo_serial_port.count() > 0)
 
+        self.connect_button.setEnabled(False)
         if self.combo_serial_port.count() == 0:
             self.combo_serial_port.addItem('No serial port found')
-            self.connect_button.setEnabled(False)
         else:
-            self.connect_button.setEnabled(True)
             self.combo_serial_port.insertItem(0, 'Select...')
             self.combo_serial_port.insertSeparator(1)
             self.combo_serial_port.setCurrentIndex(0)
