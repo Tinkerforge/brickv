@@ -27,12 +27,10 @@ import sys
 import ctypes
 import ctypes.util
 import math
-
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QMatrix4x4, QQuaternion
-
 import array
 import os
+
+from PyQt5.QtGui import QMatrix4x4, QQuaternion
 
 from brickv.utils import get_resources_path
 from brickv.render_widget import RenderWidget
