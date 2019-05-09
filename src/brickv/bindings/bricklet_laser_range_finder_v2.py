@@ -130,7 +130,7 @@ class BrickletLaserRangeFinderV2(Device):
         self.response_expected[BrickletLaserRangeFinderV2.FUNCTION_READ_UID] = BrickletLaserRangeFinderV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinderV2.FUNCTION_GET_IDENTITY] = BrickletLaserRangeFinderV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletLaserRangeFinderV2.CALLBACK_DISTANCE] = 'H'
+        self.callback_formats[BrickletLaserRangeFinderV2.CALLBACK_DISTANCE] = 'h'
         self.callback_formats[BrickletLaserRangeFinderV2.CALLBACK_VELOCITY] = 'h'
 
 
@@ -146,7 +146,7 @@ class BrickletLaserRangeFinderV2(Device):
         :cb:`Distance` callback. You can set the callback configuration
         with :func:`Set Distance Callback Configuration`.
         """
-        return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_DISTANCE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_DISTANCE, (), '', 'h')
 
     def set_distance_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -186,13 +186,13 @@ class BrickletLaserRangeFinderV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_SET_DISTANCE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_SET_DISTANCE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c h h', '')
 
     def get_distance_callback_configuration(self):
         """
         Returns the callback configuration as set by :func:`Set Distance Callback Configuration`.
         """
-        return GetDistanceCallbackConfiguration(*self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_DISTANCE_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
+        return GetDistanceCallbackConfiguration(*self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_DISTANCE_CALLBACK_CONFIGURATION, (), '', 'I ! c h h'))
 
     def get_velocity(self):
         """
