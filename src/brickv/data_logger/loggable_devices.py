@@ -54,11 +54,7 @@ if 'merged_data_logger_modules' not in globals():
     except ImportError:
         BrickIMUV2_found = False
     try:
-        try:
-            from brickv.bindings.brick_master import BrickMaster
-            BrickMaster_found = True
-        except ImportError:
-            BrickMaster_found = False
+        from brickv.bindings.brick_master import BrickMaster
         BrickMaster_found = True
     except ImportError:
         BrickMaster_found = False
