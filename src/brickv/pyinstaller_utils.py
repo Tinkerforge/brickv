@@ -172,7 +172,7 @@ class PyinstallerUtils:
             if prepare_script_working_dir is not None:
                 os.chdir(self.root_path)
 
-        self.datas = self.collect_data(by_ext(['bmp', 'jpg', 'png', 'svg']))
+        self.datas = self.collect_data(by_ext(['bmp', 'jpg', 'png', 'svg', 'obj', 'mtl', 'frag', 'vert']))
         self.datas += self.collect_data(by_name('internal'))
 
     def strip_binaries(self, binaries, patterns):

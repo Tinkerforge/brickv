@@ -27,7 +27,7 @@ from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtWidgets import QLabel, QVBoxLayout, QSizePolicy, QAction
 
 from brickv.plugin_system.plugin_base import PluginBase
-from brickv.plugin_system.plugins.imu.imu_gl_widget import IMUGLWidget
+from brickv.plugin_system.plugins.imu.imu_3d_widget import IMU3DWidget
 from brickv.plugin_system.plugins.imu.ui_imu import Ui_IMU
 from brickv.plugin_system.plugins.imu.calibrate_window import CalibrateWindow
 from brickv.bindings.brick_imu import BrickIMU
@@ -92,7 +92,7 @@ class IMU(PluginBase, Ui_IMU):
                                                expand_result_tuple_for_callback=True,
                                                use_result_signal=False)
 
-        self.imu_gl = IMUGLWidget(self)
+        self.imu_gl = IMU3DWidget(self)
         self.imu_gl.setMinimumSize(150, 150)
         self.imu_gl.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
@@ -139,7 +139,7 @@ class IMU(PluginBase, Ui_IMU):
         self.layout_bottom.addLayout(self.gl_layout)
         self.layout_bottom.addWidget(self.temp_plot_widget)
 
-        self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
+        self.save_orientation.clicked.connect(self.save_orientation_clicked)
         self.calibrate.clicked.connect(self.calibrate_clicked)
         self.led_button.clicked.connect(self.led_clicked)
         self.speed_spinbox.editingFinished.connect(self.speed_finished)
@@ -165,28 +165,37 @@ class IMU(PluginBase, Ui_IMU):
         reset.triggered.connect(self.imu.reset)
         self.set_actions([(0, None, [reset])])
 
-    def restart_gl(self):
-        state = self.imu_gl.get_state()
-        self.imu_gl.hide()
+    def save_orientation_clicked(self):
+        self.imu_gl.save_orientation()
+        self.orientation_label.hide()
 
-        self.imu_gl = IMUGLWidget()
+    def cleanup_gl(self):
+        self.state = self.imu_gl.get_state()
+        self.imu_gl.hide()
+        self.imu_gl.cleanup()
+
+    def restart_gl(self):
+        self.imu_gl = IMU3DWidget()
+
         self.imu_gl.setMinimumSize(150, 150)
         self.imu_gl.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.gl_layout.addWidget(self.imu_gl)
         self.imu_gl.show()
 
-        self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
-        self.imu_gl.set_state(state)
+        self.save_orientation.clicked.connect(self.save_orientation_clicked)
+        self.imu_gl.set_state(self.state)
 
     def start(self):
         if not self.alive:
             return
 
-        self.parent().set_callback_post_untab(lambda x: self.restart_gl())
-        self.parent().set_callback_post_tab(lambda x: self.restart_gl())
-
         if self.has_status_led:
             async_call(self.imu.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
+
+        self.parent().add_callback_on_untab(lambda x: self.cleanup_gl(), 'imu_cleanup_on_untab')
+        self.parent().add_callback_post_untab(lambda x: self.restart_gl(), 'imu_restart_post_untab')
+        self.parent().add_callback_on_tab(lambda x: self.cleanup_gl(), 'imu_cleanup_on_tab')
+        self.parent().add_callback_post_tab(lambda x: self.restart_gl(), 'imu_restart_post_tab')
 
         self.gl_layout.activate()
         self.cbe_all_data.set_period(100)
@@ -214,6 +223,7 @@ class IMU(PluginBase, Ui_IMU):
 
     def destroy(self):
         self.alive = False
+        self.cleanup_gl()
         if self.calibrate:
             self.calibrate.close()
 
@@ -262,7 +272,7 @@ class IMU(PluginBase, Ui_IMU):
         self.update_counter += 1
 
         if self.quaternion_valid:
-            self.imu_gl.update(self.qua_x, self.qua_y, self.qua_z, self.qua_w)
+            self.imu_gl.update_orientation(self.qua_x, self.qua_y, self.qua_z, self.qua_w)
 
         if self.update_counter == 2:
             self.update_counter = 0

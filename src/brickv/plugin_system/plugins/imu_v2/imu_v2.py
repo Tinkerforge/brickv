@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QFrame, QDialog, QAction, QWidget
 from PyQt5.QtGui import QColor, QPalette, QPainter, QBrush
 
 from brickv.plugin_system.plugin_base import PluginBase
-from brickv.plugin_system.plugins.imu_v2.imu_v2_gl_widget import IMUV2GLWidget
+from brickv.plugin_system.plugins.imu_v2.imu_v2_3d_widget import IMUV23DWidget
 from brickv.plugin_system.plugins.imu_v2.ui_imu_v2 import Ui_IMUV2
 from brickv.plugin_system.plugins.imu_v2.ui_calibration import Ui_Calibration
 from brickv.bindings.brick_imu_v2 import BrickIMUV2
@@ -129,7 +129,7 @@ class WrapperWidget(QWidget):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.setMinimumSize(200, 200)
-        self.glWidget = IMUV2GLWidget()
+        self.glWidget = IMUV23DWidget()
         self.layout().addWidget(self.glWidget)
         self.setWindowTitle('IMU Brick 2.0 - 3D View - Brick Viewer ' + config.BRICKV_VERSION)
 
@@ -160,8 +160,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
                                              self.cb_all_data,
                                              self.increase_error_count)
 
-        self.imu_gl = IMUV2GLWidget(self)
-        self.imu_gl.qtcb_gl_initialized.connect(self.on_gl_initialized)
+        self.imu_gl = IMUV23DWidget(self)
         self.imu_gl.setFixedSize(200, 200)
 
         self.imu_gl_wrapper = None
@@ -241,8 +240,11 @@ class IMUV2(PluginBase, Ui_IMUV2):
 
         self.data_grid.setColumnMinimumWidth(2, 75)
 
-        self.save_orientation.hide()
-        self.button_detach_3d_view.hide()
+        self.gl_layout = QVBoxLayout()
+        self.gl_layout.addWidget(self.imu_gl)
+        self.layout_bottom.addLayout(self.gl_layout)
+        self.save_orientation.clicked.connect(self.save_orientation_clicked)
+        self.button_detach_3d_view.clicked.connect(self.detach_3d_view_clicked)
 
         self.checkbox_leds.stateChanged.connect(self.led_clicked)
         self.button_calibration.clicked.connect(self.calibration_clicked)
@@ -261,44 +263,37 @@ class IMUV2(PluginBase, Ui_IMUV2):
         reset.triggered.connect(self.imu.reset)
         self.set_actions([(0, None, [reset])])
 
-    def on_gl_initialized(self, gl_supported):
-        if gl_supported:
-            self.gl_layout = QVBoxLayout()
-            self.gl_layout.addWidget(self.imu_gl)
-            self.layout_bottom.addLayout(self.gl_layout)
-            self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
-            self.button_detach_3d_view.clicked.connect(self.detach_3d_view_clicked)
-            self.save_orientation.show()
-            self.button_detach_3d_view.show()
+    def save_orientation_clicked(self):
+        self.imu_gl.save_orientation()
+        if self.imu_gl_wrapper is not None:
+            self.imu_gl_wrapper.glWidget.save_orientation()
+        self.orientation_label.hide()
 
-            self.parent().set_callback_post_untab(lambda x: self.restart_gl())
-            self.parent().set_callback_post_tab(lambda x: self.restart_gl())
-
-            self.gl_layout.activate()
-        else:
-            self.save_orientation.hide()
-            self.button_detach_3d_view.hide()
-            self.orientation_label.hide()
-            get_main_window().show_status("Only OpenGLES is supported. Disabling the IMU 2.0 3D rendering.", message_id='imu_v2_no_gl_support')
-            QTimer.singleShot(10000, lambda: get_main_window().hide_status('imu_v2_no_gl_support'))
-
+    def cleanup_gl(self):
+        self.state = self.imu_gl.get_state()
+        self.imu_gl.hide()
+        self.imu_gl.cleanup()
 
     def restart_gl(self):
-        state = self.imu_gl.get_state()
-        self.imu_gl.hide()
-
-        self.imu_gl = IMUV2GLWidget()
+        self.imu_gl = IMUV23DWidget()
 
         self.imu_gl.setFixedSize(200, 200)
         self.gl_layout.addWidget(self.imu_gl)
         self.imu_gl.show()
 
-        self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
-        self.imu_gl.set_state(state)
+        self.save_orientation.clicked.connect(self.save_orientation_clicked)
+        self.imu_gl.set_state(self.state)
 
     def start(self):
         if not self.alive:
             return
+
+        self.parent().add_callback_on_untab(lambda x: self.cleanup_gl(), 'imu_v2_cleanup_on_untab')
+        self.parent().add_callback_post_untab(lambda x: self.restart_gl(), 'imu_v2_restart_post_untab')
+        self.parent().add_callback_on_tab(lambda x: self.cleanup_gl(), 'imu_v2_cleanup_on_tab')
+        self.parent().add_callback_post_tab(lambda x: self.restart_gl(), 'imu_v2_restart_post_tab')
+
+        self.gl_layout.activate()
 
         async_call(self.imu.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
         async_call(self.imu.are_leds_on, None, self.checkbox_leds.setChecked, self.increase_error_count)
@@ -318,6 +313,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
     def destroy(self):
         self.alive = False
 
+        self.cleanup_gl()
         # Stop callback to fix deadlock with callback emulation thread.
         self.cbe_all_data.set_period(0)
 
@@ -346,7 +342,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
 
         self.imu_gl_wrapper = WrapperWidget(self)
         self.imu_gl_wrapper.glWidget.set_state(self.imu_gl.get_state())
-        self.save_orientation.clicked.connect(self.imu_gl_wrapper.glWidget.save_orientation)
+        self.save_orientation.clicked.connect(self.save_orientation_clicked)
 
         self.imu_gl_wrapper.show()
 
@@ -383,13 +379,13 @@ class IMUV2(PluginBase, Ui_IMUV2):
             for i in range(23):
                 self.data_labels[i].setText("{0:.2f}".format(self.sensor_data[i].value))
 
-            self.imu_gl.update(self.sensor_data[12].value,
+            self.imu_gl.update_orientation(self.sensor_data[12].value,
                                self.sensor_data[13].value,
                                self.sensor_data[14].value,
                                self.sensor_data[15].value)
 
             if self.imu_gl_wrapper is not None:
-                self.imu_gl_wrapper.glWidget.update(self.sensor_data[12].value,
+                self.imu_gl_wrapper.glWidget.update_orientation(self.sensor_data[12].value,
                                                     self.sensor_data[13].value,
                                                     self.sensor_data[14].value,
                                                     self.sensor_data[15].value)
@@ -407,13 +403,13 @@ class IMUV2(PluginBase, Ui_IMUV2):
                 self.calibration.gyr_color.set_color(self.calibration_color[cal_gyr])
                 self.calibration.sys_color.set_color(self.calibration_color[cal_sys])
         else:
-            self.imu_gl.update(data.quaternion[0] / (2 ** 14 - 1),
+            self.imu_gl.update_orientation(data.quaternion[0] / (2 ** 14 - 1),
                                data.quaternion[1] / (2 ** 14 - 1),
                                data.quaternion[2] / (2 ** 14 - 1),
                                data.quaternion[3] / (2 ** 14 - 1))
 
             if self.imu_gl_wrapper is not None:
-                self.imu_gl_wrapper.glWidget.update(data.quaternion[0] / (2 ** 14 - 1),
+                self.imu_gl_wrapper.glWidget.update_orientation(data.quaternion[0] / (2 ** 14 - 1),
                                                     data.quaternion[1] / (2 ** 14 - 1),
                                                     data.quaternion[2] / (2 ** 14 - 1),
                                                     data.quaternion[3] / (2 ** 14 - 1))

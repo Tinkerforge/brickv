@@ -1,0 +1,10 @@
+newmtl imu_v2
+   Ka 1.000 1.000 1.000
+   Kd 1.000 1.000 1.000
+   Ks 0.000 0.000 0.000
+   Ns 0.000
+   d 1.0
+   Tr 0.0
+   illum 2
+   map_Ka imu_v2.png
+   map_Kd imu_v2.png

@@ -529,9 +529,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def create_tab_window(self, device_info, ipcon):
         tab_window = TabWindow(self.tab_widget, device_info.name, self.untab)
         tab_window._info = device_info
-        tab_window.set_callback_on_tab(lambda index:
+        tab_window.add_callback_on_tab(lambda index:
                                        self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING and \
-                                       self.tab_widget.setTabEnabled(index, False))
+                                       self.tab_widget.setTabEnabled(index, False),
+                                       'main_window_disable_tab_if_connection_pending')
 
         layout = QVBoxLayout(tab_window)
         info_bars = [QHBoxLayout(), QHBoxLayout()]

@@ -97,17 +97,17 @@ class TabWindow(QDialog):
         self.button_handler = button_handler
         self.button_icon_normal = QIcon(load_pixmap('untab-icon-normal.png'))
         self.button_icon_hover = QIcon(load_pixmap('untab-icon-hover.png'))
-        self.cb_on_tab = None
-        self.cb_on_untab = None
-        self.cb_post_tab = None
-        self.cb_post_untab = None
+        self.cb_on_tab = {}
+        self.cb_on_untab = {}
+        self.cb_post_tab = {}
+        self.cb_post_untab = {}
         self.parent_dialog = None
 
     def untab(self):
         index = self.tab_widget.indexOf(self)
         if index > -1:
-            if self.cb_on_untab != None:
-                self.cb_on_untab(index)
+            for cb in self.cb_on_untab.values():
+                cb(index)
 
             self.tab_widget.removeTab(index)
 
@@ -119,13 +119,13 @@ class TabWindow(QDialog):
             self.parent_dialog.show()
             self.show()
 
-            if self.cb_post_untab != None:
-                self.cb_post_untab(index)
+            for cb in self.cb_post_untab.values():
+                cb(index)
 
     def tab(self):
         index = self.tab_widget.addTab(self, self.name)
-        if self.cb_on_tab != None:
-            self.cb_on_tab(index)
+        for cb in self.cb_on_tab.values():
+            cb(index)
 
         # (re-)instantiating button here because the TabBar takes ownership and
         # destroys it when this TabWindow is untabbed
@@ -135,17 +135,17 @@ class TabWindow(QDialog):
 
         self.tab_widget.tabBar().setTabButton(index, QTabBar.LeftSide, self.button)
 
-        if self.cb_post_tab != None:
-            self.cb_post_tab(index)
+        for cb in self.cb_post_tab.values():
+            cb(index)
 
-    def set_callback_on_tab(self, callback):
-        self.cb_on_tab = callback
+    def add_callback_on_tab(self, callback, key):
+        self.cb_on_tab[key] = callback
 
-    def set_callback_on_untab(self, callback):
-        self.cb_on_untab = callback
+    def add_callback_on_untab(self, callback, key):
+        self.cb_on_untab[key] = callback
 
-    def set_callback_post_untab(self, callback):
-        self.cb_post_untab = callback
+    def add_callback_post_untab(self, callback, key):
+        self.cb_post_untab[key] = callback
 
-    def set_callback_post_tab(self, callback):
-        self.cb_post_tab = callback
+    def add_callback_post_tab(self, callback, key):
+        self.cb_post_tab[key] = callback

@@ -81,7 +81,7 @@ excludes = ['wx', 'gtk+', '_gtkagg', 'gtk', 'gdk', 'gtk2', 'gtk3', 'cairo', 'way
 patterns = ['qt5qml', 'qt5quick', 'qt5network', 'qt5dbus', 'qt5svg', 'qt5websockets',
             'qtqml', 'qtquick', 'libcrypto', 'qtnetwork', 'libcrypto', 'qwebp',
             'qjpeg', 'qminimal', 'qoffscreen', 'qwebgl']
-hiddenimports = ['PyQt5._QOpenGLFunctions_2_1']
+hiddenimports = []
 
 a = Analysis(['main.py'], pathex=utils.pathex, excludes=excludes, hiddenimports=hiddenimports)
 
