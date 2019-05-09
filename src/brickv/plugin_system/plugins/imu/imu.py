@@ -272,7 +272,7 @@ class IMU(PluginBase, Ui_IMU):
         self.update_counter += 1
 
         if self.quaternion_valid:
-            self.imu_gl.update_orientation(self.qua_x, self.qua_y, self.qua_z, self.qua_w)
+            self.imu_gl.update_orientation(self.qua_w, self.qua_x, self.qua_y, self.qua_z)
 
         if self.update_counter == 2:
             self.update_counter = 0
