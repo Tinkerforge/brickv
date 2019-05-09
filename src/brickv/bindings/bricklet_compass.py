@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-04-25.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -28,7 +28,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletCompass(Device):
     """
-    TBD
+    3-axis compass with 0.1mG (milli Gauss) und 0.1° resolution
     """
 
     DEVICE_IDENTIFIER = 2153
@@ -125,6 +125,12 @@ class BrickletCompass(Device):
 
     def get_heading(self):
         """
+        Returns the heading in 1/10 degree (north = 0 degree).
+
+        Alternatively you can use :func:`Get Magnetic Flux Density` and calculate the heading
+        with ``heading = atan2(y, x)*180/PI``.
+
+
         If you want to get the value periodically, it is recommended to use the
         :cb:`Heading` callback. You can set the callback configuration
         with :func:`Set Heading Callback Configuration`.
@@ -179,7 +185,8 @@ class BrickletCompass(Device):
 
     def get_magnetic_flux_density(self):
         """
-
+        Returns the `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__
+        for all three axis in 1/10 `mG (milli Gauss) <https://en.wikipedia.org/wiki/Gauss_(unit)>`__.
         """
         return GetMagneticFluxDensity(*self.ipcon.send_request(self, BrickletCompass.FUNCTION_GET_MAGNETIC_FLUX_DENSITY, (), '', 'i i i'))
 
@@ -211,7 +218,21 @@ class BrickletCompass(Device):
 
     def set_configuration(self, data_rate, background_calibration):
         """
+        Configuration:
 
+        * Data Rate: Sets the data rate that is used by the magnetometer.
+          The lower the data rate, the lower is the noise on the data.
+        * Background Calibration: Set to *true* to enable the background
+          calibration and *false* to turn it off. If the background calibration
+          is enabled the sensing polarity is flipped once per second to automatically
+          calculate and remove offset that is caused by temperature changes.
+          This polarity flipping takes about 20ms. This means that once a second
+          you will not get new data for a period of 20ms. We highly recommend that
+          you keep the background calibration enabled and only disable it if the 20ms
+          off-time is a problem in you application.
+
+
+        Default values: Data rate of 100Hz and background calibration enabled.
         """
         data_rate = int(data_rate)
         background_calibration = bool(background_calibration)
@@ -220,13 +241,19 @@ class BrickletCompass(Device):
 
     def get_configuration(self):
         """
-
+        Returns the configuration as set by :func:`Set Configuration`.
         """
         return GetConfiguration(*self.ipcon.send_request(self, BrickletCompass.FUNCTION_GET_CONFIGURATION, (), '', 'B !'))
 
     def set_calibration(self, offset, multiplier):
         """
-        saved in non-volatile memory
+        Sets offset and multiplier coefficent for each of the three axis.
+
+        The Bricklet is factory calibrated. If you want to re-calibrate the
+        Bricklet we recommend that you do the calibration through Brick Viewer.
+
+        The calibration is saved in non-voltile memory and only has to be
+        done once.
         """
         offset = list(map(int, offset))
         multiplier = list(map(int, multiplier))
@@ -235,7 +262,7 @@ class BrickletCompass(Device):
 
     def get_calibration(self):
         """
-
+        Returns the calibration parameters as set by :func:`Set Calibration`.
         """
         return GetCalibration(*self.ipcon.send_request(self, BrickletCompass.FUNCTION_GET_CALIBRATION, (), '', '3h 3h'))
 

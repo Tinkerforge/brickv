@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -93,6 +93,8 @@ class BrickletIO4(Device):
         For example: The value 3 or 0b0011 will turn the pins 0-1 high and the
         pins 2-3 low.
 
+        All running monoflop timers will be aborted if this function is called.
+
         .. note::
          This function does nothing for pins that are configured as input.
          Pull-up resistors can be switched on with :func:`Set Configuration`.
@@ -126,6 +128,9 @@ class BrickletIO4(Device):
         * (8, 'i', false) or (0b1000, 'i', false) will set pin 3 of as input default (floating if nothing is connected).
         * (3, 'o', false) or (0b0011, 'o', false) will set pins 0 and 1 as output low.
         * (4, 'o', true) or (0b0100, 'o', true) will set pin 2 of as output high.
+
+        Running monoflop timers for the specified pins will be aborted if this
+        function is called.
 
         The default configuration is input with pull-up.
         """
@@ -239,6 +244,9 @@ class BrickletIO4(Device):
 
         For example: The parameters (9, 4) or (0b0110, 0b0100) will turn
         pin 1 low and pin 2 high, pin 0 and 3 will remain untouched.
+
+        Running monoflop timers for the selected pins will be aborted if this
+        function is called.
 
         .. note::
          This function does nothing for pins that are configured as input.

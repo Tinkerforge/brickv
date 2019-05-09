@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-07.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -52,6 +52,8 @@ class BrickletLaserRangeFinderV2(Device):
     FUNCTION_GET_MOVING_AVERAGE = 14
     FUNCTION_SET_OFFSET_CALIBRATION = 15
     FUNCTION_GET_OFFSET_CALIBRATION = 16
+    FUNCTION_SET_DISTANCE_LED_CONFIG = 17
+    FUNCTION_GET_DISTANCE_LED_CONFIG = 18
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -70,6 +72,10 @@ class BrickletLaserRangeFinderV2(Device):
     THRESHOLD_OPTION_INSIDE = 'i'
     THRESHOLD_OPTION_SMALLER = '<'
     THRESHOLD_OPTION_GREATER = '>'
+    DISTANCE_LED_CONFIG_OFF = 0
+    DISTANCE_LED_CONFIG_ON = 1
+    DISTANCE_LED_CONFIG_SHOW_HEARTBEAT = 2
+    DISTANCE_LED_CONFIG_SHOW_DISTANCE = 3
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -109,6 +115,8 @@ class BrickletLaserRangeFinderV2(Device):
         self.response_expected[BrickletLaserRangeFinderV2.FUNCTION_GET_MOVING_AVERAGE] = BrickletLaserRangeFinderV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinderV2.FUNCTION_SET_OFFSET_CALIBRATION] = BrickletLaserRangeFinderV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLaserRangeFinderV2.FUNCTION_GET_OFFSET_CALIBRATION] = BrickletLaserRangeFinderV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLaserRangeFinderV2.FUNCTION_SET_DISTANCE_LED_CONFIG] = BrickletLaserRangeFinderV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLaserRangeFinderV2.FUNCTION_GET_DISTANCE_LED_CONFIG] = BrickletLaserRangeFinderV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinderV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletLaserRangeFinderV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinderV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletLaserRangeFinderV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinderV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletLaserRangeFinderV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -131,17 +139,12 @@ class BrickletLaserRangeFinderV2(Device):
         Returns the measured distance. The value has a range of 0 to 4000
         and is given in cm.
 
-        The laser has to be enabled, see :func:`Enable Laser`.
+        The laser has to be enabled, see :func:`Set Enable`.
 
 
         If you want to get the value periodically, it is recommended to use the
         :cb:`Distance` callback. You can set the callback configuration
         with :func:`Set Distance Callback Configuration`.
-
-
-        If you want to get the value periodically, it is recommended to use the
-        :cb:`Velocity` callback. You can set the callback configuration
-        with :func:`Set Velocity Callback Configuration`.
         """
         return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_DISTANCE, (), '', 'H')
 
@@ -193,15 +196,12 @@ class BrickletLaserRangeFinderV2(Device):
 
     def get_velocity(self):
         """
-        Returns the measured distance. The value has a range of 0 to 4000
-        and is given in cm.
+        Returns the measured velocity. The value has a range of -12800 to 12700
+        and is given in 1/100 m/s.
 
-        The laser has to be enabled, see :func:`Enable Laser`.
-
-
-        If you want to get the value periodically, it is recommended to use the
-        :cb:`Distance` callback. You can set the callback configuration
-        with :func:`Set Distance Callback Configuration`.
+        The velocity measurement only produces stables results if a fixed
+        measurement rate (see :func:`Set Configuration`) is configured. Also the laser
+        has to be enabled, see :func:`Set Enable`.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -258,7 +258,7 @@ class BrickletLaserRangeFinderV2(Device):
 
     def set_enable(self, enable):
         """
-        Activates the laser of the LIDAR if set to *true*.
+        Enables the laser of the LIDAR if set to *true*.
 
         We recommend that you wait 250ms after enabling the laser before
         the first call of :func:`Get Distance` to ensure stable measurements.
@@ -269,13 +269,13 @@ class BrickletLaserRangeFinderV2(Device):
 
     def get_enable(self):
         """
-        Returns the value as set by :func:`Set Enbale`.
+        Returns the value as set by :func:`Set Enable`.
         """
         return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_ENABLE, (), '', '!')
 
     def set_configuration(self, acquisition_count, enable_quick_termination, threshold_value, measurement_frequency):
         """
-        The **Aquisition Count** defines the number of times the Laser Range Finder Bricklet
+        The **Acquisition Count** defines the number of times the Laser Range Finder Bricklet
         will integrate acquisitions to find a correlation record peak. With a higher count,
         the Bricklet can measure longer distances. With a lower count, the rate increases. The
         allowed values are 1-255.
@@ -360,6 +360,23 @@ class BrickletLaserRangeFinderV2(Device):
         Returns the offset value as set by :func:`Set Offset Calibration`.
         """
         return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_OFFSET_CALIBRATION, (), '', 'h')
+
+    def set_distance_led_config(self, config):
+        """
+        Configures the distance LED to be either turned off, turned on, blink in
+        heartbeat mode or show the distance (brighter = object is nearer).
+
+        The default value is 3 (show distance).
+        """
+        config = int(config)
+
+        self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_SET_DISTANCE_LED_CONFIG, (config,), 'B', '')
+
+    def get_distance_led_config(self):
+        """
+        Returns the LED configuration as set by :func:`Set Distance LED Config`
+        """
+        return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_DISTANCE_LED_CONFIG, (), '', 'B')
 
     def get_spitfp_error_count(self):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-03-18.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -109,7 +109,7 @@ class BrickletPiezoSpeakerV2(Device):
 
     def set_beep(self, frequency, volume, duration):
         """
-        Beeps with the given frequency and volume for the duration in ms with.
+        Beeps with the given frequency and volume for the duration in ms.
 
         For example: If you set a duration of 1000, with a volume of 10 and a frequency
         value of 2000 the piezo buzzer will beep with maximum loudness for one
@@ -158,7 +158,7 @@ class BrickletPiezoSpeakerV2(Device):
         Below you can find two sets of example settings that you can try out. You can use
         these as a starting point to find an alarm signal that suits your application.
 
-        *Example 1: 10 seconds of loud annoying fast alarm*
+        Example 1: 10 seconds of loud annoying fast alarm
 
         * Start Frequency = 800
         * End Frequency = 2000
@@ -167,7 +167,7 @@ class BrickletPiezoSpeakerV2(Device):
         * Volume = 10
         * Duration = 10000
 
-        *Example 2: 10 seconds of soft siren sound with slow build-up*
+        Example 2: 10 seconds of soft siren sound with slow build-up
 
         * Start Frequency = 250
         * End Frequency = 750
@@ -182,7 +182,7 @@ class BrickletPiezoSpeakerV2(Device):
         * End Frequency: 51Hz - 15000Hz (has to be bigger than start frequency)
         * Step Size: 1Hz - 65535Hz (has to be small enough to fit into the frequency range)
         * Step Delay: 1ms - 65535ms (has to be small enough to fit into the duration)
-        * Volume: 0-10
+        * Volume: 0 - 10
         * Duration: 0ms - 4294967295ms
         """
         start_frequency = int(start_frequency)

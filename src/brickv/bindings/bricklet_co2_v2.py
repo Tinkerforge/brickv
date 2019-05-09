@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-03-14.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -138,8 +138,8 @@ class BrickletCO2V2(Device):
     def get_all_values(self):
         """
         Returns all values measured by the CO2 Bricklet 2.0. The values are
-        CO2 concentration (in ppm), Temperature (in 0.01 °C)
-        and Humidity (in 0.01 %RH).
+        CO2 concentration (in ppm), temperature (in 0.01 °C)
+        and humidity (in 0.01 %RH).
 
         If you want to get the values periodically, it is recommended to use the
         :cb:`All Values` callback. You can set the callback configuration
@@ -188,7 +188,7 @@ class BrickletCO2V2(Device):
 
         This temperature offset is used to calculate the relative humidity and
         CO2 concentration. In case the Bricklet is installed in an enclosure, we
-        recommend to measure and set the temperature offset to imporve the accuracy of
+        recommend to measure and set the temperature offset to improve the accuracy of
         the measurements.
 
         It is sufficient to set the temperature offset once. The offset is saved in
@@ -233,7 +233,7 @@ class BrickletCO2V2(Device):
 
     def get_co2_concentration(self):
         """
-        Returns co2 concentration in ppm.
+        Returns CO2 concentration in ppm.
 
 
         If you want to get the value periodically, it is recommended to use the

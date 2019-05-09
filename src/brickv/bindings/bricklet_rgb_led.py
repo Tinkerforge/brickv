@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -52,7 +52,7 @@ class BrickletRGBLED(Device):
 
     def set_rgb_value(self, r, g, b):
         """
-        Sets the *rgb* value for the LED. The value can be between 0 and 255.
+        Sets the *r*, *g* and *b* values for the LED. Each value can be between 0 and 255.
         """
         r = int(r)
         g = int(g)
@@ -62,7 +62,7 @@ class BrickletRGBLED(Device):
 
     def get_rgb_value(self):
         """
-        Returns the *rgb* value of the LED as set by :func:`Set RGB Value`.
+        Returns the *r*, *g* and *b* values of the LED as set by :func:`Set RGB Value`.
         """
         return GetRGBValue(*self.ipcon.send_request(self, BrickletRGBLED.FUNCTION_GET_RGB_VALUE, (), '', 'B B B'))
 

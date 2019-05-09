@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-03-14.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -24,7 +24,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletSegmentDisplay4x7V2(Device):
     """
-
+    Four 7-segment displays with switchable dots
     """
 
     DEVICE_IDENTIFIER = 2137
@@ -40,7 +40,7 @@ class BrickletSegmentDisplay4x7V2(Device):
     FUNCTION_GET_BRIGHTNESS = 4
     FUNCTION_SET_NUMERIC_VALUE = 5
     FUNCTION_SET_SELECTED_SEGMENT = 6
-    FUNCTION_GET_SELECTED_SEGMENTS = 7
+    FUNCTION_GET_SELECTED_SEGMENT = 7
     FUNCTION_START_COUNTER = 8
     FUNCTION_GET_COUNTER_VALUE = 9
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
@@ -87,7 +87,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_GET_BRIGHTNESS] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_SET_NUMERIC_VALUE] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_SET_SELECTED_SEGMENT] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_GET_SELECTED_SEGMENTS] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_GET_SELECTED_SEGMENT] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_START_COUNTER] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_GET_COUNTER_VALUE] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -156,7 +156,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         -2 and 15. They represent:
 
         * -2: minus sign
-        * -1: empty space
+        * -1: blank
         * 0-9: 0-9
         * 10: A
         * 11: b
@@ -187,13 +187,13 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_SELECTED_SEGMENT, (segment, value), 'B !', '')
 
-    def get_selected_segments(self, segment):
+    def get_selected_segment(self, segment):
         """
         Returns the value of a single segment.
         """
         segment = int(segment)
 
-        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SELECTED_SEGMENTS, (segment,), 'B', '!')
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SELECTED_SEGMENT, (segment,), 'B', '!')
 
     def start_counter(self, value_from, value_to, increment, length):
         """
@@ -208,7 +208,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         The maximum values for *from*, *to* and *increment* is 9999,
         the minimum value is -999.
 
-        Using a negative increment allows to count backwards.
+        Using a negative *increment* allows to count backwards.
 
         You can stop the counter at every time by calling :func:`Set Segments`
         or :func:`Set Numeric Value`.

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -68,7 +68,7 @@ class BrickletDualRelay(Device):
         of the other relay, you can get the state with :func:`Get State` or you
         can use :func:`Set Selected State`.
 
-        Running monoflop timers will be overwritten if this function is called.
+        All running monoflop timers will be aborted if this function is called.
 
         The default value is (*false*, *false*).
         """
@@ -120,6 +120,8 @@ class BrickletDualRelay(Device):
     def set_selected_state(self, relay, state):
         """
         Sets the state of the selected relay (1 or 2), *true* means on and *false* means off.
+
+        A running monoflop timer for the selected relay will be aborted if this function is called.
 
         The other relay remains untouched.
         """

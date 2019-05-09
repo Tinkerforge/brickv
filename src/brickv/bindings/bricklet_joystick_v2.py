@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-02-20.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -108,7 +108,7 @@ class BrickletJoystickV2(Device):
 
     def get_position(self):
         """
-        Returns the position of the Joystick. The value ranges between -100 and
+        Returns the position of the joystick. The value ranges between -100 and
         100 for both axis. The middle position of the joystick is x=0, y=0. The
         returned values are averaged and calibrated (see :func:`Calibrate`).
 
@@ -130,9 +130,9 @@ class BrickletJoystickV2(Device):
 
     def calibrate(self):
         """
-        Calibrates the middle position of the Joystick. If your Joystick Bricklet
+        Calibrates the middle position of the joystick. If your Joystick Bricklet 2.0
         does not return x=0 and y=0 in the middle position, call this function
-        while the Joystick is standing still in the middle position.
+        while the joystick is standing still in the middle position.
 
         The resulting calibration will be saved in non-volatile memory,
         thus you only have to calibrate it once.

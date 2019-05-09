@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -106,7 +106,7 @@ class BrickletIndustrialDualRelay(Device):
         of the other relay, you can get the state with :func:`Get Value` or you
         can use :func:`Set Selected Value`.
 
-        Running monoflop timers will be overwritten if this function is called.
+        All running monoflop timers will be aborted if this function is called.
 
         The default value is (*false*, *false*).
         """
@@ -159,6 +159,9 @@ class BrickletIndustrialDualRelay(Device):
         """
         Sets the state of the selected relay (0 or 1), *true* means on and *false*
         means off.
+
+        A running monoflop timer for the selected relay will be aborted if this function
+        is called.
 
         The other relay remains untouched.
         """

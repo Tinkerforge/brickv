@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -73,11 +73,13 @@ class BrickletIndustrialDigitalOut4(Device):
         low.
 
         If no groups are used (see :func:`Set Group`), the pins correspond to the
-        markings on the Digital Out 4 Bricklet.
+        markings on the Industrial Digital Out 4 Bricklet.
 
         If groups are used, the pins correspond to the element in the group.
         Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
         pins 8-11 and element 4 pins 12-15.
+
+        All running monoflop timers will be aborted if this function is called.
         """
         value_mask = int(value_mask)
 
@@ -174,11 +176,14 @@ class BrickletIndustrialDigitalOut4(Device):
         low the other pins remain untouched.
 
         If no groups are used (see :func:`Set Group`), the pins correspond to the
-        markings on the Digital Out 4 Bricklet.
+        markings on the Industrial Digital Out 4 Bricklet.
 
         If groups are used, the pins correspond to the element in the group.
         Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
         pins 8-11 and element 4 pins 12-15.
+
+        Running monoflop timers for the selected pins will be aborted if this function
+        is called.
         """
         selection_mask = int(selection_mask)
         value_mask = int(value_mask)

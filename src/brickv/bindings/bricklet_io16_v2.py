@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -137,6 +137,8 @@ class BrickletIO16V2(Device):
         For example: (True, True, False, False, ..., False) will turn the channels 0-1
         high and the channels 2-15 low.
 
+        All running monoflop timers will be aborted if this function is called.
+
         .. note::
          This function does nothing for channels that are configured as input. Pull-up
          resistors can be switched on with :func:`Set Configuration`.
@@ -156,6 +158,9 @@ class BrickletIO16V2(Device):
     def set_selected_value(self, channel, value):
         """
         Sets the output value of a specific channel without affecting the other channels.
+
+        A running monoflop timer for the specific channel will be aborted if this
+        function is called.
 
         .. note::
          This function does nothing for channels that are configured as input. Pull-up
@@ -183,6 +188,9 @@ class BrickletIO16V2(Device):
         * (1, 'i', false) will set channel-1 as input default (floating if nothing is connected).
         * (2, 'o', true) will set channel-2 as output high.
         * (3, 'o', false) will set channel-3 as output low.
+
+        A running monoflop timer for the specific channel will be aborted if this
+        function is called.
 
         The default configuration is input with pull-up.
         """

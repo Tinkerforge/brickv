@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-04-16.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -25,7 +25,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickHAT(Device):
     """
-    HAT for Raspberry Pi with 8 Bricklets ports
+    HAT for Raspberry Pi with 8 Bricklets ports and real-time clock
     """
 
     DEVICE_IDENTIFIER = 111
@@ -104,10 +104,10 @@ class BrickHAT(Device):
         Parameters:
 
         * Power Off Delay: Time before the RPi/Bricklets are powered off in seconds.
-        * Power Off Duration: Duration that the RPi/Bricklets are powered off in seconds.
+        * Power Off Duration: Duration that the RPi/Bricklets stay powered off in seconds.
         * Raspberry Pi Off: RPi if powereed off if set to true.
         * Bricklets Off: Bricklets are powered off if set to true.
-        * Enable Sleep Indicator: If set to true, the LED will blink in a 1s interval
+        * Enable Sleep Indicator: If set to true, the status LED will blink in a 1s interval
           during the whole power off duration. This will draw an additional 0.3mA.
 
         Example: To turn RPi and Bricklets off in 5 seconds for 10 minutes with sleep
@@ -134,7 +134,7 @@ class BrickHAT(Device):
 
     def set_bricklet_power(self, bricklet_power):
         """
-        Set to true/false to turn the power supply of the Bricklets on/off.
+        Set to true/false to turn the power supply of the connected Bricklets on/off.
 
         By default the Bricklets are on.
         """
@@ -144,7 +144,7 @@ class BrickHAT(Device):
 
     def get_bricklet_power(self):
         """
-        Returns the bricklet power status as set by :func:`Set Bricklet Power`.
+        Returns the power status of the connected Bricklets as set by :func:`Set Bricklet Power`.
         """
         return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_BRICKLET_POWER, (), '', '!')
 
@@ -155,7 +155,7 @@ class BrickHAT(Device):
         There are three possible combinations:
 
         * Only USB connected: The USB supply voltage will be fed back to the
-          DC input connector. You will reed the USB voltage and a slightly lower
+          DC input connector. You will read the USB voltage and a slightly lower
           voltage on the DC input.
         * Only DC input connected: The DC voltage will not be fed back to the
           USB connector. You will read the DC input voltage and the USB voltage

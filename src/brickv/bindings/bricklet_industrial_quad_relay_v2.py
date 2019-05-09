@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -110,6 +110,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         relay and a value of *false* opens the relay.
 
         Use :func:`Set Selected Value` to only change one relay.
+
+        All running monoflop timers will be aborted if this function is called.
         """
         value = list(map(bool, value))
 
@@ -163,6 +165,9 @@ class BrickletIndustrialQuadRelayV2(Device):
         """
         Sets the output value of the specified channel without affecting the other
         channels.
+
+        A running monoflop timer for the specified channel will be aborted if this
+        function is called.
         """
         channel = int(channel)
         value = bool(value)

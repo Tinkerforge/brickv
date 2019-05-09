@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-04-16.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -175,7 +175,7 @@ class BrickletEnergyMonitor(Device):
 
         The calibration is saved in non-volatile memory, you only have to set it once.
 
-        By default the voltage ratio is set to TODO and the current ratio is set to TODO.
+        By default the voltage ratio is set to 1923 and the current ratio is set to 3000.
 
         Set the phase shift to 0. It is for future use and currently not supported by the Bricklet.
         """
@@ -203,6 +203,8 @@ class BrickletEnergyMonitor(Device):
         If you want to re-calibrate the offset we recommend that you connect a load that
         has a smooth sinusoidal voltage and current waveform. Alternatively you can also
         short both inputs.
+
+        The calibration is saved in non-volatile memory, you only have to set it once.
         """
         self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_CALIBRATE_OFFSET, (), '', '')
 

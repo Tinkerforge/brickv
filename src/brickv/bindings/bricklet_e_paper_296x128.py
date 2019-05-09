@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-04-17.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -342,7 +342,7 @@ class BrickletEPaper296x128(Device):
           the changes are not applied for a whole buffer but only for the delta between the last
           and the next buffer. With this mode the display will not flicker during an update and
           it takes about 900-950ms. Compared to the other two settings there is more ghosting. This
-          mode can be used for something like a flicker-free live update of a temperature.
+          mode can be used for something like a flicker-free live update of a text.
 
         With the black/white/red display if you use either the black/white or the delta mode,
         after a while of going back and forth between black and white the white color will

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -60,7 +60,7 @@ class BrickletSolidStateRelay(Device):
         """
         Sets the state of the relays *true* means on and *false* means off.
 
-        Running monoflop timers will be overwritten if this function is called.
+        A running monoflop timer will be aborted if this function is called.
 
         The default value is *false*.
         """

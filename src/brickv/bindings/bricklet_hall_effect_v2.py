@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-03-22.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -26,7 +26,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletHallEffectV2(Device):
     """
-    Measures magnetic flux density between -7mT and 7mT
+    Measures magnetic flux density between -7mT and +7mT
     """
 
     DEVICE_IDENTIFIER = 2132
@@ -116,7 +116,7 @@ class BrickletHallEffectV2(Device):
     def get_magnetic_flux_density(self):
         """
         Returns the `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__
-        in `uT (micro Tesla) <https://en.wikipedia.org/wiki/Tesla_(unit)>`__.
+        in `µT (micro Tesla) <https://en.wikipedia.org/wiki/Tesla_(unit)>`__.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -202,7 +202,7 @@ class BrickletHallEffectV2(Device):
 
         * High Threshold: 2000µT
         * Low Threshold: -2000µT
-        * Debounce: 100000us (100ms)
+        * Debounce: 100000µs (100ms)
         """
         high_threshold = int(high_threshold)
         low_threshold = int(low_threshold)

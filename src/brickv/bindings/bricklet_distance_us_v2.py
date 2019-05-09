@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-04-26.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -24,7 +24,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletDistanceUSV2(Device):
     """
-
+    Measures distance between 30cm and 500cm with ultrasound
     """
 
     DEVICE_IDENTIFIER = 299
@@ -115,7 +115,7 @@ class BrickletDistanceUSV2(Device):
 
     def get_distance(self):
         """
-        Returns the distance in cm.
+        Returns the distance in mm.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -172,7 +172,12 @@ class BrickletDistanceUSV2(Device):
 
     def set_update_rate(self, update_rate):
         """
+        Sets the update rate to 2 Hz or 10 Hz.
 
+        With 2 Hz update rate the noise is about +-1mm, while with 10 Hz update rate the noise
+        increases to about +-5mm.
+
+        The default update rate is 2 Hz.
         """
         update_rate = int(update_rate)
 
@@ -180,7 +185,7 @@ class BrickletDistanceUSV2(Device):
 
     def get_update_rate(self):
         """
-        Returns the sensor type as set by :func:`Set Update Rate`.
+        Returns the update rate as set by :func:`Set Update Rate`.
         """
         return self.ipcon.send_request(self, BrickletDistanceUSV2.FUNCTION_GET_UPDATE_RATE, (), '', 'B')
 

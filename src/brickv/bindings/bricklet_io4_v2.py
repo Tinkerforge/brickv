@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -142,6 +142,8 @@ class BrickletIO4V2(Device):
         For example: (True, True, False, False) will turn the channels 0-1 high and the
         channels 2-3 low.
 
+        All running monoflop timers and PWMs will be aborted if this function is called.
+
         .. note::
          This function does nothing for channels that are configured as input. Pull-up
          resistors can be switched on with :func:`Set Configuration`.
@@ -161,6 +163,9 @@ class BrickletIO4V2(Device):
     def set_selected_value(self, channel, value):
         """
         Sets the output value of a specific channel without affecting the other channels.
+
+        A running monoflop timer or PWM for the specific channel will be aborted if this
+        function is called.
 
         .. note::
          This function does nothing for channels that are configured as input. Pull-up
@@ -188,6 +193,9 @@ class BrickletIO4V2(Device):
         * (1, 'i', false) will set channel 1 as input default (floating if nothing is connected).
         * (2, 'o', true) will set channel 2 as output high.
         * (3, 'o', false) will set channel 3 as output low.
+
+        A running monoflop timer or PWM for the specific channel will be aborted if this
+        function is called.
 
         The default configuration is input with pull-up.
         """
@@ -270,6 +278,8 @@ class BrickletIO4V2(Device):
 
         If this function is called with the parameters (true, 1500):
         The channel will turn on and in 1.5s it will turn off again.
+
+        A PWM for the selected channel will be aborted if this function is called.
 
         A monoflop can be used as a failsafe mechanism. For example: Lets assume you
         have a RS485 bus and a IO-4 Bricklet 2.0 is connected to one of the slave
@@ -354,6 +364,9 @@ class BrickletIO4V2(Device):
 
         The maximum frequency value is 320000000 (32MHz). The maximum duty cycle value is
         10000 (100%).
+
+        A running monoflop timer for the given channel will be aborted if this function
+        is called.
 
         The default values are 0, 0.
         """

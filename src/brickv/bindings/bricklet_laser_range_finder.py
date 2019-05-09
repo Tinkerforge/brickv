@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.21                            #
 #                                                           #
@@ -365,7 +365,7 @@ class BrickletLaserRangeFinder(Device):
          version 3. Use :func:`Set Mode` for hardware version 1. You can check
          the sensor hardware version using :func:`Get Sensor Hardware Version`.
 
-        The **Aquisition Count** defines the number of times the Laser Range Finder Bricklet
+        The **Acquisition Count** defines the number of times the Laser Range Finder Bricklet
         will integrate acquisitions to find a correlation record peak. With a higher count,
         the Bricklet can measure longer distances. With a lower count, the rate increases. The
         allowed values are 1-255.
