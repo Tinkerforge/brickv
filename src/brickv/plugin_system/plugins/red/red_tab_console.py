@@ -66,16 +66,7 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
         except:
             ports = []
 
-        preferred_index = None
-
         for port in ports:
-            if preferred_index is None:
-                if 'ttyACM' in port[0] or \
-                   'ttyUSB' in port[0] or \
-                   'RED Brick' in port[1] or \
-                   'usbmodem' in port[0]:
-                    preferred_index = self.combo_serial_port.count()
-
             if len(port[1]) > 0 and port[0] != port[1]:
                 self.combo_serial_port.addItem('{0} - {1}'.format(port[0], port[1]), port[0])
             else:
@@ -86,14 +77,15 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
         if self.combo_serial_port.count() == 0:
             self.combo_serial_port.addItem('No serial port found')
             self.connect_button.setEnabled(False)
-        elif preferred_index is not None:
-            self.combo_serial_port.setCurrentIndex(preferred_index)
-            self.connect_button.setEnabled(True)
         else:
             self.connect_button.setEnabled(True)
-            index = self.combo_serial_port.findText(current_text)
-            if index >= 0:
-                self.combo_serial_port.setCurrentIndex(index)
+            self.combo_serial_port.insertItem(0, 'Select...')
+            self.combo_serial_port.insertSeparator(1)
+            self.combo_serial_port.setCurrentIndex(0)
+            if current_text != '':
+                index = self.combo_serial_port.findText(current_text)
+                if index >= 0:
+                    self.combo_serial_port.setCurrentIndex(index)
 
     def connect_clicked(self):
         text = self.connect_button.text().replace('&', '')
