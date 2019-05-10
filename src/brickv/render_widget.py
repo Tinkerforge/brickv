@@ -26,6 +26,17 @@ import sys
 import ctypes
 import ctypes.util
 import math
+import array
+
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QOpenGLWidget
+from PyQt5.QtGui import QOpenGLVersionProfile, QSurfaceFormat, \
+                        QOpenGLShaderProgram, QOpenGLShader, \
+                        QOpenGLBuffer, QVector3D, QOpenGLTexture, \
+                        QImage, QMatrix4x4, QQuaternion
+
+
+from brickv.utils import get_resources_path
 
 if sys.platform.startswith('linux'):
     libGL_path = ctypes.util.find_library('GL')
@@ -69,17 +80,6 @@ GL_UNSIGNED_SHORT = 0x1403
 
 GL_DEPTH_BUFFER_BIT = 0x00000100
 GL_COLOR_BUFFER_BIT = 0x00004000
-
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QOpenGLWidget
-from PyQt5.QtGui import QOpenGLVersionProfile, QSurfaceFormat, \
-                        QOpenGLShaderProgram, QOpenGLShader, \
-                        QOpenGLBuffer, QVector3D, QOpenGLTexture, \
-                        QImage, QMatrix4x4, QQuaternion
-
-import array
-
-from brickv.utils import get_resources_path
 
 class RenderWidget(QOpenGLWidget):
 
