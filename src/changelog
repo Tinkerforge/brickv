@@ -484,6 +484,7 @@
 - Stop preselecting serial port for Brick flashing
 - Stop Qt from adding UTF-8 BOM when copying text to the clipboard on macOS
 - Fix Ethernet Extension configuration check
+- Port IMU Brick (2.0) 3D view to modern OpenGL making it work on Raspberry Pi
 
 <unknown>: 2.4.x (<unknown>)
 - Add Data Logger support for CO2 2.0, Hall Effect 2.0, Linear Poti 2.0,
