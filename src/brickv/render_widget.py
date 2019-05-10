@@ -37,8 +37,7 @@ else:
     libGL_path = ctypes.util.find_library('opengl32')
     dll_type = ctypes.WinDLL
 
-if libGL_path is not None:
-    libGL = dll_type(libGL_path, mode=ctypes.RTLD_GLOBAL)
+libGL = dll_type(libGL_path, mode=ctypes.RTLD_GLOBAL)
 
 GLclampf = ctypes.c_float
 GLenum = ctypes.c_uint
