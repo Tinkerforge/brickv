@@ -150,18 +150,20 @@ class RenderWidget(QOpenGLWidget):
                 arr_dict[key] = index
                 indices.append(index)
 
-        add_axis(vertex_positions, vertices, indices)
+        self.bounding_sphere_radius = add_axis(self.bounding_box, vertex_positions, vertices, indices)
         self.index_count = len(indices)
 
         vertex_buf = QOpenGLBuffer(QOpenGLBuffer.VertexBuffer)
         vertex_buf.create()
         vertex_buf.bind()
         vertex_buf.allocate(vertices, len(vertices) * vertices.itemsize)
+        vertex_buf.release()
 
         index_buf = QOpenGLBuffer(QOpenGLBuffer.IndexBuffer)
         index_buf.create()
         index_buf.bind()
         index_buf.allocate(indices, len(indices) * indices.itemsize)
+        index_buf.release()
 
         return vertex_buf, index_buf
 
@@ -174,6 +176,9 @@ class RenderWidget(QOpenGLWidget):
         self.program = self.init_shaders()
 
         vertices, normals, tex_coords, faces, material = read_obj(self.obj_path)
+
+        self.bounding_box = get_bounding_box(vertices)
+        self.model_offset = -(self.bounding_box[0] + 0.5 * (self.bounding_box[1] - self.bounding_box[0])) # Offset to move the model's center into 0,0,0
 
         self.texture = load_texture(material)
         glEnable(GL_DEPTH_TEST)
@@ -206,17 +211,23 @@ class RenderWidget(QOpenGLWidget):
         self.program.setAttributeBuffer(tex_coord_loc, GL_FLOAT, offset * float_size, 2, self.vertex_buf_stride * float_size)
 
         glDrawElements(GL_TRIANGLES, self.index_count, GL_UNSIGNED_SHORT, None)
+        self.vertex_buf.release()
+        self.index_buf.release()
 
     def get_model_matrix(self):
-        return QMatrix4x4()
+        result = QMatrix4x4()
+        result.translate(self.model_offset)
+        return result
 
     def get_view_matrix(self):
         result = QMatrix4x4()
-        result.translate(0.0, 0.0, -5.0)
+        camera_offset = 4 * self.bounding_sphere_radius
+        result.translate(0.0, 0.0, -camera_offset)
         return result
 
     def paintGL(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        self.program.bind()
         self.texture.bind()
 
         model = self.get_model_matrix()
@@ -226,22 +237,27 @@ class RenderWidget(QOpenGLWidget):
         self.program.setUniformValue("model_matrix", model)
         self.program.setUniformValue("normal_matrix", model.inverted()[0].transposed())
         self.program.setUniformValue("texture", 0)
-        self.program.setUniformValue("light_pos", QVector3D(100, 100, 100))
+        self.program.setUniformValue("light_pos", QVector3D(self.bounding_sphere_radius * 10, self.bounding_sphere_radius * 10, self.bounding_sphere_radius * 10))
         self.program.setUniformValue("light_color", QVector3D(1, 1, 1))
 
         self.draw_geometry()
+        self.texture.release()
+        self.program.release()
 
     def resizeGL(self, w, h):
         aspect = float(w) / float(h if h != 0 else 1)
-        z_near = 3.0
-        z_far = 100.0
+
+        scale = self.bounding_sphere_radius
+
+        z_near = 3.0 * scale
+        z_far = 5.0 * scale
 
         self.projection.setToIdentity()
         # Ensure that the view frustum is always greater or equal than one in width and height
         if aspect >= 1:
-            self.projection.frustum(-1 * aspect, 1 * aspect, -1, 1, z_near, z_far)
+            self.projection.frustum(-scale * aspect, scale * aspect, -scale, scale, z_near, z_far)
         else:
-            self.projection.frustum(-1, 1, -1 / aspect, 1 / aspect, z_near, z_far)
+            self.projection.frustum(-scale, scale, -scale / aspect, scale / aspect, z_near, z_far)
 
 
 def read_mtl(mtl_file):
@@ -324,7 +340,7 @@ def get_bounding_box(vertices):
         max_y = max(max_y, y)
         max_z = max(max_z, z)
 
-    return min_x, max_x, min_y, max_y, min_z, max_z
+    return QVector3D(min_x, min_y, min_z), QVector3D(max_x, max_y, max_z)
 
 def add_triangle_prism(start, start_to_end, perpendicular, width, color, vertex_buf, vertex_buf_stride, index_buf):
     perpendicular = perpendicular.normalized() * width
@@ -355,16 +371,16 @@ def add_triangle_prism(start, start_to_end, perpendicular, width, color, vertex_
     for tri in tris:
         index_buf.extend([index_offset + i for i in tri])
 
-def add_axis(vertices, vertex_buf, index_buf):
-    min_x, max_x, min_y, max_y, min_z, max_z = get_bounding_box(vertices)
+def add_axis(bounding_box, vertices, vertex_buf, index_buf):
+    bb_min, bb_max = bounding_box
 
-    start = QVector3D(min_x, min_y, min_z)
-    direction = QVector3D(max_x, max_y, max_z) - start
+    start = QVector3D(bb_min)
+    direction = bb_max - start
     start -= 0.1 * direction
 
-    start_to_end_x = QVector3D(max_x - min_x, 0, 0)
-    start_to_end_y = QVector3D(0, max_y - min_y, 0)
-    start_to_end_z = QVector3D(0, 0, max_z - min_z)
+    start_to_end_x = QVector3D(bb_max.x() - start.x(), 0, 0)
+    start_to_end_y = QVector3D(0, bb_max.y() - start.y(), 0)
+    start_to_end_z = QVector3D(0, 0, bb_max.z() - start.z())
     max_bb_len = max(start_to_end_x.length(), start_to_end_y.length(), start_to_end_z.length())
     start_to_end_x = start_to_end_x.normalized() * max_bb_len * 0.5
     start_to_end_y = start_to_end_y.normalized() * max_bb_len * 0.5
@@ -376,6 +392,8 @@ def add_axis(vertices, vertex_buf, index_buf):
     add_triangle_prism(start, start_to_end_x, start_to_end_y, 0.01, [1.0, 0.0, 0.0], vertex_buf, vertex_buf_stride, index_buf)
     add_triangle_prism(start, start_to_end_y, start_to_end_z, 0.01, [0.0, 0.5, 0.0], vertex_buf, vertex_buf_stride, index_buf)
     add_triangle_prism(start, start_to_end_z, start_to_end_x, 0.01, [0.0, 0.0, 1.0], vertex_buf, vertex_buf_stride, index_buf)
+
+    return start.length()
 
 def load_texture(material):
     # Note that the QImage is mirrored vertically to account for the fact that OpenGL and QImage use opposite directions for the y axis.

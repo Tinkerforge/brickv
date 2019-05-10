@@ -55,7 +55,7 @@ class IMU3DWidget(RenderWidget):
         self.save_orientation_flag, self.reference_orientation, self.has_save_orientation = tup
 
     def get_model_matrix(self):
-        result = QMatrix4x4()
+        result = super().get_model_matrix()
         result.rotate(self.rotation)
         return result
 
