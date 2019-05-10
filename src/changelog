@@ -475,7 +475,7 @@
 - Improve error reporting for Brick flashing and RED Brick serial console
 - Fix blue/green channel mixup in Color Bricklet plugin
 
-<unknown>: 2.4.3 (<unknown>)
+2019-05-10: 2.4.3 (<unknown>)
 - Fix date display format for triggered Real-Time Clock Bricklet (2.0) alarms
 - Always show correct Dual Button Bricklet (2.0) button state
 - Don't leave Thermal Imaging Bricklet image callback enabled on exit
