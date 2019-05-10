@@ -98,6 +98,9 @@ class RenderWidget(QOpenGLWidget):
         self.obj_path = obj_path
         self.initialized = False
 
+    def __del__(self):
+        self.cleanup()
+
     def cleanup(self):
         if not self.initialized:
             return
