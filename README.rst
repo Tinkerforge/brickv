@@ -15,8 +15,8 @@ Usage
 
 The following libraries are required:
 
-* python (3)
-* pyqt5
+* python >= 3.5
+* pyqt >= 5.5
 * pyqt5.qtopengl
 * pyserial
 
