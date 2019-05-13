@@ -77,6 +77,8 @@ GL_CULL_FACE = 0x0B44
 GL_FLOAT = 0x1406
 GL_TRIANGLES = 0x0004
 GL_UNSIGNED_SHORT = 0x1403
+GL_UNSIGNED_INT = 0x1405
+
 
 GL_DEPTH_BUFFER_BIT = 0x00000100
 GL_COLOR_BUFFER_BIT = 0x00004000
@@ -130,15 +132,18 @@ class RenderWidget(QOpenGLWidget):
 
     def init_buffers(self, vertex_positions, vertex_normals, vertex_tex_coords, faces):
         vertices = array.array('f')
-        arr_dict = {}
+        vertices_dict = {}
 
-        indices = array.array('H')
+        indices = array.array('I')
 
+        # We only use one index buffer, but the obj format indexes vertex positions,
+        # normals and texture coordinates separately. So we create a vertex for each used
+        # combination of position, normal and texture coordinate.
         for tri in faces:
             for vert_idx, tex_coord_idx, normal_idx in tri:
-                key = vert_idx << 32 | tex_coord_idx << 16 | normal_idx
-                if key in arr_dict:
-                    indices.append(arr_dict[key])
+                key = (vert_idx, tex_coord_idx, normal_idx)
+                if key in vertices_dict:
+                    indices.append(vertices_dict[key])
                     continue
 
                 vertices.extend(vertex_positions[vert_idx])
@@ -146,7 +151,7 @@ class RenderWidget(QOpenGLWidget):
                 vertices.extend(vertex_tex_coords[tex_coord_idx])
                 assert len(vertices) % self.vertex_buf_stride == 0, 'The vertices contained data which was not aligned to the vertex_buf_stride'
                 index = (len(vertices) // self.vertex_buf_stride) - 1
-                arr_dict[key] = index
+                vertices_dict[key] = index
                 indices.append(index)
 
         self.bounding_sphere_radius = add_axis(self.bounding_box, vertex_positions, vertices, indices)
@@ -209,7 +214,7 @@ class RenderWidget(QOpenGLWidget):
         self.program.enableAttributeArray(tex_coord_loc)
         self.program.setAttributeBuffer(tex_coord_loc, GL_FLOAT, offset * float_size, 2, self.vertex_buf_stride * float_size)
 
-        glDrawElements(GL_TRIANGLES, self.index_count, GL_UNSIGNED_SHORT, None)
+        glDrawElements(GL_TRIANGLES, self.index_count, GL_UNSIGNED_INT, None)
         self.vertex_buf.release()
         self.index_buf.release()
 
