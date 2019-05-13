@@ -48,7 +48,7 @@ class ChunkedUploader(ChunkedUploaderBase):
         string_args = []
 
         for arg in args:
-            string_args.append(html.escape(arg))
+            string_args.append(html.escape(str(arg)))
 
         if len(string_args) > 0:
             message = message.format(*tuple(string_args))

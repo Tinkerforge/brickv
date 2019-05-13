@@ -265,8 +265,8 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
         processes_data_list_sorted = processes_data_list_sorted[:self.sbox_number_of_process.value()]
 
         for i, p in enumerate(processes_data_list_sorted):
-            name = p['name']
-            cmdline = p['cmd']
+            name = str(p['name'])
+            cmdline = str(p['cmd'])
 
             if len(cmdline) == 0:
                 cmdline = name
@@ -278,7 +278,7 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
             item_pid = QStandardItem(str(p['pid']))
             self.process_item_model.setItem(i, 1, item_pid)
 
-            item_user = QStandardItem(p['user'])
+            item_user = QStandardItem(str(p['user']))
             self.process_item_model.setItem(i, 2, item_user)
 
             cpu = p['cpu']
