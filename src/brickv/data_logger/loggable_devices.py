@@ -73,6 +73,16 @@ if 'merged_data_logger_modules' not in globals():
         BrickStepper_found = True
     except ImportError:
         BrickStepper_found = False
+    try:
+        from brickv.bindings.brick_hat import BrickHAT
+        BrickHAT_found = True
+    except ImportError:
+        BrickHAT_found = False
+    try:
+        from brickv.bindings.brick_hat_zero import BrickHATZero
+        BrickHATZero_found = True
+    except ImportError:
+        BrickHATZero_found = False
 
     # Bricklets
     try:
@@ -330,6 +340,11 @@ if 'merged_data_logger_modules' not in globals():
         BrickletLaserRangeFinder_found = True
     except ImportError:
         BrickletLaserRangeFinder_found = False
+    try:
+        from brickv.bindings.bricklet_laser_range_finder_v2 import BrickletLaserRangeFinderV2 #NYI # config: mode, FIXME: special laser handling
+        BrickletLaserRangeFinderV2_found = True
+    except ImportError:
+        BrickletLaserRangeFinderV2_found = False
     try:
         from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
         BrickletLEDStrip_found = True
@@ -862,6 +877,11 @@ else:
     except ImportError:
         BrickletLaserRangeFinder_found = False
     try:
+        from tinkerforge.bricklet_laser_range_finder_v2 import BrickletLaserRangeFinderV2 #NYI # config: mode, FIXME: special laser handling
+        BrickletLaserRangeFinderV2_found = True
+    except ImportError:
+        BrickletLaserRangeFinderV2_found = False
+    try:
         from tinkerforge.bricklet_led_strip import BrickletLEDStrip
         BrickletLEDStrip_found = True
     except ImportError:
@@ -1319,6 +1339,11 @@ if BrickSilentStepper_found:
     # BrickSilentStepper
     def special_get_silent_stepper_current_consumption(device):
         return device.get_all_data().current_consumption
+
+if BrickletLaserRangeFinderV2_found:
+    def special_set_configuration(device, enable, acquisition_count, enable_quick_termination, threshold_value, enable_auto_freq, measurement_frequency):
+        device.set_enable(enable)
+        device.set_configuration(acquisition_count, enable_quick_termination, threshold_value, measurement_frequency if not enable_auto_freq else 0)
 
 device_specs = {}
 
@@ -5868,6 +5893,36 @@ if BrickSilentStepper_found:
         'options_setter': None,
         'options': None
     }
+if BrickHAT_found:
+    device_specs[BrickHAT.DEVICE_DISPLAY_NAME] = {
+        'class': BrickHAT,
+        'values': [
+            {
+                'name': 'Voltages',
+                'getter': lambda device: device.get_voltages(),
+                'subvalues': ['USB Voltage', 'DC Voltage'],
+                'unit': ['mV', 'mV'],
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    }
+if BrickHATZero_found:
+    device_specs[BrickHATZero.DEVICE_DISPLAY_NAME] = {
+        'class': BrickHATZero,
+        'values': [
+            {
+                'name': 'USB Voltage',
+                'getter': lambda device: device.get_usb_voltage(),
+                'subvalues': None,
+                'unit': 'mV',
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    }
 if BrickletRGBLEDButton_found:
     device_specs[BrickletRGBLEDButton.DEVICE_DISPLAY_NAME] = {
         'class': BrickletRGBLEDButton,
@@ -6056,6 +6111,74 @@ if BrickletLaserRangeFinder_found:
         ],
         'options_setter': None,
         'options': None
+    }
+if BrickletLaserRangeFinderV2_found:
+    device_specs[BrickletLaserRangeFinderV2.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletLaserRangeFinderV2,
+        'values': [
+            {
+                'name': 'Distance',
+                'getter': lambda device: device.get_distance(),
+                'subvalues': None,
+                'unit': 'cm',
+                'advanced': False
+            },
+            {
+                'name': 'Velocity',
+                'getter': lambda device: device.get_velocity(),
+                'subvalues': None,
+                'unit': '1/100 m/s',
+                'advanced': False
+            }
+        ],
+        'options_setter': special_set_configuration,
+        'options': [
+            {
+                'name': 'Enable Laser',
+                'type': 'choice',
+                'values': [('Yes', True),
+                           ('No', False)],
+                'default': 'No'
+            },
+            {
+                'name': 'Acquisition Count',
+                'type': 'int',
+                'minimum': 1,
+                'maximum': 255,
+                'suffix': None,
+                'default': 128
+            },
+            {
+                'name': 'Enable Quick Termination',
+                'type': 'choice',
+                'values': [('Yes', True),
+                           ('No', False)],
+                'default': 'No'
+            },
+            {
+                'name': 'Threshold Value',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': None,
+                'default': 0,
+            },
+            {
+                'name': 'Enable Automatic Frequency (Disable for Velocity Measurement)',
+                'type': 'choice',
+                'values': [('Yes', True),
+                           ('No', False)],
+                'default': 'Yes'
+            },
+            {
+                'name': 'Manual Measurement Frequency',
+                'type': 'int',
+                'minimum': 10,
+                'maximum': 500,
+                'default': 10,
+                'suffix': 'Hz'
+            }
+        ]
     }
 if BrickletDMX_found:
     device_specs[BrickletDMX.DEVICE_DISPLAY_NAME] = {
