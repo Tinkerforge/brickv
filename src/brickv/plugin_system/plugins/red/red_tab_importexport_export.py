@@ -41,6 +41,7 @@ class ChunkedDownloader(ChunkedDownloaderBase):
         super().__init__(widget.session)
 
         self.widget = widget
+        self.scale_factor = 1
 
     def report_error(self, message, *args):
         string_args = []
@@ -55,12 +56,14 @@ class ChunkedDownloader(ChunkedDownloaderBase):
         QMessageBox.critical(get_main_window(), 'Export Error', message)
 
     def set_progress_maximum(self, maximum):
+        self.scale_factor = 1000.0 / maximum
         if self.widget.progress.isVisible():
-            self.widget.progress.setRange(0, maximum)
+            self.widget.progress.setRange(0, 1000)
 
     def set_progress_value(self, value, message):
+        value *= self.scale_factor
         if self.widget.progress.isVisible():
-            self.widget.progress.setValue(value)
+            self.widget.progress.setValue(int(value))
             self.widget.progress.set_progress_text(message)
 
     def done(self):

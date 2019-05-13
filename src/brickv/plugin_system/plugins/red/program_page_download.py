@@ -43,15 +43,18 @@ class ChunkedDownloader(ChunkedDownloaderBase):
         super().__init__(page.wizard().session)
 
         self.page = page
+        self.scale_factor = 1
 
     def report_error(self, message, *args):
         self.page.download_error('...error: ' + message, *args)
 
     def set_progress_maximum(self, maximum):
-        self.page.progress_file.setRange(0, maximum)
+        self.scale_factor = 1000.0 / maximum
+        self.page.progress_file.setRange(0, 1000)
 
     def set_progress_value(self, value, message):
-        self.page.progress_file.setValue(value)
+        value *= self.scale_factor
+        self.page.progress_file.setValue(int(value))
         self.page.progress_file.setFormat(message)
 
     def done(self):
