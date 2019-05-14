@@ -15,10 +15,9 @@ Usage
 
 The following libraries are required:
 
-* python >= 3.5
-* pyqt >= 5.5
-* pyqt5.qtopengl
-* pyserial
+* Python >= 3.5
+* PyQt >= 5.5 with QtOpenGL
+* pySerial
 
 On Windows you will also need:
 
