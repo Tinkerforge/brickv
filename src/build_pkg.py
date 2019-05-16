@@ -218,6 +218,9 @@ def main():
         return 0
 
     if sys.platform == 'win32' or sys.platform == 'darwin':
+        if sys.platform == 'darwin':
+            print("Unlocking code sign keychain")
+            system(['bash', '-c', 'security unlock-keychain /Users/$USER/Library/Keychains/login.keychain'])
         build_pyinstaller_pkg()
         return 0
 
