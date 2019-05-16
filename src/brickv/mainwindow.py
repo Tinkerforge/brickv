@@ -498,7 +498,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if uid_index.isValid():
             plugin = self.show_plugin(uid_index.data())
-            if extension_clicked and isinstance(plugin, RED):
+            if extension_clicked:
                 plugin.show_extension(extension_index)
 
     def show_brick_update(self, url_part):

@@ -284,6 +284,9 @@ class Master(PluginBase, Ui_Master):
 
         self.update_timer.start(1000)
 
+    def show_extension(self, ext_idx):
+        self.tab_widget.setCurrentIndex(ext_idx)
+
     def stop(self):
         self.update_timer.stop()
 
