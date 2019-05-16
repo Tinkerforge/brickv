@@ -489,13 +489,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         index = self.tree_view_proxy_model.mapToSource(index)
         position_index = index.sibling(index.row(), 2)
 
-        if position_index.isValid() and position_index.data().startswith('Ext'):
+        extension_clicked = position_index.isValid() and position_index.data().startswith('Ext')
+        if extension_clicked:
+            extension_index = int(position_index.data().replace('Ext', ''))
             index = index.parent()
 
         uid_index = index.sibling(index.row(), 1)
 
         if uid_index.isValid():
-            self.show_plugin(uid_index.data())
+            plugin = self.show_plugin(uid_index.data())
+            if extension_clicked and isinstance(plugin, RED):
+                plugin.show_extension(extension_index)
 
     def show_brick_update(self, url_part):
         if self.flashing_window is None:
@@ -759,6 +763,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         tab_window.show()
         tab_window.activateWindow()
         tab_window.raise_()
+
+        return device_info.plugin
 
     def cb_enumerate(self, uid, connected_uid, position,
                      hardware_version, firmware_version,

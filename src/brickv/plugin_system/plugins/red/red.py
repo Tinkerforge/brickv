@@ -31,6 +31,7 @@ import traceback
 from PyQt5.QtWidgets import QMessageBox, QLabel, QVBoxLayout, QAction, QTextBrowser
 
 from brickv.plugin_system.plugin_base import PluginBase
+from brickv.plugin_system.plugins.red import config_parser
 from brickv.plugin_system.plugins.red.ui_red import Ui_RED
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import ScriptManager, check_script_result
@@ -96,6 +97,74 @@ class RED(PluginBase, Ui_RED):
         #        for Brick(let)s connected to it. Trigger a enumerate to pick up
         #        all devices connected to a RED Brick properly
         self.ipcon.enumerate()
+
+        self.extension_configs = []
+        self.completed_counter = 0
+        self.update_extensions_in_device_info()
+
+    def show_extension(self, extension_idx):
+        self.tab_widget.setCurrentWidget(self.tab_extension)
+        self.tab_widget.currentWidget().tab_widget.setCurrentIndex(extension_idx)
+
+    def update_extensions_in_device_info(self):
+        red_file = [None, None]
+
+        def cb_file_read(extension, result):
+            red_file[extension].release()
+            self.completed_counter += 1
+
+            if result.error == None:
+                config = config_parser.parse(result.data.decode('utf-8'))
+                try:
+                    t = int(config['type'])
+                except:
+                    t = 0
+
+                names = {
+                    1: 'Chibi Extension',
+                    2: 'RS485 Extension',
+                    3: 'WIFI Extension',
+                    4: 'Ethernet Extension',
+                    5: 'WIFI Extension 2.0'
+                }
+                name = names[t] if t in names else 'Unknown'
+
+                extension = 'ext'+str(extension)
+                self.device_info.extensions[extension] = brickv.infos.ExtensionInfo()
+                self.device_info.extensions[extension].name = name
+                self.device_info.extensions[extension].extension_type = name + ' Extension'
+                self.device_info.extensions[extension].position = extension
+                self.device_info.extensions[extension].master_info = self.device_info
+
+                self.extension_configs.append((extension, config))
+
+            if self.completed_counter == len(red_file):
+                self.tab_extension.extension_query_finished(self.extension_configs)
+
+        def cb_file_open(extension, result):
+            if not isinstance(result, REDFile):
+                return
+
+            red_file[extension] = result
+            red_file[extension].read_async(red_file[extension].length, lambda x: cb_file_read(extension, x))
+
+        def cb_file_open_error(extension):
+            self.extension_configs.append((extension, None))
+            self.completed_counter += 1
+            if self.completed_counter == len(red_file):
+                self.tab_extension.extension_query_finished(self.extension_configs)
+
+        red_file[0] = REDFile(self.session)
+        async_call(red_file[0].open,
+                   ("/tmp/extension_position_0.conf", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   lambda x: cb_file_open(0, x),
+                   lambda: cb_file_open_error(0))
+
+        red_file[1] = REDFile(self.session)
+        async_call(red_file[1].open,
+                   ("/tmp/extension_position_1.conf", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   lambda x: cb_file_open(1, x),
+                   lambda: cb_file_open_error(1))
 
     def report_fatal_error(self, title, message, trace):
         trace = '<pre>{}</pre>'.format(html.escape(trace).replace('\n', '<br>'))

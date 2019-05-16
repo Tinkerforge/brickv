@@ -360,21 +360,16 @@ class REDTabExtension(REDTab, Ui_REDTabExtension):
         self.tabbed_extension_widgets = []
 
         self.tab_widget.hide()
+        self.label_status.setText('Discovering Extensions...')
+        self.label_status.show()
 
-    def update_ui_state(self):
-        if self.tab_widget.count() == 0:
-            self.label_status.setText('Could not find any Master Extensions on RED Brick stack.')
-            self.label_status.show()
-            self.tab_widget.hide()
-        else:
-            self.label_status.hide()
-            self.tab_widget.show()
+    def extension_query_finished(self, result):
+        for i in reversed(range(self.tab_widget.count())):
+             self.tab_widget.removeTab(i)
 
-    def cb_file_read(self, extension, result):
-        self.red_file[extension].release()
-
-        if result.error == None:
-            config = config_parser.parse(result.data.decode('utf-8'))
+        for extension, config in result:
+            if config is None:
+                continue
             try:
                 t = int(config['type'])
             except:
@@ -404,50 +399,22 @@ class REDTabExtension(REDTab, Ui_REDTabExtension):
                                        extension_name)
                 self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1].start_update_data()
 
-        self.config_read_counter += 1
+        self.update_ui_state()
 
-        if self.config_read_counter == 2:
-            self.update_ui_state()
-
-    def cb_file_open_error(self, extension):
-        self.config_read_counter += 1
-
-        if self.config_read_counter == 2:
-            self.update_ui_state()
-
-    def cb_file_open(self, extension, result):
-        if not isinstance(result, REDFile):
-            return
-
-        self.red_file[extension] = result
-        self.red_file[extension].read_async(self.red_file[extension].length, lambda x: self.cb_file_read(extension, x))
+    def update_ui_state(self):
+        if self.tab_widget.count() == 0:
+            self.label_status.setText('Could not find any Master Extensions on RED Brick stack.')
+            self.label_status.show()
+            self.tab_widget.hide()
+        else:
+            self.label_status.hide()
+            self.tab_widget.show()
 
     def tab_on_focus(self):
-        self.config_read_counter = 0
-        for i in reversed(range(self.tab_widget.count())):
-            self.tab_widget.removeTab(i)
-
-        self.label_status.setText('Discovering Extensions...')
-        self.label_status.show()
-        self.tab_widget.hide()
-
-        self.red_file[0] = REDFile(self.session)
-        async_call(self.red_file[0].open,
-                   ("/tmp/extension_position_0.conf", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                   lambda x: self.cb_file_open(0, x),
-                   lambda: self.cb_file_open_error(0))
-
-        self.red_file[1] = REDFile(self.session)
-        async_call(self.red_file[1].open,
-                   ("/tmp/extension_position_1.conf", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                   lambda x: self.cb_file_open(1, x),
-                   lambda: self.cb_file_open_error(1))
+        pass
 
     def tab_off_focus(self):
-        for i in range(len(self.tabbed_extension_widgets)):
-            self.tabbed_extension_widgets[i].stop_update_data()
-
-        del self.tabbed_extension_widgets[:]
+        pass
 
     def tab_destroy(self):
         pass
