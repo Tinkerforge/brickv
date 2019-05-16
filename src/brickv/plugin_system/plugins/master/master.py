@@ -22,8 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QAction, QTabBar
+from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtWidgets import QAction, QTabBar, QLabel, QWidget, QVBoxLayout
 from PyQt5.QtGui import QIcon
 
 from brickv.plugin_system.plugin_base import PluginBase
@@ -214,16 +214,32 @@ class Master(PluginBase, Ui_Master):
         self.wifi2_present(True)
 
     def wifi2_present(self, present):
-        if present and self.wifi2_firmware_version != None and not self.check_extensions:
-            wifi2 = Wifi2(self.wifi2_firmware_version, self)
-            wifi2.start()
-            self.extensions.append(wifi2)
-            self.wifi_tab_idx = self.tab_widget.addTab(wifi2, 'WIFI 2.0')
-            self.device_infos_changed(self.device_info.uid) # Trigger device_infos_changed to show potential wifi updates.
-            self.tab_widget.show()
-            self.num_extensions += 1
-            self.extension_label.setText(str(self.num_extensions) + " Present")
-            self.label_no_extension.hide()
+        if present:
+            if self.wifi2_firmware_version != None and not self.check_extensions:
+                wifi2 = Wifi2(self.wifi2_firmware_version, self)
+                wifi2.start()
+                self.extensions.append(wifi2)
+                if self.wifi_tab_idx is not None:
+                    wrapper = self.tab_widget.widget(self.wifi_tab_idx)
+                    wrapper.layout().replaceWidget(wrapper.layout().itemAt(0).widget(), wifi2)
+                else:
+                    self.wifi_tab_idx = self.tab_widget.insertTab(self.wifi_tab_idx, wifi2, 'WIFI 2.0')
+
+            else:
+                wrapper = QWidget()
+                wrapper.setContentsMargins(0, 0, 0, 0)
+                layout = QVBoxLayout()
+                label = QLabel('Waiting for WIFI Extension 2.0 firmware version...')
+                label.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+                layout.addWidget(label)
+                wrapper.setLayout(layout)
+                self.wifi_tab_idx = self.tab_widget.addTab(wrapper, 'WIFI 2.0')
+                self.device_infos_changed(self.device_info.uid) # Trigger device_infos_changed to show potential wifi updates.
+                self.tab_widget.show()
+                self.num_extensions += 1
+                self.extension_label.setText(str(self.num_extensions) + " Present")
+                self.label_no_extension.hide()
+
 
     def ethernet_present(self, present):
         if present:
