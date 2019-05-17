@@ -107,9 +107,11 @@ class Master(PluginBase, Ui_Master):
 
         if self.extension_type_preset[self.master.EXTENSION_TYPE_WIFI2]:
             wifi_info = self.device_info.get_extension_info(self.master.EXTENSION_TYPE_WIFI2)
+
             if wifi_info is None:
                 wifi_update_avail = False
-            wifi_update_avail = wifi_info.firmware_version_installed != (0, 0, 0) and wifi_info.firmware_version_installed < wifi_info.firmware_version_latest
+            else:
+                wifi_update_avail = wifi_info.firmware_version_installed != (0, 0, 0) and wifi_info.firmware_version_installed < wifi_info.firmware_version_latest
         else:
             wifi_update_avail = False
 
