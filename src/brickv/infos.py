@@ -164,15 +164,28 @@ class BrickHATZeroInfo(BrickInfo):
         super().__init__()
         self.bricklet_ports = ('a', 'b', 'c', 'd')
 
-class BrickMasterInfo(BrickInfo):
+class BrickWithExtensions(BrickInfo):
     can_have_extension = True
+
+    def __init__(self):
+        super().__init__()
+        self.extensions = {'ext0': None, 'ext1': None}
+
+    def get_extension_info(self, type_):
+        for ext_info in self.extensions.values():
+            if ext_info is None:
+                continue
+
+            if ext_info.extension_type == type_:
+                return ext_info
+        return None
+
+class BrickMasterInfo(BrickWithExtensions):
     connection_type = None
 
     def __init__(self):
         super().__init__()
-
         self.bricklet_ports = ('a', 'b', 'c', 'd')
-        self.extensions = {'ext0': None, 'ext1': None}
 
 class BrickletIsolatorInfo(BrickletInfo):
     def __init__(self):
@@ -180,16 +193,13 @@ class BrickletIsolatorInfo(BrickletInfo):
         self.bricklet_ports = {'z'}
 
 
-class BrickREDInfo(BrickInfo):
-    can_have_extension = True
-
+class BrickREDInfo(BrickWithExtensions):
     def __init__(self):
         super().__init__()
         self.bindings_infos = []
         self.brickv_info = ToolInfo()
         self.brickv_info.name = "Brick Viewer"
         self.bricklet_ports = ()
-        self.extensions = {'ext0': None, 'ext1': None}
 
 def get_bindings_name(url_part):
     # These are all bindings supported on the red brick.

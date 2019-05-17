@@ -107,11 +107,10 @@ class Master(PluginBase, Ui_Master):
             return
 
         if self.extension_type_preset[self.master.EXTENSION_TYPE_WIFI2]:
-            try:
-                wifi_info = next(ext for ext in self.device_info.extensions.values() if ext.extension_type == self.master.EXTENSION_TYPE_WIFI2)
-                wifi_update_avail = wifi_info.firmware_version_installed != (0, 0, 0) and wifi_info.firmware_version_installed < wifi_info.firmware_version_latest
-            except StopIteration:
+            wifi_info = self.device_info.get_extension_info(self.master.EXTENSION_TYPE_WIFI2)
+            if wifi_info is None:
                 wifi_update_avail = False
+            wifi_update_avail = wifi_info.firmware_version_installed != (0, 0, 0) and wifi_info.firmware_version_installed < wifi_info.firmware_version_latest
         else:
             wifi_update_avail = False
 
@@ -214,8 +213,8 @@ class Master(PluginBase, Ui_Master):
         self.wifi2_present(True)
 
     def wifi2_present(self, present):
-        if present:
-            if self.wifi2_firmware_version != None and not self.check_extensions:
+        if present and not self.check_extensions:
+            if self.wifi2_firmware_version != None:
                 wifi2 = Wifi2(self.wifi2_firmware_version, self)
                 wifi2.start()
                 self.extensions.append(wifi2)
@@ -223,8 +222,7 @@ class Master(PluginBase, Ui_Master):
                     wrapper = self.tab_widget.widget(self.wifi_tab_idx)
                     wrapper.layout().replaceWidget(wrapper.layout().itemAt(0).widget(), wifi2)
                 else:
-                    self.wifi_tab_idx = self.tab_widget.insertTab(self.wifi_tab_idx, wifi2, 'WIFI 2.0')
-
+                    self.wifi_tab_idx = self.tab_widget.addTab(wifi2, 'WIFI 2.0')
             else:
                 wrapper = QWidget()
                 wrapper.setContentsMargins(0, 0, 0, 0)
@@ -235,11 +233,10 @@ class Master(PluginBase, Ui_Master):
                 wrapper.setLayout(layout)
                 self.wifi_tab_idx = self.tab_widget.addTab(wrapper, 'WIFI 2.0')
                 self.device_infos_changed(self.device_info.uid) # Trigger device_infos_changed to show potential wifi updates.
-                self.tab_widget.show()
                 self.num_extensions += 1
                 self.extension_label.setText(str(self.num_extensions) + " Present")
-                self.label_no_extension.hide()
-
+            self.tab_widget.show()
+            self.label_no_extension.hide()
 
     def ethernet_present(self, present):
         if present:
