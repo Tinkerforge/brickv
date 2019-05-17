@@ -70,7 +70,6 @@ class Master(PluginBase, Ui_Master):
         self.wifi_update_button.clicked.connect(lambda: get_main_window().show_extension_update(self.device_info.uid))
         self.wifi_update_button.hide()
 
-        self.wifi_update_available = False
         self.wifi_tab_idx = None
 
         self.extension_label.setText("None Present")
