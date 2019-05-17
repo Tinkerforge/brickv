@@ -91,12 +91,12 @@ class Master(PluginBase, Ui_Master):
         reset.triggered.connect(self.master.reset)
         self.set_actions([(0, None, [reset])])
 
-        self.extension_type_preset = [None,  # None
-                                      False, # Chibi
-                                      False, # RS485
-                                      False, # WIFI
-                                      False, # Ethernet
-                                      False] # WIFI 2.0
+        self.extension_type_present = [None,  # None
+                                       False, # Chibi
+                                       False, # RS485
+                                       False, # WIFI
+                                       False, # Ethernet
+                                       False] # WIFI 2.0
 
         self.update_extensions_in_device_info()
 
@@ -105,7 +105,7 @@ class Master(PluginBase, Ui_Master):
         if uid != self.device_info.uid:
             return
 
-        if self.extension_type_preset[self.master.EXTENSION_TYPE_WIFI2]:
+        if self.extension_type_present[self.master.EXTENSION_TYPE_WIFI2]:
             wifi_info = self.device_info.get_extension_info(self.master.EXTENSION_TYPE_WIFI2)
 
             if wifi_info is None:
@@ -163,7 +163,7 @@ class Master(PluginBase, Ui_Master):
 
     def update_extensions_in_device_info(self):
         def is_present_async(present, extension_type, name):
-            self.extension_type_preset[extension_type] = present
+            self.extension_type_present[extension_type] = present
 
             if present:
                 if self.device_info.extensions['ext0'] == None:
@@ -303,11 +303,11 @@ class Master(PluginBase, Ui_Master):
         if self.check_extensions:
             self.check_extensions = False
 
-            self.chibi_present(self.extension_type_preset[self.master.EXTENSION_TYPE_CHIBI])
-            self.rs485_present(self.extension_type_preset[self.master.EXTENSION_TYPE_RS485])
-            self.wifi_present(self.extension_type_preset[self.master.EXTENSION_TYPE_WIFI])
-            self.ethernet_present(self.extension_type_preset[self.master.EXTENSION_TYPE_ETHERNET])
-            self.wifi2_present(self.extension_type_preset[self.master.EXTENSION_TYPE_WIFI2])
+            self.chibi_present(self.extension_type_present[self.master.EXTENSION_TYPE_CHIBI])
+            self.rs485_present(self.extension_type_present[self.master.EXTENSION_TYPE_RS485])
+            self.wifi_present(self.extension_type_present[self.master.EXTENSION_TYPE_WIFI])
+            self.ethernet_present(self.extension_type_present[self.master.EXTENSION_TYPE_ETHERNET])
+            self.wifi2_present(self.extension_type_present[self.master.EXTENSION_TYPE_WIFI2])
 
         self.update_timer.start(1000)
 
