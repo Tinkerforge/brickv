@@ -229,13 +229,15 @@ class Master(PluginBase, Ui_Master):
                 else:
                     self.wifi2_tab_idx = self.tab_widget.addTab(wifi2, 'WIFI 2.0')
             else:
-                wrapper = QWidget()
-                wrapper.setContentsMargins(0, 0, 0, 0)
-                layout = QVBoxLayout()
                 label = QLabel('Waiting for WIFI Extension 2.0 firmware version...')
                 label.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+
+                wrapper = QWidget()
+
+                layout = QVBoxLayout(wrapper)
                 layout.addWidget(label)
-                wrapper.setLayout(layout)
+                layout.setContentsMargins(0, 0, 0, 0)
+
                 self.wifi2_tab_idx = self.tab_widget.addTab(wrapper, 'WIFI 2.0')
                 self.device_infos_changed(self.device_info.uid) # Trigger device_infos_changed to show potential wifi updates.
                 self.num_extensions += 1

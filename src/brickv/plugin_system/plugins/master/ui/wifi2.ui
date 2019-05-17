@@ -14,15 +14,6 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
    <item>
     <widget class="QScrollArea" name="wifi_scroll_area">
      <property name="widgetResizable">
@@ -32,9 +23,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-432</y>
+        <y>0</y>
         <width>859</width>
-        <height>1655</height>
+        <height>1700</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
