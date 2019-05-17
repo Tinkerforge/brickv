@@ -100,13 +100,13 @@ class RED(PluginBase, Ui_RED):
 
         self.extension_configs = []
         self.completed_counter = 0
-        self.update_extensions_in_device_info()
+        self.query_extensions()
 
     def show_extension(self, extension_idx):
         self.tab_widget.setCurrentWidget(self.tab_extension)
         self.tab_widget.currentWidget().tab_widget.setCurrentIndex(extension_idx)
 
-    def update_extensions_in_device_info(self):
+    def query_extensions(self):
         red_file = [None, None]
 
         def cb_file_read(extension, result):

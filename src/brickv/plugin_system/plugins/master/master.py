@@ -22,6 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import functools
+
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QAction, QTabBar, QLabel, QWidget, QVBoxLayout
 from PyQt5.QtGui import QIcon
@@ -60,8 +62,7 @@ class Master(PluginBase, Ui_Master):
         self.extension_type = None
 
         self.extensions = []
-        self.num_extensions = 0
-        self.wifi2_ext = None
+
         self.wifi2_firmware_version = None
         self.wifi2_update_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')),
                                               QIcon(load_pixmap('update-icon-hover.png')),
@@ -71,12 +72,13 @@ class Master(PluginBase, Ui_Master):
         self.wifi2_update_button.hide()
 
         self.wifi2_tab_idx = None
+        self.wifi2_start_done = False
 
         self.extension_label.setText("None Present")
         self.tab_widget.removeTab(0)
         self.tab_widget.hide()
 
-        self.check_extensions = True
+        self.start_extensions = True
         self.extension_type_button.clicked.connect(self.extension_clicked)
 
         if self.has_status_led:
@@ -98,7 +100,7 @@ class Master(PluginBase, Ui_Master):
                                        False, # Ethernet
                                        False] # WIFI 2.0
 
-        self.update_extensions_in_device_info()
+        self.query_extensions()
 
     # overrides PluginBase.device_infos_changed
     def device_infos_changed(self, uid):
@@ -161,76 +163,29 @@ class Master(PluginBase, Ui_Master):
 
         get_main_window().tab_widget.tabBar().setTabButton(tab_idx, QTabBar.RightSide, self.update_tab_button)
 
-    def update_extensions_in_device_info(self):
-        def is_present_async(present, extension_type, name):
+    def query_extensions(self):
+        def is_present_async(extension_type, name, present):
             self.extension_type_present[extension_type] = present
 
-            if present:
-                if self.device_info.extensions['ext0'] == None:
-                    ext = 'ext0'
-                elif self.device_info.extensions['ext1'] == None:
-                    ext = 'ext1'
-                else:
-                    return # This should never be the case
+            if not present:
+                return
 
-                self.device_info.extensions[ext] = infos.ExtensionInfo()
-                self.device_info.extensions[ext].name = name
-                self.device_info.extensions[ext].extension_type = extension_type
-                self.device_info.extensions[ext].position = ext
-                self.device_info.extensions[ext].master_info = self.device_info
-
-                if extension_type == self.master.EXTENSION_TYPE_WIFI2:
-                    self.device_info.extensions[ext].url_part = 'wifi_v2'
-                    # When WIFI2 extension firmware version is being requested the
-                    # extension might still not be done with booting and thus the
-                    # message won't be received by the extension. So we delay sending
-                    # the request which gives enough time to the extension to finish
-                    # booting. Note that this delay is only induced when there is a
-                    # WIFI2 extension present.
-                    self.wifi2_ext = ext
-                    self.label_no_extension.setText('Waiting for WIFI Extension 2.0 firmware version...')
-                    async_call(self.master.get_wifi2_firmware_version, None, self.get_wifi2_firmware_version_async, self.increase_error_count, delay=2.0)
-
-                infos.update_info(self.uid)
-
-        def get_connection_type_async(connection_type):
-            self.device_info.connection_type = connection_type
-            infos.update_info(self.uid)
-
-        async_call(self.master.is_chibi_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_CHIBI, 'Chibi Extension'), self.increase_error_count)
-        async_call(self.master.is_rs485_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_RS485, 'RS485 Extension'), self.increase_error_count)
-        async_call(self.master.is_wifi_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_WIFI, 'WIFI Extension'), self.increase_error_count)
-
-        if self.firmware_version >= (2, 1, 0):
-            async_call(self.master.is_ethernet_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_ETHERNET, 'Ethernet Extension'), self.increase_error_count)
-
-        if self.firmware_version >= (2, 4, 0):
-            async_call(self.master.is_wifi2_present, None, lambda p: is_present_async(p, self.master.EXTENSION_TYPE_WIFI2, 'WIFI Extension 2.0'), self.increase_error_count)
-            async_call(self.master.get_connection_type, None, get_connection_type_async, self.increase_error_count)
-
-        async_call(lambda: None, None, get_main_window().update_tree_view, None)
-
-    def get_wifi2_firmware_version_async(self, version):
-        self.wifi2_firmware_version = version
-        self.device_info.extensions[self.wifi2_ext].firmware_version_installed = version
-        infos.update_info(self.uid)
-        get_main_window().update_tree_view() # FIXME: this is kind of a hack
-        self.wifi2_present(True)
-
-    def wifi2_present(self, present):
-        if present and not self.check_extensions:
-            if self.wifi2_firmware_version != None:
-                wifi2 = Wifi2(self.wifi2_firmware_version, self)
-                wifi2.start()
-
-                self.extensions.append(wifi2)
-
-                if self.wifi2_tab_idx is not None:
-                    wrapper = self.tab_widget.widget(self.wifi2_tab_idx)
-                    wrapper.layout().replaceWidget(wrapper.layout().itemAt(0).widget(), wifi2)
-                else:
-                    self.wifi2_tab_idx = self.tab_widget.addTab(wifi2, 'WIFI 2.0')
+            if self.device_info.extensions['ext0'] == None:
+                ext = 'ext0'
+            elif self.device_info.extensions['ext1'] == None:
+                ext = 'ext1'
             else:
+                return # This should never be the case
+
+            self.device_info.extensions[ext] = infos.ExtensionInfo()
+            self.device_info.extensions[ext].name = name
+            self.device_info.extensions[ext].extension_type = extension_type
+            self.device_info.extensions[ext].position = ext
+            self.device_info.extensions[ext].master_info = self.device_info
+
+            if extension_type == self.master.EXTENSION_TYPE_WIFI2:
+                self.device_info.extensions[ext].url_part = 'wifi_v2'
+
                 label = QLabel('Waiting for WIFI Extension 2.0 firmware version...')
                 label.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
@@ -241,73 +196,119 @@ class Master(PluginBase, Ui_Master):
                 layout.setContentsMargins(0, 0, 0, 0)
 
                 self.wifi2_tab_idx = self.tab_widget.addTab(wrapper, 'WIFI 2.0')
-                self.device_infos_changed(self.device_info.uid) # Trigger device_infos_changed to show potential wifi updates.
-                self.num_extensions += 1
-                self.extension_label.setText(str(self.num_extensions) + " Present")
 
-            self.tab_widget.show()
-            self.label_no_extension.hide()
+                # When WIFI2 extension firmware version is being requested the
+                # extension might still not be done with booting and thus the
+                # message won't be received by the extension. So we delay sending
+                # the request which gives enough time to the extension to finish
+                # booting. Note that this delay is only induced when there is a
+                # WIFI2 extension present.
+                async_call(self.master.get_wifi2_firmware_version, None, functools.partial(self.get_wifi2_firmware_version_async, ext), self.increase_error_count, delay=2.0)
 
-    def ethernet_present(self, present):
-        if present:
-            ethernet = Ethernet(self)
-            ethernet.start()
+            infos.update_info(self.uid)
 
-            self.extensions.append(ethernet)
-            self.tab_widget.addTab(ethernet, 'Ethernet')
-            self.tab_widget.show()
-            self.num_extensions += 1
-            self.extension_label.setText(str(self.num_extensions) + " Present")
-            self.label_no_extension.hide()
+        def get_connection_type_async(connection_type):
+            self.device_info.connection_type = connection_type
+            infos.update_info(self.uid)
 
-    def wifi_present(self, present):
-        if present:
-            wifi = Wifi(self)
-            wifi.start()
+        async_call(self.master.is_chibi_present, None, functools.partial(is_present_async, self.master.EXTENSION_TYPE_CHIBI, 'Chibi Extension'), self.increase_error_count)
+        async_call(self.master.is_rs485_present, None, functools.partial(is_present_async, self.master.EXTENSION_TYPE_RS485, 'RS485 Extension'), self.increase_error_count)
+        async_call(self.master.is_wifi_present, None, functools.partial(is_present_async, self.master.EXTENSION_TYPE_WIFI, 'WIFI Extension'), self.increase_error_count)
 
-            self.extensions.append(wifi)
-            self.tab_widget.addTab(wifi, 'WIFI')
-            self.tab_widget.show()
-            self.num_extensions += 1
-            self.extension_label.setText(str(self.num_extensions) + " Present")
-            self.label_no_extension.hide()
+        if self.firmware_version >= (2, 1, 0):
+            async_call(self.master.is_ethernet_present, None, functools.partial(is_present_async, self.master.EXTENSION_TYPE_ETHERNET, 'Ethernet Extension'), self.increase_error_count)
 
-    def rs485_present(self, present):
-        if present:
-            rs485 = RS485(self)
-            rs485.start()
+        if self.firmware_version >= (2, 4, 0):
+            async_call(self.master.is_wifi2_present, None, functools.partial(is_present_async, self.master.EXTENSION_TYPE_WIFI2, 'WIFI Extension 2.0'), self.increase_error_count)
+            async_call(self.master.get_connection_type, None, get_connection_type_async, self.increase_error_count)
 
-            self.extensions.append(rs485)
-            self.tab_widget.addTab(rs485, 'RS485')
-            self.tab_widget.show()
-            self.num_extensions += 1
-            self.extension_label.setText(str(self.num_extensions) + " Present")
-            self.label_no_extension.hide()
+        async_call(lambda: None, None, get_main_window().update_tree_view, None)
 
-    def chibi_present(self, present):
-        if present:
-            chibi = Chibi(self)
-            chibi.start()
+    def get_wifi2_firmware_version_async(self, ext, version):
+        self.wifi2_firmware_version = version
+        self.device_info.extensions[ext].firmware_version_installed = version
 
-            self.extensions.append(chibi)
-            self.tab_widget.addTab(chibi, 'Chibi')
-            self.tab_widget.show()
-            self.num_extensions += 1
-            self.extension_label.setText(str(self.num_extensions) + " Present")
-            self.label_no_extension.hide()
+        infos.update_info(self.uid)
+        get_main_window().update_tree_view() # FIXME: this is kind of a hack
+        self.wifi2_start()
+
+    def wifi2_start(self):
+        if self.wifi2_start_done or self.wifi2_firmware_version == None:
+            return
+
+        self.wifi2_start_done = True
+
+        wifi2 = Wifi2(self.wifi2_firmware_version, self)
+        wifi2.start()
+
+        self.extensions.append(wifi2)
+
+        wrapper = self.tab_widget.widget(self.wifi2_tab_idx)
+        wrapper.layout().replaceWidget(wrapper.layout().itemAt(0).widget(), wifi2)
+
+    def add_non_wifi2_tab(self, widget, title):
+        if self.wifi2_tab_idx != None:
+            self.tab_widget.insertTab(self.wifi2_tab_idx, widget, title)
+            self.wifi2_tab_idx += 1
+        else:
+            self.tab_widget.addTab(widget, title)
+
+        self.tab_widget.setCurrentIndex(0)
+
+    def ethernet_start(self):
+        ethernet = Ethernet(self)
+        ethernet.start()
+
+        self.extensions.append(ethernet)
+        self.add_non_wifi2_tab(ethernet, 'Ethernet')
+
+    def wifi_start(self):
+        wifi = Wifi(self)
+        wifi.start()
+
+        self.extensions.append(wifi)
+        self.add_non_wifi2_tab(wifi, 'WIFI')
+
+    def rs485_start(self):
+        rs485 = RS485(self)
+        rs485.start()
+
+        self.extensions.append(rs485)
+        self.add_non_wifi2_tab(rs485, 'RS485')
+
+    def chibi_start(self):
+        chibi = Chibi(self)
+        chibi.start()
+
+        self.extensions.append(chibi)
+        self.add_non_wifi2_tab(chibi, 'Chibi')
 
     def start(self):
         if self.has_status_led:
             async_call(self.master.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
 
-        if self.check_extensions:
-            self.check_extensions = False
+        if self.start_extensions:
+            self.start_extensions = False
 
-            self.chibi_present(self.extension_type_present[self.master.EXTENSION_TYPE_CHIBI])
-            self.rs485_present(self.extension_type_present[self.master.EXTENSION_TYPE_RS485])
-            self.wifi_present(self.extension_type_present[self.master.EXTENSION_TYPE_WIFI])
-            self.ethernet_present(self.extension_type_present[self.master.EXTENSION_TYPE_ETHERNET])
-            self.wifi2_present(self.extension_type_present[self.master.EXTENSION_TYPE_WIFI2])
+            if self.extension_type_present[self.master.EXTENSION_TYPE_CHIBI]:
+                self.chibi_start()
+
+            if self.extension_type_present[self.master.EXTENSION_TYPE_RS485]:
+                self.rs485_start()
+
+            if self.extension_type_present[self.master.EXTENSION_TYPE_WIFI]:
+                self.wifi_start()
+
+            if self.extension_type_present[self.master.EXTENSION_TYPE_ETHERNET]:
+                self.ethernet_start()
+
+            if self.extension_type_present[self.master.EXTENSION_TYPE_WIFI2]:
+                self.wifi2_start()
+
+            if self.tab_widget.count():
+                self.tab_widget.show()
+                self.extension_label.setText(str(self.tab_widget.count()) + " Present")
+                self.label_no_extension.hide()
 
         self.update_timer.start(1000)
 
