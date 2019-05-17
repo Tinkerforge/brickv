@@ -305,7 +305,7 @@ class Master(PluginBase, Ui_Master):
             if self.extension_type_present[self.master.EXTENSION_TYPE_WIFI2]:
                 self.wifi2_start()
 
-            if self.tab_widget.count():
+            if self.tab_widget.count() > 0:
                 self.tab_widget.show()
                 self.extension_label.setText(str(self.tab_widget.count()) + " Present")
                 self.label_no_extension.hide()
