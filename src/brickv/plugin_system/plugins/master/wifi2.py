@@ -23,11 +23,14 @@ Boston, MA 02111-1307, USA.
 
 from PyQt5.QtWidgets import QWidget, QMessageBox, QLineEdit
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 
 from brickv.plugin_system.plugins.master.wifi2_status import Wifi2Status
 from brickv.plugin_system.plugins.master.ui_wifi2 import Ui_Wifi2
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
+from brickv.load_pixmap import load_pixmap
+from brickv.infos import get_version_string
 
 def show_group(group):
     for widget in group:
@@ -54,7 +57,14 @@ class Wifi2(QWidget, Ui_Wifi2):
 
         self.wifi2_firmware_version = wifi2_firmware_version
 
-        self.general_group = [self.wifi_port_label, self.wifi_port, self.wifi_websocket_port_label,
+        self.wifi_update_firmware_button.setIcon(QIcon(load_pixmap('update-icon-normal.png')))
+        self.wifi_update_firmware_button.clicked.connect(lambda: get_main_window().show_extension_update(parent.device_info.uid))
+        self.wifi_update_firmware_button.hide()
+
+        self.wifi_firmware_version_label.setText(get_version_string(wifi2_firmware_version, replace_unknown='Waiting for WIFI Extension 2.0 firmware version...'))
+
+        self.general_group = [self.wifi_firmware_version_description_label, self.wifi_firmware_version_label, self.wifi_update_firmware_button,
+                              self.wifi_port_label, self.wifi_port, self.wifi_websocket_port_label,
                               self.wifi_websocket_port, self.wifi_website_port_label, self.wifi_website_port,
                               self.wifi_disable_web_interface, self.wifi_phy_mode_label, self.wifi_phy_mode,
                               self.wifi_use_auth, self.wifi_secret_label, self.wifi_secret, self.wifi_show_characters]
