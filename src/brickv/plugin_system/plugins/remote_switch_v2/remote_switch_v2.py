@@ -288,7 +288,7 @@ class RemoteSwitchV2(COMCUPluginBase, Ui_RemoteSwitchV2):
 House code = {house_code}
 Receiver code = {receiver_code}
 Switch to = {switch_to}
-Reapeats = {repeats}
+Repeats = {repeats}
 
 '''.format(house_code=remote_config.house_code,
            receiver_code=remote_config.receiver_code,
@@ -372,7 +372,7 @@ Repeats = {repeats}
 System code = {system_code}
 Device code = {device_code}
 Switch to = {switch_to}
-Reapeats = {repeats}
+Repeats = {repeats}
 
 '''.format(system_code=remote_config.system_code,
            device_code=remote_config.device_code,
