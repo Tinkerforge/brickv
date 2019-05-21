@@ -619,6 +619,16 @@ else:
         BrickStepper_found = True
     except ImportError:
         BrickStepper_found = False
+    try:
+        from brickv.bindings.brick_hat import BrickHAT
+        BrickHAT_found = True
+    except ImportError:
+        BrickHAT_found = False
+    try:
+        from brickv.bindings.brick_hat_zero import BrickHATZero
+        BrickHATZero_found = True
+    except ImportError:
+        BrickHATZero_found = False
 
     # Bricklets
     try:
