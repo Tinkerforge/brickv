@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2012-2015, 2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
 # Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
@@ -54,7 +54,11 @@ def base58decode(encoded):
     column_multiplier = 1
 
     for c in encoded[::-1]:
-        column = BASE58.index(c)
+        try:
+            column = BASE58.index(c)
+        except ValueError:
+            raise Error(Error.INVALID_UID, 'UID "{0}" contains invalid character'.format(encoded), suppress_context=True)
+
         value += column * column_multiplier
         column_multiplier *= 58
 
@@ -305,6 +309,7 @@ class Error(Exception):
     NOT_SUPPORTED = -10
     UNKNOWN_ERROR_CODE = -11
     STREAM_OUT_OF_SYNC = -12
+    INVALID_UID = -13
 
     def __init__(self, value, description, suppress_context=False):
         Exception.__init__(self, '{0} ({1})'.format(description, value))
@@ -337,8 +342,14 @@ class Device(object):
 
         uid_ = base58decode(uid)
 
-        if uid_ > 0xFFFFFFFF:
+        if uid_ > (1 << 64) - 1:
+            raise Error(Error.INVALID_UID, 'UID "{0}" is too big'.format(uid))
+
+        if uid_ > (1 << 32) - 1:
             uid_ = uid64_to_uid32(uid_)
+
+        if uid_ == 0:
+            raise Error(Error.INVALID_UID, 'UID "{0}" is empty or maps to zero'.format(uid))
 
         self.uid = uid_
         self.ipcon = ipcon

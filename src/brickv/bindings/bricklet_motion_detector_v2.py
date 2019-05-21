@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-04-16.      #
+# This file was automatically generated on 2019-05-21.      #
 #                                                           #
-# Python Bindings Version 2.1.21                            #
+# Python Bindings Version 2.1.22                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -22,7 +22,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletMotionDetectorV2(Device):
     """
-    Passive infrared (PIR) motion sensor, 12m range
+    Passive infrared (PIR) motion sensor with 12m range and dimmable backlight
     """
 
     DEVICE_IDENTIFIER = 292

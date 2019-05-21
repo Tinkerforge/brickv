@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-01-29.      #
+# This file was automatically generated on 2019-05-21.      #
 #                                                           #
-# Python Bindings Version 2.1.21                            #
+# Python Bindings Version 2.1.22                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -453,7 +453,8 @@ class BrickMaster(Device):
 
     def is_chibi_present(self):
         """
-        Returns *true* if a Chibi Extension is available to be used by the Master Brick.
+        Returns *true* if the Master Brick is at position 0 in the stack and a Chibi
+        Extension is available.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_CHIBI_PRESENT, (), '', '!')
 
@@ -599,7 +600,8 @@ class BrickMaster(Device):
 
     def is_rs485_present(self):
         """
-        Returns *true* if a RS485 Extension is available to be used by the Master Brick.
+        Returns *true* if the Master Brick is at position 0 in the stack and a RS485
+        Extension is available.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_RS485_PRESENT, (), '', '!')
 
@@ -694,7 +696,8 @@ class BrickMaster(Device):
 
     def is_wifi_present(self):
         """
-        Returns *true* if a WIFI Extension is available to be used by the Master Brick.
+        Returns *true* if the Master Brick is at position 0 in the stack and a WIFI
+        Extension is available.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_WIFI_PRESENT, (), '', '!')
 
@@ -1204,8 +1207,8 @@ class BrickMaster(Device):
 
     def is_ethernet_present(self):
         """
-        Returns *true* if a Ethernet Extension is available to be used by the Master
-        Brick.
+        Returns *true* if the Master Brick is at position 0 in the stack and an Ethernet
+        Extension is available.
 
         .. versionadded:: 2.1.0$nbsp;(Firmware)
         """
@@ -1402,8 +1405,8 @@ class BrickMaster(Device):
 
     def is_wifi2_present(self):
         """
-        Returns *true* if a WIFI Extension 2.0 is available to be used by the Master
-        Brick.
+        Returns *true* if the Master Brick is at position 0 in the stack and a WIFI
+        Extension 2.0 is available.
 
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
