@@ -264,9 +264,11 @@ class Master(PluginBase, Ui_Master):
         self.wifi2_firmware_version = version
         self.device_info.extensions[ext].firmware_version_installed = version
 
+        # Start the plugin before sending the device_infos_changed signal, so that
+        # the slot registered to the signal will already see the plugin in self.extensions.
+        self.wifi2_start()
         infos.update_info(self.uid)
         get_main_window().update_tree_view() # FIXME: this is kind of a hack
-        self.wifi2_start()
 
     def wifi2_start(self):
         if self.wifi2_start_done or self.wifi2_firmware_version == None:
