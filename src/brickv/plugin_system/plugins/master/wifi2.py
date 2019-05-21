@@ -61,7 +61,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         self.wifi_update_firmware_button.clicked.connect(lambda: get_main_window().show_extension_update(parent.device_info.uid))
         self.wifi_update_firmware_button.hide()
 
-        self.wifi_firmware_version_label.setText(get_version_string(wifi2_firmware_version, replace_unknown='Waiting for WIFI Extension 2.0 firmware version...'))
+        self.wifi_firmware_version_label.setText(get_version_string(wifi2_firmware_version, replace_unknown='Waiting for WIFI Extension 2.0 FW Version...'))
 
         self.general_group = [self.wifi_port_label, self.wifi_port, self.wifi_websocket_port_label,
                               self.wifi_websocket_port, self.wifi_website_port_label, self.wifi_website_port,
