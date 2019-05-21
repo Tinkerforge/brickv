@@ -486,6 +486,14 @@
 - Fix Ethernet Extension configuration check
 - Port IMU Brick (2.0) 3D view to modern OpenGL making it work on Raspberry Pi
 
-<unknown>: 2.4.x (<unknown>)
-- Add Data Logger support for CO2 2.0, Hall Effect 2.0, Linear Poti 2.0,
-  Joystick 2.0 and Segment Display 4x7 2.0 Bricklet
+2019-05-21: 2.4.4 (<unknown>)
+- Add support for CO2 2.0, E-Paper 296x128, Hall Effect 2.0, Joystick 2.0,
+  Laser Range Finder 2.0, Linear Poti 2.0, Piezo Speaker 2.0, RGB LED 2.0 and
+  Segment Display 4x7 2.0 Bricklet and HAT and HAT Zero Brick
+- Add Data Logger support for CO2 2.0, Hall Effect 2.0, Laser Range Finder 2.0,
+  Linear Poti 2.0, Joystick 2.0 and Segment Display 4x7 2.0 Bricklet and HAT and
+  HAT Zero Brick
+- Fix some string conversions in RED Brick plugin
+- Show Master Extensions on RED Brick in devices tree
+- Fix WIFI Extension firmware version lookup in Master Brick plugin
+- Show WIFI Extension firmware version in Master Brick plugin
