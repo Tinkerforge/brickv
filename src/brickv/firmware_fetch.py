@@ -44,10 +44,8 @@ def refresh_firmware_info(url_part, latest_version):
     elif name.endswith('_v3'):
         name = name.replace('_v3', '_3.0')
 
-    if name in ['dc', 'imu', 'imu_2.0', 'hat']:
+    if name in ['dc', 'imu', 'imu_2.0']:
         name = name.upper()
-    elif name.startswith('hat_'):
-        name = name.replace('hat_', 'HAT_')
 
     words = name.split('_')
     parts = []
@@ -103,6 +101,8 @@ def refresh_plugin_info(url_part, latest_version):
         name = name.replace('midi_', 'MIDI_')
     elif name.startswith('co2_'):
         name = name.replace('co2_', 'CO2_')
+    elif name.startswith('hat_'):
+        name = name.replace('hat_', 'HAT_')
 
     words = name.split('_')
     parts = []
