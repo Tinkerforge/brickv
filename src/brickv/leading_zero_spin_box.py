@@ -24,11 +24,16 @@ Boston, MA 02111-1307, USA.
 from PyQt5.QtWidgets import QSpinBox
 
 class LeadingZeroSpinBox(QSpinBox):
-    def valueFromText(self, text):
-        return int(text, 10)
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.leading_zeros = 6
+
+    def use_leading_zeros(self, n):
+        self.leading_zeros = n
+        self.setValue(self.value())
 
     def textFromValue(self, value):
-        if value < 0:
-            return str(value)
-        else:
-            return '%02d' % value
+        return '{{:0{}d}}'.format(self.leading_zeros).format(value)
+
+    def valueFromText(self, text):
+        return int(text, 10)

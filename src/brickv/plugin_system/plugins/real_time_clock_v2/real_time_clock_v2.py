@@ -353,6 +353,13 @@ class RealTimeClockV2(COMCUPluginBase, Ui_RealTimeClockV2):
         self.rtc.register_callback(self.rtc.CALLBACK_ALARM,
                                    self.qtcb_alarm.emit)
 
+        self.spin_month_manual.use_leading_zeros(2)
+        self.spin_day_manual.use_leading_zeros(2)
+        self.spin_hour_manual.use_leading_zeros(2)
+        self.spin_minute_manual.use_leading_zeros(2)
+        self.spin_second_manual.use_leading_zeros(2)
+        self.spin_centisecond_manual.use_leading_zeros(2)
+
     def start(self):
         async_call(self.rtc.get_offset, None, self.get_offset_async, self.increase_error_count)
         async_call(self.rtc.get_alarm, None, self.get_alarm_async, self.increase_error_count,
