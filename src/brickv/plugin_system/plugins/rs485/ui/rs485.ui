@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>773</width>
-    <height>740</height>
+    <width>783</width>
+    <height>905</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,45 +15,16 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout_3">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Show text as:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QPushButton" name="button_clear_text">
-       <property name="text">
-        <string>Clear Text</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QComboBox" name="text_type_combobox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <item>
-        <property name="text">
-         <string>ASCII</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Hex</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-    </layout>
+    <layout class="QGridLayout" name="gridLayout_3"/>
    </item>
    <item>
     <widget class="QPlainTextEdit" name="text">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>2</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>675</width>
@@ -80,424 +51,592 @@
     </widget>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="3" column="1" colspan="3">
-      <widget class="QSpinBox" name="modbus_master_param1_spinbox">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>65536</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="modbus_master_slave_address_label">
-       <property name="text">
-        <string>Slave Address:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QComboBox" name="rs485_input_combobox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>24</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-       <property name="maxCount">
-        <number>65534</number>
-       </property>
-       <property name="insertPolicy">
-        <enum>QComboBox::InsertAtBottom</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" colspan="3">
-      <widget class="QComboBox" name="modbus_master_function_combobox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>3</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <item>
-        <property name="text">
-         <string>Read Coils</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Read Holding Registers</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Write Single Coil</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Write Single Register</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Write Multiple Coils</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Write Multiple Registers</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Read Discrete Inputs</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Read Input Registers</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QComboBox" name="rs485_input_line_ending_combobox">
-       <property name="toolTip">
-        <string>Line Ending</string>
-       </property>
-       <property name="currentIndex">
-        <number>3</number>
-       </property>
-       <item>
-        <property name="text">
-         <string/>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>\n</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>\r</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>\r\n</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>\n\r</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>\0</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Hex:</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="rs485_input_label">
-       <property name="text">
-        <string>Input:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="modbus_master_function_label">
-       <property name="text">
-        <string>Function:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="QLineEdit" name="rs485_input_line_ending_lineedit">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>80</width>
-         <height>16777215</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="modbus_master_param1_label">
-       <property name="text">
-        <string>Starting Address:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="modbus_master_param2_label">
-       <property name="text">
-        <string>Number of Coils:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1" colspan="3">
-      <widget class="QSpinBox" name="modbus_master_slave_address_spinbox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="maximum">
-        <number>255</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0" colspan="4">
-      <widget class="QPushButton" name="modbus_master_send_button">
-       <property name="text">
-        <string>Send</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1" colspan="3">
-      <widget class="QSpinBox" name="modbus_master_param2_spinbox">
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>65535</number>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="modbus_master_request_timeout_label">
-       <property name="text">
-        <string>Request Timeout (milliseconds):</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1" colspan="3">
-      <widget class="QSpinBox" name="modbus_master_request_timeout_spinbox">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>60000</number>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0" colspan="4">
-      <widget class="QCheckBox" name="modbus_slave_respond_checkbox">
-       <property name="text">
-        <string>Automatically Respond to Modbus Requests</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+    <widget class="QTreeWidget" name="modbus_master_tree">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>2</verstretch>
+      </sizepolicy>
      </property>
+     <property name="rootIsDecorated">
+      <bool>false</bool>
+     </property>
+     <column>
+      <property name="text">
+       <string>Time</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Request ID</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Slave Address</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Function</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Address</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Count</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Data</string>
+      </property>
+     </column>
     </widget>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="1">
-      <widget class="QSpinBox" name="modbus_slave_address_spinbox">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>255</number>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>Duplex:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QSpinBox" name="baudrate_spinbox">
-       <property name="minimum">
-        <number>100</number>
-       </property>
-       <property name="maximum">
-        <number>2997070</number>
-       </property>
-       <property name="value">
-        <number>115200</number>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="1">
-      <widget class="QComboBox" name="duplex_combobox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <item>
-        <property name="text">
-         <string>Half-Duplex</string>
-        </property>
+    <widget class="QTreeWidget" name="modbus_slave_tree">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>2</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="rootIsDecorated">
+      <bool>false</bool>
+     </property>
+     <column>
+      <property name="text">
+       <string>Time</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Request ID</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Function</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Address</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Count</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Data</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Duplex:</string>
+         </property>
+        </widget>
        </item>
-       <item>
-        <property name="text">
-         <string>Full-Duplex</string>
-        </property>
+       <item row="3" column="1">
+        <widget class="QSpinBox" name="stopbits_spinbox">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>2</number>
+         </property>
+        </widget>
        </item>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Baudrate:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0" colspan="2">
-      <widget class="QPushButton" name="apply_button">
-       <property name="text">
-        <string>Apply Configuration</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Word Length:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QSpinBox" name="stopbits_spinbox">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>2</number>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Parity:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QSpinBox" name="wordlength_spinbox">
-       <property name="minimum">
-        <number>5</number>
-       </property>
-       <property name="maximum">
-        <number>8</number>
-       </property>
-       <property name="value">
-        <number>8</number>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QComboBox" name="parity_combobox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <item>
-        <property name="text">
-         <string>None</string>
-        </property>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Parity:</string>
+         </property>
+        </widget>
        </item>
-       <item>
-        <property name="text">
-         <string>Odd</string>
-        </property>
+       <item row="5" column="1">
+        <widget class="QComboBox" name="duplex_combobox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <item>
+          <property name="text">
+           <string>Half-Duplex</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Full-Duplex</string>
+          </property>
+         </item>
+        </widget>
        </item>
-       <item>
-        <property name="text">
-         <string>Even</string>
-        </property>
+       <item row="1" column="1">
+        <widget class="QSpinBox" name="baudrate_spinbox">
+         <property name="minimum">
+          <number>100</number>
+         </property>
+         <property name="maximum">
+          <number>2997070</number>
+         </property>
+         <property name="value">
+          <number>115200</number>
+         </property>
+        </widget>
        </item>
-      </widget>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Baudrate:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QSpinBox" name="wordlength_spinbox">
+         <property name="minimum">
+          <number>5</number>
+         </property>
+         <property name="maximum">
+          <number>8</number>
+         </property>
+         <property name="value">
+          <number>8</number>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="2">
+        <widget class="QPushButton" name="apply_button">
+         <property name="text">
+          <string>Save Configuration</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="mode_combobox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <item>
+          <property name="text">
+           <string>RS485</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Modbus Master RTU</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Modbus Slave RTU</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="parity_combobox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <item>
+          <property name="text">
+           <string>None</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Odd</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Even</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Stop Bits:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Word Length:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Mode:</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Stop Bits:</string>
+     <item>
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>Mode:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QComboBox" name="mode_combobox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <item>
-        <property name="text">
-         <string>RS485</string>
-        </property>
+     <item>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="1" column="1">
+        <widget class="QComboBox" name="text_type_combobox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <item>
+          <property name="text">
+           <string>ASCII</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Raw (Hex Bytes)</string>
+          </property>
+         </item>
+        </widget>
        </item>
-       <item>
-        <property name="text">
-         <string>Modbus Master RTU</string>
-        </property>
+       <item row="12" column="0" colspan="2">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
        </item>
-       <item>
-        <property name="text">
-         <string>Modbus Slave RTU</string>
-        </property>
+       <item row="6" column="1">
+        <widget class="QSpinBox" name="modbus_master_slave_address_spinbox">
+         <property name="maximum">
+          <number>255</number>
+         </property>
+         <property name="value">
+          <number>1</number>
+         </property>
+        </widget>
        </item>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="modbus_slave_address_label">
-       <property name="text">
-        <string>Slave Address:</string>
-       </property>
-      </widget>
+       <item row="10" column="0" colspan="2">
+        <widget class="QPushButton" name="modbus_master_send_button">
+         <property name="text">
+          <string>Send Request</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="modbus_master_param2_label">
+         <property name="text">
+          <string>Number of Coils:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QSpinBox" name="modbus_slave_address_spinbox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_show_text_as">
+         <property name="text">
+          <string>Encoding:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <widget class="QSpinBox" name="modbus_master_request_timeout_spinbox">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>60000</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="modbus_master_function_label">
+         <property name="text">
+          <string>Function:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QSpinBox" name="modbus_master_param1_spinbox">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>65536</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="modbus_slave_address_label">
+         <property name="text">
+          <string>Slave Address:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QComboBox" name="modbus_master_function_combobox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <item>
+          <property name="text">
+           <string>Read Coils</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Read Holding Registers</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Write Single Coil</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Write Single Register</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Write Multiple Coils</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Write Multiple Registers</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Read Discrete Inputs</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Read Input Registers</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="modbus_master_slave_address_label">
+         <property name="text">
+          <string>Slave Address:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QCheckBox" name="modbus_slave_respond_checkbox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Automatically respond to Modbus requests with dummy data.</string>
+         </property>
+         <property name="text">
+          <string>Automatic Response</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="rs485_input_label">
+         <property name="text">
+          <string>Input:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="modbus_master_request_timeout_label">
+         <property name="text">
+          <string>Request Timeout [ms]:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QPushButton" name="button_clear_text">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Clear History</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="modbus_master_param1_label">
+         <property name="text">
+          <string>Starting Address:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QComboBox" name="rs485_input_combobox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+           <property name="maxCount">
+            <number>65534</number>
+           </property>
+           <property name="insertPolicy">
+            <enum>QComboBox::InsertAtBottom</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="rs485_input_line_ending_combobox">
+           <property name="toolTip">
+            <string>Line Ending</string>
+           </property>
+           <property name="currentIndex">
+            <number>3</number>
+           </property>
+           <item>
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>\n</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>\r</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>\r\n</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>\n\r</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>\0</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Hex:</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="rs485_input_line_ending_lineedit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>80</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="8" column="1">
+        <widget class="QSpinBox" name="modbus_master_param2_spinbox">
+         <property name="minimum">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="0" colspan="2">
+        <widget class="QPushButton" name="rs485_send_button">
+         <property name="text">
+          <string>Write Line</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -511,7 +650,16 @@
    <item>
     <widget class="QWidget" name="widget_errors" native="true">
      <layout class="QGridLayout" name="gridLayout_5">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <item row="0" column="0">
@@ -724,8 +872,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>text_type_combobox</tabstop>
-  <tabstop>rs485_input_combobox</tabstop>
   <tabstop>parity_combobox</tabstop>
   <tabstop>stopbits_spinbox</tabstop>
   <tabstop>wordlength_spinbox</tabstop>

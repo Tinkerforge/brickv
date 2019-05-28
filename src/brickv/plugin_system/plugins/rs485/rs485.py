@@ -22,9 +22,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtWidgets import QAction, QMessageBox
-from PyQt5.QtGui import QTextCursor
-from PyQt5.QtCore import pyqtSignal
+from collections import namedtuple
+import time
+
+from PyQt5.QtWidgets import QAction, QMessageBox, QTreeWidgetItem
+from PyQt5.QtGui import QTextCursor, QColor, QBrush, QPalette
+from PyQt5.QtCore import pyqtSignal, Qt
 
 from brickv.bindings.bricklet_rs485 import BrickletRS485
 from brickv.plugin_system.plugins.rs485.ui_rs485 import Ui_RS485
@@ -47,6 +50,12 @@ MODBUS_F_IDX_READ_INPUT_REGISTERS = 7
 MSG_ERR_REQUEST_PROCESS = "Failed to process the request"
 MSG_ERR_NOT_MODBUS_MASTER = "The Bricklet needs to be in Modbus master mode to perform this operation"
 
+EXCEPTION_CODE_STREAM_OUT_OF_SYNC = -2
+
+ModbusEvent = namedtuple('ModbusEvent', ['is_request', 'time', 'request_id', 'slave_address', 'function', 'address', 'count', 'data', 'exception_code'])
+#ModbusResponse = namedtuple('ModbusResponse', ['time', 'request_id', 'slave_address', 'function', 'address', 'count', 'data', 'exception_code'])
+
+
 class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_read = pyqtSignal(object)
 
@@ -55,7 +64,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_modbus_master_read_coils_response = pyqtSignal(int, int, object)
     qtcb_modbus_slave_read_holding_registers_request = pyqtSignal(int, int, int)
     qtcb_modbus_master_read_holding_registers_response = pyqtSignal(int, int, object)
-    qtcb_modbus_slave_write_single_coil_request = pyqtSignal(int, int, int)
+    qtcb_modbus_slave_write_single_coil_request = pyqtSignal(int, int, bool)
     qtcb_modbus_master_write_single_coil_response = pyqtSignal(int, int)
     qtcb_modbus_slave_write_single_register_request = pyqtSignal(int, int, int)
     qtcb_modbus_master_write_single_register_response = pyqtSignal(int, int)
@@ -68,6 +77,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_modbus_slave_read_input_registers_request = pyqtSignal(int, int, int)
     qtcb_modbus_master_read_input_registers_response = pyqtSignal(int, int, object)
 
+
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletRS485, *args)
 
@@ -75,6 +85,28 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.text.setReadOnly(True)
 
         self.rs485 = self.device
+
+        self.modbus_errors = {
+            self.rs485.EXCEPTION_CODE_TIMEOUT: 'Request timeout',
+            self.rs485.EXCEPTION_CODE_SUCCESS: 'Request succeeded',
+            self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION: 'Received illegal function code',
+            self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS: 'Received illegal data address',
+            self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE: 'Received illegal data value',
+            self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE: 'Slave device failure',
+
+            self.rs485.EXCEPTION_CODE_ACKNOWLEDGE: 'Slave device acknowledged',
+            self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_BUSY: 'Slave device busy',
+            self.rs485.EXCEPTION_CODE_MEMORY_PARITY_ERROR: 'Slave device detected memory parity error',
+            self.rs485.EXCEPTION_CODE_GATEWAY_PATH_UNAVAILABLE: 'Gateway path unavailable',
+            self.rs485.EXCEPTION_CODE_GATEWAY_TARGET_DEVICE_FAILED_TO_RESPOND: 'Gateway target device failed to respond',
+        }
+
+        # A modbus timeout is reported as -1, this is not in the protocol, but an addition for communicating between the bindings and the bricklet.
+        # Add -2 for a stream out of sync error, which simplifies the error handling further down.
+        # As the bindings could add another error code in the future, check if this is a good idea.
+        assert EXCEPTION_CODE_STREAM_OUT_OF_SYNC not in self.modbus_errors, "-2 was already in the modbus_errors dictionary. This is a bug in the Brick Viewer."
+        self.modbus_errors[EXCEPTION_CODE_STREAM_OUT_OF_SYNC] = 'Stream out of sync.'
+
         self.cbe_error_count = CallbackEmulator(self.rs485.get_error_count,
                                                 None,
                                                 self.cb_error_count,
@@ -161,6 +193,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.rs485_input_combobox.addItem("")
         self.rs485_input_combobox.lineEdit().returnPressed.connect(self.input_changed)
+        self.rs485_send_button.clicked.connect(self.input_changed)
 
         self.rs485_input_line_ending_lineedit.setValidator(HexValidator())
         self.rs485_input_line_ending_combobox.currentIndexChanged.connect(self.line_ending_changed)
@@ -185,6 +218,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.button_clear_text.clicked.connect(lambda: self.text.setPlainText(""))
         self.button_clear_text.clicked.connect(self.hextext.clear)
+        self.button_clear_text.clicked.connect(self.modbus_master_tree.clear)
+        self.button_clear_text.clicked.connect(self.modbus_slave_tree.clear)
+
 
         self.modbus_master_send_button.clicked.connect(self.master_send_clicked)
         self.apply_button.clicked.connect(self.apply_clicked)
@@ -197,7 +233,14 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.modbus_master_function_combobox.setCurrentIndex(-1)
         self.modbus_master_function_combobox.setCurrentIndex(0)
 
-        self.gui_group_rs485 = [self.label_error_overrun_name,
+        self.gui_group_rs485 = [self.label_show_text_as,
+                                self.text_type_combobox,
+                                self.button_clear_text,
+                                self.text,
+                                self.hextext,
+                                self.line_3,
+                                self.rs485_send_button,
+                                self.label_error_overrun_name,
                                 self.label_error_overrun,
                                 self.label_error_parity_name,
                                 self.label_error_parity,
@@ -208,7 +251,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                 self.rs485_input_line_ending_combobox,
                                 self.rs485_input_line_ending_lineedit]
 
-        self.gui_group_modbus_master = [self.label_error_overrun_name,
+        self.gui_group_modbus_master = [self.modbus_master_tree,
+                                        self.button_clear_text,
+                                        self.line_3,
+                                        self.label_error_overrun_name,
                                         self.label_error_overrun,
                                         self.label_error_parity_name,
                                         self.label_error_parity,
@@ -240,7 +286,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                         self.modbus_master_request_timeout_spinbox,
                                         self.modbus_master_send_button]
 
-        self.gui_group_modbus_slave = [self.label_error_overrun_name,
+        self.gui_group_modbus_slave = [self.modbus_slave_tree,
+                                       self.button_clear_text,
+                                       self.line_3,
+                                       self.label_error_overrun_name,
                                        self.label_error_overrun,
                                        self.label_error_parity_name,
                                        self.label_error_parity,
@@ -265,6 +314,19 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                        self.modbus_slave_respond_checkbox]
 
         self.mode_changed(self.rs485.MODE_RS485)
+        self.mode = self.rs485.MODE_RS485
+
+        item = ['00:00:00', '123', '123', 'Write Multiple Registers Response', '12345', '123', '0000 0000 0000 0000']
+        self.modbus_master_tree.addTopLevelItem(QTreeWidgetItem(item))
+        for i in range(len(item)):
+            self.modbus_master_tree.resizeColumnToContents(i)
+        self.modbus_master_tree.clear()
+
+        item = ['00:00:00', '123', 'Write Multiple Registers Response', '12345', '123', '0000 0000 0000 0000']
+        self.modbus_slave_tree.addTopLevelItem(QTreeWidgetItem(item))
+        for i in range(len(item)):
+            self.modbus_slave_tree.resizeColumnToContents(i)
+        self.modbus_slave_tree.clear()
 
         self.com_led_off_action = QAction('Off', self)
         self.com_led_off_action.triggered.connect(lambda: self.rs485.set_communication_led_config(BrickletRS485.COMMUNICATION_LED_CONFIG_OFF))
@@ -294,6 +356,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                   self.error_led_show_heartbeat_action,
                                                   self.error_led_show_error_action])]
 
+        self.modbus_log = []
+
     def append_text(self, text):
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(text)
@@ -319,206 +383,123 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 self.modbus_master_param2_spinbox.setValue(65280)
 
     def master_send_clicked(self):
+        # TODO: is this still necessary?
         if self.rs485.get_mode() != self.rs485.MODE_MODBUS_MASTER_RTU:
             self.popup_fail(MSG_ERR_NOT_MODBUS_MASTER)
             return
 
-        self.rs485.set_modbus_configuration(self.modbus_slave_address_spinbox.value(),
-                                            self.modbus_master_request_timeout_spinbox.value())
+        request_fn_dict = {
+            MODBUS_F_IDX_READ_COILS: self.rs485.modbus_master_read_coils,
+            MODBUS_F_IDX_READ_HOLDING_REGISTERS: self.rs485.modbus_master_read_holding_registers,
+            MODBUS_F_IDX_WRITE_SINGLE_COIL: self.rs485.modbus_master_write_single_coil,
+            MODBUS_F_IDX_WRITE_SINGLE_REGISTER: self.rs485.modbus_master_write_single_register,
+            MODBUS_F_IDX_WRITE_MULTIPLE_COILS: self.rs485.modbus_master_write_multiple_coils,
+            MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS: self.rs485.modbus_master_write_multiple_registers,
+            MODBUS_F_IDX_READ_DISCRETE_INPUTS: self.rs485.modbus_master_read_discrete_inputs,
+            MODBUS_F_IDX_READ_INPUT_REGISTERS: self.rs485.modbus_master_read_input_registers
+        }
 
-        if self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_COILS:
-            try:
-                rid = self.rs485.modbus_master_read_coils(self.modbus_master_slave_address_spinbox.value(),
-                                                          self.modbus_master_param1_spinbox.value(),
-                                                          self.modbus_master_param2_spinbox.value())
-            except Exception as e:
-                self.popup_fail(str(e))
-                return
+        request_fn_idx = self.modbus_master_function_combobox.currentIndex()
+        request_fn_name = self.modbus_master_function_combobox.currentText()
+        request_fn = request_fn_dict[request_fn_idx]
 
-            if rid == 0:
-                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
-                return
+        slave_address = self.modbus_master_slave_address_spinbox.value()
 
-            self.modbus_master_send_button.setEnabled(False)
+        address = self.modbus_master_param1_spinbox.value()
+        arg2 = self.modbus_master_param2_spinbox.value()
+        arg2_string = ''
+        count = arg2
 
-        elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_HOLDING_REGISTERS:
-            try:
-                rid = self.rs485.modbus_master_read_holding_registers(self.modbus_master_slave_address_spinbox.value(),
-                                                                      self.modbus_master_param1_spinbox.value(),
-                                                                      self.modbus_master_param2_spinbox.value())
-            except Exception as e:
-                self.popup_fail(str(e))
-                return
+        if request_fn_idx == MODBUS_F_IDX_WRITE_SINGLE_COIL:
+            count = 1
+            arg2 = arg2 > 0
+            arg2_string = str(arg2)
+        elif request_fn_idx == MODBUS_F_IDX_WRITE_SINGLE_REGISTER:
+            count = 1
+            arg2_string = "{:04X}".format(arg2)
+        elif request_fn_idx == MODBUS_F_IDX_WRITE_MULTIPLE_COILS:
+            arg2 = [i % 2 == 0 for i in range(arg2)]
+            arg2_string = ' '.join(str(a) for a in arg2)
+        elif request_fn_idx == MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS:
+            arg2 = list(range(1, arg2 + 1))
+            arg2_string = ' '.join("{:04X}".format(i) for i in arg2)
 
-            if rid == 0:
-                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
-                return
+        try:
+            rid = request_fn(slave_address, address, arg2)
+        except Exception as e:
+            self.popup_fail(str(e))
+            return
 
-            self.modbus_master_send_button.setEnabled(False)
+        if rid == 0:
+            self.popup_fail(MSG_ERR_REQUEST_PROCESS)
+            return
 
-        elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_SINGLE_COIL:
-            if self.modbus_master_param2_spinbox.value() > 0:
-                param2 = True
-            else:
-                param2 = False
+        self.modbus_log_add(ModbusEvent(True, time.localtime(), rid, slave_address, request_fn_name, address, count, arg2_string, BrickletRS485.EXCEPTION_CODE_SUCCESS))
+        self.modbus_master_send_button.setEnabled(False)
 
-            try:
-                rid = self.rs485.modbus_master_write_single_coil(self.modbus_master_slave_address_spinbox.value(),
-                                                                 self.modbus_master_param1_spinbox.value(),
-                                                                 param2)
-            except Exception as e:
-                self.popup_fail(str(e))
-                return
+    def modbus_log_add(self, event):
+        self.modbus_log.append(event)
 
-            if rid == 0:
-                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
-                return
+        entry = [time.strftime("%H:%M:%S",event.time),
+                 str(event.request_id),
+                 str(event.slave_address),
+                 event.function + ' ' + ('Request' if event.is_request else 'Response'),
+                 str(event.address),
+                 str(event.count),
+                 event.data if event.exception_code == BrickletRS485.EXCEPTION_CODE_SUCCESS else self.modbus_errors[event.exception_code]]
 
-            self.modbus_master_send_button.setEnabled(False)
+        # None marks unknown values except in the data field.
+        for i, e in enumerate(entry):
+            if e is None:
+                entry[i] = '?' if i != len(entry) - 1 else ''
 
-        elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_SINGLE_REGISTER:
-            try:
-                rid = self.rs485.modbus_master_write_single_register(self.modbus_master_slave_address_spinbox.value(),
-                                                                     self.modbus_master_param1_spinbox.value(),
-                                                                     self.modbus_master_param2_spinbox.value())
-            except Exception as e:
-                self.popup_fail(str(e))
-                return
+        if self.mode == self.rs485.MODE_MODBUS_SLAVE_RTU:
+            entry = entry[:2] + entry[3:]
 
-            if rid == 0:
-                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
-                return
+        item = QTreeWidgetItem(entry)
 
-            self.modbus_master_send_button.setEnabled(False)
+        color = None
+        if event.exception_code != BrickletRS485.EXCEPTION_CODE_SUCCESS:
+            color = QBrush(QColor(0xFF, 0x7F, 0x7F))
+        elif (self.mode == self.rs485.MODE_MODBUS_MASTER_RTU and event.is_request) or \
+             (self.mode == self.rs485.MODE_MODBUS_SLAVE_RTU and not event.is_request):
+            color = QBrush(QColor(self.palette().color(QPalette.Background)))
 
-        elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_MULTIPLE_COILS:
-            data = []
+        if color is not None:
+            for i in range(len(entry)):
+                item.setData(i, Qt.BackgroundRole, color)
 
-            for i in range(self.modbus_master_param2_spinbox.value()):
-                if i % 2:
-                    data.append(False)
-                else:
-                    data.append(True)
-
-            try:
-                rid = self.rs485.modbus_master_write_multiple_coils(self.modbus_master_slave_address_spinbox.value(),
-                                                                    self.modbus_master_param1_spinbox.value(),
-                                                                    data)
-            except Exception as e:
-                self.popup_fail(str(e))
-                return
-
-            if rid == 0:
-                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
-                return
-
-            self.modbus_master_send_button.setEnabled(False)
-
-        elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS:
-            data = []
-
-            for i in range(self.modbus_master_param2_spinbox.value()):
-                data.append(i + 1)
-
-            try:
-                rid = self.rs485.modbus_master_write_multiple_registers(self.modbus_master_slave_address_spinbox.value(),
-                                                                        self.modbus_master_param1_spinbox.value(),
-                                                                        data)
-            except Exception as e:
-                self.popup_fail(str(e))
-                return
-
-            if rid == 0:
-                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
-                return
-
-            self.modbus_master_send_button.setEnabled(False)
-
-        elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_DISCRETE_INPUTS:
-            try:
-                rid = self.rs485.modbus_master_read_discrete_inputs(self.modbus_master_slave_address_spinbox.value(),
-                                                                    self.modbus_master_param1_spinbox.value(),
-                                                                    self.modbus_master_param2_spinbox.value())
-            except Exception as e:
-                self.popup_fail(str(e))
-                return
-
-            if rid == 0:
-                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
-                return
-
-            self.modbus_master_send_button.setEnabled(False)
-
-        elif self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_READ_INPUT_REGISTERS:
-            try:
-                rid = self.rs485.modbus_master_read_input_registers(self.modbus_master_slave_address_spinbox.value(),
-                                                                    self.modbus_master_param1_spinbox.value(),
-                                                                    self.modbus_master_param2_spinbox.value())
-            except Exception as e:
-                self.popup_fail(str(e))
-                return
-
-            if rid == 0:
-                self.popup_fail(MSG_ERR_REQUEST_PROCESS)
-                return
-
-            self.modbus_master_send_button.setEnabled(False)
+        if self.mode == self.rs485.MODE_MODBUS_SLAVE_RTU:
+            self.modbus_slave_tree.addTopLevelItem(item)
+        else:
+            self.modbus_master_tree.addTopLevelItem(item)
 
     def modbus_master_function_changed(self, function):
-        if function == MODBUS_F_IDX_READ_COILS:
-            self.modbus_master_param1_label.setText('Starting Address:')
-            self.modbus_master_param2_label.setText('Number of Coils:')
-            self.modbus_master_param2_spinbox.setMinimum(1)
-            self.modbus_master_param2_spinbox.setMaximum(2000)
-
-        elif function == MODBUS_F_IDX_READ_HOLDING_REGISTERS:
-            self.modbus_master_param1_label.setText('Starting Address:')
-            self.modbus_master_param2_label.setText('Number of Registers:')
-            self.modbus_master_param2_spinbox.setMinimum(1)
-            self.modbus_master_param2_spinbox.setMaximum(125)
-
-        elif function == MODBUS_F_IDX_WRITE_SINGLE_COIL:
-            self.modbus_master_param1_label.setText('Coil Address:')
-            self.modbus_master_param2_label.setText('Coil Value:')
-            self.modbus_master_param2_spinbox.setMinimum(0)
-            self.modbus_master_param2_spinbox.setMaximum(1)
-            self.modbus_master_param2_spinbox.setValue(0)
-
-        elif function == MODBUS_F_IDX_WRITE_SINGLE_REGISTER:
-            self.modbus_master_param1_label.setText('Register Address:')
-            self.modbus_master_param2_label.setText('Register Value:')
-            self.modbus_master_param2_spinbox.setMinimum(0)
-            self.modbus_master_param2_spinbox.setMaximum(65535)
-
-        elif function == MODBUS_F_IDX_WRITE_MULTIPLE_COILS:
-            self.modbus_master_param1_label.setText('Starting Address:')
-            self.modbus_master_param2_label.setText('Number of Coils:')
-            self.modbus_master_param2_spinbox.setMinimum(1)
-            self.modbus_master_param2_spinbox.setMaximum(1968)
-
-        elif function == MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS:
-            self.modbus_master_param1_label.setText('Starting Address:')
-            self.modbus_master_param2_label.setText('Number of Registers:')
-            self.modbus_master_param2_spinbox.setMinimum(1)
-            self.modbus_master_param2_spinbox.setMaximum(123)
-
-        elif function == MODBUS_F_IDX_READ_DISCRETE_INPUTS:
-            self.modbus_master_param1_label.setText('Starting Address:')
-            self.modbus_master_param2_label.setText('Number of Coils:')
-            self.modbus_master_param2_spinbox.setMinimum(1)
-            self.modbus_master_param2_spinbox.setMaximum(2000)
-
-        elif function == MODBUS_F_IDX_READ_INPUT_REGISTERS:
-            self.modbus_master_param1_label.setText('Starting Address:')
-            self.modbus_master_param2_label.setText('Number of Registers:')
-            self.modbus_master_param2_spinbox.setMinimum(1)
-            self.modbus_master_param2_spinbox.setMaximum(125)
+        d = {
+            MODBUS_F_IDX_READ_COILS: ('Starting Address:', 'Number of Coils:', 1, 2000),
+            MODBUS_F_IDX_READ_HOLDING_REGISTERS: ('Starting Address:', 'Number of Registers:', 1, 125),
+            MODBUS_F_IDX_WRITE_SINGLE_COIL: ('Coil Address:', 'Coil Value:', 0, 1),
+            MODBUS_F_IDX_WRITE_SINGLE_REGISTER: ('Register Address:', 'Register Value:', 0, 65535),
+            MODBUS_F_IDX_WRITE_MULTIPLE_COILS: ('Starting Address:', 'Number of Coils:', 1, 1968),
+            MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS: ('Starting Address:', 'Number of Registers:', 1, 123),
+            MODBUS_F_IDX_READ_DISCRETE_INPUTS: ('Starting Address:', 'Number of Coils:', 1, 2000),
+            MODBUS_F_IDX_READ_INPUT_REGISTERS: ('Starting Address:', 'Number of Registers:', 1, 125)
+        }
+        if function not in d:
+            return
+        text1, text2, spin_min, spin_max = d[function]
+        self.modbus_master_param1_label.setText(text1)
+        self.modbus_master_param2_label.setText(text2)
+        self.modbus_master_param2_spinbox.setMinimum(spin_min)
+        self.modbus_master_param2_spinbox.setMaximum(spin_max)
 
     def mode_changed(self, mode):
+        self.mode = mode
         if mode == self.rs485.MODE_RS485:
             self.toggle_gui_group(self.gui_group_modbus_slave, False)
             self.toggle_gui_group(self.gui_group_modbus_master, False)
             self.toggle_gui_group(self.gui_group_rs485, True)
+            self.text_type_changed()
 
         elif mode == self.rs485.MODE_MODBUS_SLAVE_RTU:
             self.toggle_gui_group(self.gui_group_rs485, False)
@@ -533,11 +514,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.configuration_changed()
 
     def cb_read(self, message):
-        if message == None:
-            # Increase stream error counter
-            self.error_stream_oos = self.error_stream_oos + 1
-            self.label_error_stream.setText(str(self.error_stream_oos))
-
+        if self.check_stream_sync(message) != BrickletRS485.EXCEPTION_CODE_SUCCESS:
             return
 
         s = ''.join(message)
@@ -558,536 +535,190 @@ class RS485(COMCUPluginBase, Ui_RS485):
         # QTextEdit breaks lines at \r and \n
         s = s.replace('\n\r', '\n').replace('\r\n', '\n')
 
-        ascii = ''
+        ascii_ = ''
 
         for c in s:
             if (ord(c) < 32 or ord(c) > 126) and ord(c) not in (10, 13):
-                ascii += '.'
+                ascii_ += '.'
             else:
-                ascii += c
+                ascii_ += c
 
-        self.append_text(ascii)
+        self.append_text(ascii_)
+
+    def check_stream_sync(self, item, exception_code=BrickletRS485.EXCEPTION_CODE_SUCCESS):
+        if item == None:
+            self.error_stream_oos = self.error_stream_oos + 1
+            self.label_error_stream.setText(str(self.error_stream_oos))
+            return EXCEPTION_CODE_STREAM_OUT_OF_SYNC
+        return exception_code
+
+    def modbus_master_response_received(self, function_name, request_id, exception_code, data=None, streamed=False):
+        if streamed:
+            exception_code = self.check_stream_sync(data, exception_code)
+
+        request = None
+        for item in self.modbus_log:
+            if item.is_request and item.request_id == request_id:
+                request = item
+        if request is not None:
+            self.modbus_log_add(ModbusEvent(False, time.localtime(), request_id, request.slave_address, function_name, request.address, request.count, data, exception_code))
+            self.modbus_log.remove(request)
+        else:
+            self.modbus_log_add(ModbusEvent(False, time.localtime(), request_id, 'Master (self)', function_name, None, None, data, exception_code))
+
+        self.modbus_master_send_button.setEnabled(True)
+
+    def modbus_slave_request_received(self, function_name, request_id, starting_address, count, data=None, streamed=False):
+        exception_code = self.check_stream_sync(data) if streamed else BrickletRS485.EXCEPTION_CODE_SUCCESS
+        self.modbus_log_add(ModbusEvent(True, time.localtime(), request_id, str(self.modbus_master_slave_address_spinbox.value()) + ' (self)', function_name, starting_address, count, data, exception_code))
+
+    def modbus_slave_response_sent(self, function_name, request_id, starting_address, count, data=None): #TODO: Remove starting_addres and count, these can be taken from the corresponding request
+        self.modbus_log_add(ModbusEvent(False, time.localtime(), request_id, 'Master', function_name, starting_address, count, data, BrickletRS485.EXCEPTION_CODE_SUCCESS))
 
     def cb_modbus_slave_read_coils_request(self, request_id, starting_address, count):
-        a = 'READ COILS REQUEST: ' + \
-            'REQUEST ID=' + \
-            str(request_id) + \
-            ', STARTING ADDRESS=' + \
-            str(starting_address) + \
-            ', COUNT=' + \
-            str(count) + \
-            '\n\n'
-
-        self.append_text(a)
+        self.modbus_slave_request_received('Read Coils', request_id, starting_address, count)
 
         if not self.modbus_slave_respond_checkbox.isChecked():
             return
 
-        data = []
-
-        for i in range(count):
-            if i % 2:
-                data.append(False)
-            else:
-                data.append(True)
+        data = [i % 2 == 0 for i in range(count)]
 
         self.rs485.modbus_slave_answer_read_coils_request(request_id, data)
+        self.modbus_slave_response_sent('Read Coils', request_id, starting_address, count, ' '.join(str(b) for b in data))
 
     def cb_modbus_master_read_coils_response(self,
                                              request_id,
                                              exception_code,
                                              coils):
-        if coils == None:
-            # Increase stream error counter
-            self.error_stream_oos = self.error_stream_oos + 1
-            self.label_error_stream.setText(str(self.error_stream_oos))
-
-            a = 'READ COILS RESPONSE: ' + \
-                'STREAM OUT OF SYNC' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
-            a = 'READ COILS RESPONSE: ' + \
-                'REQUEST TIMEOUT' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
-            a = 'READ COILS RESPONSE: ' + \
-                'RECEIVED ILLEGAL FUNCTION CODE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
-            a = 'READ COILS RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA ADDRESS' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
-            a = 'READ COILS RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA VALUE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
-            a = 'READ COILS RESPONSE: ' + \
-                'SLAVE DEVICE FAILURE' + \
-                '\n\n'
-        else:
-            a = 'READ COILS RESPONSE: ' + \
-                'REQUEST ID=' + \
-                str(request_id) + \
-                ', EXCEPTION CODE=' + \
-                str(exception_code) + \
-                ', COILS=' + \
-                str(coils) + \
-                '\n\n'
-
-        self.append_text(a)
-        self.modbus_master_send_button.setEnabled(True)
+        self.modbus_master_response_received('Read Coils', request_id, exception_code, ' '.join(str(b) for b in coils), streamed=True)
 
     def cb_modbus_slave_read_holding_registers_request(self,
                                                        request_id,
                                                        starting_address,
                                                        count):
-        a = 'READ HOLDING REGISTERS REQUEST: ' + \
-            'REQUEST ID=' + \
-            str(request_id) + \
-            ', STARTING ADDRESS=' + \
-            str(starting_address) + \
-            ', COUNT=' + \
-            str(count) + \
-            '\n\n'
-
-        self.append_text(a)
+        self.modbus_slave_request_received('Read Holding Registers', request_id, starting_address, count)
 
         if not self.modbus_slave_respond_checkbox.isChecked():
             return
 
-        data = []
-
-        for i in range(count):
-            data.append(i + 1)
+        data = list(range(1, count+1))
 
         self.rs485.modbus_slave_answer_read_holding_registers_request(request_id, data)
+        self.modbus_slave_response_sent('Read Holding Registers', request_id, starting_address, count, ' '.join("{:04X}".format(i) for i in data))
 
     def cb_modbus_master_read_holding_registers_response(self,
                                                          request_id,
                                                          exception_code,
                                                          holding_registers):
-        if holding_registers == None:
-            # Increase stream error counter
-            self.error_stream_oos = self.error_stream_oos + 1
-            self.label_error_stream.setText(str(self.error_stream_oos))
-
-            a = 'READ HOLDING REGISTERS RESPONSE: ' + \
-                'STREAM OUT OF SYNC' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
-            a = 'READ HOLDING REGISTERS RESPONSE: ' + \
-                'REQUEST TIMEOUT' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
-            a = 'READ HOLDING REGISTERS RESPONSE: ' + \
-                'RECEIVED ILLEGAL FUNCTION CODE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
-            a = 'READ HOLDING REGISTERS RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA ADDRESS' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
-            a = 'READ HOLDING REGISTERS RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA VALUE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
-            a = 'READ HOLDING REGISTERS RESPONSE: ' + \
-                'SLAVE DEVICE FAILURE' + \
-                '\n\n'
-        else:
-            a = 'READ HOLDING REGISTERS RESPONSE: ' + \
-                'REQUEST ID=' + \
-                str(request_id) + \
-                ', EXCEPTION CODE=' + \
-                str(exception_code) + \
-                ', HOLDING REGISTERS=' + \
-                str(holding_registers) + \
-                '\n\n'
-
-        self.append_text(a)
-        self.modbus_master_send_button.setEnabled(True)
+        self.modbus_master_response_received('Read Holding Registers', request_id, exception_code, ' '.join("{:04X}".format(i) for i in holding_registers), streamed=True)
 
     def cb_modbus_slave_write_single_coil_request(self,
                                                   request_id,
                                                   coil_address,
                                                   coil_value):
-        a = 'WRITE SINGLE COIL REQUEST: ' + \
-            'REQUEST ID=' + \
-            str(request_id) + \
-            ', COIL ADDRESS=' + \
-            str(coil_address) + \
-            ', COIL VALUE=' + \
-            str(coil_value) + \
-            '\n\n'
-
-        self.append_text(a)
+        self.modbus_slave_request_received('Write Single Coil', request_id, coil_address, 1, str(coil_value))
 
         if not self.modbus_slave_respond_checkbox.isChecked():
             return
 
         self.rs485.modbus_slave_answer_write_single_coil_request(request_id)
+        self.modbus_slave_response_sent('Write Single Coil', request_id, coil_address, 1)
 
     def cb_modbus_master_write_single_coil_response(self,
                                                     request_id,
                                                     exception_code):
-        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
-            a = 'WRITE SINGLE COIL RESPONSE: ' + \
-                'REQUEST TIMEOUT' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
-            a = 'WRITE SINGLE COIL RESPONSE: ' + \
-                'RECEIVED ILLEGAL FUNCTION CODE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
-            a = 'WRITE SINGLE COIL RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA ADDRESS' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
-            a = 'WRITE SINGLE COIL RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA VALUE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
-            a = 'WRITE SINGLE COIL RESPONSE: ' + \
-                'SLAVE DEVICE FAILURE' + \
-                '\n\n'
-        else:
-            a = 'WRITE SINGLE COIL RESPONSE: ' + \
-                'REQUEST ID=' + \
-                str(request_id) + \
-                ', EXCEPTION CODE=' + \
-                str(exception_code) + \
-                '\n\n'
-
-        self.append_text(a)
-        self.modbus_master_send_button.setEnabled(True)
+        self.modbus_master_response_received('Write Single Coil', request_id, exception_code)
 
     def cb_modbus_slave_write_single_register_request(self,
                                                       request_id,
                                                       register_address,
                                                       register_value):
-        a = 'WRITE SINGLE REGISTER REQUEST: ' + \
-            'REQUEST ID=' + \
-            str(request_id) + \
-            ', REGISTER ADDRESS=' + \
-            str(register_address) + \
-            ', REGISTER VALUE=' + \
-            str(register_value) + \
-            '\n\n'
-
-        self.append_text(a)
+        self.modbus_slave_request_received('Write Single Register', request_id, register_address, 1,'{:04X}'.format(register_value))
 
         if not self.modbus_slave_respond_checkbox.isChecked():
             return
 
         self.rs485.modbus_slave_answer_write_single_register_request(request_id)
+        self.modbus_slave_response_sent('Write Single Register', request_id, register_address, 1)
 
     def cb_modbus_master_write_single_register_response(self,
                                                         request_id,
                                                         exception_code):
-        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
-            a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
-                'REQUEST TIMEOUT' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
-            a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
-                'RECEIVED ILLEGAL FUNCTION CODE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
-            a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA ADDRESS' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
-            a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA VALUE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
-            a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
-                'SLAVE DEVICE FAILURE' + \
-                '\n\n'
-        else:
-            a = 'WRITE SINGLE REGISTER RESPONSE: ' + \
-                'REQUEST ID=' + \
-                str(request_id) + \
-                ', EXCEPTION CODE=' + \
-                str(exception_code) + \
-                '\n\n'
-
-        self.append_text(a)
-        self.modbus_master_send_button.setEnabled(True)
+        self.modbus_master_response_received('Write Single Register', request_id, exception_code)
 
     def cb_modbus_slave_write_multiple_coils_request(self,
                                                      request_id,
                                                      starting_address,
                                                      coils):
-        if coils == None:
-            # Increase stream error counter
-            self.error_stream_oos = self.error_stream_oos + 1
-            self.label_error_stream.setText(str(self.error_stream_oos))
-
-            a = 'WRITE MULTIPLE COILS REQUEST: ' + \
-                'STREAM OUT OF SYNC' + \
-                '\n\n'
-        else:
-            a = 'WRITE MULTIPLE COILS REQUEST: ' + \
-                'REQUEST ID=' + \
-                str(request_id) + \
-                ', STARTING ADDRESS=' + \
-                str(starting_address) + \
-                ', COUNT=' + \
-                str(len(coils)) + \
-                ', COILS=' + \
-                str(coils) + \
-                '\n\n'
-
-        self.append_text(a)
+        self.modbus_slave_request_received('Write Multiple Coils', request_id, starting_address, len(coils), ' '.join(str(c) for c in coils), streamed=True)
 
         if not self.modbus_slave_respond_checkbox.isChecked():
             return
 
         self.rs485.modbus_slave_answer_write_multiple_coils_request(request_id)
+        self.modbus_slave_response_sent('Write Multiple Coils', request_id, starting_address, len(coils))
 
     def cb_modbus_master_write_multiple_coils_response(self,
                                                        request_id,
                                                        exception_code):
-        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
-            a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
-                'REQUEST TIMEOUT' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
-            a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
-                'RECEIVED ILLEGAL FUNCTION CODE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
-            a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA ADDRESS' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
-            a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA VALUE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
-            a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
-                'SLAVE DEVICE FAILURE' + \
-                '\n\n'
-        else:
-            a = 'WRITE MULTIPLE COILS RESPONSE: ' + \
-                'REQUEST ID=' + \
-                str(request_id) + \
-                ', EXCEPTION CODE=' + \
-                str(exception_code) + \
-                '\n\n'
-
-        self.append_text(a)
-        self.modbus_master_send_button.setEnabled(True)
+        self.modbus_master_response_received('Write Multiple Coils', request_id, exception_code)
 
     def cb_modbus_slave_write_multiple_registers_request(self,
                                                          request_id,
                                                          starting_address,
                                                          registers):
-        if registers == None:
-            # Increase stream error counter
-            self.error_stream_oos = self.error_stream_oos + 1
-            self.label_error_stream.setText(str(self.error_stream_oos))
-
-            a = 'WRITE MULTIPLE REGISTERS REQUEST: ' + \
-                'STREAM OUT OF SYNC' + \
-                '\n\n'
-        else:
-            a = 'WRITE MULTIPLE REGISTERS REQUEST: ' + \
-                'REQUEST ID=' + \
-                str(request_id) + \
-                ', STARTING ADDRESS=' + \
-                str(starting_address) + \
-                ', COUNT=' + \
-                str(len(registers)) + \
-                ', REGISTERS=' + \
-                str(registers) + \
-                '\n\n'
-
-        self.append_text(a)
+        self.modbus_slave_request_received('Write Multiple Registers', request_id, starting_address, len(registers), ' '.join("{:04X}".format(i) for i in registers), streamed=True)
 
         if not self.modbus_slave_respond_checkbox.isChecked():
             return
 
         self.rs485.modbus_slave_answer_write_multiple_registers_request(request_id)
+        self.modbus_slave_response_sent('Write Multiple Registers', request_id, starting_address, len(registers))
 
     def cb_modbus_master_write_multiple_registers_response(self,
                                                            request_id,
                                                            exception_code):
-        if exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
-            a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
-                'REQUEST TIMEOUT' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
-            a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
-                'RECEIVED ILLEGAL FUNCTION CODE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
-            a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA ADDRESS' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
-            a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA VALUE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
-            a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
-                'SLAVE DEVICE FAILURE' + \
-                '\n\n'
-        else:
-            a = 'WRITE MULTIPLE REGISTERS RESPONSE: ' + \
-                'REQUEST ID=' + \
-                str(request_id) + \
-                ', EXCEPTION CODE=' + \
-                str(exception_code) + \
-                '\n\n'
-
-        self.append_text(a)
-        self.modbus_master_send_button.setEnabled(True)
+        self.modbus_master_response_received('Write Multiple Registers', request_id, exception_code)
 
     def cb_modbus_slave_read_discrete_inputs_request(self,
                                                      request_id,
                                                      starting_address,
                                                      count):
-        a = 'READ DISCRETE INPUTS REQUEST: ' + \
-            'REQUEST ID=' + \
-            str(request_id) + \
-            ', STARTING ADDRESS=' + \
-            str(starting_address) + \
-            ', COUNT=' + \
-            str(count) + \
-            '\n\n'
-
-        self.append_text(a)
+        self.modbus_slave_request_received('Read Discrete Inputs', request_id, starting_address, count)
 
         if not self.modbus_slave_respond_checkbox.isChecked():
             return
 
-        data = []
-
-        for i in range(count):
-            if i % 2:
-                data.append(False)
-            else:
-                data.append(True)
+        data = [i % 2 == 0 for i in range(count)]
 
         self.rs485.modbus_slave_answer_read_discrete_inputs_request(request_id, data)
+        self.modbus_slave_response_sent('Read Discrete Inputs', request_id, starting_address, count, ' '.join(str(c) for c in data))
 
     def cb_modbus_master_read_discrete_inputs_response(self,
                                                        request_id,
                                                        exception_code,
                                                        discrete_inputs):
-        if discrete_inputs == None:
-            # Increase stream error counter
-            self.error_stream_oos = self.error_stream_oos + 1
-            self.label_error_stream.setText(str(self.error_stream_oos))
-
-            a = 'READ DISCRETE INPUTS RESPONSE: ' + \
-                'STREAM OUT OF SYNC' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
-            a = 'READ DISCRETE INPUTS RESPONSE: ' + \
-                'REQUEST TIMEOUT' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
-            a = 'READ DISCRETE INPUTS RESPONSE: ' + \
-                'RECEIVED ILLEGAL FUNCTION CODE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
-            a = 'READ DISCRETE INPUTS RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA ADDRESS' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
-            a = 'READ DISCRETE INPUTS RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA VALUE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
-            a = 'READ DISCRETE INPUTS RESPONSE: ' + \
-                'SLAVE DEVICE FAILURE' + \
-                '\n\n'
-        else:
-            a = 'READ DISCRETE INPUTS RESPONSE: ' + \
-                'REQUEST ID=' + \
-                str(request_id) + \
-                ', EXCEPTION CODE=' + \
-                str(exception_code) + \
-                ', DISCRETE INPUTS=' + \
-                str(discrete_inputs) + \
-                '\n\n'
-
-        self.append_text(a)
-        self.modbus_master_send_button.setEnabled(True)
+        self.modbus_master_response_received('Read Discrete Inputs', request_id, exception_code, ' '.join(str(c) for c in discrete_inputs), streamed=True)
 
     def cb_modbus_slave_read_input_registers_request(self,
                                                      request_id,
                                                      starting_address,
                                                      count):
-        a = 'READ INPUT REGISTERS REQUEST: ' + \
-            'REQUEST ID=' + \
-            str(request_id) + \
-            ', STARTING ADDRESS=' + \
-            str(starting_address) + \
-            ', COUNT=' + \
-            str(count) + \
-            '\n\n'
-
-        self.append_text(a)
+        self.modbus_slave_request_received('Read Input Registers', request_id, starting_address, count)
 
         if not self.modbus_slave_respond_checkbox.isChecked():
             return
 
-        data = []
-
-        for i in range(count):
-            data.append(i + 1)
+        data = list(range(1, count+1))
 
         self.rs485.modbus_slave_answer_read_input_registers_request(request_id, data)
+        self.modbus_slave_response_sent('Read Input Registers', request_id, starting_address, count, ' '.join("{:04X}".format(i) for i in data))
 
     def cb_modbus_master_read_input_registers_response(self,
                                                        request_id,
                                                        exception_code,
                                                        input_registers):
-        if input_registers == None:
-            # Increase stream error counter
-            self.error_stream_oos = self.error_stream_oos + 1
-            self.label_error_stream.setText(str(self.error_stream_oos))
-
-            a = 'READ INPUT REGISTERS RESPONSE: ' + \
-                'STREAM OUT OF SYNC' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_TIMEOUT:
-            a = 'READ INPUT REGISTERS RESPONSE: ' + \
-                'REQUEST TIMEOUT' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_FUNCTION:
-            a = 'READ INPUT REGISTERS RESPONSE: ' + \
-                'RECEIVED ILLEGAL FUNCTION CODE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_ADDRESS:
-            a = 'READ INPUT REGISTERS RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA ADDRESS' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_ILLEGAL_DATA_VALUE:
-            a = 'READ INPUT REGISTERS RESPONSE: ' + \
-                'RECEIVED ILLEGAL DATA VALUE' + \
-                '\n\n'
-        elif exception_code == self.rs485.EXCEPTION_CODE_SLAVE_DEVICE_FAILURE:
-            a = 'READ INPUT REGISTERS RESPONSE: ' + \
-                'SLAVE DEVICE FAILURE' + \
-                '\n\n'
-        else:
-            a = 'READ INPUT REGISTERS RESPONSE: ' + \
-                'REQUEST ID=' + \
-                str(request_id) + \
-                ', EXCEPTION CODE=' + \
-                str(exception_code) + \
-                ', INPUT REGISTERS=' + \
-                str(input_registers) + \
-                '\n\n'
-
-        self.append_text(a)
-        self.modbus_master_send_button.setEnabled(True)
+        self.modbus_master_response_received('Read Input Registers', request_id, exception_code, ' '.join("{:04X}".format(i) for i in input_registers), streamed=True)
 
     def line_ending_changed(self):
         selected_line_ending = self.rs485_input_line_ending_combobox.currentText()
