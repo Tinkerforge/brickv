@@ -55,7 +55,6 @@ EXCEPTION_CODE_STREAM_OUT_OF_SYNC = -2
 ModbusEvent = namedtuple('ModbusEvent', ['is_request', 'time', 'request_id', 'slave_address', 'function', 'address', 'count', 'data', 'exception_code'])
 #ModbusResponse = namedtuple('ModbusResponse', ['time', 'request_id', 'slave_address', 'function', 'address', 'count', 'data', 'exception_code'])
 
-
 class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_read = pyqtSignal(object)
 
@@ -209,7 +208,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         # Modbus specific.
         self.modbus_slave_address_spinbox.valueChanged.connect(self.configuration_changed)
-        self.modbus_master_param2_spinbox.valueChanged.connect(self.modbus_master_param2_changed)
+        #self.modbus_master_param2_dec_spinbox.valueChanged.connect(self.modbus_master_param2_changed)
+        #self.modbus_master_param2_hex_spinbox.valueChanged.connect(self.modbus_master_param2_changed)
+        #self.modbus_master_param2_bool_combobox.valueChanged.connect(self.modbus_master_param2_changed)
         self.modbus_master_function_combobox.currentIndexChanged.connect(self.modbus_master_function_changed)
 
         self.hextext = QHexeditWidget(self.text.font())
@@ -232,6 +233,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.modbus_master_function_combobox.setCurrentIndex(-1)
         self.modbus_master_function_combobox.setCurrentIndex(0)
+
+        self.modbus_master_param2_hex_spinbox.enable_hex_mode(digit_block_size=4)
 
         self.gui_group_rs485 = [self.label_show_text_as,
                                 self.text_type_combobox,
@@ -281,7 +284,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                         self.modbus_master_param1_label,
                                         self.modbus_master_param1_spinbox,
                                         self.modbus_master_param2_label,
-                                        self.modbus_master_param2_spinbox,
+                                        self.modbus_master_param2_dec_spinbox,
+                                        self.modbus_master_param2_hex_spinbox,
+                                        self.modbus_master_param2_bool_combobox,
                                         self.modbus_master_request_timeout_label,
                                         self.modbus_master_request_timeout_spinbox,
                                         self.modbus_master_send_button]
@@ -380,7 +385,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
         if self.mode_combobox.currentIndex() == self.rs485.MODE_MODBUS_MASTER_RTU and \
            self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_SINGLE_COIL:
             if value > 0:
-                self.modbus_master_param2_spinbox.setValue(65280)
+                #self.modbus_master_param2_bool_combobox.setValue(65280)
+                pass
 
     def master_send_clicked(self):
         # TODO: is this still necessary?
@@ -406,13 +412,18 @@ class RS485(COMCUPluginBase, Ui_RS485):
         slave_address = self.modbus_master_slave_address_spinbox.value()
 
         address = self.modbus_master_param1_spinbox.value()
-        arg2 = self.modbus_master_param2_spinbox.value()
+        if request_fn_idx == MODBUS_F_IDX_WRITE_SINGLE_REGISTER:
+            arg2 = self.modbus_master_param2_hex_spinbox.value()
+        elif request_fn_idx == MODBUS_F_IDX_WRITE_SINGLE_COIL:
+            arg2 = self.modbus_master_param2_bool_combobox.currentText() == 'True'
+        else:
+            arg2 = self.modbus_master_param2_dec_spinbox.value()
+
         arg2_string = ''
         count = arg2
 
         if request_fn_idx == MODBUS_F_IDX_WRITE_SINGLE_COIL:
             count = 1
-            arg2 = arg2 > 0
             arg2_string = str(arg2)
         elif request_fn_idx == MODBUS_F_IDX_WRITE_SINGLE_REGISTER:
             count = 1
@@ -425,7 +436,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
             arg2_string = ' '.join("{:04X}".format(i) for i in arg2)
 
         try:
-            rid = request_fn(slave_address, address, arg2)
+             # Use address without coil/register type prefix
+            rid = request_fn(slave_address, address % 100000, arg2)
         except Exception as e:
             self.popup_fail(str(e))
             return
@@ -444,7 +456,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                  str(event.request_id),
                  str(event.slave_address),
                  event.function + ' ' + ('Request' if event.is_request else 'Response'),
-                 str(event.address),
+                 '{:06d}'.format(event.address),
                  str(event.count),
                  event.data if event.exception_code == BrickletRS485.EXCEPTION_CODE_SUCCESS else self.modbus_errors[event.exception_code]]
 
@@ -476,22 +488,37 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
     def modbus_master_function_changed(self, function):
         d = {
-            MODBUS_F_IDX_READ_COILS: ('Starting Address:', 'Number of Coils:', 1, 2000),
-            MODBUS_F_IDX_READ_HOLDING_REGISTERS: ('Starting Address:', 'Number of Registers:', 1, 125),
-            MODBUS_F_IDX_WRITE_SINGLE_COIL: ('Coil Address:', 'Coil Value:', 0, 1),
-            MODBUS_F_IDX_WRITE_SINGLE_REGISTER: ('Register Address:', 'Register Value:', 0, 65535),
-            MODBUS_F_IDX_WRITE_MULTIPLE_COILS: ('Starting Address:', 'Number of Coils:', 1, 1968),
-            MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS: ('Starting Address:', 'Number of Registers:', 1, 123),
-            MODBUS_F_IDX_READ_DISCRETE_INPUTS: ('Starting Address:', 'Number of Coils:', 1, 2000),
-            MODBUS_F_IDX_READ_INPUT_REGISTERS: ('Starting Address:', 'Number of Registers:', 1, 125)
+            MODBUS_F_IDX_READ_COILS: ('Starting Number:', 'Number of Coils:', 1, 2000, self.modbus_master_param2_dec_spinbox, 1, 65536),
+            MODBUS_F_IDX_READ_HOLDING_REGISTERS: ('Starting Number:', 'Number of Registers:', 1, 125, self.modbus_master_param2_dec_spinbox, 400001, 465536),
+            MODBUS_F_IDX_WRITE_SINGLE_COIL: ('Coil Number:', 'Coil Value:', 0, 1, self.modbus_master_param2_bool_combobox, 1, 65536),
+            MODBUS_F_IDX_WRITE_SINGLE_REGISTER: ('Register Number:', 'Register Value (Hex):', 0, 65535, self.modbus_master_param2_hex_spinbox, 400001, 465536),
+            MODBUS_F_IDX_WRITE_MULTIPLE_COILS: ('Starting Number:', 'Number of Coils:', 1, 1968, self.modbus_master_param2_dec_spinbox, 1, 65536),
+            MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS: ('Starting Number:', 'Number of Registers:', 1, 123, self.modbus_master_param2_dec_spinbox, 400001, 465536),
+            MODBUS_F_IDX_READ_DISCRETE_INPUTS: ('Starting Number:', 'Number of Coils:', 1, 2000, self.modbus_master_param2_dec_spinbox, 100001, 165536),
+            MODBUS_F_IDX_READ_INPUT_REGISTERS: ('Starting Number:', 'Number of Registers:', 1, 125, self.modbus_master_param2_dec_spinbox, 300001, 365536)
         }
         if function not in d:
             return
-        text1, text2, spin_min, spin_max = d[function]
+        text1, text2, spin_min, spin_max, spin, number_min, number_max = d[function]
+        self.modbus_master_param1_spinbox.setMinimum(number_min)
+        self.modbus_master_param1_spinbox.setMaximum(number_max)
+        self.modbus_master_param1_spinbox.setValue(number_min)
         self.modbus_master_param1_label.setText(text1)
         self.modbus_master_param2_label.setText(text2)
-        self.modbus_master_param2_spinbox.setMinimum(spin_min)
-        self.modbus_master_param2_spinbox.setMaximum(spin_max)
+        if function != MODBUS_F_IDX_WRITE_SINGLE_COIL:
+            spin.setMinimum(spin_min)
+            spin.setMaximum(spin_max)
+
+        if number_min == 1:
+            self.modbus_master_param1_spinbox.use_leading_zeros(6)
+        else:
+            self.modbus_master_param1_spinbox.use_leading_zeros(0)
+
+        self.modbus_master_param2_dec_spinbox.hide()
+        self.modbus_master_param2_hex_spinbox.hide()
+        self.modbus_master_param2_bool_combobox.hide()
+        spin.show()
+
 
     def mode_changed(self, mode):
         self.mode = mode
@@ -510,6 +537,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.toggle_gui_group(self.gui_group_rs485, False)
             self.toggle_gui_group(self.gui_group_modbus_slave, False)
             self.toggle_gui_group(self.gui_group_modbus_master, True)
+            self.modbus_master_function_changed(self.modbus_master_function_combobox.currentIndex())
 
         self.configuration_changed()
 
@@ -596,6 +624,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                        request_id,
                                                        starting_address,
                                                        count):
+        starting_address += 400000
         self.modbus_slave_request_received('Read Holding Registers', request_id, starting_address, count)
 
         if not self.modbus_slave_respond_checkbox.isChecked():
@@ -633,6 +662,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                       request_id,
                                                       register_address,
                                                       register_value):
+        register_address += 400000
         self.modbus_slave_request_received('Write Single Register', request_id, register_address, 1,'{:04X}'.format(register_value))
 
         if not self.modbus_slave_respond_checkbox.isChecked():
@@ -650,6 +680,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                      request_id,
                                                      starting_address,
                                                      coils):
+        starting_address += 400000
         self.modbus_slave_request_received('Write Multiple Coils', request_id, starting_address, len(coils), ' '.join(str(c) for c in coils), streamed=True)
 
         if not self.modbus_slave_respond_checkbox.isChecked():
@@ -667,6 +698,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                          request_id,
                                                          starting_address,
                                                          registers):
+        starting_address += 400000
         self.modbus_slave_request_received('Write Multiple Registers', request_id, starting_address, len(registers), ' '.join("{:04X}".format(i) for i in registers), streamed=True)
 
         if not self.modbus_slave_respond_checkbox.isChecked():
@@ -684,6 +716,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                      request_id,
                                                      starting_address,
                                                      count):
+        starting_address += 100000
         self.modbus_slave_request_received('Read Discrete Inputs', request_id, starting_address, count)
 
         if not self.modbus_slave_respond_checkbox.isChecked():
@@ -704,6 +737,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                      request_id,
                                                      starting_address,
                                                      count):
+        starting_address += 300000
         self.modbus_slave_request_received('Read Input Registers', request_id, starting_address, count)
 
         if not self.modbus_slave_respond_checkbox.isChecked():
