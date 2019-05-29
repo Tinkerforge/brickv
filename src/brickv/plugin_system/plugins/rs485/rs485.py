@@ -795,11 +795,12 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         pos = 0
         written = 0
-        text = self.rs485_input_combobox.currentText().encode('utf-8') + self.get_line_ending()
+        text = self.rs485_input_combobox.currentText()
+        bytes_ = text.encode('utf-8') + self.get_line_ending()
 
         attempts_without_progress = 0
-        while pos < len(text):
-            written = self.rs485.write(text[pos:])
+        while pos < len(bytes_):
+            written = self.rs485.write(bytes_[pos:])
             pos = pos + written
             if written == 0:
                 attempts_without_progress += 1
@@ -810,6 +811,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 self.popup_fail("Could not write line. Made no progress after {} attempts.".format(attempts_without_progress))
                 return
 
+        entries = [self.rs485_input_combobox.itemText(i) for i in range(self.rs485_input_combobox.count())]
+        if text not in entries:
+            self.rs485_input_combobox.addItem(text)
         self.rs485_input_combobox.setCurrentIndex(0)
 
     def get_rs485_configuration_async(self, conf):
