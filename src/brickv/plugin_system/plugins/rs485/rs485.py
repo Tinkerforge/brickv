@@ -501,14 +501,14 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
     def modbus_master_function_changed(self, function):
         d = {
-            MODBUS_F_IDX_READ_COILS: ('Starting Number:', 'Number of Coils:', 1, 2000, self.modbus_master_param2_dec_spinbox, 1, 65536),
-            MODBUS_F_IDX_READ_HOLDING_REGISTERS: ('Starting Number:', 'Number of Registers:', 1, 125, self.modbus_master_param2_dec_spinbox, 400001, 465536),
+            MODBUS_F_IDX_READ_COILS: ('First Coil Number:', 'Number of Coils:', 1, 2000, self.modbus_master_param2_dec_spinbox, 1, 65536),
+            MODBUS_F_IDX_READ_HOLDING_REGISTERS: ('First Register Number:', 'Number of Registers:', 1, 125, self.modbus_master_param2_dec_spinbox, 400001, 465536),
             MODBUS_F_IDX_WRITE_SINGLE_COIL: ('Coil Number:', 'Coil Value:', 0, 1, self.modbus_master_param2_bool_combobox, 1, 65536),
-            MODBUS_F_IDX_WRITE_SINGLE_REGISTER: ('Register Number:', 'Register Value (Hex):', 0, 65535, self.modbus_master_param2_hex_spinbox, 400001, 465536),
-            MODBUS_F_IDX_WRITE_MULTIPLE_COILS: ('Starting Number:', 'Number of Coils:', 1, 1968, self.modbus_master_param2_dec_spinbox, 1, 65536),
-            MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS: ('Starting Number:', 'Number of Registers:', 1, 123, self.modbus_master_param2_dec_spinbox, 400001, 465536),
-            MODBUS_F_IDX_READ_DISCRETE_INPUTS: ('Starting Number:', 'Number of Coils:', 1, 2000, self.modbus_master_param2_dec_spinbox, 100001, 165536),
-            MODBUS_F_IDX_READ_INPUT_REGISTERS: ('Starting Number:', 'Number of Registers:', 1, 125, self.modbus_master_param2_dec_spinbox, 300001, 365536)
+            MODBUS_F_IDX_WRITE_SINGLE_REGISTER: ('Register Number:', 'Register Value [Hex]:', 0, 65535, self.modbus_master_param2_hex_spinbox, 400001, 465536),
+            MODBUS_F_IDX_WRITE_MULTIPLE_COILS: ('First Coil Number:', 'Number of Coils:', 1, 1968, self.modbus_master_param2_dec_spinbox, 1, 65536),
+            MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS: ('First Register Number:', 'Number of Registers:', 1, 123, self.modbus_master_param2_dec_spinbox, 400001, 465536),
+            MODBUS_F_IDX_READ_DISCRETE_INPUTS: ('First Input Number:', 'Number of Inputs:', 1, 2000, self.modbus_master_param2_dec_spinbox, 100001, 165536),
+            MODBUS_F_IDX_READ_INPUT_REGISTERS: ('First Input Number:', 'Number of Inputs:', 1, 125, self.modbus_master_param2_dec_spinbox, 300001, 365536)
         }
         if function not in d:
             return

@@ -83,7 +83,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Address</string>
+       <string>Entity Number</string>
       </property>
      </column>
      <column>
@@ -93,7 +93,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Data</string>
+       <string>Data [Hex]</string>
       </property>
      </column>
     </widget>
@@ -126,7 +126,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Address</string>
+       <string>Entity Number</string>
       </property>
      </column>
      <column>
@@ -136,7 +136,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Data</string>
+       <string>Data [Hex]</string>
       </property>
      </column>
     </widget>
