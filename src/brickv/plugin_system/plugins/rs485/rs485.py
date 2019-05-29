@@ -55,7 +55,6 @@ EXCEPTION_CODE_STREAM_OUT_OF_SYNC = -2
 EXCEPTION_CODE_DEVICE_TIMEOUT = -2
 
 ModbusEvent = namedtuple('ModbusEvent', ['is_request', 'time', 'request_id', 'slave_address', 'function', 'address', 'count', 'data', 'exception_code'])
-#ModbusResponse = namedtuple('ModbusResponse', ['time', 'request_id', 'slave_address', 'function', 'address', 'count', 'data', 'exception_code'])
 
 class RS485(COMCUPluginBase, Ui_RS485):
     qtcb_read = pyqtSignal(object)
@@ -212,9 +211,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         # Modbus specific.
         self.modbus_slave_address_spinbox.valueChanged.connect(self.configuration_changed)
-        #self.modbus_master_param2_dec_spinbox.valueChanged.connect(self.modbus_master_param2_changed)
-        #self.modbus_master_param2_hex_spinbox.valueChanged.connect(self.modbus_master_param2_changed)
-        #self.modbus_master_param2_bool_combobox.valueChanged.connect(self.modbus_master_param2_changed)
         self.modbus_master_function_combobox.currentIndexChanged.connect(self.modbus_master_function_changed)
 
         self.hextext = QHexeditWidget(self.text.font())
@@ -387,13 +383,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
             else:
                 e.hide()
 
-    def modbus_master_param2_changed(self, value):
-        if self.mode_combobox.currentIndex() == self.rs485.MODE_MODBUS_MASTER_RTU and \
-           self.modbus_master_function_combobox.currentIndex() == MODBUS_F_IDX_WRITE_SINGLE_COIL:
-            if value > 0:
-                #self.modbus_master_param2_bool_combobox.setValue(65280)
-                pass
-
     def master_send_clicked(self):
         if self.configured_mode != self.rs485.MODE_MODBUS_MASTER_RTU:
             self.popup_fail(MSG_ERR_NOT_MODBUS_MASTER)
@@ -441,7 +430,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
             arg2_string = ' '.join("{:04X}".format(i) for i in arg2)
 
         try:
-             # Use address without coil/register type prefix
+            # Use address without coil/register type prefix
             rid = request_fn(slave_address, address % 100000, arg2)
         except Exception as e:
             self.popup_fail(str(e))
@@ -613,7 +602,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         exception_code = self.check_stream_sync(data) if streamed else BrickletRS485.EXCEPTION_CODE_SUCCESS
         self.modbus_log_add(ModbusEvent(True, time.localtime(), request_id, str(self.modbus_master_slave_address_spinbox.value()) + ' (self)', function_name, starting_address, count, data, exception_code))
 
-    def modbus_slave_response_sent(self, function_name, request_id, starting_address, count, data=None): #TODO: Remove starting_addres and count, these can be taken from the corresponding request
+    def modbus_slave_response_sent(self, function_name, request_id, starting_address, count, data=None):
         self.modbus_log_add(ModbusEvent(False, time.localtime(), request_id, 'Master', function_name, starting_address, count, data, BrickletRS485.EXCEPTION_CODE_SUCCESS))
 
     def cb_modbus_slave_read_coils_request(self, request_id, starting_address, count):
