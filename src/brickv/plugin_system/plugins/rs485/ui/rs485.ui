@@ -406,22 +406,6 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QCheckBox" name="modbus_slave_respond_checkbox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>9</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="toolTip">
-          <string>Automatically respond to Modbus requests with dummy data.</string>
-         </property>
-         <property name="text">
-          <string>Automatic Response</string>
-         </property>
-        </widget>
-       </item>
        <item row="7" column="0">
         <widget class="QLabel" name="modbus_master_param2_label">
          <property name="text">
@@ -655,6 +639,27 @@
          <property name="value">
           <number>1</number>
          </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="modbus_slave_behaviour_label">
+         <property name="text">
+          <string>Slave Behaviour:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="modbus_slave_behaviour_combobox">
+         <item>
+          <property name="text">
+           <string>None</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Automatic Response</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>

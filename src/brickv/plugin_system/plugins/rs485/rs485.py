@@ -318,7 +318,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                        self.label_error_modbus_slave_device_failure,
                                        self.modbus_slave_address_label,
                                        self.modbus_slave_address_spinbox,
-                                       self.modbus_slave_respond_checkbox]
+                                       self.modbus_slave_behaviour_combobox]
 
         self.gui_group_empty = [self.text,
                                 self.button_clear_text,
@@ -629,7 +629,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.modbus_log_add(ModbusEvent(True, time.localtime(), request_id, str(self.modbus_master_slave_address_spinbox.value()) + ' (self)', function_name, starting_address, count, data, exception_code))
 
     def modbus_slave_answer_request_async(self, answer_fn, answer_fn_args, log_fn_args):
-        if not self.modbus_slave_respond_checkbox.isChecked():
+        if self.modbus_slave_behaviour_combobox.currentIndex() == 0:
             return
 
         def modbus_slave_response_sent(function_name, request_id, starting_address, count, data=None, exception_code=BrickletRS485.EXCEPTION_CODE_SUCCESS):
