@@ -49,6 +49,7 @@ MODBUS_F_IDX_READ_INPUT_REGISTERS = 7
 
 MSG_ERR_REQUEST_PROCESS = "Failed to process the request"
 MSG_ERR_NOT_MODBUS_MASTER = "The Bricklet needs to be in Modbus master mode to perform this operation"
+MSG_ERR_NOT_RS485 = "The Bricklet needs to be in RS485 mode to perform this operation"
 
 EXCEPTION_CODE_STREAM_OUT_OF_SYNC = -2
 EXCEPTION_CODE_DEVICE_TIMEOUT = -2
@@ -322,7 +323,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                        self.modbus_slave_respond_checkbox]
 
         self.mode_changed(self.rs485.MODE_RS485)
-        self.mode = self.rs485.MODE_RS485
 
         item = ['00:00:00', '123', '123', 'Write Multiple Registers Response', '12345', '123', '0000 0000 0000 0000']
         self.modbus_master_tree.addTopLevelItem(QTreeWidgetItem(item))
@@ -395,8 +395,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                 pass
 
     def master_send_clicked(self):
-        # TODO: is this still necessary?
-        if self.rs485.get_mode() != self.rs485.MODE_MODBUS_MASTER_RTU:
+        if self.configured_mode != self.rs485.MODE_MODBUS_MASTER_RTU:
             self.popup_fail(MSG_ERR_NOT_MODBUS_MASTER)
             return
 
@@ -479,7 +478,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
             if e is None:
                 entry[i] = '?' if i != len(entry) - 1 else ''
 
-        if self.mode == self.rs485.MODE_MODBUS_SLAVE_RTU:
+        if self.configured_mode == self.rs485.MODE_MODBUS_SLAVE_RTU:
             entry = entry[:2] + entry[3:]
 
         item = QTreeWidgetItem(entry)
@@ -487,15 +486,15 @@ class RS485(COMCUPluginBase, Ui_RS485):
         color = None
         if event.exception_code != BrickletRS485.EXCEPTION_CODE_SUCCESS:
             color = QBrush(QColor(0xFF, 0x7F, 0x7F))
-        elif (self.mode == self.rs485.MODE_MODBUS_MASTER_RTU and event.is_request) or \
-             (self.mode == self.rs485.MODE_MODBUS_SLAVE_RTU and not event.is_request):
+        elif (self.configured_mode == self.rs485.MODE_MODBUS_MASTER_RTU and event.is_request) or \
+             (self.configured_mode == self.rs485.MODE_MODBUS_SLAVE_RTU and not event.is_request):
             color = QBrush(QColor(self.palette().color(QPalette.Background)))
 
         if color is not None:
             for i in range(len(entry)):
                 item.setData(i, Qt.BackgroundRole, color)
 
-        if self.mode == self.rs485.MODE_MODBUS_SLAVE_RTU:
+        if self.configured_mode == self.rs485.MODE_MODBUS_SLAVE_RTU:
             self.modbus_slave_tree.addTopLevelItem(item)
         else:
             self.modbus_master_tree.addTopLevelItem(item)
@@ -535,7 +534,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
 
     def mode_changed(self, mode):
-        self.mode = mode
         if mode == self.rs485.MODE_RS485:
             self.toggle_gui_group(self.gui_group_modbus_slave, False)
             self.toggle_gui_group(self.gui_group_modbus_master, False)
@@ -797,6 +795,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
         return line_ending
 
     def input_changed(self):
+        if self.configured_mode != self.rs485.MODE_RS485:
+            self.popup_fail(MSG_ERR_NOT_RS485)
+            return
+
         pos = 0
         written = 0
         text = self.rs485_input_combobox.currentText().encode('utf-8') + self.get_line_ending()
@@ -822,6 +824,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
     def get_mode_async(self, mode):
         self.mode_combobox.setCurrentIndex(mode)
+        self.configured_mode = mode
         self.apply_button.setEnabled(False)
 
     def text_type_changed(self):
@@ -833,6 +836,13 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.hextext.show()
 
     def configuration_changed(self):
+        self.apply_button.setEnabled(True)
+
+    def update_mode_async(self, mode):
+        self.configured_mode = mode
+
+    def error_update_mode_async(self):
+        self.popup_fail("Could not set mode.")
         self.apply_button.setEnabled(True)
 
     def apply_clicked(self):
@@ -854,6 +864,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         if mode == self.rs485.MODE_MODBUS_MASTER_RTU or mode == self.rs485.MODE_MODBUS_SLAVE_RTU:
             self.rs485.set_modbus_configuration(self.modbus_slave_address_spinbox.value(),
                                                 self.modbus_master_request_timeout_spinbox.value())
+        async_call(self.rs485.get_mode, None, self.update_mode_async, self.error_update_mode_async)
 
         self.apply_button.setEnabled(False)
 
