@@ -203,7 +203,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.rs485_input_line_ending_combobox.currentIndexChanged.connect(self.line_ending_changed)
         self.rs485_input_line_ending_lineedit.editingFinished.connect(self.line_ending_changed)
 
-        self.mode_combobox.currentIndexChanged.connect(self.mode_changed)
+
         self.baudrate_spinbox.valueChanged.connect(self.configuration_changed)
         self.parity_combobox.currentIndexChanged.connect(self.configuration_changed)
         self.stopbits_spinbox.valueChanged.connect(self.configuration_changed)
@@ -320,7 +320,15 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                        self.modbus_slave_address_spinbox,
                                        self.modbus_slave_respond_checkbox]
 
-        self.mode_changed(self.rs485.MODE_RS485)
+        self.gui_group_empty = [self.text,
+                                self.button_clear_text,
+                                self.line_3,
+                                self.label_error_overrun_name,
+                                self.label_error_overrun,
+                                self.label_error_parity_name,
+                                self.label_error_parity,
+                                self.label_error_stream_name,
+                                self.label_error_stream]
 
         item = ['00:00:00', '123', '123', 'Write Multiple Registers Response', '12345', '123', '0000 0000 0000 0000']
         self.modbus_master_tree.addTopLevelItem(QTreeWidgetItem(item))
@@ -365,7 +373,13 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.modbus_log = []
         self.modbus_master_answer_timer = QTimer(self)
         self.modbus_master_answer_timer.setSingleShot(True)
+
         self.configured_mode = None
+        self.mode_changed(self.configured_mode)
+        self.mode_combobox.insertItem(0, "Querying...")
+        self.mode_combobox.setCurrentIndex(0)
+
+        self.mode_combobox.currentIndexChanged.connect(self.mode_changed)
 
     def append_text(self, text):
         self.text.moveCursor(QTextCursor.End)
@@ -545,6 +559,12 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.toggle_gui_group(self.gui_group_modbus_slave, False)
             self.toggle_gui_group(self.gui_group_modbus_master, True)
             self.modbus_master_function_changed(self.modbus_master_function_combobox.currentIndex())
+        else:
+            self.toggle_gui_group(self.gui_group_rs485, False)
+            self.toggle_gui_group(self.gui_group_modbus_slave, False)
+            self.toggle_gui_group(self.gui_group_modbus_master, False)
+            self.toggle_gui_group(self.gui_group_empty, True)
+
 
         self.configuration_changed()
 
@@ -830,6 +850,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.apply_button.setEnabled(False)
 
     def get_mode_async(self, mode):
+        if self.mode_combobox.itemText(0) == 'Querying...':
+            self.mode_combobox.removeItem(0)
+
         self.mode_combobox.setCurrentIndex(mode)
         self.configured_mode = mode
         self.apply_button.setEnabled(False)
@@ -845,10 +868,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
     def configuration_changed(self):
         self.apply_button.setEnabled(True)
 
-    def update_mode_async(self, mode):
-        self.configured_mode = mode
-
-    def error_update_mode_async(self):
+    def error_get_mode_async(self):
         self.popup_fail("Could not set mode.")
         self.apply_button.setEnabled(True)
 
@@ -871,7 +891,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         if mode == self.rs485.MODE_MODBUS_MASTER_RTU or mode == self.rs485.MODE_MODBUS_SLAVE_RTU:
             self.rs485.set_modbus_configuration(self.modbus_slave_address_spinbox.value(),
                                                 self.modbus_master_request_timeout_spinbox.value())
-        async_call(self.rs485.get_mode, None, self.update_mode_async, self.error_update_mode_async)
+        async_call(self.rs485.get_mode, None, self.get_mode_async, self.error_get_mode_async)
 
         self.apply_button.setEnabled(False)
 
