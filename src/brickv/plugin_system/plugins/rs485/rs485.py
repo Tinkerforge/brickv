@@ -27,7 +27,7 @@ import time
 
 from PyQt5.QtWidgets import QAction, QMessageBox, QTreeWidgetItem
 from PyQt5.QtGui import QTextCursor, QColor, QBrush, QPalette
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtCore import pyqtSignal, Qt, QTimer
 
 from brickv.bindings.bricklet_rs485 import BrickletRS485
 from brickv.plugin_system.plugins.rs485.ui_rs485 import Ui_RS485
@@ -51,6 +51,7 @@ MSG_ERR_REQUEST_PROCESS = "Failed to process the request"
 MSG_ERR_NOT_MODBUS_MASTER = "The Bricklet needs to be in Modbus master mode to perform this operation"
 
 EXCEPTION_CODE_STREAM_OUT_OF_SYNC = -2
+EXCEPTION_CODE_DEVICE_TIMEOUT = -2
 
 ModbusEvent = namedtuple('ModbusEvent', ['is_request', 'time', 'request_id', 'slave_address', 'function', 'address', 'count', 'data', 'exception_code'])
 #ModbusResponse = namedtuple('ModbusResponse', ['time', 'request_id', 'slave_address', 'function', 'address', 'count', 'data', 'exception_code'])
@@ -104,7 +105,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
         # Add -2 for a stream out of sync error, which simplifies the error handling further down.
         # As the bindings could add another error code in the future, check if this is a good idea.
         assert EXCEPTION_CODE_STREAM_OUT_OF_SYNC not in self.modbus_errors, "-2 was already in the modbus_errors dictionary. This is a bug in the Brick Viewer."
+        assert EXCEPTION_CODE_DEVICE_TIMEOUT not in self.modbus_errors, "-3 was already in the modbus_errors dictionary. This is a bug in the Brick Viewer."
         self.modbus_errors[EXCEPTION_CODE_STREAM_OUT_OF_SYNC] = 'Stream out of sync.'
+        self.modbus_errors[EXCEPTION_CODE_DEVICE_TIMEOUT] = 'Bricklet communication timeout.'
 
         self.cbe_error_count = CallbackEmulator(self.rs485.get_error_count,
                                                 None,
@@ -362,6 +365,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                   self.error_led_show_error_action])]
 
         self.modbus_log = []
+        self.modbus_master_answer_timer = QTimer(self)
+        self.modbus_master_answer_timer.setSingleShot(True)
+        self.configured_mode = None
 
     def append_text(self, text):
         self.text.moveCursor(QTextCursor.End)
@@ -448,6 +454,14 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.modbus_log_add(ModbusEvent(True, time.localtime(), rid, slave_address, request_fn_name, address, count, arg2_string, BrickletRS485.EXCEPTION_CODE_SUCCESS))
         self.modbus_master_send_button.setEnabled(False)
+        self.modbus_master_answer_timer.setInterval(self.modbus_master_request_timeout_spinbox.value() + 2600)
+
+        def timeout():
+            self.modbus_log_add(ModbusEvent(False, time.localtime(), rid, slave_address, request_fn_name, address, count, arg2_string, EXCEPTION_CODE_DEVICE_TIMEOUT))
+            self.modbus_master_send_button.setEnabled(True)
+
+        self.modbus_master_answer_timer.timeout.connect(timeout)
+        self.modbus_master_answer_timer.start()
 
     def modbus_log_add(self, event):
         self.modbus_log.append(event)
@@ -581,6 +595,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         return exception_code
 
     def modbus_master_response_received(self, function_name, request_id, exception_code, data=None, streamed=False):
+        self.modbus_master_answer_timer.stop()
         if streamed:
             exception_code = self.check_stream_sync(data, exception_code)
 
@@ -895,6 +910,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.cbe_error_count_modbus.set_period(250)
 
     def stop(self):
+        self.modbus_master_answer_timer.stop()
         self.cbe_error_count.set_period(0)
         self.cbe_error_count_modbus.set_period(0)
 
