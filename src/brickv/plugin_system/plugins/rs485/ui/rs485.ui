@@ -397,6 +397,9 @@
          <property name="text">
           <string>Send Request</string>
          </property>
+         <property name="default">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item row="6" column="0">
@@ -417,6 +420,9 @@
         <widget class="QPushButton" name="rs485_send_button">
          <property name="text">
           <string>Write Line</string>
+         </property>
+         <property name="default">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -464,6 +470,12 @@
          </property>
          <property name="text">
           <string>Clear History</string>
+         </property>
+         <property name="autoDefault">
+          <bool>false</bool>
+         </property>
+         <property name="default">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -650,6 +662,12 @@
        </item>
        <item row="3" column="1">
         <widget class="QComboBox" name="modbus_slave_behaviour_combobox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>9</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <item>
           <property name="text">
            <string>None</string>
@@ -910,10 +928,32 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>text</tabstop>
+  <tabstop>modbus_master_tree</tabstop>
+  <tabstop>modbus_slave_tree</tabstop>
+  <tabstop>mode_combobox</tabstop>
+  <tabstop>baudrate_spinbox</tabstop>
   <tabstop>parity_combobox</tabstop>
   <tabstop>stopbits_spinbox</tabstop>
   <tabstop>wordlength_spinbox</tabstop>
+  <tabstop>duplex_combobox</tabstop>
+  <tabstop>modbus_slave_address_spinbox</tabstop>
+  <tabstop>modbus_master_request_timeout_spinbox</tabstop>
   <tabstop>apply_button</tabstop>
+  <tabstop>button_clear_text</tabstop>
+  <tabstop>text_type_combobox</tabstop>
+  <tabstop>rs485_input_combobox</tabstop>
+  <tabstop>rs485_input_line_ending_combobox</tabstop>
+  <tabstop>rs485_input_line_ending_lineedit</tabstop>
+  <tabstop>modbus_slave_behaviour_combobox</tabstop>
+  <tabstop>modbus_master_function_combobox</tabstop>
+  <tabstop>modbus_master_slave_address_spinbox</tabstop>
+  <tabstop>modbus_master_param1_spinbox</tabstop>
+  <tabstop>modbus_master_param2_dec_spinbox</tabstop>
+  <tabstop>modbus_master_param2_hex_spinbox</tabstop>
+  <tabstop>modbus_master_param2_bool_combobox</tabstop>
+  <tabstop>modbus_master_send_button</tabstop>
+  <tabstop>rs485_send_button</tabstop>
  </tabstops>
  <resources/>
  <connections/>

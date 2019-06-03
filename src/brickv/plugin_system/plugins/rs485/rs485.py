@@ -318,7 +318,8 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                        self.label_error_modbus_slave_device_failure,
                                        self.modbus_slave_address_label,
                                        self.modbus_slave_address_spinbox,
-                                       self.modbus_slave_behaviour_combobox]
+                                       self.modbus_slave_behaviour_combobox,
+                                       self.modbus_slave_behaviour_label]
 
         self.gui_group_empty = [self.text,
                                 self.button_clear_text,
@@ -467,7 +468,12 @@ class RS485(COMCUPluginBase, Ui_RS485):
         def timeout():
             self.modbus_log_add(ModbusEvent(False, time.localtime(), rid, slave_address, request_fn_name, address, count, arg2_string, EXCEPTION_CODE_DEVICE_TIMEOUT))
             self.modbus_master_send_button.setEnabled(True)
+            self.modbus_master_send_button.setDefault(True)
 
+        try:
+            self.modbus_master_answer_timer.timeout.disconnect()
+        except: # This raises an exception if no slots are connected.
+            pass
         self.modbus_master_answer_timer.timeout.connect(timeout)
         self.modbus_master_answer_timer.start()
 
@@ -559,6 +565,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.toggle_gui_group(self.gui_group_modbus_slave, False)
             self.toggle_gui_group(self.gui_group_modbus_master, True)
             self.modbus_master_function_changed(self.modbus_master_function_combobox.currentIndex())
+            self.modbus_master_send_button.setDefault(True)
         else:
             self.toggle_gui_group(self.gui_group_rs485, False)
             self.toggle_gui_group(self.gui_group_modbus_slave, False)
@@ -623,6 +630,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.modbus_log_add(ModbusEvent(False, time.localtime(), request_id, 'Master (self)', function_name, None, None, data, exception_code))
 
         self.modbus_master_send_button.setEnabled(True)
+        self.modbus_master_send_button.setDefault(True)
 
     def modbus_slave_request_received(self, function_name, request_id, starting_address, count, data=None, streamed=False):
         exception_code = self.check_stream_sync(data) if streamed else BrickletRS485.EXCEPTION_CODE_SUCCESS
