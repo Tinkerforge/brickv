@@ -537,13 +537,13 @@ class Wifi2(QWidget, Ui_Wifi2):
         client_ip_conf  = self.wifi_client_ip_configuration.currentIndex()
 
         if client_ip_conf == 1:
-            client_ip  = [self.wifi_client_ip4.value(), self.wifi_client_ip3.value(), self.wifi_client_ip2.value(), self.wifi_client_ip1.value()]
-            client_sub = [self.wifi_client_sub4.value(), self.wifi_client_sub3.value(), self.wifi_client_sub2.value(), self.wifi_client_sub1.value()]
-            client_gw  = [self.wifi_client_gw4.value(), self.wifi_client_gw3.value(), self.wifi_client_gw2.value(), self.wifi_client_gw1.value()]
+            client_ip  = (self.wifi_client_ip4.value(), self.wifi_client_ip3.value(), self.wifi_client_ip2.value(), self.wifi_client_ip1.value())
+            client_sub = (self.wifi_client_sub4.value(), self.wifi_client_sub3.value(), self.wifi_client_sub2.value(), self.wifi_client_sub1.value())
+            client_gw  = (self.wifi_client_gw4.value(), self.wifi_client_gw3.value(), self.wifi_client_gw2.value(), self.wifi_client_gw1.value())
         else:
-            client_ip  = [0, 0, 0, 0]
-            client_sub = [0, 0, 0 ,0]
-            client_gw  = [0, 0, 0, 0]
+            client_ip  = (0, 0, 0, 0)
+            client_sub = (0, 0, 0 ,0)
+            client_gw  = (0, 0, 0, 0)
 
         client_ssid       = self.wifi_client_ssid.text()
         client_encryption = self.wifi_client_encryption.currentIndex()
@@ -556,16 +556,16 @@ class Wifi2(QWidget, Ui_Wifi2):
         client_use_bssid = self.wifi_client_use_bssid.isChecked()
 
         if client_use_bssid:
-            client_bssid = [self.wifi_client_bssid6.value(), self.wifi_client_bssid5.value(), self.wifi_client_bssid4.value(), self.wifi_client_bssid3.value(), self.wifi_client_bssid2.value(), self.wifi_client_bssid1.value()]
+            client_bssid = (self.wifi_client_bssid6.value(), self.wifi_client_bssid5.value(), self.wifi_client_bssid4.value(), self.wifi_client_bssid3.value(), self.wifi_client_bssid2.value(), self.wifi_client_bssid1.value())
         else:
-            client_bssid = [0, 0, 0, 0, 0, 0]
+            client_bssid = (0, 0, 0, 0, 0, 0)
 
         client_use_mac = self.wifi_client_use_mac.isChecked()
 
         if client_use_mac:
-            client_mac = [self.wifi_client_mac6.value(), self.wifi_client_mac5.value(), self.wifi_client_mac4.value(), self.wifi_client_mac3.value(), self.wifi_client_mac2.value(), self.wifi_client_mac1.value()]
+            client_mac = (self.wifi_client_mac6.value(), self.wifi_client_mac5.value(), self.wifi_client_mac4.value(), self.wifi_client_mac3.value(), self.wifi_client_mac2.value(), self.wifi_client_mac1.value())
         else:
-            client_mac = [0, 0, 0, 0, 0, 0]
+            client_mac = (0, 0, 0, 0, 0, 0)
 
         if general_mode == 3:
             ap_enable = False
@@ -575,13 +575,13 @@ class Wifi2(QWidget, Ui_Wifi2):
         ap_ip_conf = self.wifi_ap_ip_configuration.currentIndex()
 
         if ap_ip_conf == 1:
-            ap_ip  = [self.wifi_ap_ip4.value(), self.wifi_ap_ip3.value(), self.wifi_ap_ip2.value(), self.wifi_ap_ip1.value()]
-            ap_sub = [self.wifi_ap_sub4.value(), self.wifi_ap_sub3.value(), self.wifi_ap_sub2.value(), self.wifi_ap_sub1.value()]
-            ap_gw  = [self.wifi_ap_gw4.value(), self.wifi_ap_gw3.value(), self.wifi_ap_gw2.value(), self.wifi_ap_gw1.value()]
+            ap_ip  = (self.wifi_ap_ip4.value(), self.wifi_ap_ip3.value(), self.wifi_ap_ip2.value(), self.wifi_ap_ip1.value())
+            ap_sub = (self.wifi_ap_sub4.value(), self.wifi_ap_sub3.value(), self.wifi_ap_sub2.value(), self.wifi_ap_sub1.value())
+            ap_gw  = (self.wifi_ap_gw4.value(), self.wifi_ap_gw3.value(), self.wifi_ap_gw2.value(), self.wifi_ap_gw1.value())
         else:
-            ap_ip  = [0, 0, 0, 0]
-            ap_sub = [0, 0, 0 ,0]
-            ap_gw  = [0, 0, 0, 0]
+            ap_ip  = (0, 0, 0, 0)
+            ap_sub = (0, 0, 0 ,0)
+            ap_gw  = (0, 0, 0, 0)
 
         ap_ssid       = self.wifi_ap_ssid.text()
         ap_encryption = self.wifi_ap_encryption.currentIndex()
@@ -595,9 +595,9 @@ class Wifi2(QWidget, Ui_Wifi2):
         ap_use_mac   = self.wifi_ap_use_mac.isChecked()
 
         if ap_use_mac:
-            ap_mac = [self.wifi_ap_mac6.value(), self.wifi_ap_mac5.value(), self.wifi_ap_mac4.value(), self.wifi_ap_mac3.value(), self.wifi_ap_mac2.value(), self.wifi_ap_mac1.value()]
+            ap_mac = (self.wifi_ap_mac6.value(), self.wifi_ap_mac5.value(), self.wifi_ap_mac4.value(), self.wifi_ap_mac3.value(), self.wifi_ap_mac2.value(), self.wifi_ap_mac1.value())
         else:
-            ap_mac = [0, 0, 0, 0, 0, 0]
+            ap_mac = (0, 0, 0, 0, 0, 0)
 
         if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 1, 0):
             # Get current mesh configuration.
@@ -611,14 +611,14 @@ class Wifi2(QWidget, Ui_Wifi2):
             mesh_router_ssid = self.wifi_mesh_router_ssid.text()
 
             if self.wifi_mesh_router_use_bssid.isChecked():
-                mesh_router_bssid = [self.wifi_mesh_router_bssid1.value(),
+                mesh_router_bssid = (self.wifi_mesh_router_bssid1.value(),
                                      self.wifi_mesh_router_bssid2.value(),
                                      self.wifi_mesh_router_bssid3.value(),
                                      self.wifi_mesh_router_bssid4.value(),
                                      self.wifi_mesh_router_bssid5.value(),
-                                     self.wifi_mesh_router_bssid6.value()]
+                                     self.wifi_mesh_router_bssid6.value())
             else:
-                mesh_router_bssid = [0, 0, 0, 0, 0, 0]
+                mesh_router_bssid = (0, 0, 0, 0, 0, 0)
 
             if self.wifi_mesh_router_encryption.currentIndex() == 1 and \
                len(self.wifi_mesh_router_password.text()) > 0:
@@ -627,35 +627,35 @@ class Wifi2(QWidget, Ui_Wifi2):
                 mesh_router_password = '\0'
 
             if self.wifi_mesh_root_ip_configuration.currentIndex() == 1:
-                mesh_root_ip  = [self.wifi_mesh_root_ip1.value(),
+                mesh_root_ip  = (self.wifi_mesh_root_ip1.value(),
                                  self.wifi_mesh_root_ip2.value(),
                                  self.wifi_mesh_root_ip3.value(),
-                                 self.wifi_mesh_root_ip4.value()]
-                mesh_root_sub = [self.wifi_mesh_root_sub1.value(),
+                                 self.wifi_mesh_root_ip4.value())
+                mesh_root_sub = (self.wifi_mesh_root_sub1.value(),
                                  self.wifi_mesh_root_sub2.value(),
                                  self.wifi_mesh_root_sub3.value(),
-                                 self.wifi_mesh_root_sub4.value()]
-                mesh_root_gw  = [self.wifi_mesh_root_gw1.value(),
+                                 self.wifi_mesh_root_sub4.value())
+                mesh_root_gw  = (self.wifi_mesh_root_gw1.value(),
                                  self.wifi_mesh_root_gw2.value(),
                                  self.wifi_mesh_root_gw3.value(),
-                                 self.wifi_mesh_root_gw4.value()]
+                                 self.wifi_mesh_root_gw4.value())
             else:
-                mesh_root_ip  = [0, 0, 0, 0]
-                mesh_root_sub = [0, 0, 0, 0]
-                mesh_root_gw  = [0, 0, 0, 0]
+                mesh_root_ip  = (0, 0, 0, 0)
+                mesh_root_sub = (0, 0, 0, 0)
+                mesh_root_gw  = (0, 0, 0, 0)
 
             mesh_group_ssid_prefix = self.wifi_mesh_group_ssid_prefix.text()
 
-            mesh_group_id     = [self.wifi_mesh_group_id1.value(),
+            mesh_group_id     = (self.wifi_mesh_group_id1.value(),
                                  self.wifi_mesh_group_id2.value(),
                                  self.wifi_mesh_group_id3.value(),
                                  self.wifi_mesh_group_id4.value(),
                                  self.wifi_mesh_group_id5.value(),
-                                 self.wifi_mesh_group_id6.value()]
-            mesh_gateway_ip   = [self.wifi_mesh_gateway_ip1.value(),
+                                 self.wifi_mesh_group_id6.value())
+            mesh_gateway_ip   = (self.wifi_mesh_gateway_ip1.value(),
                                  self.wifi_mesh_gateway_ip2.value(),
                                  self.wifi_mesh_gateway_ip3.value(),
-                                 self.wifi_mesh_gateway_ip4.value()]
+                                 self.wifi_mesh_gateway_ip4.value())
             mesh_gateway_port = self.wifi_mesh_gateway_port.value()
 
         self.master.set_response_expected(self.master.FUNCTION_SET_WIFI2_AUTHENTICATION_SECRET, True)
@@ -671,45 +671,72 @@ class Wifi2(QWidget, Ui_Wifi2):
             self.master.set_response_expected(self.master.FUNCTION_SET_WIFI2_MESH_ROUTER_PASSWORD,  True)
             self.master.set_response_expected(self.master.FUNCTION_SET_WIFI2_MESH_ROUTER_SSID,      True)
 
+        to_write = [
+            (self.master.set_wifi2_authentication_secret, general_secret),
+            (self.master.set_wifi2_configuration, general_port, general_websocket_port, general_website_port, general_phy_mode, 0, general_website), # TODO: Sleep Mode?
+            (self.master.set_wifi2_client_configuration, client_enable, client_ssid, client_ip, client_sub, client_gw, client_mac, client_bssid),
+            (self.master.set_wifi2_client_hostname, client_hostname),
+            (self.master.set_wifi2_ap_configuration, ap_enable, ap_ssid, ap_ip, ap_sub, ap_gw, ap_encryption, ap_hide_ssid, ap_channel, ap_mac),
+        ]
+
+        if self.wifi_client_change_password.isChecked():
+            to_write.append((self.master.set_wifi2_client_password, client_password))
+        if self.wifi_ap_change_password.isChecked():
+            to_write.append((self.master.set_wifi2_ap_password, ap_password))
+        if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 1, 0):
+            to_write.append((self.master.set_wifi2_mesh_configuration,
+                             mesh_enable, mesh_root_ip,
+                             mesh_root_sub, mesh_root_gw, mesh_router_bssid, mesh_group_id,
+                             mesh_group_ssid_prefix, mesh_gateway_ip, mesh_gateway_port))
+            to_write.append((self.master.set_wifi2_mesh_router_password, mesh_router_password))
+            to_write.append((self.master.set_wifi2_mesh_router_ssid, mesh_router_ssid))
+
         try:
-            # Set general configuration.
-            self.master.set_wifi2_authentication_secret(general_secret)
-            self.master.set_wifi2_configuration(general_port, general_websocket_port, general_website_port, general_phy_mode, 0, general_website) # TODO: Sleep Mode ?
+            for setter, *args in to_write:
+                setter(*args)
+        except Exception as e:
+            self.popup_fail("Could not save Wifi configuration: Error Code 1:\n\n" + str(e))
+            return
 
-            # Set client configuration.
-            self.master.set_wifi2_client_configuration(client_enable, client_ssid, client_ip, client_sub, client_gw, client_mac, client_bssid)
-            self.master.set_wifi2_client_hostname(client_hostname)
-
-            if self.wifi_client_change_password.isChecked():
-                self.master.set_wifi2_client_password(client_password)
-
-            # Set AP configuration.
-            self.master.set_wifi2_ap_configuration(ap_enable, ap_ssid, ap_ip, ap_sub, ap_gw, ap_encryption, ap_hide_ssid, ap_channel, ap_mac)
-
-            if self.wifi_ap_change_password.isChecked():
-                self.master.set_wifi2_ap_password(ap_password)
-
-            if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 1, 0):
-                # Set mesh configuration.
-                self.master.set_wifi2_mesh_configuration(mesh_enable, mesh_root_ip,
-                                                         mesh_root_sub, mesh_root_gw, mesh_router_bssid, mesh_group_id,
-                                                         mesh_group_ssid_prefix, mesh_gateway_ip, mesh_gateway_port)
-
-                # Set mesh router password.
-                self.master.set_wifi2_mesh_router_password(mesh_router_password)
-
-                # Set mesh router SSID.
-                self.master.set_wifi2_mesh_router_ssid(mesh_router_ssid)
-
-            # All done, now save configuration.
+        # All done, now save configuration.
+        try:
             ok = self.master.save_wifi2_configuration()
+        except Exception as e:
+            self.popup_fail("Could not save Wifi configuration: Error Code 2:\n\n" + str(e))
+            return
+        if ok != 0:
+            self.popup_fail("Could not save Wifi configuration. Error Code 3:\n\n Bricklet reported error " + str(ok))
+            return
 
-            if ok != 0:
-                self.popup_fail()
-            else:
-                self.popup_ok()
-        except:
-            self.popup_fail()
+        def check(setter, *args):
+            if setter.__name__ in ['set_wifi2_client_password', 'set_wifi2_ap_password'] and self.wifi2_firmware_version >= (2, 1, 3):
+                return True
+            getter = getattr(self.master, 'g' + setter.__name__[1:])
+            g = getter()
+
+            # convert named tuples to tuples
+            if hasattr(g, '_fields'):
+                g = tuple(g)
+
+            # some getters return only a single value
+            if not isinstance(g, tuple):
+                g = (g,)
+
+            if args != g:
+                print("Hier")
+
+            return args == g
+
+        try:
+            for setter, *args in to_write:
+                if not check(setter, *args):
+                    self.popup_fail("Could not save Wifi configuration: Error Code 4.")
+                    return
+        except Exception as e:
+            self.popup_fail("Could not save Wifi configuration: " + str(e))
+            return
+
+        self.popup_ok()
 
     def wifi_disable_web_interface_state_changed(self, state):
         if state == Qt.Checked:
