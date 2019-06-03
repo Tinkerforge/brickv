@@ -86,9 +86,9 @@ class LCD20x4(PluginBase):
 
         self.clear_button = QPushButton("Clear Display")
 
-        self.bl_button = QPushButton()
-        self.cursor_button = QPushButton()
-        self.blink_button = QPushButton()
+        self.bl_button = QPushButton("Querying backlight status...")
+        self.cursor_button = QPushButton("Querying cursor status...")
+        self.blink_button = QPushButton("Querying blink status...")
 
         self.onofflayout = QHBoxLayout()
         self.onofflayout.addWidget(self.bl_button)
