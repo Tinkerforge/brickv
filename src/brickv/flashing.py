@@ -1080,7 +1080,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 zf = zipfile.ZipFile(FileLike(zip_file), 'r')
             except Exception as e:
                 progress.cancel()
-                self.popup_fail('Bricklet', 'Could not write firmware: {0}'.format(e))
+                self.popup_fail('Bricklet', 'Could not read *.zbin file: {0}'.format(e))
                 return False
 
             plugin_data = None
