@@ -85,7 +85,7 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
         elif s.status == 7:
             self.wifi_mesh_status.setText('Leaf Available')
         else:
-            self.wifi_mesh_status.setText('Unknown')
+            self.wifi_mesh_status.setText('Unknown ({0})'.format(s.status))
 
         if s.root_node:
             self.wifi_mesh_root_node.setText('Yes')
@@ -141,7 +141,7 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
         elif s.client_status == 5:
             client_status = 'Got IP'
         else:
-            client_status = 'Unknown'
+            client_status = 'Unknown ({0})'.format(s.client_status)
 
         self.wifi_client_status_enabled.setText(client_enabled)
         self.wifi_client_status_status.setText(client_status)
