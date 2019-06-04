@@ -129,7 +129,14 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
         self.thermo.set_value(db)
 
     def cb_spectrum(self, spectrum):
-        length = len(spectrum)
+        try:
+            length = len(spectrum)
+        except:
+            return
+
+        if length == 0:
+            return
+
         num = 20480 // length
 
         x_data = list(range(0, num * length, num))
