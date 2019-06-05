@@ -93,10 +93,11 @@ Please make sure that your internet connection is working.'
         self.tedit_main.setText(self.MESSAGE_INFO_START)
 
         # Connect signals.
+        self.finished.connect(self.cb_finished)
         self.pbutton_n.clicked.connect(self.pbutton_n_clicked)
         self.pbutton_p.clicked.connect(self.pbutton_p_clicked)
 
-    def closeEvent(self, _event):
+    def cb_finished(self):
         self.dialog_session = False
         self.red_plugin.get_bindings_versions_async()
 
