@@ -217,10 +217,12 @@ class RED(PluginBase, Ui_RED):
 
         self.label_discovering.setText('Discovering Image Version...')
         self.widget_discovering.show()
+
         async_call(read_image_version_async, REDFile(self.session), cb_success, None)
 
     def bindings_version_success(self, result):
         okay, message = check_script_result(result)
+
         if not okay:
             get_main_window().show_status('Failed to query RED Brick bindings versions: '+ message, message_id='red_bindings_version_success_error')
             return

@@ -45,16 +45,19 @@ from brickv.data_logger.setup_dialog import SetupDialog as DataLoggerWindow
 from brickv.async_call import async_start_thread, async_next_session, async_call, async_stop_thread
 from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
+
 try:
     from brickv.bindings.brick_hat import BrickHAT
     hat_brick_supported = True
 except ImportError:
     hat_brick_supported = False
+
 try:
     from brickv.bindings.brick_hat_zero import BrickHATZero
     hat_zero_brick_supported = True
 except ImportError:
     hat_zero_brick_supported = False
+
 from brickv.bindings.bricklet_isolator import BrickletIsolator
 from brickv.plugin_system.plugins.red import RED
 from brickv import config
@@ -827,8 +830,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             set_device_info_value('connected_uid', connected_uid)
             set_device_info_value('position', position)
             set_device_info_value('hardware_version', hardware_version)
+
             if device_identifier != BrickRED.DEVICE_IDENTIFIER:
                 set_device_info_value('firmware_version_installed', firmware_version)
+
             set_device_info_value('device_identifier', device_identifier)
             set_device_info_value('enumeration_type', enumeration_type)
 
