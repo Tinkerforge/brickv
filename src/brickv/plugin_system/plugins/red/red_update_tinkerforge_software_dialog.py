@@ -99,7 +99,7 @@ Please make sure that your internet connection is working.'
 
     def cb_finished(self):
         self.dialog_session = False
-        self.red_plugin.get_bindings_versions_async()
+        self.red_plugin.query_bindings_versions()
 
     def handle_update_tf_software_install_cb(self):
         if self.update_info['processed'] == self.update_info['updates_total']:

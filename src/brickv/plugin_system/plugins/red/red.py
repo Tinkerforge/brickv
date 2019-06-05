@@ -28,6 +28,7 @@ import html
 import functools
 import traceback
 
+from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QMessageBox, QLabel, QVBoxLayout, QAction, QTextBrowser
 
 from brickv.plugin_system.plugin_base import PluginBase
@@ -100,13 +101,14 @@ class RED(PluginBase, Ui_RED):
 
         self.extension_configs = []
         self.completed_counter = 0
-        self.query_extensions()
+
+        QTimer.singleShot(500, functools.partial(self.query_image_version, functools.partial(self.query_extensions, self.query_bindings_versions)))
 
     def show_extension(self, extension_idx):
         self.tab_widget.setCurrentWidget(self.tab_extension)
         self.tab_widget.currentWidget().tab_widget.setCurrentIndex(extension_idx)
 
-    def query_extensions(self):
+    def query_extensions(self, next_function=None):
         red_file = [None, None]
 
         def cb_file_read(extension, result):
@@ -141,6 +143,9 @@ class RED(PluginBase, Ui_RED):
             if self.completed_counter == len(red_file):
                 self.tab_extension.extension_query_finished(self.extension_configs)
 
+                if next_function != None:
+                    QTimer.singleShot(500, next_function)
+
         def cb_file_open(extension, result):
             if not isinstance(result, REDFile):
                 return
@@ -151,8 +156,12 @@ class RED(PluginBase, Ui_RED):
         def cb_file_open_error(extension):
             self.extension_configs.append((extension, None))
             self.completed_counter += 1
+
             if self.completed_counter == len(red_file):
                 self.tab_extension.extension_query_finished(self.extension_configs)
+
+                if next_function != None:
+                    QTimer.singleShot(500, next_function)
 
         red_file[0] = REDFile(self.session)
         async_call(red_file[0].open,
@@ -184,10 +193,7 @@ class RED(PluginBase, Ui_RED):
         layout.addWidget(label_message)
         layout.addWidget(browser_trace)
 
-    def get_image_version_async(self):
-        if self.session == None:
-            return
-
+    def query_image_version(self, next_function=None):
         def read_image_version_async(red_file):
             return red_file.open('/etc/tf_image_version',
                                  REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING,
@@ -214,6 +220,9 @@ class RED(PluginBase, Ui_RED):
                     brickv.infos.update_info(self.device_info.uid)
             else:
                 self.label_discovering.setText('Error: Could not parse Image Version: {0}'.format(image_version))
+
+            if next_function != None:
+                QTimer.singleShot(500, next_function)
 
         self.label_discovering.setText('Discovering Image Version...')
         self.widget_discovering.show()
@@ -255,10 +264,7 @@ class RED(PluginBase, Ui_RED):
 
         brickv.infos.get_infos_changed_signal().emit(self.device_info.uid)
 
-    def get_bindings_versions_async(self):
-        if self.session == None:
-            return
-
+    def query_bindings_versions(self):
         self.script_manager.execute_script('update_tf_software_get_installed_versions',
                                            self.bindings_version_success)
 
@@ -339,11 +345,7 @@ class RED(PluginBase, Ui_RED):
         if self.session == None:
             return
 
-        if self.image_version.string == None:
-            # FIXME: this is should actually be sync to ensure that the image
-            #        version is known before it'll be used
-            self.get_image_version_async()
-        else:
+        if self.image_version.string != None:
             self.tab_widget_current_changed(self.tab_widget.currentIndex())
 
     def stop(self):

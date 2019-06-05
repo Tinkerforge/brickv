@@ -872,10 +872,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 something_changed_ref[0] = True
 
-                if device_identifier == BrickRED.DEVICE_IDENTIFIER and isinstance(plugin, RED):
-                    plugin.get_image_version_async()
-                    plugin.get_bindings_versions_async()
-
             # The plugin was paused before if it was reconnected.
             device_info.plugin.resume_plugin()
 
