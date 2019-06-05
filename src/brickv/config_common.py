@@ -59,3 +59,15 @@ try:
         INTERNAL = None
 except FileNotFoundError:
     INTERNAL = None
+
+try:
+    # Don't warn if the snapshot file is missing, as it is expected when run from source.
+    snapshot_path = get_resources_path('snapshot', warn_on_missing_file=False)
+
+    if snapshot_path is not None:
+        with open(snapshot_path, 'r') as f:
+            SNAPSHOT = f.read().strip()
+    else:
+        SNAPSHOT = None
+except FileNotFoundError:
+    SNAPSHOT = None

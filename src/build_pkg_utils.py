@@ -2,6 +2,7 @@ import os
 import shutil
 import subprocess
 import sys
+import zipfile
 from collections import namedtuple
 
 def system(command):
@@ -40,11 +41,14 @@ def get_commit_id():
     return commit_id
 
 class BuildPkgUtils:
-    def __init__(self, executable_name, platform, version, internal=False):
+    def __init__(self, executable_name, platform, version, internal=False, snapshot=False):
+        assert not (internal and snapshot)
+
         self.executable_name = executable_name
         self.platform = platform
         self.version = version
         self.internal = internal
+        self.snapshot = snapshot
         self.root_path = os.path.realpath(os.path.dirname(__file__))
         self.dist_path = os.path.join(self.root_path, 'dist')
         self.build_data_src_path = os.path.join(self.root_path, 'build_data', platform, executable_name)
@@ -66,7 +70,7 @@ class BuildPkgUtils:
     def unpack_sdist(self):
         if self.platform == 'windows':
             print('unpacking sdist zip file')
-            import zipfile
+
             with zipfile.ZipFile(os.path.join(self.dist_path, '{}-{}.zip'.format(self.executable_name, self.version))) as f:
                 f.extractall(os.path.join(self.dist_path))
         else:
@@ -107,8 +111,7 @@ class BuildPkgUtils:
         if os.path.exists(egg_info_path):
             shutil.rmtree(egg_info_path)
 
-
-    def build_pyinstaller_pkg(self, prepare_script=None, pre_sdist=lambda: None, pre_pyinstaller=lambda: None, internal=False):
+    def build_pyinstaller_pkg(self, prepare_script=None, pre_sdist=lambda: None, pre_pyinstaller=lambda: None):
         if self.platform not in ['macos', 'windows']:
             print('Building a {} package with pyinstaller is not supported.'.format(self.platform))
             sys.exit(1)

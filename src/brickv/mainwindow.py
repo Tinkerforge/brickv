@@ -92,7 +92,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         title = 'Brick Viewer ' + config.BRICKV_VERSION
 
         if config.INTERNAL != None:
-            title += '~{}'.format(config.INTERNAL)
+            title += '+internal~{}'.format(config.INTERNAL)
+        elif config.SNAPSHOT != None:
+            title += '+snapshot~{}'.format(config.SNAPSHOT)
 
         self.setWindowTitle(title)
 

@@ -41,9 +41,9 @@ if (sys.hexversion & 0xFF000000) != 0x03000000:
 import os
 import shutil
 import subprocess
-from brickv.config import BRICKV_VERSION
 
 from build_pkg_utils import *
+from brickv.config import BRICKV_VERSION
 
 def prepare_manifest(utils):
     print('preparing manifest')
@@ -84,20 +84,33 @@ def prepare_manifest(utils):
 
 def write_commit_id_and_patch_plugins(utils):
     if utils.internal:
+        kind = 'internal'
         commit_id = get_commit_id()
+
         with open(os.path.join(utils.unpacked_source_path, 'internal'), 'w') as f:
             f.write(commit_id)
     else:
-        commit_id = None
+        if utils.snapshot:
+            kind = 'snapshot'
+            commit_id = get_commit_id()
+
+            with open(os.path.join(utils.unpacked_source_path, 'snapshot'), 'w') as f:
+                f.write(commit_id)
+        else:
+            kind = None
+            commit_id = None
+
         print('patching plugins list for release')
+
         shutil.copy(os.path.join(utils.root_path, 'released_plugins.py'), os.path.join(utils.unpacked_source_path, 'plugin_system', 'plugins', '__init__.py'))
 
-    if commit_id is not None:
-        utils.version = BRICKV_VERSION + '~'+commit_id
+    if kind != None:
+        utils.version = BRICKV_VERSION + '+' + kind + '~' + commit_id
 
 def build_linux_pkg():
     print('building brickv Debian package')
-    utils = BuildPkgUtils('brickv', 'linux', BRICKV_VERSION, '--internal' in sys.argv)
+
+    utils = BuildPkgUtils('brickv', 'linux', BRICKV_VERSION, '--internal' in sys.argv, '--snapshot' in sys.argv)
 
     utils.run_sdist(pre_sdist=lambda: prepare_manifest(utils), prepare_script=os.path.join(utils.root_path, 'build_src.py'))
     utils.copy_build_data()
@@ -110,7 +123,7 @@ def build_linux_pkg():
 def build_pyinstaller_pkg():
     platform_dict = {'win32': 'windows', 'darwin': 'macos'}
 
-    utils = BuildPkgUtils('brickv', platform_dict[sys.platform], BRICKV_VERSION, '--internal' in sys.argv)
+    utils = BuildPkgUtils('brickv', platform_dict[sys.platform], BRICKV_VERSION, '--internal' in sys.argv, '--snapshot' in sys.argv)
     utils.exit_if_not_venv()
 
     utils.build_pyinstaller_pkg(prepare_script=os.path.join(utils.root_path, 'build_src.py'),
