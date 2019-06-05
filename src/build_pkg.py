@@ -47,6 +47,7 @@ from brickv.config import BRICKV_VERSION
 
 def prepare_manifest(utils):
     print('preparing manifest')
+
     bindings_path = os.path.join(utils.source_path, 'bindings')
     plugins_path = os.path.join(utils.source_path, 'plugin_system', 'plugins')
     excluded_patterns = []
@@ -136,6 +137,7 @@ BRICK_FLASH_VERSION = '1.0.1'
 
 def build_linux_flash_pkg():
     print('building brick-flash Debian package')
+
     utils = BuildPkgUtils('brick-flash', 'linux', BRICK_FLASH_VERSION, False)
 
     print('removing old build directories')
@@ -149,6 +151,7 @@ def build_linux_flash_pkg():
 
     print('creating brick-flash from template')
     os.makedirs(os.path.join(utils.build_data_dest_path, 'usr', 'bin'), exist_ok=True)
+
     with open(os.path.join(utils.root_path, 'brickv', 'samba.py'), 'r') as f:
         samba_lines = f.readlines()
 
@@ -170,20 +173,22 @@ def build_linux_flash_pkg():
 
     utils.build_debian_pkg()
 
-
 BRICK_LOGGER_VERSION = '2.1.0'
 
 def build_logger_zip():
     print('building brick-logger ZIP file')
+
     utils = BuildPkgUtils('brick-logger', 'linux', BRICK_LOGGER_VERSION, False)
 
     print('removing old build directories')
+
     if os.path.exists(utils.dist_path):
         shutil.rmtree(utils.dist_path)
 
     os.makedirs(utils.dist_path)
 
     print('creating brick-logger.py from template')
+
     replacements = {'<<VERSION>>': BRICK_LOGGER_VERSION}
 
     for module in ['configuration', 'data_logger', 'event_logger', 'loggable_devices', 'job', 'main', 'utils']:
@@ -205,6 +210,7 @@ def build_logger_zip():
     system(['chmod', '0755', 'dist/brick-logger.py'])
 
     print('building ZIP file')
+
     zip_name = 'brick_logger_{0}.zip'.format(BRICK_LOGGER_VERSION.replace('.', '_'))
 
     if os.path.exists(zip_name):
@@ -243,6 +249,8 @@ def main():
 # run 'python build_pkg.py' to build the windows/linux/macos package
 if __name__ == '__main__':
     exit_code = main()
+
     if exit_code == 0:
         print('done')
+
     sys.exit(exit_code)

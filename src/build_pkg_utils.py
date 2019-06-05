@@ -38,6 +38,7 @@ def get_commit_id():
         commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8')[:7]
     except Exception:
         commit_id = 'unknown'
+
     return commit_id
 
 class BuildPkgUtils:
@@ -65,6 +66,7 @@ class BuildPkgUtils:
 
     def copy_build_data(self):
         print('copying build data')
+
         shutil.copytree(self.build_data_src_path, self.build_data_dest_path)
 
     def unpack_sdist(self):
@@ -75,18 +77,21 @@ class BuildPkgUtils:
                 f.extractall(os.path.join(self.dist_path))
         else:
             print('unpacking sdist tar file')
+
             system(['tar', '-x', '-C', self.dist_path, '-f',
                     os.path.join(self.dist_path, '{}-{}.tar.gz'.format(self.executable_name, self.version)),
                     os.path.join('{}-{}'.format(self.executable_name, self.version), self.executable_name)])
 
         print('copying unpacked {} source'.format(self.executable_name))
+
         unpacked_path = os.path.join(self.dist_path, '{exec}-{version}'.format(exec=self.executable_name, version=self.version), self.executable_name)
         shutil.copytree(unpacked_path, self.unpacked_source_path)
 
-
     def run_sdist(self, pre_sdist=lambda: None, prepare_script=None, build_manifest_from_template=False):
         print('removing old build directories')
+
         egg_info_path = self.source_path + '.egg-info'
+
         if os.path.exists(self.dist_path):
             shutil.rmtree(self.dist_path)
 
@@ -95,6 +100,7 @@ class BuildPkgUtils:
 
         if prepare_script is not None:
             print('calling ' + prepare_script)
+
             if self.platform == 'windows':
                 system(['python', prepare_script])
             else:
@@ -103,6 +109,7 @@ class BuildPkgUtils:
         pre_sdist()
 
         print('calling setup.py sdist')
+
         if self.platform == 'windows':
             system(['python', os.path.join(self.root_path, 'setup.py'), 'sdist', '--formats=zip'])
         else:
@@ -117,7 +124,6 @@ class BuildPkgUtils:
             sys.exit(1)
 
         print('building {} {} package'.format(self.executable_name, self.platform))
-
         self.run_sdist(prepare_script=prepare_script, pre_sdist=pre_sdist)
 
         #self.copy_build_data()
@@ -134,9 +140,9 @@ class BuildPkgUtils:
         system(['pyinstaller', '--distpath', '../dist', '--workpath', '../build', 'main_folder.spec', '--'] + sys.argv + ['--build-data-path='+self.build_data_src_path])
         os.chdir(self.root_path)
 
-
     def build_debian_pkg(self):
         print('creating DEBIAN/control from template')
+
         installed_size = int(subprocess.check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split(b'\t')[0])
         control_path = os.path.join(self.build_data_dest_path, 'DEBIAN', 'control')
         specialize_template(control_path, control_path,
@@ -151,12 +157,16 @@ class BuildPkgUtils:
         system(['find', 'dist/linux', '-type', 'f', '-perm', '775', '-exec', 'chmod', '0755', '{}', ';'])
 
         print('changing owner to root')
+
         stat = os.stat('dist/linux')
         user, group = stat.st_uid, stat.st_gid
+
         system(['sudo', 'chown', '-R', 'root:root', 'dist/linux'])
 
         print('building Debian package')
+
         deb_name = '{executable}-{version}_all.deb'.format(executable=self.executable_name, version=self.version)
+
         system(['dpkg', '-b', 'dist/linux', deb_name])
 
         print('changing owner back to original user')
@@ -174,6 +184,7 @@ class BuildPkgUtils:
                                                      self.platform,
                                                      self.version.replace('.', '_'),
                                                      'exe' if self.platform == 'windows' else 'dmg'))
+
         shutil.copy(installer, self.root_path)
 
     def exit_if_not_venv(self):

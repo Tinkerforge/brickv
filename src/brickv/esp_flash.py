@@ -139,6 +139,7 @@ class ESPROM:
                     return
                 except:
                     time.sleep(0.05)
+
         raise FatalError('Failed to connect to ESP8266')
 
     """ Read memory address in target """
@@ -600,20 +601,23 @@ class TFSerial:
         if len(self.read_buffer) < length:
             try:
                 t = time.time()
+
                 while len(self.read_buffer) < length:
                     data, l = self.master.read_wifi2_serial_port(60)
                     data = data[:l]
                     self.read_buffer.extend(data)
+
                     if len(self.read_buffer) < length:
                         time.sleep(0.1)
+
                     if time.time() - t > self.timeout:
                         break
-
             except:
                 raise Exception('Failed to read data')
 
         ret = self.read_buffer[:length]
         self.read_buffer = self.read_buffer[length:]
+
         if sys.hexversion < 0x03000000:
             return ''.join(map(chr, ret))
         else:
