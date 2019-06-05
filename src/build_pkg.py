@@ -128,8 +128,8 @@ def build_pyinstaller_pkg():
     utils.exit_if_not_venv()
 
     utils.build_pyinstaller_pkg(prepare_script=os.path.join(utils.root_path, 'build_src.py'),
-                            pre_sdist=lambda: prepare_manifest(utils),
-                            pre_pyinstaller=lambda: write_commit_id_and_patch_plugins(utils))
+                                pre_sdist=lambda: prepare_manifest(utils),
+                                pre_pyinstaller=lambda: write_commit_id_and_patch_plugins(utils))
 
     utils.copy_build_artefact()
 
@@ -163,10 +163,8 @@ def build_linux_flash_pkg():
 
     specialize_template(os.path.join(utils.root_path, 'brickv', 'brick-flash.template'),
                         os.path.join(utils.build_data_dest_path, 'usr', 'bin', 'brick-flash'),
-                        {
-                            '<<VERSION>>': BRICK_FLASH_VERSION,
-                            '#### insert samba module here ####': ''.join(samba_lines)
-                        })
+                        {'<<VERSION>>': BRICK_FLASH_VERSION,
+                         '#### insert samba module here ####': ''.join(samba_lines)})
 
     print('changing binary mode to 0755')
     system(['chmod', '0755', os.path.join(utils.build_data_dest_path, 'usr', 'bin', 'brick-flash')])
@@ -240,6 +238,7 @@ def main():
         if sys.platform == 'darwin' and '--no-sign' not in sys.argv:
             print("Unlocking code sign keychain")
             system(['bash', '-c', 'security unlock-keychain /Users/$USER/Library/Keychains/login.keychain'])
+
         build_pyinstaller_pkg()
         return 0
 

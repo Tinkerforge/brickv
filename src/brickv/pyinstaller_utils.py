@@ -71,30 +71,35 @@ def by_name(name):
     return lambda full_name: os.path.basename(full_name) == name
 
 def win_sign(exe_path):
-    system([
-        "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x86\\signtool.exe", "sign",
-        "/v",
-        "/tr", "http://rfc3161timestamp.globalsign.com/advanced",
-        "/td", "sha256",
-        "/n", "Tinkerforge GmbH",
-        exe_path])
+    system(["C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x86\\signtool.exe", "sign", "/v",
+            "/tr", "http://rfc3161timestamp.globalsign.com/advanced",
+            "/td", "sha256",
+            "/n", "Tinkerforge GmbH",
+            exe_path])
     system(["C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x86\\signtool.exe", "verify", "/v", "/pa", exe_path])
 
 class PyinstallerUtils:
-    def __init__(self, name_words, version):
-        self.UNDERSCORE_NAME = '_'.join(name_words)
-        self.CAMEL_CASE_NAME = ' '.join([w.title() for w in name_words])
-        self.VERSION = version
+    def __init__(self, name_words):
+        self.underscore_name = '_'.join(name_words)
+        self.camel_case_name = ' '.join([w.title() for w in name_words])
+        self.version = None
 
         self.root_path = os.getcwd()
         self.build_path = PyInstaller.config.CONF['workpath']
         self.dist_path = PyInstaller.config.CONF['distpath']
 
         build_data_base_path = ''
-        for arg in sys.argv:
-            if arg.startswith('--build-data-path='):
-                build_data_base_path = arg.replace('--build-data-path=', '')
+        build_data_base_path = ''
 
+        for argument in sys.argv:
+            if argument.startswith('--build-data-path='):
+                build_data_base_path = argument.replace('--build-data-path=', '')
+            if argument.startswith('--version='):
+                self.version = argument.replace('--version=', '')
+
+        assert self.version != None
+
+        self.underscore_version = self.version.replace('.', '_').replace('+', '_').replace('~', '_')
         self.build_data_path = os.path.normpath(os.path.join(build_data_base_path))
 
         self.windows = sys.platform == 'win32'
@@ -108,13 +113,12 @@ class PyinstallerUtils:
         else:
             self.pathex = [self.root_path]
 
-
         if self.windows:
-            self.icon = os.path.join(self.build_data_path, self.UNDERSCORE_NAME+'-icon.ico')
+            self.icon = os.path.join(self.build_data_path, self.underscore_name + '-icon.ico')
         elif self.linux:
-            self.icon = self.UNDERSCORE_NAME+'-icon.png'
+            self.icon = self.underscore_name + '-icon.png'
         else:
-            self.icon = os.path.join(self.build_data_path, self.UNDERSCORE_NAME+'-icon.icns')
+            self.icon = os.path.join(self.build_data_path, self.underscore_name + '-icon.icns')
 
         self.datas = []
 
@@ -137,16 +141,16 @@ class PyinstallerUtils:
         return result
 
     def win_build_installer(self):
-        nsis_template_path = os.path.join(self.build_data_path, 'nsis', self.UNDERSCORE_NAME + '_installer.nsi.template')
-        nsis_path = os.path.join(self.dist_path, 'nsis', self.UNDERSCORE_NAME + '.nsi')
+        nsis_template_path = os.path.join(self.build_data_path, 'nsis', self.underscore_name + '_installer.nsi.template')
+        nsis_path = os.path.join(self.dist_path, 'nsis', self.underscore_name + '.nsi')
 
         specialize_template(nsis_template_path, nsis_path,
-                            {'<<DOT_VERSION>>': self.VERSION,
-                             '<<UNDERSCORE_VERSION>>': self.VERSION.replace('.', '_')})
+                            {'<<VERSION>>': self.version,
+                             '<<UNDERSCORE_VERSION>>': self.underscore_version})
 
         system(['C:\\Program Files (x86)\\NSIS\\makensis.exe', nsis_path])
 
-        installer = '{}_windows_{}.exe'.format(self.UNDERSCORE_NAME, self.VERSION.replace('.', '_'))
+        installer = '{}_windows_{}.exe'.format(self.underscore_name, self.underscore_version)
         installer_target_path = os.path.join(self.root_path, '..', installer)
 
         if os.path.exists(installer_target_path):
@@ -174,6 +178,7 @@ class PyinstallerUtils:
 
         self.datas = self.collect_data(by_ext(['bmp', 'jpg', 'png', 'svg', 'obj', 'mtl', 'frag', 'vert']))
         self.datas += self.collect_data(by_name('internal'))
+        self.datas += self.collect_data(by_name('snapshot'))
 
     def strip_binaries(self, binaries, patterns):
         return [x for x in binaries if all(pattern not in x[0].lower() for pattern in patterns)]
@@ -185,7 +190,7 @@ class PyinstallerUtils:
             self.post_generate_macos()
 
     def post_generate_windows(self):
-        exe_path = os.path.join(self.dist_path, self.UNDERSCORE_NAME+'.exe')
+        exe_path = os.path.join(self.dist_path, self.underscore_name + '.exe')
 
         if '--no-sign' not in sys.argv:
             win_sign(exe_path)
@@ -201,7 +206,7 @@ class PyinstallerUtils:
 
     def post_generate_macos(self):
         build_data = os.path.join(self.build_data_path, '*')
-        app_name = self.CAMEL_CASE_NAME + '.app'
+        app_name = self.camel_case_name + '.app'
         resources_path = os.path.join(self.dist_path, app_name, 'Contents', 'Resources')
         system(['bash', '-c', 'cp -R {} {}'.format(build_data.replace(" ", "\\ "), resources_path.replace(" ", "\\ "))])
 
@@ -213,7 +218,7 @@ class PyinstallerUtils:
 
         print('building disk image')
 
-        dmg_path = os.path.join(self.dist_path, '..', '{}_macos_{}.dmg'.format(self.UNDERSCORE_NAME, self.VERSION.replace('.', '_')))
+        dmg_path = os.path.join(self.dist_path, '..', '{}_macos_{}.dmg'.format(self.underscore_name, self.underscore_version))
 
         if os.path.exists(dmg_path):
             os.remove(dmg_path)
@@ -221,4 +226,4 @@ class PyinstallerUtils:
         os.mkdir(os.path.join(self.dist_path, 'dmg'))
 
         shutil.move(os.path.join(self.dist_path, app_name), os.path.join(self.dist_path, 'dmg'))
-        system(['hdiutil', 'create', '-fs', 'HFS+', '-volname', '{}-{}'.format(self.CAMEL_CASE_NAME.replace(" ", "-"), self.VERSION), '-srcfolder', os.path.join(self.dist_path, 'dmg'), dmg_path])
+        system(['hdiutil', 'create', '-fs', 'HFS+', '-volname', '{}-{}'.format(self.camel_case_name.replace(" ", "-"), self.version), '-srcfolder', os.path.join(self.dist_path, 'dmg'), dmg_path])

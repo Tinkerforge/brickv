@@ -7,16 +7,17 @@
 # Also under macOS the distutils_path attribute is not available, but the work-around seems
 # to be not necessary here.
 import distutils
+
 if hasattr(distutils, 'distutils_path') and distutils.distutils_path.endswith('__init__.py'):
     distutils.distutils_path = os.path.dirname(distutils.distutils_path)
 
 import os
 import sys
+
 sys.path.insert(0, '..') # Ensure to use the brickv source, not an installed version
 from brickv.pyinstaller_utils import *
-from brickv.config import BRICKV_VERSION
 
-utils = PyinstallerUtils(['brickv'], BRICKV_VERSION)
+utils = PyinstallerUtils(['brickv'])
 utils.prepare(os.path.join(utils.root_path, '..'))
 
 excludes = ['wx', 'gtk+', '_gtkagg', 'gtk', 'gdk', 'gtk2', 'gtk3', 'cairo', 'wayland', 'xinerama', 'share', 'icons', 'atk', 'pango', 'pil', 'PIL',
@@ -93,7 +94,7 @@ exe = EXE(pyz,
           a.scripts,
           [],
           exclude_binaries=True,
-          name=utils.UNDERSCORE_NAME + ('.exe' if utils.windows else ''),
+          name=utils.underscore_name + ('.exe' if utils.windows else ''),
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
@@ -110,13 +111,15 @@ coll = COLLECT(exe,
                name='')
 
 if utils.macos:
+    # CFBundleVersion and CFBundleShortVersionString can be most 18 chars long
+    # and have to match this format: \d+\.\d+\.\d+
     app = BUNDLE(coll,
-                 name=utils.CAMEL_CASE_NAME + '.app',
+                 name=utils.camel_case_name + '.app',
                  icon=utils.icon,
                  info_plist={
                      'LSMinimumSystemVersion': '10.11', # required for PyQt 5.11.3
-                     'CFBundleVersion': BRICKV_VERSION,
-                     'CFBundleShortVersionString': BRICKV_VERSION
+                     'CFBundleVersion': utils.version.split('+')[0],
+                     'CFBundleShortVersionString': utils.version.split('+')[0]
                  })
 
 utils.post_generate()

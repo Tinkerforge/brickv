@@ -88,6 +88,10 @@ class BuildPkgUtils:
 
         os.chdir(self.root_path)
 
+    @property
+    def underscore_version(self):
+        return self.version.replace('.', '_').replace('+', '_').replace('~', '_')
+
     def copy_build_data(self):
         print('copying build data')
 
@@ -108,7 +112,7 @@ class BuildPkgUtils:
 
         print('copying unpacked {} source'.format(self.executable_name))
 
-        unpacked_path = os.path.join(self.dist_path, '{exec}-{version}'.format(exec=self.executable_name, version=self.version), self.executable_name)
+        unpacked_path = os.path.join(self.dist_path, '{}-{}'.format(self.executable_name, self.version), self.executable_name)
         shutil.copytree(unpacked_path, self.unpacked_source_path)
 
     def run_sdist(self, pre_sdist=lambda: None, prepare_script=None, build_manifest_from_template=False):
@@ -161,7 +165,7 @@ class BuildPkgUtils:
 
         print('running pyinstaller')
         os.chdir(self.unpacked_source_path)
-        system(['pyinstaller', '--distpath', '../dist', '--workpath', '../build', 'main_folder.spec', '--'] + sys.argv + ['--build-data-path='+self.build_data_src_path])
+        system(['pyinstaller', '--distpath', '../dist', '--workpath', '../build', 'main_folder.spec', '--'] + sys.argv + ['--build-data-path=' + self.build_data_src_path, '--version=' + self.version])
         os.chdir(self.root_path)
 
     def build_debian_pkg(self):
@@ -171,7 +175,7 @@ class BuildPkgUtils:
         control_path = os.path.join(self.build_data_dest_path, 'DEBIAN', 'control')
         specialize_template(control_path, control_path,
                             {'<<VERSION>>': self.version,
-                            '<<INSTALLED_SIZE>>': str(installed_size)})
+                             '<<INSTALLED_SIZE>>': str(installed_size)})
 
         print('changing directory modes to 0755')
         system(['find', 'dist/linux', '-type', 'd', '-exec', 'chmod', '0755', '{}', ';'])
@@ -189,7 +193,7 @@ class BuildPkgUtils:
 
         print('building Debian package')
 
-        deb_name = '{executable}-{version}_all.deb'.format(executable=self.executable_name, version=self.version)
+        deb_name = '{}-{}_all.deb'.format(self.executable_name, self.version)
 
         system(['dpkg', '-b', 'dist/linux', deb_name])
 
@@ -206,7 +210,7 @@ class BuildPkgUtils:
         installer = os.path.join(self.build_data_dest_path,
                                 '{}_{}_{}.{}'.format(self.executable_name,
                                                      self.platform,
-                                                     self.version.replace('.', '_'),
+                                                     self.underscore_version,
                                                      'exe' if self.platform == 'windows' else 'dmg'))
 
         shutil.copy(installer, self.root_path)

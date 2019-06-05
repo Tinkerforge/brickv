@@ -133,7 +133,7 @@ FunctionEnd
 
 
 
-Name "Brick Viewer <<DOT_VERSION>>"
+Name "Brick Viewer <<VERSION>>"
 
 OutFile "brickv_windows_<<UNDERSCORE_VERSION>>.exe"
 
@@ -151,7 +151,7 @@ RequestExecutionLevel admin
 
 ;--------------------------------
 
-!define BRICKV_VERSION <<DOT_VERSION>>
+!define BRICKV_VERSION <<VERSION>>
 
 ;--------------------------------
 
