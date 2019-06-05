@@ -102,7 +102,7 @@ class RED(PluginBase, Ui_RED):
         self.extension_configs = []
         self.completed_counter = 0
 
-        QTimer.singleShot(500, functools.partial(self.query_image_version, functools.partial(self.query_extensions, self.query_bindings_versions)))
+        QTimer.singleShot(250, functools.partial(self.query_image_version, functools.partial(self.query_extensions, self.query_bindings_versions)))
 
     def show_extension(self, extension_idx):
         self.tab_widget.setCurrentWidget(self.tab_extension)
@@ -144,7 +144,7 @@ class RED(PluginBase, Ui_RED):
                 self.tab_extension.extension_query_finished(self.extension_configs)
 
                 if next_function != None:
-                    QTimer.singleShot(500, next_function)
+                    QTimer.singleShot(250, next_function)
 
         def cb_file_open(extension, result):
             if not isinstance(result, REDFile):
@@ -161,7 +161,7 @@ class RED(PluginBase, Ui_RED):
                 self.tab_extension.extension_query_finished(self.extension_configs)
 
                 if next_function != None:
-                    QTimer.singleShot(500, next_function)
+                    QTimer.singleShot(250, next_function)
 
         red_file[0] = REDFile(self.session)
         async_call(red_file[0].open,
@@ -222,7 +222,7 @@ class RED(PluginBase, Ui_RED):
                 self.label_discovering.setText('Error: Could not parse Image Version: {0}'.format(image_version))
 
             if next_function != None:
-                QTimer.singleShot(500, next_function)
+                QTimer.singleShot(250, next_function)
 
         self.label_discovering.setText('Discovering Image Version...')
         self.widget_discovering.show()
