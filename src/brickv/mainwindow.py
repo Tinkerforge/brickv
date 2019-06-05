@@ -89,12 +89,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.async_thread = async_start_thread(self)
 
-        title = 'Brick Viewer ' + config.BRICKV_VERSION
-
-        if config.INTERNAL != None:
-            title += '+internal~{}'.format(config.INTERNAL)
-        elif config.SNAPSHOT != None:
-            title += '+snapshot~{}'.format(config.SNAPSHOT)
+        title = 'Brick Viewer ' + config.BRICKV_FULL_VERSION
 
         self.setWindowTitle(title)
 

@@ -71,3 +71,10 @@ try:
         SNAPSHOT = None
 except FileNotFoundError:
     SNAPSHOT = None
+
+BRICKV_FULL_VERSION = BRICKV_VERSION
+
+if INTERNAL != None:
+    BRICKV_FULL_VERSION += '+internal~{}'.format(INTERNAL)
+elif SNAPSHOT != None:
+    BRICKV_FULL_VERSION += '+snapshot~{}'.format(SNAPSHOT)

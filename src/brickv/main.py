@@ -221,10 +221,7 @@ def main():
         splash = QSplashScreen(load_pixmap('splash.png'), Qt.WindowStaysOnTopHint)
         splash.show()
 
-        message = 'Starting Brick Viewer ' + config.BRICKV_VERSION
-
-        if config.INTERNAL != None:
-            message += '~{}'.format(config.INTERNAL)
+        message = 'Starting Brick Viewer ' + config.BRICKV_FULL_VERSION
 
         splash.showMessage(message, Qt.AlignHCenter | Qt.AlignBottom, Qt.white)
 
