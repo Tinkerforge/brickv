@@ -34,8 +34,6 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
 
         self.outdoor_weather = self.device
 
-        self.changing = False
-
         self.setupUi(self)
 
         self.cbe_identifiers_station = CallbackEmulator(self.outdoor_weather.get_station_identifiers,
@@ -51,8 +49,8 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
         self.combo_identifier_station.currentIndexChanged.connect(self.update_station)
         self.combo_identifier_sensor.currentIndexChanged.connect(self.update_sensor)
 
-        self.identifiers_station = []
-        self.identifiers_sensor = []
+        self.combo_identifier_station.setEnabled(False)
+        self.combo_identifier_sensor.setEnabled(False)
 
         self.data_timer_station = QTimer(self)
         self.data_timer_station.timeout.connect(self.update_station)
@@ -61,36 +59,41 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
         self.data_timer_sensor.timeout.connect(self.update_sensor)
 
     def update_station(self):
-        if len(self.identifiers_station) > 0:
+        if self.combo_identifier_station.isEnabled():
             try:
-                identifier = int(str(self.combo_identifier_station.itemText(self.combo_identifier_station.currentIndex())))
+                identifier = int(self.combo_identifier_station.currentText())
             except:
                 return
 
             async_call(self.outdoor_weather.get_station_data, identifier, self.get_station_data_async, self.increase_error_count)
         else:
-            pass # TODO
+            self.label_temperature_station.setText('---')
+            self.label_humidity_station.setText('---')
+            self.label_wind_speed_station.setText('---')
+            self.label_gust_speed_station.setText('---')
+            self.label_rain_level_station.setText('---')
+            self.label_battery_level_station.setText('---')
+            self.label_wind_direction_station.setText('---')
+            self.label_last_change_station.setText('---')
 
     def update_sensor(self):
-        if len(self.identifiers_sensor) > 0:
+        if self.combo_identifier_sensor.isEnabled():
             try:
-                identifier = int(str(self.combo_identifier_sensor.itemText(self.combo_identifier_sensor.currentIndex())))
+                identifier = int(self.combo_identifier_sensor.currentText())
             except:
                 return
 
             async_call(self.outdoor_weather.get_sensor_data, identifier, self.get_sensor_data_async, self.increase_error_count)
         else:
-            pass # TODO
+            self.label_temperature_sensor.setText('---')
+            self.label_humidity_sensor.setText('---')
+            self.label_last_change_sensor.setText('---')
 
     def cb_station_identifiers(self, identifiers):
-        if len(identifiers) == 0:
-            return
+        old_text = self.combo_identifier_station.currentText()
 
-        old_index = self.combo_identifier_station.currentIndex()
-        old_text = str(self.combo_identifier_station.itemText(old_index))
+        self.combo_identifier_station.setEnabled(False)
         self.combo_identifier_station.clear()
-
-        self.identifiers_station = identifiers
 
         for index, identifier in enumerate(identifiers):
             new_text = str(identifier)
@@ -99,17 +102,18 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
             if new_text == old_text:
                 self.combo_identifier_station.setCurrentIndex(index)
 
+        if self.combo_identifier_station.count() > 0:
+            self.combo_identifier_station.setEnabled(True)
+        else:
+            self.combo_identifier_station.addItem('No Stations found')
+
         self.update_station()
 
     def cb_sensor_identifiers(self, identifiers):
-        if len(identifiers) == 0:
-            return
+        old_text = self.combo_identifier_sensor.currentText()
 
-        old_index = self.combo_identifier_sensor.currentIndex()
-        old_text = str(self.combo_identifier_sensor.itemText(old_index))
+        self.combo_identifier_sensor.setEnabled(False)
         self.combo_identifier_sensor.clear()
-
-        self.identifiers_sensor = identifiers
 
         for index, identifier in enumerate(identifiers):
             new_text = str(identifier)
@@ -117,6 +121,11 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
 
             if new_text == old_text:
                 self.combo_identifier_sensor.setCurrentIndex(index)
+
+        if self.combo_identifier_sensor.count() > 0:
+            self.combo_identifier_sensor.setEnabled(True)
+        else:
+            self.combo_identifier_sensor.addItem('No Sensors found')
 
         self.update_sensor()
 
@@ -129,7 +138,7 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
         self.label_last_change_station.setText("{}".format(data.last_change))
 
         if data.battery_low:
-            self.label_battery_level_station.setText("<font color='red'>LOW</font>")
+            self.label_battery_level_station.setText("<font color='red'>Low</font>")
         else:
             self.label_battery_level_station.setText("OK")
 

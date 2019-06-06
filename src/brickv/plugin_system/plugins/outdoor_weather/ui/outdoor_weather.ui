@@ -95,42 +95,42 @@
        <item row="7" column="1" colspan="2">
         <widget class="QLabel" name="label_battery_level_station">
          <property name="text">
-          <string>TBD</string>
+          <string>---</string>
          </property>
         </widget>
        </item>
        <item row="8" column="1">
         <widget class="QLabel" name="label_last_change_station">
          <property name="text">
-          <string>TBD</string>
+          <string>---</string>
          </property>
         </widget>
        </item>
        <item row="3" column="1">
         <widget class="QLabel" name="label_wind_speed_station">
          <property name="text">
-          <string>TBD</string>
+          <string>---</string>
          </property>
         </widget>
        </item>
        <item row="6" column="1" colspan="2">
         <widget class="QLabel" name="label_wind_direction_station">
          <property name="text">
-          <string>TBD</string>
+          <string>---</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1">
         <widget class="QLabel" name="label_gust_speed_station">
          <property name="text">
-          <string>TBD</string>
+          <string>---</string>
          </property>
         </widget>
        </item>
        <item row="5" column="1">
         <widget class="QLabel" name="label_rain_level_station">
          <property name="text">
-          <string>TBD</string>
+          <string>---</string>
          </property>
         </widget>
        </item>
@@ -172,14 +172,14 @@
        <item row="1" column="1">
         <widget class="QLabel" name="label_temperature_station">
          <property name="text">
-          <string>TBD</string>
+          <string>---</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
         <widget class="QLabel" name="label_humidity_station">
          <property name="text">
-          <string>TBD</string>
+          <string>---</string>
          </property>
         </widget>
        </item>
@@ -229,7 +229,7 @@
         <widget class="QComboBox" name="combo_identifier_sensor">
          <item>
           <property name="text">
-           <string>No Sensor found yet</string>
+           <string>No Sensors found</string>
           </property>
          </item>
         </widget>
@@ -244,7 +244,7 @@
        <item row="8" column="5">
         <widget class="QLabel" name="label_last_change_sensor">
          <property name="text">
-          <string>TBD</string>
+          <string>---</string>
          </property>
         </widget>
        </item>
@@ -264,7 +264,7 @@
        <item row="1" column="5">
         <widget class="QLabel" name="label_temperature_sensor">
          <property name="text">
-          <string>TBD</string>
+          <string>---</string>
          </property>
         </widget>
        </item>
@@ -278,7 +278,7 @@
        <item row="2" column="5">
         <widget class="QLabel" name="label_humidity_sensor">
          <property name="text">
-          <string>TBD</string>
+          <string>---</string>
          </property>
         </widget>
        </item>
@@ -313,7 +313,7 @@
          </property>
          <item>
           <property name="text">
-           <string>No Station found yet</string>
+           <string>No Stations found</string>
           </property>
          </item>
         </widget>
