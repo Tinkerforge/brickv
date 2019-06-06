@@ -215,7 +215,10 @@ class RED(PluginBase, Ui_RED):
                 else:
                     self.widget_discovering.hide()
                     self.tab_widget.show()
-                    self.tab_widget_current_changed(self.tab_widget.currentIndex())
+
+                    if self.plugin_state == PluginBase.PLUGIN_STATE_RUNNING:
+                        self.tab_widget_current_changed(self.tab_widget.currentIndex())
+
                     self.device_info.firmware_version_installed = self.image_version.number + (0, )
                     brickv.infos.update_info(self.device_info.uid)
             else:
