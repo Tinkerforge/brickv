@@ -69,6 +69,7 @@ class REDTabSettings(REDTab, Ui_REDTabSettings):
 
                 if not okay:
                     self.label_discovering.setText('Error getting current services status:\n\n' + message)
+                    return
 
                 services_check_result = json.loads(result.stdout)
 
