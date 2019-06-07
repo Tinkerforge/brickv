@@ -1256,9 +1256,12 @@ class REDProcessBase(REDObject):
     _qtcb_state_changed = pyqtSignal(int, int, int)
 
     def _initialize(self):
-        self._state     = None
-        self._timestamp = None
-        self._exit_code = None
+        self._state                        = None
+        self._timestamp                    = None
+        self._exit_code                    = None
+        self._last_state_changed_state     = None
+        self._last_state_changed_timestamp = None
+        self._last_state_changed_exit_code = None
 
         self.state_changed_callback = None
 
@@ -1295,7 +1298,18 @@ class REDProcessBase(REDObject):
 
         state_changed_callback = self.state_changed_callback
 
-        if state_changed_callback is not None:
+        if state_changed_callback is not None and \
+           (self._last_state_changed_state != self._state or
+            self._last_state_changed_timestamp != self._timestamp or
+            self._last_state_changed_exit_code != self._exit_code):
+            # only trigger the callback if the state really changed since the
+            # last callback to deal with potential duplicated callbacks due to
+            # the need to fake state-changed callbacks to cover race-conditions.
+            # see the comment in REDProcess.spawn for more details
+            self._last_state_changed_state     = self._state
+            self._last_state_changed_timestamp = self._timestamp
+            self._last_state_changed_exit_code = self._exit_code
+
             #pylint: disable=not-callable
             state_changed_callback(self)
 
@@ -1494,7 +1508,13 @@ class REDProcess(REDProcessBase):
         # running. this means that the callback is triggered before the attach
         # call that sets up the handling for the process-state-changed callback
         # resulting in missing the callback. fake a process-state-changed callback
-        # here to ensure that code that relies on the callback doesn't get stuck
+        # here to ensure that code that relies on the callback doesn't get stuck.
+        # unfortunately, this has the disadvantage that this can result in a
+        # duplicated callback. this can happen if a state-changed callback is
+        # received between the attach call and the update-state call. this
+        # callback is then queued for execution on the main thread, while the
+        # faked callback for the same state information is executed right here
+        # outrunning the real callback
         self._cb_state_changed(self._state, self._timestamp, self._exit_code)
 
         return self

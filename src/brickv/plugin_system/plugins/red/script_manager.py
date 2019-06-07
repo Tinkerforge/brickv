@@ -94,6 +94,7 @@ class ScriptInstance(QObject):
 
     def report_result(self, result):
         assert result is not None, "result of script execution was None, this was refactored incompletly"
+
         # if result.error is not None then an error occurred during
         # script upload and the upload has to be done again
         if result.error is not None:
@@ -255,7 +256,9 @@ class ScriptManager:
         def cb_process_state_changed(si):
             # TODO: If we want to support returns > 1MB we need to do more work here,
             #       but it may not be necessary.
-            if si.abort:
+            if si.process == None:
+                pass # ignore stale state-changed callback
+            elif si.abort:
                 self._report_result_and_cleanup(si, ScriptResult('Script "{0}" aborted'.format(si.name), None, None, None))
             elif si.process.state == REDProcess.STATE_RUNNING:
                 pass # still running ignore it
