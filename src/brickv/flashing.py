@@ -46,8 +46,7 @@ from brickv.infos import get_version_string
 from brickv.utils import get_home_path, get_open_file_name, \
                          get_modeless_dialog_flags
 from brickv.esp_flash import ESPFlash, FatalError
-from brickv.infos import BrickREDInfo, FirmwareInfo, PluginInfo, \
-                         ExtensionFirmwareInfo, DeviceInfo, inventory
+from brickv.infos import BrickREDInfo, DeviceInfo, inventory
 from brickv.firmware_fetch import ERROR_DOWNLOAD
 from brickv.utils import get_main_window
 from brickv.devicesproxymodel import DevicesProxyModel
@@ -341,114 +340,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.fw_fetch_progress_bar.show()
 
         get_main_window().fw_version_fetcher.fetch_now()
-
-    def refresh_firmware_info(self, url_part, latest_version):
-        name = url_part
-
-        if name.endswith('_v2'):
-            name = name.replace('_v2', '_2.0')
-        elif name.endswith('_v3'):
-            name = name.replace('_v3', '_3.0')
-
-        if name in ['dc', 'imu', 'imu_2.0']:
-            name = name.upper()
-
-        words = name.split('_')
-        parts = []
-
-        for word in words:
-            parts.append(word[0].upper() + word[1:])
-
-        name = ' '.join(parts)
-
-        firmware_info = FirmwareInfo()
-        firmware_info.name = name
-        firmware_info.url_part = url_part
-        firmware_info.firmware_version_latest = latest_version
-
-        self.firmware_infos[url_part] = firmware_info
-
-    def refresh_plugin_info(self, url_part, latest_version):
-        name = url_part
-
-        if name.endswith('_v2'):
-            name = name.replace('_v2', '_2.0')
-        elif name.endswith('_v3'):
-            name = name.replace('_v3', '_3.0')
-
-        if name in ['gps', 'gps_2.0', 'ptc', 'ptc_2.0', 'rs232', 'rs232_2.0', 'rs485', 'co2', 'can', 'can_2.0', 'rgb_led', 'dmx', 'nfc']:
-            name = name.upper()
-        elif name.startswith('lcd_'):
-            name = name.replace('lcd_', 'LCD_')
-            if url_part.startswith('lcd_20x4_'):
-                name = name.replace('_v11', '_1.1').replace('_v12', '_1.2')
-        elif name.startswith('io'):
-            name = name.replace('io', 'IO-')
-        elif name.endswith('_ir'):
-            name = name.replace('_ir', '_IR')
-        elif name.endswith('_ir_2.0'):
-            name = name.replace('_ir_2.0', '_IR_2.0')
-        elif name.endswith('_us'):
-            name = name.replace('_us', '_US')
-        elif name.endswith('_us_2.0'):
-            name = name.replace('_us_2.0', '_US_2.0')
-        elif name.startswith('led_'):
-            name = name.replace('led_', 'LED_')
-        elif name.startswith('oled_'):
-            name = name.replace('oled_', 'OLED_')
-        elif name.startswith('uv_'):
-            name = name.replace('uv_', 'UV_')
-        elif name.startswith('rgb_led_'):
-            name = name.replace('rgb_led_', 'RGB_LED_')
-        elif name.startswith('rgb_'):
-            name = name.replace('rgb_', 'RGB_')
-        elif name.startswith('midi_'):
-            name = name.replace('midi_', 'MIDI_')
-
-        words = name.split('_')
-        parts = []
-
-        for word in words:
-            parts.append(word[0].upper() + word[1:])
-
-        name = ' '.join(parts)
-        name = name.replace('Voltage Current', 'Voltage/Current')
-        name = name.replace('Nfc Rfid', 'NFC/RFID')
-        name = name.replace('0 20ma', '0-20mA')
-        name = name.replace('Real Time', 'Real-Time')
-
-        plugin_info = PluginInfo()
-        plugin_info.name = name
-        plugin_info.url_part = url_part
-        plugin_info.firmware_version_latest = latest_version
-
-        self.plugin_infos[url_part] = plugin_info
-
-    def refresh_extension_firmware_info(self, url_part, latest_version):
-        name = url_part
-
-        if name.endswith('_v2'):
-            name = name.replace('_v2', '_2.0')
-        elif name.endswith('_v3'):
-            name = name.replace('_v3', '_3.0')
-
-        if name in ['wifi_2.0']:
-            name = name.upper()
-
-        words = name.split('_')
-        parts = []
-
-        for word in words:
-            parts.append(word[0].upper() + word[1:])
-
-        name = ' '.join(parts)
-
-        extension_firmware_info = ExtensionFirmwareInfo()
-        extension_firmware_info.name = name
-        extension_firmware_info.url_part = url_part
-        extension_firmware_info.firmware_version_latest = latest_version
-
-        self.extension_firmware_infos[url_part] = extension_firmware_info
 
     def update_bricks(self):
         self.combo_parent.clear()
