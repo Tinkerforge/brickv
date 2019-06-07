@@ -46,7 +46,8 @@ from brickv.infos import get_version_string
 from brickv.utils import get_home_path, get_open_file_name, \
                          get_modeless_dialog_flags
 from brickv.esp_flash import ESPFlash, FatalError
-from brickv import infos
+from brickv.infos import BrickREDInfo, FirmwareInfo, PluginInfo, \
+                         ExtensionFirmwareInfo, DeviceInfo, inventory
 from brickv.firmware_fetch import ERROR_DOWNLOAD
 from brickv.utils import get_main_window
 from brickv.devicesproxymodel import DevicesProxyModel
@@ -127,8 +128,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.button_extension_firmware_save.clicked.connect(self.extension_firmware_save_clicked)
         self.button_extension_firmware_browse.clicked.connect(self.extension_firmware_browse_clicked)
 
-        infos.get_infos_changed_signal().connect(self.update_bricks)
-        infos.get_infos_changed_signal().connect(self.update_extensions)
+        inventory.info_changed.connect(self.update_bricks)
+        inventory.info_changed.connect(self.update_extensions)
 
         self.label_update_tool.hide()
         self.label_no_update_connection.hide()
@@ -176,7 +177,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         get_main_window().fw_version_fetcher.fw_versions_avail.connect(self.fw_versions_fetched)
 
-        self.load_version_info(infos.get_latest_fws())
+        self.load_version_info(inventory.get_latest_fws())
 
         self.update_bricks()
         self.update_extensions()
@@ -185,9 +186,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
         name, uid, _current_version, _latest_version = [idx.sibling(idx.row(), i).data() for i in range(0, 4)]
 
         is_red_brick_brickv = "brick viewer" in name.lower() and idx.parent().data() is not None
-        is_red_brick_binding = "binding" in name.lower()
+        is_red_brick_bindings = "bindings" in name.lower()
 
-        if is_red_brick_brickv or is_red_brick_binding:
+        if is_red_brick_brickv or is_red_brick_bindings:
             parent = idx.parent()
 
             while parent.parent().data() is not None:
@@ -195,8 +196,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             uid = parent.sibling(parent.row(), 1).data()
 
-            if infos.get_info(uid).plugin is not None:
-                infos.get_info(uid).plugin.perform_action(3)
+            if inventory.get_info(uid).plugin is not None:
+                inventory.get_info(uid).plugin.perform_action(3)
 
             return
 
@@ -208,9 +209,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if len(uid) == 0:
             return # Tools and firmware-less extensions
 
-        device_info = infos.get_info(uid)
+        device_info = inventory.get_info(uid)
 
-        if isinstance(device_info, infos.BrickREDInfo):
+        if isinstance(device_info, BrickREDInfo):
             self.show_red_brick_update()
         elif not device_info.flashable_like_bricklet:
             self.show_brick_update(device_info.url_part)
@@ -247,6 +248,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         selected_extension_firmware = self.combo_extension_firmware.currentData()
 
         self.reset_version_info()
+
         if version_info is not None:
             self.tool_infos.update(version_info.tool_infos)
             self.firmware_infos.update(version_info.firmware_infos)
@@ -359,7 +361,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         name = ' '.join(parts)
 
-        firmware_info = infos.FirmwareInfo()
+        firmware_info = FirmwareInfo()
         firmware_info.name = name
         firmware_info.url_part = url_part
         firmware_info.firmware_version_latest = latest_version
@@ -415,7 +417,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         name = name.replace('0 20ma', '0-20mA')
         name = name.replace('Real Time', 'Real-Time')
 
-        plugin_info = infos.PluginInfo()
+        plugin_info = PluginInfo()
         plugin_info.name = name
         plugin_info.url_part = url_part
         plugin_info.firmware_version_latest = latest_version
@@ -441,7 +443,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         name = ' '.join(parts)
 
-        extension_firmware_info = infos.ExtensionFirmwareInfo()
+        extension_firmware_info = ExtensionFirmwareInfo()
         extension_firmware_info.name = name
         extension_firmware_info.url_part = url_part
         extension_firmware_info.firmware_version_latest = latest_version
@@ -452,23 +454,24 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.combo_parent.clear()
 
         has_no_parent_devices = False
-        for info in infos.get_device_infos():
+
+        for info in inventory.get_device_infos():
             if info.reverse_connection == None and info.flashable_like_bricklet:
                 has_no_parent_devices = True
 
         if has_no_parent_devices:
-            no_parent_info = infos.DeviceInfo()
+            no_parent_info = DeviceInfo()
             no_parent_info.name = 'None'
             no_parent_info.uid = '0'
 
-            for info in infos.get_device_infos():
+            for info in inventory.get_device_infos():
                 if info.reverse_connection == None and info.flashable_like_bricklet:
-                    no_parent_info.connections.append((info.position, info))
+                    no_parent_info.connections_add_item((info.position, info))
 
             self.combo_parent.addItem('None', no_parent_info)
 
-        for info in infos.get_device_infos():
-            if isinstance(info, infos.DeviceInfo) and len(info.bricklet_ports) > 0:
+        for info in inventory.get_device_infos():
+            if isinstance(info, DeviceInfo) and len(info.bricklet_ports) > 0:
                 self.combo_parent.addItem(info.get_combo_item(), info)
 
         if self.combo_parent.count() == 0:
@@ -967,7 +970,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.combo_port.addItem(port.upper(), (port, None))
 
         # Then we fill the non-standard ports (e.g. RPi or Isolator Bricklet)
-        for port, bricklet_info in brick_info.connections:
+        for port, bricklet_info in brick_info.connections_items():
             if port in brick_info.bricklet_ports:
                 continue
 
@@ -1480,7 +1483,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         bricks_to_reset = set()
 
-        for device_info in infos.get_bricklet_infos():
+        for device_info in inventory.get_bricklet_infos():
             if device_info.firmware_version_installed < device_info.firmware_version_latest:
                 plugin = self.download_bricklet_plugin(progress, device_info.url_part, device_info.plugin.has_comcu, device_info.name, device_info.firmware_version_latest)
 
@@ -1552,7 +1555,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             return QBrush(QColor(255, 160, 55)), True
 
-        self.load_version_info(infos.get_latest_fws())
+        self.load_version_info(inventory.get_latest_fws())
 
         if self.fw_fetch_progress_bar is not None:
             self.fw_fetch_progress_bar.cancel()
@@ -1571,9 +1574,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
             inst_replacement = '0.0.0'
             unknown_replacement = 'Unknown'
 
-            if info.url_part == 'wifi_v2' or info.type == 'tool' or info.type == 'binding':
+            if info.url_part == 'wifi_v2' or info.kind == 'tool' or info.kind == 'bindings':
                 inst_replacement = "Querying..."
-            elif info.type == "extension":
+            elif info.kind == "extension":
                 inst_replacement = ""
                 unknown_replacement = ''
 
@@ -1629,13 +1632,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         to_collapse = []
 
-        for info in infos.get_infos():
-            if isinstance(info, infos.DeviceInfo):
+        for info in inventory.get_infos():
+            if isinstance(info, DeviceInfo):
                 # If a device has a reverse connection, it will be handled as a child below.
                 if info.reverse_connection != None:
                     continue
 
-                is_red_brick = isinstance(info, infos.BrickREDInfo)
+                is_red_brick = isinstance(info, BrickREDInfo)
 
                 if is_red_brick:
                     replace_unknown = 'Querying...'
@@ -1650,7 +1653,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 color, update = get_color_for_device(info)
 
-                if update and info.type == 'bricklet':
+                if update and info.kind == 'bricklet':
                     is_update = True
 
                 for item in parent:
@@ -1698,7 +1701,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     # Restore cached is_update state, see above.
                     is_update = old_is_update
 
-            elif info.type == 'tool' and 'Brick Viewer' in info.name:
+            elif info.kind == 'tool' and 'Brick Viewer' in info.name:
                 parent = [QStandardItem(info.name),
                           QStandardItem(''),
                           QStandardItem(''),
@@ -1857,7 +1860,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         master = None
 
         # Find master from infos again, our info object may be outdated at this point
-        for info in infos.get_brick_infos():
+        for info in inventory.get_brick_infos():
             if info.uid == extension_info.master_info.uid:
                 master = info.plugin.device
 
@@ -1901,7 +1904,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.combo_extension.clear()
         items = {}
 
-        for info in infos.get_extension_infos():
+        for info in inventory.get_extension_infos():
             if info.extension_type == BrickMaster.EXTENSION_TYPE_WIFI2:
                 items[info.get_combo_item()] = info
 
@@ -1916,7 +1919,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
     def update_version_info(self):
         self.reset_version_info()
-        self.load_version_info(infos.get_latest_fws())
+        self.load_version_info(inventory.get_latest_fws())
         self.refresh_update_tree_view()
 
     def show_brick_update(self, url_part):

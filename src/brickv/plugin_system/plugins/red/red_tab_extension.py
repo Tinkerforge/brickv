@@ -370,6 +370,7 @@ class REDTabExtension(REDTab, Ui_REDTabExtension):
         for extension, config in result:
             if config is None:
                 continue
+
             try:
                 t = int(config['type'])
             except:
@@ -387,6 +388,7 @@ class REDTabExtension(REDTab, Ui_REDTabExtension):
                 self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1].start_update_data()
             else:
                 extension_name = 'Unknown Extension'
+
                 if t == 1:
                     extension_name = 'Chibi Extension'
                 elif t == 3:

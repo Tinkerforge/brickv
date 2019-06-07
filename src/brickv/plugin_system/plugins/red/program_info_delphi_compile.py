@@ -86,6 +86,7 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
             self.script_instance = None
 
             okay, message = check_script_result(result, stderr_is_redirected=True)
+
             if not okay:
                 self.log(message, pre=True)
                 self.log('...error' if not aborted else '...canceled', bold=True)
@@ -141,6 +142,7 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
             self.script_instance = None
 
             okay, message = check_script_result(result, stderr_is_redirected=True)
+
             if not okay:
                 self.log(remove_whitespace(message), pre=True)
                 self.log('...error' if not aborted else '...canceled', bold=True)

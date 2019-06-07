@@ -26,7 +26,9 @@ import threading
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from brickv import infos
+from brickv.infos import FirmwareInfo, PluginInfo, ExtensionFirmwareInfo, \
+                         BrickREDInfo, BindingsInfo, LatestFirmwares, ToolInfo, \
+                         get_bindings_name
 
 LATEST_VERSIONS_URL = 'http://download.tinkerforge.com/latest_versions.txt'
 
@@ -55,12 +57,12 @@ def refresh_firmware_info(url_part, latest_version):
 
     name = ' '.join(parts)
 
-    firmware_info = infos.FirmwareInfo()
-    firmware_info.name = name
-    firmware_info.url_part = url_part
-    firmware_info.firmware_version_latest = latest_version
+    info = FirmwareInfo()
+    info.name = name
+    info.url_part = url_part
+    info.firmware_version_latest = latest_version
 
-    return firmware_info
+    return info
 
 def refresh_plugin_info(url_part, latest_version):
     name = url_part
@@ -117,12 +119,12 @@ def refresh_plugin_info(url_part, latest_version):
     name = name.replace('Real Time', 'Real-Time')
     name = name.replace('E Paper', 'E-Paper')
 
-    plugin_info = infos.PluginInfo()
-    plugin_info.name = name
-    plugin_info.url_part = url_part
-    plugin_info.firmware_version_latest = latest_version
+    info = PluginInfo()
+    info.name = name
+    info.url_part = url_part
+    info.firmware_version_latest = latest_version
 
-    return plugin_info
+    return info
 
 def refresh_extension_firmware_info(url_part, latest_version):
     name = url_part
@@ -143,36 +145,36 @@ def refresh_extension_firmware_info(url_part, latest_version):
 
     name = ' '.join(parts)
 
-    extension_firmware_info = infos.ExtensionFirmwareInfo()
-    extension_firmware_info.name = name
-    extension_firmware_info.url_part = url_part
-    extension_firmware_info.firmware_version_latest = latest_version
+    info = ExtensionFirmwareInfo()
+    info.name = name
+    info.url_part = url_part
+    info.firmware_version_latest = latest_version
 
-    return extension_firmware_info
+    return info
 
 def refresh_red_image_info(url_part, latest_version):
-    red_image_info = infos.BrickREDInfo()
-    red_image_info.name = "RED Brick Image (" + url_part + ")"
-    red_image_info.url_part = url_part
-    red_image_info.firmware_version_latest = latest_version
+    info = BrickREDInfo()
+    info.name = "RED Brick Image (" + url_part + ")"
+    info.url_part = url_part
+    info.firmware_version_latest = latest_version
 
-    return red_image_info
+    return info
 
-# Returns None if the binding is not supported on the red brick
-def refresh_binding_info(url_part, latest_version):
-    red_image_info = infos.BindingInfo()
-    red_image_info.name = infos.get_bindings_name(url_part)
+# Returns None if the bindings is not supported on the red brick
+def refresh_bindings_info(url_part, latest_version):
+    info = BindingsInfo()
+    info.name = get_bindings_name(url_part)
 
-    if red_image_info.name is None:
+    if info.name is None:
         return None
 
-    red_image_info.url_part = url_part
-    red_image_info.firmware_version_latest = latest_version
+    info.url_part = url_part
+    info.firmware_version_latest = latest_version
 
-    return red_image_info
+    return info
 
 def fetch_latest_fw_versions(report_error_fn):
-    result = infos.LatestFirmwares({}, {}, {}, {}, {}, {})
+    result = LatestFirmwares({}, {}, {}, {}, {}, {})
 
     try:
         response = urllib.request.urlopen(LATEST_VERSIONS_URL, timeout=10)
@@ -209,7 +211,7 @@ def fetch_latest_fw_versions(report_error_fn):
             return None
 
         if parts[0] == 'tools':
-            tool_info = infos.ToolInfo()
+            tool_info = ToolInfo()
             tool_info.firmware_version_latest = latest_version
 
             result.tool_infos[parts[1]] = tool_info
@@ -222,10 +224,10 @@ def fetch_latest_fw_versions(report_error_fn):
         elif parts[0] == 'red_images':
             result.red_image_infos[parts[1]] = refresh_red_image_info(parts[1], latest_version)
         elif parts[0] == 'bindings':
-            info = refresh_binding_info(parts[1], latest_version)
+            info = refresh_bindings_info(parts[1], latest_version)
 
             if info is not None:
-                result.binding_infos[parts[1]] = info
+                result.bindings_infos[parts[1]] = info
 
     return result
 

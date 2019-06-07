@@ -128,6 +128,7 @@ class REDTabVersions(REDTab, Ui_REDTabVersions):
     def update_main(self):
         def cb_update_main(result):
             okay, _ = check_script_result(result)
+
             if not okay:
                 return
 

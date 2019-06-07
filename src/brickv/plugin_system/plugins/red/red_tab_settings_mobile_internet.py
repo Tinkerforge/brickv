@@ -260,6 +260,7 @@ class REDTabSettingsMobileInternet(QWidget, Ui_REDTabSettingsMobileInternet):
             return
 
         okay, _ = check_script_result(result)
+
         if not okay:
             self.status_refresh_timer.start(INTERVAL_REFRESH_STATUS)
             return

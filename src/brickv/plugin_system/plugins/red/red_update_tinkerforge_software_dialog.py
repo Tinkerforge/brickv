@@ -34,11 +34,9 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QFont
 
 from brickv.async_call import async_call
-import brickv.infos
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.ui_red_update_tinkerforge_software import Ui_REDUpdateTinkerforgeSoftware
 from brickv.plugin_system.plugins.red.script_manager import check_script_result
-
 
 class REDUpdateTinkerforgeSoftwareDialog(QDialog, Ui_REDUpdateTinkerforgeSoftware):
     # States.
@@ -123,6 +121,7 @@ Please make sure that your internet connection is working.'
             return
 
         okay, message = check_script_result(result, add_stdout_to_message=True)
+
         if not okay:
             self.update_info['error'] = True
             self.update_info['error_messages'] += message + '\n\n'
@@ -144,10 +143,10 @@ Please make sure that your internet connection is working.'
                     continue
 
                 display_name = d['display_name']
-
                 break
 
         okay, message = check_script_result(result, add_stdout_to_message=True)
+
         if not okay:
             self.update_info['error'] = True
             self.update_info['error_messages'] += 'Error while installing ' + display_name + ':\n' + message + '\n\n'
@@ -332,6 +331,7 @@ Please make sure that your internet connection is working.'
             def cb_update_tf_software_mkdtemp(result):
                 if not self.dialog_session:
                     return
+
                 okay, message = check_script_result(result)
 
                 if not okay:
@@ -678,6 +678,7 @@ Please make sure that your internet connection is working.'
                 self.set_current_state(self.STATE_NO_UPDATES_AVAILABLE)
 
                 okay, message = check_script_result(result)
+
                 if not okay:
                     msg = self.MESSAGE_ERR_GET_INSTALLED_VERSIONS + ':\n' + message + '\n\n'
                     self.set_current_state(self.STATE_INIT)

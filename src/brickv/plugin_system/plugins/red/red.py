@@ -38,7 +38,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import ScriptManager, check_script_result
 from brickv.async_call import async_call
 from brickv.plugin_system.plugins.red.red_update_tinkerforge_software_dialog import REDUpdateTinkerforgeSoftwareDialog
-import brickv.infos
+from brickv.infos import BindingsInfo, ToolInfo, ExtensionInfo, get_bindings_name, inventory
 
 class ImageVersion:
     string = None
@@ -104,19 +104,20 @@ class RED(PluginBase, Ui_RED):
 
         QTimer.singleShot(250, functools.partial(self.query_image_version, functools.partial(self.query_extensions, self.query_bindings_versions)))
 
-    def show_extension(self, extension_idx):
+    def show_extension(self, ext):
         self.tab_widget.setCurrentWidget(self.tab_extension)
-        self.tab_widget.currentWidget().tab_widget.setCurrentIndex(extension_idx)
+        self.tab_widget.currentWidget().tab_widget.setCurrentIndex(ext)
 
     def query_extensions(self, next_function=None):
         red_file = [None, None]
 
-        def cb_file_read(extension, result):
-            red_file[extension].release()
+        def cb_file_read(ext, result):
+            red_file[ext].release()
             self.completed_counter += 1
 
             if result.error == None:
                 config = config_parser.parse(result.data.decode('utf-8'))
+
                 try:
                     t = int(config['type'])
                 except:
@@ -129,16 +130,19 @@ class RED(PluginBase, Ui_RED):
                     4: 'Ethernet Extension',
                     5: 'WIFI Extension 2.0'
                 }
+
                 name = names[t] if t in names else 'Unknown'
 
-                extension = 'ext'+str(extension)
-                self.device_info.extensions[extension] = brickv.infos.ExtensionInfo()
-                self.device_info.extensions[extension].name = name
-                self.device_info.extensions[extension].extension_type = name + ' Extension'
-                self.device_info.extensions[extension].position = extension
-                self.device_info.extensions[extension].master_info = self.device_info
+                extension = 'ext' + str(ext)
+                self.device_info.extensions[ext] = ExtensionInfo()
+                self.device_info.extensions[ext].name = name
+                self.device_info.extensions[ext].extension_type = name + ' Extension'
+                self.device_info.extensions[ext].position = extension
+                self.device_info.extensions[ext].master_info = self.device_info
 
-                self.extension_configs.append((extension, config))
+                self.extension_configs.append((ext, config))
+
+                inventory.sync()
 
             if self.completed_counter == len(red_file):
                 self.tab_extension.extension_query_finished(self.extension_configs)
@@ -146,15 +150,15 @@ class RED(PluginBase, Ui_RED):
                 if next_function != None:
                     QTimer.singleShot(250, next_function)
 
-        def cb_file_open(extension, result):
+        def cb_file_open(ext, result):
             if not isinstance(result, REDFile):
                 return
 
-            red_file[extension] = result
-            red_file[extension].read_async(red_file[extension].length, lambda x: cb_file_read(extension, x))
+            red_file[ext] = result
+            red_file[ext].read_async(red_file[ext].length, lambda x: cb_file_read(ext, x))
 
-        def cb_file_open_error(extension):
-            self.extension_configs.append((extension, None))
+        def cb_file_open_error(ext):
+            self.extension_configs.append((ext, None))
             self.completed_counter += 1
 
             if self.completed_counter == len(red_file):
@@ -220,7 +224,7 @@ class RED(PluginBase, Ui_RED):
                         self.tab_widget_current_changed(self.tab_widget.currentIndex())
 
                     self.device_info.firmware_version_installed = self.image_version.number + (0, )
-                    brickv.infos.update_info(self.device_info.uid)
+                    inventory.sync()
             else:
                 self.label_discovering.setText('Error: Could not parse Image Version: {0}'.format(image_version))
 
@@ -248,24 +252,27 @@ class RED(PluginBase, Ui_RED):
         get_main_window().hide_status('red_bindings_version_success_error')
 
         self.device_info.bindings_infos = []
+
         for url_part, version in versions['bindings'].items():
-            info = brickv.infos.BindingInfo()
-            info.name = brickv.infos.get_bindings_name(url_part)
-            info.url_part = url_part
-            info.firmware_version_installed = tuple(int(i) for i in version.split('.'))
+            bindings_info = BindingsInfo()
+            bindings_info.name = get_bindings_name(url_part)
+            bindings_info.url_part = url_part
+            bindings_info.firmware_version_installed = tuple(int(i) for i in version.split('.'))
 
-            brickv.infos.add_latest_fw(info)
-            self.device_info.bindings_infos.append(info)
+            bindings_info.update_firmware_version_latest()
 
-        red_brickv_info = brickv.infos.ToolInfo()
-        red_brickv_info.name = 'Brick Viewer'
-        red_brickv_info.url_part = 'brickv'
-        red_brickv_info.firmware_version_installed = tuple(int(i) for i in versions['brickv'].split('.'))
+            self.device_info.bindings_infos.append(bindings_info)
 
-        brickv.infos.add_latest_fw(red_brickv_info)
-        self.device_info.brickv_info = red_brickv_info
+        brickv_info = ToolInfo()
+        brickv_info.name = 'Brick Viewer'
+        brickv_info.url_part = 'brickv'
+        brickv_info.firmware_version_installed = tuple(int(i) for i in versions['brickv'].split('.'))
 
-        brickv.infos.get_infos_changed_signal().emit(self.device_info.uid)
+        brickv_info.update_firmware_version_latest()
+
+        self.device_info.brickv_info = brickv_info
+
+        inventory.sync()
 
     def query_bindings_versions(self):
         self.script_manager.execute_script('update_tf_software_get_installed_versions',
@@ -309,8 +316,8 @@ class RED(PluginBase, Ui_RED):
         self.update_tab_button.clicked.disconnect()
         self.update_tab_button.clicked.connect(lambda: get_main_window().show_red_brick_update())
 
-    # Overrides PluginBase.device_infos_changed
-    def device_infos_changed(self, uid):
+    # Overrides PluginBase.device_info_changed
+    def device_info_changed(self, uid):
         if uid != self.device_info.uid:
             return
 
@@ -320,7 +327,7 @@ class RED(PluginBase, Ui_RED):
         # The rationale here is the same as with the Master Brick:
         # Prioritize bindings (and brickv) updates over image updates,
         # as they are easier to install. Also when they are updated,
-        # device_infos_changed is triggered again, so the image update
+        # device_info_changed is triggered again, so the image update
         # will be shown afterwards.
         # A special case is the update to image 1.14: This adds
         # support for the Brick Viewer version 2.4.0 and should therefore

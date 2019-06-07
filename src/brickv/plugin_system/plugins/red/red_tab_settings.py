@@ -66,6 +66,7 @@ class REDTabSettings(REDTab, Ui_REDTabSettings):
         if not self.service_state.fetched:
             def cb_settings_services_check(result):
                 okay, message = check_script_result(result)
+
                 if not okay:
                     self.label_discovering.setText('Error getting current services status:\n\n' + message)
 

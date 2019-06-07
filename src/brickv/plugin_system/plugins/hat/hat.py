@@ -28,7 +28,7 @@ from brickv.plugin_system.plugins.hat.ui_hat import Ui_HAT
 from brickv.async_call import async_call
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.callback_emulator import CallbackEmulator
-from brickv import infos
+from brickv.infos import inventory
 from brickv.utils import get_main_window
 
 class HAT(COMCUPluginBase, Ui_HAT):
@@ -70,7 +70,7 @@ class HAT(COMCUPluginBase, Ui_HAT):
             get_main_window().show_plugin(uid)
 
     def update_bricklets(self):
-        info = infos.get_info(self.uid)
+        info = inventory.get_info(self.uid)
 
         if info == None:
             return

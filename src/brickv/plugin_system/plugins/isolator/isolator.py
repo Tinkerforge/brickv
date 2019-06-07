@@ -26,7 +26,7 @@ from brickv.plugin_system.plugins.isolator.ui_isolator import Ui_Isolator
 from brickv.bindings.bricklet_isolator import BrickletIsolator
 from brickv.callback_emulator import CallbackEmulator
 
-from brickv import infos
+from brickv.infos import inventory
 from brickv.utils import get_main_window
 
 class Isolator(COMCUPluginBase, Ui_Isolator):
@@ -48,7 +48,7 @@ class Isolator(COMCUPluginBase, Ui_Isolator):
         self.label_messages_from_bricklet.setText(str(statistics.messages_from_bricklet))
 
         try:
-            name = infos.get_info(statistics.connected_bricklet_uid).plugin.device_class.DEVICE_DISPLAY_NAME
+            name = inventory.get_info(statistics.connected_bricklet_uid).plugin.device_class.DEVICE_DISPLAY_NAME
         except:
             name = None
 

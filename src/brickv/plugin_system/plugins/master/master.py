@@ -38,7 +38,7 @@ from brickv.plugin_system.plugins.master.ethernet import Ethernet
 from brickv.plugin_system.plugins.master.wifi2 import Wifi2
 from brickv.bindings.brick_master import BrickMaster
 from brickv.async_call import async_call
-from brickv import infos
+from brickv.infos import ExtensionInfo, inventory
 from brickv.utils import get_main_window, format_current
 from brickv.tab_window import IconButton
 from brickv.load_pixmap import load_pixmap
@@ -61,7 +61,7 @@ class Master(PluginBase, Ui_Master):
 
         self.extension_type = None
 
-        self.extensions = []
+        self.extension_tabs = []
 
         self.wifi2_firmware_version = None
 
@@ -121,7 +121,8 @@ class Master(PluginBase, Ui_Master):
         if self.wifi2_tab_idx is not None:
             self.tab_widget.tabBar().setTabButton(self.wifi2_tab_idx, QTabBar.LeftSide, self.wifi2_update_button)
             self.wifi2_update_button.show()
-            for ext in self.extensions:
+
+            for ext in self.extension_tabs:
                 if isinstance(ext, Wifi2):
                     ext.wifi_update_firmware_button.show()
 
@@ -135,7 +136,8 @@ class Master(PluginBase, Ui_Master):
 
         if self.wifi2_update_button is not None:
             self.wifi2_update_button.hide()
-            for ext in self.extensions:
+
+            for ext in self.extension_tabs:
                 if isinstance(ext, Wifi2):
                     ext.wifi_update_firmware_button.hide()
 
@@ -160,10 +162,8 @@ class Master(PluginBase, Ui_Master):
         if self.device_info.tab_window is not None:
             self.device_info.tab_window.button_update.show()
 
-
-
-    # overrides PluginBase.device_infos_changed
-    def device_infos_changed(self, uid):
+    # overrides PluginBase.device_info_changed
+    def device_info_changed(self, uid):
         if uid != self.device_info.uid:
             return
 
@@ -194,7 +194,7 @@ class Master(PluginBase, Ui_Master):
             self.show_master_update()
 
         # Intentionally override possible Master Brick update notification: The Extension update is easier for users
-        # so they are more likely to update at least the Extension. Also when the Extension is updated, device_infos_changed
+        # so they are more likely to update at least the Extension. Also when the Extension is updated, device_info_changed
         # will be called again, then notifying the user of the Master Brick update.
         if wifi_update_avail:
             self.show_wifi_update()
@@ -213,7 +213,7 @@ class Master(PluginBase, Ui_Master):
             else:
                 return # This should never be the case
 
-            self.device_info.extensions[ext] = infos.ExtensionInfo()
+            self.device_info.extensions[ext] = ExtensionInfo()
             self.device_info.extensions[ext].name = name
             self.device_info.extensions[ext].extension_type = extension_type
             self.device_info.extensions[ext].position = ext
@@ -221,6 +221,8 @@ class Master(PluginBase, Ui_Master):
 
             if extension_type == self.master.EXTENSION_TYPE_WIFI2:
                 self.device_info.extensions[ext].url_part = 'wifi_v2'
+
+                self.device_info.extensions[ext].update_firmware_version_latest()
 
                 label = QLabel('Waiting for WIFI Extension 2.0 firmware version...')
                 label.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
@@ -241,11 +243,11 @@ class Master(PluginBase, Ui_Master):
                 # WIFI2 extension present.
                 async_call(self.master.get_wifi2_firmware_version, None, functools.partial(self.get_wifi2_firmware_version_async, ext), self.increase_error_count, delay=2.0)
 
-            infos.update_info(self.uid)
+            inventory.sync()
 
         def get_connection_type_async(connection_type):
             self.device_info.connection_type = connection_type
-            infos.update_info(self.uid)
+            inventory.sync()
 
         async_call(self.master.is_chibi_present, None, functools.partial(is_present_async, self.master.EXTENSION_TYPE_CHIBI, 'Chibi Extension'), self.increase_error_count)
         async_call(self.master.is_rs485_present, None, functools.partial(is_present_async, self.master.EXTENSION_TYPE_RS485, 'RS485 Extension'), self.increase_error_count)
@@ -262,13 +264,14 @@ class Master(PluginBase, Ui_Master):
 
     def get_wifi2_firmware_version_async(self, ext, version):
         self.wifi2_firmware_version = version
+
         self.device_info.extensions[ext].firmware_version_installed = version
 
-        # Start the plugin before sending the device_infos_changed signal, so that
-        # the slot registered to the signal will already see the plugin in self.extensions.
+        # Start the plugin before sending the device_info_changed signal, so that
+        # the slot registered to the signal will already see the plugin in self.extension_tabs.
         self.wifi2_start()
-        infos.update_info(self.uid)
-        get_main_window().update_tree_view() # FIXME: this is kind of a hack
+
+        inventory.sync()
 
     def wifi2_start(self):
         if self.wifi2_start_done or self.wifi2_firmware_version == None:
@@ -279,7 +282,7 @@ class Master(PluginBase, Ui_Master):
         wifi2 = Wifi2(self.wifi2_firmware_version, self)
         wifi2.start()
 
-        self.extensions.append(wifi2)
+        self.extension_tabs.append(wifi2)
 
         wrapper = self.tab_widget.widget(self.wifi2_tab_idx)
         wrapper.layout().replaceWidget(wrapper.layout().itemAt(0).widget(), wifi2)
@@ -297,28 +300,28 @@ class Master(PluginBase, Ui_Master):
         ethernet = Ethernet(self)
         ethernet.start()
 
-        self.extensions.append(ethernet)
+        self.extension_tabs.append(ethernet)
         self.add_non_wifi2_tab(ethernet, 'Ethernet')
 
     def wifi_start(self):
         wifi = Wifi(self)
         wifi.start()
 
-        self.extensions.append(wifi)
+        self.extension_tabs.append(wifi)
         self.add_non_wifi2_tab(wifi, 'WIFI')
 
     def rs485_start(self):
         rs485 = RS485(self)
         rs485.start()
 
-        self.extensions.append(rs485)
+        self.extension_tabs.append(rs485)
         self.add_non_wifi2_tab(rs485, 'RS485')
 
     def chibi_start(self):
         chibi = Chibi(self)
         chibi.start()
 
-        self.extensions.append(chibi)
+        self.extension_tabs.append(chibi)
         self.add_non_wifi2_tab(chibi, 'Chibi')
 
     def start(self):
@@ -357,12 +360,12 @@ class Master(PluginBase, Ui_Master):
         self.update_timer.stop()
 
     def destroy(self):
-        for extension in self.extensions:
-            extension.destroy()
-            extension.hide()
-            extension.setParent(None)
+        for ext in self.extension_tabs:
+            ext.destroy()
+            ext.hide()
+            ext.setParent(None)
 
-        self.extensions = []
+        self.extension_tabs = []
 
         if self.extension_type:
             self.extension_type.close()
@@ -378,8 +381,8 @@ class Master(PluginBase, Ui_Master):
         async_call(self.master.get_stack_voltage, None, self.get_stack_voltage_async, self.increase_error_count)
         async_call(self.master.get_stack_current, None, self.get_stack_current_async, self.increase_error_count)
 
-        for extension in self.extensions:
-            extension.update_data()
+        for ext in self.extension_tabs:
+            ext.update_data()
 
     def get_stack_voltage_async(self, voltage):
         self.stack_voltage_label.setText('{:g} V'.format(round(voltage / 1000.0, 1)))

@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import QDialog
 
 from brickv.ui_advanced import Ui_Advanced
 from brickv.utils import get_modeless_dialog_flags
-from brickv import infos
+from brickv.infos import inventory
 from brickv.bindings import ip_connection
 
 NO_BRICK = 'No Brick found'
@@ -48,7 +48,7 @@ class AdvancedWindow(QDialog, Ui_Advanced):
         self.combo_brick.currentIndexChanged.connect(self.brick_changed)
         self.check_enable_calibration.stateChanged.connect(self.enable_calibration_changed)
 
-        infos.get_infos_changed_signal().connect(self.update_bricks)
+        inventory.info_changed.connect(self.update_bricks)
 
         self.update_bricks()
 
@@ -56,7 +56,7 @@ class AdvancedWindow(QDialog, Ui_Advanced):
         self.brick_infos = []
         self.combo_brick.clear()
 
-        for info in infos.get_brick_infos():
+        for info in inventory.get_brick_infos():
             self.brick_infos.append(info)
             self.combo_brick.addItem(info.get_combo_item())
 
@@ -107,7 +107,7 @@ class AdvancedWindow(QDialog, Ui_Advanced):
         info = self.brick_infos[index]
 
         for key in info.bricklet_ports:
-            if not key in info.connections_keys() or info.connections_get(key)[0].type != 'bricklet':
+            if not key in info.connections_keys() or info.connections_get(key)[0].kind != 'bricklet':
                 self.combo_port.addItem(key.upper())
             else:
                 self.combo_port.addItem('{0}: {1}'.format(key.upper(), info.connections_get(key)[0].get_combo_item()))

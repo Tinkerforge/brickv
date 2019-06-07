@@ -28,7 +28,7 @@ from brickv.bindings.ip_connection import IPConnection
 from brickv.plugin_system.plugins.master.ui_rs485 import Ui_RS485
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
-from brickv import infos
+from brickv.infos import inventory
 
 class RS485(QWidget, Ui_RS485):
     def __init__(self, parent):
@@ -77,13 +77,13 @@ class RS485(QWidget, Ui_RS485):
                 address_slave.append(str(self.update_address_slave))
 
         address_slave_text = ', '.join(address_slave)
-
         typ = 0
+
         if self.update_address == 0:
             typ = 1
 
             # trigger enumerate for rs485 slaves
-            if infos.get_info(self.parent.uid).enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED:
+            if inventory.get_info(self.parent.uid).enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED:
                 self.parent.ipcon.enumerate()
 
         self.lineedit_slave_addresses.setText(address_slave_text)

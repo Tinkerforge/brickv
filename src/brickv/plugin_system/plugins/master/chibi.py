@@ -28,7 +28,7 @@ from brickv.bindings.ip_connection import IPConnection
 from brickv.plugin_system.plugins.master.ui_chibi import Ui_Chibi
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
-from brickv import infos
+from brickv.infos import inventory
 
 class Chibi(QWidget, Ui_Chibi):
     def __init__(self, parent):
@@ -107,7 +107,7 @@ class Chibi(QWidget, Ui_Chibi):
             typ = 1
 
             # trigger enumerate for chibi slaves
-            if infos.get_info(self.parent.uid).enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED:
+            if inventory.get_info(self.parent.uid).enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED:
                 self.parent.ipcon.enumerate()
 
         self.lineedit_slave_address.setText(address_slave_text)

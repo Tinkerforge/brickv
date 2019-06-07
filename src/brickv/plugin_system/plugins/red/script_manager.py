@@ -352,8 +352,10 @@ class ScriptManager:
 
 def check_script_result(result, decode_stderr=False, stderr_is_redirected=False, add_stdout_to_message=False):
     assert result is not None, "result of script execution was None, this was refactored incompletly"
+
     if result.error is not None:
         return (False, 'Script error 100X: {0}'.format(result.error))
+
     assert result.stdout is not None, "ScriptResult error was not set, but stdout was None, this was refactored incompletly"
     assert result.stderr is not None, "ScriptResult error was not set, but stderr was None, this was refactored incompletly"
 

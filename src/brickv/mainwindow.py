@@ -61,7 +61,9 @@ except ImportError:
 from brickv.bindings.bricklet_isolator import BrickletIsolator
 from brickv.plugin_system.plugins.red import RED
 from brickv import config
-from brickv import infos
+from brickv.infos import DeviceInfo, BrickMasterInfo, BrickREDInfo, BrickHATInfo, \
+                         BrickHATZeroInfo, BrickletIsolatorInfo, BrickInfo, \
+                         BrickletInfo, get_version_string, inventory
 from brickv.tab_window import TabWindow, IconButton
 from brickv.plugin_system.comcu_bootloader import COMCUBootloader
 from brickv.load_pixmap import load_pixmap
@@ -93,6 +95,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.setWindowTitle(title)
 
+        self.delayed_update_tree_view_timer = QTimer(self)
+        self.delayed_update_tree_view_timer.timeout.connect(self.update_tree_view)
+        self.delayed_update_tree_view_timer.setInterval(100)
+
         self.tree_view_model_labels = ['Name', 'UID', 'Position', 'FW Version']
         self.tree_view_model = QStandardItemModel(self)
         self.tree_view_proxy_model = DevicesProxyModel(self)
@@ -100,6 +106,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tree_view.setModel(self.tree_view_proxy_model)
         self.tree_view.activated.connect(self.item_activated)
         self.set_tree_view_defaults()
+
+        inventory.info_changed.connect(lambda: self.delayed_update_tree_view_timer.start())
 
         self.tab_widget.removeTab(1) # remove dummy tab
         self.tab_widget.setUsesScrollButtons(True) # force scroll buttons
@@ -213,13 +221,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_update_pixmap_hover = load_pixmap('update-icon-hover.png')
 
         self.last_status_message_id = ''
-
-        infos.get_infos_changed_signal().connect(self.update_red_brick_version)
-
-    def update_red_brick_version(self, uid):
-        if not isinstance(infos.get_info(uid), infos.BrickREDInfo):
-            return
-        self.update_tree_view()
 
     def disable_auto_search_for_updates(self):
         self.fw_version_fetcher.abort()
@@ -349,12 +350,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.disable_auto_search_for_updates()
 
     def remove_all_device_infos(self):
-        for device_info in infos.get_device_infos():
+        for device_info in inventory.get_device_infos():
             self.remove_device_info(device_info.uid)
 
     def remove_device_info(self, uid):
         tab_id = self.tab_for_uid(uid)
-        device_info = infos.get_info(uid)
+        device_info = inventory.get_info(uid)
 
         device_info.plugin.stop_plugin()
         device_info.plugin.destroy_plugin()
@@ -380,7 +381,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             plugin.hide()
             plugin.setParent(None)
 
-        infos.remove_info(uid)
+        inventory.remove_info(uid)
 
     def reset_view(self):
         self.tab_widget.setCurrentIndex(0)
@@ -558,16 +559,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         button_update = QPushButton(QIcon(self.button_update_pixmap_normal), 'Update')
         button_update.installEventFilter(self)
 
-        if isinstance(device_info, infos.BrickREDInfo):
+        if isinstance(device_info, BrickREDInfo):
             button_update.clicked.connect(self.show_red_brick_update)
-        elif device_info.type == 'brick':
+        elif device_info.kind == 'brick':
             button_update.clicked.connect(lambda: self.show_brick_update(device_info.url_part))
-        elif device_info.type == 'bricklet':
+        elif device_info.kind == 'bricklet':
             button_update.clicked.connect(lambda: self.show_bricklet_update(device_info.connected_uid, device_info.position))
 
         if not device_info.plugin.has_custom_version(label_version_name, label_version):
             label_version_name.setText('FW Version:')
-            label_version.setText(infos.get_version_string(device_info.plugin.firmware_version))
+            label_version.setText(get_version_string(device_info.plugin.firmware_version))
 
         info_bars[0].addWidget(label_version_name)
         info_bars[0].addWidget(label_version)
@@ -691,10 +692,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         device_info.plugin.layout().setContentsMargins(0, 0, 0, 0)
 
         layout.addWidget(line)
+
         if device_info.plugin.has_comcu:
             device_info.plugin.widget_bootloader = COMCUBootloader(ipcon, device_info)
             device_info.plugin.widget_bootloader.hide()
             layout.addWidget(device_info.plugin.widget_bootloader)
+
         layout.addWidget(device_info.plugin, 1)
 
         return tab_window
@@ -704,7 +707,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.tab_widget.isMovable():
             if event.type() == QEvent.MouseButtonPress and event.button() & Qt.LeftButton:
                 QApplication.setOverrideCursor(QCursor(Qt.SizeHorCursor))
-
             elif event.type() == QEvent.MouseButtonRelease and event.button() & Qt.LeftButton:
                 QApplication.restoreOverrideCursor()
 
@@ -720,6 +722,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if event.type() == QEvent.KeyPress and (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter):
             self.connect_clicked()
             return True
+
         return False
 
     def eventFilter(self, source, event):
@@ -747,7 +750,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return -1
 
     def show_plugin(self, uid):
-        device_info = infos.get_info(uid)
+        device_info = inventory.get_info(uid)
 
         if device_info == None:
             return
@@ -775,18 +778,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if enumeration_type in [IPConnection.ENUMERATION_TYPE_AVAILABLE,
                                 IPConnection.ENUMERATION_TYPE_CONNECTED]:
-            device_info = infos.get_info(uid)
-            something_changed_ref = [False]
+            device_info = inventory.get_info(uid)
 
             # If the enum_type is CONNECTED, the bricklet was restarted externally.
             # The plugin could now be in an inconsistent state.
             if enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED and device_info is not None:
                 if device_info.connected_uid != connected_uid:
                     # Fix connections if bricklet was connected to another brick.
-                    parent_info = infos.get_info(device_info.connected_uid)
+                    parent_info = inventory.get_info(device_info.connected_uid)
+
                     if parent_info is not None:
-                        parent_info.connections.remove((device_info.position, device_info))
+                        parent_info.connections_remove_item((device_info.position, device_info))
                         self.show_status("Hot plugging is not supported! Please reset the brick {} and restart brick viewer.".format(device_info.connected_uid))
+
                     device_info.reverse_connection = connected_uid
                 elif device_info.position != position:
                     # Bricklet was connected to the same brick, but to another port
@@ -800,61 +804,53 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             if device_info == None:
                 if device_identifier == BrickMaster.DEVICE_IDENTIFIER:
-                    device_info = infos.BrickMasterInfo()
+                    device_info = BrickMasterInfo()
                 elif device_identifier == BrickRED.DEVICE_IDENTIFIER:
-                    device_info = infos.BrickREDInfo()
+                    device_info = BrickREDInfo()
                 elif hat_brick_supported and device_identifier == BrickHAT.DEVICE_IDENTIFIER:
-                    device_info = infos.BrickHATInfo()
+                    device_info = BrickHATInfo()
                 elif hat_zero_brick_supported and device_identifier == BrickHATZero.DEVICE_IDENTIFIER:
-                    device_info = infos.BrickHATZeroInfo()
+                    device_info = BrickHATZeroInfo()
                 elif device_identifier == BrickletIsolator.DEVICE_IDENTIFIER:
-                    device_info = infos.BrickletIsolatorInfo()
+                    device_info = BrickletIsolatorInfo()
                 elif '0' <= position <= '9':
-                    device_info = infos.BrickInfo()
-                    something_changed_ref[0] = True
+                    device_info = BrickInfo()
                 else:
-                    device_info = infos.BrickletInfo()
+                    device_info = BrickletInfo()
 
             position = position.lower()
 
-            def set_device_info_value(name, value):
-                if getattr(device_info, name) != value:
-                    setattr(device_info, name, value)
-                    something_changed_ref[0] = True
-                    infos.get_infos_changed_signal().emit(device_info.uid)
-
-            set_device_info_value('uid', uid)
-            set_device_info_value('connected_uid', connected_uid)
-            set_device_info_value('position', position)
-            set_device_info_value('hardware_version', hardware_version)
+            device_info.uid = uid
+            device_info.connected_uid = connected_uid
+            device_info.position = position
+            device_info.hardware_version = hardware_version
 
             if device_identifier != BrickRED.DEVICE_IDENTIFIER:
-                set_device_info_value('firmware_version_installed', firmware_version)
+                device_info.firmware_version_installed = firmware_version
 
-            set_device_info_value('device_identifier', device_identifier)
-            set_device_info_value('enumeration_type', enumeration_type)
+            device_info.device_identifier = device_identifier
+            device_info.enumeration_type = enumeration_type
 
             # Update connections and reverse_connection with new device
-            for info in infos.get_device_infos():
+            for info in inventory.get_device_infos():
                 if info == device_info:
                     continue
 
                 def add_to_connections(info_to_add, connected_info):
-                    connected_info.connections.append((info_to_add.position, info_to_add))
+                    connected_info.connections_add_item((info_to_add.position, info_to_add))
                     info_to_add.reverse_connection = connected_info
-                    something_changed_ref[0] = True
-                    infos.get_infos_changed_signal().emit(connected_info.uid)
 
                 if info.uid != '' and info.uid == device_info.connected_uid:
-                    if device_info in info.connections_values(): #Device was already connected, but to another port
-                        info.connections = [(pos, i) for pos, i in info.connections if i.uid != device_info.uid]
+                    if device_info in info.connections_values(): # device was already connected, but to another port
+                        info.connections_remove_value(device_info)
+
                     if device_info not in info.connections_get(device_info.position):
                         add_to_connections(device_info, info)
 
-
                 if info.connected_uid != '' and info.connected_uid == device_info.uid:
-                    if info in device_info.connections_values(): #Device was already connected, but to another port
-                        device_info.connections = [(pos, i) for pos, i in device_info.connections if i.uid != info.uid]
+                    if info in device_info.connections_values(): # device was already connected, but to another port
+                        device_info.connections_remove_value(info)
+
                     if info not in device_info.connections_get(info.position):
                         add_to_connections(info, device_info)
 
@@ -865,46 +861,47 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 device_info.tab_window.setWindowFlags(Qt.Widget)
                 device_info.tab_window.tab()
 
-                infos.add_info(device_info)
+                inventory.add_info(device_info)
 
-                something_changed_ref[0] = True
+            device_info.update_firmware_version_latest()
+
+            inventory.sync()
 
             # The plugin was paused before if it was reconnected.
             device_info.plugin.resume_plugin()
-
-            if something_changed_ref[0]:
-                self.update_tree_view()
         elif enumeration_type == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
             self.remove_device_tab(uid)
 
     def remove_device_tab(self, uid):
-        for device_info in infos.get_device_infos():
-            if device_info.uid == uid:
-                self.tab_widget.setCurrentIndex(0)
-                self.remove_device_info(device_info.uid)
+        device_info = inventory.get_info(uid)
 
-            if isinstance(device_info, infos.DeviceInfo):
-                to_delete = []
-                for idx, tup in enumerate(device_info.connections):
-                    port, info = tup
-                    if info.uid == uid:
-                        to_delete.append(idx)
-                for idx in to_delete:
-                    del device_info.connections[idx]
+        if device_info == None:
+            return
+
+        assert isinstance(device_info, DeviceInfo)
+
+        self.tab_widget.setCurrentIndex(0)
+        self.remove_device_info(device_info.uid)
+
+        for other_info in inventory.get_device_infos():
+            other_info.connections_remove_value(device_info)
 
         self.update_tree_view()
 
-    def hack_to_remove_red_brick_tab(self, red_brick_uid):
-        for device_info in infos.get_device_infos():
-            if device_info.uid == red_brick_uid:
-                self.tab_widget.setCurrentIndex(0)
-                self.remove_device_info(device_info.uid)
+    def hack_to_remove_red_brick_tab(self, uid):
+        device_info = inventory.get_info(uid)
 
-                self.red_session_losts += 1
-                self.label_red_session_losts.setText('RED Brick Session Loss Count: {0}'.format(self.red_session_losts))
-                self.label_red_session_losts.show()
+        if device_info == None:
+            return
 
-                break
+        assert isinstance(device_info, DeviceInfo)
+
+        self.tab_widget.setCurrentIndex(0)
+        self.remove_device_info(device_info.uid)
+
+        self.red_session_losts += 1
+        self.label_red_session_losts.setText('RED Brick Session Loss Count: {0}'.format(self.red_session_losts))
+        self.label_red_session_losts.show()
 
         self.update_tree_view()
 
@@ -1032,7 +1029,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.update_advanced_window()
 
             # restart all pause plugins
-            for info in infos.get_device_infos():
+            for info in inventory.get_device_infos():
                 info.plugin.resume_plugin()
         elif connection_state == IPConnection.CONNECTION_STATE_PENDING:
             self.button_connect.setText('Abort Pending Automatic Reconnect')
@@ -1044,7 +1041,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.button_flashing.setDisabled(True)
 
             # pause all running plugins
-            for info in infos.get_device_infos():
+            for info in inventory.get_device_infos():
                 info.plugin.pause_plugin()
 
         enable = connection_state == IPConnection.CONNECTION_STATE_CONNECTED
@@ -1052,13 +1049,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in range(1, self.tab_widget.count()):
             self.tab_widget.setTabEnabled(i, enable)
 
-        for device_info in infos.get_device_infos():
+        for device_info in inventory.get_device_infos():
             device_info.tab_window.setEnabled(enable)
 
         QApplication.processEvents()
 
-
     def update_tree_view(self):
+        self.delayed_update_tree_view_timer.stop()
+
         self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels)
         self.tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, None)
 
@@ -1069,18 +1067,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         def get_row(info):
             replacement = '0.0.0'
-            is_red_brick = isinstance(info, infos.BrickREDInfo)
+            is_red_brick = isinstance(info, BrickREDInfo)
 
             if is_red_brick or info.url_part == 'wifi_v2':
                 replacement = "Querying..."
-            elif info.type == "extension":
+            elif info.kind == "extension":
                 replacement = ""
 
-            fw_version = infos.get_version_string(info.firmware_version_installed,
-                                                  replace_unknown=replacement,
-                                                  is_red_brick=is_red_brick)
+            fw_version = get_version_string(info.firmware_version_installed,
+                                            replace_unknown=replacement,
+                                            is_red_brick=is_red_brick)
 
-            uid = info.uid if info.type != "extension" else ''
+            uid = info.uid if info.kind != "extension" else ''
 
             row = [QStandardItem(info.name),
                    QStandardItem(uid),
@@ -1091,12 +1089,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             if is_red_brick:
                 old_updateable = updateable
+
                 for binding in info.bindings_infos:
                     updateable |= binding.firmware_version_installed != (0, 0, 0) \
                                   and binding.firmware_version_installed < binding.firmware_version_latest
+
                 updateable |= info.brickv_info.firmware_version_installed != (0, 0, 0) \
                               and info.brickv_info.firmware_version_installed < info.brickv_info.firmware_version_latest \
                               and not info.firmware_version_installed < (1, 14, 0) # Hide Brickv update if image is too old.
+
                 # There are bindings/brickv updates but there is no image update
                 red_brick_binding_update_only = not old_updateable and updateable
             else:
@@ -1105,7 +1106,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if updateable:
                 self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels + ['Update'])
                 row.append(QStandardItem(
-                    infos.get_version_string(info.firmware_version_latest, is_red_brick=is_red_brick) + ("+" if red_brick_binding_update_only else "")))
+                    get_version_string(info.firmware_version_latest, is_red_brick=is_red_brick) + ("+" if red_brick_binding_update_only else "")))
 
                 self.tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, self.update_tab_button)
                 self.update_tab_button.show()
@@ -1131,10 +1132,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     ext_row = get_row(extension)
                     row[0].appendRow(ext_row)
 
-        for info in infos.get_device_infos():
+        for info in inventory.get_device_infos():
             # If a device has a reverse connection, it will be handled as a child of another top-level brick.
             if info.reverse_connection is not None:
                 continue
+
             recurse_on_device(info, self.tree_view_model)
 
         self.set_tree_view_defaults()
@@ -1143,7 +1145,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.delayed_refresh_updates_timer.start()
 
     def update_advanced_window(self):
-        self.button_advanced.setEnabled(len(infos.get_brick_infos()) > 0)
+        self.button_advanced.setEnabled(len(inventory.get_brick_infos()) > 0)
 
     def delayed_refresh_updates(self):
         self.delayed_refresh_updates_timer.stop()
@@ -1188,9 +1190,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 self.show_status(message, message_id='fw_versions_fetched_error')
 
-            infos.reset_latest_fws()
+            inventory.reset_latest_fws()
         else:
             self.hide_status('fw_versions_fetched_error')
-            infos.update_latest_fws(firmware_info)
-
-        self.update_tree_view()
+            inventory.update_latest_fws(firmware_info)

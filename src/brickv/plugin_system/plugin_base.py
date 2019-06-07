@@ -33,7 +33,7 @@ from brickv.bindings.bricklet_gps_v2 import GPSV2
 from brickv.utils import get_main_window
 from brickv.tab_window import IconButton
 from brickv.load_pixmap import load_pixmap
-import brickv.infos
+from brickv.infos import get_version_string, inventory
 
 class PluginBase(QWidget):
     PLUGIN_STATE_STOPPED = 0
@@ -90,9 +90,9 @@ class PluginBase(QWidget):
 
         self.update_tab_button = None
 
-        brickv.infos.get_infos_changed_signal().connect(self.device_infos_changed)
+        inventory.info_changed.connect(self.device_info_changed)
 
-    def device_infos_changed(self, uid):
+    def device_info_changed(self, uid):
         if uid != self.device_info.uid:
             return
 
@@ -106,7 +106,7 @@ class PluginBase(QWidget):
 
         self.hardware_version = self.device_info.hardware_version
         self.firmware_version = self.device_info.firmware_version_installed
-        self.label_version.setText(brickv.infos.get_version_string(self.firmware_version))
+        self.label_version.setText(get_version_string(self.firmware_version))
 
         if self.button_parent is not None:
             self.button_parent.setText(self.device_info.connected_uid)
@@ -120,10 +120,9 @@ class PluginBase(QWidget):
         self.update_tab_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')))
         self.update_tab_button.setToolTip('Update available')
 
-        if self.device_info.type == 'brick':
+        if self.device_info.kind == 'brick':
             self.update_tab_button.clicked.connect(lambda: get_main_window().show_brick_update(self.device_info.url_part))
-
-        elif self.device_info.type == 'bricklet':
+        elif self.device_info.kind == 'bricklet':
             self.update_tab_button.clicked.connect(lambda: get_main_window().show_bricklet_update(self.device_info.connected_uid, self.device_info.position))
 
         tab_idx = get_main_window().tab_widget.indexOf(self.device_info.tab_window)
@@ -156,7 +155,7 @@ class PluginBase(QWidget):
                 self.plugin_state = PluginBase.PLUGIN_STATE_RUNNING
 
                 # Ensure that the update button is shown when the plugin is untabbed and tabbed again.
-                self.device_info.tab_window.add_callback_post_tab(lambda idx: self.device_infos_changed(self.device_info.uid), 'plugin_base_device_infos_changed')
+                self.device_info.tab_window.add_callback_post_tab(lambda idx: self.device_info_changed(self.device_info.uid), 'plugin_base_device_info_changed')
 
     def stop_plugin(self):
         # only stop the plugin, if it's running
@@ -220,7 +219,7 @@ class PluginBase(QWidget):
 
         # Disconnect from infos_changed before destroying the widgets, because
         # self.device_infos_changed accesses the widgets.
-        brickv.infos.get_infos_changed_signal().disconnect(self.device_infos_changed)
+        inventory.info_changed.disconnect(self.device_info_changed)
 
         # disconnect all signals to ensure that callbacks that already emitted
         # a signal don't get delivered anymore after this point

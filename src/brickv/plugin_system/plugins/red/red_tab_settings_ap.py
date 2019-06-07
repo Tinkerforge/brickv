@@ -266,6 +266,7 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
 
         def cb_settings_ap_status(result):
             okay, _ = check_script_result(result)
+
             if okay:
                 ap_mode_status = json.loads(result.stdout)
 
@@ -283,6 +284,7 @@ class REDTabSettingsAP(QWidget, Ui_REDTabSettingsAP):
         def cb_settings_ap_apply(result):
             if self.image_version.number >= (1, 10):
                 okay, _ = check_script_result(result)
+
                 if okay:
                     self.script_manager.execute_script('settings_ap_status',
                                                        cb_settings_ap_status)

@@ -108,7 +108,7 @@ class ExceptionReporter:
 
 class BrickViewer(QApplication):
     object_creator_signal = pyqtSignal(object)
-    infos_changed_signal = pyqtSignal(str) # uid
+    info_changed_signal = pyqtSignal(str) # uid
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

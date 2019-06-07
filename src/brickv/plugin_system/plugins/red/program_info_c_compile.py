@@ -75,6 +75,7 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
             self.script_instance = None
 
             okay, message = check_script_result(result, stderr_is_redirected=True)
+
             if not okay:
                 self.log(message, pre=True)
                 self.log('...error' if not aborted else '...canceled', bold=True)
