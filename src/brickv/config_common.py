@@ -48,29 +48,22 @@ DEFAULT_USE_FUSION_GUI_STYLE = sys.platform == 'darwin'
 
 DEFAULT_AUTO_SEARCH_FOR_UPDATES = True
 
-try:
-    # Don't warn if the internal file is missing, as it is expected when run from source.
-    internal_path = get_resources_path('internal', warn_on_missing_file=False)
+def load_commit_id(name):
+    try:
+        # Don't warn if the file is missing, as it is expected when run from source.
+        path = get_resources_path(name, warn_on_missing_file=False)
 
-    if internal_path is not None:
-        with open(internal_path, 'r') as f:
-            INTERNAL = f.read().strip()
-    else:
-        INTERNAL = None
-except FileNotFoundError:
-    INTERNAL = None
+        if path is not None:
+            with open(path, 'r') as f:
+                return f.read().strip()
+    except FileNotFoundError:
+        pass
 
-try:
-    # Don't warn if the snapshot file is missing, as it is expected when run from source.
-    snapshot_path = get_resources_path('snapshot', warn_on_missing_file=False)
+    return None
 
-    if snapshot_path is not None:
-        with open(snapshot_path, 'r') as f:
-            SNAPSHOT = f.read().strip()
-    else:
-        SNAPSHOT = None
-except FileNotFoundError:
-    SNAPSHOT = None
+INTERNAL = load_commit_id('internal')
+
+SNAPSHOT = load_commit_id('snapshot')
 
 BRICKV_FULL_VERSION = BRICKV_VERSION
 
