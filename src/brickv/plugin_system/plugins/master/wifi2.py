@@ -515,7 +515,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         if general_use_auth:
             general_secret = self.wifi_secret.text()
         else:
-            general_secret = '\0'
+            general_secret = ''
 
         '''
         FIXME: Mesh mode is added to the mode combobox dynamically from master,
@@ -551,7 +551,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         if client_encryption == 1:
             client_password = self.wifi_client_password.text()
         else:
-            client_password = '\0'
+            client_password = ''
 
         client_use_bssid = self.wifi_client_use_bssid.isChecked()
 
@@ -624,7 +624,7 @@ class Wifi2(QWidget, Ui_Wifi2):
                len(self.wifi_mesh_router_password.text()) > 0:
                 mesh_router_password = self.wifi_mesh_router_password.text()
             else:
-                mesh_router_password = '\0'
+                mesh_router_password = ''
 
             if self.wifi_mesh_root_ip_configuration.currentIndex() == 1:
                 mesh_root_ip  = (self.wifi_mesh_root_ip1.value(),
@@ -681,8 +681,10 @@ class Wifi2(QWidget, Ui_Wifi2):
 
         if self.wifi_client_change_password.isChecked():
             to_write.append((self.master.set_wifi2_client_password, client_password))
+
         if self.wifi_ap_change_password.isChecked():
             to_write.append((self.master.set_wifi2_ap_password, ap_password))
+
         if self.parent.firmware_version >= (2, 4, 2) and self.wifi2_firmware_version >= (2, 1, 0):
             to_write.append((self.master.set_wifi2_mesh_configuration,
                              mesh_enable, mesh_root_ip,
@@ -704,6 +706,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         except Exception as e:
             self.popup_fail("Could not save Wifi configuration: Error Code 2:\n\n" + str(e))
             return
+
         if ok != 0:
             self.popup_fail("Could not save Wifi configuration. Error Code 3:\n\n Bricklet reported error " + str(ok))
             return
