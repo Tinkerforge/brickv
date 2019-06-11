@@ -111,7 +111,7 @@ def write_commit_id_and_patch_plugins(utils):
 def build_linux_pkg():
     print('building brickv Debian package')
 
-    utils = BuildPkgUtils('brickv', 'linux', BRICKV_VERSION, '--internal' in sys.argv, '--snapshot' in sys.argv)
+    utils = BuildPkgUtils('brickv', 'linux', BRICKV_VERSION)
 
     utils.run_sdist(pre_sdist=lambda: prepare_manifest(utils), prepare_script=os.path.join(utils.root_path, 'build_src.py'))
     utils.copy_build_data()
@@ -124,13 +124,12 @@ def build_linux_pkg():
 def build_pyinstaller_pkg():
     platform_dict = {'win32': 'windows', 'darwin': 'macos'}
 
-    utils = BuildPkgUtils('brickv', platform_dict[sys.platform], BRICKV_VERSION, '--internal' in sys.argv, '--snapshot' in sys.argv)
-    utils.exit_if_not_venv()
+    utils = BuildPkgUtils('brickv', platform_dict[sys.platform], BRICKV_VERSION)
 
+    utils.exit_if_not_venv()
     utils.build_pyinstaller_pkg(prepare_script=os.path.join(utils.root_path, 'build_src.py'),
                                 pre_sdist=lambda: prepare_manifest(utils),
                                 pre_pyinstaller=lambda: write_commit_id_and_patch_plugins(utils))
-
     utils.copy_build_artefact()
 
 BRICK_FLASH_VERSION = '1.0.1'
@@ -138,7 +137,7 @@ BRICK_FLASH_VERSION = '1.0.1'
 def build_linux_flash_pkg():
     print('building brick-flash Debian package')
 
-    utils = BuildPkgUtils('brick-flash', 'linux', BRICK_FLASH_VERSION, False)
+    utils = BuildPkgUtils('brick-flash', 'linux', BRICK_FLASH_VERSION)
 
     print('removing old build directories')
 
@@ -176,7 +175,7 @@ BRICK_LOGGER_VERSION = '2.1.0'
 def build_logger_zip():
     print('building brick-logger ZIP file')
 
-    utils = BuildPkgUtils('brick-logger', 'linux', BRICK_LOGGER_VERSION, False)
+    utils = BuildPkgUtils('brick-logger', 'linux', BRICK_LOGGER_VERSION)
 
     print('removing old build directories')
 
@@ -235,10 +234,6 @@ def main():
         return 0
 
     if sys.platform == 'win32' or sys.platform == 'darwin':
-        if sys.platform == 'darwin' and '--no-sign' not in sys.argv:
-            print("Unlocking code sign keychain")
-            system(['bash', '-c', 'security unlock-keychain /Users/$USER/Library/Keychains/login.keychain'])
-
         build_pyinstaller_pkg()
         return 0
 

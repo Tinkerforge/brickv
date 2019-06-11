@@ -66,18 +66,18 @@ def get_commit_id():
     return commit_id
 
 class BuildPkgUtils:
-    def __init__(self, executable_name, platform, version, internal=False, snapshot=False):
-        assert not (internal and snapshot)
-
+    def __init__(self, executable_name, platform, version):
         self.executable_name = executable_name
         self.platform = platform
         self.version = version
-        self.internal = internal
-        self.snapshot = snapshot
+        self.internal = '--internal' in sys.argv
+        self.snapshot = '--snapshot' in sys.argv
         self.root_path = os.path.realpath(os.path.dirname(__file__))
         self.dist_path = os.path.join(self.root_path, 'dist')
         self.build_data_src_path = os.path.join(self.root_path, 'build_data', platform, executable_name)
         self.build_data_dest_path = os.path.join(self.dist_path, platform)
+
+        assert not (self.internal and self.snapshot)
 
         if platform == 'linux':
             self.unpacked_source_path = os.path.join(self.build_data_dest_path, 'usr', 'share', executable_name)
@@ -85,6 +85,10 @@ class BuildPkgUtils:
             self.unpacked_source_path = os.path.join(self.build_data_dest_path, executable_name)
 
         self.source_path = os.path.join(self.root_path, executable_name)
+
+        if sys.platform == 'darwin' and '--no-sign' not in sys.argv:
+            print("Unlocking code sign keychain")
+            system(['bash', '-c', 'security unlock-keychain /Users/$USER/Library/Keychains/login.keychain'])
 
         os.chdir(self.root_path)
 
