@@ -725,9 +725,6 @@ class Wifi2(QWidget, Ui_Wifi2):
             if not isinstance(g, tuple):
                 g = (g,)
 
-            if args != g:
-                print("Hier")
-
             return args == g
 
         try:
