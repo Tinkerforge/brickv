@@ -89,7 +89,6 @@ class PyinstallerUtils:
         self.dist_path = PyInstaller.config.CONF['distpath']
 
         build_data_base_path = ''
-        build_data_base_path = ''
 
         for argument in sys.argv:
             if argument.startswith('--build-data-path='):
