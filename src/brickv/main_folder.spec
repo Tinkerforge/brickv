@@ -18,7 +18,7 @@ sys.path.insert(0, '..') # Ensure to use the brickv source, not an installed ver
 from brickv.pyinstaller_utils import *
 
 utils = PyinstallerUtils(['brickv'])
-utils.prepare(os.path.join(utils.root_path, '..'))
+utils.prepare()
 
 excludes = ['wx', 'gtk+', '_gtkagg', 'gtk', 'gdk', 'gtk2', 'gtk3', 'cairo', 'wayland', 'xinerama', 'share', 'icons', 'atk', 'pango', 'pil', 'PIL',
             '_tkagg',
