@@ -93,7 +93,7 @@ class PyinstallerUtils:
         for argument in sys.argv:
             if argument.startswith('--build-data-path='):
                 build_data_base_path = argument.replace('--build-data-path=', '')
-            if argument.startswith('--version='):
+            elif argument.startswith('--version='):
                 self.version = argument.replace('--version=', '')
 
         assert self.version != None
