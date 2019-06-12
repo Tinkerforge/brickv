@@ -122,15 +122,20 @@ class RS485(QWidget, Ui_RS485):
             if do_update:
                 self.label_crc_errors.setText(config['crc_errors'])
 
-        self.timer_update_crc_error_count.start(self.update_interval_crc_error_count)
+        if self.parent.is_tab_on_focus:
+            self.timer_update_crc_error_count.start(self.update_interval_crc_error_count)
 
     def cb_file_open_error(self):
         self.label_crc_errors.setText('?')
-        self.timer_update_crc_error_count.start(self.update_interval_crc_error_count)
+
+        if self.parent.is_tab_on_focus:
+            self.timer_update_crc_error_count.start(self.update_interval_crc_error_count)
 
     def cb_file_open(self, result):
         if not isinstance(result, REDFile):
-            self.timer_update_crc_error_count.start(self.update_interval_crc_error_count)
+            if self.parent.is_tab_on_focus:
+                self.timer_update_crc_error_count.start(self.update_interval_crc_error_count)
+
             return
 
         self.red_file_crc_error_count = result
@@ -138,6 +143,10 @@ class RS485(QWidget, Ui_RS485):
 
     def do_update_crc_error_count(self):
         self.timer_update_crc_error_count.stop()
+
+        if not self.parent.is_tab_on_focus:
+            return
+
         self.red_file_crc_error_count = REDFile(self.session)
 
         async_call(self.red_file_crc_error_count.open,
@@ -355,6 +364,8 @@ class REDTabExtension(REDTab, Ui_REDTabExtension):
 
         self.setupUi(self)
 
+        self.is_tab_on_focus = False
+
         self.red_file = [None, None]
         self.config_read_counter = 0
         self.tabbed_extension_widgets = []
@@ -378,14 +389,16 @@ class REDTabExtension(REDTab, Ui_REDTabExtension):
 
             if t == 2:
                 self.tabbed_extension_widgets.append(RS485(self, extension, config))
-                self.tab_widget.addTab(self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1],
-                                       'RS485')
-                self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1].start_update_data()
+                self.tab_widget.addTab(self.tabbed_extension_widgets[-1], 'RS485')
+
+                if self.is_tab_on_focus:
+                    self.tabbed_extension_widgets[-1].start_update_data()
             elif t == 4:
                 self.tabbed_extension_widgets.append(Ethernet(self, extension, config))
-                self.tab_widget.addTab(self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1],
-                                       'Ethernet')
-                self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1].start_update_data()
+                self.tab_widget.addTab(self.tabbed_extension_widgets[-1], 'Ethernet')
+
+                if self.is_tab_on_focus:
+                    self.tabbed_extension_widgets[-1].start_update_data()
             else:
                 extension_name = 'Unknown Extension'
 
@@ -397,9 +410,10 @@ class REDTabExtension(REDTab, Ui_REDTabExtension):
                     extension_name = 'WIFI Extension 2.0'
 
                 self.tabbed_extension_widgets.append(Unsupported(self, extension, config))
-                self.tab_widget.addTab(self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1],
-                                       extension_name)
-                self.tabbed_extension_widgets[len(self.tabbed_extension_widgets) - 1].start_update_data()
+                self.tab_widget.addTab(self.tabbed_extension_widgets[-1], extension_name)
+
+                if self.is_tab_on_focus:
+                    self.tabbed_extension_widgets[-1].start_update_data()
 
         self.update_ui_state()
 
@@ -413,10 +427,16 @@ class REDTabExtension(REDTab, Ui_REDTabExtension):
             self.tab_widget.show()
 
     def tab_on_focus(self):
-        pass
+        self.is_tab_on_focus = True
+
+        for widget in self.tabbed_extension_widgets:
+            widget.start_update_data()
 
     def tab_off_focus(self):
-        pass
+        self.is_tab_on_focus = False
+
+        for widget in self.tabbed_extension_widgets:
+            widget.stop_update_data()
 
     def tab_destroy(self):
         pass
