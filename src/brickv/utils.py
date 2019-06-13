@@ -116,3 +116,12 @@ def format_current(value): # float, A
         return str(int(round(value * 1000.0))) + ' mA'
     else:
         return format(value, '.3f') + ' A'
+
+# the normal QPainter.drawRect function draws the top and left line at the wrong
+# position on macOS with retina display. this function is a replacement that behaves
+# correctly on macOS with retina display
+def draw_rect(painter, x, y, width, height, thickness, color):
+    painter.fillRect(x, y, width, thickness, color) # top
+    painter.fillRect(x, y, thickness, height, color) # left
+    painter.fillRect(x, y + height - thickness, width, thickness, color) # bottom
+    painter.fillRect(x + width - thickness, y, thickness, height, color) # right

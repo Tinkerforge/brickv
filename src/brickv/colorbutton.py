@@ -21,20 +21,22 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import QRect
-from PyQt5.QtGui import QPen, QPalette, QPainter, QBrush
+from PyQt5.QtGui import QPalette, QPainter
 from PyQt5.QtWidgets import QPushButton
+
+from brickv.utils import draw_rect
 
 class ColorButton(QPushButton):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.on = False
 
-    def initialize(self, brightness_color_list, background_color=None, border_color=None, style='rectangular'):
+    def initialize(self, brightness_colors, background_color=None, border_color=None, style='rectangular'):
         self.brightness = 0
-        self.brightness_pens = [QPen(c) for c in brightness_color_list]
-        self.background_pen = QPen(self.palette().color(QPalette.Background) if background_color is None else background_color)
-        self.border_pen = QPen(self.palette().color(QPalette.WindowText) if border_color is None else border_color)
+        self.brightness_colors = brightness_colors
+        self.background_color = self.palette().color(QPalette.Background) if background_color is None else background_color
+        self.border_color = self.palette().color(QPalette.WindowText) if border_color is None else border_color
+
         if style in ['rectangular', 'circular']:
             self.style = style
         else:
@@ -42,26 +44,21 @@ class ColorButton(QPushButton):
 
     def paintEvent(self, _event):
         painter = QPainter(self)
-
-        if self.style == 'rectangular':
-            draw_fn = lambda rect, color: painter.drawRect(rect)
-            fill_fn = lambda rect, color: painter.fillRect(rect, color)
-        elif self.style == 'circular':
-            draw_fn = lambda rect, color: painter.drawEllipse(rect)
-            def fillEllipse(rect, color):
-                painter.setBrush(QBrush(color))
-                painter.drawEllipse(rect)
-            fill_fn = fillEllipse
+        width = self.width()
+        height = self.height()
 
         if self.on:
-            pen = self.brightness_pens[self.brightness]
+            fill_color = self.brightness_colors[self.brightness]
         else:
-            pen = self.background_pen
+            fill_color = self.background_color
 
-        fill_fn(QRect(0, 0, self.width() - 1, self.height() - 1), pen.color())
-
-        painter.setPen(self.border_pen)
-        draw_fn(QRect(0, 0, self.width() - 1, self.height() - 1), self.border_pen.color())
+        if self.style == 'rectangular':
+            painter.fillRect(0, 0, width, height, fill_color)
+            draw_rect(painter, 0, 0, width, height, 1, self.border_color)
+        elif self.style == 'circular':
+            painter.setPen(self.border_color)
+            painter.setBrush(fill_color)
+            painter.drawEllipse(1, 1, width - 2, height - 2)
 
     def switch_off(self):
         self.on = False
@@ -69,8 +66,10 @@ class ColorButton(QPushButton):
 
     def switch_on(self, brightness=None):
         self.on = True
+
         if brightness is not None:
             self.brightness = brightness
+
         self.update()
 
     def set_brightness(self, brightness):

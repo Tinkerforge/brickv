@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QFrame, QComboBox
-from PyQt5.QtGui import QPainter, QColor, QBrush
+from PyQt5.QtGui import QColor
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings import ip_connection
@@ -31,26 +31,7 @@ from brickv.bindings.bricklet_ambient_light_v3 import BrickletAmbientLightV3
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
-
-class AmbientLightFrame(QFrame):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.color = QColor(128, 128, 128)
-        self.setMinimumSize(25, 25)
-        self.setMaximumSize(25, 25)
-
-    def set_color(self, r, g, b):
-        self.color = QColor(r, g, b)
-        self.repaint()
-
-    def paintEvent(self, _event):
-        qp = QPainter(self)
-        qp.setBrush(QBrush(self.color))
-        qp.setPen(self.color)
-        qp.drawRect(0, 0, 25, 25)
-        qp.setBrush(Qt.NoBrush)
-        qp.setPen(Qt.black)
-        qp.drawRect(1, 1, 24, 24)
+from brickv.color_frame import ColorFrame
 
 class AmbientLightV3(COMCUPluginBase):
     def __init__(self, *args):
@@ -63,7 +44,7 @@ class AmbientLightV3(COMCUPluginBase):
                                                 self.cb_illuminance,
                                                 self.increase_error_count)
 
-        self.alf = AmbientLightFrame()
+        self.alf = ColorFrame(25, 25, QColor(128, 128, 128))
         self.out_of_range_label = QLabel('Illuminance is out-of-range')
         self.saturated_label = QLabel('Sensor is saturated')
 
@@ -183,4 +164,4 @@ class AmbientLightV3(COMCUPluginBase):
             self.saturated_label.hide()
 
         value = min(max(illuminance * 255 // max_illuminance, 0), 255)
-        self.alf.set_color(value, value, value)
+        self.alf.set_color(QColor(value, value, value))

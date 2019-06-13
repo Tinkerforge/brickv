@@ -25,6 +25,8 @@ from PyQt5.QtCore import Qt, QSize, QPoint, QRect, pyqtSignal
 from PyQt5.QtGui import QImage, QPainter, QPen, QPalette
 from PyQt5.QtWidgets import QWidget
 
+from brickv.utils import draw_rect
+
 class ScribbleWidget(QWidget):
     scribbling_started = pyqtSignal()
 
@@ -35,18 +37,19 @@ class ScribbleWidget(QWidget):
         self.scaling_factor = scaling_factor
 
         self.setFixedSize(width*scaling_factor + 2, height*scaling_factor + 2) # + 2 for outline
+
         if outline_color is None:
-            self._pen = QPen(self.palette().color(QPalette.WindowText))
+            self.outline_color = self.palette().color(QPalette.WindowText)
         else:
-            self._pen = QPen(outline_color)
+            self.outline_color = outline_color
 
         self.inner = ScribbleWidget.ScribbleArea(width, height, scaling_factor, foreground_color, background_color, enable_grid, grid_color, self)
         self.inner.move(1, 1)
 
     def paintEvent(self, _event):
         painter = QPainter(self)
-        painter.setPen(self._pen)
-        painter.drawRect(QRect(0, 0, self.width() - 1, self.height() - 1))
+
+        draw_rect(painter, 0, 0, self.width(), self.height(), 1, self.outline_color)
 
     def paint_overlay(self, event, painter):
         pass

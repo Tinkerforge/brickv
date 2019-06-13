@@ -31,6 +31,7 @@ from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.thermal_imaging.ui_thermal_imaging import Ui_ThermalImaging
 from brickv.bindings.bricklet_thermal_imaging import BrickletThermalImaging
 from brickv.async_call import async_call
+from brickv.utils import draw_rect
 
 class ThermalImageBar(QWidget):
     def __init__(self, w, h, thermal_image, parent=None):
@@ -153,16 +154,14 @@ class ThermalImage(QWidget):
         painter.drawImage(event.rect(), self.image.scaledToWidth(self.width*self.image_pixel_width, Qt.SmoothTransformation))
 
         if self.agc_roi_from != None and self.agc_roi_to != None and not self.image_is_16bit:
-            pen = QPen()
-            pen.setColor(Qt.green)
-            pen.setWidth(1)
-            painter.setPen(pen)
-
             roi = self.parent.get_agc_roi()
-            painter.drawRect(roi[0] * self.image_pixel_width + 1,
-                             roi[1] * self.image_pixel_width + 1,
-                             (roi[2] - roi[0]) * self.image_pixel_width + 1,
-                             (roi[3] - roi[1]) * self.image_pixel_width + 1)
+            draw_rect(painter,
+                      roi[0] * self.image_pixel_width + 2,
+                      roi[1] * self.image_pixel_width + 2,
+                      (roi[2] - roi[0]) * self.image_pixel_width + 1,
+                      (roi[3] - roi[1]) * self.image_pixel_width + 1,
+                      1,
+                      Qt.green)
 
             self.parent.update_agc_roi_label()
 
@@ -174,13 +173,13 @@ class ThermalImage(QWidget):
 
             from_x, from_y, to_x, to_y = self.parent.get_spotmeter_roi()
 
-            from_x = from_x * self.image_pixel_width + 1
-            from_y = from_y * self.image_pixel_width + 1
+            from_x = from_x * self.image_pixel_width + 3
+            from_y = from_y * self.image_pixel_width + 3
             to_x = to_x * self.image_pixel_width + 1
             to_y = to_y * self.image_pixel_width + 1
 
-            cross_x = from_x + (to_x-from_x) / 2.0
-            cross_y = from_y + (to_y-from_y) / 2.0
+            cross_x = from_x + (to_x - from_x) / 2.0
+            cross_y = from_y + (to_y - from_y) / 2.0
 
             if to_x-from_x > 5 or to_y - from_y > 5:
                 lines = [QLineF(from_x, from_y, from_x + self.crosshair_width, from_y),

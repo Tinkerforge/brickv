@@ -23,8 +23,8 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import Qt, QTimer, QSize
-from PyQt5.QtWidgets import QVBoxLayout, QFrame, QDialog, QAction, QWidget
-from PyQt5.QtGui import QColor, QPalette, QPainter, QBrush
+from PyQt5.QtWidgets import QVBoxLayout, QDialog, QAction, QWidget
+from PyQt5.QtGui import QColor, QPalette
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.imu_v2.imu_v2_3d_widget import IMUV23DWidget
@@ -35,6 +35,7 @@ from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_modeless_dialog_flags, get_main_window
+from brickv.color_frame import ColorFrame
 from brickv import config
 
 class Calibration(QDialog, Ui_Calibration):
@@ -75,10 +76,10 @@ during stabilization.</p>""")
         self.ipcon = parent.ipcon
         self.imu = parent.imu
 
-        self.acc_color = ColorFrame()
-        self.mag_color = ColorFrame()
-        self.gyr_color = ColorFrame()
-        self.sys_color = ColorFrame()
+        self.acc_color = ColorFrame(15, 15, Qt.red)
+        self.mag_color = ColorFrame(15, 15, Qt.red)
+        self.gyr_color = ColorFrame(15, 15, Qt.red)
+        self.sys_color = ColorFrame(15, 15, Qt.red)
 
         self.grid.addWidget(self.acc_color, 2, 2)
         self.grid.addWidget(self.mag_color, 3, 2)
@@ -97,28 +98,6 @@ during stabilization.</p>""")
     def closeEvent(self, _event):
         self.parent.button_calibration.setEnabled(True)
         self.parent.calibration = None
-
-class ColorFrame(QFrame):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.color = Qt.red
-        self.setMinimumSize(15, 15)
-        self.setMaximumSize(15, 15)
-
-    def set_color(self, color):
-        self.color = color
-        self.repaint()
-
-    def paintEvent(self, _event):
-        qp = QPainter()
-        qp.begin(self)
-        qp.setBrush(QBrush(self.color))
-        qp.setPen(self.color)
-        qp.drawRect(0, 0, 15, 15)
-        qp.setBrush(Qt.NoBrush)
-        qp.setPen(Qt.black)
-        qp.drawRect(1, 1, 14, 14)
-        qp.end()
 
 class WrapperWidget(QWidget):
     def __init__(self, plugin):

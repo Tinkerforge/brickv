@@ -33,6 +33,7 @@ from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plot_widget import PlotWidget
+from brickv.utils import draw_rect
 
 class TuningThermo(QWidget):
     def __init__(self, *args):
@@ -60,8 +61,7 @@ class TuningThermo(QWidget):
 
         painter.fillRect(0, 0, width, height, QColor(245, 245, 245))
 
-        painter.setPen(QColor(190, 190, 190))
-        painter.drawRect(0, 0, width - 1, height - 1)
+        draw_rect(painter, 0, 0, width, height, 1, QColor(190, 190, 190))
 
         filled_bar_width = int(round(float(width - self.border * 2 - 1) * self.value / self.max_value + 1))
 

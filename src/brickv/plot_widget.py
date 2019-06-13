@@ -30,9 +30,11 @@ import time
 
 from PyQt5.QtCore import pyqtSignal, Qt, QObject, QTimer, QSize, QRectF, QLineF, QPoint, QPointF
 from PyQt5.QtGui import QPainter, QFontMetrics, QPixmap, QIcon, QColor, \
-                        QPainterPath, QTransform, QPen
+                        QPainterPath, QTransform, QPen, QFont
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
                             QSizePolicy, QLabel, QSpinBox
+
+from brickv.utils import draw_rect
 
 CurveConfig = namedtuple('CurveConfig', 'title color value_wrapper value_formatter')
 MovingAverageConfig = namedtuple('MovingAverageConfig', 'min_length max_length callback')
@@ -142,6 +144,13 @@ class XScale(Scale):
 
     def draw(self, painter, width, factor, value_min, value_max):
         factor_int = int(factor)
+
+        pen = QPen()
+        pen.setCosmetic(True)
+        pen.setWidth(0)
+        pen.setColor(Qt.black)
+
+        painter.setPen(pen)
 
         # axis line
         painter.drawLine(0, 0, width - 1, 0)
@@ -398,23 +407,28 @@ class YScale(Scale):
         title_height = self.title_text_height
 
         if self.title_text_pixmap == None or self.title_text_pixmap.size() != QSize(title_width, title_height):
-            self.title_text_pixmap = QPixmap(title_width + 100, title_height + 100)
-
+            # render title text scaled 2x into pixmap. then later draw pixmap scaled 0.5x
+            # to get proper text rendering on macOS with retina display
+            self.title_text_pixmap = QPixmap(title_width * 2 + 100, title_height * 2 + 100)
             self.title_text_pixmap.fill(QColor(0, 0, 0, 0))
 
             title_painter = QPainter(self.title_text_pixmap)
 
             if DEBUG:
-                title_painter.fillRect(50, 50, title_width, title_height, Qt.yellow)
+                title_painter.fillRect(50, 50, title_width * 2, title_height * 2, Qt.yellow)
 
-            title_painter.setFont(self.title_text_font)
-            title_painter.drawText(50, 50, title_width, title_height,
+            title_text_font = QFont(self.title_text_font)
+            title_text_font.setPointSizeF(title_text_font.pointSizeF() * 2)
+
+            title_painter.setFont(title_text_font)
+            title_painter.drawText(50, 50, title_width * 2, title_height * 2,
                                    Qt.TextWordWrap | Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignTop,
                                    self.title_text)
 
             title_painter = None
 
         painter.save()
+        painter.scale(0.5, 0.5)
         painter.rotate(-90)
         painter.translate(-50, -50)
 
@@ -427,7 +441,7 @@ class YScale(Scale):
                   max(self.title_text_padding, 0) - \
                   title_height
 
-        painter.drawPixmap(title_x, title_y, self.title_text_pixmap)
+        painter.drawPixmap(title_x * 2, title_y * 2, self.title_text_pixmap)
 
         painter.restore()
 
@@ -643,9 +657,7 @@ class Plot(QWidget):
 
         # draw canvas border
         if self.curve_outer_border > 0:
-            painter.setPen(QColor(190, 190, 190))
-            painter.drawRect(canvas_x, canvas_y, canvas_width - 1, canvas_height - 1) # -1 to accommodate the 1px width of the border
-            painter.setPen(Qt.black)
+            draw_rect(painter, canvas_x, canvas_y, canvas_width, canvas_height, 1, QColor(190, 190, 190))
 
         if DEBUG:
             painter.fillRect(canvas_x + self.curve_outer_border,

@@ -24,33 +24,14 @@ Boston, MA 02111-1307, USA.
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QPushButton, QLabel, QHBoxLayout, QComboBox, QFrame, QCheckBox, QVBoxLayout
-from PyQt5.QtGui import QPainter, QBrush, QColor
+from PyQt5.QtGui import QColor
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_color import BrickletColor
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
-
-class ColorFrame(QFrame):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.color = QColor(128, 128, 128)
-        self.setMinimumSize(25, 25)
-        self.setMaximumSize(25, 25)
-
-    def set_color(self, r, g, b):
-        self.color = QColor(r, g, b)
-        self.repaint()
-
-    def paintEvent(self, event):
-        qp = QPainter(self)
-        qp.setBrush(QBrush(self.color))
-        qp.setPen(self.color)
-        qp.drawRect(0, 0, 25, 25)
-        qp.setBrush(Qt.NoBrush)
-        qp.setPen(Qt.black)
-        qp.drawRect(1, 1, 24, 24)
+from brickv.color_frame import ColorFrame
 
 class Color(PluginBase):
     def __init__(self, *args):
@@ -72,9 +53,9 @@ class Color(PluginBase):
                                                       self.cb_color_temperature,
                                                       self.increase_error_count)
 
-        self.color_frame = ColorFrame()
-        self.illuminance_frame = ColorFrame()
-        self.color_temperature_frame = ColorFrame()
+        self.color_frame = ColorFrame(25, 25, QColor(128, 128, 128))
+        self.illuminance_frame = ColorFrame(25, 25, QColor(128, 128, 128))
+        self.color_temperature_frame = ColorFrame(25, 25, QColor(128, 128, 128))
 
         self.current_color_r = CurveValueWrapper() # int
         self.current_color_g = CurveValueWrapper() # int
@@ -216,7 +197,7 @@ class Color(PluginBase):
             self.plot_widget_color_temperature.get_key_item(0).setStyleSheet('')
 
         normalize = 0xFFFF
-        self.color_frame.set_color(r * 255 // normalize, g * 255 // normalize, b * 255 // normalize)
+        self.color_frame.set_color(QColor(r * 255 // normalize, g * 255 // normalize, b * 255 // normalize))
 
     def cb_illuminance(self, illuminance):
         self.current_illuminance.value = round(illuminance * 700.0 / self.current_gain_factor / self.current_conversion_time, 1)
@@ -226,7 +207,7 @@ class Color(PluginBase):
         if i > 255:
             i = 255
 
-        self.illuminance_frame.set_color(i, i, i)
+        self.illuminance_frame.set_color(QColor(i, i, i))
 
     def cb_color_temperature(self, color_temperature):
         self.current_color_temperature.value = color_temperature
@@ -245,7 +226,7 @@ class Color(PluginBase):
 
         r, g, b = self.k_to_rgb[color_temperature]
 
-        self.color_temperature_frame.set_color(r, g, b)
+        self.color_temperature_frame.set_color(QColor(r, g, b))
 
     def is_light_on_async(self, light):
         self.light_checkbox.setChecked(light == BrickletColor.LIGHT_ON)
