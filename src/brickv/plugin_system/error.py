@@ -44,5 +44,5 @@ class Error(PluginBase):
         pass
 
     @staticmethod
-    def has_device_identifier(device_identifier):
+    def has_device_identifier(_device_identifier):
         return False

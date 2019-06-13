@@ -59,7 +59,6 @@ except ImportError:
     hat_zero_brick_supported = False
 
 from brickv.bindings.bricklet_isolator import BrickletIsolator
-from brickv.plugin_system.plugins.red import RED
 from brickv import config
 from brickv.infos import DeviceInfo, BrickMasterInfo, BrickREDInfo, BrickHATInfo, \
                          BrickHATZeroInfo, BrickletIsolatorInfo, BrickInfo, \

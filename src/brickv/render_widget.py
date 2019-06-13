@@ -25,16 +25,13 @@ import os
 import sys
 import ctypes
 import ctypes.util
-import math
 import array
 
-from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QOpenGLWidget
 from PyQt5.QtGui import QOpenGLVersionProfile, QSurfaceFormat, \
                         QOpenGLShaderProgram, QOpenGLShader, \
                         QOpenGLBuffer, QVector3D, QOpenGLTexture, \
-                        QImage, QMatrix4x4, QQuaternion
-
+                        QImage, QMatrix4x4
 
 from brickv.utils import get_resources_path
 

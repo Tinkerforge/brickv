@@ -25,7 +25,10 @@ Boston, MA 02111-1307, USA.
 import html
 
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
-from brickv.plugin_system.plugins.red.program_utils import *
+from brickv.plugin_system.plugins.red.program_utils import ExecutableVersion, Constants, \
+                                                           MandatoryTypedFileSelector, \
+                                                           MandatoryDirectorySelector, \
+                                                           ListWidgetEditor
 from brickv.plugin_system.plugins.red.ui_program_page_octave import Ui_ProgramPageOctave
 from brickv.plugin_system.plugins.red.script_manager import check_script_result
 
@@ -53,7 +56,8 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
 
         self.setupUi(self)
 
-        self.language = Constants.LANGUAGE_OCTAVE
+        self.language      = Constants.LANGUAGE_OCTAVE
+        self.is_full_image = None
 
         self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 

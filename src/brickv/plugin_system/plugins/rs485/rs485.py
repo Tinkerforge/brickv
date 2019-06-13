@@ -480,7 +480,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
     def modbus_log_add(self, event):
         self.modbus_log.append(event)
 
-        entry = [time.strftime("%H:%M:%S",event.time),
+        entry = [time.strftime("%H:%M:%S", event.time),
                  str(event.request_id),
                  str(event.slave_address),
                  event.function + ' ' + ('Request' if event.is_request else 'Response'),
@@ -708,7 +708,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                       register_address,
                                                       register_value):
         register_address += 400000
-        self.modbus_slave_request_received('Write Single Register', request_id, register_address, 1,'{:04X}'.format(register_value))
+        self.modbus_slave_request_received('Write Single Register', request_id, register_address, 1, '{:04X}'.format(register_value))
 
         self.modbus_slave_answer_request_async(
             self.rs485.modbus_slave_answer_write_single_register_request, (request_id),

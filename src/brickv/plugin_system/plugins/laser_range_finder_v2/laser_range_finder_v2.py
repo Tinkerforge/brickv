@@ -22,8 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QLabel, QVBoxLayout, QHBoxLayout, QSpinBox, QCheckBox, \
-                            QFrame, QComboBox
+from PyQt5.QtWidgets import QLabel, QVBoxLayout, QHBoxLayout, QSpinBox, QCheckBox, QFrame
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_laser_range_finder_v2 import BrickletLaserRangeFinderV2

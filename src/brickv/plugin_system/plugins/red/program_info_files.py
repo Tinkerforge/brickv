@@ -31,7 +31,6 @@ from PyQt5.QtCore import Qt, QDateTime, QDir, QSortFilterProxyModel
 from PyQt5.QtWidgets import QWidget, QDialog, QMessageBox, QInputDialog, QApplication
 from PyQt5.QtGui import QStandardItem, QStandardItemModel, QIcon
 
-from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import Download, ExpandingProgressDialog, \
                                                            ExpandingInputDialog, get_file_display_size
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles

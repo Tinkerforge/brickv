@@ -26,7 +26,10 @@ import html
 import posixpath
 
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
-from brickv.plugin_system.plugins.red.program_utils import *
+from brickv.plugin_system.plugins.red.program_utils import ExecutableVersion, Constants, \
+                                                           MandatoryLineEditChecker, \
+                                                           MandatoryDirectorySelector, \
+                                                           ListWidgetEditor
 from brickv.plugin_system.plugins.red.ui_program_page_delphi import Ui_ProgramPageDelphi
 from brickv.plugin_system.plugins.red.script_manager import check_script_result
 

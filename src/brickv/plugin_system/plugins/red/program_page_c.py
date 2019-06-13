@@ -22,11 +22,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import posixpath
 import html
+import posixpath
 
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
-from brickv.plugin_system.plugins.red.program_utils import *
+from brickv.plugin_system.plugins.red.program_utils import ExecutableVersion, Constants, \
+                                                           MandatoryLineEditChecker, \
+                                                           MandatoryDirectorySelector, \
+                                                           ListWidgetEditor
 from brickv.plugin_system.plugins.red.ui_program_page_c import Ui_ProgramPageC
 from brickv.plugin_system.plugins.red.script_manager import check_script_result
 

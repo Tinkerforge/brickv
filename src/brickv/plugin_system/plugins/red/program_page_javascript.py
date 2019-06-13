@@ -25,9 +25,14 @@ Boston, MA 02111-1307, USA.
 import html
 from PyQt5.QtWidgets import QMessageBox
 
-from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.api import REDProgram, REDError, Error
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
-from brickv.plugin_system.plugins.red.program_utils import *
+from brickv.plugin_system.plugins.red.program_utils import ExecutableVersion, Constants, \
+                                                           MandatoryTypedFileSelector, \
+                                                           MandatoryLineEditChecker, \
+                                                           MandatoryDirectorySelector, \
+                                                           ListWidgetEditor, \
+                                                           set_current_combo_index_from_data
 from brickv.plugin_system.plugins.red.ui_program_page_javascript import Ui_ProgramPageJavaScript
 from brickv.plugin_system.plugins.red.script_manager import check_script_result
 from brickv.utils import get_main_window

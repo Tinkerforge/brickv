@@ -34,7 +34,7 @@ from brickv.bindings.brick_imu_v2 import BrickIMUV2
 from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget, CurveValueWrapper
 from brickv.callback_emulator import CallbackEmulator
-from brickv.utils import get_modeless_dialog_flags, get_main_window
+from brickv.utils import get_modeless_dialog_flags
 from brickv.color_frame import ColorFrame
 from brickv import config
 
@@ -143,6 +143,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.imu_gl.setFixedSize(200, 200)
 
         self.imu_gl_wrapper = None
+        self.state = None
 
         self.data_plot_widget = []
 

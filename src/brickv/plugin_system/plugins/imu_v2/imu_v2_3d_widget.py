@@ -23,14 +23,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import sys
-import ctypes
-import ctypes.util
-import math
-import array
 import os
 
-from PyQt5.QtGui import QMatrix4x4, QQuaternion
+from PyQt5.QtGui import QQuaternion
 
 from brickv.utils import get_resources_path
 from brickv.render_widget import RenderWidget

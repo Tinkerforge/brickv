@@ -441,7 +441,7 @@ class Inventory:
     def update_latest_fws(self, latest_fws):
         self._latest_fws = latest_fws
 
-        for uid, info in self._infos.items():
+        for info in self._infos.values():
             info.update_firmware_version_latest()
 
         self.sync()

@@ -66,4 +66,3 @@ class SpinBoxHex(QSpinBox):
         if len(blocks[0]) != self.digit_block_size:
             text = '0' * (self.digit_block_size - len(blocks[0])) + text
         return text
-

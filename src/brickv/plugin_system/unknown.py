@@ -68,5 +68,5 @@ Please update Brick Viewer!""".format(info.device_identifier,
         pass
 
     @staticmethod
-    def has_device_identifier(device_identifier):
+    def has_device_identifier(_device_identifier):
         return False

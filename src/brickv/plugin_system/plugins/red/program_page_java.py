@@ -30,7 +30,13 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QDialog, QMessageBox
 
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
-from brickv.plugin_system.plugins.red.program_utils import *
+from brickv.plugin_system.plugins.red.program_utils import ExecutableVersion, Constants, \
+                                                           MandatoryEditableComboBoxChecker, \
+                                                           MandatoryTypedFileSelector, \
+                                                           MandatoryDirectorySelector, \
+                                                           ListWidgetEditor, \
+                                                           ExpandingProgressDialog, \
+                                                           ExpandingInputDialog
 from brickv.plugin_system.plugins.red.ui_program_page_java import Ui_ProgramPageJava
 from brickv.plugin_system.plugins.red.java_utils import get_jar_file_main_classes, get_class_file_main_classes
 from brickv.plugin_system.plugins.red.script_manager import check_script_result
