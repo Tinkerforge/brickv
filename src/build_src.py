@@ -84,6 +84,7 @@ for plugin in sorted(os.listdir(plugins)):
 
     brick_binding = os.path.join(bindings, 'brick_{0}.py'.format(plugin))
     bricklet_binding = os.path.join(bindings, 'bricklet_{0}.py'.format(plugin))
+    tng_binding = os.path.join(bindings, '{0}.py'.format(plugin))
     released = True
 
     if os.path.isfile(brick_binding):
@@ -91,6 +92,9 @@ for plugin in sorted(os.listdir(plugins)):
             released = not '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read()
     elif os.path.isfile(bricklet_binding):
         with open(bricklet_binding, 'r') as f:
+            released = not '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read()
+    elif os.path.isfile(tng_binding):
+        with open(tng_binding, 'r') as f:
             released = not '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read()
     else:
         raise Exception('No bindings found corresponding to plugin ' + plugin)

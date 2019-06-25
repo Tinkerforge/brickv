@@ -256,6 +256,10 @@ class DeviceInfo(AbstractInfo):
         if len(self._connections) != old_length:
             self.mark_as_changed()
 
+class TNGInfo(DeviceInfo):
+    kind = 'tng'
+    flashable_like_bricklet = True
+
 class BrickletInfo(DeviceInfo):
     kind = 'bricklet'
     flashable_like_bricklet = True
@@ -372,13 +376,13 @@ class Inventory:
         return sorted(self._infos.values(), key=lambda x: x.name)
 
     def get_device_infos(self):
-        return sorted([info for info in self._infos.values() if info.kind == 'brick' or info.kind == 'bricklet'], key=lambda x: x.name)
+        return sorted([info for info in self._infos.values() if info.kind == 'brick' or info.kind == 'bricklet' or info.kind == 'tng'], key=lambda x: x.name)
 
     def get_brick_infos(self):
         return sorted([info for info in self._infos.values() if info.kind == 'brick'], key=lambda x: x.name)
 
     def get_bricklet_infos(self):
-        return sorted([info for info in self._infos.values() if info.kind == 'bricklet'], key=lambda x: x.name)
+        return sorted([info for info in self._infos.values() if info.kind == 'bricklet' or info.kind == 'tng'], key=lambda x: x.name)
 
     def get_extension_infos(self):
         extension_infos = []
@@ -427,6 +431,8 @@ class Inventory:
             d = self._latest_fws.tool_infos
         elif info.kind == 'bindings':
             d = self._latest_fws.bindings_infos
+        elif info.kind == 'tng':
+            return (0, 0, 0) # TODO: Implement me!
         else:
             raise Exception("Unexpected info kind " + info.kind)
 

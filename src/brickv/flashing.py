@@ -775,7 +775,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.refresh_serial_ports()
 
     def read_current_uid(self):
-        if self.current_bricklet_has_comcu():
+        if self.current_bricklet_has_comcu() or self.current_bricklet_is_tng():
             return base58encode(self.current_bricklet_device().read_uid())
 
         brick = self.current_parent_device()
@@ -805,7 +805,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             return
 
         try:
-            if self.current_bricklet_has_comcu():
+            if self.current_bricklet_has_comcu() or self.current_bricklet_is_tng():
                 self.current_bricklet_device().write_uid(base58decode(uid))
             else:
                 self.parent.ipcon.write_bricklet_uid(brick, port, uid)
@@ -958,7 +958,99 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if has_comcu:
             return self.write_bricklet_plugin_comcu(plugin, bricklet, name, progress)
         else:
-            return self.write_bricklet_plugin_standard(plugin, brick, port, bricklet, name, progress)
+            if self.current_bricklet_is_tng():
+                return self.write_bricklet_plugin_tng(plugin, bricklet, name, progress)
+            else:
+                return self.write_bricklet_plugin_standard(plugin, brick, port, bricklet, name, progress)
+
+    def write_bricklet_plugin_tng(self, plugin, bricklet, name, progress):
+        try:
+            progress.setLabelText('Starting bootloader mode')
+            progress.setMaximum(0)
+            progress.setValue(0)
+            progress.show()
+
+            # Convert plugin back from list of bytes to something we can put in ZipFile
+            zip_file = plugin
+
+            try:
+                zf = zipfile.ZipFile(FileLike(zip_file), 'r')
+            except Exception as e:
+                progress.cancel()
+                self.popup_fail('Bricklet', 'Could not read *.zbin file: {0}'.format(e))
+                return False
+
+            plugin_data = None
+            is_tng = False
+
+            for name in zf.namelist():
+                if name.endswith('firmware.bin'):
+                    plugin_data = zf.read(name)
+                    break
+
+            if plugin_data == None:
+                progress.cancel()
+                self.popup_fail('TNG Module', 'Could not find firmware in *.zbin file')
+                return False
+
+            # Now convert plugin to list of bytes
+            plugin = plugin_data
+
+            # For TNG fill with zeroes to make sure that plugin size is divisible by 64.
+            plugin_len_rest = len(plugin) % 64
+            if plugin_len_rest != 0:
+                plugin += b'\0'*(64-plugin_len_rest)
+
+            num_packets = len(plugin) // 64
+            index_list = list(range(num_packets))
+
+            progress.setLabelText('Writing plugin: ' + name)
+            progress.setMaximum(len(index_list))
+            progress.setValue(0)
+            progress.show()
+
+            for position in index_list:
+                start = position * 64
+                end = (position + 1) * 64
+
+                try:
+                    bricklet.set_write_firmware_pointer(start)
+                    bricklet.write_firmware(plugin[start:end])
+                except:
+                    # retry block a second time
+                    try:
+                        bricklet.set_write_firmware_pointer(start)
+                        bricklet.write_firmware(plugin[start:end])
+                    except Exception as e:
+                        progress.cancel()
+                        self.popup_fail('TNG Module', 'Could not write firmware: {0}'.format(e))
+                        return False
+
+                progress.setValue(position)
+
+            copy_status = bricklet.copy_firmware()
+            if copy_status == 0:
+                bricklet.reset()
+                return True
+            else:
+                if copy_status == 1:
+                    error_str = 'Device identifier incorrect (Error 1)'
+                elif copy_status == 2:
+                    error_str = 'Magic number incorrect (Error 2)'
+                elif copy_status == 3:
+                    error_str = 'Length malformed (Error 3)'
+                elif copy_status == 4:
+                    error_str = 'CRC mismatch (Error 4)'
+                else: # unknown error case
+                    error_str = 'Error ' + str(copy_status)
+
+                progress.cancel()
+                self.popup_fail('Bricklet', 'Could not flash firmware: ' + error_str)
+                return False
+        except:
+            progress.cancel()
+            sys.excepthook(*sys.exc_info())
+            return False
 
     def write_bricklet_plugin_comcu(self, plugin, bricklet, name, progress):
         try:
@@ -1350,8 +1442,14 @@ class FlashingWindow(QDialog, Ui_Flashing):
         except:
             return False
 
+    def current_bricklet_is_tng(self):
+        try:
+            return self.current_bricklet_plugin().is_tng
+        except:
+            return False
+
     def plugin_browse_clicked(self):
-        if self.current_bricklet_has_comcu():
+        if self.current_bricklet_has_comcu() or self.current_bricklet_is_tng():
             file_ending = '*.zbin'
         else:
             file_ending = '*.bin'
@@ -1544,7 +1642,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 color, update = get_color_for_device(info)
 
-                if update and info.kind == 'bricklet':
+                if update and (info.kind == 'bricklet' or info.kind == 'tng'):
                     is_update = True
 
                 for item in parent:

@@ -62,7 +62,7 @@ from brickv.bindings.bricklet_isolator import BrickletIsolator
 from brickv import config
 from brickv.infos import DeviceInfo, BrickMasterInfo, BrickREDInfo, BrickHATInfo, \
                          BrickHATZeroInfo, BrickletIsolatorInfo, BrickInfo, \
-                         BrickletInfo, get_version_string, inventory
+                         BrickletInfo, TNGInfo, get_version_string, inventory
 from brickv.tab_window import TabWindow, IconButton
 from brickv.plugin_system.comcu_bootloader import COMCUBootloader
 from brickv.load_pixmap import load_pixmap
@@ -812,6 +812,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     device_info = BrickHATZeroInfo()
                 elif device_identifier == BrickletIsolator.DEVICE_IDENTIFIER:
                     device_info = BrickletIsolatorInfo()
+                elif str(device_identifier).startswith('20'):
+                    device_info = TNGInfo()
                 elif '0' <= position <= '9':
                     device_info = BrickInfo()
                 else:

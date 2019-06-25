@@ -30,6 +30,7 @@ from PyQt5.QtCore import pyqtBoundSignal
 
 from brickv.bindings.ip_connection import IPConnection
 from brickv.bindings.bricklet_gps_v2 import GPSV2
+from brickv.bindings.tng_di8 import TNGDI8
 from brickv.utils import get_main_window
 from brickv.tab_window import IconButton
 from brickv.load_pixmap import load_pixmap
@@ -44,6 +45,7 @@ class PluginBase(QWidget):
         super().__init__()
 
         self.has_comcu = False # Will be overwritten if plugin has comcu
+        self.is_tng    = False # Will be overwritten if plugin is tng
         self.plugin_state = PluginBase.PLUGIN_STATE_STOPPED
         self.label_timeouts = None
         self.label_version = None
@@ -75,7 +77,10 @@ class PluginBase(QWidget):
             # functions necessary to flash (the FIDs are at the same position for all
             # new Bricklets) and no other function is used during flashing.
             if override_base_name == 'Unknown':
-                self.device = GPSV2(self.uid, self.ipcon)
+                if str(self.device_info.device_identifier).startswith('20'):
+                    self.device = TNGDI8(self.uid, self.ipcon)
+                else:
+                    self.device = GPSV2(self.uid, self.ipcon)
 
         if self.is_hardware_version_relevant():
             self.name = '{0} {1}.{2}'.format(self.base_name,
