@@ -56,7 +56,10 @@ class ChunkedDownloader(ChunkedDownloaderBase):
         QMessageBox.critical(get_main_window(), 'Export Error', message)
 
     def set_progress_maximum(self, maximum):
-        self.scale_factor = 1000.0 / maximum
+        if maximum == 0:
+            self.scale_factor = 1.0 / 1000
+        else:
+            self.scale_factor = 1000.0 / maximum
         if self.widget.progress.isVisible():
             self.widget.progress.setRange(0, 1000)
 

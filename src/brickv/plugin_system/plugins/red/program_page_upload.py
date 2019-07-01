@@ -46,7 +46,10 @@ class ChunkedUploader(ChunkedUploaderBase):
         self.page.upload_error('...error: ' + message, *args)
 
     def set_progress_maximum(self, maximum):
-        self.scale_factor = 1000.0 / maximum
+        if maximum == 0:
+            self.scale_factor = 1.0 / 1000
+        else:
+            self.scale_factor = 1000.0 / maximum
         self.page.progress_file.setRange(0, 1000)
 
     def set_progress_value(self, value, message):
