@@ -1510,6 +1510,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         progress.cancel()
 
+        if any(brick.firmware_version_installed < brick.firmware_version_latest for brick in inventory.get_brick_infos()):
+            self.popup_ok("Brick firmware updates available.", "There are Brick firmware updates are available.")
+
     def tab_changed(self, i):
         if self.ignore_tab_changed_event:
             return
