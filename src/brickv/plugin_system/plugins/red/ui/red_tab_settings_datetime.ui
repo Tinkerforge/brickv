@@ -220,7 +220,7 @@
                 <item row="3" column="1">
                  <widget class="QPushButton" name="time_sync_button">
                   <property name="text">
-                   <string>Synchronize Brick with Local</string>
+                   <string>Update Brick to Local Time</string>
                   </property>
                  </widget>
                 </item>
