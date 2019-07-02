@@ -28,7 +28,7 @@ excludes = ['wx', 'gtk+', '_gtkagg', 'gtk', 'gdk', 'gtk2', 'gtk3', 'cairo', 'way
             'pydoc',
             #'email',
             'nose',
-            'inspect',
+            #'inspect',
             #'ctypes.macholib',
             'win32pdh',
             'win32ui',
