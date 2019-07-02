@@ -18,6 +18,8 @@ The following libraries are required:
 * Python >= 3.5
 * PyQt >= 5.5 with QtOpenGL
 * pySerial
+* pytz
+* tzlocal
 
 On Windows you will also need:
 
@@ -25,7 +27,7 @@ On Windows you will also need:
 
 On Debian based Linux distributions try::
 
- sudo apt-get install python3 python3-pyqt5 python3-pyqt5.qtopengl python3-serial
+ sudo apt-get install python3 python3-pyqt5 python3-pyqt5.qtopengl python3-serial python3-tz python3-tzlocal
 
 First you have to build the Qt .ui files with the fixed version of ``pyuic5``,
 you can do this with ``python3 build_src.py`` in ``src/``. After that you

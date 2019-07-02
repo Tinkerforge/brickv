@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>595</width>
-        <height>420</height>
+        <width>599</width>
+        <height>424</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -41,37 +41,7 @@
              <layout class="QHBoxLayout" name="horizontalLayout_7">
               <item>
                <layout class="QGridLayout" name="gridLayout_7">
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_19">
-                  <property name="text">
-                   <string>Date:</string>
-                  </property>
-                  <property name="buddy">
-                   <cstring>time_date_red</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_20">
-                  <property name="text">
-                   <string>Time:</string>
-                  </property>
-                  <property name="buddy">
-                   <cstring>time_time_red</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label_33">
-                  <property name="text">
-                   <string>Timezone:</string>
-                  </property>
-                  <property name="buddy">
-                   <cstring>time_timezone_red</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
+                <item row="0" column="1">
                  <widget class="QDateEdit" name="time_date_red">
                   <property name="enabled">
                    <bool>true</bool>
@@ -87,20 +57,27 @@
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="1">
-                 <widget class="QLineEdit" name="time_timezone_red">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_20">
                   <property name="text">
-                   <string>Collecting data...</string>
+                   <string>Time:</string>
                   </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
+                  <property name="buddy">
+                   <cstring>time_time_red</cstring>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_19">
+                  <property name="text">
+                   <string>Date:</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>time_date_red</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
                  <widget class="QTimeEdit" name="time_time_red">
                   <property name="enabled">
                    <bool>true</bool>
@@ -113,6 +90,42 @@
                   </property>
                   <property name="calendarPopup">
                    <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QComboBox" name="time_timezone_red">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="editable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="currentText">
+                   <string/>
+                  </property>
+                  <property name="insertPolicy">
+                   <enum>QComboBox::NoInsert</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QPushButton" name="save_timezone_button">
+                  <property name="text">
+                   <string>Save Timezone</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_33">
+                  <property name="text">
+                   <string>Timezone:</string>
                   </property>
                  </widget>
                 </item>
@@ -129,6 +142,16 @@
              <layout class="QHBoxLayout" name="horizontalLayout_8">
               <item>
                <layout class="QGridLayout" name="gridLayout_10">
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_36">
+                  <property name="text">
+                   <string>Timezone:</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>time_timezone_local</cstring>
+                  </property>
+                 </widget>
+                </item>
                 <item row="0" column="0">
                  <widget class="QLabel" name="label_34">
                   <property name="text">
@@ -136,19 +159,6 @@
                   </property>
                   <property name="buddy">
                    <cstring>time_date_local</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QLineEdit" name="time_timezone_local">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="text">
-                   <string>Collecting data...</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -162,13 +172,16 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_36">
-                  <property name="text">
-                   <string>Timezone:</string>
+                <item row="2" column="1">
+                 <widget class="QLineEdit" name="time_timezone_local">
+                  <property name="enabled">
+                   <bool>true</bool>
                   </property>
-                  <property name="buddy">
-                   <cstring>time_timezone_local</cstring>
+                  <property name="text">
+                   <string>Collecting data...</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -204,6 +217,13 @@
                   </property>
                  </widget>
                 </item>
+                <item row="3" column="1">
+                 <widget class="QPushButton" name="time_sync_button">
+                  <property name="text">
+                   <string>Synchronize Brick with Local</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </item>
              </layout>
@@ -212,16 +232,12 @@
           </layout>
          </item>
          <item>
-          <widget class="Line" name="line_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="time_sync_button">
+          <widget class="QLabel" name="red_reconfigure_label">
            <property name="text">
-            <string>Synchronize</string>
+            <string>The RED Brick's timezone configuration is missing or incomplete. Please select a zone or synchronize with local time configuration.</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -252,9 +268,7 @@
   <tabstop>time_date_local</tabstop>
   <tabstop>time_time_red</tabstop>
   <tabstop>time_time_local</tabstop>
-  <tabstop>time_timezone_red</tabstop>
   <tabstop>time_timezone_local</tabstop>
-  <tabstop>time_sync_button</tabstop>
  </tabstops>
  <resources/>
  <connections/>

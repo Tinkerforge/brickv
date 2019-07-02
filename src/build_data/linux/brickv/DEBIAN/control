@@ -6,7 +6,7 @@ Architecture: all
 Priority: optional
 Installed-Size: <<INSTALLED_SIZE>>
 Build-Depends: iso-codes
-Depends: python3 (>= 3.5), python3-pyqt5 (>= 5.5), python3-pyqt5.qtopengl, python3-serial
+Depends: python3 (>= 3.5), python3-pyqt5 (>= 5.5), python3-pyqt5.qtopengl, python3-serial, python3-tz, python3-tzlocal
 Description: Brick Viewer
  Brick Viewer is a small Qt GUI with which one can control and test
  all Bricks and Bricklets from Tinkerforge (see www.tinkerforge.com).
