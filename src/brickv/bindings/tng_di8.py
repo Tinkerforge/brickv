@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-06-25.      #
+# This file was automatically generated on 2019-07-02.      #
 #                                                           #
 # Python Bindings Version 2.1.22                            #
 #                                                           #
@@ -25,7 +25,7 @@ class TNGDI8(Device):
     """
 
     DEVICE_IDENTIFIER = 201
-    DEVICE_DISPLAY_NAME = 'DI8 TNG'
+    DEVICE_DISPLAY_NAME = 'TNG DI8'
     DEVICE_URL_PART = 'di8' # internal
 
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-21.      #
+# This file was automatically generated on 2019-07-02.      #
 #                                                           #
 # Python Bindings Version 2.1.22                            #
 #                                                           #
@@ -526,7 +526,7 @@ class BrickletRS485(Device):
         function creates a Modbus function code 1 request.
 
         * Slave Address: Address of the target Modbus slave.
-        * Starting Address: Starting address of the read.
+        * Starting Address: Number of the first coil to read. For backwards compatibility reasons this parameter is called Starting Address. It is not an address, but instead a coil number in the range of 1 to 65536.
         * Count: Number of coils to read.
 
         Upon success the function will return a non-zero request ID which will represent
@@ -568,7 +568,7 @@ class BrickletRS485(Device):
         This function creates a Modbus function code 3 request.
 
         * Slave Address: Address of the target Modbus slave.
-        * Starting Address: Starting address of the read.
+        * Starting Address: Number of the first holding register to read. For backwards compatibility reasons this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 (for holding register) is implicit and must be omitted.
         * Count: Number of holding registers to read.
 
         Upon success the function will return a non-zero request ID which will represent
@@ -606,7 +606,7 @@ class BrickletRS485(Device):
         This function creates a Modbus function code 5 request.
 
         * Slave Address: Address of the target Modbus slave.
-        * Coil Address: Address of the coil.
+        * Coil Address: Number of the coil to be written. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a coil number in the range of 1 to 65536.
         * Coil Value: Value to be written.
 
         Upon success the function will return a non-zero request ID which will represent
@@ -641,11 +641,11 @@ class BrickletRS485(Device):
 
     def modbus_master_write_single_register(self, slave_address, register_address, register_value):
         """
-        In Modbus master mode this function can be used to write a single register of a
+        In Modbus master mode this function can be used to write a single holding register of a
         slave. This function creates a Modbus function code 6 request.
 
         * Slave Address: Address of the target Modbus slave.
-        * Register Address: Address of the register.
+        * Register Address: Number of the holding register to be written. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 (for holding register) is implicit and must be omitted.
         * Register Value: Value to be written.
 
         Upon success the function will return a non-zero request ID which will represent
@@ -683,7 +683,7 @@ class BrickletRS485(Device):
         This function creates a Modbus function code 15 request.
 
         * Slave Address: Address of the target Modbus slave.
-        * Starting Address: Starting address of the write.
+        * Starting Address: Number of the first coil to write. For backwards compatibility reasons, this parameter is called Starting Address.It is not an address, but instead a coil number in the range of 1 to 65536.
 
         Upon success the function will return a non-zero request ID which will represent
         the current request initiated by the Modbus master. In case of failure the returned
@@ -722,7 +722,7 @@ class BrickletRS485(Device):
         This function creates a Modbus function code 16 request.
 
         * Slave Address: Address of the target Modbus slave.
-        * Starting Address: Starting Address of the write.
+        * Starting Address: Number of the first holding register to write. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 (for holding register) is implicit and must be omitted.
 
         Upon success the function will return a non-zero request ID which will represent
         the current request initiated by the Modbus master. In case of failure the returned
@@ -765,7 +765,7 @@ class BrickletRS485(Device):
         This function creates a Modbus function code 2 request.
 
         * Slave Address: Address of the target Modbus slave.
-        * Starting Address: Starting address of the read.
+        * Starting Address: Number of the first discrete input to read. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a discrete input number in the range of 1 to 65536. The prefix digit 1 (for discrete input) is implicit and must be omitted.
         * Count: Number of discrete inputs to read.
 
         Upon success the function will return a non-zero request ID which will represent
@@ -807,7 +807,7 @@ class BrickletRS485(Device):
         This function creates a Modbus function code 4 request.
 
         * Slave Address: Address of the target Modbus slave.
-        * Starting Address: Starting address of the read.
+        * Starting Address: Number of the first input register to read. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead an input register number in the range of 1 to 65536. The prefix digit 3 (for input register) is implicit and must be omitted.
         * Count: Number of input registers to read.
 
         Upon success the function will return a non-zero request ID which will represent
@@ -1105,7 +1105,7 @@ class BrickletRS485(Device):
         This function creates a Modbus function code 15 request.
 
         * Slave Address: Address of the target Modbus slave.
-        * Starting Address: Starting address of the write.
+        * Starting Address: Number of the first coil to write. For backwards compatibility reasons, this parameter is called Starting Address.It is not an address, but instead a coil number in the range of 1 to 65536.
 
         Upon success the function will return a non-zero request ID which will represent
         the current request initiated by the Modbus master. In case of failure the returned
@@ -1144,7 +1144,7 @@ class BrickletRS485(Device):
         This function creates a Modbus function code 16 request.
 
         * Slave Address: Address of the target Modbus slave.
-        * Starting Address: Starting Address of the write.
+        * Starting Address: Number of the first holding register to write. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 (for holding register) is implicit and must be omitted.
 
         Upon success the function will return a non-zero request ID which will represent
         the current request initiated by the Modbus master. In case of failure the returned

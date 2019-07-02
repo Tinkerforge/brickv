@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-21.      #
+# This file was automatically generated on 2019-07-02.      #
 #                                                           #
 # Python Bindings Version 2.1.22                            #
 #                                                           #
@@ -228,8 +228,26 @@ class BrickletAccelerometerV2(Device):
         one of the axis is enabled and the resolution is set to 16 bit,
         the :cb:`Continuous Acceleration 16 Bit` callback is activated.
 
+        The returned values are raw ADC data. If you want to put this data into
+        a FFT to determine the occurrences of specific frequencies we recommend
+        that you use the data as is. It has all of the ADC noise in it. This noise
+        looks like pure noise at first glance, but it might still have some frequnecy
+        information in it that can be utilized by the FFT.
+
+        Otherwise you have to use the following formulas that depend on the configured
+        resolution (8/16 bit) and the full scale range (see :func:`Set Configuration`) to calculate
+        the data in g/10000 (same unit that is returned by :func:`Get Acceleration`):
+
+        * 16 bit, full scale 2G: acceleration = value*625/1024
+        * 16 bit, full scale 4G: acceleration = value*1250/1024
+        * 16 bit, full scale 8G: acceleration = value*2500/1024
+
         If a resolution of 8 bit is used, only the 8 most significant bits will be
-        transferred. This means that the unit changes from g/10000 to g*256/10000.
+        transferred, so you can use the following formulas:
+
+        * 8 bit, full scale 2G:  acceleration = value*256*625/1024
+        * 8 bit, full scale 4G:  acceleration = value*256*1250/1024
+        * 8 bit, full scale 8G:  acceleration = value*256*2500/1024
 
         If no axis is enabled, both callbacks are disabled. If one of the continuous
         callbacks is enabled, the :cb:`Acceleration` callback is disabled.
