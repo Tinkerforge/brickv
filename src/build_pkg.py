@@ -65,19 +65,14 @@ def prepare_manifest(utils):
 
             brick_binding = os.path.join(bindings_path, 'brick_{0}.py'.format(plugin_name))
             bricklet_binding = os.path.join(bindings_path, 'bricklet_{0}.py'.format(plugin_name))
+            tng_binding = os.path.join(bindings_path, '{0}.py'.format(plugin_name))
+            released = True
 
-            if os.path.isfile(brick_binding):
-                with open(brick_binding, 'r') as f:
-                    if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
-                        print('excluding unreleased plugin and binding: ' + plugin_name)
-                        excluded_patterns.append('prune {source_folder}/plugin_system/plugins/{plugin_name}'.format(source_folder=utils.source_path, plugin_name=plugin_name))
-                        excluded_patterns.append('recursive-exclude {source_folder}/bindings brick_{plugin_name}.py'.format(source_folder=utils.source_path, plugin_name=plugin_name))
-            elif os.path.isfile(bricklet_binding):
-                with open(bricklet_binding, 'r') as f:
-                    if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
-                        print('excluding unreleased plugin and binding: ' + plugin_name)
-                        excluded_patterns.append('prune {source_folder}/plugin_system/plugins/{plugin_name}'.format(source_folder=utils.source_path, plugin_name=plugin_name))
-                        excluded_patterns.append('recursive-exclude {source_folder}/bindings bricklet_{plugin_name}.py'.format(source_folder=utils.source_path, plugin_name=plugin_name))
+            for file in [brick_binding, bricklet_binding, tng_binding]:
+                if os.path.isfile(file):
+                    with open(file, 'r') as f:
+                        released = not '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read()
+                        break
             else:
                 raise Exception('No bindings found corresponding to plugin {0}'.format(plugin_name))
 

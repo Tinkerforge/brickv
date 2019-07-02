@@ -87,15 +87,11 @@ for plugin in sorted(os.listdir(plugins)):
     tng_binding = os.path.join(bindings, '{0}.py'.format(plugin))
     released = True
 
-    if os.path.isfile(brick_binding):
-        with open(brick_binding, 'r') as f:
-            released = not '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read()
-    elif os.path.isfile(bricklet_binding):
-        with open(bricklet_binding, 'r') as f:
-            released = not '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read()
-    elif os.path.isfile(tng_binding):
-        with open(tng_binding, 'r') as f:
-            released = not '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read()
+    for file in [brick_binding, bricklet_binding, tng_binding]:
+        if os.path.isfile(file):
+            with open(file, 'r') as f:
+                released = not '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read()
+                break
     else:
         raise Exception('No bindings found corresponding to plugin ' + plugin)
 
