@@ -115,7 +115,7 @@ class ESPROM:
 
     """ Try connecting repeatedly until successful, or giving up """
     def connect(self):
-        for _ in range(4):
+        for _ in range(10):
             # issue reset-to-bootloader:
             # RTS = either CH_PD or nRESET (both active low = chip in reset)
             # DTR = GPIO0 (active low = boot to flasher)
@@ -129,13 +129,13 @@ class ESPROM:
 
             # worst-case latency timer should be 255ms (probably <20ms)
             self._port.timeout = 0.3
-            for _ in range(4):
+            for _ in range(10):
                 try:
                     self._port.flushInput()
                     self._slip_reader = slip_reader(self._port)
                     self._port.flushOutput()
                     self.sync()
-                    self._port.timeout = 5
+                    self._port.timeout = 3
                     return
                 except:
                     time.sleep(0.05)
