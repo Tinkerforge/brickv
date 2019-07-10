@@ -788,12 +788,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                     if parent_info is not None:
                         parent_info.connections_remove_item((device_info.position, device_info))
-                        self.show_status("Hot plugging is not supported! Please reset the brick {} and restart brick viewer.".format(device_info.connected_uid))
+                        self.show_status("Hot plugging is not supported! Please reset Brick with UID {} and reconnect Brick Viewer.".format(device_info.connected_uid))
 
                     device_info.reverse_connection = connected_uid
                 elif device_info.position != position:
                     # Bricklet was connected to the same brick, but to another port
-                    self.show_status("Hot plugging is not supported! Please reset the brick {} and restart brick viewer.".format(device_info.connected_uid))
+                    self.show_status("Hot plugging is not supported! Please reset Brick with UID {} and reconnect Brick Viewer.".format(device_info.connected_uid))
 
                 # If the plugin is not running, pause will do nothing, so it is always save to call it.
                 # The plugin will be (unconditionally) resumed later, as resume also only does something
