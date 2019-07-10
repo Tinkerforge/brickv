@@ -468,9 +468,12 @@ class Wifi2(QWidget, Ui_Wifi2):
             return
 
         try:
-            self.wifi_ap_password.text().encode('ascii')
+            tmp_pw = self.wifi_ap_password.text().encode('ascii')
         except:
             self.popup_fail('Access point password cannot contain non-ASCII characters')
+            return
+        if len(tmp_pw) < 8:
+            self.popup_fail('Access point password must contain at least 8 characters')
             return
 
         try:
