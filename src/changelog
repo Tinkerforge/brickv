@@ -486,7 +486,7 @@
 - Fix Ethernet Extension configuration check
 - Port IMU Brick (2.0) 3D view to modern OpenGL making it work on Raspberry Pi
 
-2019-05-21: 2.4.4 (<unknown>)
+2019-05-21: 2.4.4 (5edb335)
 - Add support for CO2 2.0, E-Paper 296x128, Hall Effect 2.0, Joystick 2.0,
   Laser Range Finder 2.0, Linear Poti 2.0, Piezo Speaker 2.0, RGB LED 2.0 and
   Segment Display 4x7 2.0 Bricklet and HAT and HAT Zero Brick
@@ -497,3 +497,16 @@
 - Show Master Extensions on RED Brick in devices tree
 - Fix WIFI Extension firmware version lookup in Master Brick plugin
 - Show WIFI Extension firmware version in Master Brick plugin
+
+2019-07-10: 2.4.5 (<unknown>)
+- Improve GUI and error handling of RS485 Bricklet plugin
+- Improve WIFI Extension 2.0 configuration validation
+- Handle spectrum stream-of-of-sync error for Sound Pressure Level Bricklet
+- Handle station/sensor loss for Outdoor Weather Bricklet
+- Don't trigger overview updates while RED Brick plugin is not visible
+- Fix duplicated async-reads in RED Brick plugin script manager
+- Enable Retina mode on macOS
+- Fix upload of empty files to RED Brick
+- Fix timezone setting for RED Brick
+- Make WIFI Extension 2.0 flashing more robust by increasing the number of
+  bootloader connection attempts
