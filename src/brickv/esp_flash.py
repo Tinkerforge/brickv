@@ -34,21 +34,21 @@ import time
 class ESPROM:
     # These are the currently known commands supported by the ROM
     ESP_FLASH_BEGIN = 0x02
-    ESP_FLASH_DATA  = 0x03
-    ESP_FLASH_END   = 0x04
-    ESP_MEM_BEGIN   = 0x05
-    ESP_MEM_END     = 0x06
-    ESP_MEM_DATA    = 0x07
-    ESP_SYNC        = 0x08
-    ESP_WRITE_REG   = 0x09
-    ESP_READ_REG    = 0x0a
+    ESP_FLASH_DATA = 0x03
+    ESP_FLASH_END = 0x04
+    ESP_MEM_BEGIN = 0x05
+    ESP_MEM_END = 0x06
+    ESP_MEM_DATA = 0x07
+    ESP_SYNC = 0x08
+    ESP_WRITE_REG = 0x09
+    ESP_READ_REG = 0x0a
 
     # Maximum block sized for RAM and Flash writes, respectively.
-    ESP_RAM_BLOCK   = 0x1800
+    ESP_RAM_BLOCK = 0x1800
     ESP_FLASH_BLOCK = 0x400
 
     # Default baudrate. The ROM auto-bauds, so we can use more or less whatever we want.
-    ESP_ROM_BAUD    = 115200
+    ESP_ROM_BAUD = 115200
 
     # First byte of the application image
     ESP_IMAGE_MAGIC = 0xe9
@@ -57,9 +57,9 @@ class ESPROM:
     ESP_CHECKSUM_MAGIC = 0xef
 
     # OTP ROM addresses
-    ESP_OTP_MAC0    = 0x3ff00050
-    ESP_OTP_MAC1    = 0x3ff00054
-    ESP_OTP_MAC3    = 0x3ff0005c
+    ESP_OTP_MAC0 = 0x3ff00050
+    ESP_OTP_MAC1 = 0x3ff00054
+    ESP_OTP_MAC3 = 0x3ff0005c
 
     # Flash sector size, minimum unit of erase.
     ESP_FLASH_SECTOR = 0x1000
@@ -82,6 +82,7 @@ class ESPROM:
     def checksum(data, state=ESP_CHECKSUM_MAGIC):
         for b in data:
             state ^= ord(b) if sys.hexversion < 0x03000000 else b
+
         return state
 
     """ Send a request and read the response """
@@ -96,12 +97,17 @@ class ESPROM:
         # reply with more sync responses than expected.
         for retry in range(100):
             p = self.read()
+
             if len(p) < 8:
                 continue
+
             (resp, op_ret, len_ret, val) = struct.unpack('<BBHI', p[:8])
+
             if resp != 1:
                 continue
+
             body = p[8:]
+
             if op is None or op_ret == op:
                 return val, body  # valid response received
 
@@ -110,6 +116,7 @@ class ESPROM:
     """ Perform a connection test """
     def sync(self):
         self.command(ESPROM.ESP_SYNC, b'\x07\x07\x12\x20' + 32 * b'\x55')
+
         for _i in range(7):
             self.command()
 
@@ -129,6 +136,7 @@ class ESPROM:
 
             # worst-case latency timer should be 255ms (probably <20ms)
             self._port.timeout = 0.3
+
             for _ in range(10):
                 try:
                     self._port.flushInput()
@@ -145,8 +153,10 @@ class ESPROM:
     """ Read memory address in target """
     def read_reg(self, addr):
         res = self.command(ESPROM.ESP_READ_REG, struct.pack('<I', addr))
+
         if res[1] != b"\0\0":
             raise FatalError('Failed to read target memory')
+
         return res[0]
 
     """ Write to memory address in target """
@@ -185,6 +195,7 @@ class ESPROM:
         start_sector = offset // sector_size
 
         head_sectors = sectors_per_block - (start_sector % sectors_per_block)
+
         if num_sectors < head_sectors:
             head_sectors = num_sectors
 
@@ -196,6 +207,7 @@ class ESPROM:
         self._port.timeout = 30
         result = self.command(ESPROM.ESP_FLASH_BEGIN,
                               struct.pack('<IIII', erase_size, num_blocks, ESPROM.ESP_FLASH_BLOCK, offset))[1]
+
         if result != b"\0\0":
             #pylint: disable=raising-format-tuple
             raise FatalError.WithResult('Failed to enter Flash download mode (result "%s")', result)
@@ -206,12 +218,14 @@ class ESPROM:
         result = self.command(ESPROM.ESP_FLASH_DATA,
                               struct.pack('<IIII', len(data), seq, 0, 0) + data,
                               ESPROM.checksum(data))[1]
+
         if result != b"\0\0":
             raise FatalError.WithResult('Failed to write to target Flash after seq %d (got result %%s)' % seq, result)
 
     """ Leave flash mode and run/reboot """
     def flash_finish(self, reboot=False):
         pkt = struct.pack('<I', int(not reboot))
+
         if self.command(ESPROM.ESP_FLASH_END, pkt)[1] != b"\0\0":
             raise FatalError('Failed to leave Flash mode')
 
@@ -226,6 +240,7 @@ class ESPROM:
         mac0 = self.read_reg(self.ESP_OTP_MAC0)
         mac1 = self.read_reg(self.ESP_OTP_MAC1)
         mac3 = self.read_reg(self.ESP_OTP_MAC3)
+
         if (mac3 != 0):
             oui = ((mac3 >> 16) & 0xff, (mac3 >> 8) & 0xff, mac3 & 0xff)
         elif ((mac1 >> 16) & 0xff) == 0:
@@ -234,12 +249,14 @@ class ESPROM:
             oui = (0xac, 0xd0, 0x74)
         else:
             raise FatalError("Unknown OUI")
+
         return oui + ((mac1 >> 8) & 0xff, mac1 & 0xff, (mac0 >> 24) & 0xff)
 
     """ Read Chip ID from OTP ROM - see http://esp8266-re.foogod.com/wiki/System_get_chip_id_%28IoT_RTOS_SDK_0.9.9%29 """
     def chip_id(self):
         id0 = self.read_reg(self.ESP_OTP_MAC0)
         id1 = self.read_reg(self.ESP_OTP_MAC1)
+
         return (id0 >> 24) | ((id1 & 0xffffff) << 8)
 
     """ Read SPI flash manufacturer and device id """
@@ -249,6 +266,7 @@ class ESPROM:
         self.write_reg(0x60000200, 0x10000000, 0xffffffff)
         flash_id = self.read_reg(0x60000240)
         self.flash_finish(False)
+
         return flash_id
 
     """ Abuse the loader protocol to force flash to be left in write mode """
@@ -277,6 +295,7 @@ class ESPROM:
     def run_stub(self, stub, params):
         stub = dict(stub)
         stub['code'] = unhexify(stub['code'])
+
         if 'data' in stub:
             stub['data'] = unhexify(stub['data'])
 
@@ -290,9 +309,11 @@ class ESPROM:
         # Upload
         self.mem_begin(len(pc), 1, len(pc), stub['params_start'])
         self.mem_block(pc, 0)
+
         if 'data' in stub:
             self.mem_begin(len(stub['data']), 1, len(stub['data']), stub['data_start'])
             self.mem_block(stub['data'], 0)
+
         self.mem_finish(stub['entry'])
 
 
@@ -307,23 +328,30 @@ class CesantaFlasher:
     def __init__(self, esp, baud_rate=0):
         if baud_rate <= ESPROM.ESP_ROM_BAUD:  # don't change baud rates if we already synced at that rate
             baud_rate = 0
+
         self._esp = esp
         esp.run_stub(json.loads(_CESANTA_FLASHER_STUB), [baud_rate])
+
         if baud_rate > 0:
             esp._port.baudrate = baud_rate
+
         # Read the greeting.
         p = esp.read()
+
         if p != b'OHAI':
             raise FatalError('Failed to connect to the flasher (got %s)' % hexify(p))
 
     def flash_write(self, addr, data, progress):
         assert addr % self._esp.ESP_FLASH_SECTOR == 0, 'Address must be sector-aligned'
         assert len(data) % self._esp.ESP_FLASH_SECTOR == 0, 'Length must be sector-aligned'
+
         self._esp.write(struct.pack('<B', self.CMD_FLASH_WRITE))
         self._esp.write(struct.pack('<III', addr, len(data), 1))
         num_sent, num_written = 0, 0
+
         while num_written < len(data):
             p = self._esp.read()
+
             if len(p) == 4:
                 num_written = struct.unpack('<I', p)[0]
             elif len(p) == 1:
@@ -331,21 +359,30 @@ class CesantaFlasher:
                 raise FatalError('Write failure, status: %x' % status_code)
             else:
                 raise FatalError('Unexpected packet while writing: %s' % hexify(p))
+
             progress(num_written // self._esp.ESP_FLASH_BLOCK)
+
             while num_sent - num_written < 5120:
                 self._esp._port.write(data[num_sent:num_sent + 1024])
                 num_sent += 1024
+
         p = self._esp.read()
+
         if len(p) != 16:
             raise FatalError('Expected digest, got: %s' % hexify(p))
+
         digest = hexify(p).upper()
         expected_digest = hashlib.md5(data).hexdigest().upper()
+
         if digest != expected_digest:
             raise FatalError('Digest mismatch: expected %s, got %s' % (expected_digest, digest))
+
         p = self._esp.read()
+
         if len(p) != 1:
             raise FatalError('Expected status, got: %s' % hexify(p))
         status_code = struct.unpack('<B', p)[0]
+
         if status_code != 0:
             raise FatalError('Write failure, status: %x' % status_code)
 
@@ -353,6 +390,7 @@ class CesantaFlasher:
         sys.stdout.write('Reading %d @ 0x%x... ' % (length, addr))
         sys.stdout.flush()
         self._esp.write(struct.pack('<B', self.CMD_FLASH_READ))
+
         # USB may not be able to keep up with the read rate, especially at
         # higher speeds. Since we don't have flow control, this will result in
         # data loss. Hence, we use small packet size and only allow small
@@ -361,56 +399,77 @@ class CesantaFlasher:
         # have longer FIFOs and could benefit from increasing max_in_flight.
         self._esp.write(struct.pack('<IIII', addr, length, 32, 64))
         data = ''
+
         while True:
             p = self._esp.read()
             data += p
             self._esp.write(struct.pack('<I', len(data)))
+
             if show_progress and (len(data) % 1024 == 0 or len(data) == length):
                 progress = '%d (%d %%)' % (len(data), len(data) * 100.0 / length)
                 sys.stdout.write(progress + '\b' * len(progress))
                 sys.stdout.flush()
+
             if len(data) == length:
                 break
+
             if len(data) > length:
                 raise FatalError('Read more than expected')
+
         p = self._esp.read()
+
         if len(p) != 16:
             raise FatalError('Expected digest, got: %s' % hexify(p))
+
         expected_digest = hexify(p).upper()
         digest = hashlib.md5(data).hexdigest().upper()
+
         if digest != expected_digest:
             raise FatalError('Digest mismatch: expected %s, got %s' % (expected_digest, digest))
+
         p = self._esp.read()
+
         if len(p) != 1:
             raise FatalError('Expected status, got: %s' % hexify(p))
+
         status_code = struct.unpack('<B', p)[0]
+
         if status_code != 0:
             raise FatalError('Write failure, status: %x' % status_code)
+
         return data
 
     def flash_digest(self, addr, length, digest_block_size=0):
         self._esp.write(struct.pack('<B', self.CMD_FLASH_DIGEST))
         self._esp.write(struct.pack('<III', addr, length, digest_block_size))
         digests = []
+
         while True:
             p = self._esp.read()
+
             if len(p) == 16:
                 digests.append(p)
             elif len(p) == 1:
                 status_code = struct.unpack('<B', p)[0]
+
                 if status_code != 0:
                     raise FatalError('Write failure, status: %x' % status_code)
+
                 break
             else:
                 raise FatalError('Unexpected packet: %s' % hexify(p))
+
         return digests[-1], digests[:-1]
 
     def boot_fw(self):
         self._esp.write(struct.pack('<B', self.CMD_BOOT_FW))
         p = self._esp.read()
+
         if len(p) != 1:
             raise FatalError('Expected status, got: %s' % hexify(p))
+
         status_code = struct.unpack('<B', p)[0]
+
         if status_code != 0:
             raise FatalError('Boot failure, status: %x' % status_code)
 
@@ -420,9 +479,12 @@ class CesantaFlasher:
         self._esp._port.timeout = 60
         p = self._esp.read()
         self._esp._port.timeout = otimeout
+
         if len(p) != 1:
             raise FatalError('Expected status, got: %s' % hexify(p))
+
         status_code = struct.unpack('<B', p)[0]
+
         if status_code != 0:
             raise FatalError('Erase chip failure, status: %x' % status_code)
 
@@ -436,15 +498,18 @@ def slip_reader(port):
     """
     partial_packet = None
     in_escape = False
+
     while True:
         waiting = port.inWaiting()
         read_bytes = port.read(1 if waiting == 0 else waiting)
+
         if read_bytes == b'':
             raise FatalError("Timed out waiting for packet %s" % ("header" if partial_packet is None else "content"))
 
         for b in read_bytes:
             if sys.hexversion >= 0x03000000:
                 b = bytes([b])
+
             if partial_packet is None:  # waiting for packet header
                 if b == b'\xc0':
                     partial_packet = b''
@@ -452,6 +517,7 @@ def slip_reader(port):
                     raise FatalError('Invalid head of packet (%r)' % b)
             elif in_escape:  # part-way through escape sequence
                 in_escape = False
+
                 if b == b'\xdc':
                     partial_packet += b'\xc0'
                 elif b == b'\xdd':
@@ -476,8 +542,10 @@ def hexify(s):
 
 def unhexify(hs):
     s = []
+
     for i in range(0, len(hs) - 1, 2):
         s.append(int(hs[i] + hs[i + 1], 16))
+
     if sys.hexversion < 0x03000000:
         return ''.join(map(chr, s))
     else:

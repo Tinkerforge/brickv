@@ -90,7 +90,7 @@ class RenderWidget(QOpenGLWidget):
         QOpenGLWidget.setFormat(self, surface_format)
 
         self.projection = QMatrix4x4()
-        self.vertex_buf_offsets = [3, 3, 2] #position, normal, tex_coord
+        self.vertex_buf_offsets = [3, 3, 2] # position, normal, tex_coord
         self.vertex_buf_stride = sum(self.vertex_buf_offsets)
 
         self.obj_path = obj_path
@@ -102,6 +102,7 @@ class RenderWidget(QOpenGLWidget):
     def cleanup(self):
         if not self.initialized:
             return
+
         self.makeCurrent()
 
         self.texture.destroy()
@@ -139,6 +140,7 @@ class RenderWidget(QOpenGLWidget):
         for tri in faces:
             for vert_idx, tex_coord_idx, normal_idx in tri:
                 key = (vert_idx, tex_coord_idx, normal_idx)
+
                 if key in vertices_dict:
                     indices.append(vertices_dict[key])
                     continue
@@ -218,12 +220,14 @@ class RenderWidget(QOpenGLWidget):
     def get_model_matrix(self):
         result = QMatrix4x4()
         result.translate(self.model_offset)
+
         return result
 
     def get_view_matrix(self):
         result = QMatrix4x4()
         camera_offset = 4 * self.bounding_sphere_radius
         result.translate(0.0, 0.0, -camera_offset)
+
         return result
 
     def paintGL(self):
@@ -254,6 +258,7 @@ class RenderWidget(QOpenGLWidget):
         z_far = 5.0 * scale
 
         self.projection.setToIdentity()
+
         # Ensure that the view frustum is always greater or equal than one in width and height
         if aspect >= 1:
             self.projection.frustum(-scale * aspect, scale * aspect, -scale, scale, z_near, z_far)
@@ -271,11 +276,14 @@ def read_mtl(mtl_file):
 
     for line in content:
         line = line.strip()
+
         if len(line) == 0:
             continue
+
         if line.startswith('newmtl '):
             if current_material is not None:
                 print("Only one material is supported for now.")
+
             current_material = {'name': line.split(' ')[1]}
         elif line.startswith('Ka '):
             current_material['ambient'] = [float(f) for f in line.split(' ')[1:]]
@@ -290,6 +298,7 @@ def read_mtl(mtl_file):
 
     if 'diffuse_map' in current_material and 'ambient_map' in current_material and current_material['diffuse_map'] != current_material['ambient_map']:
         print("Diffuse and ambient map are not the same texture. This is not supported.")
+
     return current_material
 
 def read_obj(obj_file):
@@ -369,6 +378,7 @@ def add_triangle_prism(start, start_to_end, perpendicular, width, color, vertex_
             (3, 1, 0), (3, 0, 2),
 
             (1, 3, 5), (0, 4, 2)]
+
     for tri in tris:
         index_buf.extend([index_offset + i for i in tri])
 
@@ -387,7 +397,7 @@ def add_axis(bounding_box, vertices, vertex_buf, index_buf):
     start_to_end_y = start_to_end_y.normalized() * max_bb_len * 0.5
     start_to_end_z = start_to_end_z.normalized() * max_bb_len * 0.5
 
-    vertex_buf_stride = 3 + 3 + 2 #position, normal, tex_coord
+    vertex_buf_stride = 3 + 3 + 2 # position, normal, tex_coord
     new_index = (len(vertex_buf) // vertex_buf_stride)
 
     add_triangle_prism(start, start_to_end_x, start_to_end_y, 0.01, [1.0, 0.0, 0.0], vertex_buf, vertex_buf_stride, index_buf)

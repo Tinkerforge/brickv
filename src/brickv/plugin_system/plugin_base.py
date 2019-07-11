@@ -45,7 +45,7 @@ class PluginBase(QWidget):
         super().__init__()
 
         self.has_comcu = False # Will be overwritten if plugin has comcu
-        self.is_tng    = False # Will be overwritten if plugin is tng
+        self.is_tng = False # Will be overwritten if plugin is tng
         self.plugin_state = PluginBase.PLUGIN_STATE_STOPPED
         self.label_timeouts = None
         self.label_version = None
@@ -116,6 +116,7 @@ class PluginBase(QWidget):
         if self.button_parent is not None:
             self.button_parent.setText(self.device_info.connected_uid)
             self.button_parent.clicked.connect(lambda: get_main_window().show_plugin(self.device_info.connected_uid))
+
         if self.label_position is not None:
             self.label_position.setText(self.device_info.position.title())
 
