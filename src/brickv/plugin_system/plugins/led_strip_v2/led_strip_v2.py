@@ -92,6 +92,17 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
 
         self.chip_type_changed(0, ui_only=True)
 
+        self.button_gradient.setEnabled(False)
+        self.box_num_led.valueChanged.connect(self.box_num_led_changed)
+
+    def box_num_led_changed(self, i):
+        if i < 2:
+            if self.state == self.STATE_COLOR_GRADIENT:
+                self.state = self.STATE_IDLE
+            self.button_gradient.setEnabled(False)
+        else:
+            self.button_gradient.setEnabled(True)
+
     def channel_mapping_changed(self, index):
         if index < 0:
             return
@@ -355,11 +366,6 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
 
     def render_color_gradient(self):
         num_leds = self.box_num_led.value()
-        if num_leds < 2:
-            QMessageBox.warning(get_main_window(), 'Color gradient',
-                                'Can not render color gradient: There is only one LED configured.',
-                                QMessageBox.Ok)
-            return
         brightness = self.brightness_slider.value() * 8
         chip_type, num_channels = self.chip_type_combobox.itemData(self.chip_type_combobox.currentIndex())
 
