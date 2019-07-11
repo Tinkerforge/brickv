@@ -331,7 +331,7 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
         else:
             values = [value for rgb in zip(r, g, b) for value in rgb]
 
-        self.led_strip.set_led_values(0, values)
+        async_call(self.led_strip.set_led_values, (0, values), None, self.increase_error_count)
 
     def render_color_single(self):
         num_leds = self.box_num_led.value()
@@ -380,7 +380,7 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
             if num_channels == 4:
                 values.append(0)
 
-        self.led_strip.set_led_values(0, values)
+        async_call(self.led_strip.set_led_values, (0, values), None, self.increase_error_count)
 
     def render_color_dot(self):
         num_leds = self.box_num_led.value()
