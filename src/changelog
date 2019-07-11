@@ -498,7 +498,7 @@
 - Fix WIFI Extension firmware version lookup in Master Brick plugin
 - Show WIFI Extension firmware version in Master Brick plugin
 
-2019-07-10: 2.4.5 (<unknown>)
+2019-07-11: 2.4.5 (<unknown>)
 - Improve GUI and error handling of RS485 Bricklet plugin
 - Improve WIFI Extension 2.0 configuration validation
 - Handle spectrum stream-of-of-sync error for Sound Pressure Level Bricklet
