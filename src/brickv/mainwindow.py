@@ -856,7 +856,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         add_to_connections(info, device_info)
 
             if device_info.plugin == None:
-                plugin = self.plugin_manager.create_plugin_instance(device_identifier, self.ipcon, device_info)
+                self.plugin_manager.create_plugin_instance(device_identifier, self.ipcon, device_info)
 
                 device_info.tab_window = self.create_tab_window(device_info, self.ipcon)
                 device_info.tab_window.setWindowFlags(Qt.Widget)

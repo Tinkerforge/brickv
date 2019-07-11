@@ -153,7 +153,7 @@ class RenderWidget(QOpenGLWidget):
                 vertices_dict[key] = index
                 indices.append(index)
 
-        self.bounding_sphere_radius = add_axis(self.bounding_box, vertex_positions, vertices, indices)
+        self.bounding_sphere_radius = add_axis(self.bounding_box, vertices, indices)
         self.index_count = len(indices)
 
         vertex_buf = QOpenGLBuffer(QOpenGLBuffer.VertexBuffer)
@@ -382,7 +382,7 @@ def add_triangle_prism(start, start_to_end, perpendicular, width, color, vertex_
     for tri in tris:
         index_buf.extend([index_offset + i for i in tri])
 
-def add_axis(bounding_box, vertices, vertex_buf, index_buf):
+def add_axis(bounding_box, vertex_buf, index_buf):
     bb_min, bb_max = bounding_box
 
     start = QVector3D(bb_min)
@@ -398,7 +398,6 @@ def add_axis(bounding_box, vertices, vertex_buf, index_buf):
     start_to_end_z = start_to_end_z.normalized() * max_bb_len * 0.5
 
     vertex_buf_stride = 3 + 3 + 2 # position, normal, tex_coord
-    new_index = (len(vertex_buf) // vertex_buf_stride)
 
     add_triangle_prism(start, start_to_end_x, start_to_end_y, 0.01, [1.0, 0.0, 0.0], vertex_buf, vertex_buf_stride, index_buf)
     add_triangle_prism(start, start_to_end_y, start_to_end_z, 0.01, [0.0, 0.5, 0.0], vertex_buf, vertex_buf_stride, index_buf)

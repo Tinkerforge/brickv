@@ -438,8 +438,8 @@ class Inventory:
 
         if info.url_part not in d:
             return (0, 0, 0)
-        else:
-            return d[info.url_part].firmware_version_latest
+
+        return d[info.url_part].firmware_version_latest
 
     def reset_latest_fws(self):
         self.update_latest_fws(LatestFirmwares({}, {}, {}, {}, {}, {}))

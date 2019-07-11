@@ -421,7 +421,7 @@ class SAMBA:
 
         success = False
 
-        for i in range(5):
+        for _ in range(5):
             self.write_flash_command(EEFC_FCR_FCMD_SGPB, 1)
 
             success = self.wait_for_flash_ready('after setting Boot-from-Flash flag', return_on_flerr=True)
@@ -626,7 +626,7 @@ class SAMBA:
             raise SAMBAException('Write error while executing code at address 0x%08X' % address) from e
 
     def wait_for_flash_ready(self, message, timeout=2000, ready=True, update_progress=False, return_on_flerr=False):
-        for i in range(timeout):
+        for _ in range(timeout):
             fsr = self.read_uint32(EEFC_FSR)
 
             if (fsr & EEFC_FSR_FLOCKE) != 0:

@@ -304,8 +304,8 @@ class PluginBase(QWidget):
     def get_url_part(self):
         if self.device_class != None:
             return self.device_class.DEVICE_URL_PART
-        else:
-            return 'unknown'
+
+        return 'unknown'
 
     @staticmethod
     def has_device_identifier(_device_identifier):

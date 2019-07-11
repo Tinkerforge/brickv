@@ -209,8 +209,8 @@ class ESPROM:
                               struct.pack('<IIII', erase_size, num_blocks, ESPROM.ESP_FLASH_BLOCK, offset))[1]
 
         if result != b"\0\0":
-            #pylint: disable=raising-format-tuple
-            raise FatalError.WithResult('Failed to enter Flash download mode (result "%s")', result)
+            raise FatalError.WithResult('Failed to enter Flash download mode (result "{}")', result)
+
         self._port.timeout = old_tmo
 
     """ Write block to flash """
@@ -220,7 +220,7 @@ class ESPROM:
                               ESPROM.checksum(data))[1]
 
         if result != b"\0\0":
-            raise FatalError.WithResult('Failed to write to target Flash after seq %d (got result %%s)' % seq, result)
+            raise FatalError.WithResult('Failed to write to target Flash after seq {} (got result {{}})'.format(seq), result)
 
     """ Leave flash mode and run/reboot """
     def flash_finish(self, reboot=False):
@@ -241,7 +241,7 @@ class ESPROM:
         mac1 = self.read_reg(self.ESP_OTP_MAC1)
         mac3 = self.read_reg(self.ESP_OTP_MAC3)
 
-        if (mac3 != 0):
+        if mac3 != 0:
             oui = ((mac3 >> 16) & 0xff, (mac3 >> 8) & 0xff, mac3 & 0xff)
         elif ((mac1 >> 16) & 0xff) == 0:
             oui = (0x18, 0xfe, 0x34)
@@ -536,8 +536,8 @@ def slip_reader(port):
 def hexify(s):
     if isinstance(s, str):
         return ''.join('%02X' % ord(c) for c in s)
-    else:
-        return ''.join('%02X' % c for c in s)
+
+    return ''.join('%02X' % c for c in s)
 
 
 def unhexify(hs):
@@ -548,8 +548,8 @@ def unhexify(hs):
 
     if sys.hexversion < 0x03000000:
         return ''.join(map(chr, s))
-    else:
-        return bytes(s)
+
+    return bytes(s)
 
 
 class FatalError(RuntimeError):
@@ -563,7 +563,7 @@ class FatalError(RuntimeError):
         Return a fatal error object that includes the hex values of
         'result' as a string formatted argument.
         """
-        return FatalError(message % ", ".join(hex(ord(x)) for x in result))
+        return FatalError(message.format(", ".join(hex(ord(x))) for x in result))
 
 
 # This is "wrapped" stub_flasher.c, to  be loaded using run_stub.
@@ -688,8 +688,8 @@ class TFSerial:
 
         if sys.hexversion < 0x03000000:
             return ''.join(map(chr, ret))
-        else:
-            return bytes(ret)
+
+        return bytes(ret)
 
     def inWaiting(self):
         return len(self.read_buffer)

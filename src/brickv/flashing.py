@@ -62,14 +62,17 @@ NO_BOOTLOADER = 'No Brick in Bootloader found'
 def error_to_name(e):
     if e.value == Error.TIMEOUT:
         return 'Timeout'
-    elif e.value == Error.NOT_CONNECTED:
+
+    if e.value == Error.NOT_CONNECTED:
         return 'No TCP/IP connection'
-    elif e.value == Error.INVALID_PARAMETER:
+
+    if e.value == Error.INVALID_PARAMETER:
         return 'Invalid parameter'
-    elif e.value == Error.NOT_SUPPORTED:
+
+    if e.value == Error.NOT_SUPPORTED:
         return 'Not supported'
-    else:
-        return e.message
+
+    return e.message
 
 class ProgressWrapper:
     def __init__(self, progress):
@@ -957,11 +960,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def write_bricklet_plugin(self, plugin, brick, port, bricklet, name, progress, has_comcu):
         if has_comcu:
             return self.write_bricklet_plugin_comcu(plugin, bricklet, name, progress)
-        else:
-            if self.current_bricklet_is_tng():
-                return self.write_bricklet_plugin_tng(plugin, bricklet, name, progress)
-            else:
-                return self.write_bricklet_plugin_standard(plugin, brick, port, bricklet, name, progress)
+
+        if self.current_bricklet_is_tng():
+            return self.write_bricklet_plugin_tng(plugin, bricklet, name, progress)
+
+        return self.write_bricklet_plugin_standard(plugin, brick, port, bricklet, name, progress)
 
     def write_bricklet_plugin_tng(self, plugin, bricklet, name, progress):
         try:

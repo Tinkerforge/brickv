@@ -102,20 +102,20 @@ def get_modeless_dialog_flags(default=Qt.WindowFlags()):
     # container. Setting the tool window flag for such dialogs works around this
     if sys.platform == 'darwin':
         return Qt.Tool
-    else:
-        return default
+
+    return default
 
 def format_voltage(value): # float, V
     if abs(value) < 1:
         return str(int(round(value * 1000.0))) + ' mV'
-    else:
-        return format(value, '.3f') + ' V'
+
+    return format(value, '.3f') + ' V'
 
 def format_current(value): # float, A
     if abs(value) < 1:
         return str(int(round(value * 1000.0))) + ' mA'
-    else:
-        return format(value, '.3f') + ' A'
+
+    return format(value, '.3f') + ' A'
 
 # the normal QPainter.drawRect function draws the top and left line at the wrong
 # position on macOS with retina display. this function is a replacement that behaves

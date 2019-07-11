@@ -47,10 +47,11 @@ class HexValidator(QValidator):
 
         if self.re_acceptable.exactMatch(_input):
             return QValidator.Acceptable, _input, _pos
-        elif self.re_intermediate.exactMatch(_input):
+
+        if self.re_intermediate.exactMatch(_input):
             return QValidator.Intermediate, _input, _pos
-        else:
-            return QValidator.Invalid, _input, _pos
+
+        return QValidator.Invalid, _input, _pos
 
     def fixup(self, _input):
         s = ''

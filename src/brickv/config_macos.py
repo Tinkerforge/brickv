@@ -137,10 +137,11 @@ def legacy_get_use_authentication():
 
     if value == 'true':
         return True
-    elif value == 'false':
+
+    if value == 'false':
         return False
-    else:
-        return DEFAULT_USE_AUTHENTICATION
+
+    return DEFAULT_USE_AUTHENTICATION
 
 def legacy_set_use_authentication(use):
     set_plist_value('UseAuthentication', str(bool(use)))
@@ -156,10 +157,11 @@ def legacy_get_remember_secret():
 
     if value == 'true':
         return True
-    elif value == 'false':
+
+    if value == 'false':
         return False
-    else:
-        return DEFAULT_REMEMBER_SECRET
+
+    return DEFAULT_REMEMBER_SECRET
 
 def legacy_set_remember_secret(remember):
     set_plist_value('RememberSecret', str(bool(remember)))
