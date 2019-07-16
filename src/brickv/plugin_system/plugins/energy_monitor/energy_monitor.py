@@ -101,11 +101,11 @@ class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
         if self.voltage_connected:
             self.label_voltage.setText('{0:.2f}'.format(data.voltage / 100))
         else:
-            self.label_voltage.setText('NC')
+            self.label_voltage.setText('Not Connected')
         if self.current_connected:
             self.label_current.setText('{0:.2f}'.format(data.current / 100))
         else:
-            self.label_current.setText('NC')
+            self.label_current.setText('Not Connected')
 
         self.label_energy.setText('{0:.2f}'.format(data.energy / 100))
         self.label_real_power.setText('{0:.2f}'.format(data.real_power / 100))
@@ -119,10 +119,10 @@ class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
         self.current_connected = status.current_transformer_connected
 
         if not self.voltage_connected:
-            self.label_voltage.setText('NC')
+            self.label_voltage.setText('Not Connected')
 
         if not self.current_connected:
-            self.label_current.setText('NC')
+            self.label_current.setText('Not Connected')
 
     def cb_transformer_calibration(self, cal):
         self.spinbox_voltage_ratio.setValue(cal.voltage_ratio/100.0)
