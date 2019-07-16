@@ -511,7 +511,7 @@
 - Make WIFI Extension 2.0 flashing more robust by increasing the number of
   bootloader connection attempts
 
-2019-07-16: 2.4.6 (<unknown>)
+2019-07-16: 2.4.6 (e0f9066)
 - Fix message box explosion for color gradient with one LED in LED Strip
   Bricklet 2.0 plugin
 - Only check WIFI Extension 2.0 AP password length if password is changed
