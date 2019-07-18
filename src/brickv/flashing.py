@@ -179,7 +179,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         get_main_window().fw_version_fetcher.fw_versions_avail.connect(self.fw_versions_fetched)
 
-        self.load_version_info(inventory.get_latest_fws())
+        self.refresh_update_tree_view()
 
         self.update_bricks()
         self.update_extensions()
@@ -241,7 +241,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                                      "Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>.<br/><br/>" +
                                      "Firmwares and plugins can be flashed from local files only.").format(firmware_info))
         else:
-            self.load_version_info(firmware_info)
+            self.refresh_update_tree_view()
 
     def load_version_info(self, version_info):
         # Save combobox state by url_part
@@ -1911,11 +1911,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.combo_extension.addItem(NO_EXTENSION, ('', '0'))
 
         self.update_ui_state()
-
-    def update_version_info(self):
-        self.reset_version_info()
-        self.load_version_info(inventory.get_latest_fws())
-        self.refresh_update_tree_view()
 
     def show_brick_update(self, url_part):
         self.tab_widget.setCurrentWidget(self.tab_brick)

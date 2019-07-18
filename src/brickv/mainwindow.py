@@ -451,10 +451,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def flashing_clicked(self):
         if self.flashing_window is None:
             self.flashing_window = FlashingWindow(self)
+        else:
+            self.flashing_window.refresh_update_tree_view()
 
         self.flashing_window.show()
         self.flashing_window.tab_widget.setCurrentWidget(self.flashing_window.tab_updates)
-        self.flashing_window.update_version_info()
 
     def advanced_clicked(self):
         if self.advanced_window is None:
