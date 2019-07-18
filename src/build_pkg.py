@@ -79,7 +79,11 @@ def prepare_manifest(utils):
     specialize_template(os.path.join(utils.root_path, 'MANIFEST.in.template'), os.path.join(utils.root_path, 'MANIFEST.in'),
                         {'<<EXCLUDES>>': '\n'.join(excluded_patterns)})
 
-def write_commit_id_and_patch_plugins(utils):
+def write_marker_files_and_patch_plugins(utils):
+    package_type = {'linux': 'deb', 'macos': 'dmg', 'windows': 'exe'}[utils.platform]
+    with open(os.path.join(utils.unpacked_source_path, 'package_type'), 'w') as f:
+        f.write(package_type)
+
     if utils.internal:
         kind = 'internal'
         commit_id = get_commit_id()
@@ -113,7 +117,7 @@ def build_linux_pkg():
     utils.copy_build_data()
     utils.unpack_sdist()
 
-    write_commit_id_and_patch_plugins(utils)
+    write_marker_files_and_patch_plugins(utils)
 
     utils.build_debian_pkg()
 
@@ -125,7 +129,7 @@ def build_pyinstaller_pkg():
     utils.exit_if_not_venv()
     utils.build_pyinstaller_pkg(prepare_script=os.path.join(utils.root_path, 'build_src.py'),
                                 pre_sdist=lambda: prepare_manifest(utils),
-                                pre_pyinstaller=lambda: write_commit_id_and_patch_plugins(utils))
+                                pre_pyinstaller=lambda: write_marker_files_and_patch_plugins(utils))
     utils.copy_build_artefact()
 
 BRICK_FLASH_VERSION = '1.0.1'

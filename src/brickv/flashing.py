@@ -30,12 +30,15 @@ import urllib.request
 import urllib.error
 import time
 import struct
+import json
+from distutils.version import StrictVersion
 from io import BytesIO as FileLike
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QStandardItemModel, QStandardItem, QBrush
-from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox, QProgressDialog
+from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox, QProgressDialog, QFileDialog
 
+from brickv import config
 from brickv.ui_flashing import Ui_Flashing
 from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.ip_connection import IPConnection, Error, base58encode, \
@@ -184,8 +187,94 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_bricks()
         self.update_extensions()
 
+    def download_file(self, url, filename, latest_version):
+        progress = QProgressDialog(self)
+        progress.setAutoClose(False)
+        progress.setWindowTitle('Updates / Flashing')
+        progress.setWindowModality(Qt.WindowModal)
+        progress.setLabelText('Downloading Brick Viewer {}'.format(latest_version))
+        progress.canceled.connect(progress.hide)
+
+        block_size = 100*1024
+        try:
+            with urllib.request.urlopen(url) as response:
+                file_size = int(response.info().get('Content-Length', 0))
+
+                progress.setMaximum(file_size)
+                progress.setValue(0)
+
+                blocks_transfered = 0
+                with open(filename + '.part', 'wb') as file:
+                    while True:
+                        if progress.wasCanceled():
+                            progress.hide()
+                            return
+
+                        block = response.read(block_size)
+                        if len(block) == 0:
+                            break
+
+                        file.write(block)
+
+                        blocks_transfered += 1
+                        progress.setValue(min(progress.maximum(), blocks_transfered * block_size))
+
+                progress.setCancelButtonText('OK')
+                os.replace(filename + '.part', filename)
+        except urllib.error.URLError:
+            self.popup_fail('Updates / Flashing',
+                            "Failed to download Brick Viewer {}.<br/><br/>".format(latest_version) +
+                            "Is your computer connected to the Internet?")
+            return
+        except Exception as e:
+            self.popup_fail('Updates / Flashing',
+                            "Failed to download Brick Viewer {}.<br/><br/>".format(latest_version) +
+                            "Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>.")
+            return
+
+    def get_brickv_download_url(self, version):
+        url = 'https://download.tinkerforge.com/tools/brickv/{platform}/brickv{suffix}'
+        suffix = ''
+
+        package_type = config.PACKAGE_TYPE
+        platform = {'exe': 'windows', 'dmg': 'macos'}.get(package_type, 'linux')
+
+        if package_type == 'deb':
+            suffix = '-{version_dots}_all.deb'.format(version_dots=version)
+        elif package_type == 'aur':
+            metadata_url = 'https://aur.archlinux.org/rpc/?v=5&type=info&arg[]=brickv'
+            try:
+                with urllib.request.urlopen(metadata_url, timeout=10) as response:
+                    parsed = json.loads(response.read().decode('utf-8'))
+                    for result in parsed['results']:
+                        if result['Name'] == 'brickv':
+                            aur_version = result['Version'].split('-')[0]
+                            break
+                    else:
+                        raise Exception("Could not query AUR package version.")
+            except:
+                if QMessageBox.warning(self, "Updates / Flashing", "Could not query AUR package version. Download anyway?", QMessageBox.Yes | QMessageBox.No) == QMessageBox.No:
+                    return
+                # User wants to download whatever is in the AUR, fake that it is the correct version
+                aur_version = version
+            if StrictVersion(aur_version) != StrictVersion(version):
+                if QMessageBox.warning(self, "Updates / Flashing", "AUR package version was {}, but expected was {}. Download anyway?".format(aur_version, version), QMessageBox.Yes | QMessageBox.No) == QMessageBox.No:
+                    return
+                # User wants to download whatever is in the AUR, override version, so that the progress dialog title shown when downloading is correct.
+                version = aur_version
+            url = 'https://aur.archlinux.org/cgit/aur.git/snapshot/brickv.tar.gz'
+        elif package_type == 'dmg' or package_type == 'exe':
+            suffix = '_{platform}_{version_under}.{ext}'.format(platform=platform, version_under='_'.join(version.split('.')), ext=package_type)
+        else:
+            url = 'https://github.com/Tinkerforge/brickv/archive/v{version_dots}.zip'.format(version_dots=version)
+
+        url = url.format(platform=platform, suffix=suffix)
+        return url, version
+
     def update_tree_view_clicked(self, idx):
-        name, uid, _current_version, _latest_version = [idx.sibling(idx.row(), i).data() for i in range(0, 4)]
+        name, uid, _position, _current_version, latest_version = [idx.sibling(idx.row(), i).data() for i in range(0, 5)]
+
+        is_local_brickv = "brick viewer" in name.lower() and idx.parent().data() is None
 
         is_red_brick_brickv = "brick viewer" in name.lower() and idx.parent().data() is not None
         is_red_brick_bindings = "bindings" in name.lower()
@@ -201,6 +290,14 @@ class FlashingWindow(QDialog, Ui_Flashing):
             if inventory.get_info(uid).plugin is not None:
                 inventory.get_info(uid).plugin.perform_action(3)
 
+            return
+
+        if is_local_brickv:
+            url, version = self.get_brickv_download_url(latest_version)
+            default_filename = url.split('/')[-1]
+            filename, _selected_filter = QFileDialog.getSaveFileName(self, "Save Brick Viewer Update", default_filename)
+
+            self.download_file(url, filename, version)
             return
 
         if "wifi" in name.lower() and "2.0" in name.lower():

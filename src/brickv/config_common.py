@@ -48,7 +48,7 @@ DEFAULT_USE_FUSION_GUI_STYLE = sys.platform == 'darwin'
 
 DEFAULT_AUTO_SEARCH_FOR_UPDATES = True
 
-def load_commit_id(name):
+def load_marker_file(name):
     try:
         # Don't warn if the file is missing, as it is expected when run from source.
         path = get_resources_path(name, warn_on_missing_file=False)
@@ -61,9 +61,11 @@ def load_commit_id(name):
 
     return None
 
-INTERNAL = load_commit_id('internal')
+INTERNAL = load_marker_file('internal')
 
-SNAPSHOT = load_commit_id('snapshot')
+SNAPSHOT = load_marker_file('snapshot')
+
+PACKAGE_TYPE = load_marker_file('package_type')
 
 BRICKV_FULL_VERSION = BRICKV_VERSION
 
