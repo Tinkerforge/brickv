@@ -43,17 +43,23 @@ class ThermalImageBar(QWidget):
         self.height = h
         self.thermal_image = thermal_image
 
-        self.setMaximumSize(w*thermal_image.image_pixel_width, h)
-        self.setMinimumSize(w*thermal_image.image_pixel_width, h)
+        self.thermal_image.image_pixel_size_changed.connect(self.image_pixel_size_changed)
 
-        self.image = QImage(QSize(w*thermal_image.image_pixel_width, h), QImage.Format_RGB32)
+        self.image_pixel_size_changed()
+
+    def image_pixel_size_changed(self):
+        self.setFixedSize(self.width * self.thermal_image.image_pixel_size, self.height)
+
+        self.image = QImage(QSize(self.width * self.thermal_image.image_pixel_size, self.height), QImage.Format_RGB32)
+
         self.update_image()
 
     def update_image(self):
         rgb_table = self.thermal_image.rgb_lookup[self.parent.color_palette_box.currentIndex()]
         painter = QPainter(self.image)
-        for i in range(self.width*self.thermal_image.image_pixel_width):
-            index = (256*i)//(self.width*self.thermal_image.image_pixel_width)
+
+        for i in range(self.width*self.thermal_image.image_pixel_size):
+            index = (256*i)//(self.width*self.thermal_image.image_pixel_size)
             color = QColor(*rgb_table[index])
             painter.fillRect(i, 0, 1, self.height, color)
 
@@ -64,6 +70,8 @@ class ThermalImageBar(QWidget):
         painter.drawImage(event.rect(), self.image)
 
 class ThermalImage(QWidget):
+    image_pixel_size_changed = pyqtSignal()
+
     def __init__(self, w, h, parent=None):
         super().__init__(parent)
 
@@ -72,13 +80,12 @@ class ThermalImage(QWidget):
         self.parent = parent
         self.width = w
         self.height = h
-        self.image_pixel_width = 5
-        self.image_is_16bit = False
+        self.image_pixel_size = 5
         self.crosshair_width = 5
+        self.image_is_16bit = False
         self.image = QImage(QSize(w, h), QImage.Format_RGB32)
 
-        self.setMaximumSize(w*self.image_pixel_width, h * self.image_pixel_width)
-        self.setMinimumSize(w*self.image_pixel_width, h * self.image_pixel_width)
+        self.scale_factor_changed()
 
         self.create_rgb_lookup()
         self.clear_image()
@@ -88,6 +95,29 @@ class ThermalImage(QWidget):
         self.spotmeter_roi_from = None
         self.spotmeter_roi_to = None
         self.wait_for_minmax = 2
+
+        self.parent.combo_scale_factor.currentIndexChanged.connect(self.scale_factor_changed)
+
+    def scale_factor_changed(self):
+        if self.parent.combo_scale_factor.currentText() == '3x':
+            self.image_pixel_size = 13
+            self.crosshair_width = 13
+        elif self.parent.combo_scale_factor.currentText() == '2.5x':
+            self.image_pixel_size = 11
+            self.crosshair_width = 11
+        elif self.parent.combo_scale_factor.currentText() == '2x':
+            self.image_pixel_size = 9
+            self.crosshair_width = 9
+        elif self.parent.combo_scale_factor.currentText() == '1.5x':
+            self.image_pixel_size = 7
+            self.crosshair_width = 7
+        else: # 1x
+            self.image_pixel_size = 5
+            self.crosshair_width = 5
+
+        self.setFixedSize(self.width * self.image_pixel_size, self.height * self.image_pixel_size)
+
+        self.image_pixel_size_changed.emit()
 
     def create_rgb_lookup(self):
         self.rgb_lookup = []
@@ -101,7 +131,7 @@ class ThermalImage(QWidget):
             g = int(round(255 * pow(x, 3)))
 
             if math.sin(2 * math.pi * x) >= 0:
-                b = int(round(255*math.sin(2 * math.pi * x)))
+                b = int(round(255 * math.sin(2 * math.pi * x)))
             else:
                 b = 0
 
@@ -151,15 +181,21 @@ class ThermalImage(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        painter.drawImage(event.rect(), self.image.scaledToWidth(self.width*self.image_pixel_width, Qt.SmoothTransformation))
+
+        if self.parent.combo_interpolation.currentIndex() == 0:
+            scale_mode = Qt.SmoothTransformation
+        else:
+            scale_mode = Qt.FastTransformation
+
+        painter.drawImage(event.rect(), self.image.scaledToWidth(self.width * self.image_pixel_size, scale_mode))
 
         if self.agc_roi_from != None and self.agc_roi_to != None and not self.image_is_16bit:
             roi = self.parent.get_agc_roi()
             draw_rect(painter,
-                      roi[0] * self.image_pixel_width + 2,
-                      roi[1] * self.image_pixel_width + 2,
-                      (roi[2] - roi[0]) * self.image_pixel_width + 1,
-                      (roi[3] - roi[1]) * self.image_pixel_width + 1,
+                      roi[0] * self.image_pixel_size + self.image_pixel_size // 2,
+                      roi[1] * self.image_pixel_size + self.image_pixel_size // 2,
+                      (roi[2] - roi[0]) * self.image_pixel_size + 1,
+                      (roi[3] - roi[1]) * self.image_pixel_size + 1,
                       1,
                       Qt.green)
 
@@ -173,15 +209,15 @@ class ThermalImage(QWidget):
 
             from_x, from_y, to_x, to_y = self.parent.get_spotmeter_roi()
 
-            from_x = from_x * self.image_pixel_width + 3
-            from_y = from_y * self.image_pixel_width + 3
-            to_x = to_x * self.image_pixel_width + 1
-            to_y = to_y * self.image_pixel_width + 1
+            from_x = from_x * self.image_pixel_size + self.image_pixel_size // 2 + 1
+            from_y = from_y * self.image_pixel_size + self.image_pixel_size // 2 + 1
+            to_x = to_x * self.image_pixel_size + self.image_pixel_size // 2 - 1
+            to_y = to_y * self.image_pixel_size + self.image_pixel_size // 2 - 1
 
             cross_x = from_x + (to_x - from_x) / 2.0
             cross_y = from_y + (to_y - from_y) / 2.0
 
-            if to_x-from_x > 5 or to_y - from_y > 5:
+            if to_x - from_x > self.image_pixel_size or to_y - from_y > self.image_pixel_size:
                 lines = [QLineF(from_x, from_y, from_x + self.crosshair_width, from_y),
                          QLineF(from_x, from_y, from_x, from_y + self.crosshair_width),
                          QLineF(to_x, to_y, to_x, to_y - self.crosshair_width),
@@ -199,8 +235,9 @@ class ThermalImage(QWidget):
             self.parent.update_spotmeter_roi_label()
 
     def clip_pos(self, pos, start=None):
-        max_width  = self.width * self.image_pixel_width - 1
-        max_height = self.height * self.image_pixel_width - 1
+        pos = QPoint(pos) # make copy before modifying
+        max_width = self.width - 1
+        max_height = self.height - 1
 
         if pos.x() < 0:
             pos.setX(0)
@@ -213,38 +250,44 @@ class ThermalImage(QWidget):
             pos.setY(max_height)
 
         if start != None:
-            if pos.x() // 5 == start.x() // 5:
-                pos.setX(pos.x() + self.image_pixel_width)
-            if pos.y() // 5 == start.y() // 5:
-                pos.setY(pos.y() + self.image_pixel_width)
+            if pos.x() == start.x():
+                pos.setX(pos.x() + 1)
+            if pos.y() == start.y():
+                pos.setY(pos.y() + 1)
 
         return pos
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
+            pos = QPoint(event.pos().x() // self.image_pixel_size, event.pos().y() // self.image_pixel_size)
+
             if self.parent.agc_roi_button.isChecked():
-                self.agc_roi_from = self.clip_pos(event.pos())
-                self.agc_roi_to = self.clip_pos(event.pos(), self.agc_roi_from)
+                self.agc_roi_from = self.clip_pos(pos)
+                self.agc_roi_to = self.clip_pos(pos, self.agc_roi_from)
             elif self.parent.spotmeter_roi_button.isChecked():
-                self.spotmeter_roi_from = self.clip_pos(event.pos())
-                self.spotmeter_roi_to = self.clip_pos(event.pos(), self.spotmeter_roi_from)
+                self.spotmeter_roi_from = self.clip_pos(pos)
+                self.spotmeter_roi_to = self.clip_pos(pos, self.spotmeter_roi_from)
 
     def mouseMoveEvent(self, event):
         if (event.buttons() & Qt.LeftButton):
+            pos = QPoint(event.pos().x() // self.image_pixel_size, event.pos().y() // self.image_pixel_size)
+
             if self.parent.agc_roi_button.isChecked():
-                self.agc_roi_to = self.clip_pos(event.pos(), self.agc_roi_from)
+                self.agc_roi_to = self.clip_pos(pos, self.agc_roi_from)
             elif self.parent.spotmeter_roi_button.isChecked():
-                self.spotmeter_roi_to = self.clip_pos(event.pos(), self.spotmeter_roi_from)
+                self.spotmeter_roi_to = self.clip_pos(pos, self.spotmeter_roi_from)
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
+            pos = QPoint(event.pos().x() // self.image_pixel_size, event.pos().y() // self.image_pixel_size)
+
             if self.parent.agc_roi_button.isChecked():
-                self.agc_roi_to = self.clip_pos(event.pos(), self.agc_roi_from)
+                self.agc_roi_to = self.clip_pos(pos, self.agc_roi_from)
                 self.parent.agc_roi_button.setChecked(False)
                 QApplication.restoreOverrideCursor()
                 self.parent.update_agc_data()
             elif self.parent.spotmeter_roi_button.isChecked():
-                self.spotmeter_roi_to = self.clip_pos(event.pos(), self.spotmeter_roi_from)
+                self.spotmeter_roi_to = self.clip_pos(pos, self.spotmeter_roi_from)
                 self.parent.spotmeter_roi_button.setChecked(False)
                 QApplication.restoreOverrideCursor()
                 self.parent.update_spotmeter_roi_data()
@@ -291,10 +334,10 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
 
     def get_agc_roi(self):
         if self.thermal_image.agc_roi_from != None and self.thermal_image.agc_roi_to != None:
-            from_x = self.thermal_image.agc_roi_from.x() // self.thermal_image.image_pixel_width
-            from_y = self.thermal_image.agc_roi_from.y() // self.thermal_image.image_pixel_width
-            to_x   = self.thermal_image.agc_roi_to.x() // self.thermal_image.image_pixel_width
-            to_y   = self.thermal_image.agc_roi_to.y() // self.thermal_image.image_pixel_width
+            from_x = self.thermal_image.agc_roi_from.x()
+            from_y = self.thermal_image.agc_roi_from.y()
+            to_x   = self.thermal_image.agc_roi_to.x()
+            to_y   = self.thermal_image.agc_roi_to.y()
         else:
             from_x = 0
             from_y = 0
@@ -311,10 +354,10 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
 
     def get_spotmeter_roi(self):
         if self.thermal_image.spotmeter_roi_from != None and self.thermal_image.spotmeter_roi_to != None:
-            from_x = self.thermal_image.spotmeter_roi_from.x() // self.thermal_image.image_pixel_width
-            from_y = self.thermal_image.spotmeter_roi_from.y() // self.thermal_image.image_pixel_width
-            to_x   = self.thermal_image.spotmeter_roi_to.x() // self.thermal_image.image_pixel_width
-            to_y   = self.thermal_image.spotmeter_roi_to.y() // self.thermal_image.image_pixel_width
+            from_x = self.thermal_image.spotmeter_roi_from.x()
+            from_y = self.thermal_image.spotmeter_roi_from.y()
+            to_x   = self.thermal_image.spotmeter_roi_to.x()
+            to_y   = self.thermal_image.spotmeter_roi_to.y()
         else:
             from_x = 0
             from_y = 0
@@ -444,20 +487,16 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
         self.update_image_combo()
 
     def get_high_contrast_config_async(self, config):
-        self.thermal_image.agc_roi_from = QPoint(config.region_of_interest[0] * self.thermal_image.image_pixel_width,
-                                                 config.region_of_interest[1] * self.thermal_image.image_pixel_width)
-        self.thermal_image.agc_roi_to   = QPoint(config.region_of_interest[2] * self.thermal_image.image_pixel_width,
-                                                 config.region_of_interest[3] * self.thermal_image.image_pixel_width)
+        self.thermal_image.agc_roi_from = QPoint(config.region_of_interest[0], config.region_of_interest[1])
+        self.thermal_image.agc_roi_to   = QPoint(config.region_of_interest[2], config.region_of_interest[3])
         self.agc_clip_limit_high_spin.setValue(config.clip_limit[0])
         self.agc_clip_limit_low_spin.setValue(config.clip_limit[1])
         self.agc_dampening_factor_spin.setValue(config.dampening_factor)
         self.agc_empty_counts_spin.setValue(config.empty_counts)
 
     def get_spotmeter_config_async(self, config):
-        self.thermal_image.spotmeter_roi_from = QPoint(config[0] * self.thermal_image.image_pixel_width,
-                                                       config[1] * self.thermal_image.image_pixel_width)
-        self.thermal_image.spotmeter_roi_to   = QPoint(config[2] * self.thermal_image.image_pixel_width,
-                                                       config[3] * self.thermal_image.image_pixel_width)
+        self.thermal_image.spotmeter_roi_from = QPoint(config[0], config[1])
+        self.thermal_image.spotmeter_roi_to   = QPoint(config[2], config[3])
 
     def get_resolution_async(self, resolution):
         self.resolution_box.setCurrentIndex(resolution)
