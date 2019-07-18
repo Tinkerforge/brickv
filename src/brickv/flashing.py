@@ -51,8 +51,8 @@ from brickv.firmware_fetch import ERROR_DOWNLOAD
 from brickv.utils import get_main_window
 from brickv.devicesproxymodel import DevicesProxyModel
 
-LATEST_VERSIONS_URL = 'http://download.tinkerforge.com/latest_versions.txt'
-FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
+LATEST_VERSIONS_URL = 'https://download.tinkerforge.com/latest_versions.txt'
+FIRMWARE_URL = 'https://download.tinkerforge.com/firmwares/'
 SELECT = 'Select...'
 CUSTOM = 'Custom...'
 NO_BRICK = 'No Brick found'

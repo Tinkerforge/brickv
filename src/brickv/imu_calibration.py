@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-IMU_CALIBRATION_URL = 'http://download.tinkerforge.com/imu_calibration/'
+IMU_CALIBRATION_URL = 'https://download.tinkerforge.com/imu_calibration/'
 
 def parse_imu_calibration(text):
     values = []

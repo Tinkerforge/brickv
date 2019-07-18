@@ -66,7 +66,7 @@ Please make sure that your internet connection is working.'
     MESSAGE_ERR_GET_INSTALLED_VERSIONS = 'Error while getting installed versions from the RED Brick'
 
     FMT_LI = '<li style="margin-bottom: 5px;">{0} [{1} --> {2}]</li>'
-    URL_LATEST_VERSIONS = 'http://download.tinkerforge.com/latest_versions.txt'
+    URL_LATEST_VERSIONS = 'https://download.tinkerforge.com/latest_versions.txt'
 
     def __init__(self, parent, session, script_manager):
         QDialog.__init__(self, parent)
@@ -659,14 +659,14 @@ Please make sure that your internet connection is working.'
 
             if self.update_info['brickv']['update']:
                 # Try to get the Brick Viewer update.
-                url = 'http://download.tinkerforge.com/tools/brickv/linux/brickv_linux_latest.deb'
+                url = 'https://download.tinkerforge.com/tools/brickv/linux/brickv_linux_latest.deb'
 
                 self.do_download_update_async_call(self.update_info['brickv']['name'], url)
 
             for d in self.update_info['bindings']:
                 # Try to get the binding updates.
                 if d['update']:
-                    url = 'http://download.tinkerforge.com/bindings/' + d['name'] + '/tinkerforge_' + d['name'] + '_bindings_latest.zip'
+                    url = 'https://download.tinkerforge.com/bindings/' + d['name'] + '/tinkerforge_' + d['name'] + '_bindings_latest.zip'
 
                     self.do_download_update_async_call(d['name'], url)
 

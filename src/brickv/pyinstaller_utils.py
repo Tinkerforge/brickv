@@ -72,7 +72,7 @@ def by_name(name):
 
 def win_sign(exe_path):
     system(["C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x86\\signtool.exe", "sign", "/v",
-            "/tr", "http://rfc3161timestamp.globalsign.com/advanced",
+            "/tr", "https://rfc3161timestamp.globalsign.com/advanced",
             "/td", "sha256",
             "/n", "Tinkerforge GmbH",
             exe_path])

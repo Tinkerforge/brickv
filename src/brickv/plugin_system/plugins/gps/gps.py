@@ -79,7 +79,7 @@ class GPS(PluginBase, Ui_GPS):
             google_str = self.last_ns + self.make_dd_dddddd(self.last_lat, True) + '+' + self.last_ew + self.make_dd_dddddd(self.last_long, True)
             QDesktopServices.openUrl(QUrl('https://maps.google.com/maps?q=' + google_str))
         else:
-            QDesktopServices.openUrl(QUrl('http://www.google.com/moon/')) # :-)
+            QDesktopServices.openUrl(QUrl('https://www.google.com/moon/')) # :-)
 
     def format_changed(self, _index):
         self.cb_coordinates(self.last_lat, self.last_ns, self.last_long, self.last_ew, self.last_pdop, self.last_hdop, self.last_vdop, self.last_epe)

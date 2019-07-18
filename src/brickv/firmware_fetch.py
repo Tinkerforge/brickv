@@ -30,7 +30,7 @@ from brickv.infos import FirmwareInfo, PluginInfo, ExtensionFirmwareInfo, \
                          BrickREDInfo, BindingsInfo, LatestFirmwares, ToolInfo, \
                          get_bindings_name
 
-LATEST_VERSIONS_URL = 'http://download.tinkerforge.com/latest_versions.txt'
+LATEST_VERSIONS_URL = 'https://download.tinkerforge.com/latest_versions.txt'
 
 ERROR_DOWNLOAD = 1
 ERROR_PARSE_SPLIT = 2

@@ -53,7 +53,7 @@ setup_arguments = {
     'version':      BRICKV_VERSION,
     'author':       'Tinkerforge',
     'author_email': 'info@tinkerforge.com',
-    'url':          'http://www.tinkerforge.com',
+    'url':          'https://www.tinkerforge.com',
     'license':      'GPL v2',
     'description':  'Small Qt GUI to control and test all Bricks and Bricklets from Tinkerforge',
     'packages':     packages,
