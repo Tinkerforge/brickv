@@ -80,7 +80,7 @@ excludes = ['wx', 'gtk+', '_gtkagg', 'gtk', 'gdk', 'gtk2', 'gtk3', 'cairo', 'way
             'PyQt5.QtXml',
             'PyQt5.QtXmlPatterns']
 patterns = ['qt5qml', 'qt5quick', 'qt5network', 'qt5dbus', 'qt5svg', 'qt5websockets',
-            'qtqml', 'qtquick', 'libcrypto', 'qtnetwork', 'libcrypto', 'qwebp',
+            'qtqml', 'qtquick', 'qtnetwork', 'qwebp',
             'qjpeg', 'qminimal', 'qoffscreen', 'qwebgl']
 hiddenimports = []
 
