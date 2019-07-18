@@ -562,6 +562,59 @@
       <layout class="QGridLayout" name="gridLayout_5"/>
      </item>
      <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_12">
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Scale Factor:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QComboBox" name="combo_scale_factor">
+         <item>
+          <property name="text">
+           <string>1x</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1.5x</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2x</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2.5x</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>3x</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QLabel" name="label">
@@ -681,59 +734,6 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_12">
-       <item>
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Scale Factor:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QComboBox" name="combo_scale_factor">
-         <item>
-          <property name="text">
-           <string>1x</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>1.5x</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>2x</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>2.5x</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>3x</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -749,9 +749,8 @@
     </layout>
    </item>
   </layout>
+  <zorder></zorder>
   <zorder>scrollArea</zorder>
-  <zorder></zorder>
-  <zorder></zorder>
  </widget>
  <resources/>
  <connections/>
