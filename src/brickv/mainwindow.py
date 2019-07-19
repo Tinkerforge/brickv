@@ -507,7 +507,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.flashing_window = FlashingWindow(self)
 
         self.flashing_window.show()
-        self.flashing_window.update_version_info()
+        self.flashing_window.refresh_update_tree_view()
         self.flashing_window.show_brick_update(url_part)
 
     def show_bricklet_update(self, parent_uid, port):
@@ -515,7 +515,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.flashing_window = FlashingWindow(self)
 
         self.flashing_window.show()
-        self.flashing_window.update_version_info()
+        self.flashing_window.refresh_update_tree_view()
         self.flashing_window.show_bricklet_update(parent_uid, port)
 
     def show_extension_update(self, master_uid):
@@ -523,7 +523,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.flashing_window = FlashingWindow(self)
 
         self.flashing_window.show()
-        self.flashing_window.update_version_info()
+        self.flashing_window.refresh_update_tree_view()
         self.flashing_window.show_extension_update(master_uid)
 
     def show_red_brick_update(self):
