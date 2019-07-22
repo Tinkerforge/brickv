@@ -207,6 +207,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         progress = PaddedProgressDialog(self, done_text)
         progress.setMinimumDuration(0)
         progress.setAutoClose(False)
+        progress.setAutoReset(False)
         progress.setWindowTitle('Updates / Flashing')
         progress.setWindowModality(Qt.WindowModal)
         progress.setLabelText(text)
