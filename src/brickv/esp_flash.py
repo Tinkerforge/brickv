@@ -77,6 +77,10 @@ class ESPROM:
         buf = b'\xc0' + packet.replace(b'\xdb', b'\xdb\xdd').replace(b'\xc0', b'\xdb\xdc') + b'\xc0'
         self._port.write(buf)
 
+    """ Write bytes to the serial port """
+    def write_raw(self, data):
+        self._port.write(data)
+
     """ Calculate checksum of a blob, as it is defined by the ROM """
     @staticmethod
     def checksum(data, state=ESP_CHECKSUM_MAGIC):
@@ -363,7 +367,7 @@ class CesantaFlasher:
             progress(num_written // self._esp.ESP_FLASH_BLOCK)
 
             while num_sent - num_written < 5120:
-                self._esp._port.write(data[num_sent:num_sent + 1024])
+                self._esp.write_raw(data[num_sent:num_sent + 1024])
                 num_sent += 1024
 
         p = self._esp.read()
