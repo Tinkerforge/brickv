@@ -732,7 +732,7 @@ class ESPFlash:
                     image = zf.read(f[1])
 
                     # Fix sflash config data
-                    if address == 0 and image[0] == b'\xe9':
+                    if address == 0 and image.startswith(b'\xe9'):
                         image = image[0:2] + flash_info + image[4:]
 
                     # Pad to sector size
