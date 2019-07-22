@@ -190,6 +190,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
     def download_file(self, url, filename, latest_version):
         progress = QProgressDialog(self)
+        progress.setMinimumDuration(0)
         progress.setAutoClose(False)
         progress.setWindowTitle('Updates / Flashing')
         progress.setWindowModality(Qt.WindowModal)
