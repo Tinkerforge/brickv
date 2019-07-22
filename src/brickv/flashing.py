@@ -31,6 +31,7 @@ import urllib.error
 import time
 import struct
 import json
+import html
 from distutils.version import StrictVersion
 from io import BytesIO as FileLike
 
@@ -247,8 +248,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         except Exception as e:
             self.popup_fail('Updates / Flashing',
                             "Failed to download Brick Viewer {}.<br/><br/>".format(latest_version) +
-                            "Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>." +
-                            str(e))
+                            "Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>:<br/><br/>" +
+                            html.escape(str(e)))
             return
 
     def get_brickv_download_url(self, version):
