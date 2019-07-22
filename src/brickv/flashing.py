@@ -299,6 +299,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
             default_filename = url.split('/')[-1]
             filename, _selected_filter = QFileDialog.getSaveFileName(self, "Save Brick Viewer Update", default_filename)
 
+            if len(filename) == 0:
+                return
+
             self.download_file(url, filename, version)
             return
 
