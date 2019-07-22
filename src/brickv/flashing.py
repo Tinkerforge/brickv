@@ -362,6 +362,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         else:
             self.refresh_update_tree_view()
 
+        self.update_button_refresh.setDisabled(False)
+
     def load_version_info(self, version_info):
         # Save combobox state by url_part
         selected_firmware = self.combo_firmware.currentData()
@@ -1858,8 +1860,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.update_button_bricklets.setEnabled(False)
 
         self.brick_changed(self.combo_parent.currentIndex())
-
-        self.update_button_refresh.setDisabled(False)
 
     def extension_changed(self, index):
         if index < 0:
