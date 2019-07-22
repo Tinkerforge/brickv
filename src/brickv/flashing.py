@@ -35,8 +35,8 @@ from distutils.version import StrictVersion
 from io import BytesIO as FileLike
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor, QStandardItemModel, QStandardItem, QBrush
-from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox, QProgressDialog, QFileDialog
+from PyQt5.QtGui import QColor, QStandardItemModel, QStandardItem, QBrush, QFontMetrics
+from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox, QProgressDialog, QFileDialog, QProgressBar
 
 from brickv import config
 from brickv.ui_flashing import Ui_Flashing
@@ -99,6 +99,17 @@ class ProgressWrapper:
 
     def cancel(self):
         self.progress.cancel()
+
+class PaddedProgressDialog(QProgressDialog):
+    def __init__(self, parent, longest_text):
+        super().__init__(parent)
+        self.longest_text = longest_text
+
+    # overrides QProgressDialog.sizeHint
+    def sizeHint(self):
+        size = QProgressDialog.sizeHint(self)
+        size.setWidth(QFontMetrics(QApplication.font()).width(self.longest_text) + 100)
+        return size
 
 class FlashingWindow(QDialog, Ui_Flashing):
     def __init__(self, parent):
@@ -189,12 +200,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_extensions()
 
     def download_file(self, url, filename, latest_version):
-        progress = QProgressDialog(self)
+        text = 'Downloading Brick Viewer {}'.format(latest_version)
+        done_text = text + ' - Done'
+
+        progress = PaddedProgressDialog(self, done_text)
         progress.setMinimumDuration(0)
         progress.setAutoClose(False)
         progress.setWindowTitle('Updates / Flashing')
         progress.setWindowModality(Qt.WindowModal)
-        progress.setLabelText('Downloading Brick Viewer {}'.format(latest_version))
+        progress.setLabelText(text)
         progress.canceled.connect(progress.hide)
 
         block_size = 100*1024
@@ -220,8 +234,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                         blocks_transfered += 1
                         progress.setValue(min(progress.maximum(), blocks_transfered * block_size))
-
+                progress.setLabelText(done_text)
                 progress.setCancelButtonText('OK')
+                progress.setValue(file_size)
+
                 os.replace(filename + '.part', filename)
         except urllib.error.URLError:
             self.popup_fail('Updates / Flashing',
