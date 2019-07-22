@@ -80,8 +80,8 @@ class ESPROM:
     """ Calculate checksum of a blob, as it is defined by the ROM """
     @staticmethod
     def checksum(data, state=ESP_CHECKSUM_MAGIC):
-        for b in data:
-            state ^= ord(b) if sys.hexversion < 0x03000000 else b
+        for byte in data:
+            state ^= byte
 
         return state
 
@@ -507,8 +507,7 @@ def slip_reader(port):
             raise FatalError("Timed out waiting for packet %s" % ("header" if partial_packet is None else "content"))
 
         for b in read_bytes:
-            if sys.hexversion >= 0x03000000:
-                b = bytes([b])
+            b = bytes([b])
 
             if partial_packet is None:  # waiting for packet header
                 if b == b'\xc0':
@@ -545,9 +544,6 @@ def unhexify(hs):
 
     for i in range(0, len(hs) - 1, 2):
         s.append(int(hs[i] + hs[i + 1], 16))
-
-    if sys.hexversion < 0x03000000:
-        return ''.join(map(chr, s))
 
     return bytes(s)
 
@@ -685,9 +681,6 @@ class TFSerial:
 
         ret = self.read_buffer[:length]
         self.read_buffer = self.read_buffer[length:]
-
-        if sys.hexversion < 0x03000000:
-            return ''.join(map(chr, ret))
 
         return bytes(ret)
 
