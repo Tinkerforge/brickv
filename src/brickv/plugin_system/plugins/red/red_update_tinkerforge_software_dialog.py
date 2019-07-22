@@ -37,6 +37,7 @@ from brickv.async_call import async_call
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.ui_red_update_tinkerforge_software import Ui_REDUpdateTinkerforgeSoftware
 from brickv.plugin_system.plugins.red.script_manager import check_script_result
+from brickv.urlopen import urlopen
 
 class REDUpdateTinkerforgeSoftwareDialog(QDialog, Ui_REDUpdateTinkerforgeSoftware):
     # States.
@@ -365,7 +366,7 @@ Please make sure that your internet connection is working.'
         if not self.dialog_session:
             return '', ''
 
-        response = urllib.request.urlopen(url, timeout=10)
+        response = urlopen(url, timeout=10)
 
         return name, response.read()
 
@@ -758,7 +759,7 @@ Please make sure that your internet connection is working.'
 
                 # Try to get the latest version numbers.
                 try:
-                    response = urllib.request.urlopen(self.URL_LATEST_VERSIONS, timeout=10)
+                    response = urlopen(self.URL_LATEST_VERSIONS, timeout=10)
                     response_data = response.read().decode('utf-8')
                 except urllib.error.URLError:
                     self.set_current_state(self.STATE_INIT)

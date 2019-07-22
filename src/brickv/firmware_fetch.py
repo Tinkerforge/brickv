@@ -29,6 +29,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from brickv.infos import FirmwareInfo, PluginInfo, ExtensionFirmwareInfo, \
                          BrickREDInfo, BindingsInfo, LatestFirmwares, ToolInfo, \
                          get_bindings_name
+from brickv.urlopen import urlopen
 
 LATEST_VERSIONS_URL = 'https://download.tinkerforge.com/latest_versions.txt'
 
@@ -177,9 +178,8 @@ def fetch_latest_fw_versions(report_error_fn):
     result = LatestFirmwares({}, {}, {}, {}, {}, {})
 
     try:
-        response = urllib.request.urlopen(LATEST_VERSIONS_URL, timeout=10)
-        latest_versions_data = response.read().decode('utf-8')
-        response.close()
+        with urlopen(LATEST_VERSIONS_URL, timeout=10) as response:
+            latest_versions_data = response.read().decode('utf-8')
     except urllib.error.HTTPError:
         report_error_fn(ERROR_SERVER_ERROR)
     except urllib.error.URLError:

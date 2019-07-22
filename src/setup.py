@@ -36,7 +36,7 @@ from brickv.config import BRICKV_VERSION
 packages = find_packages(include=['brickv', 'brickv.*'])
 
 package_data = {}
-image_patterns = ['*.bmp', '*.jpg', '*.png', '*.svg', '*.obj', '*.mtl', '*.frag', '*.vert']
+image_patterns = ['*.bmp', '*.jpg', '*.png', '*.svg', '*.obj', '*.mtl', '*.frag', '*.vert', '*.crt']
 
 for package in packages:
     package_path = os.path.join(*package.split('.'))

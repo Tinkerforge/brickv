@@ -33,6 +33,7 @@ from brickv.plugin_system.plugins.imu.ui_calibrate_import_export import Ui_calib
 from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
 from brickv.bindings import ip_connection
 from brickv.utils import get_main_window
+from brickv.urlopen import urlopen
 
 class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
     def __init__(self, parent):
@@ -78,7 +79,7 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
 
         try:
             imu_calibration_text = b'# This is the factory calibration\n\n'
-            response = urllib.request.urlopen(IMU_CALIBRATION_URL + '{0}.txt'.format(uid))
+            response = urlopen(IMU_CALIBRATION_URL + '{0}.txt'.format(uid))
             chunk = response.read(1024)
 
             while len(chunk) > 0:

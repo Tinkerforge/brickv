@@ -53,6 +53,7 @@ from brickv.infos import BrickREDInfo, DeviceInfo, inventory
 from brickv.firmware_fetch import ERROR_DOWNLOAD
 from brickv.utils import get_main_window
 from brickv.devicesproxymodel import DevicesProxyModel
+from brickv.urlopen import urlopen
 
 LATEST_VERSIONS_URL = 'https://download.tinkerforge.com/latest_versions.txt'
 FIRMWARE_URL = 'https://download.tinkerforge.com/firmwares/'
@@ -197,7 +198,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         block_size = 100*1024
         try:
-            with urllib.request.urlopen(url) as response:
+            with urlopen(url) as response:
                 file_size = int(response.info().get('Content-Length', 0))
 
                 progress.setMaximum(file_size)
@@ -244,7 +245,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         elif package_type == 'aur':
             metadata_url = 'https://aur.archlinux.org/rpc/?v=5&type=info&arg[]=brickv'
             try:
-                with urllib.request.urlopen(metadata_url, timeout=10) as response:
+                with urlopen(metadata_url, timeout=10) as response:
                     parsed = json.loads(response.read().decode('utf-8'))
                     for result in parsed['results']:
                         if result['Name'] == 'brickv':
@@ -697,7 +698,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             response = None
 
             try:
-                response = urllib.request.urlopen(FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version), timeout=10)
+                response = urlopen(FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version), timeout=10)
             except urllib.error.URLError:
                 pass
 
@@ -705,7 +706,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             while response is None and beta > 0:
                 try:
-                    response = urllib.request.urlopen(FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{2}_{3}_{4}_beta{1}.bin'.format(url_part, beta, *version), timeout=10)
+                    response = urlopen(FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{2}_{3}_{4}_beta{1}.bin'.format(url_part, beta, *version), timeout=10)
                 except urllib.error.URLError:
                     beta -= 1
 
@@ -768,7 +769,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 try:
                     imu_calibration_text = b''
-                    response = urllib.request.urlopen(IMU_CALIBRATION_URL + '{0}.txt'.format(imu_uid), timeout=10)
+                    response = urlopen(IMU_CALIBRATION_URL + '{0}.txt'.format(imu_uid), timeout=10)
                     chunk = response.read(1024)
 
                     while len(chunk) > 0:
@@ -1016,7 +1017,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         response = None
 
         try:
-            response = urllib.request.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{2}_{3}_{4}.{1}'.format(url_part, file_ext, *version), timeout=10)
+            response = urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{2}_{3}_{4}.{1}'.format(url_part, file_ext, *version), timeout=10)
         except urllib.error.URLError:
             pass
 
@@ -1024,7 +1025,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         while response is None and beta > 0:
             try:
-                response = urllib.request.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{3}_{4}_{5}_beta{1}.{2}'.format(url_part, beta, file_ext, *version), timeout=10)
+                response = urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{3}_{4}_{5}_beta{1}.{2}'.format(url_part, beta, file_ext, *version), timeout=10)
             except urllib.error.URLError:
                 beta -= 1
 
@@ -1873,7 +1874,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         response = None
 
         try:
-            response = urllib.request.urlopen(FIRMWARE_URL + 'extensions/{0}/extension_{0}_firmware_{1}_{2}_{3}.zbin'.format(url_part, *version), timeout=10)
+            response = urlopen(FIRMWARE_URL + 'extensions/{0}/extension_{0}_firmware_{1}_{2}_{3}.zbin'.format(url_part, *version), timeout=10)
         except urllib.error.URLError:
             pass
 
@@ -1881,7 +1882,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         while response is None and beta > 0:
             try:
-                response = urllib.request.urlopen(FIRMWARE_URL + 'extensions/{0}/extension{0}_firmware_{2}_{3}_{4}_beta{1}.zbin'.format(url_part, beta, *version), timeout=10)
+                response = urlopen(FIRMWARE_URL + 'extensions/{0}/extension{0}_firmware_{2}_{3}_{4}_beta{1}.zbin'.format(url_part, beta, *version), timeout=10)
             except urllib.error.URLError:
                 beta -= 1
 
