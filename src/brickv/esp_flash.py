@@ -720,8 +720,8 @@ class ESPFlash:
 
                 flasher = CesantaFlasher(esp, ESPROM.ESP_ROM_BAUD)
 
-                flash_mode = 0
-                flash_size_freq = 64
+                flash_mode = 0 # QIO
+                flash_size_freq = 0x40 # flash size 4MB (0x4_) + flash freq 40m (0x_0)
                 flash_info = struct.pack('BB', flash_mode, flash_size_freq)
 
                 for i, f in enumerate(files):
