@@ -241,11 +241,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 os.replace(filename + '.part', filename)
         except urllib.error.URLError:
+            progress.cancel()
             self.popup_fail('Updates / Flashing',
                             "Failed to download Brick Viewer {}.<br/><br/>".format(latest_version) +
                             "Is your computer connected to the Internet?")
             return
         except Exception as e:
+            progress.cancel()
             self.popup_fail('Updates / Flashing',
                             "Failed to download Brick Viewer {}.<br/><br/>".format(latest_version) +
                             "Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>:<br/><br/>" +
