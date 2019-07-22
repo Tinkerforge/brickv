@@ -121,7 +121,7 @@ class ESPROM:
     def sync(self):
         self.command(ESPROM.ESP_SYNC, b'\x07\x07\x12\x20' + 32 * b'\x55')
 
-        for _i in range(7):
+        for _ in range(7):
             self.command()
 
     """ Try connecting repeatedly until successful, or giving up """
