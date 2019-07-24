@@ -85,7 +85,22 @@ class ExceptionReporter:
         self.error_queue = queue.Queue()
         self.error_spawn = threading.Thread(target=self.error_spawner, daemon=True)
         self.error_spawn.start()
+        self.main_window = None
         sys.excepthook = self.exception_hook
+
+    def set_main_window(self, main_window):
+        self.main_window = main_window
+
+    def get_python_thread_stack_traces(self):
+        thread_names = {thread.ident: thread.name for thread in threading.enumerate()}
+
+        result = []
+        for thread_id, stack in sys._current_frames().items():
+            template = 'Thread {} (Name: {}):\n{}'
+            name = thread_names.get(thread_id, 'unknown')
+            stack_trace = ''.join(traceback.format_stack(stack))
+            result.append(template.format(thread_id, name, stack_trace))
+        return result
 
     def error_spawner(self):
         ignored = []
@@ -101,9 +116,11 @@ class ExceptionReporter:
             print(prefix)
             traceback.print_exception(etype=exctype, value=value, tb=tb)
 
+            report_message = prefix + '\n\n' + error + '\nActive Threads:\n\n' + '\n\n'.join(self.get_python_thread_stack_traces())
+
             # Either sys.executable is /path/to/python, then run calls /path/to/python /path/to/main.py --error-report,
             # or sys.executable is brickv[.exe], then the --error-report flag ensures, that the path to main.py is ignored.
-            show_again = bool(subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"] + self.argv, input=prefix + '\n' + error, universal_newlines=True).returncode)
+            show_again = bool(subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"] + self.argv, input=report_message, universal_newlines=True).returncode)
             if not show_again:
                 ignored.append(hash_)
 
