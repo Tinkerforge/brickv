@@ -277,7 +277,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 progress.setLabelText(done_text)
                 progress.setCancelButtonText('OK')
-                progress.setValue(file_size)
+                progress.setMaximum(1)
+                progress.setValue(1)
 
                 os.replace(filename + '.part', filename)
         except urllib.error.URLError:
