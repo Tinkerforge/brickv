@@ -32,6 +32,7 @@ import time
 import struct
 import json
 import html
+from threading import Thread
 from distutils.version import StrictVersion
 from io import BytesIO as FileLike
 
@@ -111,6 +112,22 @@ class PaddedProgressDialog(QProgressDialog):
         size = QProgressDialog.sizeHint(self)
         size.setWidth(QFontMetrics(QApplication.font()).width(self.longest_text) + 100)
         return size
+
+class ThreadWithReturnValue(Thread):
+    def __init__(self, group=None, target=None, name=None,
+                 args=(), kwargs={}, Verbose=None):
+        Thread.__init__(self, group, target, name, args, kwargs)
+        self._return = None
+        self._exception = None
+    def run(self):
+        if self._target is not None:
+            try:
+                self._return = self._target(*self._args, **self._kwargs)
+            except Exception as e:
+                self._exception = e
+    def join(self, *args, **kwargs):
+        Thread.join(self, *args, **kwargs)
+        return self._return, self._exception
 
 class FlashingWindow(QDialog, Ui_Flashing):
     def __init__(self, parent):
@@ -201,25 +218,39 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_extensions()
 
     def download_file(self, url, filename, latest_version):
-        text = 'Downloading Brick Viewer {}'.format(latest_version)
-        done_text = text + ' - Done'
+        downloading_text = 'Downloading Brick Viewer {}'.format(latest_version)
+        done_text = downloading_text + ' - Done'
+        connecting_text = 'Connecting to ' + url.replace('https://', '').split('/')[0]
 
-        progress = PaddedProgressDialog(self, done_text)
-        progress.setMinimumDuration(0)
+        progress = PaddedProgressDialog(self, done_text if len(done_text) > len(connecting_text) else connecting_text)
         progress.setAutoClose(False)
         progress.setAutoReset(False)
         progress.setWindowTitle('Updates / Flashing')
         progress.setWindowModality(Qt.WindowModal)
-        progress.setLabelText(text)
         progress.canceled.connect(progress.hide)
+
+        progress.setMaximum(0)
+        progress.setLabelText(connecting_text)
+        progress.setValue(0)
+        progress.forceShow()
 
         block_size = 100*1024
         try:
-            with urlopen(url) as response:
+            connection_thread = ThreadWithReturnValue(target=urlopen, args=[url], kwargs={'timeout': 10})
+            connection_thread.start()
+            while True:
+                response, exception = connection_thread.join(timeout=1.0/60)
+                if not connection_thread.is_alive():
+                    break
+                QApplication.processEvents()
+            if exception is not None:
+                raise exception
+            with response:
                 file_size = int(response.info().get('Content-Length', 0))
 
                 progress.setMaximum(file_size)
                 progress.setValue(0)
+                progress.setLabelText(downloading_text)
 
                 blocks_transfered = 0
                 with open(filename + '.part', 'wb') as file:
