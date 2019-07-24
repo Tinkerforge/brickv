@@ -292,6 +292,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         package_type = config.PACKAGE_TYPE
         platform = {'exe': 'windows', 'dmg': 'macos'}.get(package_type, 'linux')
+        default_filename = 'brickv-{}.{}'.format(version, package_type)
 
         if package_type == 'deb':
             suffix = '-{version_dots}_all.deb'.format(version_dots=version)
@@ -317,6 +318,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 # User wants to download whatever is in the AUR, override version, so that the progress dialog title shown when downloading is correct.
                 version = aur_version
             url = 'https://aur.archlinux.org/cgit/aur.git/snapshot/brickv.tar.gz'
+            default_filename = 'brickv-{}.tar.gz'.format(version)
         elif package_type == 'dmg' or package_type == 'exe':
             suffix = '_{platform}_{version_under}.{ext}'.format(platform=platform, version_under='_'.join(version.split('.')), ext=package_type)
         else:
@@ -349,8 +351,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if is_local_brickv:
             url, version = self.get_brickv_download_url(latest_version)
             default_filename = url.split('/')[-1]
-            filename, _selected_filter = QFileDialog.getSaveFileName(self, "Save Brick Viewer Update", default_filename)
 
+            filename, _selected_filter = QFileDialog.getSaveFileName(self, "Save Brick Viewer Update", default_filename)
             if len(filename) == 0:
                 return
 
