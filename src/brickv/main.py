@@ -28,6 +28,8 @@ if (sys.hexversion & 0xFF000000) != 0x03000000:
     print('Python 3.x required')
     sys.exit(1)
 
+import datetime
+from tzlocal import get_localzone
 import os
 import logging
 import locale
@@ -88,23 +90,29 @@ class ExceptionReporter:
     def error_spawner(self):
         ignored = []
         while True:
-            exctype, value, tb = self.error_queue.get()
+            time_occured, exctype, value, tb = self.error_queue.get()
             error = "".join(traceback.format_exception(etype=exctype, value=value, tb=tb))
 
             hash_ = hash(error)
             if hash_ in ignored:
                 continue
 
+            prefix = 'Occured ' + time_occured
+            print(prefix)
             traceback.print_exception(etype=exctype, value=value, tb=tb)
 
             # Either sys.executable is /path/to/python, then run calls /path/to/python /path/to/main.py --error-report,
             # or sys.executable is brickv[.exe], then the --error-report flag ensures, that the path to main.py is ignored.
-            show_again = bool(subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"] + self.argv, input=error, universal_newlines=True).returncode)
+            show_again = bool(subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"] + self.argv, input=prefix + '\n' + error, universal_newlines=True).returncode)
             if not show_again:
                 ignored.append(hash_)
 
     def exception_hook(self, exctype, value, tb):
-        self.error_queue.put((exctype, value, tb))
+        try:
+            tz = get_localzone()
+        except:
+            tz = None
+        self.error_queue.put((datetime.datetime.now(tz=tz).isoformat(), exctype, value, tb))
 
 class BrickViewer(QApplication):
     object_creator_signal = pyqtSignal(object)
