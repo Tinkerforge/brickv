@@ -234,7 +234,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
         progress.setValue(0)
         progress.forceShow()
 
-        block_size = 100*1024
+        # Use a small block size to increase responsiveness of the progress dialog.
+        # Unfortunately there is no non blocking read available.
+        block_size = 1024
         try:
             connection_thread = ThreadWithReturnValue(target=urlopen, args=[url], kwargs={'timeout': 10})
             connection_thread.start()
@@ -246,11 +248,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
             if exception is not None:
                 raise exception
             with response:
-                file_size = int(response.info().get('Content-Length', 0))
+                progress.setValue(0)
+                progress.setLabelText(downloading_text)
+                QApplication.processEvents()
 
+                file_size = int(response.info().get('Content-Length', 0))
                 progress.setMaximum(file_size)
                 progress.setValue(0)
                 progress.setLabelText(downloading_text)
+                QApplication.processEvents()
 
                 blocks_transfered = 0
                 with open(filename + '.part', 'wb') as file:
@@ -267,6 +273,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                         blocks_transfered += 1
                         progress.setValue(min(progress.maximum(), blocks_transfered * block_size))
+                        QApplication.processEvents()
+
                 progress.setLabelText(done_text)
                 progress.setCancelButtonText('OK')
                 progress.setValue(file_size)
