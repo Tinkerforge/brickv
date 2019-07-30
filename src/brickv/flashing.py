@@ -859,14 +859,14 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     self.popup_fail('IMU Brick', 'Could not download factory calibration for IMU Brick [{0}]: {1}'.format(imu_uid, e))
                     return
 
-                try:
-                    imu_calibration_text = imu_calibration_text.decode('utf-8')
-                except UnicodeError as e:
-                    progress.cancel()
-                    self.popup_fail('IMU Brick', 'Could not decode factory calibration for IMU Brick [{0}]: {1}'.format(imu_uid, e))
-                    return
-
                 if imu_calibration_text is not None:
+                    try:
+                        imu_calibration_text = imu_calibration_text.decode('utf-8')
+                    except UnicodeError as e:
+                        progress.cancel()
+                        self.popup_fail('IMU Brick', 'Could not decode factory calibration for IMU Brick [{0}]: {1}'.format(imu_uid, e))
+                        return
+
                     if len(imu_calibration_text) == 0:
                         progress.cancel()
                         self.popup_fail('IMU Brick', 'Could not download factory calibration for IMU Brick [{0}]'.format(imu_uid))
