@@ -190,8 +190,8 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
         try:
             coordinates, status, altitude, motion, date_time = data
 
-            self.cb_coordinates(*coordinates)
             self.cb_status(*status)
+            self.cb_coordinates(*coordinates)
             self.cb_altitude(*altitude)
             self.cb_motion(*motion)
             self.cb_date_time(*date_time)
