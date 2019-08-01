@@ -45,29 +45,32 @@ else:
     libGL_path = ctypes.util.find_library('opengl32')
     dll_type = ctypes.WinDLL
 
-libGL = dll_type(libGL_path, mode=ctypes.RTLD_GLOBAL)
+has_libGL = libGL_path != None
 
-GLclampf = ctypes.c_float
-GLenum = ctypes.c_uint
-GLsizei = ctypes.c_int
-GLvoid_ptr = ctypes.c_void_p
-GLbitfield = ctypes.c_uint
+if has_libGL:
+    libGL = dll_type(libGL_path, mode=ctypes.RTLD_GLOBAL)
 
-glClearColor = libGL.glClearColor
-glClearColor.restype = None
-glClearColor.argtypes = [GLclampf, GLclampf, GLclampf, GLclampf]
+    GLclampf = ctypes.c_float
+    GLenum = ctypes.c_uint
+    GLsizei = ctypes.c_int
+    GLvoid_ptr = ctypes.c_void_p
+    GLbitfield = ctypes.c_uint
 
-glEnable = libGL.glEnable
-glEnable.restype = None
-glEnable.argtypes = [GLenum]
+    glClearColor = libGL.glClearColor
+    glClearColor.restype = None
+    glClearColor.argtypes = [GLclampf, GLclampf, GLclampf, GLclampf]
 
-glDrawElements = libGL.glDrawElements
-glDrawElements.restype = None
-glDrawElements.argtypes = [GLenum, GLsizei, GLenum, GLvoid_ptr]
+    glEnable = libGL.glEnable
+    glEnable.restype = None
+    glEnable.argtypes = [GLenum]
 
-glClear = libGL.glClear
-glClear.restype = None
-glClear.argtypes = [GLbitfield]
+    glDrawElements = libGL.glDrawElements
+    glDrawElements.restype = None
+    glDrawElements.argtypes = [GLenum, GLsizei, GLenum, GLvoid_ptr]
+
+    glClear = libGL.glClear
+    glClear.restype = None
+    glClear.argtypes = [GLbitfield]
 
 GL_DEPTH_TEST = 0x0B71
 GL_CULL_FACE = 0x0B44
@@ -76,12 +79,10 @@ GL_TRIANGLES = 0x0004
 GL_UNSIGNED_SHORT = 0x1403
 GL_UNSIGNED_INT = 0x1405
 
-
 GL_DEPTH_BUFFER_BIT = 0x00000100
 GL_COLOR_BUFFER_BIT = 0x00004000
 
 class RenderWidget(QOpenGLWidget):
-
     def __init__(self, obj_path, parent=None):
         super().__init__(parent)
 
@@ -114,6 +115,7 @@ class RenderWidget(QOpenGLWidget):
 
     def init_shaders(self):
         program = QOpenGLShaderProgram(self)
+
         if not program.addShaderFromSourceFile(QOpenGLShader.Vertex, get_resources_path("shader.vert")):
             return None
 
@@ -171,6 +173,9 @@ class RenderWidget(QOpenGLWidget):
         return vertex_buf, index_buf
 
     def initializeGL(self):
+        if not has_libGL:
+            return
+
         profile = QOpenGLVersionProfile()
         profile.setVersion(4, 1)
         profile.setProfile(QSurfaceFormat.CoreProfile)
@@ -231,6 +236,9 @@ class RenderWidget(QOpenGLWidget):
         return result
 
     def paintGL(self):
+        if not has_libGL:
+            return
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         self.program.bind()
         self.texture.bind()
@@ -250,10 +258,11 @@ class RenderWidget(QOpenGLWidget):
         self.program.release()
 
     def resizeGL(self, w, h):
+        if not has_libGL:
+            return
+
         aspect = float(w) / float(h if h != 0 else 1)
-
         scale = self.bounding_sphere_radius
-
         z_near = 3.0 * scale
         z_far = 5.0 * scale
 
@@ -264,7 +273,6 @@ class RenderWidget(QOpenGLWidget):
             self.projection.frustum(-scale * aspect, scale * aspect, -scale, scale, z_near, z_far)
         else:
             self.projection.frustum(-scale, scale, -scale / aspect, scale / aspect, z_near, z_far)
-
 
 def read_mtl(mtl_file):
     with open(mtl_file, 'r') as f:
@@ -313,8 +321,10 @@ def read_obj(obj_file):
 
     for line in content:
         line = line.strip()
+
         if len(line) == 0:
             continue
+
         if line.startswith('vn '):
             normals.append([float(f) for f in line.split(' ')[1:]])
         elif line.startswith('vt '):
@@ -331,6 +341,7 @@ def read_obj(obj_file):
             pass
         else:
             print("Could not parse line {}".format(line))
+
     return vertices, normals, tex_coords, faces, material
 
 def get_bounding_box(vertices):
@@ -376,7 +387,6 @@ def add_triangle_prism(start, start_to_end, perpendicular, width, color, vertex_
     tris = [(5, 3, 2), (5, 2, 4),
             (1, 5, 4), (1, 4, 0),
             (3, 1, 0), (3, 0, 2),
-
             (1, 3, 5), (0, 4, 2)]
 
     for tri in tris:
