@@ -33,7 +33,7 @@ from PyQt5.QtGui import QOpenGLVersionProfile, QSurfaceFormat, \
                         QOpenGLBuffer, QVector3D, QOpenGLTexture, \
                         QImage, QMatrix4x4
 
-from brickv.utils import get_resources_path
+from brickv.utils import get_resources_path, get_main_window
 
 if sys.platform.startswith('linux'):
     libGL_path = ctypes.util.find_library('GL')
@@ -96,6 +96,9 @@ class RenderWidget(QOpenGLWidget):
 
         self.obj_path = obj_path
         self.initialized = False
+
+        if not has_libGL:
+            get_main_window().show_status('OpenGL library not found. Disabling 3D view.')
 
     def __del__(self):
         self.cleanup()
