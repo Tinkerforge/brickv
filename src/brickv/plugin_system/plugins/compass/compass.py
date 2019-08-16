@@ -92,7 +92,7 @@ class CompassWidget(QWidget):
 
         painter.drawPolygon(QPolygon([QPoint(-10, 0), QPoint(0, -45), QPoint(10, 0), QPoint(0, 45), QPoint(-10, 0)]))
 
-        painter.setBrush(self.palette().brush(QPalette.Highlight))
+        painter.setBrush(Qt.red)
 
         painter.drawPolygon(QPolygon([QPoint(-5, -25), QPoint(0, -45), QPoint(5, -25), QPoint(0, -30), QPoint(-5, -25)]))
 
