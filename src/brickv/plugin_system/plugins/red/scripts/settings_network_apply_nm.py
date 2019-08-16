@@ -48,6 +48,8 @@ if len(argv) != 2:
     exit (1)
 
 def get_ap_object(device_object_paths):
+    connection_specific_object = None
+
     for device_object_path in device_object_paths:
         device_type = dbus.Interface(dbus.SystemBus().get_object(DBUS_NM_BUS_NAME, device_object_path),
                                      dbus_interface = DBUS_PROPERTIES_INTERFACE).Get(DBUS_NM_DEVICE_INTERFACE, "DeviceType")
