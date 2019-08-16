@@ -121,7 +121,7 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
                    cb_open, cb_open_error)
 
     def save_content(self):
-        filename = get_save_file_name(get_main_window(), 'Save Log', self.last_filename, '*.log')
+        filename = get_save_file_name(get_main_window(), 'Save Log', self.last_filename, 'Log(*.log)')
 
         if len(filename) == 0:
             return
