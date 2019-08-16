@@ -484,13 +484,13 @@ class RS485(COMCUPluginBase, Ui_RS485):
                  str(event.request_id),
                  str(event.slave_address),
                  event.function + ' ' + ('Request' if event.is_request else 'Response'),
-                 '{:06d}'.format(event.address),
+                 '{:06d}'.format(event.address) if event.address is not None else None,
                  str(event.count),
                  event.data if event.exception_code == BrickletRS485.EXCEPTION_CODE_SUCCESS else self.modbus_errors[event.exception_code]]
 
         # None marks unknown values except in the data field.
         for i, e in enumerate(entry):
-            if e is None:
+            if e is None or e == 'None':
                 entry[i] = '?' if i != len(entry) - 1 else ''
 
         if self.configured_mode == self.rs485.MODE_MODBUS_SLAVE_RTU:
