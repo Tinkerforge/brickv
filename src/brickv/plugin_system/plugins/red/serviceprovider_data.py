@@ -10308,7 +10308,7 @@ dict_country = \
  'md': 'Moldova, Republic of',
  'me': 'Montenegro',
  'mg': 'Madagascar',
- 'mk': 'Macedonia, Republic of',
+ 'mk': 'North Macedonia',
  'ml': 'Mali',
  'mm': 'Myanmar',
  'mn': 'Mongolia',
