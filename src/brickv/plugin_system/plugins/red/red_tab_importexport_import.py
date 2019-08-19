@@ -132,7 +132,7 @@ class REDTabImportExportImport(QWidget, Ui_REDTabImportExportImport):
         else:
             last_directory = get_home_path()
 
-        filename = get_open_file_name(get_main_window(), 'Open Archive', last_directory, 'Tinkerforge RED-Brick Archives(*.tfrba);;All Files (*)')
+        filename = get_open_file_name(get_main_window(), 'Open Archive', last_directory, 'Tinkerforge RED-Brick Archives(*.tfrba);;All Files(*)')
 
         if len(filename) > 0:
             self.edit_archive.setText(filename)

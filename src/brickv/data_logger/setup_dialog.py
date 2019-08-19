@@ -302,7 +302,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
     def btn_save_config_clicked(self):
         filename = get_save_file_name(self, 'Save Config',
-                                      get_home_path(), 'JSON Files (*.json)')
+                                      get_home_path(), 'JSON Files(*.json)')
 
         if len(filename) == 0:
             return
@@ -319,7 +319,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
     def btn_load_config_clicked(self):
         filename = get_open_file_name(self, 'Load Config',
-                                      get_home_path(), 'JSON Files (*.json);;All Files (*)')
+                                      get_home_path(), 'JSON Files(*.json);;All Files(*)')
 
         if len(filename) == 0:
             return

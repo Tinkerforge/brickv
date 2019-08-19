@@ -716,7 +716,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         else:
             last_dir = get_home_path()
 
-        filename = get_open_file_name(self, 'Open Firmware', last_dir, 'Firmwares (*.bin);;All Files (*)')
+        filename = get_open_file_name(self, 'Open Firmware', last_dir, 'Firmwares(*.bin);;All Files(*)')
 
         if len(filename) > 0:
             self.edit_custom_firmware.setText(filename)
@@ -1629,7 +1629,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if len(self.edit_custom_plugin.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(self.edit_custom_plugin.text()))
 
-        filename = get_open_file_name(self, 'Open Plugin', last_dir, 'Firmware ({});;All Files (*)'.format(file_ending))
+        filename = get_open_file_name(self, 'Open Plugin', last_dir, 'Firmwares({});;All Files(*)'.format(file_ending))
 
         if len(filename) > 0:
             self.edit_custom_plugin.setText(filename)
@@ -2054,7 +2054,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         else:
             last_dir = get_home_path()
 
-        filename = get_open_file_name(self, 'Open Extension Firmware', last_dir, 'Firmware (*.zbin);;All Files (*)')
+        filename = get_open_file_name(self, 'Open Extension Firmware', last_dir, 'Firmwares(*.zbin);;All Files(*)')
 
         if len(filename) > 0:
             self.edit_custom_extension_firmware.setText(filename)
