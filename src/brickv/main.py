@@ -87,6 +87,30 @@ class ExceptionReporter:
         self.error_spawn.start()
         self.main_window = None
         sys.excepthook = self.exception_hook
+        if sys.version_info >= (3,8,0):
+            threading.excepthook = self.exception_hook
+        else:
+            self.install_thread_excepthook()
+
+    def install_thread_excepthook(self):
+        """
+        Workaround for sys.excepthook thread bug
+        From https://bugs.python.org/issue1230540#msg91244
+        """
+        init_old = threading.Thread.__init__
+        def init(self, *args, **kwargs):
+            init_old(self, *args, **kwargs)
+            run_old = self.run
+            def run_with_except_hook(*args, **kw):
+                try:
+                    run_old(*args, **kw)
+                except (KeyboardInterrupt, SystemExit):
+                    raise
+                except:
+                    # Add self (i.e. the thread that raised the error) to behave like to python 3.8's threading.excepthook
+                    sys.excepthook(*sys.exc_info(), self)
+            self.run = run_with_except_hook
+        threading.Thread.__init__ = init
 
     def set_main_window(self, main_window):
         self.main_window = main_window
@@ -105,7 +129,7 @@ class ExceptionReporter:
     def error_spawner(self):
         ignored = []
         while True:
-            time_occured, exctype, value, tb = self.error_queue.get()
+            time_occured, exctype, value, tb, thread = self.error_queue.get()
             error = "".join(traceback.format_exception(etype=exctype, value=value, tb=tb))
 
             hash_ = hash(error)
@@ -113,6 +137,10 @@ class ExceptionReporter:
                 continue
 
             prefix = 'Occured ' + time_occured
+            if thread is not None:
+                prefix += ' raised by Thread {}'.format(thread.ident)
+                if thread.name is not None:
+                    prefix += ' (Name: {})'.format(thread.name)
             print(prefix)
             traceback.print_exception(etype=exctype, value=value, tb=tb)
 
@@ -124,12 +152,12 @@ class ExceptionReporter:
             if not show_again:
                 ignored.append(hash_)
 
-    def exception_hook(self, exctype, value, tb):
+    def exception_hook(self, exctype, value, tb, thread=None):
         try:
             tz = get_localzone()
         except:
             tz = None
-        self.error_queue.put((datetime.datetime.now(tz=tz).isoformat(), exctype, value, tb))
+        self.error_queue.put((datetime.datetime.now(tz=tz).isoformat(), exctype, value, tb, thread))
 
 class BrickViewer(QApplication):
     object_creator_signal = pyqtSignal(object)
