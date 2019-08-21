@@ -23,6 +23,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import io
 import sys
 import os
 import zipfile
@@ -80,38 +81,45 @@ def error_to_name(e):
 
     return e.message
 
-class ProgressWrapper:
-    def __init__(self, progress):
-        self.progress = progress
-
-    def reset(self, title, length):
-        if title != None:
-            self.progress.setLabelText(title)
-
-        self.progress.setMaximum(length)
-        self.progress.setValue(0)
-        self.progress.show()
-        QApplication.processEvents()
-
-    def update(self, value=None):
-        if value != None:
-            self.progress.setValue(value)
-
-        QApplication.processEvents()
-
-    def cancel(self):
-        self.progress.cancel()
-
 class PaddedProgressDialog(QProgressDialog):
-    def __init__(self, parent, longest_text):
+    def __init__(self, parent, text_for_width_calculation=None):
         super().__init__(parent)
-        self.longest_text = longest_text
+        self.setAutoClose(False)
+        self.setAutoReset(False)
+        self.setWindowTitle("Updates / Flashing")
+        self.setWindowModality(Qt.WindowModal)
+        if text_for_width_calculation is None:
+            self.text_for_width_calculation = 'Verifying written plugin: bricklet_industrial_dual_analog_in_v2_firmware_2_0_0.zbin'
+            self.uses_default_text_for_width_calculation = True
+        else:
+            self.text_for_width_calculation = text_for_width_calculation
+            self.uses_default_text_for_width_calculation = False
+        self.canceled.connect(self.hide)
 
     # overrides QProgressDialog.sizeHint
     def sizeHint(self):
         size = QProgressDialog.sizeHint(self)
-        size.setWidth(QFontMetrics(QApplication.font()).width(self.longest_text) + 100)
+        size.setWidth(QFontMetrics(QApplication.font()).width(self.text_for_width_calculation) + 100)
         return size
+
+    def reset(self, title, length):
+        if title != None:
+            self.setLabelText(title)
+
+        self.setMaximum(length)
+        self.setValue(0)
+        self.show()
+        QApplication.processEvents()
+
+    def update(self, value=None):
+        if value != None:
+            self.setValue(value)
+
+        QApplication.processEvents()
+
+    def hideCancelButton(self):
+        self.setCancelButton(None)
+        self.adjustSize()
 
 class ThreadWithReturnValue(Thread):
     def __init__(self, group=None, target=None, name=None,
@@ -217,17 +225,19 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_bricks()
         self.update_extensions()
 
-    def download_file(self, url, filename, latest_version):
-        downloading_text = 'Downloading Brick Viewer {}'.format(latest_version)
+    def download_file(self, url, name, filename=None, progress_dialog=None):
+        downloading_text = 'Downloading {}'.format(name)
         done_text = downloading_text + ' - Done'
         connecting_text = 'Connecting to ' + url.replace('https://', '').split('/')[0]
+        text_for_width_calculation = done_text if len(done_text) > len(connecting_text) else connecting_text
 
-        progress = PaddedProgressDialog(self, done_text if len(done_text) > len(connecting_text) else connecting_text)
-        progress.setAutoClose(False)
-        progress.setAutoReset(False)
-        progress.setWindowTitle('Updates / Flashing')
-        progress.setWindowModality(Qt.WindowModal)
-        progress.canceled.connect(progress.hide)
+        if progress_dialog is None:
+            progress = PaddedProgressDialog(self, text_for_width_calculation)
+        else:
+            progress = progress_dialog
+            if progress.uses_default_text_for_width_calculation:
+                progress.text_for_width_calculation = text_for_width_calculation
+                progress.adjustSize()
 
         progress.setMaximum(0)
         progress.setLabelText(connecting_text)
@@ -259,11 +269,17 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 QApplication.processEvents()
 
                 blocks_transfered = 0
-                with open(filename + '.part', 'wb') as file:
+
+                if filename is not None:
+                    file = open(filename + '.part', 'wb')
+                else:
+                    file = io.BytesIO()
+
+                with file:
                     while True:
                         if progress.wasCanceled():
                             progress.hide()
-                            return
+                            return None
 
                         block = response.read(block_size)
                         if len(block) == 0:
@@ -275,25 +291,31 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         progress.setValue(min(progress.maximum(), blocks_transfered * block_size))
                         QApplication.processEvents()
 
-                progress.setLabelText(done_text)
-                progress.setCancelButtonText('OK')
-                progress.setMaximum(1)
-                progress.setValue(1)
+                    # Only show finished state if progress is our own dialog
+                    if progress_dialog is None:
+                        progress.setLabelText(done_text)
+                        progress.setCancelButtonText('OK')
+                        progress.setMaximum(1)
+                        progress.setValue(1)
 
-                os.replace(filename + '.part', filename)
+                    if filename is not None:
+                        os.replace(filename + '.part', filename)
+                    else:
+                        file.seek(0)
+                        return file.read()
         except urllib.error.URLError:
             progress.cancel()
             self.popup_fail('Updates / Flashing',
-                            "Failed to download Brick Viewer {}.<br/><br/>".format(latest_version) +
+                            "Failed to download .<br/><br/>".format(name) +
                             "Is your computer connected to the Internet?")
-            return
+            return None
         except Exception as e:
             progress.cancel()
             self.popup_fail('Updates / Flashing',
-                            "Failed to download Brick Viewer {}.<br/><br/>".format(latest_version) +
+                            "Failed to download .<br/><br/>".format(name) +
                             "Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>:<br/><br/>" +
                             html.escape(str(e)))
-            return
+            return None
 
     def get_brickv_download_url(self, version):
         url = 'https://download.tinkerforge.com/tools/brickv/{platform}/brickv{suffix}'
@@ -365,7 +387,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             if len(filename) == 0:
                 return
 
-            self.download_file(url, filename, version)
+            self.download_file(url, 'Brick Viewer {}'.format(version), filename)
             return
 
         if "wifi" in name.lower() and "2.0" in name.lower():
@@ -737,7 +759,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             sys.excepthook(*exc_info)
             return
 
-        progress = ProgressWrapper(self.create_progress_bar('Flashing'))
+        progress = PaddedProgressDialog(self, text_for_width_calculation='Downloading factory calibration for IMU Brick')
         samba.progress = progress
         current_text = self.combo_firmware.currentText()
 
@@ -749,7 +771,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
             return
         elif current_text == CUSTOM:
             firmware_file_name = self.edit_custom_firmware.text()
-
             try:
                 with open(firmware_file_name, 'rb') as f:
                     firmware = f.read()
@@ -762,45 +783,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
             name = self.firmware_infos[url_part].name
             version = self.firmware_infos[url_part].firmware_version_latest
 
-            progress.reset('Downloading {0} Brick firmware {1}.{2}.{3}'.format(name, *version), 0)
+            url = FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version)
 
-            response = None
-
-            try:
-                response = urlopen(FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version), timeout=10)
-            except urllib.error.URLError:
-                pass
-
-            beta = 5
-
-            while response is None and beta > 0:
-                try:
-                    response = urlopen(FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{2}_{3}_{4}_beta{1}.bin'.format(url_part, beta, *version), timeout=10)
-                except urllib.error.URLError:
-                    beta -= 1
-
-            if response is None:
-                progress.cancel()
-                self.popup_fail('Brick', 'Could not download {0} Brick firmware {1}.{2}.{3}'.format(name, *version))
-                return
-
-            try:
-                length = int(response.headers['Content-Length'])
-                progress.reset(None, length)
-                progress.update(0)
-                QApplication.processEvents()
-                firmware = bytes()
-                chunk = response.read(1024)
-
-                while len(chunk) > 0:
-                    firmware += chunk
-                    progress.update(len(firmware))
-                    chunk = response.read(1024)
-
-                response.close()
-            except urllib.error.URLError:
-                progress.cancel()
-                self.popup_fail('Brick', 'Could not download {0} Brick firmware {1}.{2}.{3}'.format(name, *version))
+            firmware = self.download_file(url, '{0} Brick firmware {1}.{2}.{3}'.format(name, *version), progress_dialog=progress)
+            if firmware is None:
                 return
 
         # Get IMU UID
@@ -891,6 +877,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         progress.cancel()
                         self.popup_fail('IMU Brick', 'Could not parse factory calibration for IMU Brick [{0}]: {1}'.format(imu_uid, e))
                         return
+
+        progress.hideCancelButton()
 
         # Flash firmware
         def report_result(reboot_okay):
@@ -1074,55 +1062,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_ui_state()
 
     def download_bricklet_plugin(self, progress, url_part, has_comcu, name, version):
-        progress.setLabelText('Downloading {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
-        progress.setMaximum(0)
-        progress.show()
-
         if has_comcu:
             file_ext = 'zbin'
         else:
             file_ext = 'bin'
 
-        response = None
+        url = FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{2}_{3}_{4}.{1}'.format(url_part, file_ext, *version)
+        name = '{0} Bricklet plugin {1}.{2}.{3}'.format(name, *version)
 
-        try:
-            response = urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{2}_{3}_{4}.{1}'.format(url_part, file_ext, *version), timeout=10)
-        except urllib.error.URLError:
-            pass
-
-        beta = 5
-
-        while response is None and beta > 0:
-            try:
-                response = urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{3}_{4}_{5}_beta{1}.{2}'.format(url_part, beta, file_ext, *version), timeout=10)
-            except urllib.error.URLError:
-                beta -= 1
-
-        if response is None:
-            progress.cancel()
-            self.popup_fail('Bricklet', 'Could not download {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
-            return None
-
-        try:
-            length = int(response.headers['Content-Length'])
-            progress.setMaximum(length)
-            progress.setValue(0)
-            QApplication.processEvents()
-            plugin = bytes()
-            chunk = response.read(256)
-
-            while len(chunk) > 0:
-                plugin += chunk
-                progress.setValue(len(plugin))
-                chunk = response.read(256)
-
-            response.close()
-        except urllib.error.URLError:
-            progress.cancel()
-            self.popup_fail('Bricklet', 'Could not download {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
-            return None
-
-        return plugin
+        return self.download_file(url, name, progress_dialog=progress)
 
     def write_bricklet_plugin(self, plugin, brick, port, bricklet, name, progress, has_comcu):
         if has_comcu:
@@ -1519,7 +1467,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         return True
 
     def plugin_save_clicked(self):
-        progress = self.create_progress_bar('Flashing')
+        progress = PaddedProgressDialog(self)
         current_text = self.combo_plugin.currentText()
 
         # Get plugin
@@ -1540,11 +1488,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
             plugin_info = self.plugin_infos[url_part]
             name = plugin_info.name
             version = plugin_info.firmware_version_latest
+
             plugin = self.download_bricklet_plugin(progress, url_part, self.current_bricklet_has_comcu(), name, version)
 
             if plugin == None:
                 return
-
+        progress.hideCancelButton()
         # Flash plugin
         port = self.current_bricklet_port()
         brick = self.current_parent_device()
@@ -1935,54 +1884,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def extension_firmware_changed(self, _index):
         self.update_ui_state()
 
-    def download_extension_firmware(self, progress, url_part, name, version):
-        progress.reset('Downloading {0} Extension firmware {1}.{2}.{3}'.format(name, *version), 0)
-
-        response = None
-
-        try:
-            response = urlopen(FIRMWARE_URL + 'extensions/{0}/extension_{0}_firmware_{1}_{2}_{3}.zbin'.format(url_part, *version), timeout=10)
-        except urllib.error.URLError:
-            pass
-
-        beta = 5
-
-        while response is None and beta > 0:
-            try:
-                response = urlopen(FIRMWARE_URL + 'extensions/{0}/extension{0}_firmware_{2}_{3}_{4}_beta{1}.zbin'.format(url_part, beta, *version), timeout=10)
-            except urllib.error.URLError:
-                beta -= 1
-
-        if response is None:
-            progress.cancel()
-            self.popup_fail('Extension', 'Could not download {0} Extension firmware {1}.{2}.{3}'.format(name, *version))
-            return None
-
-        try:
-            length = int(response.headers['Content-Length'])
-            progress.reset('Downloading {0} Extension firmware {1}.{2}.{3}'.format(name, *version), length)
-            progress.update(0)
-            firmware = b''
-            chunk = response.read(256)
-
-            while len(chunk) > 0:
-                firmware += chunk
-                progress.update(len(firmware))
-                chunk = response.read(256)
-
-            response.close()
-        except urllib.error.URLError:
-            progress.cancel()
-            self.popup_fail('Extension', 'Could not download {0} Extension firmware {1}.{2}.{3}'.format(name, *version))
-            return None
-
-        return firmware
-
     def extension_firmware_save_clicked(self):
         # FIXME: check Master.get_connection_type()
 
         current_text = self.combo_extension_firmware.currentText()
-        progress = ProgressWrapper(self.create_progress_bar('Flashing'))
+        progress = PaddedProgressDialog(self)
 
         if current_text == SELECT:
             return
@@ -2008,11 +1914,14 @@ class FlashingWindow(QDialog, Ui_Flashing):
             url_part = self.combo_extension_firmware.itemData(self.combo_extension_firmware.currentIndex())
             name = self.extension_firmware_infos[url_part].name
             version = self.extension_firmware_infos[url_part].firmware_version_latest
-            firmware = self.download_extension_firmware(progress, url_part, name, version)
+
+            url = FIRMWARE_URL + 'extensions/{0}/extension_{0}_firmware_{1}_{2}_{3}.zbin'.format(url_part, *version)
+            firmware = self.download_file(url, '{0} Extension firmware {1}.{2}.{3}'.format(name, *version), progress_dialog=progress)
 
             if not firmware:
                 return
 
+        progress.hideCancelButton()
         progress.reset('Connecting to bootloader', 0)
         progress.update(0)
 
