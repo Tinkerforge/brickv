@@ -292,15 +292,16 @@ class Compass(COMCUPluginBase):
 
     def cb_mfd(self, data):
         x, y, z = data
-        inclination = int(round(180/math.pi * math.atan2(z, math.hypot(y, x)), 0))
-        heading = int(round(math.atan2(y, x)*180/math.pi, 0))
+        inclination = round(180/math.pi * math.atan2(z, math.hypot(y, x)))
+        heading = math.atan2(y, x)*180/math.pi
+
         if heading < 0:
             heading += 360
 
-        self.current_mfd_x.value = int(round(x / 10.0, 0))
-        self.current_mfd_y.value = int(round(y / 10.0, 0))
-        self.current_mfd_z.value = int(round(z / 10.0, 0))
-        self.heading_label.setText(heading)
+        self.current_mfd_x.value = round(x / 10.0)
+        self.current_mfd_y.value = round(y / 10.0)
+        self.current_mfd_z.value = round(z / 10.0)
+        self.heading_label.setText(round(heading))
         self.compass_widget.set_angle(heading)
         self.inclination_label.setText(inclination)
 
