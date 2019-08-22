@@ -229,16 +229,16 @@ class DeviceInfo(AbstractInfo):
     def connections_get(self, key):
         result = [v for k, v in self._connections if k == key]
 
-        if key != '0':
-            assert len(result) <= 1, 'On a port, other than the "meta" port 0 (that is used for extensions),'\
-                ' there should only be one device attached. On port {} there where {} devices attached: {}'\
-                .format(key, len(result), [r.uid for r in result])
-
         return result
 
     def connections_add_item(self, item):
+        result = len(self.connections_get(item[0])) > 0
+        print(item, result)
+
         self._connections.append(item)
         self.mark_as_changed()
+
+        return result
 
     def connections_remove_item(self, item):
         old_length = len(self._connections)

@@ -839,8 +839,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     continue
 
                 def add_to_connections(info_to_add, connected_info):
-                    connected_info.connections_add_item((info_to_add.position, info_to_add))
+                    hotplug = connected_info.connections_add_item((info_to_add.position, info_to_add))
                     info_to_add.reverse_connection = connected_info
+                    if hotplug:
+                        self.show_status("Hot plugging is not supported! Please reset Brick with UID {} and reconnect Brick Viewer.".format(connected_info.uid))
 
                 if info.uid != '' and info.uid == device_info.connected_uid:
                     if device_info in info.connections_values(): # device was already connected, but to another port
