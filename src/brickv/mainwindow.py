@@ -841,7 +841,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 def add_to_connections(info_to_add, connected_info):
                     hotplug = connected_info.connections_add_item((info_to_add.position, info_to_add))
                     info_to_add.reverse_connection = connected_info
-                    if hotplug:
+
+                    # '0' is the port where other stacks connected by RS485 extensions are connected. Multiple connections are allowed here.
+                    if hotplug and info_to_add.position != '0':
                         self.show_status("Hot plugging is not supported! Please reset Brick with UID {} and reconnect Brick Viewer.".format(connected_info.uid))
 
                 if info.uid != '' and info.uid == device_info.connected_uid:
