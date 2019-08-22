@@ -176,6 +176,16 @@ if 'merged_data_logger_modules' not in globals():
     except ImportError:
         BrickletColor_found = False
     try:
+        from brickv.bindings.bricklet_color_v2 import BrickletColorV2
+        BrickletColorV2_found = True
+    except ImportError:
+        BrickletColorV2_found = False
+    try:
+        from brickv.bindings.bricklet_compass import BrickletCompass
+        BrickletCompass_found = True
+    except ImportError:
+        BrickletCompass_found = False
+    try:
         from brickv.bindings.bricklet_current12 import BrickletCurrent12
         BrickletCurrent12_found = True
     except ImportError:
@@ -201,6 +211,11 @@ if 'merged_data_logger_modules' not in globals():
     except ImportError:
         BrickletDistanceUS_found = False
     try:
+        from brickv.bindings.bricklet_distance_us_v2 import BrickletDistanceUSV2
+        BrickletDistanceUSV2_found = True
+    except ImportError:
+        BrickletDistanceUSV2_found = False
+    try:
         from brickv.bindings.bricklet_dmx import BrickletDMX
         BrickletDMX_found = True
     except ImportError:
@@ -225,6 +240,11 @@ if 'merged_data_logger_modules' not in globals():
         BrickletDustDetector_found = True
     except ImportError:
         BrickletDustDetector_found = False
+    try:
+        from brickv.bindings.bricklet_energy_monitor import BrickletEnergyMonitor
+        BrickletEnergyMonitor_found = True
+    except ImportError:
+        BrickletEnergyMonitor_found = False
     try:
         from brickv.bindings.bricklet_gps import BrickletGPS
         BrickletGPS_found = True
@@ -406,6 +426,11 @@ if 'merged_data_logger_modules' not in globals():
     except ImportError:
         BrickletMultiTouch_found = False
     try:
+        from brickv.bindings.bricklet_multi_touch_v2 import BrickletMultiTouchV2
+        BrickletMultiTouchV2_found = True
+    except ImportError:
+        BrickletMultiTouchV2_found = False
+    try:
         from brickv.bindings.bricklet_nfc import BrickletNFC
         BrickletNFC_found = True
     except ImportError:
@@ -480,6 +505,11 @@ if 'merged_data_logger_modules' not in globals():
         BrickletRotaryPoti_found = True
     except ImportError:
         BrickletRotaryPoti_found = False
+    try:
+        from brickv.bindings.bricklet_rotary_poti_v2 import BrickletRotaryPotiV2
+        BrickletRotaryPotiV2_found = True
+    except ImportError:
+        BrickletRotaryPotiV2_found = False
     #from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
     #from brickv.bindings.bricklet_rs232_v2 import BrickletRS232V2 #NYI FIXME: has to use read_callback callback to get all data
     try:
@@ -620,12 +650,12 @@ else:
     except ImportError:
         BrickStepper_found = False
     try:
-        from brickv.bindings.brick_hat import BrickHAT
+        from tinkerforge.brick_hat import BrickHAT
         BrickHAT_found = True
     except ImportError:
         BrickHAT_found = False
     try:
-        from brickv.bindings.brick_hat_zero import BrickHATZero
+        from tinkerforge.brick_hat_zero import BrickHATZero
         BrickHATZero_found = True
     except ImportError:
         BrickHATZero_found = False
@@ -722,6 +752,16 @@ else:
     except ImportError:
         BrickletColor_found = False
     try:
+        from tinkerforge.bricklet_color_v2 import BrickletColorV2
+        BrickletColorV2_found = True
+    except ImportError:
+        BrickletColorV2_found = False
+    try:
+        from tinkerforge.bricklet_compass import BrickletCompass
+        BrickletCompass_found = True
+    except ImportError:
+        BrickletCompass_found = False
+    try:
         from tinkerforge.bricklet_current12 import BrickletCurrent12
         BrickletCurrent12_found = True
     except ImportError:
@@ -747,6 +787,11 @@ else:
     except ImportError:
         BrickletDistanceUS_found = False
     try:
+        from tinkerforge.bricklet_distance_us_v2 import BrickletDistanceUSV2
+        BrickletDistanceUSV2_found = True
+    except ImportError:
+        BrickletDistanceUSV2_found = False
+    try:
         from tinkerforge.bricklet_dmx import BrickletDMX
         BrickletDMX_found = True
     except ImportError:
@@ -771,6 +816,11 @@ else:
         BrickletDustDetector_found = True
     except ImportError:
         BrickletDustDetector_found = False
+    try:
+        from tinkerforge.bricklet_energy_monitor import BrickletEnergyMonitor
+        BrickletEnergyMonitor_found = True
+    except ImportError:
+        BrickletEnergyMonitor_found = False
     try:
         from tinkerforge.bricklet_gps import BrickletGPS
         BrickletGPS_found = True
@@ -952,6 +1002,11 @@ else:
     except ImportError:
         BrickletMultiTouch_found = False
     try:
+        from tinkerforge.bricklet_multi_touch_v2 import BrickletMultiTouchV2
+        BrickletMultiTouchV2_found = True
+    except ImportError:
+        BrickletMultiTouchV2_found = False
+    try:
         from tinkerforge.bricklet_nfc import BrickletNFC
         BrickletNFC_found = True
     except ImportError:
@@ -1026,6 +1081,11 @@ else:
         BrickletRotaryPoti_found = True
     except ImportError:
         BrickletRotaryPoti_found = False
+    try:
+        from tinkerforge.bricklet_rotary_poti_v2 import BrickletRotaryPotiV2
+        BrickletRotaryPotiV2_found = True
+    except ImportError:
+        BrickletRotaryPotiV2_found = False
     # from tinkerforge.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
     # from tinkerforge.bricklet_rs232_v2 import BrickletRS232V2 #NYI FIXME: has to use read_callback callback to get all data
     try:
@@ -1168,6 +1228,35 @@ if BrickletColor_found:
         elif integration_time == BrickletColor.INTEGRATION_TIME_154MS:
             integration_time_factor = 154
         elif integration_time == BrickletColor.INTEGRATION_TIME_700MS:
+            integration_time_factor = 700
+
+        illuminance = device.get_illuminance()
+
+        return int(round(illuminance * 700.0 / float(gain_factor) / float(integration_time_factor), 1) * 10)
+
+if BrickletColorV2_found:
+    # BrickletColorV2
+    def special_get_get_illuminance(device):
+        gain, integration_time = device.get_config()
+
+        if gain == BrickletColorV2.GAIN_1X:
+            gain_factor = 1
+        elif gain == BrickletColorV2.GAIN_4X:
+            gain_factor = 4
+        elif gain == BrickletColorV2.GAIN_16X:
+            gain_factor = 16
+        elif gain == BrickletColorV2.GAIN_60X:
+            gain_factor = 60
+
+        if integration_time == BrickletColorV2.INTEGRATION_TIME_2MS:
+            integration_time_factor = 2.4
+        elif integration_time == BrickletColorV2.INTEGRATION_TIME_24MS:
+            integration_time_factor = 24
+        elif integration_time == BrickletColorV2.INTEGRATION_TIME_101MS:
+            integration_time_factor = 101
+        elif integration_time == BrickletColorV2.INTEGRATION_TIME_154MS:
+            integration_time_factor = 154
+        elif integration_time == BrickletColorV2.INTEGRATION_TIME_700MS:
             integration_time_factor = 700
 
         illuminance = device.get_illuminance()
@@ -2065,6 +2154,97 @@ if BrickletColor_found:
             }
         ]
     }
+if BrickletColorV2_found:
+    device_specs[BrickletColorV2.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletColorV2,
+        'values': [
+            {
+                'name': 'Color',
+                'getter': lambda device: device.get_color(),
+                'subvalues': ['Red', 'Green', 'Blue', 'Clear'],
+                'unit': [None, None, None, None],
+                'advanced': False
+            },
+            {
+                'name': 'Color Temperature',
+                'getter': lambda device: device.get_color_temperature(), # FIXME: saturation handling is missing
+                'subvalues': None,
+                'unit': 'K',
+                'advanced': False
+            },
+            {
+                'name': 'Illuminance',
+                'getter': special_get_get_illuminance, # FIXME: saturation handling is missing
+                'subvalues': None,
+                'unit': 'lx/10',
+                'advanced': False
+            }
+        ],
+        'options_setter': lambda device, gain, integration_time, enable_light: [device.set_config(gain, integration_time), device.set_light(enable_light)],
+        'options': [
+            {
+                'name': 'Gain',
+                'type': 'choice',
+                'values': [('1x', BrickletColorV2.GAIN_1X),
+                           ('4x', BrickletColorV2.GAIN_4X),
+                           ('16x', BrickletColorV2.GAIN_16X),
+                           ('60x', BrickletColorV2.GAIN_60X)],
+                'default': '60x'
+            },
+            {
+                'name': 'Integration Time',
+                'type': 'choice',
+                'values': [('2.4ms', BrickletColorV2.INTEGRATION_TIME_2MS),
+                           ('24ms', BrickletColorV2.INTEGRATION_TIME_24MS),
+                           ('101ms', BrickletColorV2.INTEGRATION_TIME_101MS),
+                           ('154ms', BrickletColorV2.INTEGRATION_TIME_154MS),
+                           ('700ms', BrickletColorV2.INTEGRATION_TIME_700MS)],
+                'default': '154ms'
+            },
+            {
+                'name': 'Enable Light',
+                'type': 'bool',
+                'default': False
+            }
+        ]
+    }
+if BrickletCompass_found:
+    device_specs[BrickletCompass.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletCompass,
+        'values': [
+            {
+                'name': 'Heading',
+                'getter': lambda device: device.get_heading(),
+                'subvalues': None,
+                'unit': '°/10',
+                'advanced': False
+            },
+            {
+                'name': 'Magnetic Flux Density',
+                'getter': lambda device: device.get_magnetic_flux_density(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['mG/10', 'mG/10','mG/10'],
+                'advanced': False
+            }
+        ],
+        'options_setter': lambda device, data_rate, background_calibration: device.set_configuration(data_rate, background_calibration),
+        'options': [
+            {
+                'name': 'Data Rate',
+                'type': 'choice',
+                'values': [('100 Hz', BrickletCompass.DATA_RATE_100HZ),
+                           ('200 Hz', BrickletCompass.DATA_RATE_200HZ),
+                           ('400 Hz', BrickletCompass.DATA_RATE_400HZ),
+                           ('600 Hz', BrickletCompass.DATA_RATE_600HZ)],
+                'default': '100 Hz'
+            },
+            {
+                'name': 'Background Calibration',
+                'type': 'bool',
+                'default': True
+            }
+        ]
+    }
 if BrickletCurrent12_found:
     device_specs[BrickletCurrent12.DEVICE_DISPLAY_NAME] = {
         'class': BrickletCurrent12,
@@ -2193,6 +2373,29 @@ if BrickletDistanceUS_found:
             }
         ]
     }
+if BrickletDistanceUSV2_found:
+    device_specs[BrickletDistanceUSV2.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletDistanceUSV2,
+        'values': [
+            {
+                'name': 'Distance',
+                'getter': lambda device: device.get_distance(),
+                'subvalues': None,
+                'unit': 'mm',
+                'advanced': False
+            }
+        ],
+        'options_setter': lambda device, update_rate : device.set_update_rate(update_rate),
+        'options': [
+            {
+                'name': 'Update Rate',
+                'type': 'choice',
+                'values': [('2 Hz', BrickletDistanceUSV2.UPDATE_RATE_2_HZ),
+                           ('10 Hz', BrickletDistanceUSV2.UPDATE_RATE_10_HZ)],
+                'default': '2 Hz'
+            }
+        ]
+    }
 if BrickletDualButton_found:
     device_specs[BrickletDualButton.DEVICE_DISPLAY_NAME] = {
         'class': BrickletDualButton,
@@ -2282,6 +2485,21 @@ if BrickletDustDetector_found:
                 'default': 100
             }
         ]
+    }
+if BrickletEnergyMonitor_found:
+    device_specs[BrickletEnergyMonitor.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletEnergyMonitor,
+        'values': [
+            {
+                'name': 'Energy Data',
+                'getter': lambda device: device.get_energy_data(),
+                'subvalues': ['Voltage', 'Current', 'Energy', 'Real Power', 'Apparent Power', 'Reactive Power', 'Power Factor', 'Frequency'],
+                'unit': ['10mV', '10mA', '10mWh', '10mW', '10mVA', '10mVAR', '1/1000', '10mHz'],
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
     }
 if BrickletGPS_found:
     device_specs[BrickletGPS.DEVICE_DISPLAY_NAME] = {
@@ -4597,6 +4815,98 @@ if BrickletMultiTouch_found:
             }
         ]
     }
+if BrickletMultiTouchV2_found:
+    device_specs[BrickletMultiTouchV2.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletMultiTouchV2,
+        'values': [
+            {
+                'name': 'State',
+                'getter': lambda device: device.get_touch_state(),
+                'subvalues': ['Electrode 0', 'Electrode 1', 'Electrode 2', 'Electrode 3', 'Electrode 4', 'Electrode 5',
+                              'Electrode 6', 'Electrode 7', 'Electrode 8', 'Electrode 9', 'Electrode 10', 'Electrode 11', 'Proximity'],
+                'unit': [None, None, None, None, None, None, None, None, None, None, None, None, None],
+                'advanced': False
+            }
+        ],
+        'options_setter': lambda device, e0, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e_prox, sensitivity:
+                                 [device.set_electrode_config([e0, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e_prox]),
+                                  device.set_electrode_sensitivity(sensitivity)],
+        'options': [
+            {
+                'name': 'Electrode 0',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 1',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 2',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 3',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 4',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 5',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 6',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 7',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 8',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 9',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 10',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 11',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Proximity',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode Sensitivity',
+                'type': 'int',
+                'minimum': 5,
+                'maximum': 201,
+                'suffix': None,
+                'default': 181
+            }
+        ]
+    }
 if BrickletNFC_found:
     device_specs[BrickletNFC.DEVICE_DISPLAY_NAME] = {
         'class': BrickletNFC,
@@ -4850,6 +5160,21 @@ if BrickletRotaryPoti_found:
                 'subvalues': None,
                 'unit': None,
                 'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    }
+if BrickletRotaryPotiV2_found:
+    device_specs[BrickletRotaryPotiV2.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletRotaryPotiV2,
+        'values': [
+            {
+                'name': 'Position',
+                'getter': lambda device: device.get_position(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
             }
         ],
         'options_setter': None,
