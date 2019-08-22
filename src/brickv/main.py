@@ -136,9 +136,9 @@ class ExceptionReporter:
             if hash_ in ignored:
                 continue
 
-            prefix = 'Occured ' + time_occured
+            prefix = 'Brick Viewer {} on {}\nException raised at {}'.format(config.BRICKV_FULL_VERSION, sys.platform, time_occured)
             if thread is not None:
-                prefix += ' raised by Thread {}'.format(thread.ident)
+                prefix += ' by Thread {}'.format(thread.ident)
                 if thread.name is not None:
                     prefix += ' (Name: {})'.format(thread.name)
             print(prefix)
