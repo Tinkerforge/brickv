@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-21.      #
+# This file was automatically generated on 2019-08-23.      #
 #                                                           #
-# Python Bindings Version 2.1.22                            #
+# Python Bindings Version 2.1.23                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -129,6 +127,10 @@ class BrickletMultiTouchV2(Device):
         electrode. This means that you can put a piece of paper or foil
         or similar on top of a electrode to build a touch panel with
         a professional look.
+
+        If you want to get the value periodically, it is recommended to use the
+        :cb:`Touch State` callback. You can set the callback configuration
+        with :func:`Set Touch State Callback Configuration`.
         """
         return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_TOUCH_STATE, (), '', '13!')
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-21.      #
+# This file was automatically generated on 2019-08-23.      #
 #                                                           #
-# Python Bindings Version 2.1.22                            #
+# Python Bindings Version 2.1.23                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -576,7 +576,7 @@ class BrickMaster(Device):
         different for different frequencies:
 
         .. csv-table::
-         :header: "Frequency",             "Possible Channels"
+         :header: "Frequency", "Possible Channels"
          :widths: 40, 60
 
          "OQPSK 868MHz (Europe)", "0"
@@ -1718,7 +1718,7 @@ class BrickMaster(Device):
 
     def set_wifi2_ap_password(self, password):
         """
-        Sets the access point password (up to 63 chars) for the configured encryption
+        Sets the access point password (at least 8 and up to 63 chars) for the configured encryption
         mode, see :func:`Set Wifi2 AP Configuration`.
 
         To apply configuration changes to the WIFI Extension 2.0 the
@@ -2103,7 +2103,7 @@ class BrickMaster(Device):
         value returned is not the ambient temperature!
 
         The temperature is only proportional to the real temperature and it has an
-        accuracy of +-15%. Practically it is only useful as an indicator for
+        accuracy of ±15%. Practically it is only useful as an indicator for
         temperature changes.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')

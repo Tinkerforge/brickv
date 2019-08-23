@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-21.      #
+# This file was automatically generated on 2019-08-23.      #
 #                                                           #
-# Python Bindings Version 2.1.22                            #
+# Python Bindings Version 2.1.23                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -60,6 +58,11 @@ class BrickletXMC1400Breakout(Device):
     FUNCTION_READ_UID = 249
     FUNCTION_GET_IDENTITY = 255
 
+    THRESHOLD_OPTION_OFF = 'x'
+    THRESHOLD_OPTION_OUTSIDE = 'o'
+    THRESHOLD_OPTION_INSIDE = 'i'
+    THRESHOLD_OPTION_SMALLER = '<'
+    THRESHOLD_OPTION_GREATER = '>'
     GPIO_MODE_INPUT_TRISTATE = 0
     GPIO_MODE_INPUT_PULL_DOWN = 1
     GPIO_MODE_INPUT_PULL_UP = 2
@@ -72,11 +75,6 @@ class BrickletXMC1400Breakout(Device):
     GPIO_MODE_OUTPUT_OPEN_DRAIN = 9
     GPIO_INPUT_HYSTERESIS_STANDARD = 0
     GPIO_INPUT_HYSTERESIS_LARGE = 4
-    THRESHOLD_OPTION_OFF = 'x'
-    THRESHOLD_OPTION_OUTSIDE = 'o'
-    THRESHOLD_OPTION_INSIDE = 'i'
-    THRESHOLD_OPTION_SMALLER = '<'
-    THRESHOLD_OPTION_GREATER = '>'
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -229,8 +227,8 @@ class BrickletXMC1400Breakout(Device):
         """
         Returns the value of the example count (see example.c).
 
-        This example function uses "add_callback_value_function"-helper in the
-        generater. The getter as well as the callback and callback configuration
+        This example function uses the "add_callback_value_function"-helper in the
+        generator. The getter as well as the callback and callback configuration
         functions are auto-generated for the API as well as the firmware.
 
 

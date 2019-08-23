@@ -144,9 +144,9 @@ class Calibration(QDialog, Ui_Calibration):
         self.button_calibration_remove.setEnabled(False)
         self.button_calibration_save.setEnabled(True)
 
-        off = [0]*3
-        mul = [10000]*3
-        self.parent.compass.set_calibration(off, mul)
+        offset = [0]*3
+        gain = [10000]*3
+        self.parent.compass.set_calibration(offset, gain)
 
         self.x = [0, 0, 0]
         self.y = [0, 0, 0]
@@ -160,18 +160,18 @@ class Calibration(QDialog, Ui_Calibration):
 
         self.cbe_mfd.set_period(0)
 
-        off = [0]*3
-        mul = [10000]*3
+        offset = [0]*3
+        gain = [10000]*3
 
-        off[0] = int(round((self.x[1] + self.x[2])/2, 0))
-        off[1] = int(round((self.y[1] + self.y[2])/2, 0))
-        off[2] = int(round((self.z[1] + self.z[2])/2, 0))
+        offset[0] = int(round((self.x[1] + self.x[2])/2, 0))
+        offset[1] = int(round((self.y[1] + self.y[2])/2, 0))
+        offset[2] = int(round((self.z[1] + self.z[2])/2, 0))
 
-        mul[0] = 10000
-        mul[1] = int(round(10000*(abs(self.x[1]) + abs(self.x[2]))/(abs(self.y[1]) + abs(self.y[2])), 0))
-        mul[2] = int(round(10000*(abs(self.x[1]) + abs(self.x[2]))/(abs(self.z[1]) + abs(self.z[2])), 0))
+        gain[0] = 10000
+        gain[1] = int(round(10000*(abs(self.x[1]) + abs(self.x[2]))/(abs(self.y[1]) + abs(self.y[2])), 0))
+        gain[2] = int(round(10000*(abs(self.x[1]) + abs(self.x[2]))/(abs(self.z[1]) + abs(self.z[2])), 0))
 
-        self.parent.compass.set_calibration(off, mul)
+        self.parent.compass.set_calibration(offset, gain)
         self.close()
 
     def update_labels(self):

@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-21.      #
+# This file was automatically generated on 2019-08-23.      #
 #                                                           #
-# Python Bindings Version 2.1.22                            #
+# Python Bindings Version 2.1.23                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -116,17 +114,17 @@ class BrickletEnergyMonitor(Device):
 
         * Voltage (V): Voltage RMS with a resolution of 10mV (example: 230.05V = 23005)
         * Current (A): Current RMS with a resolution of 10mA (example: 1.42A = 142)
-        * Energy (Wh): Energy (integrated over time) with a resoluton of 10mWh (example: 1.1kWh = 110000)
+        * Energy (Wh): Energy (integrated over time) with a resolution of 10mWh (example: 1.1kWh = 110000)
         * Real Power (W): Real Power with a resolution of 10mW (example: 1234.56W = 123456)
         * Apparent Power (VA): Apparent Power with a resolution of 10mVA (example: 1234.56VA = 123456)
         * Reactive Power (VAR): Reactive Power with a resolution of 10mVAR (example: 1234.56VAR = 123456)
         * Power Factor: Power Factor with a resolution of 1/1000 (example: PF 0.995 = 995)
         * Frequency (Hz): AC Frequency of the mains voltage with a resolution of 1/100 Hz (example: 50Hz = 5000)
 
-        The frequency is recalculated every 6s.
+        The frequency is recalculated every 6 seconds.
 
         All other values are integrated over 10 zero-crossings of the voltage sine wave.
-        With a standard AC mains voltage frequecy of 50Hz this results in a 5 measurements
+        With a standard AC mains voltage frequency of 50Hz this results in a 5 measurements
         per second (or an integration time of 200ms per measurement).
 
         If no voltage transformer is connected, the Bricklet will use the current waveform

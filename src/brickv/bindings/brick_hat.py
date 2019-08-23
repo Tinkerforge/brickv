@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-07-02.      #
+# This file was automatically generated on 2019-08-23.      #
 #                                                           #
-# Python Bindings Version 2.1.22                            #
+# Python Bindings Version 2.1.23                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -99,10 +99,14 @@ class BrickHAT(Device):
         """
         Sets the sleep mode.
 
+        .. note::
+         Calling this function will cut the Raspberry Pi's power after Power Off Delay seconds.
+         You have to shut down the Operating System yourself, e.g. by calling 'sudo shutdown -h now'.
+
         Parameters:
 
         * Power Off Delay: Time in seconds before the RPi/Bricklets are powered off.
-        * Power Off Duration: Duration in seconds that the RPi/Bricklets stay powered.
+        * Power Off Duration: Duration in seconds that the RPi/Bricklets stay powered off.
         * Raspberry Pi Off: RPi is powered off if set to true.
         * Bricklets Off: Bricklets are powered off if set to true.
         * Enable Sleep Indicator: If set to true, the status LED will blink in a 1s interval

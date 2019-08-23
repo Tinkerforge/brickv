@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-21.      #
+# This file was automatically generated on 2019-08-23.      #
 #                                                           #
-# Python Bindings Version 2.1.22                            #
+# Python Bindings Version 2.1.23                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -22,13 +20,13 @@ GetHeadingCallbackConfiguration = namedtuple('HeadingCallbackConfiguration', ['p
 GetMagneticFluxDensity = namedtuple('MagneticFluxDensity', ['x', 'y', 'z'])
 GetMagneticFluxDensityCallbackConfiguration = namedtuple('MagneticFluxDensityCallbackConfiguration', ['period', 'value_has_to_change'])
 GetConfiguration = namedtuple('Configuration', ['data_rate', 'background_calibration'])
-GetCalibration = namedtuple('Calibration', ['offset', 'multiplier'])
+GetCalibration = namedtuple('Calibration', ['offset', 'gain'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletCompass(Device):
     """
-    3-axis compass with 0.1mG (milli Gauss) und 0.1° resolution
+    3-axis compass with 0.1mG (milli Gauss) and 0.1° resolution
     """
 
     DEVICE_IDENTIFIER = 2153
@@ -125,10 +123,10 @@ class BrickletCompass(Device):
 
     def get_heading(self):
         """
-        Returns the heading in 1/10 degree (north = 0 degree).
+        Returns the heading in 1/10 degree (north = 0 degree, east = 90 degree).
 
-        Alternatively you can use :func:`Get Magnetic Flux Density` and calculate the heading
-        with ``heading = atan2(y, x)*180/PI``.
+        Alternatively you can use :func:`Get Magnetic Flux Density` and calculate the
+        heading with ``heading = atan2(y, x) * 180 / PI``.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -187,6 +185,10 @@ class BrickletCompass(Device):
         """
         Returns the `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__
         for all three axis in 1/10 `mG (milli Gauss) <https://en.wikipedia.org/wiki/Gauss_(unit)>`__.
+
+        If you want to get the value periodically, it is recommended to use the
+        :cb:`Magnetic Flux Density` callback. You can set the callback configuration
+        with :func:`Set Magnetic Flux Density Callback Configuration`.
         """
         return GetMagneticFluxDensity(*self.ipcon.send_request(self, BrickletCompass.FUNCTION_GET_MAGNETIC_FLUX_DENSITY, (), '', 'i i i'))
 
@@ -218,7 +220,7 @@ class BrickletCompass(Device):
 
     def set_configuration(self, data_rate, background_calibration):
         """
-        Configuration:
+        Configures the data rate and background calibration.
 
         * Data Rate: Sets the data rate that is used by the magnetometer.
           The lower the data rate, the lower is the noise on the data.
@@ -229,8 +231,7 @@ class BrickletCompass(Device):
           This polarity flipping takes about 20ms. This means that once a second
           you will not get new data for a period of 20ms. We highly recommend that
           you keep the background calibration enabled and only disable it if the 20ms
-          off-time is a problem in you application.
-
+          off-time is a problem in your application.
 
         Default values: Data rate of 100Hz and background calibration enabled.
         """
@@ -245,20 +246,20 @@ class BrickletCompass(Device):
         """
         return GetConfiguration(*self.ipcon.send_request(self, BrickletCompass.FUNCTION_GET_CONFIGURATION, (), '', 'B !'))
 
-    def set_calibration(self, offset, multiplier):
+    def set_calibration(self, offset, gain):
         """
-        Sets offset and multiplier coefficent for each of the three axis.
+        Sets offset and gain for each of the three axes.
 
         The Bricklet is factory calibrated. If you want to re-calibrate the
         Bricklet we recommend that you do the calibration through Brick Viewer.
 
-        The calibration is saved in non-voltile memory and only has to be
+        The calibration is saved in non-volatile memory and only has to be
         done once.
         """
         offset = list(map(int, offset))
-        multiplier = list(map(int, multiplier))
+        gain = list(map(int, gain))
 
-        self.ipcon.send_request(self, BrickletCompass.FUNCTION_SET_CALIBRATION, (offset, multiplier), '3h 3h', '')
+        self.ipcon.send_request(self, BrickletCompass.FUNCTION_SET_CALIBRATION, (offset, gain), '3h 3h', '')
 
     def get_calibration(self):
         """

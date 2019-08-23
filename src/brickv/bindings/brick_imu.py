@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-21.      #
+# This file was automatically generated on 2019-08-23.      #
 #                                                           #
-# Python Bindings Version 2.1.22                            #
+# Python Bindings Version 2.1.23                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -706,7 +706,7 @@ class BrickIMU(Device):
         value returned is not the ambient temperature!
 
         The temperature is only proportional to the real temperature and it has an
-        accuracy of +-15%. Practically it is only useful as an indicator for
+        accuracy of ±15%. Practically it is only useful as an indicator for
         temperature changes.
         """
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')

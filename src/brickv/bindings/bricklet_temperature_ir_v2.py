@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-21.      #
+# This file was automatically generated on 2019-08-23.      #
 #                                                           #
-# Python Bindings Version 2.1.22                            #
+# Python Bindings Version 2.1.23                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -117,10 +117,6 @@ class BrickletTemperatureIRV2(Device):
         e.g. a value of 423 means that an ambient temperature of 42.3 °C is
         measured.
 
-        If you want to get the ambient temperature periodically, it is recommended
-        to use the :cb:`Ambient Temperature` callback and set the period with
-        :func:`Set Ambient Temperature Callback Configuration`.
-
 
         If you want to get the value periodically, it is recommended to use the
         :cb:`Ambient Temperature` callback. You can set the callback configuration
@@ -186,10 +182,6 @@ class BrickletTemperatureIRV2(Device):
         <https://en.wikipedia.org/wiki/Emissivity>`__. The emissivity of the material
         can be set with :func:`Set Emissivity`.
 
-        If you want to get the object temperature periodically, it is recommended
-        to use the :cb:`Object Temperature` callback and set the period with
-        :func:`Set Object Temperature Callback Configuration`.
-
 
         If you want to get the value periodically, it is recommended to use the
         :cb:`Object Temperature` callback. You can set the callback configuration
@@ -251,7 +243,7 @@ class BrickletTemperatureIRV2(Device):
 
         The emissivity is usually given as a value between 0.0 and 1.0. A list of
         emissivities of different materials can be found
-        `here <http://www.infrared-thermography.com/material.htm>`__.
+        `here <https://www.infrared-thermography.com/material.htm>`__.
 
         The parameter of :func:`Set Emissivity` has to be given with a factor of
         65535 (16-bit). For example: An emissivity of 0.1 can be set with the

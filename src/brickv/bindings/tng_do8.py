@@ -18,20 +18,19 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
-GetValue = namedtuple('Value', ['timestamp', 'value'])
 
-class TNGDI8(Device):
+class TNGDO8(Device):
     """
     TBD
     """
 
-    DEVICE_IDENTIFIER = 201
-    DEVICE_DISPLAY_NAME = 'TNG DI8'
-    DEVICE_URL_PART = 'di8' # internal
+    DEVICE_IDENTIFIER = 202
+    DEVICE_DISPLAY_NAME = 'TNG DO8'
+    DEVICE_URL_PART = 'do8' # internal
 
 
 
-    FUNCTION_GET_VALUE = 1
+    FUNCTION_SET_VALUE = 1
     FUNCTION_GET_TIMESTAMP = 234
     FUNCTION_COPY_FIRMWARE = 235
     FUNCTION_SET_WRITE_FIRMWARE_POINTER = 237
@@ -53,32 +52,36 @@ class TNGDI8(Device):
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[TNGDI8.FUNCTION_GET_VALUE] = TNGDI8.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[TNGDI8.FUNCTION_GET_TIMESTAMP] = TNGDI8.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[TNGDI8.FUNCTION_COPY_FIRMWARE] = TNGDI8.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[TNGDI8.FUNCTION_SET_WRITE_FIRMWARE_POINTER] = TNGDI8.RESPONSE_EXPECTED_FALSE
-        self.response_expected[TNGDI8.FUNCTION_WRITE_FIRMWARE] = TNGDI8.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[TNGDI8.FUNCTION_RESET] = TNGDI8.RESPONSE_EXPECTED_FALSE
+        self.response_expected[TNGDO8.FUNCTION_SET_VALUE] = TNGDO8.RESPONSE_EXPECTED_FALSE
+        self.response_expected[TNGDO8.FUNCTION_GET_TIMESTAMP] = TNGDO8.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[TNGDO8.FUNCTION_COPY_FIRMWARE] = TNGDO8.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[TNGDO8.FUNCTION_SET_WRITE_FIRMWARE_POINTER] = TNGDO8.RESPONSE_EXPECTED_FALSE
+        self.response_expected[TNGDO8.FUNCTION_WRITE_FIRMWARE] = TNGDO8.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[TNGDO8.FUNCTION_RESET] = TNGDO8.RESPONSE_EXPECTED_FALSE
 
 
 
-    def get_value(self):
+    def set_value(self, timestamp, value):
         """
-        Returns the input value as bools, *true* refers to high and *false* refers to low.
+        Sets the output value of all four channels. A value of *true* or *false* outputs
+        logic 1 or logic 0 respectively on the corresponding channel.
         """
-        return GetValue(*self.ipcon.send_request(self, TNGDI8.FUNCTION_GET_VALUE, (), '', 'Q 8!'))
+        timestamp = int(timestamp)
+        value = list(map(bool, value))
+
+        self.ipcon.send_request(self, TNGDO8.FUNCTION_SET_VALUE, (timestamp, value), 'Q 8!', '')
 
     def get_timestamp(self):
         """
         TODO
         """
-        return self.ipcon.send_request(self, TNGDI8.FUNCTION_GET_TIMESTAMP, (), '', 'Q')
+        return self.ipcon.send_request(self, TNGDO8.FUNCTION_GET_TIMESTAMP, (), '', 'Q')
 
     def copy_firmware(self):
         """
         TODO
         """
-        return self.ipcon.send_request(self, TNGDI8.FUNCTION_COPY_FIRMWARE, (), '', 'B')
+        return self.ipcon.send_request(self, TNGDO8.FUNCTION_COPY_FIRMWARE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -86,7 +89,7 @@ class TNGDI8(Device):
         """
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, TNGDI8.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, TNGDO8.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
 
     def write_firmware(self, data):
         """
@@ -94,7 +97,7 @@ class TNGDI8(Device):
         """
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, TNGDI8.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, TNGDO8.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
 
     def reset(self):
         """
@@ -105,4 +108,4 @@ class TNGDI8(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
-        self.ipcon.send_request(self, TNGDI8.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, TNGDO8.FUNCTION_RESET, (), '', '')

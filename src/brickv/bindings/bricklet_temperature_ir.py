@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-21.      #
+# This file was automatically generated on 2019-08-23.      #
 #                                                           #
-# Python Bindings Version 2.1.22                            #
+# Python Bindings Version 2.1.23                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -127,7 +127,7 @@ class BrickletTemperatureIR(Device):
 
         The emissivity is usually given as a value between 0.0 and 1.0. A list of
         emissivities of different materials can be found
-        `here <http://www.infrared-thermography.com/material.htm>`__.
+        `here <https://www.infrared-thermography.com/material.htm>`__.
 
         The parameter of :func:`Set Emissivity` has to be given with a factor of
         65535 (16-bit). For example: An emissivity of 0.1 can be set with the
@@ -139,6 +139,8 @@ class BrickletTemperatureIR(Device):
 
         The default emissivity is 1.0 (value of 65535) and the minimum emissivity the
         sensor can handle is 0.1 (value of 6553).
+
+        The emissivity is stored in non-volatile memory and will still be used after a restart or power cycle of the Bricklet.
         """
         emissivity = int(emissivity)
 

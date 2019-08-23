@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-21.      #
+# This file was automatically generated on 2019-08-23.      #
 #                                                           #
-# Python Bindings Version 2.1.22                            #
+# Python Bindings Version 2.1.23                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -288,6 +288,16 @@ class BrickletLCD128x64(Device):
     def clear_display(self):
         """
         Clears the complete content of the display.
+
+        If automatic draw is enabled (default) the pixels are directly cleared.
+
+        If automatic draw is disabled the the internal buffer is cleared and
+        the buffer is transferred to the display only after :func:`Draw Buffered Frame`
+        is called. This can be used to avoid flicker when drawing a complex frame in
+        multiple steps.
+
+        Automatic draw can be configured with the :func:`Set Display Configuration`
+        function.
         """
         self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_CLEAR_DISPLAY, (), '', '')
 
@@ -329,6 +339,18 @@ class BrickletLCD128x64(Device):
 
         The display uses a special 5x7 pixel charset. You can view the characters
         of the charset in Brick Viewer.
+
+        If automatic draw is enabled (default) the text is directly written to
+        the screen. Only pixels that have actually changed are updated on the screen,
+        the rest stays the same.
+
+        If automatic draw is disabled the text is written to an internal buffer and
+        the buffer is transferred to the display only after :func:`Draw Buffered Frame`
+        is called. This can be used to avoid flicker when drawing a complex frame in
+        multiple steps.
+
+        Automatic draw can be configured with the :func:`Set Display Configuration`
+        function.
 
         This function is a 1:1 replacement for the function with the same name
         in the LCD 20x4 Bricklet. You can draw text at a specific pixel position

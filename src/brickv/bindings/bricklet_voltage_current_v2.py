@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-21.      #
+# This file was automatically generated on 2019-08-23.      #
 #                                                           #
-# Python Bindings Version 2.1.22                            #
+# Python Bindings Version 2.1.23                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -77,6 +77,14 @@ class BrickletVoltageCurrentV2(Device):
     AVERAGING_256 = 5
     AVERAGING_512 = 6
     AVERAGING_1024 = 7
+    CONVERSION_TIME_140US = 0
+    CONVERSION_TIME_204US = 1
+    CONVERSION_TIME_332US = 2
+    CONVERSION_TIME_588US = 3
+    CONVERSION_TIME_1_1MS = 4
+    CONVERSION_TIME_2_116MS = 5
+    CONVERSION_TIME_4_156MS = 6
+    CONVERSION_TIME_8_244MS = 7
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -368,6 +376,9 @@ class BrickletVoltageCurrentV2(Device):
         are measuring 1023mA, you can calibrate the Voltage/Current Bricklet
         by setting the current multiplier to 1000 and the divisor to 1023.
         The same applies for the voltage.
+
+        The calibration will be saved on the EEPROM of the Voltage/Current
+        Bricklet and only needs to be done once.
         """
         voltage_multiplier = int(voltage_multiplier)
         voltage_divisor = int(voltage_divisor)

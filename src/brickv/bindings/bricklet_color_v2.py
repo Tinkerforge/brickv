@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-21.      #
+# This file was automatically generated on 2019-08-23.      #
 #                                                           #
-# Python Bindings Version 2.1.22                            #
+# Python Bindings Version 2.1.23                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -22,7 +20,7 @@ GetColor = namedtuple('Color', ['r', 'g', 'b', 'c'])
 GetColorCallbackConfiguration = namedtuple('ColorCallbackConfiguration', ['period', 'value_has_to_change'])
 GetIlluminanceCallbackConfiguration = namedtuple('IlluminanceCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
 GetColorTemperatureCallbackConfiguration = namedtuple('ColorTemperatureCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
-GetConfig = namedtuple('Config', ['gain', 'integration_time'])
+GetConfiguration = namedtuple('Configuration', ['gain', 'integration_time'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -51,8 +49,8 @@ class BrickletColorV2(Device):
     FUNCTION_GET_COLOR_TEMPERATURE_CALLBACK_CONFIGURATION = 11
     FUNCTION_SET_LIGHT = 13
     FUNCTION_GET_LIGHT = 14
-    FUNCTION_SET_CONFIG = 15
-    FUNCTION_GET_CONFIG = 16
+    FUNCTION_SET_CONFIGURATION = 15
+    FUNCTION_GET_CONFIGURATION = 16
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -116,8 +114,8 @@ class BrickletColorV2(Device):
         self.response_expected[BrickletColorV2.FUNCTION_GET_COLOR_TEMPERATURE_CALLBACK_CONFIGURATION] = BrickletColorV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletColorV2.FUNCTION_SET_LIGHT] = BrickletColorV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletColorV2.FUNCTION_GET_LIGHT] = BrickletColorV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletColorV2.FUNCTION_SET_CONFIG] = BrickletColorV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletColorV2.FUNCTION_GET_CONFIG] = BrickletColorV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletColorV2.FUNCTION_SET_CONFIGURATION] = BrickletColorV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletColorV2.FUNCTION_GET_CONFIGURATION] = BrickletColorV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletColorV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletColorV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletColorV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletColorV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletColorV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletColorV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -186,14 +184,14 @@ class BrickletColorV2(Device):
     def get_illuminance(self):
         """
         Returns the illuminance affected by the gain and integration time as
-        set by :func:`Set Config`. To get the illuminance in Lux apply this formula::
+        set by :func:`Set Configuration`. To get the illuminance in Lux apply this formula::
 
          lux = illuminance * 700 / gain / integration_time
 
         To get a correct illuminance measurement make sure that the color
-        values themself are not saturated. The color value (R, G or B)
+        values themselves are not saturated. The color value (R, G or B)
         is saturated if it is equal to the maximum value of 65535.
-        In that case you have to reduce the gain, see :func:`Set Config`.
+        In that case you have to reduce the gain, see :func:`Set Configuration`.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -253,9 +251,9 @@ class BrickletColorV2(Device):
         Returns the color temperature in Kelvin.
 
         To get a correct color temperature measurement make sure that the color
-        values themself are not saturated. The color value (R, G or B)
+        values themselves are not saturated. The color value (R, G or B)
         is saturated if it is equal to the maximum value of 65535.
-        In that case you have to reduce the gain, see :func:`Set Config`.
+        In that case you have to reduce the gain, see :func:`Set Configuration`.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -324,10 +322,10 @@ class BrickletColorV2(Device):
         """
         return self.ipcon.send_request(self, BrickletColorV2.FUNCTION_GET_LIGHT, (), '', '!')
 
-    def set_config(self, gain, integration_time):
+    def set_configuration(self, gain, integration_time):
         """
         Sets the configuration of the sensor. Gain and integration time
-        can be configured in this way.
+        can be configured this way.
 
         For configuring the gain:
 
@@ -349,7 +347,7 @@ class BrickletColorV2(Device):
 
         The integration time provides a trade-off between conversion time
         and accuracy. With a longer integration time the values read will
-        be more accurate but it will take longer time to get the conversion
+        be more accurate but it will take longer to get the conversion
         results.
 
         The default values are 60x gain and 154ms integration time.
@@ -357,13 +355,13 @@ class BrickletColorV2(Device):
         gain = int(gain)
         integration_time = int(integration_time)
 
-        self.ipcon.send_request(self, BrickletColorV2.FUNCTION_SET_CONFIG, (gain, integration_time), 'B B', '')
+        self.ipcon.send_request(self, BrickletColorV2.FUNCTION_SET_CONFIGURATION, (gain, integration_time), 'B B', '')
 
-    def get_config(self):
+    def get_configuration(self):
         """
-        Returns the configuration as set by :func:`Set Config`.
+        Returns the configuration as set by :func:`Set Configuration`.
         """
-        return GetConfig(*self.ipcon.send_request(self, BrickletColorV2.FUNCTION_GET_CONFIG, (), '', 'B B'))
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletColorV2.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
     def get_spitfp_error_count(self):
         """

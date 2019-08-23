@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-05-21.      #
+# This file was automatically generated on 2019-08-23.      #
 #                                                           #
-# Python Bindings Version 2.1.22                            #
+# Python Bindings Version 2.1.23                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -279,7 +279,7 @@ class BrickletColor(Device):
          lux = illuminance * 700 / gain / integration_time
 
         To get a correct illuminance measurement make sure that the color
-        values themself are not saturated. The color value (R, G or B)
+        values themselves are not saturated. The color value (R, G or B)
         is saturated if it is equal to the maximum value of 65535.
         In that case you have to reduce the gain, see :func:`Set Config`.
         """
@@ -290,7 +290,7 @@ class BrickletColor(Device):
         Returns the color temperature in Kelvin.
 
         To get a correct color temperature measurement make sure that the color
-        values themself are not saturated. The color value (R, G or B)
+        values themselves are not saturated. The color value (R, G or B)
         is saturated if it is equal to the maximum value of 65535.
         In that case you have to reduce the gain, see :func:`Set Config`.
         """

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-07-02.      #
+# This file was automatically generated on 2019-08-23.      #
 #                                                           #
-# Python Bindings Version 2.1.22                            #
+# Python Bindings Version 2.1.23                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -20,6 +20,7 @@ GetAcceleration = namedtuple('Acceleration', ['x', 'y', 'z'])
 GetConfiguration = namedtuple('Configuration', ['data_rate', 'full_scale'])
 GetAccelerationCallbackConfiguration = namedtuple('AccelerationCallbackConfiguration', ['period', 'value_has_to_change'])
 GetContinuousAccelerationConfiguration = namedtuple('ContinuousAccelerationConfiguration', ['enable_x', 'enable_y', 'enable_z', 'resolution'])
+GetFilterConfiguration = namedtuple('FilterConfiguration', ['iir_bypass', 'low_pass_filter'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -46,6 +47,8 @@ class BrickletAccelerometerV2(Device):
     FUNCTION_GET_INFO_LED_CONFIG = 7
     FUNCTION_SET_CONTINUOUS_ACCELERATION_CONFIGURATION = 9
     FUNCTION_GET_CONTINUOUS_ACCELERATION_CONFIGURATION = 10
+    FUNCTION_SET_FILTER_CONFIGURATION = 13
+    FUNCTION_GET_FILTER_CONFIGURATION = 14
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -83,6 +86,10 @@ class BrickletAccelerometerV2(Device):
     INFO_LED_CONFIG_SHOW_HEARTBEAT = 2
     RESOLUTION_8BIT = 0
     RESOLUTION_16BIT = 1
+    IIR_BYPASS_APPLIED = 0
+    IIR_BYPASS_BYPASSED = 1
+    LOW_PASS_FILTER_NINTH = 0
+    LOW_PASS_FILTER_HALF = 1
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -106,7 +113,7 @@ class BrickletAccelerometerV2(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletAccelerometerV2.FUNCTION_GET_ACCELERATION] = BrickletAccelerometerV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAccelerometerV2.FUNCTION_SET_CONFIGURATION] = BrickletAccelerometerV2.RESPONSE_EXPECTED_FALSE
@@ -117,6 +124,8 @@ class BrickletAccelerometerV2(Device):
         self.response_expected[BrickletAccelerometerV2.FUNCTION_GET_INFO_LED_CONFIG] = BrickletAccelerometerV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAccelerometerV2.FUNCTION_SET_CONTINUOUS_ACCELERATION_CONFIGURATION] = BrickletAccelerometerV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletAccelerometerV2.FUNCTION_GET_CONTINUOUS_ACCELERATION_CONFIGURATION] = BrickletAccelerometerV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAccelerometerV2.FUNCTION_SET_FILTER_CONFIGURATION] = BrickletAccelerometerV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAccelerometerV2.FUNCTION_GET_FILTER_CONFIGURATION] = BrickletAccelerometerV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAccelerometerV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletAccelerometerV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAccelerometerV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletAccelerometerV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAccelerometerV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletAccelerometerV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -275,6 +284,36 @@ class BrickletAccelerometerV2(Device):
         :func:`Set Continuous Acceleration Configuration`.
         """
         return GetContinuousAccelerationConfiguration(*self.ipcon.send_request(self, BrickletAccelerometerV2.FUNCTION_GET_CONTINUOUS_ACCELERATION_CONFIGURATION, (), '', '! ! ! B'))
+
+    def set_filter_configuration(self, iir_bypass, low_pass_filter):
+        """
+        Configures IIR Bypass filter mode and low pass filter roll off corner frequency.
+
+        The filter can be applied or bypassed and the corner frequency can be
+        half or a ninth of the output data rate.
+
+        .. image:: /Images/Bricklets/bricklet_accelerometer_v2_filter.png
+           :scale: 100 %
+           :alt: Accelerometer filter
+           :align: center
+           :target: ../../_images/Bricklets/bricklet_accelerometer_v2_filter.png
+
+        By default filtering is applied and the filter corner frequency is a ninth of the output data rate.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        iir_bypass = int(iir_bypass)
+        low_pass_filter = int(low_pass_filter)
+
+        self.ipcon.send_request(self, BrickletAccelerometerV2.FUNCTION_SET_FILTER_CONFIGURATION, (iir_bypass, low_pass_filter), 'B B', '')
+
+    def get_filter_configuration(self):
+        """
+        Returns the configuration as set by :func:`Set Filter Configuration`.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        return GetFilterConfiguration(*self.ipcon.send_request(self, BrickletAccelerometerV2.FUNCTION_GET_FILTER_CONFIGURATION, (), '', 'B B'))
 
     def get_spitfp_error_count(self):
         """
