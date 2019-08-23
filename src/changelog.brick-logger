@@ -43,8 +43,12 @@
 2019-01-30: 2.0.9 (6c5b23b)
 - Add support for Accelerometer 2.0 and Ambient Light 3.0 Bricklet
 
-2019-05-21: 2.1.0 (<unknown>)
+2019-05-21: 2.1.0 (76d0931)
 - Port to Python 3
 - Add support for CO2 2.0, Hall Effect 2.0, Laser Range Finder 2.0,
   Linear Poti 2.0, Joystick 2.0 and Segment Display 4x7 2.0 Bricklet and
   HAT and HAT Zero Brick
+
+2019-08-23: 2.1.1 (<unknown>)
+- Add support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
+  Multi Touch 2.0 and Rotary Poti 2.0 Bricklet

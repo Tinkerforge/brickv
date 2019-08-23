@@ -515,3 +515,17 @@
 - Fix message box explosion for color gradient with one LED in LED Strip
   Bricklet 2.0 plugin
 - Only check WIFI Extension 2.0 AP password length if password is changed
+
+2019-08-23: 2.4.7 (<unknown>)
+- Add support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
+  Multi Touch 2.0, Rotary Poti 2.0 and XMC1400 Breakout Bricklet
+- Add Data Logger support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
+  Multi Touch 2.0 and Rotary Poti 2.0 Bricklet
+- Fix latest firmware version discovery if no Internet connection is available
+- Add interpolation and scale factor options to Thermal Imaging Bricklet plugin
+- Download firmware files using HTTPS
+- Updates/Flashing dialog can download Brick Viewer updates
+- Fix WIFI Extension 2.0 flashing to fix web interface
+- Don't try to use invalid IMU Brick calibration
+- Don't crash if OpenGL is not available
+- Correctly handle Modbus response with unknown request in RS485 Bricklet plugin
