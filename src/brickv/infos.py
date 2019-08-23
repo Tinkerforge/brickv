@@ -233,7 +233,6 @@ class DeviceInfo(AbstractInfo):
 
     def connections_add_item(self, item):
         result = len(self.connections_get(item[0])) > 0
-        print(item, result)
 
         self._connections.append(item)
         self.mark_as_changed()
