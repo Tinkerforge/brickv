@@ -58,7 +58,6 @@ from brickv.utils import get_main_window
 from brickv.devicesproxymodel import DevicesProxyModel
 from brickv.urlopen import urlopen
 
-LATEST_VERSIONS_URL = 'https://download.tinkerforge.com/latest_versions.txt'
 FIRMWARE_URL = 'https://download.tinkerforge.com/firmwares/'
 SELECT = 'Select...'
 CUSTOM = 'Custom...'
