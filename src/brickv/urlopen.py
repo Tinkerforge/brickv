@@ -32,7 +32,7 @@ def urlopen(*args, **kwargs):
     if 'context' in kwargs:
         raise ValueError("Don't pass an SSL context to this function, as it creates a custom one.")
 
-    cert_path = get_resources_path('AlphaSSLCA-SHA256-G2.crt', warn_on_missing_file=True)
+    cert_path = get_resources_path('CertChain.crt', warn_on_missing_file=True)
     context = ssl.create_default_context()
     context.load_verify_locations(cert_path)
 
