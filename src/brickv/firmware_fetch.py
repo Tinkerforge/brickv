@@ -184,6 +184,7 @@ def fetch_latest_fw_versions(report_error_fn):
             latest_versions_data = response.read().decode('utf-8')
     except urllib.error.HTTPError:
         report_error_fn(ERROR_SERVER_ERROR)
+        return None
     except urllib.error.URLError:
         report_error_fn(ERROR_DOWNLOAD)
         return None
