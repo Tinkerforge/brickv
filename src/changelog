@@ -516,7 +516,7 @@
   Bricklet 2.0 plugin
 - Only check WIFI Extension 2.0 AP password length if password is changed
 
-2019-08-26: 2.4.7 (<unknown>)
+2019-08-26: 2.4.7 (b49a385)
 - Add support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
   Multi Touch 2.0, Rotary Poti 2.0 and XMC1400 Breakout Bricklet
 - Add Data Logger support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
@@ -529,3 +529,6 @@
 - Don't try to use invalid IMU Brick calibration
 - Don't crash if OpenGL is not available
 - Correctly handle Modbus response with unknown request in RS485 Bricklet plugin
+
+2019-08-27: 2.4.8 (<unknown>)
+- Fix firmware download on newer macOS versions
