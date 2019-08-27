@@ -152,6 +152,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.fw_fetch_progress_bar = None
 
+        self.last_firmware_url_part = ""
+        self.last_plugin_url_part = ""
+        self.last_extension_firmware_url_part = ""
+
         self.parent = parent
         self.tab_widget.currentChanged.connect(self.tab_changed)
         self.button_serial_port_refresh.clicked.connect(self.refresh_serial_ports)
@@ -413,6 +417,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 self.fw_fetch_progress_bar = None
 
                 self.combo_firmware.setEnabled(False)
+                self.combo_firmware_version.setEnabled(False)
                 self.combo_plugin.setEnabled(False)
                 self.combo_extension_firmware.setEnabled(False)
 
@@ -451,7 +456,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 self.combo_firmware.insertSeparator(self.combo_firmware.count())
 
             for firmware_info in sorted(self.firmware_infos.values(), key=lambda x: x.name):
-                name = '{0} ({1}.{2}.{3})'.format(firmware_info.name, *firmware_info.firmware_version_latest)
+                name = '{0}'.format(firmware_info.name)
                 self.combo_firmware.addItem(name, firmware_info.url_part)
 
             if self.combo_firmware.count() > 0:
@@ -463,7 +468,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 self.combo_plugin.insertSeparator(self.combo_plugin.count())
 
             for plugin_info in sorted(self.plugin_infos.values(), key=lambda x: x.name):
-                name = '{0} ({1}.{2}.{3})'.format(plugin_info.name, *plugin_info.firmware_version_latest)
+                name = '{0}'.format(plugin_info.name)
                 self.combo_plugin.addItem(name, plugin_info.url_part)
 
             if self.combo_plugin.count() > 0:
@@ -475,7 +480,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 self.combo_extension_firmware.insertSeparator(self.combo_extension_firmware.count())
 
             for extension_firmware_info in sorted(self.extension_firmware_infos.values(), key=lambda x: x.name):
-                name = '{0} ({1}.{2}.{3})'.format(extension_firmware_info.name, *extension_firmware_info.firmware_version_latest)
+                name = '{0}'.format(extension_firmware_info.name)
                 self.combo_extension_firmware.addItem(name, extension_firmware_info.url_part)
 
             if self.combo_extension_firmware.count() > 0:
@@ -730,6 +735,25 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
     def firmware_changed(self, _index):
         self.update_ui_state()
+        url_part = self.combo_firmware.currentData()
+
+        last_selected_firmware = self.combo_firmware_version.currentData()
+        last_latest_firmware = self.combo_firmware_version.itemData(0)
+
+        self.combo_firmware_version.clear()
+
+        if url_part is None:
+            self.last_firmware_url_part = url_part
+            return
+
+        for version in self.firmware_infos[url_part].firmware_versions:
+            self.combo_firmware_version.addItem('{}.{}.{}'.format(*version), version)
+
+        if self.last_firmware_url_part == url_part and last_selected_firmware != last_latest_firmware:
+            idx = self.combo_firmware_version.findData(last_selected_firmware)
+            self.combo_firmware_version.setCurrentIndex(idx)
+
+        self.last_firmware_url_part = url_part
 
     def firmware_browse_clicked(self):
         if len(self.edit_custom_firmware.text()) > 0:
@@ -780,7 +804,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         else:
             url_part = self.combo_firmware.itemData(self.combo_firmware.currentIndex())
             name = self.firmware_infos[url_part].name
-            version = self.firmware_infos[url_part].firmware_version_latest
+            version = self.combo_firmware_version.currentData()
 
             url = FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version)
 
@@ -1059,6 +1083,25 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
     def plugin_changed(self, _index):
         self.update_ui_state()
+        url_part = self.combo_plugin.currentData()
+
+        last_selected_plugin = self.combo_plugin_version.currentData()
+        last_latest_plugin = self.combo_plugin_version.itemData(0)
+
+        self.combo_plugin_version.clear()
+
+        if url_part is None:
+            self.last_plugin_url_part = url_part
+            return
+
+        for version in self.plugin_infos[url_part].firmware_versions:
+            self.combo_plugin_version.addItem('{}.{}.{}'.format(*version), version)
+
+        if self.last_plugin_url_part == url_part and last_selected_plugin != last_latest_plugin:
+            idx = self.combo_plugin_version.findData(last_selected_plugin)
+            self.combo_plugin_version.setCurrentIndex(idx)
+
+        self.last_plugin_url_part = url_part
 
     def download_bricklet_plugin(self, progress, url_part, has_comcu, name, version):
         if has_comcu:
@@ -1486,7 +1529,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             url_part = self.combo_plugin.itemData(self.combo_plugin.currentIndex())
             plugin_info = self.plugin_infos[url_part]
             name = plugin_info.name
-            version = plugin_info.firmware_version_latest
+            version = self.combo_plugin_version.currentData()
 
             plugin = self.download_bricklet_plugin(progress, url_part, self.current_bricklet_has_comcu(), name, version)
 
@@ -1880,6 +1923,26 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.update_ui_state()
 
+        url_part = self.combo_extension_firmware.currentData()
+
+        last_selected_extension_firmware = self.combo_extension_firmware_version.currentData()
+        last_latest_extension_firmware = self.combo_extension_firmware_version.itemData(0)
+
+        self.combo_extension_firmware_version.clear()
+
+        if url_part is None:
+            self.last_extension_firmware_url_part = url_part
+            return
+
+        for version in self.extension_firmware_infos[url_part].firmware_versions:
+            self.combo_extension_firmware_version.addItem('{}.{}.{}'.format(*version), version)
+
+        if self.last_extension_firmware_url_part == url_part and last_selected_extension_firmware != last_latest_extension_firmware:
+            idx = self.combo_extension_firmware_version.findData(last_selected_extension_firmware)
+            self.combo_extension_firmware_version.setCurrentIndex(idx)
+
+        self.last_extension_firmware_url_part = url_part
+
     def extension_firmware_changed(self, _index):
         self.update_ui_state()
 
@@ -1912,7 +1975,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         else:
             url_part = self.combo_extension_firmware.itemData(self.combo_extension_firmware.currentIndex())
             name = self.extension_firmware_infos[url_part].name
-            version = self.extension_firmware_infos[url_part].firmware_version_latest
+            version = self.combo_extension_firmware_version.currentData()
 
             url = FIRMWARE_URL + 'extensions/{0}/extension_{0}_firmware_{1}_{2}_{3}.zbin'.format(url_part, *version)
             firmware = self.download_file(url, '{0} Extension firmware {1}.{2}.{3}'.format(name, *version), progress_dialog=progress)
@@ -1995,6 +2058,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
             idx = -1
 
         if idx >= 0:
+            # Remove user selected version to ensure, that the latest version is preselected
+            self.last_firmware_url_part = ""
             self.combo_firmware.setCurrentIndex(idx)
 
     def show_bricklet_update(self, parent_uid, port):
@@ -2017,6 +2082,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
             idx = -1
 
         if idx >= 0:
+            # Remove user selected version to ensure, that the latest version is preselected
+            self.last_plugin_url_part = ""
             self.combo_port.setCurrentIndex(idx)
             self.port_changed(idx)
 
@@ -2029,6 +2096,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
             idx = -1
 
         if idx >= 0:
+            # Remove user selected version to ensure, that the latest version is preselected
+            self.last_extension_firmware_url_part = ""
             self.combo_extension.setCurrentIndex(idx)
             self.extension_changed(idx)
 

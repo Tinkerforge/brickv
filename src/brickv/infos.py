@@ -48,8 +48,12 @@ class AbstractInfo:
     name = ''
     firmware_version_installed = (0, 0, 0)
     firmware_version_latest = (0, 0, 0)
+    firmware_versions = None
     can_have_extension = False
     extensions = None
+
+    def __init__(self):
+        self.firmware_versions = []
 
     def __setattr__(self, name, value):
         if name == 'changed':

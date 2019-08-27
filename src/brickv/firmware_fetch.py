@@ -32,6 +32,7 @@ from brickv.infos import FirmwareInfo, PluginInfo, ExtensionFirmwareInfo, \
 from brickv.urlopen import urlopen
 
 LATEST_VERSIONS_URL = 'https://download.tinkerforge.com/latest_versions.txt'
+ALL_VERSIONS_URL = 'https://download.tinkerforge.com/all_versions.txt'
 
 ERROR_DOWNLOAD = 1
 ERROR_PARSE_SPLIT = 2
@@ -176,12 +177,34 @@ def refresh_bindings_info(url_part, latest_version):
 
     return info
 
+def parse_versions_line(line, report_error_fn):
+    parts = line.split(':')
+
+    if len(parts) != 3:
+        report_error_fn(ERROR_PARSE_SPLIT)
+        return None
+
+    latest_version_parts = parts[2].split('.')
+
+    if len(latest_version_parts) != 3:
+        report_error_fn(ERROR_PARSE_VERSION_SPLIT)
+        return None
+
+    try:
+        latest_version = int(latest_version_parts[0]), int(latest_version_parts[1]), int(latest_version_parts[2])
+    except (TypeError, ValueError):
+        report_error_fn(ERROR_PARSE_VERSION_INTS)
+        return None
+    return parts, latest_version
+
 def fetch_latest_fw_versions(report_error_fn):
     result = LatestFirmwares({}, {}, {}, {}, {}, {})
 
     try:
         with urlopen(LATEST_VERSIONS_URL, timeout=10) as response:
             latest_versions_data = response.read().decode('utf-8')
+        with urlopen(ALL_VERSIONS_URL, timeout=10) as response:
+            all_versions_data = response.read().decode('utf-8')
     except urllib.error.HTTPError:
         report_error_fn(ERROR_SERVER_ERROR)
         return None
@@ -195,23 +218,10 @@ def fetch_latest_fw_versions(report_error_fn):
         if len(line) < 1:
             continue
 
-        parts = line.split(':')
-
-        if len(parts) != 3:
-            report_error_fn(ERROR_PARSE_SPLIT)
+        parsed = parse_versions_line(line, report_error_fn)
+        if parsed is None:
             return None
-
-        latest_version_parts = parts[2].split('.')
-
-        if len(latest_version_parts) != 3:
-            report_error_fn(ERROR_PARSE_VERSION_SPLIT)
-            return None
-
-        try:
-            latest_version = int(latest_version_parts[0]), int(latest_version_parts[1]), int(latest_version_parts[2])
-        except (TypeError, ValueError):
-            report_error_fn(ERROR_PARSE_VERSION_INTS)
-            return None
+        parts, latest_version = parsed
 
         if parts[0] == 'tools':
             tool_info = ToolInfo()
@@ -231,6 +241,31 @@ def fetch_latest_fw_versions(report_error_fn):
 
             if info is not None:
                 result.bindings_infos[parts[1]] = info
+
+    for line in all_versions_data.split('\n'):
+        line = line.strip()
+
+        if len(line) < 1:
+            continue
+
+        parsed = parse_versions_line(line, report_error_fn)
+        if parsed is None:
+            return None
+        parts, version = parsed
+
+        d = {
+            'tools':result.tool_infos,
+            'bricks':result.firmware_infos,
+            'bricklets':result.plugin_infos,
+            'extensions':result.extension_firmware_infos,
+            'red_images':result.red_image_infos,
+            'bindings':result.bindings_infos,
+        }
+
+        if parts[0] not in d or parts[1] not in d[parts[0]]:
+            continue
+
+        d[parts[0]][parts[1]].firmware_versions.append(version)
 
     return result
 
