@@ -27,19 +27,20 @@ from PyQt5.QtGui import QValidator
 from PyQt5.QtCore import QRegExp
 
 class HexValidator(QValidator):
-    def __init__(self, max_bytes=-1):
+    def __init__(self, max_bytes=-1, digit_group_size=2):
         super().__init__()
 
         self.max_bytes = max_bytes
+        self.digit_group_size = digit_group_size
 
         if max_bytes == 0:
             self.re_acceptable = QRegExp('')
             self.re_intermediate = QRegExp('')
         elif max_bytes > 0:
-            self.re_acceptable = QRegExp('([0-9A-Fa-f]{2} ){0,%d}[0-9A-Fa-f]{2}' % (max_bytes - 1))
+            self.re_acceptable = QRegExp('([0-9A-Fa-f]{%d} ){0,%d}[0-9A-Fa-f]{%d}' % (digit_group_size, max_bytes - 1, digit_group_size))
             self.re_intermediate = QRegExp('[ ]*|([ ]*[0-9A-Fa-f][ ]*){1,%d}' % (max_bytes * 2))
         else:
-            self.re_acceptable = QRegExp('([0-9A-Fa-f]{2} )*[0-9A-Fa-f]{2}')
+            self.re_acceptable = QRegExp('([0-9A-Fa-f]{%d} )*[0-9A-Fa-f]{%d}' % (digit_group_size, digit_group_size))
             self.re_intermediate = QRegExp('[ ]*|([ ]*[0-9A-Fa-f][ ]*)+')
 
     def validate(self, _input, _pos):
@@ -61,7 +62,7 @@ class HexValidator(QValidator):
             if n == 0:
                 break
 
-            if i % 2 == 0:
+            if i % self.digit_group_size == 0:
                 s += ' '
 
             s += c
@@ -69,7 +70,7 @@ class HexValidator(QValidator):
 
         s = s.strip()
 
-        if len(s.replace(' ', '')) % 2 == 1:
-            s = s[:-1] + '0' + s[-1:]
+        if len(s.replace(' ', '')) % self.digit_group_size > 0:
+            s = s[:-1] + '0' * (self.digit_group_size - len(s[-1])) + s[-1:]
 
         return s

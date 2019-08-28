@@ -351,37 +351,6 @@
      </item>
      <item>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="7" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
-         <item>
-          <widget class="QSpinBox" name="modbus_master_param2_dec_spinbox"/>
-         </item>
-         <item>
-          <widget class="SpinBoxHex" name="modbus_master_param2_hex_spinbox">
-           <property name="minimum">
-            <number>0</number>
-           </property>
-           <property name="maximum">
-            <number>65535</number>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="modbus_master_param2_bool_combobox">
-           <item>
-            <property name="text">
-             <string>True</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>False</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
-       </item>
        <item row="6" column="1">
         <widget class="LeadingZeroSpinBox" name="modbus_master_param1_spinbox">
          <property name="minimum">
@@ -389,40 +358,6 @@
          </property>
          <property name="maximum">
           <number>65536</number>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0" colspan="2">
-        <widget class="QPushButton" name="modbus_master_send_button">
-         <property name="text">
-          <string>Send Request</string>
-         </property>
-         <property name="default">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="modbus_master_param1_label">
-         <property name="text">
-          <string>Starting Address:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="modbus_master_param2_label">
-         <property name="text">
-          <string>Number of Coils:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0" colspan="2">
-        <widget class="QPushButton" name="rs485_send_button">
-         <property name="text">
-          <string>Write Line</string>
-         </property>
-         <property name="default">
-          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -453,29 +388,17 @@
          </property>
         </widget>
        </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="modbus_slave_behaviour_label">
+         <property name="text">
+          <string>Slave Behaviour:</string>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_show_text_as">
          <property name="text">
           <string>Encoding:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="2">
-        <widget class="QPushButton" name="button_clear_text">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>1</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Clear History</string>
-         </property>
-         <property name="autoDefault">
-          <bool>false</bool>
-         </property>
-         <property name="default">
-          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -566,6 +489,100 @@
          </item>
         </layout>
        </item>
+       <item row="7" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QSpinBox" name="modbus_master_param2_dec_spinbox"/>
+         </item>
+         <item>
+          <widget class="SpinBoxHex" name="modbus_master_param2_hex_spinbox">
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="modbus_master_param2_bool_combobox">
+           <item>
+            <property name="text">
+             <string>True</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>False</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="modbus_master_param2_combobox">
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="5" column="1">
+        <widget class="QSpinBox" name="modbus_master_slave_address_spinbox">
+         <property name="maximum">
+          <number>255</number>
+         </property>
+         <property name="value">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QPushButton" name="button_clear_text">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Clear History</string>
+         </property>
+         <property name="autoDefault">
+          <bool>false</bool>
+         </property>
+         <property name="default">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="2">
+        <widget class="QPushButton" name="modbus_master_send_button">
+         <property name="text">
+          <string>Send Request</string>
+         </property>
+         <property name="default">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="modbus_master_param2_label">
+         <property name="text">
+          <string>Number of Coils:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0" colspan="2">
+        <widget class="QPushButton" name="rs485_send_button">
+         <property name="text">
+          <string>Write Line</string>
+         </property>
+         <property name="default">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="0">
         <widget class="QLabel" name="modbus_master_function_label">
          <property name="text">
@@ -573,11 +590,24 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="rs485_input_label">
-         <property name="text">
-          <string>Input:</string>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="modbus_slave_behaviour_combobox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>9</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
+         <item>
+          <property name="text">
+           <string>None</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Automatic Response</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item row="4" column="1">
@@ -643,41 +673,18 @@
          </property>
         </spacer>
        </item>
-       <item row="5" column="1">
-        <widget class="QSpinBox" name="modbus_master_slave_address_spinbox">
-         <property name="maximum">
-          <number>255</number>
-         </property>
-         <property name="value">
-          <number>1</number>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="modbus_slave_behaviour_label">
+       <item row="2" column="0">
+        <widget class="QLabel" name="rs485_input_label">
          <property name="text">
-          <string>Slave Behaviour:</string>
+          <string>Input:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QComboBox" name="modbus_slave_behaviour_combobox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>9</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+       <item row="6" column="0">
+        <widget class="QLabel" name="modbus_master_param1_label">
+         <property name="text">
+          <string>Starting Address:</string>
          </property>
-         <item>
-          <property name="text">
-           <string>None</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Automatic Response</string>
-          </property>
-         </item>
         </widget>
        </item>
       </layout>

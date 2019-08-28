@@ -33,6 +33,7 @@ from brickv.bindings.bricklet_rs485 import BrickletRS485
 from brickv.plugin_system.plugins.rs485.ui_rs485 import Ui_RS485
 from brickv.async_call import async_call
 from brickv.hex_validator import HexValidator
+from brickv.bin_validator import BinValidator
 from brickv.callback_emulator import CallbackEmulator
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.qhexedit import QHexeditWidget
@@ -197,7 +198,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.rs485_input_combobox.addItem("")
         self.rs485_input_combobox.lineEdit().returnPressed.connect(self.input_changed)
-        self.rs485_input_combobox.editTextChanged.connect(self.fixup_rs485_input)
+        self.rs485_input_combobox.lineEdit().textEdited.connect(self.fixup_rs485_input)
         self.rs485_send_button.clicked.connect(self.input_changed)
 
         self.rs485_input_line_ending_lineedit.setValidator(HexValidator())
@@ -290,6 +291,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                         self.modbus_master_param2_dec_spinbox,
                                         self.modbus_master_param2_hex_spinbox,
                                         self.modbus_master_param2_bool_combobox,
+                                        self.modbus_master_param2_combobox,
                                         self.modbus_master_request_timeout_label,
                                         self.modbus_master_request_timeout_spinbox,
                                         self.modbus_master_send_button]
@@ -391,6 +393,15 @@ class RS485(COMCUPluginBase, Ui_RS485):
             fixed = text
         self.rs485_input_combobox.setEditText(fixed)
 
+    def fixup_modbus_master_write_multiple_registers_input(self, text):
+        fixed = text.replace(' ', '')
+        fixed = ' '.join([fixed[i:i+4] for i in range(0, len(fixed), 4)])
+        self.modbus_master_param2_combobox.setEditText(fixed)
+
+    def fixup_modbus_master_write_multiple_coils_input(self, text):
+        fixed = self.modbus_master_param2_combobox.validator().fixup(text)
+        self.modbus_master_param2_combobox.setEditText(fixed)
+
     def append_text(self, text):
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(text)
@@ -449,12 +460,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
             count = 1
             arg2_string = "{:04X}".format(arg2)
         elif request_fn_idx == MODBUS_F_IDX_WRITE_MULTIPLE_COILS:
-            arg2 = [i % 2 == 0 for i in range(arg2)]
+            arg2 = [i == '1' for i in self.modbus_master_param2_combobox.currentText().split(' ')]
             arg2_string = ' '.join(str(a) for a in arg2)
         elif request_fn_idx == MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS:
-            arg2 = list(range(1, arg2 + 1))
+            arg2 = [int(i, 16) for i in self.modbus_master_param2_combobox.currentText().split(' ')]
             arg2_string = ' '.join("{:04X}".format(i) for i in arg2)
-
         try:
             # Use address without coil/register type prefix
             rid = request_fn(slave_address, address % 100000, arg2)
@@ -525,24 +535,35 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
     def modbus_master_function_changed(self, function):
         d = {
-            MODBUS_F_IDX_READ_COILS: ('First Coil Number:', 'Number of Coils:', 1, 2000, self.modbus_master_param2_dec_spinbox, 1, 65536),
-            MODBUS_F_IDX_READ_HOLDING_REGISTERS: ('First Register Number:', 'Number of Registers:', 1, 125, self.modbus_master_param2_dec_spinbox, 400001, 465536),
-            MODBUS_F_IDX_WRITE_SINGLE_COIL: ('Coil Number:', 'Coil Value:', 0, 1, self.modbus_master_param2_bool_combobox, 1, 65536),
-            MODBUS_F_IDX_WRITE_SINGLE_REGISTER: ('Register Number:', 'Register Value [Hex]:', 0, 65535, self.modbus_master_param2_hex_spinbox, 400001, 465536),
-            MODBUS_F_IDX_WRITE_MULTIPLE_COILS: ('First Coil Number:', 'Number of Coils:', 1, 1968, self.modbus_master_param2_dec_spinbox, 1, 65536),
-            MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS: ('First Register Number:', 'Number of Registers:', 1, 123, self.modbus_master_param2_dec_spinbox, 400001, 465536),
-            MODBUS_F_IDX_READ_DISCRETE_INPUTS: ('First Input Number:', 'Number of Inputs:', 1, 2000, self.modbus_master_param2_dec_spinbox, 100001, 165536),
-            MODBUS_F_IDX_READ_INPUT_REGISTERS: ('First Input Number:', 'Number of Inputs:', 1, 125, self.modbus_master_param2_dec_spinbox, 300001, 365536)
+            MODBUS_F_IDX_READ_COILS:               ('First Coil Number:',     'Number of Coils:',      None,                    1,    2000,  self.modbus_master_param2_dec_spinbox,   1,      65536),
+            MODBUS_F_IDX_READ_HOLDING_REGISTERS:   ('First Register Number:', 'Number of Registers:',  None,                    1,    125,   self.modbus_master_param2_dec_spinbox,   400001, 465536),
+            MODBUS_F_IDX_WRITE_SINGLE_COIL:        ('Coil Number:',           'Coil Value:',           None,                    None, None,  self.modbus_master_param2_bool_combobox, 1,      65536),
+            MODBUS_F_IDX_WRITE_SINGLE_REGISTER:    ('Register Number:',       'Register Value [Hex]:', None,                    0,    65535, self.modbus_master_param2_hex_spinbox,   400001, 465536),
+            MODBUS_F_IDX_WRITE_MULTIPLE_COILS:     ('First Coil Number:',     'Coil Values [0 or 1]',  BinValidator(1968, 1),   None, None,  self.modbus_master_param2_combobox,      1,      65536),
+            MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS: ('First Register Number:', 'Register Values [Hex]', HexValidator(123*2, 4),  None, None,  self.modbus_master_param2_combobox,      400001, 465536),
+            MODBUS_F_IDX_READ_DISCRETE_INPUTS:     ('First Input Number:',    'Number of Inputs:',     None,                    1,    2000,  self.modbus_master_param2_dec_spinbox,   100001, 165536),
+            MODBUS_F_IDX_READ_INPUT_REGISTERS:     ('First Input Number:',    'Number of Inputs:',     None,                    1,    125,   self.modbus_master_param2_dec_spinbox,   300001, 365536)
         }
         if function not in d:
             return
-        text1, text2, spin_min, spin_max, spin, number_min, number_max = d[function]
+        text1, text2, param2_validator, spin_min, spin_max, spin, number_min, number_max = d[function]
         self.modbus_master_param1_spinbox.setMinimum(number_min)
         self.modbus_master_param1_spinbox.setMaximum(number_max)
         self.modbus_master_param1_spinbox.setValue(number_min)
         self.modbus_master_param1_label.setText(text1)
         self.modbus_master_param2_label.setText(text2)
-        if function != MODBUS_F_IDX_WRITE_SINGLE_COIL:
+
+        self.modbus_master_param2_combobox.setValidator(param2_validator)
+        if function == MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS:
+            self.modbus_master_param2_combobox.clearEditText()
+            self.modbus_master_param2_combobox.clear()
+            self.modbus_master_param2_combobox.lineEdit().textEdited.connect(self.fixup_modbus_master_write_multiple_registers_input)
+        elif function == MODBUS_F_IDX_WRITE_MULTIPLE_COILS:
+            self.modbus_master_param2_combobox.clearEditText()
+            self.modbus_master_param2_combobox.clear()
+            self.modbus_master_param2_combobox.lineEdit().textEdited.connect(self.fixup_modbus_master_write_multiple_coils_input)
+
+        if spin_min is not None and spin_max is not None:
             spin.setMinimum(spin_min)
             spin.setMaximum(spin_max)
 
@@ -554,6 +575,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.modbus_master_param2_dec_spinbox.hide()
         self.modbus_master_param2_hex_spinbox.hide()
         self.modbus_master_param2_bool_combobox.hide()
+        self.modbus_master_param2_combobox.hide()
         spin.show()
 
 
