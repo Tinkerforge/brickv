@@ -418,9 +418,9 @@ class Inventory:
                 latest_fw = self._latest_fws.red_image_infos['full'].firmware_version_latest
 
             return latest_fw
-        elif info.kind == 'brick':
+        elif info.kind == 'brick' and not info.flashable_like_bricklet:
             d = self._latest_fws.firmware_infos
-        elif info.kind == 'bricklet':
+        elif info.kind == 'bricklet' or (info.kind == 'brick' and info.flashable_like_bricklet):
             d = self._latest_fws.plugin_infos
         elif info.kind == 'extension':
             d = self._latest_fws.extension_firmware_infos
