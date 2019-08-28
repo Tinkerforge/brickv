@@ -197,6 +197,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.rs485_input_combobox.addItem("")
         self.rs485_input_combobox.lineEdit().returnPressed.connect(self.input_changed)
+        self.rs485_input_combobox.editTextChanged.connect(self.fixup_rs485_input)
         self.rs485_send_button.clicked.connect(self.input_changed)
 
         self.rs485_input_line_ending_lineedit.setValidator(HexValidator())
@@ -381,6 +382,14 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.mode_combobox.setCurrentIndex(0)
 
         self.mode_combobox.currentIndexChanged.connect(self.mode_changed)
+
+    def fixup_rs485_input(self, text):
+        if self.text_type_combobox.currentIndex() == 1:
+            fixed = text.replace(' ', '')
+            fixed = ' '.join([fixed[i:i+2] for i in range(0, len(fixed), 2)])
+        else:
+            fixed = text
+        self.rs485_input_combobox.setEditText(fixed)
 
     def append_text(self, text):
         self.text.moveCursor(QTextCursor.End)
@@ -824,7 +833,11 @@ class RS485(COMCUPluginBase, Ui_RS485):
         pos = 0
         written = 0
         text = self.rs485_input_combobox.currentText()
-        bytes_ = text.encode('utf-8') + self.get_line_ending()
+
+        if self.text_type_combobox.currentIndex() == 0:
+            bytes_ = text.encode('utf-8') + self.get_line_ending()
+        else:
+            bytes_ = bytes.fromhex(text)
 
         attempts_without_progress = 0
         while pos < len(bytes_):
@@ -869,9 +882,13 @@ class RS485(COMCUPluginBase, Ui_RS485):
         if self.text_type_combobox.currentIndex() == 0:
             self.hextext.hide()
             self.text.show()
+            self.rs485_input_combobox.setValidator(None)
         else:
             self.text.hide()
             self.hextext.show()
+            self.rs485_input_combobox.setValidator(HexValidator())
+        self.rs485_input_combobox.clearEditText()
+        self.rs485_input_combobox.clear()
 
     def configuration_changed(self):
         self.apply_button.setEnabled(True)
