@@ -789,12 +789,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                     if parent_info is not None:
                         parent_info.connections_remove_item((device_info.position, device_info))
-                        self.show_status("Hot plugging is not supported! Please reset Brick with UID {} and reconnect Brick Viewer.".format(device_info.connected_uid))
+                        self.show_status("Hot plugging is not supported! Please reset Brick with UID {} and reconnect Brick Viewer.".format(device_info.connected_uid), message_id='mainwindow_hotplug')
 
                     device_info.reverse_connection = connected_uid
                 elif device_info.position != position:
                     # Bricklet was connected to the same brick, but to another port
-                    self.show_status("Hot plugging is not supported! Please reset Brick with UID {} and reconnect Brick Viewer.".format(device_info.connected_uid))
+                    self.show_status("Hot plugging is not supported! Please reset Brick with UID {} and reconnect Brick Viewer.".format(device_info.connected_uid), message_id='mainwindow_hotplug')
 
                 # If the plugin is not running, pause will do nothing, so it is always save to call it.
                 # The plugin will be (unconditionally) resumed later, as resume also only does something
@@ -844,7 +844,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                     # '0' is the port where other stacks connected by RS485 extensions are connected. Multiple connections are allowed here.
                     if hotplug and info_to_add.position != '0':
-                        self.show_status("Hot plugging is not supported! Please reset Brick with UID {} and reconnect Brick Viewer.".format(connected_info.uid))
+                        self.show_status("Hot plugging is not supported! Please reset Brick with UID {} and reconnect Brick Viewer.".format(connected_info.uid), message_id='mainwindow_hotplug')
 
                 if info.uid != '' and info.uid == device_info.connected_uid:
                     if device_info in info.connections_values(): # device was already connected, but to another port
@@ -976,6 +976,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.update_ui_state()
 
     def cb_disconnected(self, disconnect_reason):
+        self.hide_status('mainwindow_hotplug')
         if disconnect_reason == IPConnection.DISCONNECT_REASON_REQUEST:
             self.auto_reconnects = 0
             self.label_auto_reconnects.hide()
