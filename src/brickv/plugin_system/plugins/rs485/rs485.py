@@ -732,7 +732,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                                      request_id,
                                                      starting_address,
                                                      coils):
-        starting_address += 400000
         self.modbus_slave_request_received('Write Multiple Coils', request_id, starting_address, len(coils), ' '.join(str(c) for c in coils), streamed=True)
 
         self.modbus_slave_answer_request_async(
