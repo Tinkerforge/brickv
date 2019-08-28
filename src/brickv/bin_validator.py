@@ -30,9 +30,7 @@ class BinValidator(QValidator):
         super().__init__()
 
         self.max_bits = max_bits
-        print(bit_group_size)
         self.bit_group_size = bit_group_size
-        print(self.bit_group_size)
 
         if max_bits == 0:
             self.re_acceptable = QRegularExpression('')
@@ -51,5 +49,4 @@ class BinValidator(QValidator):
 
     def fixup(self, text):
         text = text.replace(' ', '')
-        print(self.bit_group_size)
         return ' '.join([text[i:i+self.bit_group_size] for i in range(0, len(text), self.bit_group_size)])
