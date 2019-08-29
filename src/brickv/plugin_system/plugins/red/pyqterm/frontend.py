@@ -346,7 +346,7 @@ class TerminalWidget(QWidget):
         elif ctrl and key == Qt.Key_Minus:
             self.zoom_out()
         else:
-            if text and key != Qt.Key_Backspace:
+            if text and key not in self.keymap:
                 self.send(text)
             else:
                 s = self.keymap.get(key)
