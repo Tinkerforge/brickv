@@ -1624,6 +1624,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         progress = PaddedProgressDialog(self)
         progress.setLabelText('Auto-Updating Bricklets')
+        progress.hideCancelButton()
 
         bricks_to_reset = set()
 
