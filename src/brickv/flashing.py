@@ -569,14 +569,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.update_ui_state()
 
-    def create_progress_bar(self, title):
-        progress = QProgressDialog(self)
-        progress.setAutoClose(False)
-        progress.setWindowTitle(title)
-        progress.setCancelButton(None)
-        progress.setWindowModality(Qt.WindowModal)
-        return progress
-
     def popup_ok(self, title, message):
         QMessageBox.information(self, title, message, QMessageBox.Ok)
 
@@ -584,7 +576,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         QMessageBox.critical(self, title, message, QMessageBox.Ok)
 
     def refresh_serial_ports(self):
-        progress = self.create_progress_bar('Discovering')
+        progress = PaddedProgressDialog(self)
+        progress.setLabelText('Discovering')
         current_text = self.combo_serial_port.currentText()
         self.combo_serial_port.clear()
 
@@ -1629,7 +1622,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         def brick_for_bricklet(bricklet):
             return bricklet.reverse_connection
 
-        progress = self.create_progress_bar('Auto-Updating Bricklets')
+        progress = PaddedProgressDialog(self)
+        progress.setLabelText('Auto-Updating Bricklets')
 
         bricks_to_reset = set()
 
@@ -1686,7 +1680,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_button_refresh.setDisabled(True)
 
         self.refresh_updates_pending = False
-        self.fw_fetch_progress_bar = self.create_progress_bar('Discovering')
+        self.fw_fetch_progress_bar = PaddedProgressDialog(self, 'Discovering latest versions on tinkerforge.com')
 
         self.refresh_latest_version_info()
 
