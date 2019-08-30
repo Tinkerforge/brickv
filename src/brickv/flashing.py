@@ -1729,7 +1729,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             if ignore_update:
                 color, update = None, False
 
-            if update:
+            if update and info.kind != "extension":
                 is_update = True
 
             for item in row:
