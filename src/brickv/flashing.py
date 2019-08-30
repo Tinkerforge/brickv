@@ -1661,14 +1661,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
             except:
                 pass
 
-        progress.setLabelText('Waiting for Bricks to reset')
-        progress.setMaximum(400)
-        progress.setValue(0)
-
-        for i in range(400):
-            time.sleep(0.03)
-            progress.setValue(i)
-
         progress.cancel()
 
         if any(brick.firmware_version_installed < brick.firmware_version_latest for brick in inventory.get_brick_infos()):
