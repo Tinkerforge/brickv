@@ -198,7 +198,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.rs485_input_combobox.addItem("")
         self.rs485_input_combobox.lineEdit().returnPressed.connect(self.input_changed)
-        self.rs485_input_combobox.lineEdit().textEdited.connect(self.fixup_rs485_input)
         self.rs485_send_button.clicked.connect(self.input_changed)
 
         self.rs485_input_line_ending_lineedit.setValidator(HexValidator())
@@ -385,14 +384,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.mode_combobox.currentIndexChanged.connect(self.mode_changed)
 
-    def fixup_rs485_input(self, text):
-        if self.text_type_combobox.currentIndex() == 1:
-            fixed = text.replace(' ', '')
-            fixed = ' '.join([fixed[i:i+2] for i in range(0, len(fixed), 2)])
-        else:
-            fixed = text
-        self.rs485_input_combobox.setEditText(fixed)
-
     def append_text(self, text):
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(text)
@@ -434,28 +425,40 @@ class RS485(COMCUPluginBase, Ui_RS485):
         slave_address = self.modbus_master_slave_address_spinbox.value()
 
         address = self.modbus_master_param1_spinbox.value()
+
         if request_fn_idx == MODBUS_F_IDX_WRITE_SINGLE_REGISTER:
             arg2 = self.modbus_master_param2_hex_spinbox.value()
         elif request_fn_idx == MODBUS_F_IDX_WRITE_SINGLE_COIL:
             arg2 = self.modbus_master_param2_bool_combobox.currentText() == 'True'
+        elif request_fn_idx == MODBUS_F_IDX_WRITE_MULTIPLE_COILS:
+            text = self.modbus_master_param2_combobox.currentText()
+            if len(text) == 0:
+                return
+
+            arg2 = [i == '1' for i in text]
+        elif request_fn_idx == MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS:
+            text = self.modbus_master_param2_combobox.currentText()
+            if len(text) == 0:
+                return
+
+            arg2 = [int(i, 16) for i in text]
         else:
             arg2 = self.modbus_master_param2_dec_spinbox.value()
 
-        arg2_string = ''
-        count = arg2
+        count = 1
 
         if request_fn_idx == MODBUS_F_IDX_WRITE_SINGLE_COIL:
-            count = 1
             arg2_string = str(arg2)
         elif request_fn_idx == MODBUS_F_IDX_WRITE_SINGLE_REGISTER:
-            count = 1
             arg2_string = "{:04X}".format(arg2)
         elif request_fn_idx == MODBUS_F_IDX_WRITE_MULTIPLE_COILS:
-            arg2 = [i == '1' for i in self.modbus_master_param2_combobox.currentText().split(' ')]
             arg2_string = ' '.join(str(a) for a in arg2)
         elif request_fn_idx == MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS:
-            arg2 = [int(i, 16) for i in self.modbus_master_param2_combobox.currentText().split(' ')]
             arg2_string = ' '.join("{:04X}".format(i) for i in arg2)
+        else:
+            count = arg2
+            arg2_string = ''
+            
         try:
             # Use address without coil/register type prefix
             rid = request_fn(slave_address, address % 100000, arg2)

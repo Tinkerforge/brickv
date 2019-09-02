@@ -55,22 +55,14 @@ class HexValidator(QValidator):
         return QValidator.Invalid, _input, _pos
 
     def fixup(self, _input):
-        s = ''
-        n = self.max_bytes * 2
+        text = _input.replace(' ', '')
+        if len(text) == 0:
+            return ''
 
-        for i, c in enumerate(_input.replace(' ', '').upper()):
-            if n == 0:
-                break
+        blocks = [text[i:i+self.digit_group_size] for i in range(0, len(text), self.digit_group_size)]
 
-            if i % self.digit_group_size == 0:
-                s += ' '
+        last_block = blocks[-1]
+        if len(last_block) < self.digit_group_size:
+            last_block = '0' * (self.digit_group_size - len(last_block)) + last_block
 
-            s += c
-            n -= 1
-
-        s = s.strip()
-
-        if len(s.replace(' ', '')) % self.digit_group_size > 0:
-            s = s[:-1] + '0' * (self.digit_group_size - len(s[-1])) + s[-1:]
-
-        return s
+        return ' '.join(blocks[:-1] + [last_block])
