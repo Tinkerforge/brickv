@@ -66,8 +66,8 @@ def fuzzy_geq(a, b):
 
 class CurveValueWrapper:
     def __init__(self):
-        self.valid = False
         self.locked = False
+        self.history = []
         self._value = None
 
     @property
@@ -81,7 +81,7 @@ class CurveValueWrapper:
         if self.locked:
             return
 
-        self.valid = True
+        self.history.append((time.monotonic(), value))
 
 class Scale(QObject):
     def __init__(self, tick_text_font, title_text_font, parent):
@@ -479,9 +479,9 @@ class CurveArea(QWidget):
             x_max = self.plot.x_max
 
             if self.plot.curve_start == 'left':
-                curve_x_offset = 0
+                curve_x_offset = int((x_min - int(x_min)) * factor_x)
             else:
-                curve_x_offset = round((self.plot.x_diff - (x_max - x_min)) * factor_x)
+                curve_x_offset = int((self.plot.x_diff - (x_max - x_min)) * factor_x)
 
             transform = QTransform()
 
@@ -563,7 +563,7 @@ class CurveArea(QWidget):
 class Plot(QWidget):
     def __init__(self, parent, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
                  curve_configs, x_scale_visible, y_scale_visible, curve_outer_border_visible,
-                 curve_motion_granularity, canvas_color, curve_start, x_diff, y_diff_min,
+                 curve_motion, canvas_color, curve_start, x_diff, y_diff_min,
                  y_scale_shrinkable, update_interval):
         super().__init__(parent)
 
@@ -579,7 +579,7 @@ class Plot(QWidget):
         else:
             self.curve_outer_border = 0 # px, fixed
 
-        self.curve_motion_granularity = curve_motion_granularity
+        self.curve_motion = curve_motion
         self.curve_to_scale = 8 # px, fixed
         self.canvas_color = canvas_color
         self.curve_start = curve_start
@@ -728,7 +728,7 @@ class Plot(QWidget):
         offset_y = self.height() - self.x_scale.total_height
 
         if self.x_min != None:
-            x_min = self.x_min
+            x_min = math.floor(self.x_min)
         else:
             x_min = 0.0
 
@@ -801,8 +801,10 @@ class Plot(QWidget):
 
         if len(self.curves_x[c]) > 0:
             if (self.curves_x[c][-1] - self.curves_x[c][0]) >= self.x_diff:
-                x_motion = self.x_min + self.curve_motion_granularity - self.update_interval / 2
-                k_motion = bisect.bisect_left(self.curves_x[c], x_motion)
+                if self.curve_motion == 'jump': # 1 second
+                    k_motion = bisect.bisect_left(self.curves_x[c], int(self.x_min) + 1.0)
+                else: # smooth
+                    k_motion = 1
 
                 self.curves_x[c] = self.curves_x[c][k_motion:]
                 self.curves_y[c] = self.curves_y[c][k_motion:]
@@ -1072,7 +1074,7 @@ class PlotWidget(QWidget):
                  x_scale_visible=True,
                  y_scale_visible=True,
                  curve_outer_border_visible=True,
-                 curve_motion_granularity=1.0, # seconds
+                 curve_motion='jump', # jump, smooth
                  canvas_color=QColor(245, 245, 245),
                  external_timer=None,
                  key='top-value', # top-value, right-no-icon
@@ -1086,6 +1088,8 @@ class PlotWidget(QWidget):
                  y_resolution=None,
                  y_scale_shrinkable=True):
         super().__init__(parent)
+
+        assert update_interval < 0.5, update_interval
 
         self.setMinimumSize(300, 250)
 
@@ -1103,7 +1107,7 @@ class PlotWidget(QWidget):
 
         self.plot = Plot(self, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
                          self.curve_configs, x_scale_visible, y_scale_visible, curve_outer_border_visible,
-                         curve_motion_granularity, canvas_color, curve_start, x_diff, y_diff_min,
+                         curve_motion, canvas_color, curve_start, x_diff, y_diff_min,
                          y_scale_shrinkable, update_interval)
         self.set_x_scale = self.plot.set_x_scale
         self.set_fixed_y_scale = self.plot.set_fixed_y_scale
@@ -1111,8 +1115,10 @@ class PlotWidget(QWidget):
         self.key_items = []
         self.key_has_values = key.endswith('-value') if key != None else False
         self.first_show = True
-        self.timestamp = 0 # seconds
+        self.plot_timestamp = 0 # seconds
         self.update_interval = update_interval # seconds
+        self.last_timestamp = [None] * len(self.curve_configs)
+        self.last_value = [None] * len(self.curve_configs)
 
         h1layout = QHBoxLayout()
         h1layout.setContentsMargins(0, 0, 0, 0)
@@ -1293,8 +1299,8 @@ class PlotWidget(QWidget):
             if curve_config.value_wrapper == None:
                 continue
 
-            curve_config.value_wrapper.valid = False
             curve_config.value_wrapper.locked = stop
+            curve_config.value_wrapper.history = []
 
             if stop:
                 self.plot.add_jump(i)
@@ -1306,31 +1312,43 @@ class PlotWidget(QWidget):
         if self.stop:
             return
 
-        any_valid = False
+        monotonic_timestamp = time.monotonic()
 
         for i, curve_config in enumerate(self.curve_configs):
             if curve_config.value_wrapper == None:
                 continue
 
-            valid = curve_config.value_wrapper.valid
-            value = curve_config.value_wrapper.value
+            history = curve_config.value_wrapper.history
+            curve_config.value_wrapper.history = []
 
-            if valid:
+            for value_timestamp, value in history:
                 assert value != None
-
-                any_valid = True
 
                 if len(self.key_items) > 0 and self.key_has_values:
                     self.key_items[i].setText(curve_config.title + ': ' + curve_config.value_formatter(value))
 
-                self.plot.add_data(i, self.timestamp, value)
-            elif len(self.key_items) > 0 and self.key_has_values:
-                self.key_items[i].setText(curve_config.title)
+                timestamp = self.plot_timestamp - (monotonic_timestamp - value_timestamp)
 
-        if any_valid:
-            self.timestamp += self.update_interval
+                if timestamp < 0:
+                    continue
+
+                self.plot.add_data(i, timestamp, value)
+
+                self.last_timestamp[i] = timestamp
+                self.last_value[i] = value
+
+            # don't allow a gap of more than 0.5 seconds in the data to ensure proper curve motion
+            while self.last_timestamp[i] != None and self.plot_timestamp - self.last_timestamp[i] > 0.5:
+                self.last_timestamp[i] += self.update_interval
+
+                # FIXME: maybe render this fake data in a different style/color
+                self.plot.add_data(i, self.last_timestamp[i], self.last_value[i])
+
+        self.plot_timestamp += self.update_interval
 
     # internal
     def clear_clicked(self):
         self.plot.clear_graph()
-        self.timestamp = 0
+        self.last_timestamp = [None] * len(self.curve_configs)
+        self.last_value = [None] * len(self.curve_configs)
+        self.plot_timestamp = 0
