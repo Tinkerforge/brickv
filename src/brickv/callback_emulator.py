@@ -35,7 +35,7 @@ class CallbackEmulator(QObject):
     def __init__(self, function, arguments, result_callback, error_callback,
                  pass_arguments_to_result_callback=False, pass_exception_to_error_callback=False,
                  expand_arguments_tuple_for_callback=False, expand_result_tuple_for_callback=False,
-                 use_result_signal=True, ignore_last_result=False, debug_exception=False):
+                 use_result_signal=True, debug_exception=False):
         super().__init__()
 
         if pass_arguments_to_result_callback:
@@ -50,11 +50,9 @@ class CallbackEmulator(QObject):
         self.expand_arguments_tuple_for_callback = expand_arguments_tuple_for_callback
         self.expand_result_tuple_for_callback = expand_result_tuple_for_callback
         self.use_result_signal = use_result_signal
-        self.ignore_last_result = ignore_last_result
         self.debug_exception = debug_exception
         self.thread = None
         self.thread_id = 0
-        self.last_result = None
 
         if self.use_result_signal:
             self.qtcb_result.connect(self.cb_result)
@@ -95,7 +93,6 @@ class CallbackEmulator(QObject):
     def loop(self, thread_id, period):
         monotonic_timestamp = time.monotonic()
         first = True
-        ignore_last_result_override = True
 
         while thread_id == self.thread_id:
             if not first:
@@ -128,12 +125,7 @@ class CallbackEmulator(QObject):
 
                 continue
 
-            if self.ignore_last_result or ignore_last_result_override or self.last_result != result:
-                self.last_result = result
-
-                if self.use_result_signal:
-                    self.qtcb_result.emit(result)
-                else:
-                    self.cb_result(result)
-
-            ignore_last_result_override = False
+            if self.use_result_signal:
+                self.qtcb_result.emit(result)
+            else:
+                self.cb_result(result)

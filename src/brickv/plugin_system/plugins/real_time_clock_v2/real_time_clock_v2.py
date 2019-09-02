@@ -309,8 +309,7 @@ class RealTimeClockV2(COMCUPluginBase, Ui_RealTimeClockV2):
                                               None,
                                               self.cb_date_time,
                                               self.increase_error_count,
-                                              expand_result_tuple_for_callback=True,
-                                              ignore_last_result=True)
+                                              expand_result_tuple_for_callback=True)
 
         self.calibration = None
         self.offset = 0
