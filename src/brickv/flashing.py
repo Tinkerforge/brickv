@@ -419,7 +419,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 self.combo_firmware.setEnabled(False)
                 self.combo_firmware_version.setEnabled(False)
                 self.combo_plugin.setEnabled(False)
+                self.combo_plugin_version.setEnabled(False)
                 self.combo_extension_firmware.setEnabled(False)
+                self.combo_extension_firmware_version.setEnabled(False)
 
                 if firmware_info == ERROR_DOWNLOAD:
                     self.popup_fail('Updates / Flashing',
@@ -643,6 +645,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                                              ((not is_firmware_select and not is_firmware_custom) or \
                                               (is_firmware_custom and custom_firmware_is_valid)))
 
+        self.combo_firmware_version.setEnabled(not is_firmware_custom and not is_firmware_select)
         self.edit_custom_firmware.setEnabled(is_firmware_custom)
         self.button_firmware_browse.setEnabled(is_firmware_custom)
 
@@ -673,6 +676,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                                            ((not is_plugin_select and not is_plugin_custom) or \
                                             (is_plugin_custom and custom_plugin_is_valid)))
 
+        self.combo_plugin_version.setEnabled(not is_plugin_custom and not is_plugin_select)
         self.edit_custom_plugin.setEnabled(is_plugin_custom)
         self.button_plugin_browse.setEnabled(is_plugin_custom)
 
@@ -709,6 +713,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                                                        ((not is_extension_firmware_select and not is_extension_firmware_custom) or \
                                                         (is_extension_firmware_custom and custom_extension_firmware_is_valid)))
 
+        self.combo_extension_firmware_version.setEnabled(not is_extension_firmware_custom and not is_extension_firmware_select)
         self.edit_custom_extension_firmware.setEnabled(is_extension_firmware_custom)
         self.button_extension_firmware_browse.setEnabled(is_extension_firmware_custom)
 
