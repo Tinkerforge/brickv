@@ -35,9 +35,11 @@ class BinValidator(QValidator):
         if max_bits == 0:
             self.re_acceptable = QRegularExpression('')
         elif max_bits > 0:
-            self.re_acceptable = QRegularExpression('^([0,1,\\s]){0,%d}$' % (max_bits))
+            self.re_acceptable = QRegularExpression('^([0,1](\s[0,1]){0,%d})?$' % (max_bits - 1))
+            self.re_intermediate = QRegularExpression('^[0,1]{0,%d}$' % (max_bits))
         else:
-            self.re_acceptable = QRegularExpression('^([0,1,\\s])*$')
+            self.re_acceptable = QRegularExpression('^([0,1](\s[0,1])*)?$')
+            self.re_intermediate = QRegularExpression('^[0,1]*$')
 
     def validate(self, text, _pos):
         text = text.upper()
@@ -45,8 +47,13 @@ class BinValidator(QValidator):
         if self.re_acceptable.match(text).hasMatch():
             return QValidator.Acceptable, text, _pos
 
-        return QValidator.Invalid, text, _pos
+        if self.re_intermediate.match(text).hasMatch():
+            return QValidator.Intermediate, text, _pos
+
+        return QValidator.Intermediate, text, _pos
 
     def fixup(self, text):
         text = text.replace(' ', '')
-        return ' '.join([text[i:i+self.bit_group_size] for i in range(0, len(text), self.bit_group_size)])
+        fixed = ' '.join([text[i:i+self.bit_group_size] for i in range(0, len(text), self.bit_group_size)])
+        print(fixed)
+        return fixed

@@ -393,15 +393,6 @@ class RS485(COMCUPluginBase, Ui_RS485):
             fixed = text
         self.rs485_input_combobox.setEditText(fixed)
 
-    def fixup_modbus_master_write_multiple_registers_input(self, text):
-        fixed = text.replace(' ', '')
-        fixed = ' '.join([fixed[i:i+4] for i in range(0, len(fixed), 4)])
-        self.modbus_master_param2_combobox.setEditText(fixed)
-
-    def fixup_modbus_master_write_multiple_coils_input(self, text):
-        fixed = self.modbus_master_param2_combobox.validator().fixup(text)
-        self.modbus_master_param2_combobox.setEditText(fixed)
-
     def append_text(self, text):
         self.text.moveCursor(QTextCursor.End)
         self.text.insertPlainText(text)
@@ -554,14 +545,9 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.modbus_master_param2_label.setText(text2)
 
         self.modbus_master_param2_combobox.setValidator(param2_validator)
-        if function == MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS:
+        if function == MODBUS_F_IDX_WRITE_MULTIPLE_REGISTERS or function == MODBUS_F_IDX_WRITE_MULTIPLE_COILS:
             self.modbus_master_param2_combobox.clearEditText()
             self.modbus_master_param2_combobox.clear()
-            self.modbus_master_param2_combobox.lineEdit().textEdited.connect(self.fixup_modbus_master_write_multiple_registers_input)
-        elif function == MODBUS_F_IDX_WRITE_MULTIPLE_COILS:
-            self.modbus_master_param2_combobox.clearEditText()
-            self.modbus_master_param2_combobox.clear()
-            self.modbus_master_param2_combobox.lineEdit().textEdited.connect(self.fixup_modbus_master_write_multiple_coils_input)
 
         if spin_min is not None and spin_max is not None:
             spin.setMinimum(spin_min)
