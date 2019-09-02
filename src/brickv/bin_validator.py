@@ -36,10 +36,10 @@ class BinValidator(QValidator):
             self.re_acceptable = QRegularExpression('')
         elif max_bits > 0:
             self.re_acceptable = QRegularExpression('^([0,1](\s[0,1]){0,%d})?$' % (max_bits - 1))
-            self.re_intermediate = QRegularExpression('^[0,1]{0,%d}$' % (max_bits))
+            self.re_intermediate = QRegularExpression('^(\s*[0,1]){0,%d}\s*$' % (max_bits))
         else:
             self.re_acceptable = QRegularExpression('^([0,1](\s[0,1])*)?$')
-            self.re_intermediate = QRegularExpression('^[0,1]*$')
+            self.re_intermediate = QRegularExpression('^(\s*[0,1])*\s*$')
 
     def validate(self, text, _pos):
         text = text.upper()
