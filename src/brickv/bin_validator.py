@@ -50,7 +50,7 @@ class BinValidator(QValidator):
         if self.re_intermediate.match(text).hasMatch():
             return QValidator.Intermediate, text, _pos
 
-        return QValidator.Intermediate, text, _pos
+        return QValidator.Invalid, text, _pos
 
     def fixup(self, text):
         text = text.replace(' ', '')
