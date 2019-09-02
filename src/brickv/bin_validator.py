@@ -55,5 +55,4 @@ class BinValidator(QValidator):
     def fixup(self, text):
         text = text.replace(' ', '')
         fixed = ' '.join([text[i:i+self.bit_group_size] for i in range(0, len(text), self.bit_group_size)])
-        print(fixed)
         return fixed
