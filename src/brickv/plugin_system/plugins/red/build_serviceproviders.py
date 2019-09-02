@@ -32,7 +32,7 @@ import xml.etree.ElementTree as ET
 from pprint import pformat
 
 XML_URL = 'https://git.gnome.org/browse/mobile-broadband-provider-info/plain/serviceproviders.xml'
-ISO3166_FILE = '/usr/share/xml/iso-codes/iso_3166.xml'
+ISO3166_URL = 'https://salsa.debian.org/iso-codes-team/iso-codes/raw/master/data/iso_3166-1.json'
 DATA_FILE = 'serviceprovider_data.py'
 
 try:
@@ -40,6 +40,12 @@ try:
 
     response = urllib.request.urlopen(XML_URL, timeout=10)
     xml_data = response.read()
+    response.close()
+
+    print('[*] Downloading ISO-3166 database')
+
+    response = urllib.request.urlopen(ISO3166_URL, timeout=10)
+    iso3166_data = response.read()
     response.close()
 
     print('[*] Processing provider dict')
@@ -80,12 +86,12 @@ try:
 
     print('[*] Processing country dict')
 
-    root_country = ET.parse(ISO3166_FILE).getroot()
+    iso3166 = json.loads(iso3166_data.decode('utf-8'))
     dict_country_all = {}
     dict_country = {}
 
-    for entry_country in root_country.getiterator('iso_3166_entry'):
-        dict_country_all[entry_country.get('alpha_2_code')] = entry_country.get('name')
+    for entry_country in iso3166['3166-1']:
+        dict_country_all[entry_country.get('alpha_2')] = entry_country.get('name')
 
     for dict_c in dict_provider['country']:
         code_country = dict_c['@code']
