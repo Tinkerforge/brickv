@@ -30,7 +30,7 @@ LOGGING_LEVEL = logging.ERROR
 LOGGING_FORMAT = '%(asctime)s <%(levelname)s> <%(filename)s:%(lineno)s> %(message)s'
 LOGGING_DATEFMT = '%Y-%m-%d %H:%M:%S'
 
-BRICKV_VERSION = '2.4.8'
+BRICKV_VERSION = '2.4.9'
 
 HOST_INFO_COUNT = 10
 

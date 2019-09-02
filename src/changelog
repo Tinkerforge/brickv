@@ -530,5 +530,13 @@
 - Don't crash if OpenGL is not available
 - Correctly handle Modbus response with unknown request in RS485 Bricklet plugin
 
-2019-08-27: 2.4.8 (<unknown>)
+2019-08-27: 2.4.8 (1cf569a)
 - Fix firmware download on newer macOS versions
+
+2019-09-02: 2.4.9 (<unknown>)
+- Fix Bricklet auto-update crash
+- Allow to choose other versions than the latest when flashing firmwares
+- Allow to write hex bytes in hex mode in RS485 Bricklet plugin
+- Allow to specify coil/register values when writing multiple coils/registers
+  in RS485 Bricklet plugin
+- Delete key works correct in RED Brick plugin console tab
