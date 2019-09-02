@@ -550,12 +550,9 @@ class CurveArea(QWidget):
 
                     for i in range(start + 1, len(curve_x)):
                         if curve_jump[i]:
-                            curve_x_diff_half = (curve_x[i] - curve_x[i - 1]) / 2
-
-                            lineTo(curve_x[i - 1] + curve_x_diff_half, curve_y[i - 1])
-                            moveTo(curve_x[i] - curve_x_diff_half, curve_y[i])
-
-                        lineTo(curve_x[i], curve_y[i])
+                            moveTo(curve_x[i], curve_y[i])
+                        else:
+                            lineTo(curve_x[i], curve_y[i])
 
                     pen.setColor(self.plot.curve_configs[c].color)
                     painter.setPen(pen)
