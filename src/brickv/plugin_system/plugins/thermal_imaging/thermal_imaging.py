@@ -329,7 +329,7 @@ class WrapperWidget(QWidget):
 
         self.layout().addStretch()
 
-        self.setWindowTitle('Thermal Imaging Bricklet - Thermal Image - Brick Viewer ' + BRICKV_VERSION)
+        self.setWindowTitle('Thermal Image - Thermal Imaging Bricklet - Brick Viewer ' + BRICKV_VERSION)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
