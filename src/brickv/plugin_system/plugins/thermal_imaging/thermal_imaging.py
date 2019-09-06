@@ -618,7 +618,9 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
         self.thermal_imaging.register_callback(self.thermal_imaging.CALLBACK_TEMPERATURE_IMAGE, None)
 
     def destroy(self):
-        pass
+        if self.thermal_image_wrapper != None:
+            self.thermal_image_wrapper.close()
+
 
     @staticmethod
     def has_device_identifier(device_identifier):
