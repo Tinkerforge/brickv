@@ -298,42 +298,47 @@ class WrapperWidget(QWidget):
 
         self.setLayout(QHBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
-        self.setMinimumSize(400, 400) # To keep pixel size at least 5
         self.layout().addStretch()
 
-        inner_layout = QVBoxLayout()
-        inner_layout.setContentsMargins(0, 0, 0, 0)
+        self.inner_layout = QVBoxLayout()
+        self.inner_layout.setContentsMargins(0, 0, 0, 0)
 
-        label_layout = QHBoxLayout()
+        self.label_layout = QHBoxLayout()
         self.temperature_min = QLabel("", parent=self)
         self.temperature_max = QLabel("", parent=self)
         self.temperature_max.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
         self.thermal_image = ThermalImage(80, 60, self.plugin, self)
-        inner_layout.addStretch()
-        inner_layout.addWidget(self.thermal_image)
+        self.inner_layout.addStretch()
+        self.inner_layout.addWidget(self.thermal_image)
 
-        label_layout.addWidget(self.temperature_min)
-        label_layout.addWidget(self.temperature_max)
-        inner_layout.addLayout(label_layout)
+        self.label_layout.addWidget(self.temperature_min)
+        self.label_layout.addWidget(self.temperature_max)
+        self.inner_layout.addLayout(self.label_layout)
         self.thermal_image_bar = ThermalImageBar(80, 20, self.thermal_image, self.plugin, self)
-        inner_layout.addWidget(self.thermal_image_bar)
-        inner_layout.addStretch()
+        self.inner_layout.addWidget(self.thermal_image_bar)
+        self.inner_layout.addStretch()
 
-        self.layout().addLayout(inner_layout)
+        self.layout().addLayout(self.inner_layout)
 
         self.layout().addStretch()
 
         self.setWindowTitle('Thermal Image - Thermal Imaging Bricklet - Brick Viewer ' + BRICKV_VERSION)
 
+        self.height_offset = 20 + self.label_layout.sizeHint().height() + 2 * self.inner_layout.spacing()
+
+        self.setMinimumSize(400, 300 + self.height_offset) # To keep pixel size at least 5
+
     def resizeEvent(self, event):
         super().resizeEvent(event)
 
-        pixel_size = min(self.width() // 80, (self.height() - int(self.thermal_image_bar.height * 1.8) - int(self.temperature_min.height() * 1.8)) // 60)
+        pixel_size = min(self.width() // 80, (self.height() - self.height_offset) // 60)
 
         if pixel_size % 2 == 0:
             pixel_size -= 1
 
+        pixel_size = max(5, pixel_size)
+        self.label_layout.sizeHint().height()
         self.thermal_image.scale_factor_changed(pixel_size)
 
     def closeEvent(self, _event):
