@@ -298,34 +298,29 @@ class WrapperWidget(QWidget):
 
         self.setLayout(QHBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
-        self.setMinimumSize(200, 200)
+        self.setMinimumSize(400, 400) # To keep pixel size at least 5
         self.layout().addStretch()
 
         inner_layout = QVBoxLayout()
-        inner_widget = QWidget()
+        inner_layout.setContentsMargins(0, 0, 0, 0)
 
         label_layout = QHBoxLayout()
-        label_widget = QWidget()
-        self.temperature_min = QLabel("", parent=label_widget)
-        self.temperature_max = QLabel("", parent=label_widget)
+        self.temperature_min = QLabel("", parent=self)
+        self.temperature_max = QLabel("", parent=self)
+        self.temperature_max.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
         self.thermal_image = ThermalImage(80, 60, self.plugin, self)
+        inner_layout.addStretch()
         inner_layout.addWidget(self.thermal_image)
 
+        label_layout.addWidget(self.temperature_min)
+        label_layout.addWidget(self.temperature_max)
+        inner_layout.addLayout(label_layout)
+        self.thermal_image_bar = ThermalImageBar(80, 20, self.thermal_image, self.plugin, self)
+        inner_layout.addWidget(self.thermal_image_bar)
         inner_layout.addStretch()
 
-        label_layout.addWidget(self.temperature_min)
-        label_layout.addStretch()
-        label_layout.addWidget(self.temperature_max)
-        label_widget.setLayout(label_layout)
-        inner_layout.addWidget(label_widget)
-
-        self.thermal_image_bar = ThermalImageBar(80, 20, self.thermal_image, self.plugin, inner_widget)
-        inner_layout.addWidget(self.thermal_image_bar)
-
-        inner_widget.setLayout(inner_layout)
-
-        self.layout().addWidget(inner_widget)
+        self.layout().addLayout(inner_layout)
 
         self.layout().addStretch()
 
@@ -335,6 +330,9 @@ class WrapperWidget(QWidget):
         super().resizeEvent(event)
 
         pixel_size = min(self.width() // 80, (self.height() - int(self.thermal_image_bar.height * 1.8) - int(self.temperature_min.height() * 1.8)) // 60)
+
+        if pixel_size % 2 == 0:
+            pixel_size -= 1
 
         self.thermal_image.scale_factor_changed(pixel_size)
 
