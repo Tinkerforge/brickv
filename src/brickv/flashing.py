@@ -1430,7 +1430,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 time.sleep(0.25)
                 counter += 1
 
-            progress.cancel()
             return True
         except:
             progress.cancel()
