@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-09-13.      #
 #                                                           #
 # Python Bindings Version 2.1.23                            #
 #                                                           #
@@ -18,6 +18,7 @@ except ValueError:
 
 GetSleepMode = namedtuple('SleepMode', ['power_off_delay', 'power_off_duration', 'raspberry_pi_off', 'bricklets_off', 'enable_sleep_indicator'])
 GetVoltages = namedtuple('Voltages', ['voltage_usb', 'voltage_dc'])
+GetVoltagesCallbackConfiguration = namedtuple('VoltagesCallbackConfiguration', ['period', 'value_has_to_change'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -30,6 +31,7 @@ class BrickHAT(Device):
     DEVICE_DISPLAY_NAME = 'HAT Brick'
     DEVICE_URL_PART = 'hat' # internal
 
+    CALLBACK_VOLTAGES = 8
 
 
     FUNCTION_SET_SLEEP_MODE = 1
@@ -37,6 +39,8 @@ class BrickHAT(Device):
     FUNCTION_SET_BRICKLET_POWER = 3
     FUNCTION_GET_BRICKLET_POWER = 4
     FUNCTION_GET_VOLTAGES = 5
+    FUNCTION_SET_VOLTAGES_CALLBACK_CONFIGURATION = 6
+    FUNCTION_GET_VOLTAGES_CALLBACK_CONFIGURATION = 7
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -80,6 +84,8 @@ class BrickHAT(Device):
         self.response_expected[BrickHAT.FUNCTION_SET_BRICKLET_POWER] = BrickHAT.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickHAT.FUNCTION_GET_BRICKLET_POWER] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickHAT.FUNCTION_GET_VOLTAGES] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickHAT.FUNCTION_SET_VOLTAGES_CALLBACK_CONFIGURATION] = BrickHAT.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickHAT.FUNCTION_GET_VOLTAGES_CALLBACK_CONFIGURATION] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickHAT.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickHAT.FUNCTION_SET_BOOTLOADER_MODE] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickHAT.FUNCTION_GET_BOOTLOADER_MODE] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -93,6 +99,7 @@ class BrickHAT(Device):
         self.response_expected[BrickHAT.FUNCTION_READ_UID] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickHAT.FUNCTION_GET_IDENTITY] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickHAT.CALLBACK_VOLTAGES] = 'H H'
 
 
     def set_sleep_mode(self, power_off_delay, power_off_duration, raspberry_pi_off, bricklets_off, enable_sleep_indicator):
@@ -101,7 +108,7 @@ class BrickHAT(Device):
 
         .. note::
          Calling this function will cut the Raspberry Pi's power after Power Off Delay seconds.
-         You have to shut down the Operating System yourself, e.g. by calling 'sudo shutdown -h now'.
+         You have to shut down the operating system yourself, e.g. by calling 'sudo shutdown -h now'.
 
         Parameters:
 
@@ -168,6 +175,32 @@ class BrickHAT(Device):
           USB voltage).
         """
         return GetVoltages(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_VOLTAGES, (), '', 'H H'))
+
+    def set_voltages_callback_configuration(self, period, value_has_to_change):
+        """
+        The period in ms is the period with which the :cb:`Voltages`
+        callback is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
+        """
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_VOLTAGES_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+
+    def get_voltages_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set Voltages Callback Configuration`.
+        """
+        return GetVoltagesCallbackConfiguration(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_VOLTAGES_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
     def get_spitfp_error_count(self):
         """
@@ -308,5 +341,14 @@ class BrickHAT(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def register_callback(self, callback_id, function):
+        """
+        Registers the given *function* with the given *callback_id*.
+        """
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
+        else:
+            self.registered_callbacks[callback_id] = function
 
 HAT = BrickHAT # for backward compatibility

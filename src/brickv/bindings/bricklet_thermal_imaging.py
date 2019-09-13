@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-09-13.      #
 #                                                           #
 # Python Bindings Version 2.1.23                            #
 #                                                           #
@@ -289,7 +289,7 @@ class BrickletThermalImaging(Device):
 
         * Region Of Interest = (0, 0, 79, 59),
         * Dampening Factor = 64,
-        * Clip Limit = (4800, 512) and
+        * Clip Limit = (512, 4800) and
         * Empty Counts = 2.
         """
         region_of_interest = list(map(int, region_of_interest))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-09-13.      #
 #                                                           #
 # Python Bindings Version 2.1.23                            #
 #                                                           #
@@ -120,6 +120,10 @@ class BrickletParticulateMatter(Device):
 
         If the sensor is disabled (see :func:`Set Enable`) then the last known good
         values from the sensor are returned.
+
+        If you want to get the values periodically, it is recommended to use the
+        :cb:`PM Concentration` callback. You can set the callback configuration
+        with :func:`Set PM Concentration Callback Configuration`.
         """
         return GetPMConcentration(*self.ipcon.send_request(self, BrickletParticulateMatter.FUNCTION_GET_PM_CONCENTRATION, (), '', 'H H H'))
 
@@ -137,6 +141,10 @@ class BrickletParticulateMatter(Device):
 
         If the sensor is disabled (see :func:`Set Enable`) then the last known good
         value from the sensor is returned.
+
+        If you want to get the values periodically, it is recommended to use the
+        :cb:`PM Count` callback. You can set the callback configuration
+        with :func:`Set PM Count Callback Configuration`.
         """
         return GetPMCount(*self.ipcon.send_request(self, BrickletParticulateMatter.FUNCTION_GET_PM_COUNT, (), '', 'H H H H H H'))
 

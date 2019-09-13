@@ -310,6 +310,7 @@ class Error(Exception):
     UNKNOWN_ERROR_CODE = -11
     STREAM_OUT_OF_SYNC = -12
     INVALID_UID = -13
+    NON_ASCII_CHAR_IN_SECRET = -14
 
     def __init__(self, value, description, suppress_context=False):
         Exception.__init__(self, '{0} ({1})'.format(description, value))
@@ -535,6 +536,8 @@ class IPConnection(object):
         self.auto_reconnect = True
         self.auto_reconnect_allowed = False
         self.auto_reconnect_pending = False
+        self.auto_reconnect_internal = False
+        self.connect_failure_callback = None
         self.sequence_number_lock = threading.Lock()
         self.next_sequence_number = 0 # protected by sequence_number_lock
         self.authentication_lock = threading.Lock() # protects authentication handshake
@@ -622,7 +625,10 @@ class IPConnection(object):
         https://www.tinkerforge.com/en/doc/Tutorials/Tutorial_Authentication/Tutorial.html
         """
 
-        secret_bytes = secret.encode('ascii')
+        try:
+            secret_bytes = secret.encode('ascii')
+        except UnicodeEncodeError:
+            raise Error(Error.NON_ASCII_CHAR_IN_SECRET, 'Authentication secret contains non-ASCII characters')
 
         with self.authentication_lock:
             if self.next_authentication_nonce == 0:
@@ -787,16 +793,31 @@ class IPConnection(object):
                 tmp.settimeout(0.1)
             else:
                 tmp.settimeout(None)
-        except:
+        except Exception as e:
             def cleanup1():
-                # end callback thread
-                if not is_auto_reconnect:
-                    self.callback.queue.put((IPConnection.QUEUE_EXIT, None))
+                if self.auto_reconnect_internal:
+                    if is_auto_reconnect:
+                        return
 
-                    if threading.current_thread() is not self.callback.thread:
-                        self.callback.thread.join()
+                    if self.connect_failure_callback is not None:
+                        self.connect_failure_callback(e)
 
-                    self.callback = None
+                    self.auto_reconnect_allowed = True
+
+                    # FIXME: don't misuse disconnected-callback here to trigger an auto-reconnect
+                    #        because not actual connection has been established yet
+                    self.callback.queue.put((IPConnection.QUEUE_META,
+                                             (IPConnection.CALLBACK_DISCONNECTED,
+                                              IPConnection.DISCONNECT_REASON_ERROR, None)))
+                else:
+                    # end callback thread
+                    if not is_auto_reconnect:
+                        self.callback.queue.put((IPConnection.QUEUE_EXIT, None))
+
+                        if threading.current_thread() is not self.callback.thread:
+                            self.callback.thread.join()
+
+                        self.callback = None
 
             cleanup1()
             raise
@@ -909,6 +930,10 @@ class IPConnection(object):
         # close socket
         self.socket.close()
         self.socket = None
+
+    def set_auto_reconnect_internal(self, auto_reconnect, connect_failure_callback):
+        self.auto_reconnect_internal = auto_reconnect
+        self.connect_failure_callback = connect_failure_callback
 
     def receive_loop(self, socket_id):
         if sys.hexversion < 0x03000000:

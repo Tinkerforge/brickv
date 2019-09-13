@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-09-13.      #
 #                                                           #
 # Python Bindings Version 2.1.23                            #
 #                                                           #
@@ -217,7 +217,7 @@ class BrickletGPSV2(Device):
         Returns the current date and time. The date is
         given in the format ``ddmmyy`` and the time is given
         in the format ``hhmmss.sss``. For example, 140713 means
-        14.05.13 as date and 195923568 means 19:59:23.568 as time.
+        14.07.13 as date and 195923568 means 19:59:23.568 as time.
         """
         return GetDateTime(*self.ipcon.send_request(self, BrickletGPSV2.FUNCTION_GET_DATE_TIME, (), '', 'I I'))
 

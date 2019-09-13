@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-09-13.      #
 #                                                           #
 # Python Bindings Version 2.1.23                            #
 #                                                           #
@@ -312,6 +312,9 @@ class BrickletIO4V2(Device):
 
         If you set the reset counter to *true*, the count is set back to 0
         directly after it is read.
+
+        .. note::
+         Calling this function is only allowed for channels configured as input.
         """
         channel = int(channel)
         reset_counter = bool(reset_counter)
@@ -337,6 +340,9 @@ class BrickletIO4V2(Device):
         default configuration is very likely OK for you.
 
         Default values: 0 (edge type) and 100ms (debounce time)
+
+        .. note::
+         Calling this function is only allowed for channels configured as input.
         """
         channel = int(channel)
         edge_type = int(edge_type)
@@ -348,6 +354,9 @@ class BrickletIO4V2(Device):
         """
         Returns the edge type and debounce time for the selected channel as set by
         :func:`Set Edge Count Configuration`.
+
+        .. note::
+         Calling this function is only allowed for channels configured as input.
         """
         channel = int(channel)
 
@@ -359,7 +368,7 @@ class BrickletIO4V2(Device):
         cycle given in 1/100%.
 
         You need to set the channel to output before you call this function, otherwise it will
-        be ignored. To turn the PWM off again, you can set the frequency to 0 or any other
+        report an invalid parameter error. To turn the PWM off again, you can set the frequency to 0 or any other
         function that changes a value of the channel (e.g. :func:`Set Selected Value`).
 
         The maximum frequency value is 320000000 (32MHz). The maximum duty cycle value is
