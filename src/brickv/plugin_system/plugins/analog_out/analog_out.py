@@ -44,8 +44,8 @@ class AnalogOut(PluginBase):
         self.mode_combo = QComboBox()
         self.mode_combo.addItem("Normal")
         self.mode_combo.addItem("1 kOhm Resistor to GND")
-        self.mode_combo.addItem("100 kOhm resistor to GND")
-        self.mode_combo.addItem("500 kOhm resistor to GND")
+        self.mode_combo.addItem("100 kOhm Resistor to GND")
+        self.mode_combo.addItem("500 kOhm Resistor to GND")
 
         layout_h1 = QHBoxLayout()
         layout_h1.addStretch()
