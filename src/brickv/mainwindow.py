@@ -561,10 +561,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if isinstance(device_info, BrickREDInfo):
             button_update.clicked.connect(self.show_red_brick_update)
+        elif device_info.flashable_like_bricklet:
+            button_update.clicked.connect(lambda: self.show_bricklet_update(device_info.connected_uid, device_info.position))
         elif device_info.kind == 'brick':
             button_update.clicked.connect(lambda: self.show_brick_update(device_info.url_part))
-        elif device_info.kind == 'bricklet':
-            button_update.clicked.connect(lambda: self.show_bricklet_update(device_info.connected_uid, device_info.position))
 
         if not device_info.plugin.has_custom_version(label_version_name, label_version):
             label_version_name.setText('FW Version:')

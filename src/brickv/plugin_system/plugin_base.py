@@ -126,10 +126,10 @@ class PluginBase(QWidget):
         self.update_tab_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')))
         self.update_tab_button.setToolTip('Update available')
 
-        if self.device_info.kind == 'brick':
-            self.update_tab_button.clicked.connect(lambda: get_main_window().show_brick_update(self.device_info.url_part))
-        elif self.device_info.kind == 'bricklet':
+        if self.device_info.flashable_like_bricklet:
             self.update_tab_button.clicked.connect(lambda: get_main_window().show_bricklet_update(self.device_info.connected_uid, self.device_info.position))
+        elif self.device_info.kind == 'brick':
+            self.update_tab_button.clicked.connect(lambda: get_main_window().show_brick_update(self.device_info.url_part))
 
         tab_idx = get_main_window().tab_widget.indexOf(self.device_info.tab_window)
         get_main_window().tab_widget.tabBar().setTabButton(tab_idx, QTabBar.RightSide, self.update_tab_button)
