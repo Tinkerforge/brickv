@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2012, 2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014, 2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
 
 config_linux.py: Config Handling for Linux
 
@@ -22,8 +22,8 @@ Boston, MA 02111-1307, USA.
 """
 
 import os
-
 import configparser
+import tempfile
 
 from brickv.config_common import *
 
@@ -57,8 +57,12 @@ def set_config_value(section, option, value):
     if not os.path.exists(CONFIG_DIRNAME):
         os.makedirs(CONFIG_DIRNAME)
 
-    with open(CONFIG_FILENAME, 'w') as f:
+    fd, name = tempfile.mkstemp(text=True)
+
+    with os.fdopen(fd, 'w') as f:
         scp.write(f)
+
+    os.replace(name, CONFIG_FILENAME)
 
 def get_host_info_strings(max_count):
     strings = []

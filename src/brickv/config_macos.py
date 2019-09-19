@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2012, 2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014, 2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
 
 config_macos.py: Config Handling for macOS
 
@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 import plistlib
 import os
 import subprocess
+import tempfile
 
 from brickv.config_common import *
 
@@ -59,8 +60,12 @@ def set_plist_value(name, value):
     if not os.path.exists(CONFIG_DIRNAME):
         os.makedirs(CONFIG_DIRNAME)
 
-    with open(CONFIG_FILENAME, 'wb') as f:
+    fd, name = tempfile.mkstemp()
+
+    with os.fdopen(fd, 'wb') as f:
         plistlib.dump(root, f)
+
+    os.replace(name, CONFIG_FILENAME)
 
 def get_host_info_strings(max_count):
     strings = []
