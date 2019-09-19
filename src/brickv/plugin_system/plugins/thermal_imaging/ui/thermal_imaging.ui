@@ -56,13 +56,6 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>High Clip Limit:</string>
-              </property>
-             </widget>
-            </item>
             <item row="4" column="0">
              <widget class="QLabel" name="label_5">
               <property name="text">
@@ -115,27 +108,34 @@
               </item>
              </layout>
             </item>
-            <item row="1" column="1">
+            <item row="2" column="1">
              <widget class="QSpinBox" name="agc_clip_limit_low_spin">
               <property name="maximum">
                <number>1024</number>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Low Clip Limit:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>High Clip Limit:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
              <widget class="QSpinBox" name="agc_clip_limit_high_spin">
               <property name="layoutDirection">
                <enum>Qt::LeftToRight</enum>
               </property>
               <property name="maximum">
                <number>4800</number>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_6">
-              <property name="text">
-               <string>Low Clip Limit:</string>
               </property>
              </widget>
             </item>
@@ -753,8 +753,6 @@
     </layout>
    </item>
   </layout>
-  <zorder></zorder>
-  <zorder>scrollArea</zorder>
  </widget>
  <resources/>
  <connections/>
