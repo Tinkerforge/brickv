@@ -158,8 +158,6 @@ class BuildPkgUtils:
         print('building {} {} package'.format(self.executable_name, self.platform))
         self.run_sdist(prepare_script=prepare_script, pre_sdist=pre_sdist)
 
-        #self.copy_build_data()
-
         self.unpack_sdist()
 
         pre_pyinstaller()
