@@ -210,7 +210,7 @@ class BuildPkgUtils:
         else:
             print('skipping lintian check')
 
-    def copy_build_artefact(self):
+    def copy_build_artifact(self):
         installer = os.path.join(self.build_data_dest_path,
                                 '{}_{}_{}.{}'.format(self.executable_name,
                                                      self.platform,
