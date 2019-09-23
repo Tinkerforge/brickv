@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-09-13.      #
+# This file was automatically generated on 2019-09-23.      #
 #                                                           #
 # Python Bindings Version 2.1.23                            #
 #                                                           #
@@ -76,7 +76,7 @@ class BrickHATZero(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickHATZero.FUNCTION_GET_USB_VOLTAGE] = BrickHATZero.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickHATZero.FUNCTION_SET_USB_VOLTAGE_CALLBACK_CONFIGURATION] = BrickHATZero.RESPONSE_EXPECTED_TRUE
@@ -139,6 +139,8 @@ class BrickHATZero(Device):
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
 
         The default value is (0, false, 'x', 0, 0).
+
+        .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -151,6 +153,8 @@ class BrickHATZero(Device):
     def get_usb_voltage_callback_configuration(self):
         """
         Returns the callback configuration as set by :func:`Set USB Voltage Callback Configuration`.
+
+        .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
         return GetUSBVoltageCallbackConfiguration(*self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_USB_VOLTAGE_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
 

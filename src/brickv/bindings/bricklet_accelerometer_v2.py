@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-09-23.      #
 #                                                           #
 # Python Bindings Version 2.1.23                            #
 #                                                           #
@@ -161,12 +161,12 @@ class BrickletAccelerometerV2(Device):
         Possible values are:
 
         * Data rate of 0.781Hz to 25600Hz.
-        * Full scale range of -2g to +2g up to -8g to +8g.
+        * Full scale range of ±2g up to ±8g.
 
         Decreasing data rate or full scale range will also decrease the noise on
         the data.
 
-        The default values are 100Hz data rate and -2g to +2g range.
+        The default values are 100Hz data rate and ±2g range.
         """
         data_rate = int(data_rate)
         full_scale = int(full_scale)

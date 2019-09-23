@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-09-23.      #
 #                                                           #
 # Python Bindings Version 2.1.23                            #
 #                                                           #
@@ -19,6 +19,7 @@ except ValueError:
 GetStatistics = namedtuple('Statistics', ['messages_from_brick', 'messages_from_bricklet', 'connected_bricklet_device_identifier', 'connected_bricklet_uid'])
 GetSPITFPBaudrateConfig = namedtuple('SPITFPBaudrateConfig', ['enable_dynamic_baudrate', 'minimum_dynamic_baudrate'])
 GetIsolatorSPITFPErrorCount = namedtuple('IsolatorSPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
+GetStatisticsCallbackConfiguration = namedtuple('StatisticsCallbackConfiguration', ['period', 'value_has_to_change'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -31,6 +32,7 @@ class BrickletIsolator(Device):
     DEVICE_DISPLAY_NAME = 'Isolator Bricklet'
     DEVICE_URL_PART = 'isolator' # internal
 
+    CALLBACK_STATISTICS = 9
 
 
     FUNCTION_GET_STATISTICS = 1
@@ -39,6 +41,8 @@ class BrickletIsolator(Device):
     FUNCTION_SET_SPITFP_BAUDRATE = 4
     FUNCTION_GET_SPITFP_BAUDRATE = 5
     FUNCTION_GET_ISOLATOR_SPITFP_ERROR_COUNT = 6
+    FUNCTION_SET_STATISTICS_CALLBACK_CONFIGURATION = 7
+    FUNCTION_GET_STATISTICS_CALLBACK_CONFIGURATION = 8
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -75,7 +79,7 @@ class BrickletIsolator(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletIsolator.FUNCTION_GET_STATISTICS] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIsolator.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG] = BrickletIsolator.RESPONSE_EXPECTED_FALSE
@@ -83,6 +87,8 @@ class BrickletIsolator(Device):
         self.response_expected[BrickletIsolator.FUNCTION_SET_SPITFP_BAUDRATE] = BrickletIsolator.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIsolator.FUNCTION_GET_SPITFP_BAUDRATE] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIsolator.FUNCTION_GET_ISOLATOR_SPITFP_ERROR_COUNT] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIsolator.FUNCTION_SET_STATISTICS_CALLBACK_CONFIGURATION] = BrickletIsolator.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletIsolator.FUNCTION_GET_STATISTICS_CALLBACK_CONFIGURATION] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIsolator.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIsolator.FUNCTION_SET_BOOTLOADER_MODE] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIsolator.FUNCTION_GET_BOOTLOADER_MODE] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -96,6 +102,7 @@ class BrickletIsolator(Device):
         self.response_expected[BrickletIsolator.FUNCTION_READ_UID] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIsolator.FUNCTION_GET_IDENTITY] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletIsolator.CALLBACK_STATISTICS] = 'I I H 8s'
 
 
     def get_statistics(self):
@@ -189,6 +196,36 @@ class BrickletIsolator(Device):
         * overflow errors.
         """
         return GetIsolatorSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_ISOLATOR_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+
+    def set_statistics_callback_configuration(self, period, value_has_to_change):
+        """
+        The period in ms is the period with which the :cb:`Statistics`
+        callback is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        The default value is (0, false).
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+
+        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_STATISTICS_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+
+    def get_statistics_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set Statistics Callback Configuration`.
+
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        return GetStatisticsCallbackConfiguration(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_STATISTICS_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
     def get_spitfp_error_count(self):
         """
@@ -329,5 +366,14 @@ class BrickletIsolator(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def register_callback(self, callback_id, function):
+        """
+        Registers the given *function* with the given *callback_id*.
+        """
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
+        else:
+            self.registered_callbacks[callback_id] = function
 
 Isolator = BrickletIsolator # for backward compatibility

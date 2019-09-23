@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-09-13.      #
+# This file was automatically generated on 2019-09-23.      #
 #                                                           #
 # Python Bindings Version 2.1.23                            #
 #                                                           #
@@ -269,17 +269,17 @@ class BrickletThermalImaging(Device):
         lower the value of N the higher the influence of the current video frame whereas
         the higher the value of N the more influence the previous damped transfer function has.
 
-        Clip Limit Index 0 (AGC HEQ Clip Limit Low): This parameter defines an artificial population that is added to
+        Clip Limit Index 0 (AGC HEQ Clip Limit High): This parameter defines the maximum number of pixels allowed
+        to accumulate in any given histogram bin. Any additional pixels in a given bin are clipped.
+        The effect of this parameter is to limit the influence of highly-populated bins on the
+        resulting HEQ transformation function.
+
+        Clip Limit Index 1 (AGC HEQ Clip Limit Low): This parameter defines an artificial population that is added to
         every non-empty histogram bin. In other words, if the Clip Limit Low is set to L, a bin
         with an actual population of X will have an effective population of L + X. Any empty bin
         that is nearby a populated bin will be given an artificial population of L. The effect of
         higher values is to provide a more linear transfer function; lower values provide a more
         non-linear (equalized) transfer function.
-
-        Clip Limit Index 1 (AGC HEQ Clip Limit High): This parameter defines the maximum number of pixels allowed
-        to accumulate in any given histogram bin. Any additional pixels in a given bin are clipped.
-        The effect of this parameter is to limit the influence of highly-populated bins on the
-        resulting HEQ transformation function.
 
         Empty Counts: This parameter specifies the maximum number of pixels in a bin that will be
         interpreted as an empty bin. Histogram bins with this number of pixels or less will be
@@ -289,7 +289,7 @@ class BrickletThermalImaging(Device):
 
         * Region Of Interest = (0, 0, 79, 59),
         * Dampening Factor = 64,
-        * Clip Limit = (512, 4800) and
+        * Clip Limit = (4800, 512) and
         * Empty Counts = 2.
         """
         region_of_interest = list(map(int, region_of_interest))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-09-23.      #
 #                                                           #
 # Python Bindings Version 2.1.23                            #
 #                                                           #
@@ -160,7 +160,7 @@ class BrickletDustDetector(Device):
     def set_moving_average(self, average):
         """
         Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
-        for the dust_density.
+        for the dust density.
 
         Setting the length to 0 will turn the averaging completely off. With less
         averaging, there is more noise on the data.

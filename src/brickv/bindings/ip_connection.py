@@ -164,7 +164,7 @@ if sys.hexversion < 0x03000000:
                 if code_point <= 255:
                     chars.append(chr(code_point))
                 else:
-                    raise ValueError('Invalid string value: {1}'.format(repr(value)))
+                    raise ValueError('Invalid string value: {0}'.format(repr(value)))
 
             return ''.join(chars)
         elif isinstance(value, bytearray): # Python2 bytearray satisfies item <= 255 by default
@@ -181,7 +181,7 @@ else:
         if isinstance(value, str):
             for char in value:
                 if ord(char) > 255:
-                    raise ValueError('Invalid string value: {1}'.format(repr(value)))
+                    raise ValueError('Invalid string value: {0}'.format(repr(value)))
 
             return value
         elif isinstance(value, (bytes, bytearray)): # Python3 bytes/bytearray satisfies item <= 255 by default

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-09-23.      #
 #                                                           #
 # Python Bindings Version 2.1.23                            #
 #                                                           #
@@ -280,18 +280,18 @@ class BrickletIndustrialCounter(Device):
         """
         Sets the counter configuration for the given channel.
 
-        * Count Edge: Counter can count on rising, falling or both edges.
+        * Count Edge: Counter can count on rising, falling or both edges. Default is rising.
         * Count Direction: Counter can count up or down. You can also use
           another channel as direction input, see
           `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
-          for details.
+          for details. Default is up.
         * Duty Cycle Prescaler: Sets a divider for the internal clock. See
           `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
-          for details.
+          for details. Default is 1.
         * Frequency Integration Time: Sets the integration time for the
           frequency measurement. See
           `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
-          for details.
+          for details. Default is 1024ms.
         """
         channel = int(channel)
         count_edge = int(count_edge)
