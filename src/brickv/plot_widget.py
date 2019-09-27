@@ -1325,7 +1325,10 @@ class PlotWidget(QWidget):
                 assert value != None
 
                 if len(self.key_items) > 0 and self.key_has_values:
-                    self.key_items[i].setText(curve_config.title + ': ' + curve_config.value_formatter(value))
+                    if curve_config.title == '':
+                        self.key_items[i].setText(curve_config.value_formatter(value))
+                    else:
+                        self.key_items[i].setText(curve_config.title + ': ' + curve_config.value_formatter(value))
 
                 timestamp = self.plot_timestamp - (monotonic_timestamp - value_timestamp)
 
