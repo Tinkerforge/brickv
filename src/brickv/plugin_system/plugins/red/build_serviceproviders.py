@@ -31,8 +31,14 @@ import urllib.error
 import xml.etree.ElementTree as ET
 from pprint import pformat
 
-XML_URL = 'https://git.gnome.org/browse/mobile-broadband-provider-info/plain/serviceproviders.xml'
-ISO3166_URL = 'https://salsa.debian.org/iso-codes-team/iso-codes/raw/master/data/iso_3166-1.json'
+try:
+    XML_URL = 'file://{0}'.format(os.environ['SERVICEPROVIDERS_XML_PATH'])
+except KeyError:
+    XML_URL = 'https://git.gnome.org/browse/mobile-broadband-provider-info/plain/serviceproviders.xml'
+try:
+    ISO3166_URL = 'file://{0}'.format(os.environ['ISOCODES_JSON_PATH'])
+except KeyError:
+    ISO3166_URL = 'https://salsa.debian.org/iso-codes-team/iso-codes/raw/master/data/iso_3166-1.json'
 DATA_FILE = 'serviceprovider_data.py'
 
 try:
