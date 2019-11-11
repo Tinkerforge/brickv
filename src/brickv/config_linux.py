@@ -57,7 +57,7 @@ def set_config_value(section, option, value):
     if not os.path.exists(CONFIG_DIRNAME):
         os.makedirs(CONFIG_DIRNAME)
 
-    fd, name = tempfile.mkstemp(text=True)
+    fd, name = tempfile.mkstemp(text=True, dir=CONFIG_DIRNAME)
 
     with os.fdopen(fd, 'w') as f:
         scp.write(f)

@@ -60,7 +60,7 @@ def set_plist_value(name, value):
     if not os.path.exists(CONFIG_DIRNAME):
         os.makedirs(CONFIG_DIRNAME)
 
-    fd, name = tempfile.mkstemp()
+    fd, name = tempfile.mkstemp(dir=CONFIG_DIRNAME)
 
     with os.fdopen(fd, 'wb') as f:
         plistlib.dump(root, f)
