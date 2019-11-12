@@ -102,6 +102,8 @@ class TabWindow(QDialog):
         self.cb_post_tab = {}
         self.cb_post_untab = {}
         self.parent_dialog = None
+        self.update_button = None
+        self.tabbed = True
 
     def untab(self):
         index = self.tab_widget.indexOf(self)
@@ -109,6 +111,7 @@ class TabWindow(QDialog):
             for cb in self.cb_on_untab.values():
                 cb(index)
 
+            self.tabbed = False
             self.tab_widget.removeTab(index)
 
             self.parent_dialog = TabWidget(self, self.name + " - " + "Brick Viewer " + config.BRICKV_VERSION)
@@ -126,6 +129,8 @@ class TabWindow(QDialog):
         index = self.tab_widget.addTab(self, self.name)
         for cb in self.cb_on_tab.values():
             cb(index)
+
+        self.tabbed = True
 
         # (re-)instantiating button here because the TabBar takes ownership and
         # destroys it when this TabWindow is untabbed
@@ -149,3 +154,27 @@ class TabWindow(QDialog):
 
     def add_callback_post_tab(self, callback, key):
         self.cb_post_tab[key] = callback
+
+    def show_update_tab_button(self, tool_tip, clicked_fn):
+        if not self.tabbed:
+            return
+
+        self.update_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')))
+        self.update_button.setToolTip(tool_tip)
+        self.update_button.clicked.connect(clicked_fn)
+
+        tab_idx = self.tab_widget.indexOf(self)
+
+        self.tab_widget.tabBar().setTabButton(tab_idx, QTabBar.RightSide, self.update_button)
+
+    def hide_update_tab_button(self):
+        if not self.tabbed:
+            return
+
+        tab_idx = self.tab_widget.indexOf(self)
+        tab_button = self.tab_widget.tabBar().tabButton(tab_idx, QTabBar.RightSide)
+        if tab_button is None:
+            return
+
+        tab_button.hide()
+        self.tab_widget.tabBar().setTabButton(tab_idx, QTabBar.RightSide, None)

@@ -65,11 +65,6 @@ class Master(PluginBase, Ui_Master):
 
         self.wifi2_firmware_version = None
 
-        self.update_tab_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')), QIcon(load_pixmap('update-icon-hover.png')), parent=get_main_window().tab_widget)
-        self.update_tab_button.setToolTip('Update available')
-        self.update_tab_button.clicked.connect(lambda: get_main_window().show_brick_update(self.device_info.url_part))
-        self.update_tab_button.hide()
-
         self.wifi2_update_button = IconButton(QIcon(load_pixmap('update-icon-normal.png')),
                                               QIcon(load_pixmap('update-icon-hover.png')),
                                               self.tab_widget)
@@ -109,14 +104,7 @@ class Master(PluginBase, Ui_Master):
         self.query_extensions()
 
     def show_wifi_update(self):
-        tab_idx = get_main_window().tab_widget.indexOf(self.device_info.tab_window)
-        self.update_tab_button.setToolTip('WIFI Extension 2.0 Update available')
-        self.update_tab_button.clicked.connect(lambda: get_main_window().show_extension_update(self.device_info.uid))
-        self.update_tab_button.show()
-
-        # The tab bar sometimes does not show the tab button if it is set without first removing the old button
-        get_main_window().tab_widget.tabBar().setTabButton(tab_idx, QTabBar.RightSide, None)
-        get_main_window().tab_widget.tabBar().setTabButton(tab_idx, QTabBar.RightSide, self.update_tab_button)
+        self.device_info.tab_window.show_update_tab_button('WIFI Extension 2.0 Update available', lambda: get_main_window().show_extension_update(self.device_info.uid))
 
         if self.wifi2_tab_idx is not None:
             self.tab_widget.tabBar().setTabButton(self.wifi2_tab_idx, QTabBar.LeftSide, self.wifi2_update_button)
@@ -127,9 +115,7 @@ class Master(PluginBase, Ui_Master):
                     ext.wifi_update_firmware_button.show()
 
     def hide_wifi_update(self):
-        tab_idx = get_main_window().tab_widget.indexOf(self.device_info.tab_window)
-        get_main_window().tab_widget.tabBar().setTabButton(tab_idx, QTabBar.RightSide, None)
-        self.update_tab_button.hide()
+        self.device_info.tab_window.hide_update_tab_button()
 
         if self.wifi2_tab_idx is not None:
             self.tab_widget.tabBar().setTabButton(self.wifi2_tab_idx, QTabBar.LeftSide, None)
@@ -142,22 +128,13 @@ class Master(PluginBase, Ui_Master):
                     ext.wifi_update_firmware_button.hide()
 
     def hide_master_update(self):
-        tab_idx = get_main_window().tab_widget.indexOf(self.device_info.tab_window)
-        get_main_window().tab_widget.tabBar().setTabButton(tab_idx, QTabBar.RightSide, None)
-        self.update_tab_button.hide()
+        self.device_info.tab_window.hide_update_tab_button()
 
         if self.device_info.tab_window is not None:
             self.device_info.tab_window.button_update.hide()
 
     def show_master_update(self):
-        tab_idx = get_main_window().tab_widget.indexOf(self.device_info.tab_window)
-        self.update_tab_button.setToolTip('Update available')
-        self.update_tab_button.clicked.connect(lambda: get_main_window().show_brick_update(self.device_info.url_part))
-        self.update_tab_button.show()
-
-         # The tab bar sometimes does not show the tab button if it is set without first removing the old button
-        get_main_window().tab_widget.tabBar().setTabButton(tab_idx, QTabBar.RightSide, None)
-        get_main_window().tab_widget.tabBar().setTabButton(tab_idx, QTabBar.RightSide, self.update_tab_button)
+        self.device_info.tab_window.show_update_tab_button('Update available', lambda: get_main_window().show_brick_update(self.device_info.url_part))
 
         if self.device_info.tab_window is not None:
             self.device_info.tab_window.button_update.show()

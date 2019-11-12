@@ -299,9 +299,7 @@ class RED(PluginBase, Ui_RED):
         self.device_info.tab_window.button_update.clicked.disconnect()
         self.device_info.tab_window.button_update.clicked.connect(lambda: self.perform_action(3))
 
-        self.update_tab_button.setToolTip(tool_tip_text)
-        self.update_tab_button.clicked.disconnect()
-        self.update_tab_button.clicked.connect(lambda: self.perform_action(3))
+        self.device_info.tab_window.show_update_tab_button(tool_tip_text, lambda: self.perform_action(3))
 
     def show_image_update(self):
         self.show_update()
@@ -312,9 +310,7 @@ class RED(PluginBase, Ui_RED):
         self.device_info.tab_window.button_update.clicked.disconnect()
         self.device_info.tab_window.button_update.clicked.connect(get_main_window().show_red_brick_update)
 
-        self.update_tab_button.setToolTip('Image Update for RED Brick available')
-        self.update_tab_button.clicked.disconnect()
-        self.update_tab_button.clicked.connect(lambda: get_main_window().show_red_brick_update())
+        self.device_info.tab_window.show_update_tab_button('Image Update for RED Brick available', lambda: get_main_window().show_red_brick_update())
 
     # Overrides PluginBase.device_info_changed
     def device_info_changed(self, uid):
