@@ -1,0 +1,7 @@
+PyInstaller >= 3.5
+PyQt5 == 5.11.3
+pyserial
+pytz
+setuptools
+tzlocal
+pypiwin32; platform_system == "Windows"
