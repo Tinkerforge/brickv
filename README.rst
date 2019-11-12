@@ -83,8 +83,8 @@ The virtual environment is created with::
  python3 -m venv brickv-venv
 
 and activated with ``source brickv-venv/bin/activate`` under Linux or macOS,
-or under Windows with either ``brickv-venv/Scripts/activate.bat``
-or ``brickv-venv/Scripts/activate.ps1``
+or under Windows with either ``brickv-venv\Scripts\activate.bat``
+or ``brickv-venv\Scripts\activate.ps1``
 if you use cmd.exe or PowerShell.
 
 The required packages can then be installed with::
