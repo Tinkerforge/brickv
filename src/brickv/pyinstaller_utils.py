@@ -217,35 +217,35 @@ class PyinstallerUtils:
         if '--no-sign' not in sys.argv:
             system(['codesign', '--deep', '--force', '--verify', '--verbose=1', '--sign', 'Developer ID Application: Tinkerforge GmbH (K39N76HTZ4)', app_path])
             system(['codesign', '--verify', '--deep', '--verbose=1', app_path])
+
+            print('notarize app')
+            system(['ditto', '-c', '-k', '--keepParent', app_path, app_path + '.zip'])
+            output = subprocess.check_output(['xcrun', 'altool', '--notarize-app', '--primary-bundle-id', 'com.tinkerforge.' + self.underscore_name, '--username', 'olaf@tinkerforge.com', '--password', '@keychain:Notarization', '--output-format', 'xml', '--file', app_path + '.zip'])
+            request_uuid = plistlib.loads(output)['notarization-upload']['RequestUUID']
+
+            print('notarize request uuid', request_uuid)
+            notarization_info = None
+
+            while True:
+                output = subprocess.check_output(['xcrun', 'altool', '--notarization-info', request_uuid, '--username', 'olaf@tinkerforge.com', '--password', '@keychain:Notarization', '--output-format', 'xml'])
+                notarization_info = plistlib.loads(output)['notarization-info']
+
+                if notarization_info['Status'] != 'in progress':
+                    break
+
+                print('waiting for notarization to complete ...')
+                time.sleep(10)
+
+            print('notarization info', notarization_info)
+
+            if notarization_info['Status'] != 'success':
+                print('error: notarization failed')
+                sys.exit(1)
+
+            print('staple notarization ticket to app')
+            system(['xcrun', 'stapler', 'staple', app_path])
         else:
             print("skipping codesign")
-
-        print('notarize app')
-        system(['ditto', '-c', '-k', '--keepParent', app_path, app_path + '.zip'])
-        output = subprocess.check_output(['xcrun', 'altool', '--notarize-app', '--primary-bundle-id', 'com.tinkerforge.' + self.underscore_name, '--username', 'olaf@tinkerforge.com', '--password', '@keychain:Notarization', '--output-format', 'xml', '--file', app_path + '.zip'])
-        request_uuid = plistlib.loads(output)['notarization-upload']['RequestUUID']
-
-        print('notarize request uuid', request_uuid)
-        notarization_info = None
-
-        while True:
-            output = subprocess.check_output(['xcrun', 'altool', '--notarization-info', request_uuid, '--username', 'olaf@tinkerforge.com', '--password', '@keychain:Notarization', '--output-format', 'xml'])
-            notarization_info = plistlib.loads(output)['notarization-info']
-
-            if notarization_info['Status'] != 'in progress':
-                break
-
-            print('waiting for notarization to complete ...')
-            time.sleep(10)
-
-        print('notarization info', notarization_info)
-
-        if notarization_info['Status'] != 'success':
-            print('error: notarization failed')
-            sys.exit(1)
-
-        print('staple notarization ticket to app')
-        system(['xcrun', 'stapler', 'staple', app_path])
 
         print('building disk image')
         dmg_path = os.path.join(self.dist_path, '..', '{}_macos_{}.dmg'.format(self.underscore_name, self.underscore_version))
