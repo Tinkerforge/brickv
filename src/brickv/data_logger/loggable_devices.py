@@ -1584,7 +1584,7 @@ if BrickletAirQuality_found:
                 'name': 'Air Pressure',
                 'getter': lambda device: device.get_air_pressure(),
                 'subvalues': None,
-                'unit': 'mbar/100',
+                'unit': 'hPa/100',
                 'advanced': False
             },
             {
@@ -1851,7 +1851,7 @@ if BrickletBarometer_found:
                 'name': 'Air Pressure',
                 'getter': lambda device: device.get_air_pressure(),
                 'subvalues': None,
-                'unit': 'mbar/1000',
+                'unit': 'hPa/1000',
                 'advanced': False
             },
             {
@@ -1881,7 +1881,7 @@ if BrickletBarometer_found:
                 'type': 'int',
                 'minimum': 10000,
                 'maximum': 1200000,
-                'suffix': ' mbar/1000',
+                'suffix': ' hPa/1000',
                 'default': 1013250
             },
             {
@@ -1918,7 +1918,7 @@ if BrickletBarometerV2_found:
                 'name': 'Air Pressure',
                 'getter': lambda device: device.get_air_pressure(),
                 'subvalues': None,
-                'unit': 'mbar/1000',
+                'unit': 'hPa/1000',
                 'advanced': False
             },
             {
@@ -1959,7 +1959,7 @@ if BrickletBarometerV2_found:
                 'type': 'int',
                 'minimum': 10000,
                 'maximum': 1200000,
-                'suffix': ' mbar/1000',
+                'suffix': ' hPa/1000',
                 'default': 1013250
             },
             {

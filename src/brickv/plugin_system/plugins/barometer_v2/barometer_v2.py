@@ -103,7 +103,7 @@ class Calibration(QDialog, Ui_Calibration):
 
     def cb_air_pressure(self, air_pressure):
         self.air_pressure = air_pressure / 1000.0
-        self.lbl_air_pressure.setText('{:.3f} mbar (QFE)'.format(self.air_pressure))
+        self.lbl_air_pressure.setText('{:.3f} hPa (QFE)'.format(self.air_pressure))
 
     def cb_altitude(self, altitude):
         self.altitude = altitude / 1000.0
@@ -178,14 +178,14 @@ class BarometerV2(COMCUPluginBase):
         plot_config_air_pressure = [('Air Pressure',
                                      Qt.red,
                                      self.current_air_pressure,
-                                     '{:.3f} mbar (QFE)'.format)]
+                                     '{:.3f} hPa (QFE)'.format)]
 
         plot_config_altitude = [('Altitude',
                                  Qt.darkGreen,
                                  self.current_altitude,
                                  lambda value: '{:.3f} m ({:.3f} ft)'.format(value, value / METER_TO_FEET_DIVISOR))]
 
-        self.plot_widget_air_pressure = PlotWidget('Air Pressure [mbar]',
+        self.plot_widget_air_pressure = PlotWidget('Air Pressure [hPa]',
                                                    plot_config_air_pressure,
                                                    self.btn_clear_graphs,
                                                    y_resolution=0.001)
@@ -226,7 +226,7 @@ class BarometerV2(COMCUPluginBase):
         layout.addWidget(line)
 
         layout_h2 = QHBoxLayout()
-        layout_h2.addWidget(QLabel('Reference Air Pressure [mbar]:'))
+        layout_h2.addWidget(QLabel('Reference Air Pressure [hPa]:'))
         layout_h2.addWidget(self.sbox_reference_air_pressure)
         layout_h2.addWidget(self.btn_use_current)
         layout_h2.addStretch()

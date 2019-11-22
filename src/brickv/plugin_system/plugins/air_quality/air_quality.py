@@ -43,7 +43,7 @@ class AirQuality(COMCUPluginBase):
         self.current_iaq_index = CurveValueWrapper() # float
         self.current_temperature = CurveValueWrapper() # float, °C
         self.current_humidity = CurveValueWrapper() # float, %RH
-        self.current_air_pressure = CurveValueWrapper() # float, mbar
+        self.current_air_pressure = CurveValueWrapper() # float, hPa
 
         self.iaq_accuracy_label = QLabel("(Accuracy: TBD)")
 
@@ -56,8 +56,8 @@ class AirQuality(COMCUPluginBase):
         plots_humidity = [('Relative Humidity', Qt.red, self.current_humidity, '{} %RH'.format)]
         self.plot_widget_humidity = PlotWidget('Relative Humidity [%RH]', plots_humidity, y_resolution=0.01)
 
-        plots_air_pressure = [('Air Pressure', Qt.red, self.current_air_pressure, '{} mbar (QFE)'.format)]
-        self.plot_widget_air_pressure = PlotWidget('Air Pressure [mbar]', plots_air_pressure, y_resolution=0.01)
+        plots_air_pressure = [('Air Pressure', Qt.red, self.current_air_pressure, '{} hPa (QFE)'.format)]
+        self.plot_widget_air_pressure = PlotWidget('Air Pressure [hPa]', plots_air_pressure, y_resolution=0.01)
 
         layout_plot1 = QHBoxLayout()
         layout_plot1.addWidget(self.plot_widget_iaq_index)

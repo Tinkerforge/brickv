@@ -69,18 +69,18 @@ class Barometer(PluginBase):
 
         self.chip_temperature_label = ChipTemperatureLabel()
 
-        self.current_air_pressure = CurveValueWrapper() # float, mbar
+        self.current_air_pressure = CurveValueWrapper() # float, hPa
         self.current_altitude = CurveValueWrapper() # float, m
 
         self.clear_graphs_button = QPushButton('Clear Graphs')
 
-        plots = [('Air Pressure', Qt.red, self.current_air_pressure, '{:.3f} mbar (QFE)'.format)]
-        self.air_pressure_plot_widget = PlotWidget('Air Pressure [mbar]', plots, self.clear_graphs_button, y_resolution=0.001)
+        plots = [('Air Pressure', Qt.red, self.current_air_pressure, '{:.3f} hPa (QFE)'.format)]
+        self.air_pressure_plot_widget = PlotWidget('Air Pressure [hPa]', plots, self.clear_graphs_button, y_resolution=0.001)
 
         plots = [('Altitude', Qt.darkGreen, self.current_altitude, lambda value: '{:.2f} m ({:.2f} ft)'.format(value, value / METER_TO_FEET_DIVISOR))]
         self.altitude_plot_widget = PlotWidget('Altitude [m]', plots, self.clear_graphs_button, y_resolution=0.01)
 
-        self.reference_label = QLabel('Reference Air Pressure [mbar]:')
+        self.reference_label = QLabel('Reference Air Pressure [hPa]:')
 
         self.reference_box = QDoubleSpinBox()
         self.reference_box.setMinimum(10)
