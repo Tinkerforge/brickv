@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -314,7 +314,7 @@ class BrickIMUV2(Device):
         Returns the current orientation (w, x, y, z) of the IMU Brick as
         `quaternions <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
 
-        You have to divide the returns values by 16383 (14 bit) to get
+        You have to divide the return values by 16383 (14 bit) to get
         the usual range of -1.0 to +1.0 for quaternions.
 
         If you want to get the quaternions periodically, it is recommended
@@ -394,10 +394,8 @@ class BrickIMUV2(Device):
 
     def set_acceleration_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Acceleration` callback is triggered
+        Sets the period with which the :cb:`Acceleration` callback is triggered
         periodically. A value of 0 turns the callback off.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -411,7 +409,7 @@ class BrickIMUV2(Device):
 
     def set_magnetic_field_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Magnetic Field` callback is triggered
+        Sets the period with which the :cb:`Magnetic Field` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
         period = int(period)
@@ -426,7 +424,7 @@ class BrickIMUV2(Device):
 
     def set_angular_velocity_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Angular Velocity` callback is
+        Sets the period with which the :cb:`Angular Velocity` callback is
         triggered periodically. A value of 0 turns the callback off.
         """
         period = int(period)
@@ -441,7 +439,7 @@ class BrickIMUV2(Device):
 
     def set_temperature_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Temperature` callback is triggered
+        Sets the period with which the :cb:`Temperature` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
         period = int(period)
@@ -456,7 +454,7 @@ class BrickIMUV2(Device):
 
     def set_orientation_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Orientation` callback is triggered
+        Sets the period with which the :cb:`Orientation` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
         period = int(period)
@@ -471,7 +469,7 @@ class BrickIMUV2(Device):
 
     def set_linear_acceleration_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Linear Acceleration` callback is
+        Sets the period with which the :cb:`Linear Acceleration` callback is
         triggered periodically. A value of 0 turns the callback off.
         """
         period = int(period)
@@ -486,7 +484,7 @@ class BrickIMUV2(Device):
 
     def set_gravity_vector_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Gravity Vector` callback is triggered
+        Sets the period with which the :cb:`Gravity Vector` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
         period = int(period)
@@ -501,7 +499,7 @@ class BrickIMUV2(Device):
 
     def set_quaternion_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Quaternion` callback is triggered
+        Sets the period with which the :cb:`Quaternion` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
         period = int(period)
@@ -516,7 +514,7 @@ class BrickIMUV2(Device):
 
     def set_all_data_period(self, period):
         """
-        Sets the period in ms with which the :cb:`All Data` callback is triggered
+        Sets the period with which the :cb:`All Data` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
         period = int(period)

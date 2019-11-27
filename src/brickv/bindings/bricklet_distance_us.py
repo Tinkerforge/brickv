@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -75,8 +75,8 @@ class BrickletDistanceUS(Device):
 
     def get_distance_value(self):
         """
-        Returns the current distance value measured by the sensor. The value has a
-        range of 0 to 4095. A small value corresponds to a small distance, a big
+        Returns the current distance value measured by the sensor.
+        A small value corresponds to a small distance, a big
         value corresponds to a big distance. The relation between the measured distance
         value and the actual distance is affected by the 5V supply voltage (deviations
         in the supply voltage result in deviations in the distance values) and is
@@ -90,13 +90,11 @@ class BrickletDistanceUS(Device):
 
     def set_distance_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Distance` callback is triggered
+        Sets the period with which the :cb:`Distance` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         Der :cb:`Distance` callback is only triggered if the distance value has changed
         since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -123,8 +121,6 @@ class BrickletDistanceUS(Device):
          "'i'",    "Callback is triggered when the distance value is *inside* the min and max values"
          "'<'",    "Callback is triggered when the distance value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the distance value is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -140,7 +136,7 @@ class BrickletDistanceUS(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callbacks
+        Sets the period with which the threshold callbacks
 
         * :cb:`Distance Reached`,
 
@@ -149,8 +145,6 @@ class BrickletDistanceUS(Device):
         * :func:`Set Distance Callback Threshold`,
 
         keep being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 
@@ -169,10 +163,6 @@ class BrickletDistanceUS(Device):
 
         Setting the length to 0 will turn the averaging completely off. With less
         averaging, there is more noise on the data.
-
-        The range for the averaging is 0-100.
-
-        The default value is 20.
         """
         average = int(average)
 

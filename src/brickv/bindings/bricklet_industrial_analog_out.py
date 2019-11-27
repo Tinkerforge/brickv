@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -93,7 +93,7 @@ class BrickletIndustrialAnalogOut(Device):
 
     def set_voltage(self, voltage):
         """
-        Sets the output voltage in mV.
+        Sets the output voltage.
 
         The output voltage and output current are linked. Changing the output voltage
         also changes the output current.
@@ -110,7 +110,7 @@ class BrickletIndustrialAnalogOut(Device):
 
     def set_current(self, current):
         """
-        Sets the output current in µA.
+        Sets the output current.
 
         The output current and output voltage are linked. Changing the output current
         also changes the output voltage.
@@ -132,11 +132,11 @@ class BrickletIndustrialAnalogOut(Device):
         Possible voltage ranges are:
 
         * 0V to 5V
-        * 0V to 10V (default)
+        * 0V to 10V
 
         Possible current ranges are:
 
-        * 4mA to 20mA (default)
+        * 4mA to 20mA
         * 0mA to 20mA
         * 0mA to 24mA
 

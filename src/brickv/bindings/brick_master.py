@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -1001,13 +1001,11 @@ class BrickMaster(Device):
 
     def set_stack_current_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Stack Current` callback is triggered
+        Sets the period with which the :cb:`Stack Current` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Stack Current` callback is only triggered if the current has changed
         since the last triggering.
-
-        The default value is 0.
 
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
@@ -1025,13 +1023,11 @@ class BrickMaster(Device):
 
     def set_stack_voltage_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Stack Voltage` callback is triggered
+        Sets the period with which the :cb:`Stack Voltage` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Stack Voltage` callback is only triggered if the voltage has changed
         since the last triggering.
-
-        The default value is 0.
 
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
@@ -1049,13 +1045,11 @@ class BrickMaster(Device):
 
     def set_usb_voltage_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`USB Voltage` callback is triggered
+        Sets the period with which the :cb:`USB Voltage` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`USB Voltage` callback is only triggered if the voltage has changed
         since the last triggering.
-
-        The default value is 0.
 
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
@@ -1175,7 +1169,7 @@ class BrickMaster(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callbacks
+        Sets the period with which the threshold callbacks
 
         * :cb:`Stack Current Reached`,
         * :cb:`Stack Voltage Reached`,
@@ -1188,8 +1182,6 @@ class BrickMaster(Device):
         * :func:`Set USB Voltage Callback Threshold`
 
         keep being reached.
-
-        The default value is 100.
 
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """

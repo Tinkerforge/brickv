@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -135,8 +135,6 @@ class BrickletIO16(Device):
 
         Running monoflop timers for the selected pins will be aborted if this
         function is called.
-
-        The default configuration is input with pull-up.
         """
         port = create_char(port)
         selection_mask = int(selection_mask)
@@ -164,13 +162,11 @@ class BrickletIO16(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the debounce period of the :cb:`Interrupt` callback in ms.
+        Sets the debounce period of the :cb:`Interrupt` callback.
 
         For example: If you set this value to 100, you will get the interrupt
         maximal every 100ms. This is necessary if something that bounces is
         connected to the IO-16 Bricklet, such as a button.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 
@@ -216,7 +212,7 @@ class BrickletIO16(Device):
         The third parameter is a bitmask with the desired value of the specified
         output pins. A 1 in the bitmask means high and a 0 in the bitmask means low.
 
-        The forth parameter indicates the time (in ms) that the pins should hold
+        The forth parameter indicates the time that the pins should hold
         the value.
 
         If this function is called with the parameters ('a', 9, 1, 1500) or
@@ -294,18 +290,14 @@ class BrickletIO16(Device):
         The edge type parameter configures if rising edges, falling edges or
         both are counted if the pin is configured for input. Possible edge types are:
 
-        * 0 = rising (default)
+        * 0 = rising
         * 1 = falling
         * 2 = both
-
-        The debounce time is given in ms.
 
         Configuring an edge counter resets its value to 0.
 
         If you don't know what any of this means, just leave it at default. The
         default configuration is very likely OK for you.
-
-        Default values: 0 (edge type) and 100ms (debounce time)
 
         .. versionadded:: 2.0.3$nbsp;(Plugin)
         """

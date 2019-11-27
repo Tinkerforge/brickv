@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -145,9 +145,7 @@ class BrickletBarometerV2(Device):
 
     def get_air_pressure(self):
         """
-        Returns the measured air pressure. The value has a range of
-        260000 to 1260000 and is given in mbar/1000, i.e. a value of
-        1001092 means that an air pressure of 1001.092 mbar is measured.
+        Returns the measured air pressure.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -158,7 +156,7 @@ class BrickletBarometerV2(Device):
 
     def set_air_pressure_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Air Pressure` callback is triggered
+        The period is the period with which the :cb:`Air Pressure` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -185,8 +183,6 @@ class BrickletBarometerV2(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -205,7 +201,7 @@ class BrickletBarometerV2(Device):
     def get_altitude(self):
         """
         Returns the relative altitude of the air pressure sensor. The value
-        is given in mm and is calculated based on the difference between the
+        is calculated based on the difference between the
         current air pressure and the reference air pressure that can be set
         with :func:`Set Reference Air Pressure`.
 
@@ -218,7 +214,7 @@ class BrickletBarometerV2(Device):
 
     def set_altitude_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Altitude` callback is triggered
+        The period is the period with which the :cb:`Altitude` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -245,8 +241,6 @@ class BrickletBarometerV2(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -264,9 +258,7 @@ class BrickletBarometerV2(Device):
 
     def get_temperature(self):
         """
-        Returns the temperature of the air pressure sensor. The value
-        has a range of -4000 to 8500 and is given in °C/100, i.e. a value
-        of 2007 means that a temperature of 20.07 °C is measured.
+        Returns the temperature of the air pressure sensor.
 
         This temperature is used internally for temperature compensation
         of the air pressure measurement. It is not as accurate as the
@@ -282,7 +274,7 @@ class BrickletBarometerV2(Device):
 
     def set_temperature_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Temperature` callback is triggered
+        The period is the period with which the :cb:`Temperature` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -309,8 +301,6 @@ class BrickletBarometerV2(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -334,12 +324,8 @@ class BrickletBarometerV2(Device):
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
 
-        The range for the averaging is 1-1000.
-
         If you want to do long term measurements the longest moving average will give
         the cleanest results.
-
-        The default value is 100.
         """
         moving_average_length_air_pressure = int(moving_average_length_air_pressure)
         moving_average_length_temperature = int(moving_average_length_temperature)
@@ -355,8 +341,8 @@ class BrickletBarometerV2(Device):
 
     def set_reference_air_pressure(self, air_pressure):
         """
-        Sets the reference air pressure in mbar/1000 for the altitude calculation.
-        Valid values are between 260000 and 1260000. Setting the reference to the
+        Sets the reference air pressure for the altitude calculation.
+        Setting the reference to the
         current air pressure results in a calculated altitude of 0mm. Passing 0 is
         a shortcut for passing the current air pressure as reference.
 
@@ -364,8 +350,6 @@ class BrickletBarometerV2(Device):
         `QNH <https://en.wikipedia.org/wiki/QNH>`__ and
         `QFE <https://en.wikipedia.org/wiki/Mean_sea_level_pressure#Mean_sea_level_pressure>`__
         used in aviation.
-
-        The default value is 1013.25mbar.
         """
         air_pressure = int(air_pressure)
 
@@ -385,12 +369,11 @@ class BrickletBarometerV2(Device):
         by setting ``measured air pressure`` and ``actual air pressure`` to 0.
 
         Then the current air pressure has to be measured using the Bricklet
-        (``measured air pressure``) and with and accurate reference barometer
-        (``actual air pressure``) at the same time and passed to this function in
-        mbar/1000.
+        (``measured air pressure``) and with an accurate reference barometer
+        (``actual air pressure``) at the same time and passed to this function.
 
         After proper calibration the air pressure measurement can achieve an accuracy
-        up to 0.2 mbar.
+        up to 0.2 hPa.
 
         The calibration is saved in the EEPROM of the Bricklet and only needs to be
         configured once.
@@ -419,8 +402,6 @@ class BrickletBarometerV2(Device):
         A higher data rate will result in a less precise temperature because of
         self-heating of the sensor. If the accuracy of the temperature reading is
         important to you, we would recommend the 1Hz data rate.
-
-        The default values are 50Hz data rate and 1/9th low pass filter.
         """
         data_rate = int(data_rate)
         air_pressure_low_pass_filter = int(air_pressure_low_pass_filter)

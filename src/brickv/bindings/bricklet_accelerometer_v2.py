@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-09-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -147,7 +147,7 @@ class BrickletAccelerometerV2(Device):
     def get_acceleration(self):
         """
         Returns the acceleration in x, y and z direction. The values
-        are given in g/10000 (1g = 9.80665m/s²), not to be confused with grams.
+        are given in gₙ/10000 (1gₙ = 9.80665m/s²).
 
         If you want to get the acceleration periodically, it is recommended
         to use the :cb:`Acceleration` callback and set the period with
@@ -165,8 +165,6 @@ class BrickletAccelerometerV2(Device):
 
         Decreasing data rate or full scale range will also decrease the noise on
         the data.
-
-        The default values are 100Hz data rate and ±2g range.
         """
         data_rate = int(data_rate)
         full_scale = int(full_scale)
@@ -181,7 +179,7 @@ class BrickletAccelerometerV2(Device):
 
     def set_acceleration_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`Acceleration`
+        The period is the period with which the :cb:`Acceleration`
         callback is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -193,8 +191,6 @@ class BrickletAccelerometerV2(Device):
 
         If this callback is enabled, the :cb:`Continuous Acceleration 16 Bit` callback
         and :cb:`Continuous Acceleration 8 Bit` callback will automatically be disabled.
-
-        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -247,16 +243,16 @@ class BrickletAccelerometerV2(Device):
         resolution (8/16 bit) and the full scale range (see :func:`Set Configuration`) to calculate
         the data in g/10000 (same unit that is returned by :func:`Get Acceleration`):
 
-        * 16 bit, full scale 2G: acceleration = value*625/1024
-        * 16 bit, full scale 4G: acceleration = value*1250/1024
-        * 16 bit, full scale 8G: acceleration = value*2500/1024
+        * 16 bit, full scale 2g: acceleration = value*625/1024
+        * 16 bit, full scale 4g: acceleration = value*1250/1024
+        * 16 bit, full scale 8g: acceleration = value*2500/1024
 
         If a resolution of 8 bit is used, only the 8 most significant bits will be
         transferred, so you can use the following formulas:
 
-        * 8 bit, full scale 2G:  acceleration = value*256*625/1024
-        * 8 bit, full scale 4G:  acceleration = value*256*1250/1024
-        * 8 bit, full scale 8G:  acceleration = value*256*2500/1024
+        * 8 bit, full scale 2g: acceleration = value*256*625/1024
+        * 8 bit, full scale 4g: acceleration = value*256*1250/1024
+        * 8 bit, full scale 8g: acceleration = value*256*2500/1024
 
         If no axis is enabled, both callbacks are disabled. If one of the continuous
         callbacks is enabled, the :cb:`Acceleration` callback is disabled.
@@ -297,8 +293,6 @@ class BrickletAccelerometerV2(Device):
            :alt: Accelerometer filter
            :align: center
            :target: ../../_images/Bricklets/bricklet_accelerometer_v2_filter.png
-
-        By default filtering is applied and the filter corner frequency is a ninth of the output data rate.
 
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """

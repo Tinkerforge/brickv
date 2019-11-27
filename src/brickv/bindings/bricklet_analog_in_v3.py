@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -118,8 +118,7 @@ class BrickletAnalogInV3(Device):
 
     def get_voltage(self):
         """
-        Returns the measured voltage. The value is in mV and
-        between 0V and 42V. The resolution is approximately 10mV to 1mV
+        Returns the measured voltage. The resolution is approximately 10mV to 1mV
         depending on the oversampling configuration (:func:`Set Oversampling`).
 
 
@@ -131,7 +130,7 @@ class BrickletAnalogInV3(Device):
 
     def set_voltage_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Voltage` callback is triggered
+        The period is the period with which the :cb:`Voltage` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -158,8 +157,6 @@ class BrickletAnalogInV3(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -189,8 +186,6 @@ class BrickletAnalogInV3(Device):
         With increased oversampling the noise decreases. With decreased
         oversampling the reaction time increases (changes in voltage will be
         measured faster).
-
-        The default value is 4096x.
         """
         oversampling = int(oversampling)
 

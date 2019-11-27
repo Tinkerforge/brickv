@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -235,9 +235,8 @@ class BrickletLCD128x64(Device):
         """
         Writes pixels to the specified window.
 
-        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are written
-        into the window line by line top to bottom and each line is written from left to
-        right.
+        The pixels are written into the window line by line top to bottom
+        and each line is written from left to right.
 
         If automatic draw is enabled (default) the pixels are directly written to
         the screen. Only pixels that have actually changed are updated on the screen,
@@ -265,9 +264,8 @@ class BrickletLCD128x64(Device):
         """
         Reads pixels from the specified window.
 
-        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are read
-        from the window line by line top to bottom and each line is read from left to
-        right.
+        The pixels are read from the window line by line top to bottom
+        and each line is read from left to right.
 
         If automatic draw is enabled (default) the pixels that are read are always the
         same that are shown on the display.
@@ -305,16 +303,10 @@ class BrickletLCD128x64(Device):
         """
         Sets the configuration of the display.
 
-        You can set a contrast value from 0 to 63, a backlight intensity value
-        from 0 to 100 and you can invert the color (white/black) of the display.
-
         If automatic draw is set to *true*, the display is automatically updated with every
         call of :func:`Write Pixels` and :func:`Write Line`. If it is set to false, the
         changes are written into an internal buffer and only shown on the display after
         a call of :func:`Draw Buffered Frame`.
-
-        The default values are contrast 14, backlight intensity 100, inverting off
-        and automatic draw on.
         """
         contrast = int(contrast)
         backlight = int(backlight)
@@ -331,8 +323,7 @@ class BrickletLCD128x64(Device):
 
     def write_line(self, line, position, text):
         """
-        Writes text to a specific line (0 to 7) with a specific position
-        (0 to 21). The text can have a maximum of 22 characters.
+        Writes text to a specific line with a specific position.
 
         For example: (1, 10, "Hello") will write *Hello* in the middle of the
         second line of the display.
@@ -382,16 +373,16 @@ class BrickletLCD128x64(Device):
         """
         Returns the last valid touch position:
 
-        * Pressure: Amount of pressure applied by the user (0-300)
-        * X: Touch position on x-axis (0-127)
-        * Y: Touch position on y-axis (0-63)
+        * Pressure: Amount of pressure applied by the user
+        * X: Touch position on x-axis
+        * Y: Touch position on y-axis
         * Age: Age of touch press in ms (how long ago it was)
         """
         return GetTouchPosition(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_TOUCH_POSITION, (), '', 'H H H I'))
 
     def set_touch_position_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`Touch Position` callback
+        The period is the period with which the :cb:`Touch Position` callback
         is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -400,8 +391,6 @@ class BrickletLCD128x64(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -425,13 +414,13 @@ class BrickletLCD128x64(Device):
         provided. You can use this vector do determine a more exact location of the gesture (e.g.
         the swipe from top to bottom was on the left or right part of the screen).
 
-        The age parameter corresponds to the age of gesture in ms (how long ago it was).
+        The age parameter corresponds to the age of gesture (how long ago it was).
         """
         return GetTouchGesture(*self.ipcon.send_request(self, BrickletLCD128x64.FUNCTION_GET_TOUCH_GESTURE, (), '', 'B I H H H H H I'))
 
     def set_touch_gesture_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`Touch Gesture` callback
+        The period is the period with which the :cb:`Touch Gesture` callback
         is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -440,8 +429,6 @@ class BrickletLCD128x64(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -458,8 +445,6 @@ class BrickletLCD128x64(Device):
     def draw_line(self, position_x_start, position_y_start, position_x_end, position_y_end, color):
         """
         Draws a white or black line from (x, y)-start to (x, y)-end.
-        The x values have to be within the range of 0 to 127 and the y
-        values have t be within the range of 0 to 63.
 
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
@@ -474,8 +459,6 @@ class BrickletLCD128x64(Device):
     def draw_box(self, position_x_start, position_y_start, position_x_end, position_y_end, fill, color):
         """
         Draws a white or black box from (x, y)-start to (x, y)-end.
-        The x values have to be within the range of 0 to 127 and the y
-        values have to be within the range of 0 to 63.
 
         If you set fill to true, the box will be filled with the
         color. Otherwise only the outline will be drawn.
@@ -493,10 +476,7 @@ class BrickletLCD128x64(Device):
 
     def draw_text(self, position_x, position_y, font, color, text):
         """
-        Draws a text with up to 22 characters at the pixel position (x, y).
-
-        The x values have to be within the range of 0 to 127 and the y
-        values have to be within the range of 0 to 63.
+        Draws a text at the pixel position (x, y).
 
         You can use one of 9 different font sizes and draw the text in white or black.
 
@@ -512,10 +492,9 @@ class BrickletLCD128x64(Device):
 
     def set_gui_button(self, index, position_x, position_y, width, height, text):
         """
-        Draws a clickable button at position (x, y) with the given text
-        of up to 16 characters.
+        Draws a clickable button at position (x, y) with the given text.
 
-        You can use up to 12 buttons (index 0-11).
+        You can use up to 12 buttons.
 
         The x position + width has to be within the range of 1 to 128 and the y
         position + height has to be within the range of 1 to 64.
@@ -571,7 +550,7 @@ class BrickletLCD128x64(Device):
 
     def set_gui_button_pressed_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`GUI Button Pressed` callback
+        The period is the period with which the :cb:`GUI Button Pressed` callback
         is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -580,8 +559,6 @@ class BrickletLCD128x64(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
 
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
@@ -615,7 +592,7 @@ class BrickletLCD128x64(Device):
         """
         Draws a slider at position (x, y) with the given length.
 
-        You can use up to 6 sliders (index 0-5).
+        You can use up to 6 sliders.
 
         If you use the horizontal direction, the x position + length has to be
         within the range of 1 to 128 and the y position has to be within
@@ -675,7 +652,7 @@ class BrickletLCD128x64(Device):
 
     def set_gui_slider_value_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`GUI Slider Value` callback
+        The period is the period with which the :cb:`GUI Slider Value` callback
         is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -684,8 +661,6 @@ class BrickletLCD128x64(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
 
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
@@ -721,8 +696,6 @@ class BrickletLCD128x64(Device):
         Additionally, if you set `Clear GUI` to true, all of the GUI elements (buttons,
         slider, graphs) will automatically be removed on every tab change.
 
-        By default click and swipe as well as automatic GUI clear is enabled.
-
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
         change_tab_config = int(change_tab_config)
@@ -740,9 +713,9 @@ class BrickletLCD128x64(Device):
 
     def set_gui_tab_text(self, index, text):
         """
-        Adds a text-tab with the given index. The text can have a length of up to 5 characters.
+        Adds a text-tab with the given index.
 
-        You can use up to 10 tabs (index 0-9).
+        You can use up to 10 tabs.
 
         A text-tab with the same index as a icon-tab will overwrite the icon-tab.
 
@@ -771,7 +744,7 @@ class BrickletLCD128x64(Device):
         Adds a icon-tab with the given index. The icon can have a width of 28 pixels
         with a height of 6 pixels. It is drawn line-by-line from left to right.
 
-        You can use up to 10 tabs (index 0-9).
+        You can use up to 10 tabs.
 
         A icon-tab with the same index as a text-tab will overwrite the text-tab.
 
@@ -819,7 +792,7 @@ class BrickletLCD128x64(Device):
 
     def set_gui_tab_selected_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`GUI Tab Selected` callback
+        The period is the period with which the :cb:`GUI Tab Selected` callback
         is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -828,8 +801,6 @@ class BrickletLCD128x64(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
 
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
@@ -858,15 +829,13 @@ class BrickletLCD128x64(Device):
 
     def set_gui_graph_configuration(self, index, graph_type, position_x, position_y, width, height, text_x, text_y):
         """
-        Sets the configuration for up to four graphs (index 0-3).
+        Sets the configuration for up to four graphs.
 
         The graph type can be dot-, line- or bar-graph.
 
-        The x and y position are pixel positions. They have to be within
-        the range of (0, 0) to (127, 63). The maximum width is 118 and the
-        maximum height is 63.
+        The x and y position are pixel positions.
 
-        You can add a text for the x and y axis with at most 4 characters each.
+        You can add a text for the x and y axis.
         The text is drawn at the inside of the graph and it can overwrite some
         of the graph data. If you need the text outside of the graph you can
         leave this text here empty and use :func:`Draw Text` to draw the caption
@@ -1125,9 +1094,8 @@ class BrickletLCD128x64(Device):
         """
         Writes pixels to the specified window.
 
-        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are written
-        into the window line by line top to bottom and each line is written from left to
-        right.
+        The pixels are written into the window line by line top to bottom
+        and each line is written from left to right.
 
         If automatic draw is enabled (default) the pixels are directly written to
         the screen. Only pixels that have actually changed are updated on the screen,
@@ -1169,9 +1137,8 @@ class BrickletLCD128x64(Device):
         """
         Reads pixels from the specified window.
 
-        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are read
-        from the window line by line top to bottom and each line is read from left to
-        right.
+        The pixels are read from the window line by line top to bottom
+        and each line is read from left to right.
 
         If automatic draw is enabled (default) the pixels that are read are always the
         same that are shown on the display.

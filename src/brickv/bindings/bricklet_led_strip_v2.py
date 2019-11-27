@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -184,7 +184,13 @@ class BrickletLEDStripV2(Device):
 
     def get_led_values_low_level(self, index, length):
         """
-        Returns the RGB(W) values as set by :func:`Set LED Values`.
+        Returns *length* RGB(W) values starting from the
+        given *index*.
+
+        If the channel mapping has 3 colors, you will get the data in the sequence
+        RGBRGBRGB... if the channel mapping has 4 colors you will get the data in the
+        sequence RGBWRGBWRGBW...
+        (assuming you start at an index divisible by 3 (RGB) or 4 (RGBW)).
         """
         index = int(index)
         length = int(length)
@@ -254,6 +260,7 @@ class BrickletLEDStripV2(Device):
         * WS2811,
         * WS2812 / SK6812 / NeoPixel RGB,
         * SK6812RGBW / NeoPixel RGBW (Chip Type = WS2812),
+        * WS2813 / WS2815 (Chip Type = WS2812)
         * LPD8806 and
         * APA102 / DotStar.
 
@@ -507,7 +514,13 @@ class BrickletLEDStripV2(Device):
 
     def get_led_values(self, index, length):
         """
-        Returns the RGB(W) values as set by :func:`Set LED Values`.
+        Returns *length* RGB(W) values starting from the
+        given *index*.
+
+        If the channel mapping has 3 colors, you will get the data in the sequence
+        RGBRGBRGB... if the channel mapping has 4 colors you will get the data in the
+        sequence RGBWRGBWRGBW...
+        (assuming you start at an index divisible by 3 (RGB) or 4 (RGBW)).
         """
         index = int(index)
         length = int(length)

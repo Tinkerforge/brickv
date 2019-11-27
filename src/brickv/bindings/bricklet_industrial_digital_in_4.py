@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -131,13 +131,11 @@ class BrickletIndustrialDigitalIn4(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the debounce period of the :cb:`Interrupt` callback in ms.
+        Sets the debounce period of the :cb:`Interrupt` callback.
 
         For example: If you set this value to 100, you will get the interrupt
         maximal every 100ms. This is necessary if something that bounces is
         connected to the Digital In 4 Bricklet, such as a button.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 
@@ -180,6 +178,8 @@ class BrickletIndustrialDigitalIn4(Device):
         If you set the reset counter to *true*, the count is set back to 0
         directly after it is read.
 
+        The edge counters use the grouping as set by :func:`Set Group`.
+
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         pin = int(pin)
@@ -195,18 +195,16 @@ class BrickletIndustrialDigitalIn4(Device):
         The edge type parameter configures if rising edges, falling edges or
         both are counted if the pin is configured for input. Possible edge types are:
 
-        * 0 = rising (default)
+        * 0 = rising
         * 1 = falling
         * 2 = both
-
-        The debounce time is given in ms.
 
         Configuring an edge counter resets its value to 0.
 
         If you don't know what any of this means, just leave it at default. The
         default configuration is very likely OK for you.
 
-        Default values: 0 (edge type) and 100ms (debounce time)
+        The edge counters use the grouping as set by :func:`Set Group`.
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """

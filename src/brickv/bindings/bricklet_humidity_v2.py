@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -129,9 +129,7 @@ class BrickletHumidityV2(Device):
 
     def get_humidity(self):
         """
-        Returns the humidity measured by the sensor. The value
-        has a range of 0 to 10000 and is given in %RH/100 (Relative Humidity),
-        i.e. a value of 4223 means that a humidity of 42.23 %RH is measured.
+        Returns the humidity measured by the sensor.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -142,7 +140,7 @@ class BrickletHumidityV2(Device):
 
     def set_humidity_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Humidity` callback is triggered
+        The period is the period with which the :cb:`Humidity` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -169,8 +167,6 @@ class BrickletHumidityV2(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -188,9 +184,7 @@ class BrickletHumidityV2(Device):
 
     def get_temperature(self):
         """
-        Returns the temperature measured by the sensor. The value
-        has a range of -4000 to 16500 and is given in °C/100,
-        i.e. a value of 3200 means that a temperature of 32.00 °C is measured.
+        Returns the temperature measured by the sensor.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -201,7 +195,7 @@ class BrickletHumidityV2(Device):
 
     def set_temperature_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Temperature` callback is triggered
+        The period is the period with which the :cb:`Temperature` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -228,8 +222,6 @@ class BrickletHumidityV2(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -249,8 +241,6 @@ class BrickletHumidityV2(Device):
         """
         Enables/disables the heater. The heater can be used to dry the sensor in
         extremely wet conditions.
-
-        By default the heater is disabled.
         """
         heater_config = int(heater_config)
 
@@ -270,13 +260,9 @@ class BrickletHumidityV2(Device):
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
 
-        The range for the averaging is 1-1000.
-
         New data is gathered every 50ms*. With a moving average of length 1000 the resulting
         averaging window has a length of 50s. If you want to do long term measurements the longest
         moving average will give the cleanest results.
-
-        The default value is 5.
 
         \* In firmware version 2.0.3 we added the :func:`Set Samples Per Second` function. It
         configures the measurement frequency. Since high frequencies can result in self-heating

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-09-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -75,7 +75,7 @@ class BrickletDustDetector(Device):
 
     def get_dust_density(self):
         """
-        Returns the dust density in µg/m³.
+        Returns the dust density.
 
         If you want to get the dust density periodically, it is recommended
         to use the :cb:`Dust Density` callback and set the period with
@@ -85,13 +85,11 @@ class BrickletDustDetector(Device):
 
     def set_dust_density_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Dust Density` callback is triggered
+        Sets the period with which the :cb:`Dust Density` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Dust Density` callback is only triggered if the dust density has
         changed since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -118,8 +116,6 @@ class BrickletDustDetector(Device):
          "'i'",    "Callback is triggered when the dust density value is *inside* the min and max values"
          "'<'",    "Callback is triggered when the dust density value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the dust density value is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -135,7 +131,7 @@ class BrickletDustDetector(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callback
+        Sets the period with which the threshold callback
 
         * :cb:`Dust Density Reached`
 
@@ -144,8 +140,6 @@ class BrickletDustDetector(Device):
         * :func:`Set Dust Density Callback Threshold`
 
         keeps being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 
@@ -164,10 +158,6 @@ class BrickletDustDetector(Device):
 
         Setting the length to 0 will turn the averaging completely off. With less
         averaging, there is more noise on the data.
-
-        The range for the averaging is 0-100.
-
-        The default value is 100.
         """
         average = int(average)
 

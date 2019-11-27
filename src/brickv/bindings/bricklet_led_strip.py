@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -118,15 +118,11 @@ class BrickletLEDStrip(Device):
 
     def set_rgb_values(self, index, length, r, g, b):
         """
-        Sets the RGB values for the LEDs with the given *length* starting
-        from *index*.
+        Sets *length* RGB values for the LEDs starting from *index*.
 
         To make the colors show correctly you need to configure the chip type
         (:func:`Set Chip Type`) and a 3-channel channel mapping (:func:`Set Channel Mapping`)
         according to the connected LEDs.
-
-        The maximum length is 16, the index goes from 0 to 319 and the rgb values
-        have 8 bits each.
 
         Example: If you set
 
@@ -171,8 +167,8 @@ class BrickletLEDStrip(Device):
 
     def get_rgb_values(self, index, length):
         """
-        Returns RGB value with the given *length* starting from the
-        given *index*.
+        Returns *length* R, G and B values starting from the
+        given LED *index*.
 
         The values are the last values that were set by :func:`Set RGB Values`.
         """
@@ -183,14 +179,12 @@ class BrickletLEDStrip(Device):
 
     def set_frame_duration(self, duration):
         """
-        Sets the frame duration in ms.
+        Sets the frame duration.
 
         Example: If you want to achieve 20 frames per second, you should
         set the frame duration to 50ms (50ms * 20 = 1 second).
 
         For an explanation of the general approach see :func:`Set RGB Values`.
-
-        Default value: 100ms (10 frames per second).
         """
         duration = int(duration)
 
@@ -198,20 +192,19 @@ class BrickletLEDStrip(Device):
 
     def get_frame_duration(self):
         """
-        Returns the frame duration in ms as set by :func:`Set Frame Duration`.
+        Returns the frame duration as set by :func:`Set Frame Duration`.
         """
         return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_FRAME_DURATION, (), '', 'H')
 
     def get_supply_voltage(self):
         """
-        Returns the current supply voltage of the LEDs. The voltage is given in mV.
+        Returns the current supply voltage of the LEDs.
         """
         return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_SUPPLY_VOLTAGE, (), '', 'H')
 
     def set_clock_frequency(self, frequency):
         """
-        Sets the frequency of the clock in Hz. The range is 10000Hz (10kHz) up to
-        2000000Hz (2MHz).
+        Sets the frequency of the clock.
 
         The Bricklet will choose the nearest achievable frequency, which may
         be off by a few Hz. You can get the exact frequency that is used by
@@ -223,8 +216,6 @@ class BrickletLEDStrip(Device):
 
         With a decreasing frequency your maximum frames per second will decrease
         too.
-
-        The default value is 1.66MHz.
 
         .. note::
          The frequency in firmware version 2.0.0 is fixed at 2MHz.
@@ -254,8 +245,6 @@ class BrickletLEDStrip(Device):
         * LPD8806 and
         * APA102 / DotStar.
 
-        The default value is WS2801 (2801).
-
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
         chip = int(chip)
@@ -272,8 +261,7 @@ class BrickletLEDStrip(Device):
 
     def set_rgbw_values(self, index, length, r, g, b, w):
         """
-        Sets the RGBW values for the LEDs with the given *length* starting
-        from *index*.
+        Sets *length* RGBW values for the LEDs starting from *index*.
 
         To make the colors show correctly you need to configure the chip type
         (:func:`Set Chip Type`) and a 4-channel channel mapping (:func:`Set Channel Mapping`)
@@ -339,8 +327,7 @@ class BrickletLEDStrip(Device):
 
     def get_rgbw_values(self, index, length):
         """
-        Returns RGBW values with the given *length* starting from the
-        given *index*.
+        Returns *length* RGBW values starting from the given *index*.
 
         The values are the last values that were set by :func:`Set RGBW Values`.
 
@@ -372,8 +359,6 @@ class BrickletLEDStrip(Device):
         results. Vice-versa if a 4-channel mapping is selected then
         :func:`Set RGBW Values` has to be used. Calling :func:`Set RGB Values` with a
         4-channel mapping will produce incorrect results.
-
-        The default value is BGR (36).
 
         .. versionadded:: 2.0.6$nbsp;(Plugin)
         """

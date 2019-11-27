@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -157,14 +157,14 @@ class BrickletOutdoorWeather(Device):
 
         The return values are:
 
-        * Temperature in °C/10,
-        * Humidity in %RH,
-        * Wind Speed in m/10s,
-        * Gust Speed in m/10s,
-        * Rain Fall in mm/10,
-        * Wind Direction (N, NNE, NE, ENE, E, ESE, SE, SSE, S, SSW, SW, WSW, W, WNW, NW, NNW),
-        * Battery Low (true or false) and
-        * Last Change (time in seconds since the reception of this data).
+        * Temperature,
+        * Humidity,
+        * Wind Speed,
+        * Gust Speed,
+        * Rain Fall,
+        * Wind Direction,
+        * Battery Low (true if battery is low) and
+        * Last Change (seconds since the reception of this data).
         """
         identifier = int(identifier)
 
@@ -177,9 +177,9 @@ class BrickletOutdoorWeather(Device):
 
         The return values are:
 
-        * Temperature in °C/10,
-        * Humidity in %RH and
-        * Last Change (time in seconds since the last reception of data).
+        * Temperature,
+        * Humidity and
+        * Last Change (seconds since the last reception of data).
         """
         identifier = int(identifier)
 
@@ -187,7 +187,7 @@ class BrickletOutdoorWeather(Device):
 
     def set_station_callback_configuration(self, enable_callback):
         """
-        Turns callback for station data on or off. Default is off.
+        Turns callback for station data on or off.
         """
         enable_callback = bool(enable_callback)
 
@@ -201,7 +201,7 @@ class BrickletOutdoorWeather(Device):
 
     def set_sensor_callback_configuration(self, enable_callback):
         """
-        Turns callback for sensor data on or off. Default is off.
+        Turns callback for sensor data on or off.
         """
         enable_callback = bool(enable_callback)
 

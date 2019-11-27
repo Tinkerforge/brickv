@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -110,8 +110,7 @@ class BrickletColor(Device):
 
     def get_color(self):
         """
-        Returns the measured color of the sensor. The values
-        have a range of 0 to 65535.
+        Returns the measured color of the sensor.
 
         The red (r), green (g), blue (b) and clear (c) colors are measured
         with four different photodiodes that are responsive at different
@@ -131,13 +130,11 @@ class BrickletColor(Device):
 
     def set_color_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Color` callback is triggered
+        Sets the period with which the :cb:`Color` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Color` callback is only triggered if the color has changed since the
         last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -164,8 +161,6 @@ class BrickletColor(Device):
          "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
          "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0, 0, 0, 0, 0, 0, 0).
         """
         option = create_char(option)
         min_r = int(min_r)
@@ -187,7 +182,7 @@ class BrickletColor(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callback
+        Sets the period with which the threshold callback
 
         * :cb:`Color Reached`
 
@@ -196,8 +191,6 @@ class BrickletColor(Device):
         * :func:`Set Color Callback Threshold`
 
         keeps being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 
@@ -257,8 +250,6 @@ class BrickletColor(Device):
         and accuracy. With a longer integration time the values read will
         be more accurate but it will take longer time to get the conversion
         results.
-
-        The default values are 60x gain and 154ms integration time.
         """
         gain = int(gain)
         integration_time = int(integration_time)
@@ -287,7 +278,7 @@ class BrickletColor(Device):
 
     def get_color_temperature(self):
         """
-        Returns the color temperature in Kelvin.
+        Returns the color temperature.
 
         To get a correct color temperature measurement make sure that the color
         values themselves are not saturated. The color value (R, G or B)
@@ -298,13 +289,11 @@ class BrickletColor(Device):
 
     def set_illuminance_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Illuminance` callback is triggered
+        Sets the period with which the :cb:`Illuminance` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Illuminance` callback is only triggered if the illuminance has changed
         since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -318,13 +307,11 @@ class BrickletColor(Device):
 
     def set_color_temperature_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Color Temperature` callback is
+        Sets the period with which the :cb:`Color Temperature` callback is
         triggered periodically. A value of 0 turns the callback off.
 
         The :cb:`Color Temperature` callback is only triggered if the color temperature
         has changed since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 

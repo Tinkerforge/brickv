@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -75,8 +75,8 @@ class BrickletMoisture(Device):
 
     def get_moisture_value(self):
         """
-        Returns the current moisture value. The value has a range of
-        0 to 4095. A small value corresponds to little moisture, a big
+        Returns the current moisture value.
+        A small value corresponds to little moisture, a big
         value corresponds to much moisture.
 
         If you want to get the moisture value periodically, it is recommended
@@ -87,13 +87,11 @@ class BrickletMoisture(Device):
 
     def set_moisture_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Moisture` callback is triggered
+        Sets the period with which the :cb:`Moisture` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Moisture` callback is only triggered if the moisture value has changed
         since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -120,8 +118,6 @@ class BrickletMoisture(Device):
          "'i'",    "Callback is triggered when the moisture value is *inside* the min and max values"
          "'<'",    "Callback is triggered when the moisture value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the moisture value is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -137,7 +133,7 @@ class BrickletMoisture(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callback
+        Sets the period with which the threshold callback
 
         * :cb:`Moisture Reached`
 
@@ -146,8 +142,6 @@ class BrickletMoisture(Device):
         * :func:`Set Moisture Callback Threshold`
 
         keeps being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 
@@ -166,10 +160,6 @@ class BrickletMoisture(Device):
 
         Setting the length to 0 will turn the averaging completely off. With less
         averaging, there is more noise on the data.
-
-        The range for the averaging is 0-100.
-
-        The default value is 100.
         """
         average = int(average)
 

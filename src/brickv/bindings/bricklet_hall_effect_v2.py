@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -113,8 +113,7 @@ class BrickletHallEffectV2(Device):
 
     def get_magnetic_flux_density(self):
         """
-        Returns the `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__
-        in `µT (micro Tesla) <https://en.wikipedia.org/wiki/Tesla_(unit)>`__.
+        Returns the `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -125,7 +124,7 @@ class BrickletHallEffectV2(Device):
 
     def set_magnetic_flux_density_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Magnetic Flux Density` callback is triggered
+        The period is the period with which the :cb:`Magnetic Flux Density` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -152,8 +151,6 @@ class BrickletHallEffectV2(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -173,8 +170,8 @@ class BrickletHallEffectV2(Device):
         """
         Returns the current value of the counter.
 
-        You can configure the low/high thresholds in µT and the debounce time
-        in us with :func:`Set Counter Config`.
+        You can configure the low/high thresholds and the debounce time
+        with :func:`Set Counter Config`.
 
         If you set reset counter to *true*, the count is set back to 0
         directly after it is read.
@@ -189,18 +186,12 @@ class BrickletHallEffectV2(Device):
 
     def set_counter_config(self, high_threshold, low_threshold, debounce):
         """
-        Sets a high and a low threshold in µT as well as a debounce time in µs.
+        Sets a high and a low threshold as well as a debounce time.
 
         If the measured magnetic flux density goes above the high threshold or
         below the low threshold, the count of the counter is increased by 1.
 
         The debounce time is the minimum time between two count increments.
-
-        The default values are
-
-        * High Threshold: 2000µT
-        * Low Threshold: -2000µT
-        * Debounce: 100000µs (100ms)
         """
         high_threshold = int(high_threshold)
         low_threshold = int(low_threshold)
@@ -216,7 +207,7 @@ class BrickletHallEffectV2(Device):
 
     def set_counter_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`Counter`
+        The period is the period with which the :cb:`Counter`
         callback is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -225,8 +216,6 @@ class BrickletHallEffectV2(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -142,7 +142,7 @@ class BrickletSoundPressureLevel(Device):
 
     def set_decibel_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Decibel` callback is triggered
+        The period is the period with which the :cb:`Decibel` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -169,8 +169,6 @@ class BrickletSoundPressureLevel(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -211,13 +209,11 @@ class BrickletSoundPressureLevel(Device):
 
     def set_spectrum_callback_configuration(self, period):
         """
-        The period in ms is the period with which the :cb:`Spectrum` callback is
+        The period is the period with which the :cb:`Spectrum` callback is
         triggered periodically. A value of 0 turns the callback off.
 
         Every new measured spectrum will be send at most once. Set the period to 1 to
         make sure that you get every spectrum.
-
-        The default value is 0.
         """
         period = int(period)
 

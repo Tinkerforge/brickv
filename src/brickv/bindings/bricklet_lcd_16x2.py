@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -72,8 +72,8 @@ class BrickletLCD16x2(Device):
 
     def write_line(self, line, position, text):
         """
-        Writes text to a specific line (0 to 1) with a specific position
-        (0 to 15). The text can have a maximum of 16 characters.
+        Writes text to a specific line with a specific position.
+        The text can have a maximum of 16 characters.
 
         For example: (0, 5, "Hello") will write *Hello* in the middle of the
         first line of the display.
@@ -120,8 +120,6 @@ class BrickletLCD16x2(Device):
         should be blinking (shown as a blinking block). The cursor position
         is one character behind the the last text written with
         :func:`Write Line`.
-
-        The default is (false, false).
         """
         cursor = bool(cursor)
         blinking = bool(blinking)
@@ -136,7 +134,7 @@ class BrickletLCD16x2(Device):
 
     def is_button_pressed(self, button):
         """
-        Returns *true* if the button (0 to 2) is pressed.
+        Returns *true* if the button is pressed.
 
         If you want to react on button presses and releases it is recommended to use the
         :cb:`Button Pressed` and :cb:`Button Released` callbacks.

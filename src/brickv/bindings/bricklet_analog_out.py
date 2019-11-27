@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -59,10 +59,8 @@ class BrickletAnalogOut(Device):
 
     def set_voltage(self, voltage):
         """
-        Sets the voltage in mV. The possible range is 0V to 5V (0-5000).
-        Calling this function will set the mode to 0 (see :func:`Set Mode`).
-
-        The default value is 0 (with mode 1).
+        Sets the voltage. Calling this function will set
+        the mode to 0 (see :func:`Set Mode`).
         """
         voltage = int(voltage)
 
@@ -83,10 +81,8 @@ class BrickletAnalogOut(Device):
         * 2: 100k Ohm resistor to ground
         * 3: 500k Ohm resistor to ground
 
-        Setting the mode to 0 will result in an output voltage of 0. You can jump
+        Setting the mode to 0 will result in an output voltage of 0 V. You can jump
         to a higher output voltage directly by calling :func:`Set Voltage`.
-
-        The default mode is 1.
         """
         mode = int(mode)
 

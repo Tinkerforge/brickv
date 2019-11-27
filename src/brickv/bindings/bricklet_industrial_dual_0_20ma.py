@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -79,11 +79,10 @@ class BrickletIndustrialDual020mA(Device):
 
     def get_current(self, sensor):
         """
-        Returns the current of the specified sensor (0 or 1). The value is in nA
-        and between 0nA and 22505322nA (22.5mA).
+        Returns the current of the specified sensor.
 
         It is possible to detect if an IEC 60381-1 compatible sensor is connected
-        and if it works probably.
+        and if it works properly.
 
         If the returned current is below 4mA, there is likely no sensor connected
         or the sensor may be defect. If the returned current is over 20mA, there might
@@ -99,13 +98,11 @@ class BrickletIndustrialDual020mA(Device):
 
     def set_current_callback_period(self, sensor, period):
         """
-        Sets the period in ms with which the :cb:`Current` callback is triggered
+        Sets the period with which the :cb:`Current` callback is triggered
         periodically for the given sensor. A value of 0 turns the callback off.
 
         The :cb:`Current` callback is only triggered if the current has changed since the
         last triggering.
-
-        The default value is 0.
         """
         sensor = int(sensor)
         period = int(period)
@@ -136,8 +133,6 @@ class BrickletIndustrialDual020mA(Device):
          "'i'",    "Callback is triggered when the current is *inside* the min and max values"
          "'<'",    "Callback is triggered when the current is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the current is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         sensor = int(sensor)
         option = create_char(option)
@@ -156,7 +151,7 @@ class BrickletIndustrialDual020mA(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callback
+        Sets the period with which the threshold callback
 
         * :cb:`Current Reached`
 
@@ -165,8 +160,6 @@ class BrickletIndustrialDual020mA(Device):
         * :func:`Set Current Callback Threshold`
 
         keeps being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 
@@ -191,8 +184,6 @@ class BrickletIndustrialDual020mA(Device):
          "1",    "60 samples per second, 14 bit resolution"
          "2",    "15 samples per second, 16 bit resolution"
          "3",    "4 samples per second, 18 bit resolution"
-
-        The default value is 3 (4 samples per second with 18 bit resolution).
         """
         rate = int(rate)
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-09-13.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -111,9 +111,9 @@ class BrickletGPS(Device):
         the additional multiplicative effect of GPS satellite geometry on GPS
         precision. See
         `here <https://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__
-        for more information. The values are give in hundredths.
+        for more information.
 
-        EPE is the "Estimated Position Error". The EPE is given in cm. This is not the
+        EPE is the "Estimated Position Error". This is not the
         absolute maximum error, it is the error with a specific confidence. See
         `here <https://www.nps.gov/gis/gps/WhatisEPE.html>`__ for more information.
 
@@ -146,8 +146,6 @@ class BrickletGPS(Device):
         """
         Returns the current altitude and corresponding geoidal separation.
 
-        Both values are given in cm.
-
         This data is only valid if there is currently a fix as indicated by
         :func:`Get Status`.
         """
@@ -155,8 +153,7 @@ class BrickletGPS(Device):
 
     def get_motion(self):
         """
-        Returns the current course and speed. Course is given in hundredths degree
-        and speed is given in hundredths km/h. A course of 0° means the Bricklet is
+        Returns the current course and speed. A course of 0° means the Bricklet is
         traveling north bound and 90° means it is traveling east bound.
 
         Please note that this only returns useful values if an actual movement
@@ -195,13 +192,11 @@ class BrickletGPS(Device):
 
     def set_coordinates_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Coordinates` callback is triggered
+        Sets the period with which the :cb:`Coordinates` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Coordinates` callback is only triggered if the coordinates changed
         since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -215,13 +210,11 @@ class BrickletGPS(Device):
 
     def set_status_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Status` callback is triggered
+        Sets the period with which the :cb:`Status` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Status` callback is only triggered if the status changed since the
         last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -235,13 +228,11 @@ class BrickletGPS(Device):
 
     def set_altitude_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Altitude` callback is triggered
+        Sets the period with which the :cb:`Altitude` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Altitude` callback is only triggered if the altitude changed since
         the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -255,13 +246,11 @@ class BrickletGPS(Device):
 
     def set_motion_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Motion` callback is triggered
+        Sets the period with which the :cb:`Motion` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Motion` callback is only triggered if the motion changed since the
         last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -275,13 +264,11 @@ class BrickletGPS(Device):
 
     def set_date_time_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Date Time` callback is triggered
+        Sets the period with which the :cb:`Date Time` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Date Time` callback is only triggered if the date or time changed
         since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 

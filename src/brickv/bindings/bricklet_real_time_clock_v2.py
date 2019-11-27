@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -208,10 +208,8 @@ class BrickletRealTimeClockV2(Device):
 
     def set_date_time_callback_configuration(self, period):
         """
-        Sets the period in ms with which the :cb:`Date Time` callback is triggered
+        Sets the period with which the :cb:`Date Time` callback is triggered
         periodically. A value of 0 turns the callback off.
-
-        The default value is 0.
         """
         period = int(period)
 

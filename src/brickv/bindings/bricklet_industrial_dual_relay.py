@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -107,8 +107,6 @@ class BrickletIndustrialDualRelay(Device):
         can use :func:`Set Selected Value`.
 
         All running monoflop timers will be aborted if this function is called.
-
-        The default value is (*false*, *false*).
         """
         channel0 = bool(channel0)
         channel1 = bool(channel1)
@@ -125,7 +123,7 @@ class BrickletIndustrialDualRelay(Device):
         """
         The first parameter can be 0 or 1 (relay 0 or relay 1). The second parameter
         is the desired state of the relay (*true* means on and *false* means off).
-        The third parameter indicates the time (in ms) that the relay should hold
+        The third parameter indicates the time that the relay should hold
         the state.
 
         If this function is called with the parameters (1, true, 1500):
@@ -157,7 +155,7 @@ class BrickletIndustrialDualRelay(Device):
 
     def set_selected_value(self, channel, value):
         """
-        Sets the state of the selected relay (0 or 1), *true* means on and *false*
+        Sets the state of the selected relay, *true* means on and *false*
         means off.
 
         A running monoflop timer for the selected relay will be aborted if this function

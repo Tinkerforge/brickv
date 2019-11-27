@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -166,9 +166,8 @@ class BrickletEPaper296x128(Device):
         """
         Writes black/white pixels to the specified window into the buffer.
 
-        The x-axis goes from 0 to 295 and the y-axis from 0 to 127. The pixels are written
-        into the window line by line top to bottom and each line is written from left to
-        right.
+        The pixels are written into the window line by line top to bottom
+        and each line is written from left to right.
 
         The value 0 (false) corresponds to a black pixel and the value 1 (true) to a
         white pixel.
@@ -192,9 +191,8 @@ class BrickletEPaper296x128(Device):
         """
         Returns the current content of the black/white pixel buffer for the specified window.
 
-        The x-axis goes from 0 to 295 and the y-axis from 0 to 127. The pixels are written
-        into the window line by line top to bottom and each line is written from left to
-        right.
+        The pixels are read into the window line by line top to bottom and
+        each line is read from left to right.
 
         The current content of the buffer does not have to be the current content of the display.
         It is possible that the data was not drawn to the display yet and after a restart of
@@ -213,9 +211,8 @@ class BrickletEPaper296x128(Device):
         black/white/gray. Depending on the model this function writes either red or
         gray pixels to the specified window into the buffer.
 
-        The x-axis goes from 0 to 295 and the y-axis from 0 to 127. The pixels are written
-        into the window line by line top to bottom and each line is written from left to
-        right.
+        The pixels are written into the window line by line top to bottom
+        and each line is written from left to right.
 
         The value 0 (false) means that this pixel does not have color. It will be either black
         or white (see :func:`Write Black White`). The value 1 (true) corresponds to a red or gray
@@ -240,9 +237,8 @@ class BrickletEPaper296x128(Device):
         """
         Returns the current content of the red or gray pixel buffer for the specified window.
 
-        The x-axis goes from 0 to 295 and the y-axis from 0 to 127. The pixels are written
-        into the window line by line top to bottom and each line is written from left to
-        right.
+        The pixels are written into the window line by line top to bottom
+        and each line is written from left to right.
 
         The current content of the buffer does not have to be the current content of the display.
         It is possible that the data was not drawn to the display yet and after a restart of
@@ -258,6 +254,9 @@ class BrickletEPaper296x128(Device):
     def fill_display(self, color):
         """
         Fills the complete content of the display with the given color.
+
+        This function writes the pixels into the black/white/red|gray pixel buffer, to draw the buffer
+        to the display use :func:`Draw`.
         """
         color = int(color)
 
@@ -267,11 +266,11 @@ class BrickletEPaper296x128(Device):
         """
         Draws a text with up to 50 characters at the pixel position (x, y).
 
-        The x values have to be within the range of 0 to 295 and the y
-        values have to be within the range of 0 to 127.
-
         You can use one of 9 different font sizes and draw the text in
         black/white/red|gray. The text can be drawn horizontal or vertical.
+
+        This function writes the pixels into the black/white/red|gray pixel buffer, to draw the buffer
+        to the display use :func:`Draw`.
         """
         position_x = int(position_x)
         position_y = int(position_y)
@@ -285,8 +284,9 @@ class BrickletEPaper296x128(Device):
     def draw_line(self, position_x_start, position_y_start, position_x_end, position_y_end, color):
         """
         Draws a line from (x, y)-start to (x, y)-end in the given color.
-        The x values have to be within the range of 0 to 295 and the y
-        values have t be within the range of 0 to 127.
+
+        This function writes the pixels into the black/white/red|gray pixel buffer, to draw the buffer
+        to the display use :func:`Draw`.
         """
         position_x_start = int(position_x_start)
         position_y_start = int(position_y_start)
@@ -299,11 +299,12 @@ class BrickletEPaper296x128(Device):
     def draw_box(self, position_x_start, position_y_start, position_x_end, position_y_end, fill, color):
         """
         Draws a box from (x, y)-start to (x, y)-end in the given color.
-        The x values have to be within the range of 0 to 295 and the y
-        values have to be within the range of 0 to 127.
 
         If you set fill to true, the box will be filled with the
         color. Otherwise only the outline will be drawn.
+
+        This function writes the pixels into the black/white/red|gray pixel buffer, to draw the buffer
+        to the display use :func:`Draw`.
         """
         position_x_start = int(position_x_start)
         position_y_start = int(position_y_start)
@@ -523,9 +524,8 @@ class BrickletEPaper296x128(Device):
         """
         Writes black/white pixels to the specified window into the buffer.
 
-        The x-axis goes from 0 to 295 and the y-axis from 0 to 127. The pixels are written
-        into the window line by line top to bottom and each line is written from left to
-        right.
+        The pixels are written into the window line by line top to bottom
+        and each line is written from left to right.
 
         The value 0 (false) corresponds to a black pixel and the value 1 (true) to a
         white pixel.
@@ -563,9 +563,8 @@ class BrickletEPaper296x128(Device):
         """
         Returns the current content of the black/white pixel buffer for the specified window.
 
-        The x-axis goes from 0 to 295 and the y-axis from 0 to 127. The pixels are written
-        into the window line by line top to bottom and each line is written from left to
-        right.
+        The pixels are read into the window line by line top to bottom and
+        each line is read from left to right.
 
         The current content of the buffer does not have to be the current content of the display.
         It is possible that the data was not drawn to the display yet and after a restart of
@@ -603,9 +602,8 @@ class BrickletEPaper296x128(Device):
         black/white/gray. Depending on the model this function writes either red or
         gray pixels to the specified window into the buffer.
 
-        The x-axis goes from 0 to 295 and the y-axis from 0 to 127. The pixels are written
-        into the window line by line top to bottom and each line is written from left to
-        right.
+        The pixels are written into the window line by line top to bottom
+        and each line is written from left to right.
 
         The value 0 (false) means that this pixel does not have color. It will be either black
         or white (see :func:`Write Black White`). The value 1 (true) corresponds to a red or gray
@@ -644,9 +642,8 @@ class BrickletEPaper296x128(Device):
         """
         Returns the current content of the red or gray pixel buffer for the specified window.
 
-        The x-axis goes from 0 to 295 and the y-axis from 0 to 127. The pixels are written
-        into the window line by line top to bottom and each line is written from left to
-        right.
+        The pixels are written into the window line by line top to bottom
+        and each line is written from left to right.
 
         The current content of the buffer does not have to be the current content of the display.
         It is possible that the data was not drawn to the display yet and after a restart of

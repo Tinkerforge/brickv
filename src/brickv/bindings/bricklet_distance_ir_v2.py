@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -127,7 +127,7 @@ class BrickletDistanceIRV2(Device):
 
     def get_distance(self):
         """
-        Returns the distance measured by the sensor. The value is in mm and possible
+        Returns the distance measured by the sensor. Possible
         distance ranges are 40 to 300, 100 to 800 and 200 to 1500, depending on the
         selected IR sensor.
 
@@ -140,7 +140,7 @@ class BrickletDistanceIRV2(Device):
 
     def set_distance_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Distance` callback is triggered
+        The period is the period with which the :cb:`Distance` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -167,8 +167,6 @@ class BrickletDistanceIRV2(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -187,7 +185,6 @@ class BrickletDistanceIRV2(Device):
     def get_analog_value(self):
         """
         Returns the analog value as read by a analog-to-digital converter.
-        The value has 21 bit with a range of 0 to 2097151.
 
         This is unfiltered raw data. We made sure that the integration time
         of the ADC is shorter then the measurement interval of the sensor
@@ -205,7 +202,7 @@ class BrickletDistanceIRV2(Device):
 
     def set_analog_value_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Analog Value` callback is triggered
+        The period is the period with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -232,8 +229,6 @@ class BrickletDistanceIRV2(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -257,13 +252,9 @@ class BrickletDistanceIRV2(Device):
         Setting the length to 1 will turn the averaging off. With less averaging, there
         is more noise on the data.
 
-        The range for the averaging is 1-1000.
-
         New data is gathered every ~10ms. With a moving average of length 1000 the
         resulting averaging window has a length of approximately 10s. If you want to do
         long term measurements the longest moving average will give the cleanest results.
-
-        The default value is 25.
         """
         moving_average_length = int(moving_average_length)
 
@@ -279,8 +270,6 @@ class BrickletDistanceIRV2(Device):
         """
         Configures the distance LED to be either turned off, turned on, blink in
         heartbeat mode or show the distance (brighter = object is nearer).
-
-        The default value is 3 (show distance).
         """
         config = int(config)
 

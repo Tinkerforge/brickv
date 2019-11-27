@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -135,13 +135,15 @@ class BrickletCO2V2(Device):
 
     def get_all_values(self):
         """
-        Returns all values measured by the CO2 Bricklet 2.0. The values are
-        CO2 concentration (in ppm), temperature (in 0.01 °C)
-        and humidity (in 0.01 %RH).
+        Returns all values measured by the CO2 Bricklet 2.0.
 
         If you want to get the values periodically, it is recommended to use the
         :cb:`All Values` callback. You can set the callback configuration
         with :func:`Set All Values Callback Configuration`.
+
+        .. note::
+         The sensor is able to messure up to 120 °C. However it is only specified up to 70 °C.
+         Exposing the Bricklet to higher temperatures might result in permanent damage.
         """
         return GetAllValues(*self.ipcon.send_request(self, BrickletCO2V2.FUNCTION_GET_ALL_VALUES, (), '', 'H h H'))
 
@@ -152,8 +154,6 @@ class BrickletCO2V2(Device):
         To increase the accuracy of the CO2 Bricklet 2.0 you can set the current air pressure.
         You use the :ref:`Barometer Bricklet 2.0 <barometer_v2_bricklet>` or the
         :ref:`Air Quality Bricklet <air_quality_bricklet>` to get the current air pressure.
-
-        The expected unit of the ambient air pressure value is mbar.
 
         By default air pressure compensation is disabled. Once you set a value it
         will be used for compensation. You can turn the compensation off again by
@@ -173,8 +173,8 @@ class BrickletCO2V2(Device):
 
     def set_temperature_offset(self, offset):
         """
-        Sets a temperature offset with resolution 1/100°C. A offset of 10 will decrease
-        the measured temperature by 0.1°C.
+        Sets a temperature offset. A offset of 10 will decrease
+        the measured temperature by 0.1 °C.
 
         If you install this Bricklet into an enclosure and you want to measure the ambient
         temperature, you may have to decrease the measured temperature by some value to
@@ -205,7 +205,7 @@ class BrickletCO2V2(Device):
 
     def set_all_values_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`All Values`
+        The period is the period with which the :cb:`All Values`
         callback is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -214,8 +214,6 @@ class BrickletCO2V2(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -231,7 +229,7 @@ class BrickletCO2V2(Device):
 
     def get_co2_concentration(self):
         """
-        Returns CO2 concentration in ppm.
+        Returns CO2 concentration.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -242,7 +240,7 @@ class BrickletCO2V2(Device):
 
     def set_co2_concentration_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`CO2 Concentration` callback is triggered
+        The period is the period with which the :cb:`CO2 Concentration` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -269,8 +267,6 @@ class BrickletCO2V2(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -288,7 +284,11 @@ class BrickletCO2V2(Device):
 
     def get_temperature(self):
         """
-        Returns temperature in steps of 0.01 °C.
+        Returns temperature.
+
+        .. note::
+         The sensor is able to messure up to 120 °C. However it is only specified up to 70 °C.
+         Exposing the Bricklet to higher temperatures might result in permanent damage.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -299,7 +299,7 @@ class BrickletCO2V2(Device):
 
     def set_temperature_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Temperature` callback is triggered
+        The period is the period with which the :cb:`Temperature` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -326,8 +326,6 @@ class BrickletCO2V2(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -345,7 +343,7 @@ class BrickletCO2V2(Device):
 
     def get_humidity(self):
         """
-        Returns relative humidity in steps of 0.01 %RH.
+        Returns relative humidity.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -356,7 +354,7 @@ class BrickletCO2V2(Device):
 
     def set_humidity_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Humidity` callback is triggered
+        The period is the period with which the :cb:`Humidity` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -383,8 +381,6 @@ class BrickletCO2V2(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -123,7 +123,7 @@ class BrickletCompass(Device):
 
     def get_heading(self):
         """
-        Returns the heading in 1/10 degree (north = 0 degree, east = 90 degree).
+        Returns the heading (north = 0 degree, east = 90 degree).
 
         Alternatively you can use :func:`Get Magnetic Flux Density` and calculate the
         heading with ``heading = atan2(y, x) * 180 / PI``.
@@ -137,7 +137,7 @@ class BrickletCompass(Device):
 
     def set_heading_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Heading` callback is triggered
+        The period is the period with which the :cb:`Heading` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -164,8 +164,6 @@ class BrickletCompass(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -184,7 +182,7 @@ class BrickletCompass(Device):
     def get_magnetic_flux_density(self):
         """
         Returns the `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__
-        for all three axis in 1/10 `mG (milli Gauss) <https://en.wikipedia.org/wiki/Gauss_(unit)>`__.
+        for all three axis.
 
         If you want to get the value periodically, it is recommended to use the
         :cb:`Magnetic Flux Density` callback. You can set the callback configuration
@@ -194,7 +192,7 @@ class BrickletCompass(Device):
 
     def set_magnetic_flux_density_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`Magnetic Flux Density` callback
+        The period is the period with which the :cb:`Magnetic Flux Density` callback
         is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -203,8 +201,6 @@ class BrickletCompass(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -232,8 +228,6 @@ class BrickletCompass(Device):
           you will not get new data for a period of 20ms. We highly recommend that
           you keep the background calibration enabled and only disable it if the 20ms
           off-time is a problem in your application.
-
-        Default values: Data rate of 100Hz and background calibration enabled.
         """
         data_rate = int(data_rate)
         background_calibration = bool(background_calibration)

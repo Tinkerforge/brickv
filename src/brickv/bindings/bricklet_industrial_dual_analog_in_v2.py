@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -133,7 +133,7 @@ class BrickletIndustrialDualAnalogInV2(Device):
 
     def get_voltage(self, channel):
         """
-        Returns the voltage for the given channel in mV.
+        Returns the voltage for the given channel.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -146,7 +146,7 @@ class BrickletIndustrialDualAnalogInV2(Device):
 
     def set_voltage_callback_configuration(self, channel, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Voltage` callback is triggered
+        The period is the period with which the :cb:`Voltage` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -173,8 +173,6 @@ class BrickletIndustrialDualAnalogInV2(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         channel = int(channel)
         period = int(period)
@@ -198,8 +196,6 @@ class BrickletIndustrialDualAnalogInV2(Device):
         Sets the sample rate. The sample rate can be between 1 sample per second
         and 976 samples per second. Decreasing the sample rate will also decrease the
         noise on the data.
-
-        The default value is 6 (2 samples per second).
         """
         rate = int(rate)
 
@@ -283,9 +279,6 @@ class BrickletIndustrialDualAnalogInV2(Device):
         and the brightness is linearly scaled between the values 4V and 20V. If the
         min value is greater than the max value, the LED brightness is scaled the other
         way around.
-
-        By default the channel LED status config is set to intensity with min=0V and
-        max=10V.
         """
         channel = int(channel)
         min = int(min)

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -110,8 +110,6 @@ class BrickletHallEffect(Device):
 
         If you don't know what any of this means, just leave it at default. The
         default configuration is very likely OK for you.
-
-        Default values: 0 (edge type) and 100ms (debounce time)
         """
         edge_type = int(edge_type)
         debounce = int(debounce)
@@ -146,13 +144,11 @@ class BrickletHallEffect(Device):
 
     def set_edge_count_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Edge Count` callback is triggered
+        Sets the period with which the :cb:`Edge Count` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Edge Count` callback is only triggered if the edge count has changed
         since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 

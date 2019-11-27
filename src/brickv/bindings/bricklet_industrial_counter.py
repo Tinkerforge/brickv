@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-09-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -207,13 +207,6 @@ class BrickletIndustrialCounter(Device):
         """
         Returns the signal data (duty cycle, period, frequency and value) for the
         given channel.
-
-        The units are:
-
-        * Duty Cycle: 1/100 %
-        * Period: ns
-        * Frequency: mHz (1/1000 Hz)
-        * Value: true = high, false = low
         """
         channel = int(channel)
 
@@ -223,13 +216,6 @@ class BrickletIndustrialCounter(Device):
         """
         Returns the signal data (duty cycle, period, frequency and value) for all four
         channels.
-
-        The units are:
-
-        * Duty Cycle: 1/100 %
-        * Period: ns
-        * Frequency: mHz (1/1000 Hz)
-        * Value: true = high, false = low
         """
         return GetAllSignalData(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_SIGNAL_DATA, (), '', '4H 4Q 4I 4!'))
 
@@ -280,18 +266,18 @@ class BrickletIndustrialCounter(Device):
         """
         Sets the counter configuration for the given channel.
 
-        * Count Edge: Counter can count on rising, falling or both edges. Default is rising.
+        * Count Edge: Counter can count on rising, falling or both edges.
         * Count Direction: Counter can count up or down. You can also use
           another channel as direction input, see
           `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
-          for details. Default is up.
+          for details.
         * Duty Cycle Prescaler: Sets a divider for the internal clock. See
           `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
-          for details. Default is 1.
+          for details.
         * Frequency Integration Time: Sets the integration time for the
           frequency measurement. See
           `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
-          for details. Default is 1024ms.
+          for details.
         """
         channel = int(channel)
         count_edge = int(count_edge)
@@ -311,7 +297,7 @@ class BrickletIndustrialCounter(Device):
 
     def set_all_counter_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`All Counter`
+        The period is the period with which the :cb:`All Counter`
         callback is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -320,8 +306,6 @@ class BrickletIndustrialCounter(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -337,7 +321,7 @@ class BrickletIndustrialCounter(Device):
 
     def set_all_signal_data_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`All Signal Data`
+        The period is the period with which the :cb:`All Signal Data`
         callback is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -346,8 +330,6 @@ class BrickletIndustrialCounter(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)

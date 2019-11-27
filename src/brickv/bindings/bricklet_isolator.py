@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-09-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -134,10 +134,6 @@ class BrickletIsolator(Device):
         The maximum value of the baudrate can be set per port with the function
         :func:`Set SPITFP Baudrate`. If the dynamic baudrate is disabled, the baudrate
         as set by :func:`Set SPITFP Baudrate` will be used statically.
-
-        The minimum dynamic baudrate has a value range of 400000 to 2000000 baud.
-
-        By default dynamic baudrate is enabled and the minimum dynamic baudrate is 400000.
         """
         enable_dynamic_baudrate = bool(enable_dynamic_baudrate)
         minimum_dynamic_baudrate = int(minimum_dynamic_baudrate)
@@ -156,8 +152,6 @@ class BrickletIsolator(Device):
         and the connected Bricklet. The baudrate for communication between
         Brick and Isolator Bricklet can be set through the API of the Brick.
 
-        The baudrate can be in the range 400000 to 2000000.
-
         If you want to increase the throughput of Bricklets you can increase
         the baudrate. If you get a high error count because of high
         interference (see :func:`Get SPITFP Error Count`) you can decrease the
@@ -169,8 +163,6 @@ class BrickletIsolator(Device):
         Regulatory testing is done with the default baudrate. If CE compatibility
         or similar is necessary in you applications we recommend to not change
         the baudrate.
-
-        The default baudrate for all ports is 1400000.
         """
         baudrate = int(baudrate)
 
@@ -199,7 +191,7 @@ class BrickletIsolator(Device):
 
     def set_statistics_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`Statistics`
+        The period is the period with which the :cb:`Statistics`
         callback is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -208,8 +200,6 @@ class BrickletIsolator(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
 
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """

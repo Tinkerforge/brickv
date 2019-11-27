@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -222,8 +222,6 @@ class BrickletNFC(Device):
         If you change a mode, the Bricklet will reconfigure the hardware for this mode.
         Therefore, you can only use functions corresponding to the current mode. For
         example, in Reader mode you can only use Reader functions.
-
-        The default mode is "off".
         """
         mode = int(mode)
 
@@ -308,7 +306,7 @@ class BrickletNFC(Device):
 
     def reader_write_ndef_low_level(self, ndef_length, ndef_chunk_offset, ndef_chunk_data):
         """
-        Writes NDEF formated data with a maximum of 255 bytes.
+        Writes NDEF formated data.
 
         This function currently supports NFC Forum Type 2 and 4.
 
@@ -353,8 +351,6 @@ class BrickletNFC(Device):
         """
         Returns the NDEF data from an internal buffer. To fill the buffer
         with a NDEF message you have to call :func:`Reader Request NDEF` beforehand.
-
-        The buffer can have a size of up to 8192 bytes.
         """
         return ReaderReadNDEFLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_READ_NDEF_LOW_LEVEL, (), '', 'H H 60B'))
 
@@ -466,8 +462,6 @@ class BrickletNFC(Device):
         """
         Returns the page data from an internal buffer. To fill the buffer
         with specific pages you have to call :func:`Reader Request Page` beforehand.
-
-        The buffer can have a size of up to 8192 bytes.
         """
         return ReaderReadPageLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_READ_PAGE_LOW_LEVEL, (), '', 'H H 60B'))
 
@@ -612,7 +606,6 @@ class BrickletNFC(Device):
     def p2p_read_ndef_low_level(self):
         """
         Returns the NDEF message that was written by a NFC peer in NFC P2P mode.
-        The maximum NDEF length is 8192 byte.
 
         The NDEF message is ready if you called :func:`P2P Start Transfer` with a
         read transfer and the P2P state changed to *P2PTransferNDEFReady*.
@@ -640,7 +633,7 @@ class BrickletNFC(Device):
 
     def set_maximum_timeout(self, timeout):
         """
-        Sets the maximum timeout in ms.
+        Sets the maximum timeout.
 
         This is a global maximum used for all internal state timeouts. The timeouts depend heavily
         on the used tags etc. For example: If you use a Type 2 tag and you want to detect if
@@ -655,10 +648,8 @@ class BrickletNFC(Device):
         If you need a fast response time to discover if a tag is present or not you can find
         a good timeout value by trial and error for your specific tag.
 
-        By default we use a very conservative timeout, to be sure that any Tag can always
+        By default we use a very conservative timeout, to be sure that any tag can always
         answer in time.
-
-        Default timeout: 2000ms.
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
@@ -833,7 +824,7 @@ class BrickletNFC(Device):
 
     def reader_write_ndef(self, ndef):
         """
-        Writes NDEF formated data with a maximum of 255 bytes.
+        Writes NDEF formated data.
 
         This function currently supports NFC Forum Type 2 and 4.
 
@@ -872,8 +863,6 @@ class BrickletNFC(Device):
         """
         Returns the NDEF data from an internal buffer. To fill the buffer
         with a NDEF message you have to call :func:`Reader Request NDEF` beforehand.
-
-        The buffer can have a size of up to 8192 bytes.
         """
         with self.stream_lock:
             ret = self.reader_read_ndef_low_level()
@@ -951,8 +940,6 @@ class BrickletNFC(Device):
         """
         Returns the page data from an internal buffer. To fill the buffer
         with specific pages you have to call :func:`Reader Request Page` beforehand.
-
-        The buffer can have a size of up to 8192 bytes.
         """
         with self.stream_lock:
             ret = self.reader_read_page_low_level()
@@ -1038,7 +1025,6 @@ class BrickletNFC(Device):
     def p2p_read_ndef(self):
         """
         Returns the NDEF message that was written by a NFC peer in NFC P2P mode.
-        The maximum NDEF length is 8192 byte.
 
         The NDEF message is ready if you called :func:`P2P Start Transfer` with a
         read transfer and the P2P state changed to *P2PTransferNDEFReady*.

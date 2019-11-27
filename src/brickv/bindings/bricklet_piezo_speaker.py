@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -59,16 +59,11 @@ class BrickletPiezoSpeaker(Device):
 
     def beep(self, duration, frequency):
         """
-        Beeps with the given frequency for the duration in ms. For example:
-        If you set a duration of 1000, with a frequency value of 2000
-        the piezo buzzer will beep for one second with a frequency of
-        approximately 2 kHz.
+        Beeps with the given frequency for the given duration.
 
         .. versionchanged:: 2.0.2$nbsp;(Plugin)
            A duration of 0 stops the current beep if any, the frequency parameter is
            ignored. A duration of 4294967295 results in an infinite beep.
-
-        The *frequency* parameter can be set between 585 and 7100.
 
         The Piezo Speaker Bricklet can only approximate the frequency, it will play
         the best possible match by applying the calibration (see :func:`Calibrate`).
@@ -83,13 +78,10 @@ class BrickletPiezoSpeaker(Device):
         Sets morse code that will be played by the piezo buzzer. The morse code
         is given as a string consisting of "." (dot), "-" (minus) and " " (space)
         for *dits*, *dahs* and *pauses*. Every other character is ignored.
-        The second parameter is the frequency (see :func:`Beep`).
 
         For example: If you set the string "...---...", the piezo buzzer will beep
         nine times with the durations "short short short long long long short
         short short".
-
-        The maximum string size is 60.
         """
         morse = create_string(morse)
         frequency = int(frequency)

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -55,8 +55,7 @@ class BrickletPiezoBuzzer(Device):
 
     def beep(self, duration):
         """
-        Beeps with the duration in ms. For example: If you set a value of 1000,
-        the piezo buzzer will beep for one second.
+        Beeps for the given duration.
         """
         duration = int(duration)
 
@@ -71,8 +70,6 @@ class BrickletPiezoBuzzer(Device):
         For example: If you set the string "...---...", the piezo buzzer will beep
         nine times with the durations "short short short long long long short
         short short".
-
-        The maximum string size is 60.
         """
         morse = create_string(morse)
 

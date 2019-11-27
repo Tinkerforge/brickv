@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -131,7 +131,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         """
         This callback can be configured per channel.
 
-        The period in ms is the period with which the :cb:`Value`
+        The period is the period with which the :cb:`Value`
         callback is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -140,8 +140,6 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
         """
         channel = int(channel)
         period = int(period)
@@ -160,7 +158,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
     def set_all_value_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`All Value`
+        The period is the period with which the :cb:`All Value`
         callback is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -169,8 +167,6 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -204,18 +200,14 @@ class BrickletIndustrialDigitalIn4V2(Device):
         The edge type parameter configures if rising edges, falling edges or both are
         counted. Possible edge types are:
 
-        * 0 = rising (default)
+        * 0 = rising
         * 1 = falling
         * 2 = both
-
-        The debounce time is given in ms.
 
         Configuring an edge counter resets its value to 0.
 
         If you don't know what any of this means, just leave it at default. The
         default configuration is very likely OK for you.
-
-        Default values: 0 (edge type) and 100ms (debounce time)
         """
         channel = int(channel)
         edge_type = int(edge_type)

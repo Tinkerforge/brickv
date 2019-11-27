@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -86,13 +86,11 @@ class BrickletUVLight(Device):
 
     def set_uv_light_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`UV Light` callback is triggered
+        Sets the period with which the :cb:`UV Light` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`UV Light` callback is only triggered if the intensity has changed since
         the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -136,7 +134,7 @@ class BrickletUVLight(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callbacks
+        Sets the period with which the threshold callbacks
 
         * :cb:`UV Light Reached`,
 
@@ -145,8 +143,6 @@ class BrickletUVLight(Device):
         * :func:`Set UV Light Callback Threshold`,
 
         keep being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -123,8 +123,6 @@ class BrickletIndustrialAnalogOutV2(Device):
     def set_enabled(self, enabled):
         """
         Enables/disables the output of voltage and current.
-
-        The default is disabled.
         """
         enabled = bool(enabled)
 
@@ -138,7 +136,7 @@ class BrickletIndustrialAnalogOutV2(Device):
 
     def set_voltage(self, voltage):
         """
-        Sets the output voltage in mV.
+        Sets the output voltage.
 
         The output voltage and output current are linked. Changing the output voltage
         also changes the output current.
@@ -155,7 +153,7 @@ class BrickletIndustrialAnalogOutV2(Device):
 
     def set_current(self, current):
         """
-        Sets the output current in µA.
+        Sets the output current.
 
         The output current and output voltage are linked. Changing the output current
         also changes the output voltage.
@@ -177,11 +175,11 @@ class BrickletIndustrialAnalogOutV2(Device):
         Possible voltage ranges are:
 
         * 0V to 5V
-        * 0V to 10V (default)
+        * 0V to 10V
 
         Possible current ranges are:
 
-        * 4mA to 20mA (default)
+        * 4mA to 20mA
         * 0mA to 20mA
         * 0mA to 24mA
 
@@ -207,8 +205,6 @@ class BrickletIndustrialAnalogOutV2(Device):
         of the LED can change with the output value (voltage or current).
 
         You can configure the channel status behavior with :func:`Set Out LED Status Config`.
-
-        By default the LED is configured as "Out Status"
         """
         config = int(config)
 
@@ -243,9 +239,6 @@ class BrickletIndustrialAnalogOutV2(Device):
         8V and above and the brightness is linearly scaled between the values 2V and 8V.
         If the min value is greater than the max value, the LED brightness is scaled the
         other way around.
-
-        By default the channel LED status config is set to intensity with min=0V and
-        max=10V.
         """
         min = int(min)
         max = int(max)

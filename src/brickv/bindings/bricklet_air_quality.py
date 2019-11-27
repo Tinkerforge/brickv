@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -169,14 +169,14 @@ class BrickletAirQuality(Device):
         * IAQ Index Accuracy: 0 = unreliable to 3 = high
         * Temperature: in steps of 0.01 °C
         * Humidity: in steps of 0.01 %RH
-        * Air Pressure: in steps of 0.01 mbar
+        * Air Pressure: in steps of 0.01 hPa
         """
         return GetAllValues(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_ALL_VALUES, (), '', 'i B i i i'))
 
     def set_temperature_offset(self, offset):
         """
-        Sets a temperature offset with resolution 1/100°C. A offset of 10 will decrease
-        the measured temperature by 0.1°C.
+        Sets a temperature offset with resolution 1/100 °C. A offset of 10 will decrease
+        the measured temperature by 0.1 °C.
 
         If you install this Bricklet into an enclosure and you want to measure the ambient
         temperature, you may have to decrease the measured temperature by some value to
@@ -204,7 +204,7 @@ class BrickletAirQuality(Device):
 
     def set_all_values_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`All Values`
+        The period is the period with which the :cb:`All Values`
         callback is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -213,8 +213,6 @@ class BrickletAirQuality(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -247,7 +245,7 @@ class BrickletAirQuality(Device):
 
     def set_iaq_index_callback_configuration(self, period, value_has_to_change):
         """
-        The period in ms is the period with which the :cb:`IAQ Index`
+        The period is the period with which the :cb:`IAQ Index`
         callback is triggered periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -256,8 +254,6 @@ class BrickletAirQuality(Device):
 
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
-
-        The default value is (0, false).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -284,7 +280,7 @@ class BrickletAirQuality(Device):
 
     def set_temperature_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Temperature` callback is triggered
+        The period is the period with which the :cb:`Temperature` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -311,8 +307,6 @@ class BrickletAirQuality(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -341,7 +335,7 @@ class BrickletAirQuality(Device):
 
     def set_humidity_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Humidity` callback is triggered
+        The period is the period with which the :cb:`Humidity` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -368,8 +362,6 @@ class BrickletAirQuality(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -387,7 +379,7 @@ class BrickletAirQuality(Device):
 
     def get_air_pressure(self):
         """
-        Returns air pressure in steps of 0.01 mbar.
+        Returns air pressure in steps of 0.01 hPa.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -398,7 +390,7 @@ class BrickletAirQuality(Device):
 
     def set_air_pressure_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Air Pressure` callback is triggered
+        The period is the period with which the :cb:`Air Pressure` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -425,8 +417,6 @@ class BrickletAirQuality(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         period = int(period)
         value_has_to_change = bool(value_has_to_change)

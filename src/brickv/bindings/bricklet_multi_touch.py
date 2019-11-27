@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -127,10 +127,6 @@ class BrickletMultiTouch(Device):
 
         After a new sensitivity is set, you likely want to call :func:`Recalibrate`
         to calibrate the electrodes with the newly defined sensitivity.
-
-        The valid sensitivity value range is 5-201.
-
-        The default sensitivity value is 181.
         """
         sensitivity = int(sensitivity)
 

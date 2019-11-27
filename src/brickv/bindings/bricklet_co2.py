@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -71,9 +71,7 @@ class BrickletCO2(Device):
 
     def get_co2_concentration(self):
         """
-        Returns the measured CO2 concentration. The value is in
-        `ppm (parts per million) <https://en.wikipedia.org/wiki/Parts-per_notation>`__
-        and between 0 to 10000.
+        Returns the measured CO2 concentration.
 
         If you want to get the CO2 concentration periodically, it is recommended to use
         the :cb:`CO2 Concentration` callback and set the period with
@@ -83,13 +81,11 @@ class BrickletCO2(Device):
 
     def set_co2_concentration_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`CO2 Concentration` callback is
+        Sets the period with which the :cb:`CO2 Concentration` callback is
         triggered periodically. A value of 0 turns the callback off.
 
         The :cb:`CO2 Concentration` callback is only triggered if the CO2 concentration
         has changed since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -116,8 +112,6 @@ class BrickletCO2(Device):
          "'i'",    "Callback is triggered when the CO2 concentration is *inside* the min and max values"
          "'<'",    "Callback is triggered when the CO2 concentration is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the CO2 concentration is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -133,7 +127,7 @@ class BrickletCO2(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callbacks
+        Sets the period with which the threshold callbacks
 
         * :cb:`CO2 Concentration Reached`,
 
@@ -142,8 +136,6 @@ class BrickletCO2(Device):
         * :func:`Set CO2 Concentration Callback Threshold`,
 
         keep being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 

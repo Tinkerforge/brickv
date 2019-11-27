@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -92,8 +92,7 @@ class BrickletCurrent12(Device):
 
     def get_current(self):
         """
-        Returns the current of the sensor. The value is in mA
-        and between -12500mA and 12500mA.
+        Returns the current of the sensor.
 
         If you want to get the current periodically, it is recommended to use the
         :cb:`Current` callback and set the period with
@@ -129,7 +128,6 @@ class BrickletCurrent12(Device):
     def get_analog_value(self):
         """
         Returns the value as read by a 12-bit analog-to-digital converter.
-        The value is between 0 and 4095.
 
         .. note::
          The value returned by :func:`Get Current` is averaged over several samples
@@ -145,13 +143,11 @@ class BrickletCurrent12(Device):
 
     def set_current_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Current` callback is triggered
+        Sets the period with which the :cb:`Current` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Current` callback is only triggered if the current has changed since
         the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -165,13 +161,11 @@ class BrickletCurrent12(Device):
 
     def set_analog_value_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Analog Value` callback is triggered
+        Sets the period with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Analog Value` callback is only triggered if the analog value has
         changed since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -198,8 +192,6 @@ class BrickletCurrent12(Device):
          "'i'",    "Callback is triggered when the current is *inside* the min and max values"
          "'<'",    "Callback is triggered when the current is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the current is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -228,8 +220,6 @@ class BrickletCurrent12(Device):
          "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
          "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -245,7 +235,7 @@ class BrickletCurrent12(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callbacks
+        Sets the period with which the threshold callbacks
 
         * :cb:`Current Reached`,
         * :cb:`Analog Value Reached`
@@ -256,8 +246,6 @@ class BrickletCurrent12(Device):
         * :func:`Set Analog Value Callback Threshold`
 
         keep being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 

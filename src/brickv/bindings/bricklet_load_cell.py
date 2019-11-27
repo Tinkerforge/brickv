@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -95,7 +95,7 @@ class BrickletLoadCell(Device):
 
     def get_weight(self):
         """
-        Returns the currently measured weight in grams.
+        Returns the currently measured weight.
 
         If you want to get the weight periodically, it is recommended
         to use the :cb:`Weight` callback and set the period with
@@ -105,13 +105,11 @@ class BrickletLoadCell(Device):
 
     def set_weight_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Weight` callback is triggered
+        Sets the period with which the :cb:`Weight` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Weight` callback is only triggered if the weight has changed since the
         last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -138,8 +136,6 @@ class BrickletLoadCell(Device):
          "'i'",    "Callback is triggered when the weight is *inside* the min and max values"
          "'<'",    "Callback is triggered when the weight is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the weight is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -155,7 +151,7 @@ class BrickletLoadCell(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callback
+        Sets the period with which the threshold callback
 
         * :cb:`Weight Reached`
 
@@ -164,8 +160,6 @@ class BrickletLoadCell(Device):
         * :func:`Set Weight Callback Threshold`
 
         keeps being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 
@@ -184,10 +178,6 @@ class BrickletLoadCell(Device):
 
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
-
-        The range for the averaging is 1-40.
-
-        The default value is 4.
         """
         average = int(average)
 
@@ -222,8 +212,7 @@ class BrickletLoadCell(Device):
         To calibrate your Load Cell Bricklet you have to
 
         * empty the scale and call this function with 0 and
-        * add a known weight to the scale and call this function with the weight in
-          grams.
+        * add a known weight to the scale and call this function with the weight.
 
         The calibration is saved in the EEPROM of the Bricklet and only
         needs to be done once.
@@ -261,8 +250,6 @@ class BrickletLoadCell(Device):
 
         We recommend to use the Brick Viewer for configuration, you don't need
         to call this function in your source code.
-
-        The default rate is 10Hz and the default gain is 128x.
         """
         rate = int(rate)
         gain = int(gain)

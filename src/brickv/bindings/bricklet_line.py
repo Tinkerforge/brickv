@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -85,13 +85,11 @@ class BrickletLine(Device):
 
     def set_reflectivity_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Reflectivity` callback is triggered
+        Sets the period with which the :cb:`Reflectivity` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Reflectivity` callback is only triggered if the reflectivity has
         changed since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -118,8 +116,6 @@ class BrickletLine(Device):
          "'i'",    "Callback is triggered when the reflectivity is *inside* the min and max values"
          "'<'",    "Callback is triggered when the reflectivity is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the reflectivity is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -135,7 +131,7 @@ class BrickletLine(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callback
+        Sets the period with which the threshold callback
 
         * :cb:`Reflectivity Reached`
 
@@ -144,8 +140,6 @@ class BrickletLine(Device):
         * :func:`Set Reflectivity Callback Threshold`
 
         keeps being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 

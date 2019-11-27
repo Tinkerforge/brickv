@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -107,20 +107,10 @@ class BrickletPiezoSpeakerV2(Device):
 
     def set_beep(self, frequency, volume, duration):
         """
-        Beeps with the given frequency and volume for the duration in ms.
-
-        For example: If you set a duration of 1000, with a volume of 10 and a frequency
-        value of 2000 the piezo buzzer will beep with maximum loudness for one
-        second with a frequency of 2 kHz.
+        Beeps with the given frequency and volume for the duration.
 
         A duration of 0 stops the current beep if any is ongoing.
         A duration of 4294967295 results in an infinite beep.
-
-        The ranges are:
-
-        * Frequency: 50Hz - 15000Hz
-        * Volume: 0 - 10
-        * Duration: 0ms - 4294967295ms
         """
         frequency = int(frequency)
         volume = int(volume)
@@ -131,7 +121,7 @@ class BrickletPiezoSpeakerV2(Device):
     def get_beep(self):
         """
         Returns the last beep settings as set by :func:`Set Beep`. If a beep is currently
-        running it also returns the remaining duration of the beep in ms.
+        running it also returns the remaining duration of the beep.
 
         If the frequency or volume is updated during a beep (with :func:`Update Frequency`
         or :func:`Update Volume`) this function returns the updated value.

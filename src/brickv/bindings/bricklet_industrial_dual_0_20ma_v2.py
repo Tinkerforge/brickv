@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -130,8 +130,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
     def get_current(self, channel):
         """
-        Returns the current of the specified channel. The value is in nA and between
-        0nA and 22505322nA (22.5mA).
+        Returns the current of the specified channel.
 
         It is possible to detect if an IEC 60381-1 compatible sensor is connected
         and if it works probably.
@@ -151,7 +150,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
     def set_current_callback_configuration(self, channel, period, value_has_to_change, option, min, max):
         """
-        The period in ms is the period with which the :cb:`Current` callback is triggered
+        The period is the period with which the :cb:`Current` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         If the `value has to change`-parameter is set to true, the callback is only
@@ -178,8 +177,6 @@ class BrickletIndustrialDual020mAV2(Device):
          "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-        The default value is (0, false, 'x', 0, 0).
         """
         channel = int(channel)
         period = int(period)
@@ -211,8 +208,6 @@ class BrickletIndustrialDual020mAV2(Device):
          "1",    "60 samples per second, 14 bit resolution"
          "2",    "15 samples per second, 16 bit resolution"
          "3",    "4 samples per second, 18 bit resolution"
-
-        The default value is 3 (4 samples per second with 18 bit resolution).
         """
         rate = int(rate)
 
@@ -231,8 +226,6 @@ class BrickletIndustrialDual020mAV2(Device):
 
         Example: If you measure 0.5mA with a gain of 8x the return value will be
         4mA.
-
-        The default gain is 1x.
         """
         gain = int(gain)
 
@@ -252,8 +245,6 @@ class BrickletIndustrialDual020mAV2(Device):
         of the LED can change with the measured value.
 
         You can configure the channel status behavior with :func:`Set Channel LED Status Config`.
-
-        By default all channel LEDs are configured as "Channel Status".
         """
         channel = int(channel)
         config = int(config)
@@ -290,9 +281,6 @@ class BrickletIndustrialDual020mAV2(Device):
         on at 20mA and above and the brightness is linearly scaled between the values
         4mA and 20mA. If the min value is greater than the max value, the LED brightness
         is scaled the other way around.
-
-        By default the channel LED status config is set to intensity with min=4mA and
-        max=20mA.
         """
         channel = int(channel)
         min = int(min)

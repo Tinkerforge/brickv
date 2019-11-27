@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -103,9 +103,8 @@ class BrickletOLED128x64V2(Device):
         """
         Writes pixels to the specified window.
 
-        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are written
-        into the window line by line top to bottom and each line is written from left to
-        right.
+        The pixels are written into the window line by line top to bottom
+        and each line is written from left to right.
 
         If automatic draw is enabled (default) the pixels are directly written to
         the screen. Only pixels that have actually changed are updated on the screen,
@@ -133,9 +132,8 @@ class BrickletOLED128x64V2(Device):
         """
         Reads pixels from the specified window.
 
-        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are read
-        from the window line by line top to bottom and each line is read from left to
-        right.
+        The pixels are read from the window line by line top to bottom
+        and each line is read from left to right.
 
         If automatic draw is enabled (default) the pixels that are read are always the
         same that are shown on the display.
@@ -180,8 +178,6 @@ class BrickletOLED128x64V2(Device):
         call of :func:`Write Pixels` or :func:`Write Line`. If it is set to false, the
         changes are written into an internal buffer and only shown on the display after
         a call of :func:`Draw Buffered Frame`.
-
-        The default values are contrast 143, inverting off and automatic draw on.
         """
         contrast = int(contrast)
         invert = bool(invert)
@@ -197,8 +193,8 @@ class BrickletOLED128x64V2(Device):
 
     def write_line(self, line, position, text):
         """
-        Writes text to a specific line (0 to 7) with a specific position
-        (0 to 21). The text can have a maximum of 22 characters.
+        Writes text to a specific line with a specific position.
+        The text can have a maximum of 22 characters.
 
         For example: (1, 10, "Hello") will write *Hello* in the middle of the
         second line of the display.
@@ -384,9 +380,8 @@ class BrickletOLED128x64V2(Device):
         """
         Writes pixels to the specified window.
 
-        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are written
-        into the window line by line top to bottom and each line is written from left to
-        right.
+        The pixels are written into the window line by line top to bottom
+        and each line is written from left to right.
 
         If automatic draw is enabled (default) the pixels are directly written to
         the screen. Only pixels that have actually changed are updated on the screen,
@@ -428,9 +423,8 @@ class BrickletOLED128x64V2(Device):
         """
         Reads pixels from the specified window.
 
-        The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are read
-        from the window line by line top to bottom and each line is read from left to
-        right.
+        The pixels are read from the window line by line top to bottom
+        and each line is read from left to right.
 
         If automatic draw is enabled (default) the pixels that are read are always the
         same that are shown on the display.

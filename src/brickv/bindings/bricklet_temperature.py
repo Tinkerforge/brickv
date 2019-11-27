@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -77,9 +77,7 @@ class BrickletTemperature(Device):
 
     def get_temperature(self):
         """
-        Returns the temperature of the sensor. The value
-        has a range of -2500 to 8500 and is given in °C/100,
-        e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
+        Returns the temperature of the sensor.
 
         If you want to get the temperature periodically, it is recommended
         to use the :cb:`Temperature` callback and set the period with
@@ -89,13 +87,11 @@ class BrickletTemperature(Device):
 
     def set_temperature_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Temperature` callback is triggered
+        Sets the period with which the :cb:`Temperature` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Temperature` callback is only triggered if the temperature has changed
         since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -122,8 +118,6 @@ class BrickletTemperature(Device):
          "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
          "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -139,7 +133,7 @@ class BrickletTemperature(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callback
+        Sets the period with which the threshold callback
 
         * :cb:`Temperature Reached`
 
@@ -148,8 +142,6 @@ class BrickletTemperature(Device):
         * :func:`Set Temperature Callback Threshold`
 
         keeps being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 
@@ -165,7 +157,7 @@ class BrickletTemperature(Device):
         """
         Sets the I2C mode. Possible modes are:
 
-        * 0: Fast (400kHz, default)
+        * 0: Fast (400kHz)
         * 1: Slow (100kHz)
 
         If you have problems with obvious outliers in the

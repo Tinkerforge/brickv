@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -108,13 +108,11 @@ class BrickletAmbientLightV2(Device):
 
     def set_illuminance_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Illuminance` callback is triggered
+        Sets the period with which the :cb:`Illuminance` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Illuminance` callback is only triggered if the illuminance has changed
         since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -158,7 +156,7 @@ class BrickletAmbientLightV2(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callbacks
+        Sets the period with which the threshold callbacks
 
         * :cb:`Illuminance Reached`,
 
@@ -167,8 +165,6 @@ class BrickletAmbientLightV2(Device):
         * :func:`Set Illuminance Callback Threshold`,
 
         keep being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 

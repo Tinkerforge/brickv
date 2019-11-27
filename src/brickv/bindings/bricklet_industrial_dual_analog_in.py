@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -90,7 +90,7 @@ class BrickletIndustrialDualAnalogIn(Device):
 
     def get_voltage(self, channel):
         """
-        Returns the voltage for the given channel in mV.
+        Returns the voltage for the given channel.
 
         If you want to get the voltage periodically, it is recommended to use the
         :cb:`Voltage` callback and set the period with
@@ -102,13 +102,11 @@ class BrickletIndustrialDualAnalogIn(Device):
 
     def set_voltage_callback_period(self, channel, period):
         """
-        Sets the period in ms with which the :cb:`Voltage` callback is triggered
+        Sets the period with which the :cb:`Voltage` callback is triggered
         periodically for the given channel. A value of 0 turns the callback off.
 
         The :cb:`Voltage` callback is only triggered if the voltage has changed since the
         last triggering.
-
-        The default value is 0.
         """
         channel = int(channel)
         period = int(period)
@@ -139,8 +137,6 @@ class BrickletIndustrialDualAnalogIn(Device):
          "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
          "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         channel = int(channel)
         option = create_char(option)
@@ -159,7 +155,7 @@ class BrickletIndustrialDualAnalogIn(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callback
+        Sets the period with which the threshold callback
 
         * :cb:`Voltage Reached`
 
@@ -168,8 +164,6 @@ class BrickletIndustrialDualAnalogIn(Device):
         * :func:`Set Voltage Callback Threshold`
 
         keeps being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 
@@ -186,8 +180,6 @@ class BrickletIndustrialDualAnalogIn(Device):
         Sets the sample rate. The sample rate can be between 1 sample per second
         and 976 samples per second. Decreasing the sample rate will also decrease the
         noise on the data.
-
-        The default value is 6 (2 samples per second).
         """
         rate = int(rate)
 

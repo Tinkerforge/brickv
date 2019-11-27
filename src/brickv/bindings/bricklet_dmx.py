@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -138,8 +138,6 @@ class BrickletDMX(Device):
         Sets the DMX mode to either master or slave.
 
         Calling this function sets frame number to 0.
-
-        The default value is 0 (master).
         """
         dmx_mode = int(dmx_mode)
 
@@ -206,7 +204,7 @@ class BrickletDMX(Device):
 
     def set_frame_duration(self, frame_duration):
         """
-        Sets the duration of a frame in ms.
+        Sets the duration of a frame.
 
         Example: If you want to achieve 20 frames per second, you should
         set the frame duration to 50ms (50ms * 20 = 1 second).
@@ -215,8 +213,6 @@ class BrickletDMX(Device):
         this value to 0.
 
         This setting is only used in master mode.
-
-        Default value: 100ms (10 frames per second).
         """
         frame_duration = int(frame_duration)
 

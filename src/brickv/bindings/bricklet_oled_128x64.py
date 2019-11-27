@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -89,8 +89,6 @@ class BrickletOLED128x64(Device):
         """
         Sets the window in which you can write with :func:`Write`. One row
         has a height of 8 pixels.
-
-        The columns have a range of 0 to 127 and the rows have a range of 0 to 7.
         """
         column_from = int(column_from)
         column_to = int(column_to)
@@ -111,8 +109,6 @@ class BrickletOLED128x64(Device):
 
         You can set a contrast value from 0 to 255 and you can invert the color
         (black/white) of the display.
-
-        The default values are contrast 143 and inverting off.
         """
         contrast = int(contrast)
         invert = bool(invert)
@@ -127,8 +123,8 @@ class BrickletOLED128x64(Device):
 
     def write_line(self, line, position, text):
         """
-        Writes text to a specific line (0 to 7) with a specific position
-        (0 to 25). The text can have a maximum of 26 characters.
+        Writes text to a specific line with a specific position.
+        The text can have a maximum of 26 characters.
 
         For example: (1, 10, "Hello") will write *Hello* in the middle of the
         second line of the display.

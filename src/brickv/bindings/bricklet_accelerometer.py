@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-09-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -105,7 +105,7 @@ class BrickletAccelerometer(Device):
     def get_acceleration(self):
         """
         Returns the acceleration in x, y and z direction. The values
-        are given in g/1000 (1g = 9.80665m/s²), not to be confused with grams.
+        are given in gₙ/1000 (1gₙ = 9.80665m/s²).
 
         If you want to get the acceleration periodically, it is recommended
         to use the :cb:`Acceleration` callback and set the period with
@@ -115,13 +115,11 @@ class BrickletAccelerometer(Device):
 
     def set_acceleration_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Acceleration` callback is triggered
+        Sets the period with which the :cb:`Acceleration` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Acceleration` callback is only triggered if the acceleration has
         changed since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -148,8 +146,6 @@ class BrickletAccelerometer(Device):
          "'i'",    "Callback is triggered when the acceleration is *inside* the min and max values"
          "'<'",    "Callback is triggered when the acceleration is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the acceleration is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0, 0, 0, 0, 0).
         """
         option = create_char(option)
         min_x = int(min_x)
@@ -169,7 +165,7 @@ class BrickletAccelerometer(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callback
+        Sets the period with which the threshold callback
 
         * :cb:`Acceleration Reached`
 
@@ -178,8 +174,6 @@ class BrickletAccelerometer(Device):
         * :func:`Set Acceleration Callback Threshold`
 
         keeps being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 
@@ -193,7 +187,7 @@ class BrickletAccelerometer(Device):
 
     def get_temperature(self):
         """
-        Returns the temperature of the accelerometer in °C.
+        Returns the temperature of the accelerometer.
         """
         return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_TEMPERATURE, (), '', 'h')
 
@@ -203,14 +197,11 @@ class BrickletAccelerometer(Device):
         Possible values are:
 
         * Data rate of 0Hz to 1600Hz.
-        * Full scale range of ±2g up to ±16g.
+        * Full scale range of ±2gₙ up to ±16gₙ.
         * Filter bandwidth between 50Hz and 800Hz.
 
         Decreasing data rate or full scale range will also decrease the noise on
         the data.
-
-        The default values are 100Hz data rate, ±4g range and 200Hz
-        filter bandwidth.
         """
         data_rate = int(data_rate)
         full_scale = int(full_scale)

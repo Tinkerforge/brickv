@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -91,7 +91,7 @@ class BrickletAnalogOutV3(Device):
 
     def set_output_voltage(self, voltage):
         """
-        Sets the voltage in mV. The possible range is 0V to 12V (0-12000).
+        Sets the voltage.
         """
         voltage = int(voltage)
 
@@ -105,7 +105,7 @@ class BrickletAnalogOutV3(Device):
 
     def get_input_voltage(self):
         """
-        Returns the input voltage in mV.
+        Returns the input voltage.
         """
         return self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_GET_INPUT_VOLTAGE, (), '', 'H')
 

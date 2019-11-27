@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -233,9 +233,6 @@ class BrickletCANV2(Device):
         """
         Sets the transceiver configuration for the CAN bus communication.
 
-        The baud rate can be configured in bit/s between 10 and 1000 kbit/s and the
-        sample point can be configured in 1/10 % between 50 and 90 %.
-
         The CAN transceiver has three different modes:
 
         * Normal: Reads from and writes to the CAN bus and performs active bus
@@ -245,8 +242,6 @@ class BrickletCANV2(Device):
         * Read-Only: Only reads from the CAN bus, but does neither active bus error
           detection nor acknowledgement. Only the receiving part of the transceiver
           is connected to the CAN bus.
-
-        The default is: 125 kbit/s, 62.5 % and normal transceiver mode.
         """
         baud_rate = int(baud_rate)
         sample_point = int(sample_point)
@@ -294,7 +289,7 @@ class BrickletCANV2(Device):
 
         A valid queue configuration fulfills these conditions::
 
-         write_buffer_size + read_buffer_size_0 + read_buffer_size_1 + ... + read_buffer_size_31 <= 32
+         write_buffer_size + abs(read_buffer_size_0) + abs(read_buffer_size_1) + ... + abs(read_buffer_size_31) <= 32
          write_backlog_size + read_backlog_size <= 768
 
         The write buffer timeout has three different modes that define how a failed
@@ -309,15 +304,6 @@ class BrickletCANV2(Device):
           number of milliseconds then the frame is discarded.
 
         The current content of the queues is lost when this function is called.
-
-        The default is:
-
-        * 8 write buffers,
-        * infinite write timeout,
-        * 383 write backlog frames,
-        * 16 read buffers for data frames,
-        * 8 read buffers for remote frames and
-        * 383 read backlog frames.
         """
         write_buffer_size = int(write_buffer_size)
         write_buffer_timeout = int(write_buffer_timeout)
@@ -743,7 +729,7 @@ class BrickletCANV2(Device):
 
         A valid queue configuration fulfills these conditions::
 
-         write_buffer_size + read_buffer_size_0 + read_buffer_size_1 + ... + read_buffer_size_31 <= 32
+         write_buffer_size + abs(read_buffer_size_0) + abs(read_buffer_size_1) + ... + abs(read_buffer_size_31) <= 32
          write_backlog_size + read_backlog_size <= 768
 
         The write buffer timeout has three different modes that define how a failed
@@ -758,15 +744,6 @@ class BrickletCANV2(Device):
           number of milliseconds then the frame is discarded.
 
         The current content of the queues is lost when this function is called.
-
-        The default is:
-
-        * 8 write buffers,
-        * infinite write timeout,
-        * 383 write backlog frames,
-        * 16 read buffers for data frames,
-        * 8 read buffers for remote frames and
-        * 383 read backlog frames.
         """
         write_buffer_size = int(write_buffer_size)
         write_buffer_timeout = int(write_buffer_timeout)

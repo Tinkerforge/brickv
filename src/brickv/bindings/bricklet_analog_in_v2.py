@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-08-23.      #
+# This file was automatically generated on 2019-11-27.      #
 #                                                           #
-# Python Bindings Version 2.1.23                            #
+# Python Bindings Version 2.1.24                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -90,8 +90,7 @@ class BrickletAnalogInV2(Device):
 
     def get_voltage(self):
         """
-        Returns the measured voltage. The value is in mV and
-        between 0V and 42V. The resolution is approximately 10mV.
+        Returns the measured voltage. The resolution is approximately 10mV.
 
         If you want to get the voltage periodically, it is recommended to use the
         :cb:`Voltage` callback and set the period with
@@ -102,7 +101,6 @@ class BrickletAnalogInV2(Device):
     def get_analog_value(self):
         """
         Returns the value as read by a 12-bit analog-to-digital converter.
-        The value is between 0 and 4095.
 
         If you want the analog value periodically, it is recommended to use the
         :cb:`Analog Value` callback and set the period with
@@ -112,13 +110,11 @@ class BrickletAnalogInV2(Device):
 
     def set_voltage_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Voltage` callback is triggered
+        Sets the period with which the :cb:`Voltage` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Voltage` callback is only triggered if the voltage has changed since
         the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -132,13 +128,11 @@ class BrickletAnalogInV2(Device):
 
     def set_analog_value_callback_period(self, period):
         """
-        Sets the period in ms with which the :cb:`Analog Value` callback is triggered
+        Sets the period with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
 
         The :cb:`Analog Value` callback is only triggered if the analog value has
         changed since the last triggering.
-
-        The default value is 0.
         """
         period = int(period)
 
@@ -165,8 +159,6 @@ class BrickletAnalogInV2(Device):
          "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
          "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -195,8 +187,6 @@ class BrickletAnalogInV2(Device):
          "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
          "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -212,7 +202,7 @@ class BrickletAnalogInV2(Device):
 
     def set_debounce_period(self, debounce):
         """
-        Sets the period in ms with which the threshold callbacks
+        Sets the period with which the threshold callbacks
 
         * :cb:`Voltage Reached`,
         * :cb:`Analog Value Reached`
@@ -223,8 +213,6 @@ class BrickletAnalogInV2(Device):
         * :func:`Set Analog Value Callback Threshold`
 
         keep being reached.
-
-        The default value is 100.
         """
         debounce = int(debounce)
 
@@ -243,10 +231,6 @@ class BrickletAnalogInV2(Device):
 
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
-
-        The range for the averaging is 1-50.
-
-        The default value is 50.
         """
         average = int(average)
 
