@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -71,8 +71,7 @@ class BrickletSoundIntensity(Device):
 
     def get_intensity(self):
         """
-        Returns the current sound intensity. The value has a range of
-        0 to 4095.
+        Returns the current sound intensity.
 
         The value corresponds to the
         `upper envelop <https://en.wikipedia.org/wiki/Envelope_(waves)>`__
@@ -117,8 +116,6 @@ class BrickletSoundIntensity(Device):
          "'i'",    "Callback is triggered when the intensity is *inside* the min and max values"
          "'<'",    "Callback is triggered when the intensity is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the intensity is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)

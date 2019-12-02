@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -401,7 +401,7 @@ class BrickRED(Device):
 
     def get_string_length(self, string_id):
         """
-        Returns the length of a string object in bytes and the resulting error code.
+        Returns the length of a string object and the resulting error code.
         """
         string_id = int(string_id)
 
@@ -706,7 +706,7 @@ class BrickRED(Device):
 
     def set_file_position(self, file_id, offset, origin):
         """
-        Set the current seek position of a file object in bytes relative to ``origin``.
+        Set the current seek position of a file object relative to ``origin``.
 
         Possible file origins are:
 
@@ -727,7 +727,7 @@ class BrickRED(Device):
 
     def get_file_position(self, file_id):
         """
-        Returns the current seek position of a file object in bytes and returns the
+        Returns the current seek position of a file object and returns the
         resulting error code.
 
         If the file object was created by :func:`Create Pipe` then it has no seek

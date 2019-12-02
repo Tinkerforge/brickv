@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-11-29.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -176,7 +176,7 @@ class BrickStepper(Device):
 
     def set_max_velocity(self, velocity):
         """
-        Sets the maximum velocity of the stepper motor in steps per second.
+        Sets the maximum velocity of the stepper motor.
         This function does *not* start the motor, it merely sets the maximum
         velocity the stepper motor is accelerated to. To get the motor running use
         either :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` or
@@ -194,14 +194,14 @@ class BrickStepper(Device):
 
     def get_current_velocity(self):
         """
-        Returns the *current* velocity of the stepper motor in steps per second.
+        Returns the *current* velocity of the stepper motor.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_CURRENT_VELOCITY, (), '', 'H')
 
     def set_speed_ramping(self, acceleration, deacceleration):
         """
-        Sets the acceleration and deacceleration of the stepper motor. The values
-        are given in *steps/s²*. An acceleration of 1000 means, that
+        Sets the acceleration and deacceleration of the stepper motor.
+        An acceleration of 1000 means, that
         every second the velocity is increased by 1000 *steps/s*.
 
         For example: If the current velocity is 0 and you want to accelerate to a
@@ -210,8 +210,6 @@ class BrickStepper(Device):
 
         An acceleration/deacceleration of 0 means instantaneous
         acceleration/deacceleration (not recommended)
-
-        The default value is 1000 for both
         """
         acceleration = int(acceleration)
         deacceleration = int(deacceleration)
@@ -317,8 +315,6 @@ class BrickStepper(Device):
 
         A higher value will increase the resolution and
         decrease the torque of the stepper motor.
-
-        The default value is 8 (Eighth Step).
         """
         mode = int(mode)
 
@@ -355,7 +351,7 @@ class BrickStepper(Device):
 
     def get_stack_input_voltage(self):
         """
-        Returns the stack input voltage in mV. The stack input voltage is the
+        Returns the stack input voltage. The stack input voltage is the
         voltage that is supplied via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
         """
@@ -363,7 +359,7 @@ class BrickStepper(Device):
 
     def get_external_input_voltage(self):
         """
-        Returns the external input voltage in mV. The external input voltage is
+        Returns the external input voltage. The external input voltage is
         given via the black power input connector on the Stepper Brick.
 
         If there is an external input voltage and a stack input voltage, the motor
@@ -380,15 +376,13 @@ class BrickStepper(Device):
 
     def get_current_consumption(self):
         """
-        Returns the current consumption of the motor in mA.
+        Returns the current consumption of the motor.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_CURRENT_CONSUMPTION, (), '', 'H')
 
     def set_motor_current(self, current):
         """
-        Sets the current in mA with which the motor will be driven.
-        The minimum value is 100mA, the maximum value 2291mA and the
-        default value is 800mA.
+        Sets the current with which the motor will be driven.
 
         .. warning::
          Do not set this value above the specifications of your stepper motor.
@@ -426,8 +420,8 @@ class BrickStepper(Device):
 
     def set_decay(self, decay):
         """
-        Sets the decay mode of the stepper motor. The possible value range is
-        between 0 and 65535. A value of 0 sets the fast decay mode, a value of
+        Sets the decay mode of the stepper motor.
+        A value of 0 sets the fast decay mode, a value of
         65535 sets the slow decay mode and a value in between sets the mixed
         decay mode.
 
@@ -445,8 +439,6 @@ class BrickStepper(Device):
 
         Generally, fast decay mode (small value) will be noisier but also
         allow higher motor speeds.
-
-        The default value is 10000.
 
         .. note::
          There is unfortunately no formula to calculate a perfect decay
@@ -466,13 +458,11 @@ class BrickStepper(Device):
 
     def set_minimum_voltage(self, voltage):
         """
-        Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
+        Sets the minimum voltage, below which the :cb:`Under Voltage` callback
         is triggered. The minimum possible value that works with the Stepper Brick is 8V.
         You can use this function to detect the discharge of a battery that is used
         to drive the stepper motor. If you have a fixed power supply, you likely do
         not need this functionality.
-
-        The default value is 8V.
         """
         voltage = int(voltage)
 
@@ -500,8 +490,6 @@ class BrickStepper(Device):
          stepper motor with a large inductivity we strongly
          suggest that you disable synchronous rectification. Otherwise the
          Brick may not be able to cope with the load and overheat.
-
-        The default value is *false*.
         """
         sync_rect = bool(sync_rect)
 
@@ -515,14 +503,11 @@ class BrickStepper(Device):
 
     def set_time_base(self, time_base):
         """
-        Sets the time base of the velocity and the acceleration of the stepper brick
-        (in seconds).
+        Sets the time base of the velocity and the acceleration of the stepper brick.
 
         For example, if you want to make one step every 1.5 seconds, you can set
         the time base to 15 and the velocity to 10. Now the velocity is
         10steps/15s = 1steps/1.5s.
-
-        The default value is 1.
         """
         time_base = int(time_base)
 

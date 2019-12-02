@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -182,15 +182,7 @@ class BrickletRS232V2(Device):
 
     def set_configuration(self, baudrate, parity, stopbits, wordlength, flowcontrol):
         """
-        Sets the configuration for the RS232 communication. Available options:
-
-        * Baud rate between 100 and 2000000 baud.
-        * Parity of none, odd or even.
-        * Stop bits can be 1 or 2.
-        * Word length of 5 to 8.
-        * Flow control can be off, software or hardware.
-
-        The default is: 115200 baud, parity none, 1 stop bit, word length 8.
+        Sets the configuration for the RS232 communication.
         """
         baudrate = int(baudrate)
         parity = int(parity)
@@ -209,7 +201,7 @@ class BrickletRS232V2(Device):
     def set_buffer_config(self, send_buffer_size, receive_buffer_size):
         """
         Sets the send and receive buffer size in byte. In total the buffers have to be
-        10240 byte (10kb) in size, the minimum buffer size is 1024 byte (1kb) for each.
+        10240 byte (10KiB) in size, the minimum buffer size is 1024 byte (1KiB) for each.
 
         The current buffer content is lost if this function is called.
 
@@ -217,8 +209,6 @@ class BrickletRS232V2(Device):
         can not be written yet. The receive buffer holds data that is
         received through RS232 but could not yet be send to the
         user, either by :func:`Read` or through :cb:`Read` callback.
-
-        The default configuration is 5120 byte (5kb) per buffer.
         """
         send_buffer_size = int(send_buffer_size)
         receive_buffer_size = int(receive_buffer_size)

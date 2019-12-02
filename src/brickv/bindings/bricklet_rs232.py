@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -153,15 +153,9 @@ class BrickletRS232(Device):
 
     def set_configuration(self, baudrate, parity, stopbits, wordlength, hardware_flowcontrol, software_flowcontrol):
         """
-        Sets the configuration for the RS232 communication. Available options:
+        Sets the configuration for the RS232 communication.
 
-        * Baudrate between 300 and 230400 baud.
-        * Parity of none, odd, even or forced parity.
-        * Stopbits can be 1 or 2.
-        * Word length of 5 to 8.
-        * Hard-/Software flow control can either be on or off but not both simultaneously on.
-
-        The default is: 115200 baud, parity none, 1 stop bit, word length 8, hard-/software flow control off.
+        Hard-/Software flow control can either be on or off but not both simultaneously on.
         """
         baudrate = int(baudrate)
         parity = int(parity)
@@ -181,7 +175,7 @@ class BrickletRS232(Device):
     def set_break_condition(self, break_time):
         """
         Sets a break condition (the TX output is forced to a logic 0 state).
-        The parameter sets the hold-time of the break condition (in ms).
+        The parameter sets the hold-time of the break condition.
 
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """

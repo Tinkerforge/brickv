@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -102,8 +102,6 @@ class BrickletRGBLEDButton(Device):
     def set_color(self, red, green, blue):
         """
         Sets the color of the LED.
-
-        By default the LED is off (0, 0, 0).
         """
         red = int(red)
         green = int(green)
@@ -126,14 +124,10 @@ class BrickletRGBLEDButton(Device):
     def set_color_calibration(self, red, green, blue):
         """
         Sets a color calibration. Some colors appear brighter then others,
-        so a calibration may be necessary for nice uniform colors.
-
-        The values range from 0% to 100%.
+        so a calibration may be necessary for uniform colors.
 
         The calibration is saved in flash. You don't need to call this
         function on every startup.
-
-        Default value is (100, 100, 55).
         """
         red = int(red)
         green = int(green)

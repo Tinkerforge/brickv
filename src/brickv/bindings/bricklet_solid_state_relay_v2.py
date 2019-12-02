@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -115,7 +115,7 @@ class BrickletSolidStateRelayV2(Device):
     def set_monoflop(self, state, time):
         """
         The first parameter  is the desired state of the relay (*true* means on
-        and *false* means off). The second parameter indicates the time (in ms) that
+        and *false* means off). The second parameter indicates the time that
         the relay should hold the state.
 
         If this function is called with the parameters (true, 1500):

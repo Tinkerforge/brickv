@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -125,8 +125,7 @@ class BrickletSoundPressureLevel(Device):
 
     def get_decibel(self):
         """
-        Returns the measured sound pressure in decibels. The values are given in
-        dB/10 (tenths dB).
+        Returns the measured sound pressure in decibels.
 
         The Bricklet supports the weighting standards dB(A), dB(B), dB(C), dB(D),
         dB(Z) and ITU-R 468. You can configure the weighting with :func:`Set Configuration`.
@@ -249,8 +248,6 @@ class BrickletSoundPressureLevel(Device):
         often used to measure volumes at concerts etc. dB(Z) has a
         flat response, no weighting is applied. ITU-R 468 is an ITU
         weighting standard mostly used in the UK and Europe.
-
-        The defaults are FFT size 1024 and weighting standard dB(A).
         """
         fft_size = int(fft_size)
         weighting = int(weighting)

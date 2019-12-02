@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -150,7 +150,7 @@ class BrickletLEDStripV2(Device):
     def set_led_values_low_level(self, index, value_length, value_chunk_offset, value_chunk_data):
         """
         Sets the RGB(W) values for the LEDs starting from *index*.
-        You can set at most 2048 RGB values or 1536 RGBW values.
+        You can set at most 2048 RGB values or 1536 RGBW values (6144 byte each).
 
         To make the colors show correctly you need to configure the chip type
         (see :func:`Set Chip Type`) and a channel mapping (see :func:`Set Channel Mapping`)
@@ -199,7 +199,7 @@ class BrickletLEDStripV2(Device):
 
     def set_frame_duration(self, duration):
         """
-        Sets the frame duration in ms.
+        Sets the frame duration.
 
         Example: If you want to achieve 20 frames per second, you should
         set the frame duration to 50ms (50ms * 20 = 1 second).
@@ -214,20 +214,19 @@ class BrickletLEDStripV2(Device):
 
     def get_frame_duration(self):
         """
-        Returns the frame duration in ms as set by :func:`Set Frame Duration`.
+        Returns the frame duration as set by :func:`Set Frame Duration`.
         """
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_FRAME_DURATION, (), '', 'H')
 
     def get_supply_voltage(self):
         """
-        Returns the current supply voltage of the LEDs. The voltage is given in mV.
+        Returns the current supply voltage of the LEDs.
         """
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_SUPPLY_VOLTAGE, (), '', 'H')
 
     def set_clock_frequency(self, frequency):
         """
-        Sets the frequency of the clock in Hz. The range is 10000Hz (10kHz) up to
-        2000000Hz (2MHz).
+        Sets the frequency of the clock.
 
         The Bricklet will choose the nearest achievable frequency, which may
         be off by a few Hz. You can get the exact frequency that is used by
@@ -239,8 +238,6 @@ class BrickletLEDStripV2(Device):
 
         With a decreasing frequency your maximum frames per second will decrease
         too.
-
-        The default value is 1.66MHz.
         """
         frequency = int(frequency)
 
@@ -263,8 +260,6 @@ class BrickletLEDStripV2(Device):
         * WS2813 / WS2815 (Chip Type = WS2812)
         * LPD8806 and
         * APA102 / DotStar.
-
-        The default value is WS2801 (2801).
         """
         chip = int(chip)
 
@@ -293,8 +288,6 @@ class BrickletLEDStripV2(Device):
         making them 4-channel chips. Internally the brightness channel is the first
         channel, therefore one of the Wxyz channel mappings should be used. Then
         the W channel controls the brightness.
-
-        The default value is BGR (36).
         """
         mapping = int(mapping)
 
@@ -309,8 +302,6 @@ class BrickletLEDStripV2(Device):
     def set_frame_started_callback_configuration(self, enable):
         """
         Enables/disables the :cb:`Frame Started` callback.
-
-        By default the callback is enabled.
         """
         enable = bool(enable)
 
@@ -466,7 +457,7 @@ class BrickletLEDStripV2(Device):
     def set_led_values(self, index, value):
         """
         Sets the RGB(W) values for the LEDs starting from *index*.
-        You can set at most 2048 RGB values or 1536 RGBW values.
+        You can set at most 2048 RGB values or 1536 RGBW values (6144 byte each).
 
         To make the colors show correctly you need to configure the chip type
         (see :func:`Set Chip Type`) and a channel mapping (see :func:`Set Channel Mapping`)

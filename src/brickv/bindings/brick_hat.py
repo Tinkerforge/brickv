@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -112,8 +112,8 @@ class BrickHAT(Device):
 
         Parameters:
 
-        * Power Off Delay: Time in seconds before the RPi/Bricklets are powered off.
-        * Power Off Duration: Duration in seconds that the RPi/Bricklets stay powered off.
+        * Power Off Delay: Time before the RPi/Bricklets are powered off.
+        * Power Off Duration: Duration that the RPi/Bricklets stay powered off.
         * Raspberry Pi Off: RPi is powered off if set to true.
         * Bricklets Off: Bricklets are powered off if set to true.
         * Enable Sleep Indicator: If set to true, the status LED will blink in a 1s interval
@@ -144,8 +144,6 @@ class BrickHAT(Device):
     def set_bricklet_power(self, bricklet_power):
         """
         Set to true/false to turn the power supply of the connected Bricklets on/off.
-
-        By default the Bricklets are on.
         """
         bricklet_power = bool(bricklet_power)
 
@@ -159,7 +157,7 @@ class BrickHAT(Device):
 
     def get_voltages(self):
         """
-        Returns the USB supply voltage and the DC input supply voltage in mV.
+        Returns the USB supply voltage and the DC input supply voltage.
 
         There are three possible combinations:
 

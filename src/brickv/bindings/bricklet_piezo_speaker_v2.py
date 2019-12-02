@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -134,11 +134,11 @@ class BrickletPiezoSpeakerV2(Device):
 
         The following parameters can be set:
 
-        * Start Frequency: Start frequency of the alarm in Hz.
-        * End Frequency: End frequency of the alarm in Hz.
-        * Step Size: Size of one step of the sweep between the start/end frequencies in Hz.
-        * Step Delay: Delay between two steps (duration of time that one tone is used in a sweep) in ms.
-        * Duration: Duration of the alarm in ms.
+        * Start Frequency: Start frequency of the alarm.
+        * End Frequency: End frequency of the alarm.
+        * Step Size: Size of one step of the sweep between the start/end frequencies.
+        * Step Delay: Delay between two steps (duration of time that one tone is used in a sweep).
+        * Duration: Duration of the alarm.
 
         A duration of 0 stops the current alarm if any is ongoing.
         A duration of 4294967295 results in an infinite alarm.
@@ -164,14 +164,12 @@ class BrickletPiezoSpeakerV2(Device):
         * Volume = 0
         * Duration = 10000
 
-        The ranges are:
+        The following conditions must be met:
 
-        * Start Frequency: 50Hz - 14999Hz (has to be smaller than end frequency)
-        * End Frequency: 51Hz - 15000Hz (has to be bigger than start frequency)
-        * Step Size: 1Hz - 65535Hz (has to be small enough to fit into the frequency range)
-        * Step Delay: 1ms - 65535ms (has to be small enough to fit into the duration)
-        * Volume: 0 - 10
-        * Duration: 0ms - 4294967295ms
+        * Start Frequency: has to be smaller than end frequency
+        * End Frequency: has to be bigger than start frequency
+        * Step Size: has to be small enough to fit into the frequency range
+        * Step Delay: has to be small enough to fit into the duration
         """
         start_frequency = int(start_frequency)
         end_frequency = int(end_frequency)
@@ -185,17 +183,17 @@ class BrickletPiezoSpeakerV2(Device):
     def get_alarm(self):
         """
         Returns the last alarm settings as set by :func:`Set Alarm`. If an alarm is currently
-        running it also returns the remaining duration of the alarm in ms as well as the
-        current frequency of the alarm in Hz.
+        running it also returns the remaining duration of the alarm as well as the
+        current frequency of the alarm.
 
-        If the volume is updated during a beep (with :func:`Update Volume`)
+        If the volume is updated during an alarm (with :func:`Update Volume`)
         this function returns the updated value.
         """
         return GetAlarm(*self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_ALARM, (), '', 'H H H H B I I H'))
 
     def update_volume(self, volume):
         """
-        Updates the volume of an ongoing beep or alarm. The range of the volume is 0 to 10.
+        Updates the volume of an ongoing beep or alarm.
         """
         volume = int(volume)
 
@@ -203,7 +201,7 @@ class BrickletPiezoSpeakerV2(Device):
 
     def update_frequency(self, frequency):
         """
-        Updates the frequency of an ongoing beep. The range of the frequency is 50Hz to 15000Hz.
+        Updates the frequency of an ongoing beep.
         """
         frequency = int(frequency)
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -76,6 +76,14 @@ class BrickletVoltageCurrent(Device):
     THRESHOLD_OPTION_INSIDE = 'i'
     THRESHOLD_OPTION_SMALLER = '<'
     THRESHOLD_OPTION_GREATER = '>'
+    CONVERSION_TIME_140US = 0
+    CONVERSION_TIME_204US = 1
+    CONVERSION_TIME_332US = 2
+    CONVERSION_TIME_588US = 3
+    CONVERSION_TIME_1_1MS = 4
+    CONVERSION_TIME_2_116MS = 5
+    CONVERSION_TIME_4_156MS = 6
+    CONVERSION_TIME_8_244MS = 7
 
     def __init__(self, uid, ipcon):
         """
@@ -119,8 +127,7 @@ class BrickletVoltageCurrent(Device):
 
     def get_current(self):
         """
-        Returns the current. The value is in mA
-        and between -20000mA and 20000mA.
+        Returns the current.
 
         If you want to get the current periodically, it is recommended to use the
         :cb:`Current` callback and set the period with
@@ -130,8 +137,7 @@ class BrickletVoltageCurrent(Device):
 
     def get_voltage(self):
         """
-        Returns the voltage. The value is in mV
-        and between 0mV and 36000mV.
+        Returns the voltage.
 
         If you want to get the voltage periodically, it is recommended to use the
         :cb:`Voltage` callback and set the period with
@@ -141,8 +147,7 @@ class BrickletVoltageCurrent(Device):
 
     def get_power(self):
         """
-        Returns the power. The value is in mW
-        and between 0mV and 720000mW.
+        Returns the power.
 
         If you want to get the power periodically, it is recommended to use the
         :cb:`Power` callback and set the period with
@@ -155,39 +160,6 @@ class BrickletVoltageCurrent(Device):
         Sets the configuration of the Voltage/Current Bricklet. It is
         possible to configure number of averages as well as
         voltage and current conversion time.
-
-        Averaging:
-
-        .. csv-table::
-         :header: "Value", "Number of Averages"
-         :widths: 20, 20
-
-         "0",    "1"
-         "1",    "4"
-         "2",    "16"
-         "3",    "64"
-         "4",    "128"
-         "5",    "256"
-         "6",    "512"
-         ">=7",  "1024"
-
-        Voltage/Current conversion:
-
-        .. csv-table::
-         :header: "Value", "Conversion time"
-         :widths: 20, 20
-
-         "0",    "140µs"
-         "1",    "204µs"
-         "2",    "332µs"
-         "3",    "588µs"
-         "4",    "1.1ms"
-         "5",    "2.116ms"
-         "6",    "4.156ms"
-         ">=7",  "8.244ms"
-
-        The default values are 3, 4 and 4 (64, 1.1ms, 1.1ms) for averaging, voltage
-        conversion and current conversion.
         """
         averaging = int(averaging)
         voltage_conversion_time = int(voltage_conversion_time)
@@ -291,8 +263,6 @@ class BrickletVoltageCurrent(Device):
          "'i'",    "Callback is triggered when the current is *inside* the min and max values"
          "'<'",    "Callback is triggered when the current is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the current is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -321,8 +291,6 @@ class BrickletVoltageCurrent(Device):
          "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
          "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -351,8 +319,6 @@ class BrickletVoltageCurrent(Device):
          "'i'",    "Callback is triggered when the power is *inside* the min and max values"
          "'<'",    "Callback is triggered when the power is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the power is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)

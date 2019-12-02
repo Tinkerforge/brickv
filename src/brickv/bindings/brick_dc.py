@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -141,8 +141,6 @@ class BrickDC(Device):
         controlled, e.g. a velocity of 3277 sets a PWM with a 10% duty cycle.
         You can not only control the duty cycle of the PWM but also the frequency,
         see :func:`Set PWM Frequency`.
-
-        The default velocity is 0.
         """
         velocity = int(velocity)
 
@@ -174,8 +172,6 @@ class BrickDC(Device):
 
         If acceleration is set to 0, there is no speed ramping, i.e. a new velocity
         is immediately given to the motor.
-
-        The default acceleration is 10000.
         """
         acceleration = int(acceleration)
 
@@ -189,16 +185,14 @@ class BrickDC(Device):
 
     def set_pwm_frequency(self, frequency):
         """
-        Sets the frequency (in Hz) of the PWM with which the motor is driven.
-        The possible range of the frequency is 1-20000Hz. Often a high frequency
+        Sets the frequency of the PWM with which the motor is driven.
+        Often a high frequency
         is less noisy and the motor runs smoother. However, with a low frequency
         there are less switches and therefore fewer switching losses. Also with
         most motors lower frequencies enable higher torque.
 
         If you have no idea what all this means, just ignore this function and use
         the default frequency, it will very likely work fine.
-
-        The default frequency is 15 kHz.
         """
         frequency = int(frequency)
 
@@ -206,7 +200,7 @@ class BrickDC(Device):
 
     def get_pwm_frequency(self):
         """
-        Returns the PWM frequency (in Hz) as set by :func:`Set PWM Frequency`.
+        Returns the PWM frequency as set by :func:`Set PWM Frequency`.
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_PWM_FREQUENCY, (), '', 'H')
 
@@ -225,7 +219,7 @@ class BrickDC(Device):
 
     def get_stack_input_voltage(self):
         """
-        Returns the stack input voltage in mV. The stack input voltage is the
+        Returns the stack input voltage. The stack input voltage is the
         voltage that is supplied via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
         """
@@ -233,7 +227,7 @@ class BrickDC(Device):
 
     def get_external_input_voltage(self):
         """
-        Returns the external input voltage in mV. The external input voltage is
+        Returns the external input voltage. The external input voltage is
         given via the black power input connector on the DC Brick.
 
         If there is an external input voltage and a stack input voltage, the motor
@@ -250,7 +244,7 @@ class BrickDC(Device):
 
     def get_current_consumption(self):
         """
-        Returns the current consumption of the motor in mA.
+        Returns the current consumption of the motor.
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_CONSUMPTION, (), '', 'H')
 
@@ -276,13 +270,11 @@ class BrickDC(Device):
 
     def set_minimum_voltage(self, voltage):
         """
-        Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
+        Sets the minimum voltage, below which the :cb:`Under Voltage` callback
         is triggered. The minimum possible value that works with the DC Brick is 6V.
         You can use this function to detect the discharge of a battery that is used
         to drive the motor. If you have a fixed power supply, you likely do not need
         this functionality.
-
-        The default value is 6V.
         """
         voltage = int(voltage)
 
@@ -311,8 +303,6 @@ class BrickDC(Device):
         In Drive/Coast mode, the motor is always either driving or freewheeling.
         Advantages are: Less current consumption and less demands on the motor and
         driver chip.
-
-        The default value is 0 = Drive/Brake.
         """
         mode = int(mode)
 
@@ -326,10 +316,8 @@ class BrickDC(Device):
 
     def set_current_velocity_period(self, period):
         """
-        Sets a period in ms with which the :cb:`Current Velocity` callback is triggered.
+        Sets a period with which the :cb:`Current Velocity` callback is triggered.
         A period of 0 turns the callback off.
-
-        The default value is 0.
         """
         period = int(period)
 

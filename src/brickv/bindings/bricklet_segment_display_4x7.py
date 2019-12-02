@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -89,14 +89,11 @@ class BrickletSegmentDisplay4x7(Device):
         """
         Starts a counter with the *from* value that counts to the *to*
         value with the each step incremented by *increment*.
-        The *length* of the increment is given in ms.
+        *length* is the pause between each increment.
 
         Example: If you set *from* to 0, *to* to 100, *increment* to 1 and
         *length* to 1000, a counter that goes from 0 to 100 with one second
         pause between each increment will be started.
-
-        The maximum values for *from*, *to* and *increment* is 9999,
-        the minimum value is -999.
 
         Using a negative increment allows to count backwards.
 

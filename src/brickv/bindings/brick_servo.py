@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -178,7 +178,7 @@ class BrickServo(Device):
 
     def set_position(self, servo_num, position):
         """
-        Sets the position in °/100 for the specified servo.
+        Sets the position for the specified servo.
 
         The default range of the position is -9000 to 9000, but it can be specified
         according to your servo with :func:`Set Degree`.
@@ -212,13 +212,11 @@ class BrickServo(Device):
 
     def set_velocity(self, servo_num, velocity):
         """
-        Sets the maximum velocity of the specified servo in °/100s. The velocity
+        Sets the maximum velocity of the specified servo. The velocity
         is accelerated according to the value set by :func:`Set Acceleration`.
 
         The minimum velocity is 0 (no movement) and the maximum velocity is 65535.
         With a value of 65535 the position will be set immediately (no velocity).
-
-        The default value is 65535.
         """
         servo_num = int(servo_num)
         velocity = int(velocity)
@@ -245,12 +243,10 @@ class BrickServo(Device):
 
     def set_acceleration(self, servo_num, acceleration):
         """
-        Sets the acceleration of the specified servo in °/100s².
+        Sets the acceleration of the specified servo.
 
         The minimum acceleration is 1 and the maximum acceleration is 65535.
         With a value of 65535 the velocity will be set immediately (no acceleration).
-
-        The default value is 65535.
         """
         servo_num = int(servo_num)
         acceleration = int(acceleration)
@@ -268,16 +264,12 @@ class BrickServo(Device):
 
     def set_output_voltage(self, voltage):
         """
-        Sets the output voltages with which the servos are driven in mV.
-        The minimum output voltage is 2000mV and the maximum output voltage is
-        9000mV.
+        Sets the output voltages with which the servos are driven.
 
         .. note::
          We recommend that you set this value to the maximum voltage that is
          specified for your servo, most servos achieve their maximum force only
          with high voltages.
-
-        The default value is 5000.
         """
         voltage = int(voltage)
 
@@ -291,7 +283,7 @@ class BrickServo(Device):
 
     def set_pulse_width(self, servo_num, min, max):
         """
-        Sets the minimum and maximum pulse width of the specified servo in µs.
+        Sets the minimum and maximum pulse width of the specified servo.
 
         Usually, servos are controlled with a
         `PWM <https://en.wikipedia.org/wiki/Pulse-width_modulation>`__, whereby the
@@ -303,11 +295,7 @@ class BrickServo(Device):
         maximum pulse width, you should set the values accordingly. If your servo
         comes without any datasheet you have to find the values via trial and error.
 
-        Both values have a range from 1 to 65535 (unsigned 16-bit integer). The
-        minimum must be smaller than the maximum.
-
-        The default values are 1000µs (1ms) and 2000µs (2ms) for minimum and
-        maximum pulse width.
+        The minimum must be smaller than the maximum.
         """
         servo_num = int(servo_num)
         min = int(min)
@@ -352,10 +340,7 @@ class BrickServo(Device):
           control it with a RC brushless motor controller. In this case you can set the
           minimum to 0 and the maximum to 10000. :func:`Set Position` now controls the rpm.
 
-        Both values have a possible range from -32767 to 32767
-        (signed 16-bit integer). The minimum must be smaller than the maximum.
-
-        The default values are -9000 and 9000 for the minimum and maximum degree.
+        The minimum must be smaller than the maximum.
         """
         servo_num = int(servo_num)
         min = int(min)
@@ -374,7 +359,7 @@ class BrickServo(Device):
 
     def set_period(self, servo_num, period):
         """
-        Sets the period of the specified servo in µs.
+        Sets the period of the specified servo.
 
         Usually, servos are controlled with a
         `PWM <https://en.wikipedia.org/wiki/Pulse-width_modulation>`__. Different
@@ -385,10 +370,6 @@ class BrickServo(Device):
         set it accordingly. If you don't have a datasheet and you have no idea
         what the correct period is, the default value (19.5ms) will most likely
         work fine.
-
-        The minimum possible period is 1µs and the maximum is 65535µs.
-
-        The default value is 19.5ms (19500µs).
         """
         servo_num = int(servo_num)
         period = int(period)
@@ -405,7 +386,7 @@ class BrickServo(Device):
 
     def get_servo_current(self, servo_num):
         """
-        Returns the current consumption of the specified servo in mA.
+        Returns the current consumption of the specified servo.
         """
         servo_num = int(servo_num)
 
@@ -413,13 +394,13 @@ class BrickServo(Device):
 
     def get_overall_current(self):
         """
-        Returns the current consumption of all servos together in mA.
+        Returns the current consumption of all servos together.
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_OVERALL_CURRENT, (), '', 'H')
 
     def get_stack_input_voltage(self):
         """
-        Returns the stack input voltage in mV. The stack input voltage is the
+        Returns the stack input voltage. The stack input voltage is the
         voltage that is supplied via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
         """
@@ -427,7 +408,7 @@ class BrickServo(Device):
 
     def get_external_input_voltage(self):
         """
-        Returns the external input voltage in mV. The external input voltage is
+        Returns the external input voltage. The external input voltage is
         given via the black power input connector on the Servo Brick.
 
         If there is an external input voltage and a stack input voltage, the motors
@@ -444,13 +425,11 @@ class BrickServo(Device):
 
     def set_minimum_voltage(self, voltage):
         """
-        Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
+        Sets the minimum voltage, below which the :cb:`Under Voltage` callback
         is triggered. The minimum possible value that works with the Servo Brick is 5V.
         You can use this function to detect the discharge of a battery that is used
         to drive the stepper motor. If you have a fixed power supply, you likely do
         not need this functionality.
-
-        The default value is 5V (5000mV).
         """
         voltage = int(voltage)
 
@@ -475,8 +454,6 @@ class BrickServo(Device):
     def disable_position_reached_callback(self):
         """
         Disables the :cb:`Position Reached` callback.
-
-        Default is disabled.
 
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """

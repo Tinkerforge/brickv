@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -124,7 +124,7 @@ class BrickletLoadCellV2(Device):
 
     def get_weight(self):
         """
-        Returns the currently measured weight in grams.
+        Returns the currently measured weight.
 
 
         If you want to get the value periodically, it is recommended to use the

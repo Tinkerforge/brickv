@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-11-29.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -173,7 +173,7 @@ class BrickIMU(Device):
     def get_acceleration(self):
         """
         Returns the calibrated acceleration from the accelerometer for the
-        x, y and z axis in g/1000 (1g = 9.80665m/s²).
+        x, y and z axis.
 
         If you want to get the acceleration periodically, it is recommended
         to use the :cb:`Acceleration` callback and set the period with
@@ -184,7 +184,7 @@ class BrickIMU(Device):
     def get_magnetic_field(self):
         """
         Returns the calibrated magnetic field from the magnetometer for the
-        x, y and z axis in mG (Milligauss or Nanotesla).
+        x, y and z axis.
 
         If you want to get the magnetic field periodically, it is recommended
         to use the :cb:`Magnetic Field` callback and set the period with
@@ -209,8 +209,6 @@ class BrickIMU(Device):
         Returns the data from :func:`Get Acceleration`, :func:`Get Magnetic Field`
         and :func:`Get Angular Velocity` as well as the temperature of the IMU Brick.
 
-        The temperature is given in °C/100.
-
         If you want to get the data periodically, it is recommended
         to use the :cb:`All Data` callback and set the period with
         :func:`Set All Data Period`.
@@ -220,7 +218,7 @@ class BrickIMU(Device):
     def get_orientation(self):
         """
         Returns the current orientation (roll, pitch, yaw) of the IMU Brick as Euler
-        angles in one-hundredth degree. Note that Euler angles always experience a
+        angles. Note that Euler angles always experience a
         `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
 
         We recommend that you use quaternions instead.
@@ -272,8 +270,7 @@ class BrickIMU(Device):
 
     def get_imu_temperature(self):
         """
-        Returns the temperature of the IMU Brick. The temperature is given in
-        °C/100.
+        Returns the temperature of the IMU Brick.
         """
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_IMU_TEMPERATURE, (), '', 'h')
 
@@ -326,7 +323,7 @@ class BrickIMU(Device):
 
     def set_convergence_speed(self, speed):
         """
-        Sets the convergence speed of the IMU Brick in °/s. The convergence speed
+        Sets the convergence speed of the IMU Brick. The convergence speed
         determines how the different sensor measurements are fused.
 
         If the orientation of the IMU Brick is off by 10° and the convergence speed is
@@ -351,8 +348,6 @@ class BrickIMU(Device):
 
         You might want to play around with the convergence speed in the Brick Viewer to
         get a feeling for a good value for your application.
-
-        The default value is 30.
         """
         speed = int(speed)
 

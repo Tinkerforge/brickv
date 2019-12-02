@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-11-29.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -229,7 +229,7 @@ class BrickSilentStepper(Device):
 
     def set_max_velocity(self, velocity):
         """
-        Sets the maximum velocity of the stepper motor in steps per second.
+        Sets the maximum velocity of the stepper motor.
         This function does *not* start the motor, it merely sets the maximum
         velocity the stepper motor is accelerated to. To get the motor running use
         either :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` or
@@ -247,14 +247,14 @@ class BrickSilentStepper(Device):
 
     def get_current_velocity(self):
         """
-        Returns the *current* velocity of the stepper motor in steps per second.
+        Returns the *current* velocity of the stepper motor.
         """
         return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_CURRENT_VELOCITY, (), '', 'H')
 
     def set_speed_ramping(self, acceleration, deacceleration):
         """
-        Sets the acceleration and deacceleration of the stepper motor. The values
-        are given in *steps/s²*. An acceleration of 1000 means, that
+        Sets the acceleration and deacceleration of the stepper motor.
+        An acceleration of 1000 means, that
         every second the velocity is increased by 1000 *steps/s*.
 
         For example: If the current velocity is 0 and you want to accelerate to a
@@ -263,8 +263,6 @@ class BrickSilentStepper(Device):
 
         An acceleration/deacceleration of 0 means instantaneous
         acceleration/deacceleration (not recommended)
-
-        The default value is 1000 for both
         """
         acceleration = int(acceleration)
         deacceleration = int(deacceleration)
@@ -372,8 +370,6 @@ class BrickSilentStepper(Device):
 
         If you often change the speed with high acceleration you should turn the
         interpolation off.
-
-        The default is 1/256-step with interpolation on.
         """
         step_resolution = int(step_resolution)
         interpolation = bool(interpolation)
@@ -411,7 +407,7 @@ class BrickSilentStepper(Device):
 
     def get_stack_input_voltage(self):
         """
-        Returns the stack input voltage in mV. The stack input voltage is the
+        Returns the stack input voltage. The stack input voltage is the
         voltage that is supplied via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
         """
@@ -419,7 +415,7 @@ class BrickSilentStepper(Device):
 
     def get_external_input_voltage(self):
         """
-        Returns the external input voltage in mV. The external input voltage is
+        Returns the external input voltage. The external input voltage is
         given via the black power input connector on the Silent Stepper Brick.
 
         If there is an external input voltage and a stack input voltage, the motor
@@ -436,9 +432,7 @@ class BrickSilentStepper(Device):
 
     def set_motor_current(self, current):
         """
-        Sets the current in mA with which the motor will be driven.
-        The minimum value is 360mA, the maximum value 1640mA and the
-        default value is 800mA.
+        Sets the current with which the motor will be driven.
 
         .. warning::
          Do not set this value above the specifications of your stepper motor.
@@ -483,12 +477,12 @@ class BrickSilentStepper(Device):
           the configured motor phase current will be driven until the configured
           Power Down Time is elapsed. After that the phase current will be reduced to the standstill
           current. The elapsed time for this reduction can be configured with the Standstill Delay Time.
-          The unit is in mA and the maximum allowed value is the configured maximum motor current
+          The maximum allowed value is the configured maximum motor current
           (see :func:`Set Motor Current`).
 
         * Motor Run Current: The value sets the motor current when the motor is running.
           Use a value of at least one half of the global maximum motor current for a good
-          microstep performance. The unit is in mA and the maximum allowed value is the current
+          microstep performance. The maximum allowed value is the current
           motor current. The API maps the entered value to 1/32 ... 32/32 of the maximum
           motor current. This value should be used to change the motor current during motor movement,
           whereas the global maximum motor current should not be changed while the motor is moving
@@ -497,37 +491,24 @@ class BrickSilentStepper(Device):
         * Standstill Delay Time: Controls the duration for motor power down after a motion
           as soon as standstill is detected and the Power Down Time is expired. A high Standstill Delay
           Time results in a smooth transition that avoids motor jerk during power down.
-          The value range is 0 to 307ms
 
         * Power Down Time: Sets the delay time after a stand still.
-          The value range is 0 to 5222ms.
 
-        * Stealth Threshold: Sets the upper threshold for Stealth mode in steps/s. The value range is
-          0-65536 steps/s. If the velocity of the motor goes above this value, Stealth mode is turned
+        * Stealth Threshold: Sets the upper threshold for Stealth mode.
+          If the velocity of the motor goes above this value, Stealth mode is turned
           off. Otherwise it is turned on. In Stealth mode the torque declines with high speed.
 
-        * Coolstep Threshold: Sets the lower threshold for Coolstep mode in steps/s. The value range is
-          0-65536 steps/s. The Coolstep Threshold needs to be above the Stealth Threshold.
+        * Coolstep Threshold: Sets the lower threshold for Coolstep mode.
+          The Coolstep Threshold needs to be above the Stealth Threshold.
 
-        * Classic Threshold: Sets the lower threshold for classic mode. The value range is
-          0-65536 steps/s. In classic mode the stepper becomes more noisy, but the torque is maximized.
+        * Classic Threshold: Sets the lower threshold for classic mode.
+          In classic mode the stepper becomes more noisy, but the torque is maximized.
 
-        * High Velocity Shopper Mode: If High Velocity Shopper Mode is enabled, the stepper control
+        * High Velocity Chopper Mode: If High Velocity Chopper Mode is enabled, the stepper control
           is optimized to run the stepper motors at high velocities.
 
         If you want to use all three thresholds make sure that
         Stealth Threshold < Coolstep Threshold < Classic Threshold.
-
-        The default values are:
-
-        * Standstill Current: 200
-        * Motor Run Current: 800
-        * Standstill Delay Time: 0
-        * Power Down Time: 1000
-        * Stealth Threshold: 500
-        * Coolstep Threshold: 500
-        * Classic Threshold: 1000
-        * High Velocity Shopper Mode: false
         """
         standstill_current = int(standstill_current)
         motor_run_current = int(motor_run_current)
@@ -555,22 +536,22 @@ class BrickSilentStepper(Device):
         controls the motor current flow. More information can be found in the TMC2130 datasheet on page
         47 (7 spreadCycle and Classic Chopper).
 
-        * Slow Decay Duration: Controls duration of off time setting of slow decay phase. The value
-          range is 0-15. 0 = driver disabled, all bridges off. Use 1 only with Comparator Blank time >= 2.
+        * Slow Decay Duration: Controls duration of off time setting of slow decay phase.
+          0 = driver disabled, all bridges off. Use 1 only with Comparator Blank time >= 2.
 
         * Enable Random Slow Decay: Set to false to fix chopper off time as set by Slow Decay Duration.
           If you set it to true, Decay Duration is randomly modulated.
 
-        * Fast Decay Duration: Sets the fast decay duration. The value range is 0-15. This parameters is
+        * Fast Decay Duration: Sets the fast decay duration. This parameters is
           only used if the Chopper Mode is set to Fast Decay.
 
-        * Hysteresis Start Value: Sets the hysteresis start value. The value range is 0-7. This parameter is
+        * Hysteresis Start Value: Sets the hysteresis start value. This parameter is
           only used if the Chopper Mode is set to Spread Cycle.
 
-        * Hysteresis End Value: Sets the hysteresis end value. The value range is -3 to 12. This parameter is
+        * Hysteresis End Value: Sets the hysteresis end value. This parameter is
           only used if the Chopper Mode is set to Spread Cycle.
 
-        * Sine Wave Offset: Sets the sine wave offset. The value range is -3 to 12. This parameters is
+        * Sine Wave Offset: Sets the sine wave offset. This parameters is
           only used if the Chopper Mode is set to Fast Decay. 1/512 of the value becomes added to the absolute
           value of the sine wave.
 
@@ -587,18 +568,6 @@ class BrickSilentStepper(Device):
 
         * Fast Decay Without Comparator: If set to true the current comparator usage for termination of the
           fast decay cycle is disabled.
-
-        The default values are:
-
-        * Slow Decay Duration: 4
-        * Enable Random Slow Decay: 0
-        * Fast Decay Duration: 0
-        * Hysteresis Start Value: 0
-        * Hysteresis End Value: 0
-        * Sine Wave Offset: 0
-        * Chopper Mode: 0
-        * Comparator Blank Time: 1
-        * Fast Decay Without Comparator: false
         """
         slow_decay_duration = int(slow_decay_duration)
         enable_random_slow_decay = bool(enable_random_slow_decay)
@@ -629,11 +598,11 @@ class BrickSilentStepper(Device):
           stealth mode is disabled, even if the speed is below the threshold set in :func:`Set Basic Configuration`.
 
         * Amplitude: If autoscale is disabled, the PWM amplitude is scaled by this value. If autoscale is enabled,
-          this value defines the maximum PWM amplitude change per half wave. The value range is 0-255.
+          this value defines the maximum PWM amplitude change per half wave.
 
         * Gradient: If autoscale is disabled, the PWM gradient is scaled by this value. If autoscale is enabled,
           this value defines the maximum PWM gradient. With autoscale a value above 64 is recommended,
-          otherwise the regulation might not be able to measure the current. The value range is 0-255.
+          otherwise the regulation might not be able to measure the current.
 
         * Enable Autoscale: If set to true, automatic current control is used. Otherwise the user defined
           amplitude and gradient are used.
@@ -643,15 +612,6 @@ class BrickSilentStepper(Device):
 
         * Freewheel Mode: The freewheel mode defines the behavior in stand still if the Standstill Current
           (see :func:`Set Basic Configuration`) is set to 0.
-
-        The default values are:
-
-        * Enable Stealth: true
-        * Amplitude: 128
-        * Gradient: 4
-        * Enable Autoscale: true
-        * Force Symmetric: false
-        * Freewheel Mode: 0 (Normal)
         """
         enable_stealth = bool(enable_stealth)
         amplitude = int(amplitude)
@@ -676,7 +636,7 @@ class BrickSilentStepper(Device):
         Sets the configuration relevant for Coolstep.
 
         * Minimum Stallguard Value: If the Stallguard result falls below this value*32, the motor current
-          is increased to reduce motor load angle. The value range is 0-15. A value of 0 turns Coolstep off.
+          is increased to reduce motor load angle. A value of 0 turns Coolstep off.
 
         * Maximum Stallguard Value: If the Stallguard result goes above
           (Min Stallguard Value + Max Stallguard Value + 1) * 32, the motor current is decreased to save
@@ -691,22 +651,12 @@ class BrickSilentStepper(Device):
         * Minimum Current: Sets the minimum current for Coolstep current control. You can choose between
           half and quarter of the run current.
 
-        * Stallguard Threshold Value: Sets the level for stall output (see :func:`Get Driver Status`). The value
-          range is -64 to +63. A lower value gives a higher sensitivity. You have to find a suitable value for your
+        * Stallguard Threshold Value: Sets the level for stall output (see :func:`Get Driver Status`).
+          A lower value gives a higher sensitivity. You have to find a suitable value for your
           motor by trial and error, 0 works for most motors.
 
         * Stallguard Mode: Set to 0 for standard resolution or 1 for filtered mode. In filtered mode the Stallguard
           signal will be updated every four full-steps.
-
-        The default values are:
-
-        * Minimum Stallguard Value: 2
-        * Maximum Stallguard Value: 10
-        * Current Up Step Width: 0
-        * Current Down Step Width: 0
-        * Minimum Current: 0
-        * Stallguard Threshold Value: 0
-        * Stallguard Mode: 0
         """
         minimum_stallguard_value = int(minimum_stallguard_value)
         maximum_stallguard_value = int(maximum_stallguard_value)
@@ -739,11 +689,6 @@ class BrickSilentStepper(Device):
           the synchronization is turned off. Otherwise the synchronization is done through the formula
           f_sync = f_clk/(value*64). In Classic Mode the synchronization is automatically switched off.
           f_clk is 12.8MHz.
-
-        The default values are:
-
-        * Disable Short To Ground Protection: 0
-        * Synchronize Phase Frequency: 0
         """
         disable_short_to_ground_protection = bool(disable_short_to_ground_protection)
         synchronize_phase_frequency = int(synchronize_phase_frequency)
@@ -773,7 +718,7 @@ class BrickSilentStepper(Device):
         * Motor Stalled: Is true if a motor stall was detected.
 
         * Actual Motor Current: Indicates the actual current control scaling as used in Coolstep mode.
-          The returned value is between 0 and 31. It represents a multiplier of 1/32 to 32/32 of the
+          It represents a multiplier of 1/32 to 32/32 of the
           ``Motor Run Current`` as set by :func:`Set Basic Configuration`. Example: If a ``Motor Run Current``
           of 1000mA was set and the returned value is 15, the ``Actual Motor Current`` is 16/32*1000mA = 500mA.
 
@@ -790,14 +735,12 @@ class BrickSilentStepper(Device):
 
     def set_minimum_voltage(self, voltage):
         """
-        Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
+        Sets the minimum voltage, below which the :cb:`Under Voltage` callback
         is triggered. The minimum possible value that works with the Silent Stepper
         Brick is 8V.
         You can use this function to detect the discharge of a battery that is used
         to drive the stepper motor. If you have a fixed power supply, you likely do
         not need this functionality.
-
-        The default value is 8V.
         """
         voltage = int(voltage)
 
@@ -812,13 +755,11 @@ class BrickSilentStepper(Device):
     def set_time_base(self, time_base):
         """
         Sets the time base of the velocity and the acceleration of the Silent Stepper
-        Brick (in seconds).
+        Brick.
 
         For example, if you want to make one step every 1.5 seconds, you can set
         the time base to 15 and the velocity to 10. Now the velocity is
         10steps/15s = 1steps/1.5s.
-
-        The default value is 1.
         """
         time_base = int(time_base)
 

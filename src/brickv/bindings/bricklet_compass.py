@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -26,7 +26,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletCompass(Device):
     """
-    3-axis compass with 0.1mG (milli Gauss) and 0.1° resolution
+    3-axis compass with 10 nanotesla and 0.1° resolution
     """
 
     DEVICE_IDENTIFIER = 2153

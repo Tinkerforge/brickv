@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -86,8 +86,7 @@ class BrickletVoltage(Device):
 
     def get_voltage(self):
         """
-        Returns the voltage of the sensor. The value is in mV and
-        between 0mV and 50000mV.
+        Returns the voltage of the sensor.
 
         If you want to get the voltage periodically, it is recommended to use the
         :cb:`Voltage` callback and set the period with
@@ -98,7 +97,6 @@ class BrickletVoltage(Device):
     def get_analog_value(self):
         """
         Returns the value as read by a 12-bit analog-to-digital converter.
-        The value is between 0 and 4095.
 
         .. note::
          The value returned by :func:`Get Voltage` is averaged over several samples
@@ -163,8 +161,6 @@ class BrickletVoltage(Device):
          "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
          "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -193,8 +189,6 @@ class BrickletVoltage(Device):
          "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
          "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)

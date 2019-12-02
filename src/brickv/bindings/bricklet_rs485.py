@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -307,15 +307,7 @@ class BrickletRS485(Device):
 
     def set_rs485_configuration(self, baudrate, parity, stopbits, wordlength, duplex):
         """
-        Sets the configuration for the RS485 communication. Available options:
-
-        * Baudrate between 100 and 2000000 baud.
-        * Parity of none, odd or even.
-        * Stopbits can be 1 or 2.
-        * Word length of 5 to 8.
-        * Half- or Full-Duplex.
-
-        The default is: 115200 baud, parity none, 1 stop bit, word length 8, half duplex.
+        Sets the configuration for the RS485 communication.
         """
         baudrate = int(baudrate)
         parity = int(parity)
@@ -336,9 +328,7 @@ class BrickletRS485(Device):
         Sets the configuration for the RS485 Modbus communication. Available options:
 
         * Slave Address: Address to be used as the Modbus slave address in Modbus slave mode. Valid Modbus slave address range is 1 to 247.
-        * Master Request Timeout: Specifies how long the master should wait for a response from a slave in milliseconds when in Modbus master mode.
-
-        The default is: Slave Address = 1 and Master Request Timeout = 1000 milliseconds (1 second).
+        * Master Request Timeout: Specifies how long the master should wait for a response from a slave when in Modbus master mode.
         """
         slave_address = int(slave_address)
         master_request_timeout = int(master_request_timeout)
@@ -358,8 +348,6 @@ class BrickletRS485(Device):
         * RS485,
         * Modbus Master RTU and
         * Modbus Slave RTU.
-
-        The default is: RS485 mode.
         """
         mode = int(mode)
 
@@ -415,8 +403,8 @@ class BrickletRS485(Device):
     def set_buffer_config(self, send_buffer_size, receive_buffer_size):
         """
         Sets the send and receive buffer size in byte. In sum there is
-        10240 byte (10kb) buffer available and the minimum buffer size
-        is 1024 byte (1kb) for both.
+        10240 byte (10KiB) buffer available and the minimum buffer size
+        is 1024 byte (1KiB) for both.
 
         The current buffer content is lost if this function is called.
 
@@ -424,8 +412,6 @@ class BrickletRS485(Device):
         could not be written yet. The receive buffer holds data that is
         received through RS485 but could not yet be send to the
         user, either by :func:`Read` or through :cb:`Read` callback.
-
-        The default configuration is 5120 byte (5kb) per buffer.
         """
         send_buffer_size = int(send_buffer_size)
         receive_buffer_size = int(receive_buffer_size)

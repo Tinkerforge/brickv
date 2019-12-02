@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -285,7 +285,7 @@ class BrickletLaserRangeFinderV2(Device):
         the distance to something with a very high reflection (e.g. mirror). Set this to 0 to
         use the default algorithm. The other allowed values are 1-255.
 
-        Set the **Measurement Frequency** in Hz to force a fixed measurement rate. If set to 0,
+        Set the **Measurement Frequency** to force a fixed measurement rate. If set to 0,
         the Laser Range Finder Bricklet will use the optimal frequency according to the other
         configurations and the actual measured distance. Since the rate is not fixed in this case,
         the velocity measurement is not stable. For a stable velocity measurement you should

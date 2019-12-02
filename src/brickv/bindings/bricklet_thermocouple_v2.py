@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -209,8 +209,6 @@ class BrickletThermocoupleV2(Device):
 
         * 60Hz: ``time = 82 + (samples - 1) * 16.67``
         * 50Hz: ``time = 98 + (samples - 1) * 20``
-
-        The default configuration is 16 samples, K type and 50Hz.
         """
         averaging = int(averaging)
         thermocouple_type = int(thermocouple_type)

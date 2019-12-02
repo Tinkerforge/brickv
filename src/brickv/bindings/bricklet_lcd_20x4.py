@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -223,7 +223,7 @@ class BrickletLCD20x4(Device):
 
     def set_default_text_counter(self, counter):
         """
-        Sets the default text counter in ms. This counter is decremented each
+        Sets the default text counter. This counter is decremented each
         ms by the LCD firmware. If the counter reaches 0, the default text
         (see :func:`Set Default Text`) is shown on the LCD.
 

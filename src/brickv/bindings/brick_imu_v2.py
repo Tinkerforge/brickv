@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-11-29.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -217,7 +217,7 @@ class BrickIMUV2(Device):
     def get_acceleration(self):
         """
         Returns the calibrated acceleration from the accelerometer for the
-        x, y and z axis in 1/100 m/s².
+        x, y and z axis.
 
         If you want to get the acceleration periodically, it is recommended
         to use the :cb:`Acceleration` callback and set the period with
@@ -228,7 +228,7 @@ class BrickIMUV2(Device):
     def get_magnetic_field(self):
         """
         Returns the calibrated magnetic field from the magnetometer for the
-        x, y and z axis in 1/16 µT (Microtesla).
+        x, y and z axis.
 
         If you want to get the magnetic field periodically, it is recommended
         to use the :cb:`Magnetic Field` callback and set the period with
@@ -239,7 +239,7 @@ class BrickIMUV2(Device):
     def get_angular_velocity(self):
         """
         Returns the calibrated angular velocity from the gyroscope for the
-        x, y and z axis in 1/16 °/s.
+        x, y and z axis.
 
         If you want to get the angular velocity periodically, it is recommended
         to use the :cb:`Angular Velocity` acallback nd set the period with
@@ -249,8 +249,8 @@ class BrickIMUV2(Device):
 
     def get_temperature(self):
         """
-        Returns the temperature of the IMU Brick. The temperature is given in
-        °C. The temperature is measured in the core of the BNO055 IC, it is not the
+        Returns the temperature of the IMU Brick.
+        The temperature is measured in the core of the BNO055 IC, it is not the
         ambient temperature
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_TEMPERATURE, (), '', 'b')
@@ -258,16 +258,10 @@ class BrickIMUV2(Device):
     def get_orientation(self):
         """
         Returns the current orientation (heading, roll, pitch) of the IMU Brick as
-        independent Euler angles in 1/16 degree. Note that Euler angles always
+        independent Euler angles. Note that Euler angles always
         experience a `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
         We recommend that you use quaternions instead, if you need the absolute
         orientation.
-
-        The rotation angle has the following ranges:
-
-        * heading: 0° to 360°
-        * roll: -90° to +90°
-        * pitch: -180° to +180°
 
         If you want to get the orientation periodically, it is recommended
         to use the :cb:`Orientation` callback and set the period with
@@ -278,7 +272,7 @@ class BrickIMUV2(Device):
     def get_linear_acceleration(self):
         """
         Returns the linear acceleration of the IMU Brick for the
-        x, y and z axis in 1/100 m/s².
+        x, y and z axis.
 
         The linear acceleration is the acceleration in each of the three
         axis of the IMU Brick with the influences of gravity removed.
@@ -295,7 +289,7 @@ class BrickIMUV2(Device):
     def get_gravity_vector(self):
         """
         Returns the current gravity vector of the IMU Brick for the
-        x, y and z axis in 1/100 m/s².
+        x, y and z axis.
 
         The gravity vector is the acceleration that occurs due to gravity.
         Influences of additional linear acceleration are removed.
@@ -327,14 +321,14 @@ class BrickIMUV2(Device):
         """
         Return all of the available data of the IMU Brick.
 
-        * acceleration in 1/100 m/s² (see :func:`Get Acceleration`)
-        * magnetic field in 1/16 µT (see :func:`Get Magnetic Field`)
-        * angular velocity in 1/16 °/s (see :func:`Get Angular Velocity`)
-        * Euler angles in 1/16 ° (see :func:`Get Orientation`)
-        * quaternion 1/16383 (see :func:`Get Quaternion`)
-        * linear acceleration 1/100 m/s² (see :func:`Get Linear Acceleration`)
-        * gravity vector 1/100 m/s² (see :func:`Get Gravity Vector`)
-        * temperature in 1 °C (see :func:`Get Temperature`)
+        * acceleration (see :func:`Get Acceleration`)
+        * magnetic field (see :func:`Get Magnetic Field`)
+        * angular velocity (see :func:`Get Angular Velocity`)
+        * Euler angles (see :func:`Get Orientation`)
+        * quaternion (see :func:`Get Quaternion`)
+        * linear acceleration (see :func:`Get Linear Acceleration`)
+        * gravity vector (see :func:`Get Gravity Vector`)
+        * temperature (see :func:`Get Temperature`)
         * calibration status (see below)
 
         The calibration status consists of four pairs of two bits. Each pair
@@ -533,14 +527,6 @@ class BrickIMUV2(Device):
         Accelerometer. The Accelerometer Range is user selectable in all fusion modes,
         all other configurations are auto-controlled in fusion mode.
 
-        The default values are:
-
-        * Magnetometer Rate 20Hz
-        * Gyroscope Range 2000°/s
-        * Gyroscope Bandwidth 32Hz
-        * Accelerometer Range +/-4G
-        * Accelerometer Bandwidth 62.5Hz
-
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
         magnetometer_rate = int(magnetometer_rate)
@@ -575,8 +561,6 @@ class BrickIMUV2(Device):
         but the fast magnetometer calibration is turned off. So to find the orientation
         the first time will likely take longer, but small magnetic influences might
         not affect the automatic calibration as much.
-
-        By default sensor fusion is on.
 
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """

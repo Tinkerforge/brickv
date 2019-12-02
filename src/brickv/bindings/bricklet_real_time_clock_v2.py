@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -118,19 +118,7 @@ class BrickletRealTimeClockV2(Device):
 
     def set_date_time(self, year, month, day, hour, minute, second, centisecond, weekday):
         """
-        Sets the current date (including weekday) and the current time with hundredths
-        of a second resolution.
-
-        Possible value ranges:
-
-        * Year: 2000 to 2099
-        * Month: 1 to 12 (January to December)
-        * Day: 1 to 31
-        * Hour: 0 to 23
-        * Minute: 0 to 59
-        * Second: 0 to 59
-        * Centisecond: 0 to 99
-        * Weekday: 1 to 7 (Monday to Sunday)
+        Sets the current date (including weekday) and the current time.
 
         If the backup battery is installed then the real-time clock keeps date and
         time even if the Bricklet is not powered by a Brick.
@@ -153,10 +141,10 @@ class BrickletRealTimeClockV2(Device):
     def get_date_time(self):
         """
         Returns the current date (including weekday) and the current time of the
-        real-time clock with hundredths of a second resolution.
+        real-time.
 
         The timestamp represents the current date and the the current time of the
-        real-time clock converted to milliseconds.
+        real-time clock converted to milliseconds and is an offset to 2000-01-01 00:00:00.0000.
         """
         return GetDateTime(*self.ipcon.send_request(self, BrickletRealTimeClockV2.FUNCTION_GET_DATE_TIME, (), '', 'H B B B B B B B q'))
 
@@ -164,7 +152,7 @@ class BrickletRealTimeClockV2(Device):
         """
         Returns the current date and the time of the real-time clock converted to
         milliseconds. The timestamp has an effective resolution of hundredths of a
-        second.
+        second and is an offset to 2000-01-01 00:00:00.0000.
         """
         return self.ipcon.send_request(self, BrickletRealTimeClockV2.FUNCTION_GET_TIMESTAMP, (), '', 'q')
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -71,8 +71,8 @@ class BrickletUVLight(Device):
 
     def get_uv_light(self):
         """
-        Returns the UV light intensity of the sensor, the intensity is given
-        in 1/10 mW/m². The sensor has already weighted the intensity with the erythemal
+        Returns the UV light intensity of the sensor.
+        The sensor has already weighted the intensity with the erythemal
         action spectrum to get the skin-affecting irradiation.
 
         To get UV index you just have to divide the value by 250. For example, a UV
@@ -117,8 +117,6 @@ class BrickletUVLight(Device):
          "'i'",    "Callback is triggered when the intensity is *inside* the min and max values"
          "'<'",    "Callback is triggered when the intensity is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the intensity is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)

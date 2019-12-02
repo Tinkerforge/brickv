@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -403,7 +403,7 @@ class BrickMaster(Device):
 
     def get_stack_voltage(self):
         """
-        Returns the stack voltage in mV. The stack voltage is the
+        Returns the stack voltage. The stack voltage is the
         voltage that is supplied via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
         """
@@ -411,7 +411,7 @@ class BrickMaster(Device):
 
     def get_stack_current(self):
         """
-        Returns the stack current in mA. The stack current is the
+        Returns the stack current. The stack current is the
         current that is drawn via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
         """
@@ -420,7 +420,7 @@ class BrickMaster(Device):
     def set_extension_type(self, extension, exttype):
         """
         Writes the extension type to the EEPROM of a specified extension.
-        The extension is either 0 or 1 (0 is the on the bottom, 1 is the one on top,
+        The extension is either 0 or 1 (0 is the lower one, 1 is the upper one,
         if only one extension is present use 0).
 
         Possible extension types:
@@ -460,7 +460,7 @@ class BrickMaster(Device):
 
     def set_chibi_address(self, address):
         """
-        Sets the address (1-255) belonging to the Chibi Extension.
+        Sets the address belonging to the Chibi Extension.
 
         It is possible to set the address with the Brick Viewer and it will be
         saved in the EEPROM of the Chibi Extension, it does not
@@ -478,7 +478,7 @@ class BrickMaster(Device):
 
     def set_chibi_master_address(self, address):
         """
-        Sets the address (1-255) of the Chibi Master. This address is used if the
+        Sets the address of the Chibi Master. This address is used if the
         Chibi Extension is used as slave (i.e. it does not have a USB connection).
 
         It is possible to set the address with the Brick Viewer and it will be
@@ -497,7 +497,7 @@ class BrickMaster(Device):
 
     def set_chibi_slave_address(self, num, address):
         """
-        Sets up to 254 slave addresses. Valid addresses are in range 1-255. 0 has a
+        Sets up to 254 slave addresses. 0 has a
         special meaning, it is used as list terminator and not allowed as normal slave
         address. The address numeration (via ``num`` parameter) has to be used
         ascending from 0. For example: If you use the Chibi Extension in Master mode
@@ -669,15 +669,14 @@ class BrickMaster(Device):
 
     def set_rs485_configuration(self, speed, parity, stopbits):
         """
-        Sets the configuration of the RS485 Extension. Speed is given in baud. The
+        Sets the configuration of the RS485 Extension. The
         Master Brick will try to match the given baud rate as exactly as possible.
-        The maximum recommended baud rate is 2000000 (2Mbit/s).
+        The maximum recommended baud rate is 2000000 (2MBd).
         Possible values for parity are 'n' (none), 'e' (even) and 'o' (odd).
-        Possible values for stop bits are 1 and 2.
 
         If your RS485 is unstable (lost messages etc.), the first thing you should
         try is to decrease the speed. On very large bus (e.g. 1km), you probably
-        should use a value in the range of 100000 (100kbit/s).
+        should use a value in the range of 100000 (100kBd).
 
         The values are stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
@@ -772,7 +771,7 @@ class BrickMaster(Device):
 
         If you choose WPA Enterprise as encryption, you have to set ``eap_options`` and
         the length of the certificates (for other encryption types these parameters
-        are ignored). The certificate length are given in byte and the certificates
+        are ignored). The certificates
         themselves can be set with :func:`Set Wifi Certificate`. ``eap_options`` consist
         of the outer authentication (bits 1-2), inner authentication (bit 3) and
         certificate type (bits 4-5):
@@ -887,8 +886,6 @@ class BrickMaster(Device):
 
          "0", "Full Speed (high power consumption, high throughput)"
          "1", "Low Power (low power consumption, low throughput)"
-
-        The default value is 0 (Full Speed).
         """
         mode = int(mode)
 
@@ -930,8 +927,6 @@ class BrickMaster(Device):
          "0", "FCC: Channel 1-11 (N/S America, Australia, New Zealand)"
          "1", "ETSI: Channel 1-13 (Europe, Middle East, Africa)"
          "2", "TELEC: Channel 1-14 (Japan)"
-
-        The default value is 1 (ETSI).
         """
         domain = int(domain)
 
@@ -945,7 +940,7 @@ class BrickMaster(Device):
 
     def get_usb_voltage(self):
         """
-        Returns the USB voltage in mV. Does not work with hardware version 2.1.
+        Returns the USB voltage. Does not work with hardware version 2.1.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_USB_VOLTAGE, (), '', 'H')
 
@@ -1081,8 +1076,6 @@ class BrickMaster(Device):
          "'<'",    "Callback is triggered when the current is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the current is greater than the min value (max is ignored)"
 
-        The default value is ('x', 0, 0).
-
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
         option = create_char(option)
@@ -1115,8 +1108,6 @@ class BrickMaster(Device):
          "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
 
-        The default value is ('x', 0, 0).
-
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
         option = create_char(option)
@@ -1148,8 +1139,6 @@ class BrickMaster(Device):
          "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
          "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
 
         .. versionadded:: 2.0.5$nbsp;(Firmware)
         """
@@ -1309,8 +1298,6 @@ class BrickMaster(Device):
         you have to restart the Master Brick after configuration.
 
         It is recommended to use the Brick Viewer to set the Ethernet configuration.
-
-        The default values are 3 for the socket connections and 4280 for the port.
 
         .. versionadded:: 2.2.0$nbsp;(Firmware)
         """
@@ -1671,10 +1658,8 @@ class BrickMaster(Device):
         password.
 
         The ``hidden`` parameter makes the access point hide or show its SSID.
-        The default value is *false*.
 
         The ``channel`` parameter sets the channel (1 to 13) of the access point.
-        The default value is 1.
 
         If the ``mac_address`` parameter is set to all zero then the factory MAC
         address is used. Otherwise this parameter can be used to set a custom MAC
@@ -1789,7 +1774,7 @@ class BrickMaster(Device):
         Sets the mesh specific configuration of the WIFI Extension 2.0.
 
         The ``enable`` parameter enables or disables the mesh part of the
-        WIFI Extension 2.0. The default value is *false*. The mesh part cannot be
+        WIFI Extension 2.0. The mesh part cannot be
         enabled together with the client and access-point part.
 
         If the ``root_ip`` parameter is set to all zero then ``root_subnet_mask``

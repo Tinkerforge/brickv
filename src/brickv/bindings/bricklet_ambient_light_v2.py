@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -93,8 +93,6 @@ class BrickletAmbientLightV2(Device):
         """
         Returns the illuminance of the ambient light sensor. The measurement range goes
         up to about 100000lux, but above 64000lux the precision starts to drop.
-        The illuminance is given in lux/100, i.e. a value of 450000 means that an
-        illuminance of 4500lux is measured.
 
         .. versionchanged:: 2.0.2$nbsp;(Plugin)
           An illuminance of 0lux indicates that the sensor is saturated and the
@@ -139,8 +137,6 @@ class BrickletAmbientLightV2(Device):
          "'i'",    "Callback is triggered when the illuminance is *inside* the min and max values"
          "'<'",    "Callback is triggered when the illuminance is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the illuminance is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -201,8 +197,6 @@ class BrickletAmbientLightV2(Device):
         If the measurement is out-of-range or the sensor is saturated then you should
         configure the next higher illuminance range. If the highest range is already
         in use, then start to reduce the integration time.
-
-        The default values are 0-8000lux illuminance range and 200ms integration time.
         """
         illuminance_range = int(illuminance_range)
         integration_time = int(integration_time)

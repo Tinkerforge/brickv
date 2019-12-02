@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -99,7 +99,7 @@ class BrickHATZero(Device):
 
     def get_usb_voltage(self):
         """
-        Returns the USB supply voltage of the Raspberry Pi in mV.
+        Returns the USB supply voltage of the Raspberry Pi.
 
 
         If you want to get the value periodically, it is recommended to use the

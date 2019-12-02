@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -278,8 +278,6 @@ class BrickletIO4(Device):
         * 0 = rising (default)
         * 1 = falling
         * 2 = both
-
-        The debounce time is given in ms.
 
         Configuring an edge counter resets its value to 0.
 

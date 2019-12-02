@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -134,9 +134,7 @@ class BrickletPTCV2(Device):
 
     def get_temperature(self):
         """
-        Returns the temperature of the connected sensor. The value
-        has a range of -246 to 849 °C and is given in °C/100,
-        e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
+        Returns the temperature of the connected sensor.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -255,8 +253,6 @@ class BrickletPTCV2(Device):
         Noise from 50Hz or 60Hz power sources (including
         harmonics of the AC power's fundamental frequency) is
         attenuated by 82dB.
-
-        Default value is 0 = 50Hz.
         """
         filter = int(filter)
 
@@ -288,8 +284,6 @@ class BrickletPTCV2(Device):
         Sets the wire mode of the sensor. Possible values are 2, 3 and 4 which
         correspond to 2-, 3- and 4-wire sensors. The value has to match the jumper
         configuration on the Bricklet.
-
-        The default value is 2 = 2-wire.
         """
         mode = int(mode)
 
@@ -309,14 +303,11 @@ class BrickletPTCV2(Device):
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
 
-        The range for the averaging is 1-1000.
-
         New data is gathered every 20ms. With a moving average of length 1000 the resulting
         averaging window has a length of 20s. If you want to do long term measurements the longest
         moving average will give the cleanest results.
 
-        The default value is 1 for resistance and 40 for temperature. The default values match
-        the non-changeable averaging settings of the old PTC Bricklet 1.0
+        The default values match the non-changeable averaging settings of the old PTC Bricklet 1.0
         """
         moving_average_length_resistance = int(moving_average_length_resistance)
         moving_average_length_temperature = int(moving_average_length_temperature)

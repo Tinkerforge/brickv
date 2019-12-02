@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -143,8 +143,7 @@ class BrickletVoltageCurrentV2(Device):
 
     def get_current(self):
         """
-        Returns the current. The value is in mA
-        and between -20000mA and 20000mA.
+        Returns the current.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -199,8 +198,7 @@ class BrickletVoltageCurrentV2(Device):
 
     def get_voltage(self):
         """
-        Returns the voltage. The value is in mV
-        and between 0mV and 36000mV.
+        Returns the voltage.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -255,8 +253,7 @@ class BrickletVoltageCurrentV2(Device):
 
     def get_power(self):
         """
-        Returns the power. The value is in mW
-        and between 0mV and 720000mW.
+        Returns the power.
 
 
         If you want to get the value periodically, it is recommended to use the
@@ -314,39 +311,6 @@ class BrickletVoltageCurrentV2(Device):
         Sets the configuration of the Voltage/Current Bricklet 2.0. It is
         possible to configure number of averages as well as
         voltage and current conversion time.
-
-        Averaging:
-
-        .. csv-table::
-         :header: "Value", "Number of Averages"
-         :widths: 20, 20
-
-         "0",    "1"
-         "1",    "4"
-         "2",    "16"
-         "3",    "64"
-         "4",    "128"
-         "5",    "256"
-         "6",    "512"
-         ">=7",  "1024"
-
-        Voltage/Current conversion:
-
-        .. csv-table::
-         :header: "Value", "Conversion time"
-         :widths: 20, 20
-
-         "0",    "140µs"
-         "1",    "204µs"
-         "2",    "332µs"
-         "3",    "588µs"
-         "4",    "1.1ms"
-         "5",    "2.116ms"
-         "6",    "4.156ms"
-         ">=7",  "8.244ms"
-
-        The default values are 3, 4 and 4 (64, 1.1ms, 1.1ms) for averaging, voltage
-        conversion and current conversion.
         """
         averaging = int(averaging)
         voltage_conversion_time = int(voltage_conversion_time)

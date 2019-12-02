@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -126,8 +126,8 @@ class BrickletUVLightV2(Device):
 
     def get_uva(self):
         """
-        Returns the UVA intensity of the sensor, the intensity is given
-        in 1/10 mW/m². The sensor has not weighted the intensity with the erythemal
+        Returns the UVA intensity of the sensor.
+        The sensor has not weighted the intensity with the erythemal
         action spectrum to get the skin-affecting irradiation. Therefore, you cannot
         just divide the value by 250 to get the UVA index. To get the UV index use
         :func:`Get UVI`.
@@ -191,8 +191,8 @@ class BrickletUVLightV2(Device):
 
     def get_uvb(self):
         """
-        Returns the UVB intensity of the sensor, the intensity is given
-        in 1/10 mW/m². The sensor has not weighted the intensity with the erythemal
+        Returns the UVB intensity of the sensor.
+        The sensor has not weighted the intensity with the erythemal
         action spectrum to get the skin-affecting irradiation. Therefore, you cannot
         just divide the value by 250 to get the UVB index. To get the UV index use
         :func:`Get UVI`.
@@ -325,8 +325,6 @@ class BrickletUVLightV2(Device):
         With a longer integration time (especially 800 ms) and a higher UV intensity the
         sensor can be saturated. If this happens the UVA/UVB/UVI readings are all -1.
         In this case you need to choose a shorter integration time.
-
-        Default value: 400 ms.
         """
         integration_time = int(integration_time)
 

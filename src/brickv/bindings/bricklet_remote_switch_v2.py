@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -145,8 +145,6 @@ class BrickletRemoteSwitchV2(Device):
 
         Some dimmers are controlled by the length of a button pressed,
         this can be simulated by increasing the repeats.
-
-        The default value is 5.
         """
         repeats = int(repeats)
 
@@ -163,8 +161,6 @@ class BrickletRemoteSwitchV2(Device):
         To switch a type A socket you have to give the house code, receiver code and the
         state (on or off) you want to switch to.
 
-        The house code and receiver code have a range of 0 to 31 (5bit).
-
         A detailed description on how you can figure out the house and receiver code
         can be found :ref:`here <remote_switch_bricklet_type_a_house_and_receiver_code>`.
         """
@@ -179,9 +175,7 @@ class BrickletRemoteSwitchV2(Device):
         To switch a type B socket you have to give the address, unit and the state
         (on or off) you want to switch to.
 
-        The address has a range of 0 to 67108863 (26bit) and the unit has a range
-        of 0 to 15 (4bit). To switch all devices with the same address use 255 for
-        the unit.
+        To switch all devices with the same address use 255 for the unit.
 
         A detailed description on how you can teach a socket the address and unit can
         be found :ref:`here <remote_switch_bricklet_type_b_address_and_unit>`.
@@ -197,9 +191,6 @@ class BrickletRemoteSwitchV2(Device):
         To control a type B dimmer you have to give the address, unit and the
         dim value you want to set the dimmer to.
 
-        The address has a range of 0 to 67108863 (26bit), the unit and the dim value
-        has a range of 0 to 15 (4bit).
-
         A detailed description on how you can teach a dimmer the address and unit can
         be found :ref:`here <remote_switch_bricklet_type_b_address_and_unit>`.
         """
@@ -213,9 +204,6 @@ class BrickletRemoteSwitchV2(Device):
         """
         To switch a type C socket you have to give the system code, device code and the
         state (on or off) you want to switch to.
-
-        The system code has a range of 'A' to 'P' (4bit) and the device code has a
-        range of 1 to 16 (4bit).
 
         A detailed description on how you can figure out the system and device code
         can be found :ref:`here <remote_switch_bricklet_type_c_system_and_device_code>`.
@@ -235,8 +223,6 @@ class BrickletRemoteSwitchV2(Device):
           is triggered (if enabled).
         * Callback Enabled: Enable or disable callback (see :cb:`Remote Status A` callback,
           :cb:`Remote Status B` callback and :cb:`Remote Status C` callback).
-
-        Default is ('A', 2, false).
         """
         remote_type = int(remote_type)
         minimum_repeats = int(minimum_repeats)

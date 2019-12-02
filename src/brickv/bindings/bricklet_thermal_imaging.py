@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -231,8 +231,6 @@ class BrickletThermalImaging(Device):
         * Index 3: Row end (has to be smaller then 60).
 
         The spotmeter statistics can be read out with :func:`Get Statistics`.
-
-        The default region of interest is (39, 29, 40, 30).
         """
         region_of_interest = list(map(int, region_of_interest))
 
@@ -284,13 +282,6 @@ class BrickletThermalImaging(Device):
         Empty Counts: This parameter specifies the maximum number of pixels in a bin that will be
         interpreted as an empty bin. Histogram bins with this number of pixels or less will be
         processed as an empty bin.
-
-        The default values are
-
-        * Region Of Interest = (0, 0, 79, 59),
-        * Dampening Factor = 64,
-        * Clip Limit = (4800, 512) and
-        * Empty Counts = 2.
         """
         region_of_interest = list(map(int, region_of_interest))
         dampening_factor = int(dampening_factor)
@@ -317,8 +308,6 @@ class BrickletThermalImaging(Device):
         * Manual Temperature Image: :func:`Get Temperature Image`.
         * Callback High Contrast Image: :cb:`High Contrast Image` callback.
         * Callback Temperature Image: :cb:`Temperature Image` callback.
-
-        The default is Manual High Contrast Image (0).
         """
         config = int(config)
 

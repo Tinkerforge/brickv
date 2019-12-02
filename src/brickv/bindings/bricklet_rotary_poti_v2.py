@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-02.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -99,8 +99,8 @@ class BrickletRotaryPotiV2(Device):
 
     def get_position(self):
         """
-        Returns the position of the rotary potentiometer. The value is in degree
-        and between -150° (turned left) and 150° (turned right).
+        Returns the position of the rotary potentiometer. The value is
+        between -150° (turned left) and 150° (turned right).
 
 
         If you want to get the value periodically, it is recommended to use the
