@@ -88,7 +88,7 @@ class ExceptionReporter:
         self.main_window = None
         sys.excepthook = self.exception_hook
         if sys.version_info >= (3,8,0):
-            threading.excepthook = self.exception_hook
+            threading.excepthook = lambda args: self.exception_hook(*args)
         else:
             self.install_thread_excepthook()
 
