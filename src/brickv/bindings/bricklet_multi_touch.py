@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-03.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -104,7 +104,7 @@ class BrickletMultiTouch(Device):
 
         Disabling electrodes will also reduce power consumption.
 
-        Default: 8191 = 0x1FFF = 0b1111111111111 (all electrodes enabled)
+        Default: 8191 = 0x1FFF = 0b1111111111111 (all electrodes and proximity feature enabled)
         """
         enabled_electrodes = int(enabled_electrodes)
 
@@ -144,7 +144,10 @@ class BrickletMultiTouch(Device):
         the position, the hardware and firmware version as well as the
         device identifier.
 
-        The position can be 'a', 'b', 'c' or 'd'.
+        The position can be 'a', 'b', 'c', 'd', 'e', 'f', 'g' or 'h' (Bricklet Port).
+        The Raspberry Pi HAT (Zero) Brick is always at position 'i' and the Bricklet
+        connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
+        position 'z'.
 
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|

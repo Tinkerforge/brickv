@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-02.      #
+# This file was automatically generated on 2019-12-03.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -368,7 +368,7 @@ class BrickServo(Device):
 
         If your servo comes with a datasheet that specifies a period, you should
         set it accordingly. If you don't have a datasheet and you have no idea
-        what the correct period is, the default value (19.5ms) will most likely
+        what the correct period is, the default value will most likely
         work fine.
         """
         servo_num = int(servo_num)

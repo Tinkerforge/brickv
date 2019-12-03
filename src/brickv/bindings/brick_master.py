@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-02.      #
+# This file was automatically generated on 2019-12-03.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -722,8 +722,7 @@ class BrickMaster(Device):
         ``connection`` is set to one of the DHCP options then ``ip``, ``subnet_mask``
         and ``gateway`` are ignored, you can set them to 0.
 
-        The last parameter is the port that your program will connect to. The
-        default port, that is used by brickd, is 4223.
+        The last parameter is the port that your program will connect to.
 
         The values are stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
@@ -1213,8 +1212,7 @@ class BrickMaster(Device):
         to the DHCP options then ``ip``, ``subnet_mask`` and ``gateway`` are ignored,
         you can set them to 0.
 
-        The last parameter is the port that your program will connect to. The
-        default port, that is used by brickd, is 4223.
+        The last parameter is the port that your program will connect to.
 
         The values are stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
@@ -1480,16 +1478,16 @@ class BrickMaster(Device):
         Sets the general configuration of the WIFI Extension 2.0.
 
         The ``port`` parameter sets the port number that your programm will connect
-        to. The default value is 4223.
+        to.
 
         The ``websocket_port`` parameter sets the WebSocket port number that your
-        JavaScript programm will connect to. The default value is 4280.
+        JavaScript programm will connect to.
 
         The ``website_port`` parameter sets the port number for the website of the
-        WIFI Extension 2.0. The default value is 80.
+        WIFI Extension 2.0.
 
         The ``phy_mode`` parameter sets the specific wireless network mode to be used.
-        Possible values are B, G and N. The default value is G.
+        Possible values are B, G and N.
 
         The ``sleep_mode`` parameter is currently unused.
 
@@ -1539,7 +1537,7 @@ class BrickMaster(Device):
         Sets the client specific configuration of the WIFI Extension 2.0.
 
         The ``enable`` parameter enables or disables the client part of the
-        WIFI Extension 2.0. The default value is *true*.
+        WIFI Extension 2.0.
 
         The ``ssid`` parameter sets the SSID (up to 32 characters) of the access point
         to connect to.
@@ -1643,7 +1641,7 @@ class BrickMaster(Device):
         Sets the access point specific configuration of the WIFI Extension 2.0.
 
         The ``enable`` parameter enables or disables the access point part of the
-        WIFI Extension 2.0. The default value is true.
+        WIFI Extension 2.0.
 
         The ``ssid`` parameter sets the SSID (up to 32 characters) of the access point.
 
@@ -1653,8 +1651,8 @@ class BrickMaster(Device):
         The default configuration is DHCP.
 
         The ``encryption`` parameter sets the encryption mode to be used. Possible
-        values are Open (no encryption), WEP or WPA/WPA2 PSK. The default value is
-        WPA/WPA2 PSK. Use the :func:`Set Wifi2 AP Password` function to set the encryption
+        values are Open (no encryption), WEP or WPA/WPA2 PSK.
+        Use the :func:`Set Wifi2 AP Password` function to set the encryption
         password.
 
         The ``hidden`` parameter makes the access point hide or show its SSID.

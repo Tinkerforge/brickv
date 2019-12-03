@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-03.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -388,8 +388,6 @@ class BrickletGPSV2(Device):
         the position accuracy increases (if SBAS satellites are in view),
         but the update rate is limited to 5Hz. With SBAS disabled the update rate is increased to 10Hz.
 
-        By default SBAS is enabled and the update rate is 5Hz.
-
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
         sbas_config = int(sbas_config)
@@ -537,7 +535,10 @@ class BrickletGPSV2(Device):
         the position, the hardware and firmware version as well as the
         device identifier.
 
-        The position can be 'a', 'b', 'c' or 'd'.
+        The position can be 'a', 'b', 'c', 'd', 'e', 'f', 'g' or 'h' (Bricklet Port).
+        The Raspberry Pi HAT (Zero) Brick is always at position 'i' and the Bricklet
+        connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
+        position 'z'.
 
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|

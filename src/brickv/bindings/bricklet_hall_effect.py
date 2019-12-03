@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-02.      #
+# This file was automatically generated on 2019-12-03.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -94,7 +94,7 @@ class BrickletHallEffect(Device):
         The edge type parameter configures if rising edges, falling edges or
         both are counted. Possible edge types are:
 
-        * 0 = rising (default)
+        * 0 = rising
         * 1 = falling
         * 2 = both
 
@@ -127,8 +127,6 @@ class BrickletHallEffect(Device):
         If *edges* is set to n, an interrupt is invoked for every n-th detected edge.
 
         If *edges* is set to 0, the interrupt is disabled.
-
-        Default value is 0.
         """
         edges = int(edges)
 
@@ -173,7 +171,10 @@ class BrickletHallEffect(Device):
         the position, the hardware and firmware version as well as the
         device identifier.
 
-        The position can be 'a', 'b', 'c' or 'd'.
+        The position can be 'a', 'b', 'c', 'd', 'e', 'f', 'g' or 'h' (Bricklet Port).
+        The Raspberry Pi HAT (Zero) Brick is always at position 'i' and the Bricklet
+        connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
+        position 'z'.
 
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|

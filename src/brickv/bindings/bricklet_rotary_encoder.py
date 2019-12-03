@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2019-12-03.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -123,8 +123,6 @@ class BrickletRotaryEncoder(Device):
          "'i'",    "Callback is triggered when the count is *inside* the min and max values"
          "'<'",    "Callback is triggered when the count is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the count is greater than the min value (max is ignored)"
-
-        The default value is ('x', 0, 0).
         """
         option = create_char(option)
         min = int(min)
@@ -175,7 +173,10 @@ class BrickletRotaryEncoder(Device):
         the position, the hardware and firmware version as well as the
         device identifier.
 
-        The position can be 'a', 'b', 'c' or 'd'.
+        The position can be 'a', 'b', 'c', 'd', 'e', 'f', 'g' or 'h' (Bricklet Port).
+        The Raspberry Pi HAT (Zero) Brick is always at position 'i' and the Bricklet
+        connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
+        position 'z'.
 
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
