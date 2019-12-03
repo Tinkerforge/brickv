@@ -27,6 +27,7 @@ Boston, MA 02111-1307, USA.
 
 import time
 from collections import namedtuple
+from queue import Queue, Empty
 
 if 'merged_data_logger_modules' not in globals():
     from brickv.data_logger.event_logger import EventLogger
@@ -511,7 +512,11 @@ if 'merged_data_logger_modules' not in globals():
     except ImportError:
         BrickletRotaryPotiV2_found = False
     #from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
-    #from brickv.bindings.bricklet_rs232_v2 import BrickletRS232V2 #NYI FIXME: has to use read_callback callback to get all data
+    try:
+        from brickv.bindings.bricklet_rs232_v2 import BrickletRS232V2
+        BrickletRS232V2_found = True
+    except ImportError:
+        BrickletRS232V2_found = False
     try:
         from brickv.bindings.bricklet_rs485 import BrickletRS485
         BrickletRS485_found = True
@@ -1087,7 +1092,11 @@ else:
     except ImportError:
         BrickletRotaryPotiV2_found = False
     # from tinkerforge.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback callback to get all data
-    # from tinkerforge.bricklet_rs232_v2 import BrickletRS232V2 #NYI FIXME: has to use read_callback callback to get all data
+    try:
+        from tinkerforge.bricklet_rs232_v2 import BrickletRS232V2
+        BrickletRS232V2_found = True
+    except ImportError:
+        BrickletRS232V2_found = False
     try:
         from tinkerforge.bricklet_rs485 import BrickletRS485
         BrickletRS485_found = True
@@ -1443,6 +1452,40 @@ if BrickletLaserRangeFinderV2_found:
     def special_set_configuration(device, enable, acquisition_count, enable_quick_termination, threshold_value, enable_auto_freq, measurement_frequency):
         device.set_enable(enable)
         device.set_configuration(acquisition_count, enable_quick_termination, threshold_value, measurement_frequency if not enable_auto_freq else 0)
+
+if BrickletRS232V2_found:
+    rs232v2_read_buffers = {}
+
+    def to_ascii(s):
+        ascii_ = ''
+
+        for c in s:
+            if (ord(c) < 32 or ord(c) > 126) and ord(c) not in (10, 13):
+                ascii_ += '.'
+            else:
+                ascii_ += c
+        return ascii_.replace('\\', '\\\\').replace('\n', '\\n').replace('\r', '\\r')
+
+    def to_hextext(s):
+        return ' '.join('{:02X}'.format(ord(c)) for c in s) + ' '
+
+    def special_rs232v2_initialize(device, baudrate, parity, stopbits, wordlength, flowcontrol, ascii_):
+        rs232v2_read_buffers[device.uid] = Queue()
+        if ascii_:
+            device.register_callback(device.CALLBACK_READ, lambda message: rs232v2_read_buffers[device.uid].put(to_ascii(message)))
+        else:
+            device.register_callback(device.CALLBACK_READ, lambda message: rs232v2_read_buffers[device.uid].put(to_hextext(message)))
+        device.set_configuration(baudrate, parity, stopbits, wordlength, flowcontrol)
+        device.enable_read_callback()
+
+    def special_rs232v2_get_input(device):
+        queue = rs232v2_read_buffers[device.uid]
+        result = []
+        try:
+            while True:
+                result += queue.get_nowait()
+        except Empty:
+            return ''.join(result)
 
 device_specs = {}
 
@@ -5180,6 +5223,66 @@ if BrickletRotaryPotiV2_found:
         'options_setter': None,
         'options': None
     }
+if BrickletRS232V2_found:
+    device_specs[BrickletRS232V2.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletRS232V2,
+        'values': [
+            {
+                'name': 'Input',
+                'getter': lambda device: special_rs232v2_get_input(device),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            },
+        ],
+        'options_setter': special_rs232v2_initialize,
+        'options':  [
+            {
+                'name': 'Baudrate',
+                'type': 'int',
+                'minimum': 100,
+                'maximum': 2000000,
+                'suffix': 'Bd',
+                'default': 115200
+            }, {
+                'name': 'Parity',
+                'type': 'choice',
+                'values': [('None', 0),
+                           ('Odd', 1),
+                           ('Even', 2)],
+                'default': 'None'
+            }, {
+                'name': 'Stopbits',
+                'type': 'choice',
+                'values': [('1', 1),
+                           ('2', 2)],
+                'default': '1'
+            }, {
+                'name': 'Wordlength',
+                'type': 'choice',
+                'values':  [('5', 5),
+                            ('6', 6),
+                            ('7', 7),
+                            ('8', 8)],
+                'default': '8'
+            }, {
+                'name': 'Flowcontrol',
+                'type': 'choice',
+                'values': [('Off', 0),
+                           ('Software', 1),
+                           ('Hardware', 2)],
+                'default': 'Off'
+            }, {
+                'name': 'Format',
+                'type': 'choice',
+                'values': [('ASCII', True),
+                           ('Hex bytes', False)],
+                'default': 'ASCII'
+            }
+
+        ]
+    }
+
 if BrickletRS485_found:
     device_specs[BrickletRS485.DEVICE_DISPLAY_NAME] = {
         'class': BrickletRS485,
