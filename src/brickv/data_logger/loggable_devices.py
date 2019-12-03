@@ -6003,7 +6003,7 @@ if BrickIMU_found:
                 'name': 'Magnetic Field',
                 'getter': lambda device: device.get_magnetic_field(),
                 'subvalues': ['X', 'Y', 'Z'],
-                'unit': ['G/1000', 'G/1000', 'G/1000'],
+                'unit': ['µT/10', 'µT/10', 'µT/10'],
                 'advanced': True
             },
             {
@@ -6025,7 +6025,7 @@ if BrickIMU_found:
                 'getter': lambda device: device.get_all_data(),
                 'subvalues': ['Acceleration-X', 'Acceleration-Y', 'Acceleration-Z', 'Acceleration-X', 'Acceleration-Y', 'Acceleration-Z',
                               'Angular Velocity-X', 'Angular Velocity-Y', 'Angular Velocity-Z', 'IMU Temperature'],
-                'unit': ['g/1000', 'g/1000', 'g/1000', 'G/1000', 'G/1000', 'G/1000', '8/115 °/s', '8/115 °/s', '8/115 °/s', '°C/100'],
+                'unit': ['g/1000', 'g/1000', 'g/1000', 'µT/10', 'µT/10', 'µT/10', '8/115 °/s', '8/115 °/s', '8/115 °/s', '°C/100'],
                 'advanced': True
             },
             {
