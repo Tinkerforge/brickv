@@ -145,6 +145,7 @@ BRICKLET_PTC_3_WIRE    = 'ptc_3_wire'
 BRICKLET_PTC_4_WIRE    = 'ptc_4_wire'
 BRICKLET_TEMPERATURE   = 'temperature'
 BRICKLET_HUMIDITY      = 'humidity'
+BRICKLET_HUMIDITY_TEMP = 'humidity_temp'
 BRICKLET_AMBIENT_LIGHT = 'ambient_light'
 BRICKLET_IO4           = 'io4'
 BRICKLET_IDI4          = 'idi4'
@@ -276,7 +277,7 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
                     return
 
     elif bricklet == BRICKLET_TEMPERATURE:
-        unit = '°C'
+        unit = '\xb0C'
         bricklet_temperature = BrickletTemperature(uid, ipcon)
 
         if got_temperature_v2:
@@ -327,6 +328,35 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
         if bricklet_humidity != None:
             try:
                 reading = bricklet_humidity.get_humidity() / divisor
+            except:
+                handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
+                            RETURN_CODE_CRITICAL)
+
+                return
+
+    elif bricklet == BRICKLET_HUMIDITY_TEMP:
+        unit = '\xb0C'
+        divisor = 100.0
+        bricklet_humidity = BrickletHumidity(uid, ipcon)
+
+        if got_humidity_v2:
+            device_identifier = None
+
+            try:
+                device_identifier = bricklet_humidity.get_identity().device_identifier
+            except:
+                bricklet_humidity = None
+                handle_result(MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY,
+                              RETURN_CODE_CRITICAL)
+
+                return
+
+            if device_identifier == BrickletHumidityV2.DEVICE_IDENTIFIER:
+                bricklet_humidity = BrickletHumidityV2(uid, ipcon)
+
+        if bricklet_humidity != None:
+            try:
+                reading = bricklet_humidity.get_temperature() / divisor
             except:
                 handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
                             RETURN_CODE_CRITICAL)
@@ -788,7 +818,7 @@ if __name__ == '__main__':
                        '--bricklet',
                        help = 'Type of bricklet',
                        type = str,
-                       choices = ['ptc_2_wire', 'ptc_3_wire', 'ptc_4_wire', 'temperature', 'humidity', 'ambient_light', 'io4', 'idi4'],
+                       choices = ['ptc_2_wire', 'ptc_3_wire', 'ptc_4_wire', 'temperature', 'humidity', 'humidity_temp', 'ambient_light', 'io4', 'idi4'],
                        required = True)
 
     parse.add_argument('-u',

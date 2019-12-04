@@ -84,6 +84,7 @@ SUPPORTED_BRICKLETS = {'PTC (2-wire)'            :{'id':'ptc_2_wire', 'unit':'°
                        'PTC (4-wire)'            :{'id':'ptc_4_wire', 'unit':'°C'},
                        'Temperature'             :{'id':'temperature', 'unit':'°C'},
                        'Humidity'                :{'id':'humidity', 'unit':'%RH'},
+                       'Humidity (Temperature)'  :{'id':'humidity_temp', 'unit':'°C'},
                        'Ambient Light'           :{'id':'ambient_light', 'unit':'Lux'},
                        'IO4'                     :{'id':'io4', 'unit':None},
                        'Industrial Digital In 4' :{'id':'idi4', 'unit':None}}
@@ -101,6 +102,8 @@ RANGE_MIN_TEMPERATURE   = 0
 RANGE_MAX_TEMPERATURE   = 100
 RANGE_MIN_HUMIDITY      = 0
 RANGE_MAX_HUMIDITY      = 100
+RANGE_MIN_HUMIDITY_TEMP = -20
+RANGE_MAX_HUMIDITY_TEMP = 85
 RANGE_MIN_AMBIENT_LIGHT = 0
 RANGE_MAX_AMBIENT_LIGHT = 1300 # Ambient Light = fixed 900, Ambient Light 2.0 = configured to 1300
 
@@ -589,6 +592,11 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
             widget_spin_span.sbox_lower.setRange(RANGE_MIN_HUMIDITY, RANGE_MAX_HUMIDITY)
             widget_spin_span.sbox_upper.setRange(RANGE_MIN_HUMIDITY, RANGE_MAX_HUMIDITY)
 
+        elif bricklet == 'humidity_temp':
+            widget_spin_span.span_slider.setRange(RANGE_MIN_HUMIDITY_TEMP, RANGE_MAX_HUMIDITY_TEMP)
+            widget_spin_span.sbox_lower.setRange(RANGE_MIN_HUMIDITY_TEMP, RANGE_MAX_HUMIDITY_TEMP)
+            widget_spin_span.sbox_upper.setRange(RANGE_MIN_HUMIDITY_TEMP, RANGE_MAX_HUMIDITY_TEMP)
+
         elif bricklet == 'ambient_light':
             widget_spin_span.span_slider.setRange(RANGE_MIN_AMBIENT_LIGHT, RANGE_MAX_AMBIENT_LIGHT)
             widget_spin_span.sbox_lower.setRange(RANGE_MIN_AMBIENT_LIGHT, RANGE_MAX_AMBIENT_LIGHT)
@@ -712,7 +720,8 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                  dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['temperature']:
                 self.dict_hosts[dict_rule['host']]['temperature'].insert(0, dict_rule['uid'])
 
-            elif dict_rule['bricklet'] == 'humidity' and\
+            elif dict_rule['bricklet'] == 'humidity'      or\
+                 dict_rule['bricklet'] == 'humidity_temp' and\
                  dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['humidity']:
                 self.dict_hosts[dict_rule['host']]['humidity'].insert(0, dict_rule['uid'])
 
@@ -929,7 +938,8 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'temperature':
             populate_and_select('temperature')
 
-        elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'humidity':
+        elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'humidity' or\
+             SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'humidity_temp':
             populate_and_select('humidity')
 
         elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'ambient_light':
