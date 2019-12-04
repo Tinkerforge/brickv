@@ -490,10 +490,13 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         # Restore combobox state. If the former selected firmware is not found, set combobox to SELECT.
         self.combo_firmware.addItem(CUSTOM)
-        firmware_idx = self.combo_firmware.findData(selected_firmware)
 
-        if firmware_idx < 0:
-            firmware_idx = 0
+        if len(self.edit_custom_firmware.text()) > 0:
+            firmware_index = self.combo_firmware.count() - 1
+        else:
+            firmware_idx = self.combo_firmware.findData(selected_firmware)
+            if firmware_idx < 0:
+                firmware_idx = 0
 
         self.combo_firmware.setCurrentIndex(firmware_idx)
         self.firmware_changed(firmware_idx)
@@ -508,10 +511,14 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.plugin_changed(plugin_idx)
 
         self.combo_extension_firmware.addItem(CUSTOM)
-        extension_firmware_idx = self.combo_extension_firmware.findData(selected_extension_firmware)
 
-        if extension_firmware_idx < 0:
-            extension_firmware_idx = 0
+        if len(self.edit_custom_extension_firmware.text()) > 0:
+            extension_firmware_idx = self.combo_extension_firmware.count() - 1
+        else:
+            extension_firmware_idx = self.combo_extension_firmware.findData(selected_extension_firmware)
+
+            if extension_firmware_idx < 0:
+                extension_firmware_idx = 0
 
         self.combo_extension_firmware.setCurrentIndex(extension_firmware_idx)
         self.extension_firmware_changed(extension_firmware_idx)
@@ -1059,6 +1066,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def port_changed(self, index):
         self.update_ui_state()
         self.edit_uid.setText('')
+
+        if len(self.edit_custom_plugin.text()) > 0:
+            self.combo_plugin.setCurrentIndex(self.combo_plugin.count() - 1)
+            return
 
         if index < 0:
             self.combo_plugin.setCurrentIndex(0)
@@ -1892,6 +1903,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def extension_changed(self, index):
         if index < 0:
             self.combo_extension.setCurrentIndex(0)
+            return
+
+        if len(self.edit_custom_extension_firmware.text()) > 0:
+            self.combo_extension_firmware.setCurrentIndex(self.combo_extension_firmware.count() - 1)
             return
 
         itemData = self.combo_extension.itemData(index)
