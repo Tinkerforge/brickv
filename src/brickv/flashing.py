@@ -492,7 +492,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.combo_firmware.addItem(CUSTOM)
 
         if len(self.edit_custom_firmware.text()) > 0:
-            firmware_index = self.combo_firmware.count() - 1
+            firmware_idx = self.combo_firmware.count() - 1
         else:
             firmware_idx = self.combo_firmware.findData(selected_firmware)
             if firmware_idx < 0:
@@ -1063,11 +1063,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.update_ui_state()
 
-    def port_changed(self, index):
+    def port_changed(self, index, ignore_custom=False):
         self.update_ui_state()
         self.edit_uid.setText('')
 
-        if len(self.edit_custom_plugin.text()) > 0:
+        if not ignore_custom and len(self.edit_custom_plugin.text()) > 0:
             self.combo_plugin.setCurrentIndex(self.combo_plugin.count() - 1)
             return
 
@@ -1900,12 +1900,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.brick_changed(self.combo_parent.currentIndex())
 
-    def extension_changed(self, index):
+    def extension_changed(self, index, ignore_custom=False):
         if index < 0:
             self.combo_extension.setCurrentIndex(0)
             return
 
-        if len(self.edit_custom_extension_firmware.text()) > 0:
+        if not ignore_custom and len(self.edit_custom_extension_firmware.text()) > 0:
             self.combo_extension_firmware.setCurrentIndex(self.combo_extension_firmware.count() - 1)
             return
 
@@ -2091,7 +2091,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             # Remove user selected version to ensure, that the latest version is preselected
             self.last_plugin_url_part = ""
             self.combo_port.setCurrentIndex(idx)
-            self.port_changed(idx)
+            self.port_changed(idx, ignore_custom=True)
 
     def show_extension_update(self, master_uid):
         self.tab_widget.setCurrentWidget(self.tab_extension)
@@ -2105,7 +2105,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             # Remove user selected version to ensure, that the latest version is preselected
             self.last_extension_firmware_url_part = ""
             self.combo_extension.setCurrentIndex(idx)
-            self.extension_changed(idx)
+            self.extension_changed(idx, ignore_custom=True)
 
     def show_red_brick_update(self):
         get_main_window().show_red_brick_update()
