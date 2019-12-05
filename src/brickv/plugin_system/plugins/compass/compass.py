@@ -153,7 +153,6 @@ class Calibration(QDialog, Ui_Calibration):
         self.z = [0, 0, 0]
         self.cbe_mfd.set_period(20)
 
-
     def calibration_save_clicked(self):
         self.button_calibration_save.setEnabled(False)
         self.button_calibration_remove.setEnabled(True)
@@ -196,6 +195,7 @@ class Calibration(QDialog, Ui_Calibration):
 
     def cb_mfd(self, data):
         x, y, z = data
+
         self.x[0] = x
         self.y[0] = y
         self.z[0] = z
@@ -228,11 +228,9 @@ class Compass(COMCUPluginBase):
 
         self.compass_widget = CompassWidget()
 
-
-
-        self.current_mfd_x = CurveValueWrapper() # int, mG
-        self.current_mfd_y = CurveValueWrapper() # int, mG
-        self.current_mfd_z = CurveValueWrapper() # int, mG
+        self.current_mfd_x = CurveValueWrapper() # int, µT
+        self.current_mfd_y = CurveValueWrapper() # int, µT
+        self.current_mfd_z = CurveValueWrapper() # int, µT
 
         self.heading_label = HeadingLabel()
         self.inclination_label = InclinationLabel()
@@ -243,10 +241,10 @@ class Compass(COMCUPluginBase):
         self.label_layout.addWidget(self.inclination_label)
         self.label_widget.setLayout(self.label_layout)
 
-        plots = [('X', Qt.red, self.current_mfd_x, '{0} mG'.format),
-                 ('Y', Qt.darkGreen, self.current_mfd_y, '{0} mG'.format),
-                 ('Z', Qt.blue, self.current_mfd_z, '{0} mG'.format)]
-        self.plot_widget = PlotWidget('Magnetic Flux Density [mG]', plots, extra_key_widgets=[self.compass_widget, self.label_widget],
+        plots = [('X', Qt.red, self.current_mfd_x, '{0} µT'.format),
+                 ('Y', Qt.darkGreen, self.current_mfd_y, '{0} µT'.format),
+                 ('Z', Qt.blue, self.current_mfd_z, '{0} µT'.format)]
+        self.plot_widget = PlotWidget('Magnetic Flux Density [µT]', plots, extra_key_widgets=[self.compass_widget, self.label_widget],
                                       update_interval=0.1, y_resolution=1)
 
         self.dr_label = QLabel('Data Rate:')
@@ -298,9 +296,9 @@ class Compass(COMCUPluginBase):
         if heading < 0:
             heading += 360
 
-        self.current_mfd_x.value = round(x / 10.0)
-        self.current_mfd_y.value = round(y / 10.0)
-        self.current_mfd_z.value = round(z / 10.0)
+        self.current_mfd_x.value = round(x / 100.0)
+        self.current_mfd_y.value = round(y / 100.0)
+        self.current_mfd_z.value = round(z / 100.0)
         self.heading_label.setText(round(heading))
         self.compass_widget.set_angle(heading)
         self.inclination_label.setText(inclination)

@@ -98,7 +98,7 @@ class IMU(PluginBase, Ui_IMU):
 
         self.update_counter = 0
 
-        self.mag_plot_widget = PlotWidget("Magnetic Field [mG]",
+        self.mag_plot_widget = PlotWidget("Magnetic Field [µT]",
                                           [("X", Qt.red, self.mag_x, str),
                                            ("Y", Qt.darkGreen, self.mag_y, str),
                                            ("Z", Qt.blue, self.mag_z, str)],
@@ -235,9 +235,9 @@ class IMU(PluginBase, Ui_IMU):
         self.acc_x.value = acc_x
         self.acc_y.value = acc_y
         self.acc_z.value = acc_z
-        self.mag_x.value = mag_x
-        self.mag_y.value = mag_y
-        self.mag_z.value = mag_z
+        self.mag_x.value = mag_x / 10
+        self.mag_y.value = mag_y / 10
+        self.mag_z.value = mag_z / 10
         self.gyr_x.value = gyr_x / 14.375
         self.gyr_y.value = gyr_y / 14.375
         self.gyr_z.value = gyr_z / 14.375
