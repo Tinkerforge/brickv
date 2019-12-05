@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2019-12-05.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -147,7 +147,8 @@ class BrickletAccelerometerV2(Device):
     def get_acceleration(self):
         """
         Returns the acceleration in x, y and z direction. The values
-        are given in gₙ/10000 (1gₙ = 9.80665m/s²).
+        are given in gₙ/10000 (1gₙ = 9.80665m/s²). The range is
+        configured with :func:`Set Configuration`.
 
         If you want to get the acceleration periodically, it is recommended
         to use the :cb:`Acceleration` callback and set the period with
@@ -243,16 +244,16 @@ class BrickletAccelerometerV2(Device):
         resolution (8/16 bit) and the full scale range (see :func:`Set Configuration`) to calculate
         the data in gₙ/10000 (same unit that is returned by :func:`Get Acceleration`):
 
-        * 16 bit, full scale 2g: acceleration = value*625/1024
-        * 16 bit, full scale 4g: acceleration = value*1250/1024
-        * 16 bit, full scale 8g: acceleration = value*2500/1024
+        * 16 bit, full scale 2g: acceleration = value * 625 / 1024
+        * 16 bit, full scale 4g: acceleration = value * 1250 / 1024
+        * 16 bit, full scale 8g: acceleration = value * 2500 / 1024
 
         If a resolution of 8 bit is used, only the 8 most significant bits will be
         transferred, so you can use the following formulas:
 
-        * 8 bit, full scale 2g: acceleration = value*256*625/1024
-        * 8 bit, full scale 4g: acceleration = value*256*1250/1024
-        * 8 bit, full scale 8g: acceleration = value*256*2500/1024
+        * 8 bit, full scale 2g: acceleration = value * 256 * 625 / 1024
+        * 8 bit, full scale 4g: acceleration = value * 256 * 1250 / 1024
+        * 8 bit, full scale 8g: acceleration = value * 256 * 2500 / 1024
 
         If no axis is enabled, both callbacks are disabled. If one of the continuous
         callbacks is enabled, the :cb:`Acceleration` callback is disabled.
@@ -397,7 +398,7 @@ class BrickletAccelerometerV2(Device):
 
     def get_chip_temperature(self):
         """
-        Returns the temperature in °C as measured inside the microcontroller. The
+        Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
         The temperature is only proportional to the real temperature and it has bad

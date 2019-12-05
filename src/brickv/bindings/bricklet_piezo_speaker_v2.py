@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2019-12-05.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -295,7 +295,7 @@ class BrickletPiezoSpeakerV2(Device):
 
     def get_chip_temperature(self):
         """
-        Returns the temperature in °C as measured inside the microcontroller. The
+        Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
         The temperature is only proportional to the real temperature and it has bad

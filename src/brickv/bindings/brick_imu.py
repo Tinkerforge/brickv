@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-29.      #
+# This file was automatically generated on 2019-12-05.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -557,10 +557,6 @@ class BrickIMU(Device):
         :func:`Set SPITFP Baudrate`. If the dynamic baudrate is disabled, the baudrate
         as set by :func:`Set SPITFP Baudrate` will be used statically.
 
-        The minimum dynamic baudrate has a value range of 400000 to 2000000 baud.
-
-        By default dynamic baudrate is enabled and the minimum dynamic baudrate is 400000.
-
         .. versionadded:: 2.3.5$nbsp;(Firmware)
         """
         enable_dynamic_baudrate = bool(enable_dynamic_baudrate)
@@ -593,8 +589,7 @@ class BrickIMU(Device):
 
     def set_spitfp_baudrate(self, bricklet_port, baudrate):
         """
-        Sets the baudrate for a specific Bricklet port ('a' - 'd'). The
-        baudrate can be in the range 400000 to 2000000.
+        Sets the baudrate for a specific Bricklet port.
 
         If you want to increase the throughput of Bricklets you can increase
         the baudrate. If you get a high error count because of high
@@ -607,8 +602,6 @@ class BrickIMU(Device):
         Regulatory testing is done with the default baudrate. If CE compatibility
         or similar is necessary in you applications we recommend to not change
         the baudrate.
-
-        The default baudrate for all ports is 1400000.
 
         .. versionadded:: 2.3.3$nbsp;(Firmware)
         """
@@ -695,7 +688,7 @@ class BrickIMU(Device):
 
     def get_chip_temperature(self):
         """
-        Returns the temperature in °C/10 as measured inside the microcontroller. The
+        Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
         The temperature is only proportional to the real temperature and it has an
@@ -721,7 +714,7 @@ class BrickIMU(Device):
         the position, the hardware and firmware version as well as the
         device identifier.
 
-        The position can be '0'-'8' (stack position).
+        The position is the position in the stack from '0' (bottom) to '8' (top).
 
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|

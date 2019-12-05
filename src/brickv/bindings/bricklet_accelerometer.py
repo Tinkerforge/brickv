@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2019-12-05.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -105,7 +105,8 @@ class BrickletAccelerometer(Device):
     def get_acceleration(self):
         """
         Returns the acceleration in x, y and z direction. The values
-        are given in gₙ/1000 (1gₙ = 9.80665m/s²).
+        are given in gₙ/1000 (1gₙ = 9.80665m/s²). The range is
+        configured with :func:`Set Configuration`.
 
         If you want to get the acceleration periodically, it is recommended
         to use the :cb:`Acceleration` callback and set the period with

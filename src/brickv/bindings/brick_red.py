@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-02.      #
+# This file was automatically generated on 2019-12-05.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -1129,7 +1129,7 @@ class BrickRED(Device):
         the position, the hardware and firmware version as well as the
         device identifier.
 
-        The position can be '0'-'8' (stack position).
+        The position is the position in the stack from '0' (bottom) to '8' (top).
 
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
