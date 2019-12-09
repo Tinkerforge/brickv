@@ -541,7 +541,7 @@
   in RS485 Bricklet plugin
 - Delete key works correct in RED Brick plugin console tab
 
-2019-12-09: 2.4.10 (<unknown>)
+2019-12-09: 2.4.10 (70b01b1)
 - Make Thermal Imaging Bricklet image view detachable
 - Fix firmware auto-update for Co-MCU Bricklets
 - Avoid potential config file writing collision between two Brick Viewer
