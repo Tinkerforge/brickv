@@ -533,10 +533,22 @@
 2019-08-27: 2.4.8 (1cf569a)
 - Fix firmware download on newer macOS versions
 
-2019-09-02: 2.4.9 (<unknown>)
+2019-09-02: 2.4.9 (887f2ad)
 - Fix Bricklet auto-update crash
 - Allow to choose other versions than the latest when flashing firmwares
 - Allow to write hex bytes in hex mode in RS485 Bricklet plugin
 - Allow to specify coil/register values when writing multiple coils/registers
   in RS485 Bricklet plugin
 - Delete key works correct in RED Brick plugin console tab
+
+2019-12-09: 2.4.10 (<unknown>)
+- Make Thermal Imaging Bricklet image view detachable
+- Fix firmware auto-update for Co-MCU Bricklets
+- Avoid potential config file writing collision between two Brick Viewer
+  instances on Linux and macOS
+- Notarize Brick Viewer app to make it ready for macOS 10.15
+- Fix potential crash in WIFI Extension 2.0 firmware update detection logic
+- Fix exception hook for Python 3.8
+- Prefer hPa over mbar and Tesla over Gauss
+- Add Data Logger support for RS232 Bricklet 2.0 data reading
+- Add Server Monitoring support for Humidity Bricklet 2.0 temperature value

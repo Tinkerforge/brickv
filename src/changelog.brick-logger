@@ -52,3 +52,6 @@
 2019-08-26: 2.1.1 (b49a385)
 - Add support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
   Multi Touch 2.0 and Rotary Poti 2.0 Bricklet
+
+2019-12-09: 2.1.2 (<unknown>)
+- Add support for RS232 Bricklet 2.0 data reading
