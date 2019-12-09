@@ -215,7 +215,7 @@ class PyinstallerUtils:
         system(['bash', '-c', 'cp -R {} {}'.format(build_data.replace(" ", "\\ "), resources_path.replace(" ", "\\ "))])
 
         if '--no-sign' not in sys.argv:
-            system(['codesign', '--deep', '--force', '--verify', '--verbose=1', '--sign', 'Developer ID Application: Tinkerforge GmbH (K39N76HTZ4)', app_path])
+            system(['codesign', '--deep', '--force', '--verify', '--verbose=1', '-o', 'runtime', '--sign', 'Developer ID Application: Tinkerforge GmbH (K39N76HTZ4)', app_path])
             system(['codesign', '--verify', '--deep', '--verbose=1', app_path])
 
             print('notarize app')
