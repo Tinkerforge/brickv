@@ -209,13 +209,14 @@ class PyinstallerUtils:
 
     def post_generate_macos(self):
         build_data = os.path.join(self.build_data_path, '*')
+        entitlements_path = os.path.join(self.build_data_path, '..', 'entitlements.plist')
         app_name = self.camel_case_name + '.app'
         app_path = os.path.join(self.dist_path, app_name)
         resources_path = os.path.join(self.dist_path, app_name, 'Contents', 'Resources')
         system(['bash', '-c', 'cp -R {} {}'.format(build_data.replace(" ", "\\ "), resources_path.replace(" ", "\\ "))])
 
         if '--no-sign' not in sys.argv:
-            system(['codesign', '--deep', '--force', '--verify', '--verbose=1', '-o', 'runtime', '--sign', 'Developer ID Application: Tinkerforge GmbH (K39N76HTZ4)', app_path])
+            system(['codesign', '--deep', '--force', '--verify', '--verbose=1', '-o', 'runtime', '--entitlements', entitlements_path, '--sign', 'Developer ID Application: Tinkerforge GmbH (K39N76HTZ4)', app_path])
             system(['codesign', '--verify', '--deep', '--verbose=1', app_path])
 
             print('notarize app')
