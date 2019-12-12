@@ -277,7 +277,7 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
                     return
 
     elif bricklet == BRICKLET_TEMPERATURE:
-        unit = '\xb0C'
+        unit = '°C'
         bricklet_temperature = BrickletTemperature(uid, ipcon)
 
         if got_temperature_v2:
@@ -335,7 +335,7 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
                 return
 
     elif bricklet == BRICKLET_HUMIDITY_TEMP:
-        unit = '\xb0C'
+        unit = '°C'
         divisor = 100.0
         bricklet_humidity = BrickletHumidity(uid, ipcon)
 
@@ -880,7 +880,8 @@ Date/Time: $LONGDATETIME$\\n" | \
 -s {2}:{3} \
 -o username={4} \
 -o password={5} \
--o tls={6}'''
+-o tls={6} \
+-o message-charset=utf-8'''
 
 TEMPLATE_COMMAND_LINE_NOTIFY_SERVICE = '''/usr/bin/printf "%b" "***** Nagios *****\\n\\n \
 Notification Type: $NOTIFICATIONTYPE$\\n\\n \
@@ -897,7 +898,8 @@ Additional Info:\\n\\n$SERVICEOUTPUT$\\n" | \
 -s {2}:{3} \
 -o username={4} \
 -o password={5} \
--o tls={6}'''
+-o tls={6} \
+-o message-charset=utf-8'''
 
 TEMPLATE_TEST_EMAIL = '''/usr/bin/sendemail \
 -f {0} \
@@ -908,7 +910,8 @@ that the server monitoring email alert is working on the RED-Brick.\n
 -s {2}:{3} \
 -o username={4} \
 -o password={5} \
--o tls={6}'''
+-o tls={6} \
+-o message-charset=utf-8'''
 
 ACTION = argv[1]
 
