@@ -553,6 +553,6 @@
 - Add Data Logger support for RS232 Bricklet 2.0 data reading
 - Add Server Monitoring support for Humidity Bricklet 2.0 temperature value
 
-2019-12-12: 2.4.11 (<unknown>)
+2019-12-12: 2.4.11 (9928663)
 - Lower Hardened Runtime restrictions to make ctypes work again on macOS
 - Fix encoding issues in Server Monitoring script
