@@ -928,6 +928,7 @@ dict_enumerate = {'host'         : None,
                   'ptc'          : [],
                   'temperature'  : [],
                   'humidity'     : [],
+                  'humidity_temp': [],
                   'ambient_light': [],
                   'io4'          : [],
                   'idi4'         : []}
@@ -961,6 +962,7 @@ def ignore_enumerate_fail():
     dict_enumerate['ptc']           = []
     dict_enumerate['temperature']   = []
     dict_enumerate['humidity']      = []
+    dict_enumerate['humidity_temp']      = []
     dict_enumerate['ambient_light'] = []
     dict_enumerate['io4']           = []
     dict_enumerate['idi4']          = []
@@ -1022,6 +1024,7 @@ def cb_enumerate(uid,
          device_identifier == BrickletHumidityV2.DEVICE_IDENTIFIER and\
          uid not in dict_enumerate['humidity']:
             dict_enumerate['humidity'].append(uid)
+            dict_enumerate['humidity_temp'].append(uid)
 
     elif device_identifier == BrickletAmbientLight.DEVICE_IDENTIFIER and\
          uid not in dict_enumerate['ambient_light']:

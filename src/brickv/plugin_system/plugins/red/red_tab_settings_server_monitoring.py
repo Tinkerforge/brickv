@@ -434,6 +434,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         ptc           = dict_enumerate['ptc']
         temperature   = dict_enumerate['temperature']
         humidity      = dict_enumerate['humidity']
+        humidity_temp = dict_enumerate['humidity_temp']
         ambient_light = dict_enumerate['ambient_light']
         io4           = dict_enumerate['io4']
         idi4          = dict_enumerate['idi4']
@@ -447,6 +448,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         self.dict_hosts[host]['ptc']           = ptc
         self.dict_hosts[host]['temperature']   = temperature
         self.dict_hosts[host]['humidity']      = humidity
+        self.dict_hosts[host]['humidity_temp'] = humidity_temp
         self.dict_hosts[host]['ambient_light'] = ambient_light
         self.dict_hosts[host]['io4']           = io4
         self.dict_hosts[host]['idi4']          = idi4
@@ -668,6 +670,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         dict_enumerate['ptc'].append(EMPTY_UID)
         dict_enumerate['temperature'].append(EMPTY_UID)
         dict_enumerate['humidity'].append(EMPTY_UID)
+        dict_enumerate['humidity_temp'].append(EMPTY_UID)
         dict_enumerate['ambient_light'].append(EMPTY_UID)
         dict_enumerate['io4'].append(EMPTY_UID)
         dict_enumerate['idi4'].append(EMPTY_UID)
@@ -678,6 +681,7 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         self.dict_hosts[dict_enumerate['host']]['ptc']           = dict_enumerate['ptc']
         self.dict_hosts[dict_enumerate['host']]['temperature']   = dict_enumerate['temperature']
         self.dict_hosts[dict_enumerate['host']]['humidity']      = dict_enumerate['humidity']
+        self.dict_hosts[dict_enumerate['host']]['humidity']      = dict_enumerate['humidity_temp']
         self.dict_hosts[dict_enumerate['host']]['ambient_light'] = dict_enumerate['ambient_light']
         self.dict_hosts[dict_enumerate['host']]['io4']           = dict_enumerate['io4']
         self.dict_hosts[dict_enumerate['host']]['idi4']          = dict_enumerate['idi4']
@@ -720,10 +724,13 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
                  dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['temperature']:
                 self.dict_hosts[dict_rule['host']]['temperature'].insert(0, dict_rule['uid'])
 
-            elif dict_rule['bricklet'] == 'humidity'      or\
-                 dict_rule['bricklet'] == 'humidity_temp' and\
+            elif dict_rule['bricklet'] == 'humidity' and\
                  dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['humidity']:
                 self.dict_hosts[dict_rule['host']]['humidity'].insert(0, dict_rule['uid'])
+
+            elif dict_rule['bricklet'] == 'humidity_temp' and\
+                 dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['humidity_temp']:
+                self.dict_hosts[dict_rule['host']]['humidity_temp'].insert(0, dict_rule['uid'])
 
             elif dict_rule['bricklet'] == 'ambient_light' and\
                  dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['ambient_light']:
@@ -938,9 +945,11 @@ class REDTabSettingsServerMonitoring(QWidget, Ui_REDTabSettingsServerMonitoring)
         elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'temperature':
             populate_and_select('temperature')
 
-        elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'humidity' or\
-             SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'humidity_temp':
+        elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'humidity':
             populate_and_select('humidity')
+
+        elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'humidity_temp':
+            populate_and_select('humidity_temp')
 
         elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'ambient_light':
             populate_and_select('ambient_light')
