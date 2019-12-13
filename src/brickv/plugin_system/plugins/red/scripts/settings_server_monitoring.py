@@ -720,7 +720,7 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
                 if ch1['current_state'] == ch1['critical']['expected_state']:
                     ch1['is_critical'] = True
                 else:
-                    ch01['is_critical'] = False
+                    ch1['is_critical'] = False
             else:
                 ch1['current_state']= 'IGN'
                 ch1['is_critical'] = None
