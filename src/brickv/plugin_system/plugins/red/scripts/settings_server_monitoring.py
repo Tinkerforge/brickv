@@ -367,49 +367,39 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
         unit = 'Lux'
         divisor = 10.0
         bricklet_ambient_light = BrickletAmbientLight(uid, ipcon)
+        range = None
+        integration_time = None
 
-        if got_ambient_light_v2:
-            device_identifier = None
+        try:
+            device_identifier = bricklet_ambient_light.get_identity().device_identifier
+        except:
+            bricklet_ambient_light = None
+            handle_result(MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY,
+                            RETURN_CODE_CRITICAL)
+            return
 
-            try:
-                device_identifier = bricklet_ambient_light.get_identity().device_identifier
-            except:
-                bricklet_ambient_light = None
-                handle_result(MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY,
-                              RETURN_CODE_CRITICAL)
+        if got_ambient_light_v2 and device_identifier == BrickletAmbientLightV2.DEVICE_IDENTIFIER:
+            divisor = 100.0
+            range = BrickletAmbientLightV2.ILLUMINANCE_RANGE_UNLIMITED
+            integration_time = BrickletAmbientLightV2.INTEGRATION_TIME_200MS
+            bricklet_ambient_light = BrickletAmbientLightV2(uid, ipcon)
 
-                return
-
-            if device_identifier == BrickletAmbientLightV2.DEVICE_IDENTIFIER:
-                divisor = 100.0
-                bricklet_ambient_light = BrickletAmbientLightV2(uid, ipcon)
-
-        elif got_ambient_light_v3:
-            device_identifier = None
-
-            try:
-                device_identifier = bricklet_ambient_light.get_identity().device_identifier
-            except:
-                bricklet_ambient_light = None
-                handle_result(MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY,
-                              RETURN_CODE_CRITICAL)
-
-                return
-
-            if device_identifier == BrickletAmbientLightV3.DEVICE_IDENTIFIER:
-                divisor = 100.0
-                bricklet_ambient_light = BrickletAmbientLightV3(uid, ipcon)
+        if got_ambient_light_v3 and device_identifier == BrickletAmbientLightV3.DEVICE_IDENTIFIER:
+            divisor = 100.0
+            range = BrickletAmbientLightV3.ILLUMINANCE_RANGE_UNLIMITED
+            integration_time = BrickletAmbientLightV3.INTEGRATION_TIME_200MS
+            bricklet_ambient_light = BrickletAmbientLightV3(uid, ipcon)
 
         if bricklet_ambient_light != None:
-            try:
-                bricklet_ambient_light.set_configuration(BrickletAmbientLightV3.ILLUMINANCE_RANGE_UNLIMITED,
-                                                        BrickletAmbientLightV3.INTEGRATION_TIME_200MS)
-            except:
-                bricklet_ambient_light = None
-                handle_result(MESSAGE_CRITICAL_ERROR_SETTING_AMBIENT_LIGHT_CONFIGURATION,
-                            RETURN_CODE_CRITICAL)
+            if range is not None and integration_time is not None:
+                try:
+                    bricklet_ambient_light.set_configuration(range, integration_time)
+                except:
+                    bricklet_ambient_light = None
+                    handle_result(MESSAGE_CRITICAL_ERROR_SETTING_AMBIENT_LIGHT_CONFIGURATION,
+                                RETURN_CODE_CRITICAL)
 
-                return
+                    return
 
             try:
                 reading = bricklet_ambient_light.get_illuminance() / divisor
