@@ -108,7 +108,7 @@ class ExceptionReporter:
                     raise
                 except:
                     # Add self (i.e. the thread that raised the error) to behave like to python 3.8's threading.excepthook
-                    sys.excepthook(*sys.exc_info(), self)
+                    sys.excepthook(*sys.exc_info(), thread=self)
             self.run = run_with_except_hook
         threading.Thread.__init__ = init
 
