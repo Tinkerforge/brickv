@@ -35,7 +35,7 @@ try:
     build_script_path = os.path.dirname(os.path.realpath(__file__))
     scripts = []
 
-    for script in glob.glob(os.path.join(build_script_path, 'scripts', '*.py')):
+    for script in sorted(glob.glob(os.path.join(build_script_path, 'scripts', '*.py'))):
         scripts.append(script)
         lines = []
 
@@ -57,7 +57,7 @@ try:
         with open(script + '_prepared', 'w') as f:
             f.writelines(lines)
 
-    for script in glob.glob(os.path.join(build_script_path, 'scripts', '*.sh')):
+    for script in sorted(glob.glob(os.path.join(build_script_path, 'scripts', '*.sh'))):
         scripts.append(script)
         lines = []
 
