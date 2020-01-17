@@ -155,10 +155,10 @@ class Wifi2(QWidget, Ui_Wifi2):
         self.wifi_secret_show_state_changed(Qt.Unchecked)
         self.wifi_client_show_state_changed(Qt.Unchecked)
         self.wifi_mesh_router_password_show_state_change(Qt.Unchecked)
-        self.wifi_ap_show_state_changed(Qt.Unchecked)
+        self.wifi_ap_password_show_state_changed(Qt.Unchecked)
         self.wifi_show_characters.stateChanged.connect(self.wifi_secret_show_state_changed)
         self.wifi_client_password_show.stateChanged.connect(self.wifi_client_show_state_changed)
-        self.wifi_ap_password_show.stateChanged.connect(self.wifi_ap_show_state_changed)
+        self.wifi_ap_password_show.stateChanged.connect(self.wifi_ap_password_show_state_changed)
         self.wifi_mesh_router_password_show.stateChanged.connect(self.wifi_mesh_router_password_show_state_change)
         self.wifi_client_change_password.stateChanged.connect(self.wifi_client_change_password_changed)
         self.wifi_ap_change_password.stateChanged.connect(self.wifi_ap_change_password_changed)
@@ -913,7 +913,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         else:
             self.wifi_mesh_router_password.setEchoMode(QLineEdit.Password)
 
-    def wifi_ap_show_state_changed(self, state):
+    def wifi_ap_password_show_state_changed(self, state):
         if state == Qt.Checked:
             self.wifi_ap_password.setEchoMode(QLineEdit.Normal)
         else:
