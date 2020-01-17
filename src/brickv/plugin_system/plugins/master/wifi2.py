@@ -378,6 +378,8 @@ class Wifi2(QWidget, Ui_Wifi2):
         else:
             self.wifi_ap_encryption.setCurrentIndex(data.encryption - 1)
 
+        self.wifi_ap_encryption_changed(self.wifi_ap_encryption.currentIndex()) # force update
+
         self.wifi_ap_hide_ssid.setChecked(data.hidden)
         self.wifi_ap_channel.setValue(data.channel)
 
