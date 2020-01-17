@@ -1899,7 +1899,17 @@ WEP: 10 or 26 hexadecimal digits</string>
               <item row="4" column="1" colspan="2">
                <layout class="QHBoxLayout" name="horizontalLayout_23">
                 <item>
+                 <widget class="QCheckBox" name="wifi_mesh_router_change_password">
+                  <property name="text">
+                   <string>Change Password</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QLineEdit" name="wifi_mesh_router_password">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="maxLength">
                    <number>64</number>
                   </property>
@@ -1907,6 +1917,9 @@ WEP: 10 or 26 hexadecimal digits</string>
                 </item>
                 <item>
                  <widget class="QCheckBox" name="wifi_mesh_router_password_show">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="text">
                    <string>Show Characters</string>
                   </property>
@@ -2250,6 +2263,9 @@ WEP: 10 or 26 hexadecimal digits</string>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>wifi_scroll_area</tabstop>
+  <tabstop>wifi_update_firmware_button</tabstop>
+  <tabstop>wifi_mode</tabstop>
   <tabstop>wifi_port</tabstop>
   <tabstop>wifi_websocket_port</tabstop>
   <tabstop>wifi_website_port</tabstop>
@@ -2274,6 +2290,7 @@ WEP: 10 or 26 hexadecimal digits</string>
   <tabstop>wifi_client_gw1</tabstop>
   <tabstop>wifi_client_ssid</tabstop>
   <tabstop>wifi_client_encryption</tabstop>
+  <tabstop>wifi_client_change_password</tabstop>
   <tabstop>wifi_client_password</tabstop>
   <tabstop>wifi_client_password_show</tabstop>
   <tabstop>wifi_client_use_bssid</tabstop>
@@ -2305,6 +2322,7 @@ WEP: 10 or 26 hexadecimal digits</string>
   <tabstop>wifi_ap_gw1</tabstop>
   <tabstop>wifi_ap_ssid</tabstop>
   <tabstop>wifi_ap_encryption</tabstop>
+  <tabstop>wifi_ap_change_password</tabstop>
   <tabstop>wifi_ap_password</tabstop>
   <tabstop>wifi_ap_password_show</tabstop>
   <tabstop>wifi_ap_channel</tabstop>
@@ -2325,6 +2343,7 @@ WEP: 10 or 26 hexadecimal digits</string>
   <tabstop>wifi_mesh_router_bssid5</tabstop>
   <tabstop>wifi_mesh_router_bssid6</tabstop>
   <tabstop>wifi_mesh_router_encryption</tabstop>
+  <tabstop>wifi_mesh_router_change_password</tabstop>
   <tabstop>wifi_mesh_router_password</tabstop>
   <tabstop>wifi_mesh_router_password_show</tabstop>
   <tabstop>wifi_mesh_root_ip_configuration</tabstop>
@@ -2354,7 +2373,6 @@ WEP: 10 or 26 hexadecimal digits</string>
   <tabstop>wifi_mesh_gateway_port</tabstop>
   <tabstop>wifi_save</tabstop>
   <tabstop>wifi_show_status</tabstop>
-  <tabstop>wifi_scroll_area</tabstop>
  </tabstops>
  <resources/>
  <connections/>
