@@ -220,6 +220,12 @@ class Wifi2(QWidget, Ui_Wifi2):
         async_call(self.master.get_wifi2_client_hostname, None,
                    self.get_wifi2_client_hostname_async, self.parent.increase_error_count)
 
+        if self.wifi2_firmware_version >= (2, 1, 4):
+            # FW >= 2.1.4 reports a fake password to allow checking if encryption
+            # is enabled instead of always reporting an empty password
+            async_call(self.master.get_wifi2_client_password, None,
+                       self.get_wifi2_client_password_async, self.parent.increase_error_count)
+
         async_call(self.master.get_wifi2_ap_configuration, None,
                    self.get_wifi2_ap_configuration_async, self.parent.increase_error_count)
 
@@ -328,6 +334,12 @@ class Wifi2(QWidget, Ui_Wifi2):
 
     def get_wifi2_client_hostname_async(self, data):
         self.wifi_client_hostname.setText(data)
+
+    def get_wifi2_client_password_async(self, data):
+        if len(data) == 0:
+            self.wifi_client_encryption.setCurrentIndex(0)
+        else:
+            self.wifi_client_encryption.setCurrentIndex(1)
 
     def get_wifi2_ap_configuration_async(self, data):
         self.ap_enable = data.enable
@@ -553,11 +565,12 @@ class Wifi2(QWidget, Ui_Wifi2):
 
         client_ssid       = self.wifi_client_ssid.text()
         client_encryption = self.wifi_client_encryption.currentIndex()
+        client_password   = None
 
-        if client_encryption == 1:
-            client_password = self.wifi_client_password.text()
-        else:
+        if client_encryption == 0:
             client_password = ''
+        elif self.wifi_client_change_password.isChecked():
+            client_password = self.wifi_client_password.text()
 
         client_use_bssid = self.wifi_client_use_bssid.isChecked()
 
@@ -685,7 +698,7 @@ class Wifi2(QWidget, Ui_Wifi2):
             (self.master.set_wifi2_ap_configuration, ap_enable, ap_ssid, ap_ip, ap_sub, ap_gw, ap_encryption, ap_hide_ssid, ap_channel, ap_mac),
         ]
 
-        if self.wifi_client_change_password.isChecked():
+        if client_password != None:
             to_write.append((self.master.set_wifi2_client_password, client_password))
 
         if self.wifi_ap_change_password.isChecked():
