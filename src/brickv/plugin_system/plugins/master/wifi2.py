@@ -283,10 +283,12 @@ class Wifi2(QWidget, Ui_Wifi2):
     def get_wifi2_client_configuration_async(self, data):
         self.client_enable = data.enable
         self.wifi_client_ssid.setText(data.ssid)
+
         if data.ip == (0, 0, 0, 0):
             self.wifi_client_ip_configuration.setCurrentIndex(0)
         else:
             self.wifi_client_ip_configuration.setCurrentIndex(1)
+
         self.wifi_client_ip1.setValue(data.ip[3])
         self.wifi_client_ip2.setValue(data.ip[2])
         self.wifi_client_ip3.setValue(data.ip[1])
@@ -472,6 +474,7 @@ class Wifi2(QWidget, Ui_Wifi2):
         except:
             self.popup_fail('Access point password cannot contain non-ASCII characters')
             return
+
         if self.wifi_ap_change_password.isChecked() and len(tmp_pw) < 8:
             self.popup_fail('Access point password must contain at least 8 characters')
             return
@@ -545,7 +548,7 @@ class Wifi2(QWidget, Ui_Wifi2):
             client_gw  = (self.wifi_client_gw4.value(), self.wifi_client_gw3.value(), self.wifi_client_gw2.value(), self.wifi_client_gw1.value())
         else:
             client_ip  = (0, 0, 0, 0)
-            client_sub = (0, 0, 0 ,0)
+            client_sub = (0, 0, 0, 0)
             client_gw  = (0, 0, 0, 0)
 
         client_ssid       = self.wifi_client_ssid.text()
