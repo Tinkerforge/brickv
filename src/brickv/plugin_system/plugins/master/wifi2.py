@@ -727,18 +727,18 @@ class Wifi2(QWidget, Ui_Wifi2):
             for setter, *args in to_write:
                 setter(*args)
         except Exception as e:
-            self.popup_fail("Could not save Wifi configuration: Error Code 1:\n\n" + str(e))
+            self.popup_fail("Could not save WIFI configuration: Error Code 1:\n\n" + str(e))
             return
 
         # All done, now save configuration.
         try:
             ok = self.master.save_wifi2_configuration()
         except Exception as e:
-            self.popup_fail("Could not save Wifi configuration: Error Code 2:\n\n" + str(e))
+            self.popup_fail("Could not save WIFI configuration: Error Code 2:\n\n" + str(e))
             return
 
         if ok != 0:
-            self.popup_fail("Could not save Wifi configuration. Error Code 3:\n\n Bricklet reported error " + str(ok))
+            self.popup_fail("Could not save WIFI configuration. Error Code 3:\n\n Bricklet reported error " + str(ok))
             return
 
         def check(setter, *args):
@@ -764,10 +764,10 @@ class Wifi2(QWidget, Ui_Wifi2):
         try:
             for setter, *args in to_write:
                 if not check(setter, *args):
-                    self.popup_fail("Could not save Wifi configuration: Error Code 4.")
+                    self.popup_fail("Could not save WIFI configuration: Error Code 4.")
                     return
         except Exception as e:
-            self.popup_fail("Could not save Wifi configuration: " + str(e))
+            self.popup_fail("Could not save WIFI configuration: " + str(e))
             return
 
         self.popup_ok()
@@ -956,8 +956,8 @@ class Wifi2(QWidget, Ui_Wifi2):
             if self.wifi2_status.isVisible():
                 self.wifi2_status.update_status()
 
-    def popup_ok(self, message='Successfully saved configuration.\nNew configuration will be used after reset of the Master Brick.'):
+    def popup_ok(self, message='Successfully saved WIFI configuration.\nNew configuration will be used after reset of the Master Brick.'):
         QMessageBox.information(get_main_window(), 'Configuration', message, QMessageBox.Ok)
 
-    def popup_fail(self, message='Could not save configuration.'):
+    def popup_fail(self, message='Could not save WIFI configuration.'):
         QMessageBox.critical(get_main_window(), 'Configuration', message, QMessageBox.Ok)
