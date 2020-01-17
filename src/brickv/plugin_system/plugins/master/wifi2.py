@@ -101,7 +101,11 @@ class Wifi2(QWidget, Ui_Wifi2):
                              self.wifi_ap_mac3, self.wifi_ap_mac2, self.wifi_ap_mac1,
                              self.wifi_ap_mac_dot1, self.wifi_ap_mac_dot2, self.wifi_ap_mac_dot3,
                              self.wifi_ap_mac_dot4, self.wifi_ap_mac_dot5]
-        self.ap_enc_group = [self.wifi_ap_password_label, self.wifi_ap_password, self.wifi_ap_password_show]
+        self.ap_enc_group = [self.wifi_ap_password_label,
+                             self.wifi_ap_change_password,
+                             self.wifi_ap_password,
+                             self.wifi_ap_password_show]
+
         self.mesh_router_enc_group = [self.wifi_mesh_router_password_label,
                                       self.wifi_mesh_router_password,
                                       self.wifi_mesh_router_password_show]
