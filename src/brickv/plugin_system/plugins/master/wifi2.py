@@ -539,15 +539,13 @@ class Wifi2(QWidget, Ui_Wifi2):
         else:
             general_secret = ''
 
-        '''
-        FIXME: Mesh mode is added to the mode combobox dynamically from master,
-        after master and WIFI2 extension firmware versions are verified which is
-        done from an async callback from the master brick tab. We assume in this
-        case that the mesh entry will have index 3 because until now nothing else
-        is added to the combobox dynamically. In future if more items are dynamically
-        being added to this combobox form async calls depending on this index
-        assumtion may fail.
-        '''
+        # FIXME: Mesh mode is added to the mode combobox dynamically from master,
+        # after master and WIFI2 extension firmware versions are verified which is
+        # done from an async callback from the master brick tab. We assume in this
+        # case that the mesh entry will have index 3 because until now nothing else
+        # is added to the combobox dynamically. In future if more items are dynamically
+        # being added to this combobox form async calls depending on this index
+        # assumtion may fail.
         general_mode = self.wifi_mode.currentIndex()
 
         if general_mode == 3:
