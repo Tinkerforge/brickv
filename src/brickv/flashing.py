@@ -306,12 +306,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     else:
                         file.seek(0)
                         return file.read()
-        except urllib.error.URLError:
-            progress.cancel()
-            self.popup_fail('Updates / Flashing',
-                            "Failed to download .<br/><br/>".format(name) +
-                            "Is your computer connected to the Internet?")
-            return None
         except Exception as e:
             progress.cancel()
             self.popup_fail('Updates / Flashing',
