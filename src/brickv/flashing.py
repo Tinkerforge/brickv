@@ -315,7 +315,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         except Exception as e:
             progress.cancel()
             self.popup_fail('Updates / Flashing',
-                            "Failed to download .<br/><br/>".format(name) +
+                            "Failed to download {0}.<br/><br/>".format(name) +
                             "Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>:<br/><br/>" +
                             html.escape(str(e)))
             return None
