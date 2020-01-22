@@ -136,6 +136,9 @@ class ThreadWithReturnValue(Thread):
         Thread.join(self, *args, **kwargs)
         return self._return, self._exception
 
+class BrickletKindMismatchError(Exception):
+    pass
+
 class FlashingWindow(QDialog, Ui_Flashing):
     def __init__(self, parent):
         QDialog.__init__(self, parent, get_modeless_dialog_flags())
@@ -250,8 +253,30 @@ class FlashingWindow(QDialog, Ui_Flashing):
         # Use a small block size to increase responsiveness of the progress dialog.
         # Unfortunately there is no non blocking read available.
         block_size = 1024
+
+        def urlopen_wrapper(url, **kwargs):
+            try:
+                return urlopen(url, **kwargs)
+            except urllib.error.HTTPError as e:
+                if e.code == 404:
+                    if url.endswith('.bin'):
+                        try:
+                            with urlopen(url[:-4] + '.zbin', **kwargs) as r:
+                                pass
+                        except:
+                            raise e
+
+                        raise BrickletKindMismatchError('Cannot flash Co-Processor firmware onto Classic Bricklet')
+                    elif url.endswith('.zbin'):
+                        try:
+                            with urlopen(url[:-5] + '.bin', **kwargs) as r:
+                                pass
+                        except:
+                            raise e
+
+                        raise BrickletKindMismatchError('Cannot flash Classic plugin onto Co-Processor Bricklet')
         try:
-            connection_thread = ThreadWithReturnValue(target=urlopen, args=[url], kwargs={'timeout': 10})
+            connection_thread = ThreadWithReturnValue(target=urlopen_wrapper, args=[url], kwargs={'timeout': 10})
             connection_thread.start()
             while True:
                 response, exception = connection_thread.join(timeout=1.0/60)
@@ -306,6 +331,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     else:
                         file.seek(0)
                         return file.read()
+        except BrickletKindMismatchError as e:
+            progress.cancel()
+            self.popup_fail('Updates / Flashing', html.escape(str(e)))
         except Exception as e:
             progress.cancel()
             self.popup_fail('Updates / Flashing',
