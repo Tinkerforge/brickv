@@ -275,6 +275,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                             raise e
 
                         raise BrickletKindMismatchError('Cannot flash Classic plugin onto Co-Processor Bricklet')
+
         try:
             connection_thread = ThreadWithReturnValue(target=urlopen_wrapper, args=[url], kwargs={'timeout': 10})
             connection_thread.start()
