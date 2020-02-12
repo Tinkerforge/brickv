@@ -31,99 +31,122 @@ import urllib.error
 import xml.etree.ElementTree as ET
 from pprint import pformat
 
-try:
-    XML_URL = 'file://{0}'.format(os.environ['SERVICEPROVIDERS_XML_PATH'])
-except KeyError:
-    XML_URL = 'https://git.gnome.org/browse/mobile-broadband-provider-info/plain/serviceproviders.xml'
-try:
-    ISO3166_URL = 'file://{0}'.format(os.environ['ISOCODES_JSON_PATH'])
-except KeyError:
-    ISO3166_URL = 'https://salsa.debian.org/iso-codes-team/iso-codes/raw/master/data/iso_3166-1.json'
-DATA_FILE = 'serviceprovider_data.py'
+def main():
+    try:
+        XML_URL = 'file://{0}'.format(os.environ['SERVICEPROVIDERS_XML_PATH'])
+    except KeyError:
+        XML_URL = 'https://git.gnome.org/browse/mobile-broadband-provider-info/plain/serviceproviders.xml'
+    try:
+        ISO3166_URL = 'file://{0}'.format(os.environ['ISOCODES_JSON_PATH'])
+    except KeyError:
+        ISO3166_URL = 'https://salsa.debian.org/iso-codes-team/iso-codes/raw/master/data/iso_3166-1.json'
+    DATA_FILE = 'serviceprovider_data.py'
 
-try:
     print('[*] Downloading provider database')
 
-    response = urllib.request.urlopen(XML_URL, timeout=10)
-    xml_data = response.read()
-    response.close()
+    xml_data = None
+    try:
+        response = urllib.request.urlopen(XML_URL, timeout=10)
+        xml_data = response.read()
+        response.close()
+    except Exception as e:
+        print("----> Failed to download provider database. Will use old provider database. Error was: {}".format(str(e)))
 
     print('[*] Downloading ISO-3166 database')
 
-    response = urllib.request.urlopen(ISO3166_URL, timeout=10)
-    iso3166_data = response.read()
-    response.close()
+    iso3166_data = None
+    try:
+        response = urllib.request.urlopen(ISO3166_URL, timeout=10)
+        iso3166_data = response.read()
+        response.close()
+    except Exception as e:
+        print("----> Failed to download ISO-3166 database. Will use old provider database. Error was: {}".format(str(e)))
 
-    print('[*] Processing provider dict')
+    if xml_data is None or iso3166_data is None:
+        return
 
-    def expand(element):
-        result = {}
+    try:
+        print('[*] Processing provider dict')
 
-        for item in element.items():
-            result['@' + item[0]] = item[1]
+        def expand(element):
+            result = {}
 
-        for child in list(element):
-            if child.tag in result:
-                if type(result[child.tag]) != list:
-                    result[child.tag] = [result[child.tag]]
+            for item in element.items():
+                result['@' + item[0]] = item[1]
 
-                result[child.tag].append(expand(child))
-            else:
-                result[child.tag] = expand(child)
+            for child in list(element):
+                if child.tag in result:
+                    if type(result[child.tag]) != list:
+                        result[child.tag] = [result[child.tag]]
 
-        text = element.text
+                    result[child.tag].append(expand(child))
+                else:
+                    result[child.tag] = expand(child)
 
-        if text != None:
-            text = text.strip()
+            text = element.text
 
-            if len(text) == 0:
-                text = None
+            if text != None:
+                text = text.strip()
 
-        if len(result) == 0:
-            return text
+                if len(text) == 0:
+                    text = None
 
-        if text != None:
-            result['#text'] = text
+            if len(result) == 0:
+                return text
 
-        return result
+            if text != None:
+                result['#text'] = text
 
-    root_provider = ET.fromstring(xml_data)
-    dict_provider = expand(root_provider)
+            return result
 
-    print('[*] Processing country dict')
+        root_provider = ET.fromstring(xml_data)
+        dict_provider = expand(root_provider)
 
-    iso3166 = json.loads(iso3166_data.decode('utf-8'))
-    dict_country_all = {}
-    dict_country = {}
+        print('[*] Processing country dict')
 
-    for entry_country in iso3166['3166-1']:
-        dict_country_all[entry_country.get('alpha_2')] = entry_country.get('name')
+        iso3166 = json.loads(iso3166_data.decode('utf-8'))
+        dict_country_all = {}
+        dict_country = {}
 
-    for dict_c in dict_provider['country']:
-        code_country = dict_c['@code']
-        dict_country[code_country] = dict_country_all[code_country.upper()]
+        for entry_country in iso3166['3166-1']:
+            dict_country_all[entry_country.get('alpha_2')] = entry_country.get('name')
 
-    print('[*] Writing provider and country dicts')
+        for dict_c in dict_provider['country']:
+            code_country = dict_c['@code']
+            dict_country[code_country] = dict_country_all[code_country.upper()]
 
-    with open(DATA_FILE, 'w') as f:
-        f.write('# -*- coding: utf-8 -*-\n')
-        f.write('# This file is generated, don\'t edit it.\n')
-        f.write('\n')
-        f.write('# The provider data comes from the GNOME mobile-broadband-provider-info package\n')
-        f.write('# that is released as public domain:\n')
-        f.write('#\n')
-        f.write('# https://git.gnome.org/browse/mobile-broadband-provider-info/plain/serviceproviders.xml\n')
-        f.write('\n')
-        f.write('dict_provider = \\\n')
-        f.write(pformat(dict_provider) + '\n')
-        f.write('\n')
-        f.write('# The country data comes from the Debian iso-codes package that is released\n')
-        f.write('# under LGPLv2.1+:\n')
-        f.write('#\n')
-        f.write('# /usr/share/xml/iso-codes/iso_3166.xml\n')
-        f.write('\n')
-        f.write('dict_country = \\\n')
-        f.write(pformat(dict_country) + '\n')
-except Exception as e:
-    print('----> Error occurred: ' + str(e))
-    exit(1)
+    except Exception as e:
+        print('----> Failed to process provider or country dict: ' + str(e))
+        exit(1)
+
+    try:
+        print('[*] Writing provider and country dicts')
+
+        with open(DATA_FILE + '.tmp', 'w') as f:
+            f.write('# -*- coding: utf-8 -*-\n')
+            f.write('# This file is generated, don\'t edit it.\n')
+            f.write('\n')
+            f.write('# The provider data comes from the GNOME mobile-broadband-provider-info package\n')
+            f.write('# that is released as public domain:\n')
+            f.write('#\n')
+            f.write('# https://git.gnome.org/browse/mobile-broadband-provider-info/plain/serviceproviders.xml\n')
+            f.write('\n')
+            f.write('dict_provider = \\\n')
+            f.write(pformat(dict_provider) + '\n')
+            f.write('\n')
+            f.write('# The country data comes from the Debian iso-codes package that is released\n')
+            f.write('# under LGPLv2.1+:\n')
+            f.write('#\n')
+            f.write('# /usr/share/xml/iso-codes/iso_3166.xml\n')
+            f.write('\n')
+            f.write('dict_country = \\\n')
+            f.write(pformat(dict_country) + '\n')
+
+        os.replace(DATA_FILE + '.tmp', DATA_FILE)
+    except Exception as e:
+        print('----> Failed to write provider and country dict: ' + str(e))
+        exit(1)
+
+
+if __name__ == '__main__':
+    main()

@@ -13,6 +13,7 @@ src/brickv/plugin_images.py
 src/brickv/frozen_images.py
 src/brickv/plugin_system/plugins/__init__.py
 src/brickv/plugin_system/plugins/red/script_data.py
+src/brickv/plugin_system/plugins/red/serviceprovider_data.py.tmp
 src/build_data/linux/brickv/usr/share/brickv
 src/build_data/linux/brick-flash-cmd/usr/bin
 src/MANIFEST.in
