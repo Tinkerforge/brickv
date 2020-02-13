@@ -780,6 +780,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                 IPConnection.ENUMERATION_TYPE_CONNECTED]:
             device_info = inventory.get_info(uid)
 
+            cached_device_info_valid = device_info is not None and (\
+                   device_info.connected_uid != connected_uid
+                or device_info.position != position
+                or device_info.hardware_version != hardware_version
+                or device_info.device_identifier != device_identifier)
+
+            if cached_device_info_valid:
+                self.remove_device_info(uid)
+                device_info = None
+
             # If the enum_type is CONNECTED, the bricklet was restarted externally.
             # The plugin could now be in an inconsistent state.
             if enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED and device_info is not None:
