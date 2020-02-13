@@ -458,7 +458,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         else:
             count = arg2
             arg2_string = ''
-            
+
         try:
             # Use address without coil/register type prefix
             rid = request_fn(slave_address, address % 100000, arg2)
@@ -865,7 +865,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         entries = [self.rs485_input_combobox.itemText(i) for i in range(self.rs485_input_combobox.count())]
         if text not in entries:
             self.rs485_input_combobox.addItem(text)
-        self.rs485_input_combobox.setCurrentIndex(0)
+        self.rs485_input_combobox.setCurrentIndex(self.rs485_input_combobox.count() - 1)
 
     def get_rs485_configuration_async(self, conf):
         self.baudrate_spinbox.setValue(conf.baudrate)
