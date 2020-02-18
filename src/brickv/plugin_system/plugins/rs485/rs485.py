@@ -441,7 +441,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
             if len(text) == 0:
                 return
 
-            arg2 = [int(i, 16) for i in text]
+            arg2 = [int(i, 16) for i in text.split(' ')]
         else:
             arg2 = self.modbus_master_param2_dec_spinbox.value()
 
