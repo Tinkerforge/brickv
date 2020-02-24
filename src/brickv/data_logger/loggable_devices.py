@@ -1216,7 +1216,7 @@ def value_to_bits(value, length):
 
 if BrickletColor_found:
     # BrickletColor
-    def special_get_get_illuminance(device):
+    def special_get_color_illuminance(device):
         gain, integration_time = device.get_config()
 
         if gain == BrickletColor.GAIN_1X:
@@ -1245,8 +1245,8 @@ if BrickletColor_found:
 
 if BrickletColorV2_found:
     # BrickletColorV2
-    def special_get_get_illuminance(device):
-        gain, integration_time = device.get_config()
+    def special_get_color_v2_illuminance(device):
+        gain, integration_time = device.get_configuration()
 
         if gain == BrickletColorV2.GAIN_1X:
             gain_factor = 1
@@ -2168,7 +2168,7 @@ if BrickletColor_found:
             },
             {
                 'name': 'Illuminance',
-                'getter': special_get_get_illuminance, # FIXME: saturation handling is missing
+                'getter': special_get_color_illuminance, # FIXME: saturation handling is missing
                 'subvalues': None,
                 'unit': 'lx/10',
                 'advanced': False
@@ -2217,13 +2217,13 @@ if BrickletColorV2_found:
             },
             {
                 'name': 'Illuminance',
-                'getter': special_get_get_illuminance, # FIXME: saturation handling is missing
+                'getter': special_get_color_v2_illuminance, # FIXME: saturation handling is missing
                 'subvalues': None,
                 'unit': 'lx/10',
                 'advanced': False
             }
         ],
-        'options_setter': lambda device, gain, integration_time, enable_light: [device.set_config(gain, integration_time), device.set_light(enable_light)],
+        'options_setter': lambda device, gain, integration_time, enable_light: [device.set_configuration(gain, integration_time), device.set_light(enable_light)],
         'options': [
             {
                 'name': 'Gain',
