@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -93,7 +93,7 @@ class BrickletSoundPressureLevel(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletSoundPressureLevel.DEVICE_IDENTIFIER, BrickletSoundPressureLevel.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -122,6 +122,7 @@ class BrickletSoundPressureLevel(Device):
         self.callback_formats[BrickletSoundPressureLevel.CALLBACK_SPECTRUM_LOW_LEVEL] = 'H H 30H'
 
         self.high_level_callbacks[BrickletSoundPressureLevel.CALLBACK_SPECTRUM] = [('stream_length', 'stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': False}, None]
+        ipcon.add_device(self)
 
     def get_decibel(self):
         """
@@ -137,6 +138,8 @@ class BrickletSoundPressureLevel(Device):
         :cb:`Decibel` callback. You can set the callback configuration
         with :func:`Set Decibel Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_DECIBEL, (), '', 'H')
 
     def set_decibel_callback_configuration(self, period, value_has_to_change, option, min, max):
@@ -169,6 +172,8 @@ class BrickletSoundPressureLevel(Device):
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
         option = create_char(option)
@@ -181,6 +186,8 @@ class BrickletSoundPressureLevel(Device):
         """
         Returns the callback configuration as set by :func:`Set Decibel Callback Configuration`.
         """
+        self.check_validity()
+
         return GetDecibelCallbackConfiguration(*self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_DECIBEL_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
 
     def get_spectrum_low_level(self):
@@ -204,6 +211,8 @@ class BrickletSoundPressureLevel(Device):
         spectrum you have to apply the formula f(x) = 20*log10(max(1, x/sqrt(2)))
         on each value.
         """
+        self.check_validity()
+
         return GetSpectrumLowLevel(*self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_SPECTRUM_LOW_LEVEL, (), '', 'H H 30H'))
 
     def set_spectrum_callback_configuration(self, period):
@@ -214,6 +223,8 @@ class BrickletSoundPressureLevel(Device):
         Every new measured spectrum will be send at most once. Set the period to 1 to
         make sure that you get every spectrum.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_SPECTRUM_CALLBACK_CONFIGURATION, (period,), 'I', '')
@@ -223,6 +234,8 @@ class BrickletSoundPressureLevel(Device):
         Returns the callback configuration as set by
         :func:`Get Spectrum Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_SPECTRUM_CALLBACK_CONFIGURATION, (), '', 'I')
 
     def set_configuration(self, fft_size, weighting):
@@ -249,6 +262,8 @@ class BrickletSoundPressureLevel(Device):
         flat response, no weighting is applied. ITU-R 468 is an ITU
         weighting standard mostly used in the UK and Europe.
         """
+        self.check_validity()
+
         fft_size = int(fft_size)
         weighting = int(weighting)
 
@@ -258,6 +273,8 @@ class BrickletSoundPressureLevel(Device):
         """
         Returns the configuration as set by :func:`Set Configuration`.
         """
+        self.check_validity()
+
         return GetConfiguration(*self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
     def get_spitfp_error_count(self):
@@ -274,6 +291,8 @@ class BrickletSoundPressureLevel(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -288,6 +307,8 @@ class BrickletSoundPressureLevel(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -296,6 +317,8 @@ class BrickletSoundPressureLevel(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -307,6 +330,8 @@ class BrickletSoundPressureLevel(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -322,6 +347,8 @@ class BrickletSoundPressureLevel(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -336,6 +363,8 @@ class BrickletSoundPressureLevel(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -344,6 +373,8 @@ class BrickletSoundPressureLevel(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -355,6 +386,8 @@ class BrickletSoundPressureLevel(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -366,6 +399,8 @@ class BrickletSoundPressureLevel(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -376,6 +411,8 @@ class BrickletSoundPressureLevel(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -385,6 +422,8 @@ class BrickletSoundPressureLevel(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -58,7 +58,7 @@ class BrickletIndustrialDual020mA(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletIndustrialDual020mA.DEVICE_IDENTIFIER, BrickletIndustrialDual020mA.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -76,6 +76,7 @@ class BrickletIndustrialDual020mA(Device):
         self.callback_formats[BrickletIndustrialDual020mA.CALLBACK_CURRENT] = 'B i'
         self.callback_formats[BrickletIndustrialDual020mA.CALLBACK_CURRENT_REACHED] = 'B i'
 
+        ipcon.add_device(self)
 
     def get_current(self, sensor):
         """
@@ -92,6 +93,8 @@ class BrickletIndustrialDual020mA(Device):
         :cb:`Current` callback and set the period with
         :func:`Set Current Callback Period`.
         """
+        self.check_validity()
+
         sensor = int(sensor)
 
         return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_CURRENT, (sensor,), 'B', 'i')
@@ -104,6 +107,8 @@ class BrickletIndustrialDual020mA(Device):
         The :cb:`Current` callback is only triggered if the current has changed since the
         last triggering.
         """
+        self.check_validity()
+
         sensor = int(sensor)
         period = int(period)
 
@@ -113,6 +118,8 @@ class BrickletIndustrialDual020mA(Device):
         """
         Returns the period as set by :func:`Set Current Callback Period`.
         """
+        self.check_validity()
+
         sensor = int(sensor)
 
         return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_CURRENT_CALLBACK_PERIOD, (sensor,), 'B', 'I')
@@ -134,6 +141,8 @@ class BrickletIndustrialDual020mA(Device):
          "'<'",    "Callback is triggered when the current is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the current is greater than the min value (max is ignored)"
         """
+        self.check_validity()
+
         sensor = int(sensor)
         option = create_char(option)
         min = int(min)
@@ -145,6 +154,8 @@ class BrickletIndustrialDual020mA(Device):
         """
         Returns the threshold as set by :func:`Set Current Callback Threshold`.
         """
+        self.check_validity()
+
         sensor = int(sensor)
 
         return GetCurrentCallbackThreshold(*self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_CURRENT_CALLBACK_THRESHOLD, (sensor,), 'B', 'c i i'))
@@ -161,6 +172,8 @@ class BrickletIndustrialDual020mA(Device):
 
         keeps being reached.
         """
+        self.check_validity()
+
         debounce = int(debounce)
 
         self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -169,6 +182,8 @@ class BrickletIndustrialDual020mA(Device):
         """
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def set_sample_rate(self, rate):
@@ -185,6 +200,8 @@ class BrickletIndustrialDual020mA(Device):
          "2",    "15 samples per second, 16 bit resolution"
          "3",    "4 samples per second, 18 bit resolution"
         """
+        self.check_validity()
+
         rate = int(rate)
 
         self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_SAMPLE_RATE, (rate,), 'B', '')
@@ -193,6 +210,8 @@ class BrickletIndustrialDual020mA(Device):
         """
         Returns the sample rate as set by :func:`Set Sample Rate`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_SAMPLE_RATE, (), '', 'B')
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -163,7 +163,7 @@ class BrickletNFC(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletNFC.DEVICE_IDENTIFIER, BrickletNFC.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 1)
 
@@ -209,6 +209,7 @@ class BrickletNFC(Device):
         self.callback_formats[BrickletNFC.CALLBACK_CARDEMU_STATE_CHANGED] = 'B !'
         self.callback_formats[BrickletNFC.CALLBACK_P2P_STATE_CHANGED] = 'B !'
 
+        ipcon.add_device(self)
 
     def set_mode(self, mode):
         """
@@ -223,6 +224,8 @@ class BrickletNFC(Device):
         Therefore, you can only use functions corresponding to the current mode. For
         example, in Reader mode you can only use Reader functions.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_MODE, (mode,), 'B', '')
@@ -231,6 +234,8 @@ class BrickletNFC(Device):
         """
         Returns the mode as set by :func:`Set Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_MODE, (), '', 'B')
 
     def reader_request_tag_id(self):
@@ -266,6 +271,8 @@ class BrickletNFC(Device):
         In case of any *ReaderError* state the selection is lost and you have to
         start again by calling :func:`Reader Request Tag ID`.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_REQUEST_TAG_ID, (), '', '')
 
     def reader_get_tag_id_low_level(self):
@@ -281,6 +288,8 @@ class BrickletNFC(Device):
            :cb:`Reader State Changed` callback)
         3. Call :func:`Reader Get Tag ID`
         """
+        self.check_validity()
+
         return ReaderGetTagIDLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_GET_TAG_ID_LOW_LEVEL, (), '', 'B B 32B'))
 
     def reader_get_state(self):
@@ -302,6 +311,8 @@ class BrickletNFC(Device):
 
         The same approach is used analogously for the other API functions.
         """
+        self.check_validity()
+
         return ReaderGetState(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_GET_STATE, (), '', 'B !'))
 
     def reader_write_ndef_low_level(self, ndef_length, ndef_chunk_offset, ndef_chunk_data):
@@ -321,6 +332,8 @@ class BrickletNFC(Device):
         5. Wait for state to change to *ReaderWriteNDEFReady* (see :func:`Reader Get State`
            or :cb:`Reader State Changed` callback)
         """
+        self.check_validity()
+
         ndef_length = int(ndef_length)
         ndef_chunk_offset = int(ndef_chunk_offset)
         ndef_chunk_data = list(map(int, ndef_chunk_data))
@@ -345,6 +358,8 @@ class BrickletNFC(Device):
            or :cb:`Reader State Changed` callback)
         6. Call :func:`Reader Read NDEF` to retrieve the NDEF message from the buffer
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_REQUEST_NDEF, (), '', '')
 
     def reader_read_ndef_low_level(self):
@@ -352,6 +367,8 @@ class BrickletNFC(Device):
         Returns the NDEF data from an internal buffer. To fill the buffer
         with a NDEF message you have to call :func:`Reader Request NDEF` beforehand.
         """
+        self.check_validity()
+
         return ReaderReadNDEFLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_READ_NDEF_LOW_LEVEL, (), '', 'H H 60B'))
 
     def reader_authenticate_mifare_classic_page(self, page, key_number, key):
@@ -377,6 +394,8 @@ class BrickletNFC(Device):
 
         The authentication will always work for one whole sector (4 pages).
         """
+        self.check_validity()
+
         page = int(page)
         key_number = int(key_number)
         key = list(map(int, key))
@@ -413,6 +432,8 @@ class BrickletNFC(Device):
 
         Choose CC by setting page to 3 or NDEF by setting page to 4.
         """
+        self.check_validity()
+
         page = int(page)
         data_length = int(data_length)
         data_chunk_offset = int(data_chunk_offset)
@@ -453,6 +474,8 @@ class BrickletNFC(Device):
 
         Choose CC by setting page to 3 or NDEF by setting page to 4.
         """
+        self.check_validity()
+
         page = int(page)
         length = int(length)
 
@@ -463,6 +486,8 @@ class BrickletNFC(Device):
         Returns the page data from an internal buffer. To fill the buffer
         with specific pages you have to call :func:`Reader Request Page` beforehand.
         """
+        self.check_validity()
+
         return ReaderReadPageLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_READ_PAGE_LOW_LEVEL, (), '', 'H H 60B'))
 
     def cardemu_get_state(self):
@@ -484,6 +509,8 @@ class BrickletNFC(Device):
 
         The same approach is used analogously for the other API functions.
         """
+        self.check_validity()
+
         return CardemuGetState(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_CARDEMU_GET_STATE, (), '', 'B !'))
 
     def cardemu_start_discovery(self):
@@ -499,6 +526,8 @@ class BrickletNFC(Device):
         If the cardemu state changes to *CardemuDiscoveryReady* you can start the NDEF message
         transfer with :func:`Cardemu Write NDEF` and :func:`Cardemu Start Transfer`.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_CARDEMU_START_DISCOVERY, (), '', '')
 
     def cardemu_write_ndef_low_level(self, ndef_length, ndef_chunk_offset, ndef_chunk_data):
@@ -511,6 +540,8 @@ class BrickletNFC(Device):
         will not be overwritten until you call this function again or change the
         mode.
         """
+        self.check_validity()
+
         ndef_length = int(ndef_length)
         ndef_chunk_offset = int(ndef_chunk_offset)
         ndef_chunk_data = list(map(int, ndef_chunk_data))
@@ -528,6 +559,8 @@ class BrickletNFC(Device):
         change to *CardemuTransferNDEFReady* if the transfer was successful or
         *CardemuTransferNDEFError* if it wasn't.
         """
+        self.check_validity()
+
         transfer = int(transfer)
 
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_CARDEMU_START_TRANSFER, (transfer,), 'B', '')
@@ -551,6 +584,8 @@ class BrickletNFC(Device):
 
         The same approach is used analogously for the other API functions.
         """
+        self.check_validity()
+
         return P2PGetState(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_GET_STATE, (), '', 'B !'))
 
     def p2p_start_discovery(self):
@@ -566,6 +601,8 @@ class BrickletNFC(Device):
         If the P2P state changes to *P2PDiscoveryReady* you can start the NDEF message
         transfer with :func:`P2P Start Transfer`.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_START_DISCOVERY, (), '', '')
 
     def p2p_write_ndef_low_level(self, ndef_length, ndef_chunk_offset, ndef_chunk_data):
@@ -578,6 +615,8 @@ class BrickletNFC(Device):
         will not be overwritten until you call this function again, change the
         mode or use P2P to read an NDEF messages.
         """
+        self.check_validity()
+
         ndef_length = int(ndef_length)
         ndef_chunk_offset = int(ndef_chunk_offset)
         ndef_chunk_data = list(map(int, ndef_chunk_data))
@@ -599,6 +638,8 @@ class BrickletNFC(Device):
         you can now use :func:`P2P Read NDEF` to read the NDEF message that was written
         by the NFC peer.
         """
+        self.check_validity()
+
         transfer = int(transfer)
 
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_START_TRANSFER, (transfer,), 'B', '')
@@ -610,6 +651,8 @@ class BrickletNFC(Device):
         The NDEF message is ready if you called :func:`P2P Start Transfer` with a
         read transfer and the P2P state changed to *P2PTransferNDEFReady*.
         """
+        self.check_validity()
+
         return P2PReadNDEFLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_READ_NDEF_LOW_LEVEL, (), '', 'H H 60B'))
 
     def set_detection_led_config(self, config):
@@ -621,6 +664,8 @@ class BrickletNFC(Device):
 
         If the Bricklet is in bootloader mode, the LED is off.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_DETECTION_LED_CONFIG, (config,), 'B', '')
@@ -629,6 +674,8 @@ class BrickletNFC(Device):
         """
         Returns the configuration as set by :func:`Set Detection LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_DETECTION_LED_CONFIG, (), '', 'B')
 
     def set_maximum_timeout(self, timeout):
@@ -653,6 +700,8 @@ class BrickletNFC(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         timeout = int(timeout)
 
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_MAXIMUM_TIMEOUT, (timeout,), 'H', '')
@@ -663,6 +712,8 @@ class BrickletNFC(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_MAXIMUM_TIMEOUT, (), '', 'H')
 
     def get_spitfp_error_count(self):
@@ -679,6 +730,8 @@ class BrickletNFC(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -693,6 +746,8 @@ class BrickletNFC(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -701,6 +756,8 @@ class BrickletNFC(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -712,6 +769,8 @@ class BrickletNFC(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -727,6 +786,8 @@ class BrickletNFC(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletNFC.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -741,6 +802,8 @@ class BrickletNFC(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -749,6 +812,8 @@ class BrickletNFC(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -760,6 +825,8 @@ class BrickletNFC(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -771,6 +838,8 @@ class BrickletNFC(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -781,6 +850,8 @@ class BrickletNFC(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletNFC.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -790,6 +861,8 @@ class BrickletNFC(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletNFC.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

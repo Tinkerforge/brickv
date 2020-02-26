@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -95,7 +95,7 @@ class BrickletOutdoorWeather(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletOutdoorWeather.DEVICE_IDENTIFIER, BrickletOutdoorWeather.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -123,6 +123,7 @@ class BrickletOutdoorWeather(Device):
         self.callback_formats[BrickletOutdoorWeather.CALLBACK_STATION_DATA] = 'B h B I I I B !'
         self.callback_formats[BrickletOutdoorWeather.CALLBACK_SENSOR_DATA] = 'B h B'
 
+        ipcon.add_device(self)
 
     def get_station_identifiers_low_level(self):
         """
@@ -135,6 +136,8 @@ class BrickletOutdoorWeather(Device):
         Since firmware version 2.0.2 a station is removed from the list if no data was received for
         12 hours.
         """
+        self.check_validity()
+
         return GetStationIdentifiersLowLevel(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_IDENTIFIERS_LOW_LEVEL, (), '', 'H H 60B'))
 
     def get_sensor_identifiers_low_level(self):
@@ -148,6 +151,8 @@ class BrickletOutdoorWeather(Device):
         Since firmware version 2.0.2 a sensor is removed from the list if no data was received for
         12 hours.
         """
+        self.check_validity()
+
         return GetSensorIdentifiersLowLevel(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_IDENTIFIERS_LOW_LEVEL, (), '', 'H H 60B'))
 
     def get_station_data(self, identifier):
@@ -166,6 +171,8 @@ class BrickletOutdoorWeather(Device):
         * Battery Low (true if battery is low) and
         * Last Change (seconds since the reception of this data).
         """
+        self.check_validity()
+
         identifier = int(identifier)
 
         return GetStationData(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_DATA, (identifier,), 'B', 'h B I I I B ! H'))
@@ -181,6 +188,8 @@ class BrickletOutdoorWeather(Device):
         * Humidity and
         * Last Change (seconds since the last reception of data).
         """
+        self.check_validity()
+
         identifier = int(identifier)
 
         return GetSensorData(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_DATA, (identifier,), 'B', 'h B H'))
@@ -189,6 +198,8 @@ class BrickletOutdoorWeather(Device):
         """
         Turns callback for station data on or off.
         """
+        self.check_validity()
+
         enable_callback = bool(enable_callback)
 
         self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_STATION_CALLBACK_CONFIGURATION, (enable_callback,), '!', '')
@@ -197,12 +208,16 @@ class BrickletOutdoorWeather(Device):
         """
         Returns the configuration as set by :func:`Set Station Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_CALLBACK_CONFIGURATION, (), '', '!')
 
     def set_sensor_callback_configuration(self, enable_callback):
         """
         Turns callback for sensor data on or off.
         """
+        self.check_validity()
+
         enable_callback = bool(enable_callback)
 
         self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_SENSOR_CALLBACK_CONFIGURATION, (enable_callback,), '!', '')
@@ -211,6 +226,8 @@ class BrickletOutdoorWeather(Device):
         """
         Returns the configuration as set by :func:`Set Sensor Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_CALLBACK_CONFIGURATION, (), '', '!')
 
     def get_spitfp_error_count(self):
@@ -227,6 +244,8 @@ class BrickletOutdoorWeather(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -241,6 +260,8 @@ class BrickletOutdoorWeather(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -249,6 +270,8 @@ class BrickletOutdoorWeather(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -260,6 +283,8 @@ class BrickletOutdoorWeather(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -275,6 +300,8 @@ class BrickletOutdoorWeather(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -289,6 +316,8 @@ class BrickletOutdoorWeather(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -297,6 +326,8 @@ class BrickletOutdoorWeather(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -308,6 +339,8 @@ class BrickletOutdoorWeather(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -319,6 +352,8 @@ class BrickletOutdoorWeather(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -329,6 +364,8 @@ class BrickletOutdoorWeather(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -338,6 +375,8 @@ class BrickletOutdoorWeather(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

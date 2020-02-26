@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015, 2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2012-2015, 2017, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 # Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
@@ -22,23 +22,35 @@ try:
 except ImportError:
     import Queue as queue # Python 2
 
+if not 'INTERNAL_DEVICE_DISPLAY_NAMES' in globals():
+    try:
+        from .device_display_names import get_device_display_name
+    except ValueError:
+        from device_display_names import get_device_display_name
+
+# internal
 def get_uid_from_data(data):
     return struct.unpack('<I', data[0:4])[0]
 
+# internal
 def get_length_from_data(data):
     return struct.unpack('<B', data[4:5])[0]
 
+# internal
 def get_function_id_from_data(data):
     return struct.unpack('<B', data[5:6])[0]
 
+# internal
 def get_sequence_number_from_data(data):
     return (struct.unpack('<B', data[6:7])[0] >> 4) & 0x0F
 
+# internal
 def get_error_code_from_data(data):
     return (struct.unpack('<B', data[7:8])[0] >> 6) & 0x03
 
 BASE58 = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
 
+# internal
 def base58encode(value):
     encoded = ''
 
@@ -49,6 +61,7 @@ def base58encode(value):
 
     return BASE58[value] + encoded
 
+# internal
 def base58decode(encoded):
     value = 0
     column_multiplier = 1
@@ -64,6 +77,7 @@ def base58decode(encoded):
 
     return value
 
+# internal
 def uid64_to_uid32(uid64):
     value1 = uid64 & 0xFFFFFFFF
     value2 = (uid64 >> 32) & 0xFFFFFFFF
@@ -76,6 +90,7 @@ def uid64_to_uid32(uid64):
 
     return uid32
 
+# internal
 def create_chunk_data(data, chunk_offset, chunk_length, chunk_padding):
     chunk_data = data[chunk_offset:chunk_offset + chunk_length]
 
@@ -85,6 +100,7 @@ def create_chunk_data(data, chunk_offset, chunk_length, chunk_padding):
     return chunk_data
 
 if sys.hexversion < 0x03000000:
+    # internal
     def create_char(value): # return str with len() == 1 and ord() <= 255
         if isinstance(value, str) and len(value) == 1: # Python2 str satisfies ord() <= 255 by default
             return value
@@ -102,6 +118,7 @@ if sys.hexversion < 0x03000000:
         else:
             raise ValueError('Invalid char value: ' + repr(value))
 else:
+    # internal
     def create_char(value): # return str with len() == 1 and ord() <= 255
         if isinstance(value, str) and len(value) == 1 and ord(value) <= 255:
             return value
@@ -113,6 +130,7 @@ else:
             raise ValueError('Invalid char value: ' + repr(value))
 
 if sys.hexversion < 0x03000000:
+    # internal
     def create_char_list(value, expected_type='char list'): # return list of str with len() == 1 and ord() <= 255 for all items
         if isinstance(value, list):
             return map(create_char, value)
@@ -135,6 +153,7 @@ if sys.hexversion < 0x03000000:
         else:
             raise ValueError('Invalid {0} value: {1}'.format(expected_type, repr(value)))
 else:
+    # internal
     def create_char_list(value, expected_type='char list'): # return list of str with len() == 1 and ord() <= 255 for all items
         if isinstance(value, list):
             return list(map(create_char, value))
@@ -152,6 +171,7 @@ else:
             raise ValueError('Invalid {0} value: {1}'.format(expected_type, repr(value)))
 
 if sys.hexversion < 0x03000000:
+    # internal
     def create_string(value): # return str with ord() <= 255 for all chars
         if isinstance(value, str): # Python2 str satisfies ord() <= 255 by default
             return value
@@ -177,6 +197,7 @@ if sys.hexversion < 0x03000000:
         else:
             return ''.join(create_char_list(value, expected_type='string'))
 else:
+    # internal
     def create_string(value): # return str with ord() <= 255 for all chars
         if isinstance(value, str):
             for char in value:
@@ -194,6 +215,7 @@ else:
         else:
             return ''.join(create_char_list(value, expected_type='string'))
 
+# internal
 def pack_payload(data, form):
     if sys.hexversion < 0x03000000:
         packed = ''
@@ -238,6 +260,7 @@ def pack_payload(data, form):
 
     return packed
 
+# internal
 def unpack_payload(data, form):
     ret = []
 
@@ -311,6 +334,8 @@ class Error(Exception):
     STREAM_OUT_OF_SYNC = -12
     INVALID_UID = -13
     NON_ASCII_CHAR_IN_SECRET = -14
+    WRONG_DEVICE_TYPE = -15
+    DEVICE_REPLACED = -16
 
     def __init__(self, value, description, suppress_context=False):
         Exception.__init__(self, '{0} ({1})'.format(description, value))
@@ -330,17 +355,17 @@ class Error(Exception):
             self.__suppress_context__ = True
 
 class Device(object):
+    DEVICE_IDENTIFIER_CHECK_PENDING = 0
+    DEVICE_IDENTIFIER_CHECK_MATCH = 1
+    DEVICE_IDENTIFIER_CHECK_MISMATCH = 2
+
     RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0
     RESPONSE_EXPECTED_ALWAYS_TRUE = 1 # getter
     RESPONSE_EXPECTED_TRUE = 2 # setter
     RESPONSE_EXPECTED_FALSE = 3 # setter, default
 
-    def __init__(self, uid, ipcon):
-        """
-        Creates the device object with the unique device ID *uid* and adds
-        it to the IPConnection *ipcon*.
-        """
-
+    # internal
+    def __init__(self, uid, ipcon, device_identifier, device_display_name):
         uid_ = base58decode(uid)
 
         if uid_ > (1 << 64) - 1:
@@ -352,8 +377,15 @@ class Device(object):
         if uid_ == 0:
             raise Error(Error.INVALID_UID, 'UID "{0}" is empty or maps to zero'.format(uid))
 
+        self.replaced = False
         self.uid = uid_
+        self.uid_string = uid
         self.ipcon = ipcon
+        self.device_identifier = device_identifier
+        self.device_display_name = device_display_name
+        self.device_identifier_lock = threading.Lock()
+        self.device_identifier_check = Device.DEVICE_IDENTIFIER_CHECK_PENDING # protected by device_identifier_lock
+        self.wrong_device_display_name = '?' # protected by device_identifier_lock
         self.api_version = (0, 0, 0)
         self.registered_callbacks = {}
         self.callback_formats = {}
@@ -371,8 +403,6 @@ class Device(object):
         self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_UID] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
-
-        ipcon.devices[self.uid] = self # FIXME: maybe use a weakref here
 
     def get_api_version(self):
         """
@@ -397,7 +427,7 @@ class Device(object):
         Enabling the response expected flag for a setter function allows to
         detect timeouts and other error conditions calls of this setter as
         well. The device will then send a response for this purpose. If this
-        flag is disabled for a setter function then no response is send and
+        flag is disabled for a setter function then no response is sent and
         errors are silently ignored, because they cannot be detected.
         """
 
@@ -421,7 +451,7 @@ class Device(object):
         Enabling the response expected flag for a setter function allows to
         detect timeouts and other error conditions calls of this setter as
         well. The device will then send a response for this purpose. If this
-        flag is disabled for a setter function then no response is send and
+        flag is disabled for a setter function then no response is sent and
         errors are silently ignored, because they cannot be detected.
         """
 
@@ -456,17 +486,42 @@ class Device(object):
             if self.response_expected[i] in [Device.RESPONSE_EXPECTED_TRUE, Device.RESPONSE_EXPECTED_FALSE]:
                 self.response_expected[i] = flag
 
+    # internal
+    def check_validity(self):
+        if self.replaced:
+            raise Error(Error.DEVICE_REPLACED, 'Device has been replaced')
+
+        if self.device_identifier_check == Device.DEVICE_IDENTIFIER_CHECK_MATCH:
+            return
+
+        with self.device_identifier_lock:
+            if self.device_identifier_check == Device.DEVICE_IDENTIFIER_CHECK_PENDING:
+                device_identifier = self.ipcon.send_request(self, 255, (), '', '8s 8s c 3B 3B H')[5] # <device>.get_identity
+
+                if device_identifier == self.device_identifier:
+                    self.device_identifier_check = Device.DEVICE_IDENTIFIER_CHECK_MATCH
+                else:
+                    self.device_identifier_check = Device.DEVICE_IDENTIFIER_CHECK_MISMATCH
+                    self.wrong_device_display_name = get_device_display_name(device_identifier)
+
+            if self.device_identifier_check == Device.DEVICE_IDENTIFIER_CHECK_MISMATCH:
+                raise Error(Error.WRONG_DEVICE_TYPE,
+                            'UID {0} belongs to a {1} instead of the expected {2}'
+                            .format(self.uid_string, self.wrong_device_display_name, self.device_display_name))
+
 class BrickDaemon(Device):
     FUNCTION_GET_AUTHENTICATION_NONCE = 1
     FUNCTION_AUTHENTICATE = 2
 
     def __init__(self, uid, ipcon):
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, 0, 'Brick Daemon')
 
         self.api_version = (2, 0, 0)
 
         self.response_expected[BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE] = BrickDaemon.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickDaemon.FUNCTION_AUTHENTICATE] = BrickDaemon.RESPONSE_EXPECTED_TRUE
+
+        ipcon.add_device(self)
 
     def get_authentication_nonce(self):
         return self.ipcon.send_request(self, BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE, (), '', '4B')
@@ -543,6 +598,7 @@ class IPConnection(object):
         self.authentication_lock = threading.Lock() # protects authentication handshake
         self.next_authentication_nonce = 0 # protected by authentication_lock
         self.devices = {}
+        self.replace_lock = threading.Lock() # used to synchronize replacements in the devices dict
         self.registered_callbacks = {}
         self.socket = None # protected by socket_lock
         self.socket_id = 0 # protected by socket_lock
@@ -757,6 +813,7 @@ class IPConnection(object):
         else:
             self.registered_callbacks[callback_id] = function
 
+    # internal
     def connect_unlocked(self, is_auto_reconnect):
         # NOTE: assumes that socket is None and socket_lock is locked
 
@@ -895,6 +952,7 @@ class IPConnection(object):
                                  (IPConnection.CALLBACK_CONNECTED,
                                   connect_reason, None)))
 
+    # internal
     def disconnect_unlocked(self):
         # NOTE: assumes that socket is not None and socket_lock is locked
 
@@ -931,10 +989,22 @@ class IPConnection(object):
         self.socket.close()
         self.socket = None
 
+    # internal
     def set_auto_reconnect_internal(self, auto_reconnect, connect_failure_callback):
         self.auto_reconnect_internal = auto_reconnect
         self.connect_failure_callback = connect_failure_callback
 
+    # internal
+    def add_device(self, device):
+        with self.replace_lock:
+            replaced_device = self.devices.get(device.uid)
+
+            if replaced_device != None:
+                replaced_device.replaced = True
+
+            self.devices[device.uid] = device # FIXME: maybe use a weakref here
+
+    # internal
     def receive_loop(self, socket_id):
         if sys.hexversion < 0x03000000:
             pending_data = ''
@@ -978,6 +1048,7 @@ class IPConnection(object):
 
                 self.handle_response(packet)
 
+    # internal
     def dispatch_meta(self, function_id, parameter, socket_id):
         if function_id == IPConnection.CALLBACK_CONNECTED:
             if IPConnection.CALLBACK_CONNECTED in self.registered_callbacks:
@@ -1030,6 +1101,7 @@ class IPConnection(object):
                     if retry:
                         time.sleep(0.1)
 
+    # internal
     def dispatch_packet(self, packet):
         uid = get_uid_from_data(packet)
         length = get_length_from_data(packet)
@@ -1047,10 +1119,15 @@ class IPConnection(object):
                firmware_version, device_identifier, enumeration_type)
             return
 
-        if uid not in self.devices:
+        device = self.devices.get(uid)
+
+        if device == None:
             return
 
-        device = self.devices[uid]
+        try:
+            device.check_validity()
+        except Error:
+            return # silently ignoring callbacks for invalid devices
 
         if -function_id in device.high_level_callbacks:
             hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]
@@ -1116,6 +1193,7 @@ class IPConnection(object):
             else:
                 cb(*unpack_payload(payload, form))
 
+    # internal
     def callback_loop(self, callback):
         while True:
             kind, data = callback.queue.get()
@@ -1133,6 +1211,7 @@ class IPConnection(object):
                     if callback.packet_dispatch_allowed:
                         self.dispatch_packet(data)
 
+    # internal
     # NOTE: the disconnect probe thread is not allowed to hold the socket_lock at any
     #       time because it is created and joined while the socket_lock is locked
     def disconnect_probe_loop(self, disconnect_probe_queue):
@@ -1161,6 +1240,7 @@ class IPConnection(object):
             else:
                 self.disconnect_probe_flag = True
 
+    # internal
     def send(self, packet):
         with self.socket_lock:
             if self.socket is None:
@@ -1180,6 +1260,7 @@ class IPConnection(object):
 
             self.disconnect_probe_flag = False
 
+    # internal
     def send_request(self, device, function_id, data, form, form_ret):
         patched_from = []
 
@@ -1242,12 +1323,14 @@ class IPConnection(object):
         else:
             self.send(request)
 
+    # internal
     def get_next_sequence_number(self):
         with self.sequence_number_lock:
             sequence_number = self.next_sequence_number + 1
             self.next_sequence_number = sequence_number % 15
             return sequence_number
 
+    # internal
     def handle_response(self, packet):
         self.disconnect_probe_flag = False
 
@@ -1260,12 +1343,10 @@ class IPConnection(object):
             return
 
         uid = get_uid_from_data(packet)
+        device = self.devices.get(uid)
 
-        if not uid in self.devices:
-            # Response from an unknown device, ignoring it
-            return
-
-        device = self.devices[uid]
+        if device == None:
+            return # Response from an unknown device, ignoring it
 
         if sequence_number == 0:
             if function_id in device.registered_callbacks or \
@@ -1280,6 +1361,7 @@ class IPConnection(object):
 
         # Response seems to be OK, but can't be handled
 
+    # internal
     def handle_disconnect_by_peer(self, disconnect_reason, socket_id, disconnect_immediately):
         # NOTE: assumes that socket_lock is locked if disconnect_immediately is true
 
@@ -1292,6 +1374,7 @@ class IPConnection(object):
                                  (IPConnection.CALLBACK_DISCONNECTED,
                                   disconnect_reason, socket_id)))
 
+    # internal
     def create_packet_header(self, device, length, function_id):
         uid = IPConnection.BROADCAST_UID
         sequence_number = self.get_next_sequence_number()
@@ -1310,6 +1393,7 @@ class IPConnection(object):
                 bool(r_bit),
                 sequence_number)
 
+    # internal
     def write_bricklet_plugin(self, device, port, position, plugin_chunk):
         self.send_request(device,
                           IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN,
@@ -1317,6 +1401,7 @@ class IPConnection(object):
                           'c B 32B',
                           '')
 
+    # internal
     def read_bricklet_plugin(self, device, port, position):
         return self.send_request(device,
                                  IPConnection.FUNCTION_READ_BRICKLET_PLUGIN,
@@ -1324,6 +1409,7 @@ class IPConnection(object):
                                  'c B',
                                  '32B')
 
+    # internal
     def get_adc_calibration(self, device):
         return self.send_request(device,
                                  IPConnection.FUNCTION_GET_ADC_CALIBRATION,
@@ -1331,6 +1417,7 @@ class IPConnection(object):
                                  '',
                                  'h h')
 
+    # internal
     def adc_calibrate(self, device, port):
         self.send_request(device,
                           IPConnection.FUNCTION_ADC_CALIBRATE,
@@ -1338,6 +1425,7 @@ class IPConnection(object):
                           'c',
                           '')
 
+    # internal
     def write_bricklet_uid(self, device, port, uid):
         uid_int = base58decode(uid)
 
@@ -1347,6 +1435,7 @@ class IPConnection(object):
                           'c I',
                           '')
 
+    # internal
     def read_bricklet_uid(self, device, port):
         uid_int = self.send_request(device,
                                     IPConnection.FUNCTION_READ_BRICKLET_UID,

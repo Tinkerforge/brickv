@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -92,7 +92,7 @@ class BrickletDistanceIRV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletDistanceIRV2.DEVICE_IDENTIFIER, BrickletDistanceIRV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 1)
 
@@ -124,6 +124,7 @@ class BrickletDistanceIRV2(Device):
         self.callback_formats[BrickletDistanceIRV2.CALLBACK_DISTANCE] = 'H'
         self.callback_formats[BrickletDistanceIRV2.CALLBACK_ANALOG_VALUE] = 'I'
 
+        ipcon.add_device(self)
 
     def get_distance(self):
         """
@@ -136,6 +137,8 @@ class BrickletDistanceIRV2(Device):
         :cb:`Distance` callback. You can set the callback configuration
         with :func:`Set Distance Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_DISTANCE, (), '', 'H')
 
     def set_distance_callback_configuration(self, period, value_has_to_change, option, min, max):
@@ -168,6 +171,8 @@ class BrickletDistanceIRV2(Device):
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
         option = create_char(option)
@@ -180,6 +185,8 @@ class BrickletDistanceIRV2(Device):
         """
         Returns the callback configuration as set by :func:`Set Distance Callback Configuration`.
         """
+        self.check_validity()
+
         return GetDistanceCallbackConfiguration(*self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_DISTANCE_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
 
     def get_analog_value(self):
@@ -198,6 +205,8 @@ class BrickletDistanceIRV2(Device):
         :cb:`Analog Value` callback. You can set the callback configuration
         with :func:`Set Analog Value Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_ANALOG_VALUE, (), '', 'I')
 
     def set_analog_value_callback_configuration(self, period, value_has_to_change, option, min, max):
@@ -230,6 +239,8 @@ class BrickletDistanceIRV2(Device):
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
         option = create_char(option)
@@ -242,6 +253,8 @@ class BrickletDistanceIRV2(Device):
         """
         Returns the callback configuration as set by :func:`Set Analog Value Callback Configuration`.
         """
+        self.check_validity()
+
         return GetAnalogValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_ANALOG_VALUE_CALLBACK_CONFIGURATION, (), '', 'I ! c I I'))
 
     def set_moving_average_configuration(self, moving_average_length):
@@ -256,6 +269,8 @@ class BrickletDistanceIRV2(Device):
         resulting averaging window has a length of approximately 10s. If you want to do
         long term measurements the longest moving average will give the cleanest results.
         """
+        self.check_validity()
+
         moving_average_length = int(moving_average_length)
 
         self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_SET_MOVING_AVERAGE_CONFIGURATION, (moving_average_length,), 'H', '')
@@ -264,6 +279,8 @@ class BrickletDistanceIRV2(Device):
         """
         Returns the moving average configuration as set by :func:`Set Moving Average Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_MOVING_AVERAGE_CONFIGURATION, (), '', 'H')
 
     def set_distance_led_config(self, config):
@@ -271,6 +288,8 @@ class BrickletDistanceIRV2(Device):
         Configures the distance LED to be either turned off, turned on, blink in
         heartbeat mode or show the distance (brighter = object is nearer).
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_SET_DISTANCE_LED_CONFIG, (config,), 'B', '')
@@ -279,6 +298,8 @@ class BrickletDistanceIRV2(Device):
         """
         Returns the LED configuration as set by :func:`Set Distance LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_DISTANCE_LED_CONFIG, (), '', 'B')
 
     def set_sensor_type(self, sensor):
@@ -292,6 +313,8 @@ class BrickletDistanceIRV2(Device):
         If you want to change the sensor you can set the type in Brick Viewer,
         you will likely never need to call this function from your program.
         """
+        self.check_validity()
+
         sensor = int(sensor)
 
         self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_SET_SENSOR_TYPE, (sensor,), 'B', '')
@@ -300,6 +323,8 @@ class BrickletDistanceIRV2(Device):
         """
         Returns the sensor type as set by :func:`Set Sensor Type`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_SENSOR_TYPE, (), '', 'B')
 
     def get_spitfp_error_count(self):
@@ -316,6 +341,8 @@ class BrickletDistanceIRV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -330,6 +357,8 @@ class BrickletDistanceIRV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -338,6 +367,8 @@ class BrickletDistanceIRV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -349,6 +380,8 @@ class BrickletDistanceIRV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -364,6 +397,8 @@ class BrickletDistanceIRV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -378,6 +413,8 @@ class BrickletDistanceIRV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -386,6 +423,8 @@ class BrickletDistanceIRV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -397,6 +436,8 @@ class BrickletDistanceIRV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -408,6 +449,8 @@ class BrickletDistanceIRV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -418,6 +461,8 @@ class BrickletDistanceIRV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -427,6 +472,8 @@ class BrickletDistanceIRV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDistanceIRV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

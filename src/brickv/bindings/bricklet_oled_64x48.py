@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -44,7 +44,7 @@ class BrickletOLED64x48(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletOLED64x48.DEVICE_IDENTIFIER, BrickletOLED64x48.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -57,6 +57,7 @@ class BrickletOLED64x48(Device):
         self.response_expected[BrickletOLED64x48.FUNCTION_GET_IDENTITY] = BrickletOLED64x48.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+        ipcon.add_device(self)
 
     def write(self, data):
         """
@@ -80,6 +81,8 @@ class BrickletOLED64x48(Device):
         The next call of :func:`Write` will write the second row and so on. To
         fill the whole display you need to call :func:`Write` 6 times.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_WRITE, (data,), '64B', '')
@@ -89,6 +92,8 @@ class BrickletOLED64x48(Device):
         Sets the window in which you can write with :func:`Write`. One row
         has a height of 8 pixels.
         """
+        self.check_validity()
+
         column_from = int(column_from)
         column_to = int(column_to)
         row_from = int(row_from)
@@ -100,6 +105,8 @@ class BrickletOLED64x48(Device):
         """
         Clears the current content of the window as set by :func:`New Window`.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_CLEAR_DISPLAY, (), '', '')
 
     def set_display_configuration(self, contrast, invert):
@@ -109,6 +116,8 @@ class BrickletOLED64x48(Device):
         You can set a contrast value from 0 to 255 and you can invert the color
         (black/white) of the display.
         """
+        self.check_validity()
+
         contrast = int(contrast)
         invert = bool(invert)
 
@@ -118,6 +127,8 @@ class BrickletOLED64x48(Device):
         """
         Returns the configuration as set by :func:`Set Display Configuration`.
         """
+        self.check_validity()
+
         return GetDisplayConfiguration(*self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_GET_DISPLAY_CONFIGURATION, (), '', 'B !'))
 
     def write_line(self, line, position, text):
@@ -134,6 +145,8 @@ class BrickletOLED64x48(Device):
         The display uses a special 5x7 pixel charset. You can view the characters
         of the charset in Brick Viewer.
         """
+        self.check_validity()
+
         line = int(line)
         position = int(position)
         text = create_string(text)

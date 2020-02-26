@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -53,7 +53,7 @@ class BrickletIndustrialDigitalIn4(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletIndustrialDigitalIn4.DEVICE_IDENTIFIER, BrickletIndustrialDigitalIn4.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 1)
 
@@ -72,6 +72,7 @@ class BrickletIndustrialDigitalIn4(Device):
 
         self.callback_formats[BrickletIndustrialDigitalIn4.CALLBACK_INTERRUPT] = 'H H'
 
+        ipcon.add_device(self)
 
     def get_value(self):
         """
@@ -88,6 +89,8 @@ class BrickletIndustrialDigitalIn4(Device):
         Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
         pins 8-11 and element 4 pins 12-15.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_VALUE, (), '', 'H')
 
     def set_group(self, group):
@@ -111,6 +114,8 @@ class BrickletIndustrialDigitalIn4(Device):
         Changing the group configuration resets all edge counter configurations
         and values.
         """
+        self.check_validity()
+
         group = create_char_list(group)
 
         self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_GROUP, (group,), '4c', '')
@@ -119,6 +124,8 @@ class BrickletIndustrialDigitalIn4(Device):
         """
         Returns the group as set by :func:`Set Group`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_GROUP, (), '', '4c')
 
     def get_available_for_group(self):
@@ -127,6 +134,8 @@ class BrickletIndustrialDigitalIn4(Device):
         value 5 or 0b0101 means: Port A and port C are connected to Bricklets that
         can be grouped together.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_AVAILABLE_FOR_GROUP, (), '', 'B')
 
     def set_debounce_period(self, debounce):
@@ -137,6 +146,8 @@ class BrickletIndustrialDigitalIn4(Device):
         maximal every 100ms. This is necessary if something that bounces is
         connected to the Digital In 4 Bricklet, such as a button.
         """
+        self.check_validity()
+
         debounce = int(debounce)
 
         self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -145,6 +156,8 @@ class BrickletIndustrialDigitalIn4(Device):
         """
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def set_interrupt(self, interrupt_mask):
@@ -160,6 +173,8 @@ class BrickletIndustrialDigitalIn4(Device):
 
         The interrupt is delivered with the :cb:`Interrupt` callback.
         """
+        self.check_validity()
+
         interrupt_mask = int(interrupt_mask)
 
         self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_INTERRUPT, (interrupt_mask,), 'H', '')
@@ -168,6 +183,8 @@ class BrickletIndustrialDigitalIn4(Device):
         """
         Returns the interrupt bitmask as set by :func:`Set Interrupt`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_INTERRUPT, (), '', 'H')
 
     def get_edge_count(self, pin, reset_counter):
@@ -182,6 +199,8 @@ class BrickletIndustrialDigitalIn4(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         pin = int(pin)
         reset_counter = bool(reset_counter)
 
@@ -208,6 +227,8 @@ class BrickletIndustrialDigitalIn4(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         selection_mask = int(selection_mask)
         edge_type = int(edge_type)
         debounce = int(debounce)
@@ -221,6 +242,8 @@ class BrickletIndustrialDigitalIn4(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         pin = int(pin)
 
         return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_EDGE_COUNT_CONFIG, (pin,), 'B', 'B B'))

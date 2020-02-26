@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -54,7 +54,7 @@ class BrickletDistanceUS(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletDistanceUS.DEVICE_IDENTIFIER, BrickletDistanceUS.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 1)
 
@@ -72,6 +72,7 @@ class BrickletDistanceUS(Device):
         self.callback_formats[BrickletDistanceUS.CALLBACK_DISTANCE] = 'H'
         self.callback_formats[BrickletDistanceUS.CALLBACK_DISTANCE_REACHED] = 'H'
 
+        ipcon.add_device(self)
 
     def get_distance_value(self):
         """
@@ -86,6 +87,8 @@ class BrickletDistanceUS(Device):
         use the :cb:`Distance` callback and set the period with
         :func:`Set Distance Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DISTANCE_VALUE, (), '', 'H')
 
     def set_distance_callback_period(self, period):
@@ -96,6 +99,8 @@ class BrickletDistanceUS(Device):
         Der :cb:`Distance` callback is only triggered if the distance value has changed
         since the last triggering.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_SET_DISTANCE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -104,6 +109,8 @@ class BrickletDistanceUS(Device):
         """
         Returns the period as set by :func:`Set Distance Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_distance_callback_threshold(self, option, min, max):
@@ -122,6 +129,8 @@ class BrickletDistanceUS(Device):
          "'<'",    "Callback is triggered when the distance value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the distance value is greater than the min value (max is ignored)"
         """
+        self.check_validity()
+
         option = create_char(option)
         min = int(min)
         max = int(max)
@@ -132,6 +141,8 @@ class BrickletDistanceUS(Device):
         """
         Returns the threshold as set by :func:`Set Distance Callback Threshold`.
         """
+        self.check_validity()
+
         return GetDistanceCallbackThreshold(*self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_debounce_period(self, debounce):
@@ -146,6 +157,8 @@ class BrickletDistanceUS(Device):
 
         keep being reached.
         """
+        self.check_validity()
+
         debounce = int(debounce)
 
         self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -154,6 +167,8 @@ class BrickletDistanceUS(Device):
         """
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def set_moving_average(self, average):
@@ -164,6 +179,8 @@ class BrickletDistanceUS(Device):
         Setting the length to 0 will turn the averaging completely off. With less
         averaging, there is more noise on the data.
         """
+        self.check_validity()
+
         average = int(average)
 
         self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
@@ -172,6 +189,8 @@ class BrickletDistanceUS(Device):
         """
         Returns the length moving average as set by :func:`Set Moving Average`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
 
     def get_identity(self):

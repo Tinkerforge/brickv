@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -99,7 +99,7 @@ class BrickletIndustrialDualAnalogInV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletIndustrialDualAnalogInV2.DEVICE_IDENTIFIER, BrickletIndustrialDualAnalogInV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -130,6 +130,7 @@ class BrickletIndustrialDualAnalogInV2(Device):
 
         self.callback_formats[BrickletIndustrialDualAnalogInV2.CALLBACK_VOLTAGE] = 'B i'
 
+        ipcon.add_device(self)
 
     def get_voltage(self, channel):
         """
@@ -140,6 +141,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         :cb:`Voltage` callback. You can set the callback configuration
         with :func:`Set Voltage Callback Configuration`.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_VOLTAGE, (channel,), 'B', 'i')
@@ -174,6 +177,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
         """
+        self.check_validity()
+
         channel = int(channel)
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -187,6 +192,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         """
         Returns the callback configuration as set by :func:`Set Voltage Callback Configuration`.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return GetVoltageCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_VOLTAGE_CALLBACK_CONFIGURATION, (channel,), 'B', 'I ! c i i'))
@@ -197,6 +204,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         and 976 samples per second. Decreasing the sample rate will also decrease the
         noise on the data.
         """
+        self.check_validity()
+
         rate = int(rate)
 
         self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_SET_SAMPLE_RATE, (rate,), 'B', '')
@@ -205,6 +214,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         """
         Returns the sample rate as set by :func:`Set Sample Rate`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_SAMPLE_RATE, (), '', 'B')
 
     def set_calibration(self, offset, gain):
@@ -215,6 +226,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         is already factory calibrated by Tinkerforge. It should not be necessary
         for you to use this function
         """
+        self.check_validity()
+
         offset = list(map(int, offset))
         gain = list(map(int, gain))
 
@@ -224,6 +237,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         """
         Returns the calibration as set by :func:`Set Calibration`.
         """
+        self.check_validity()
+
         return GetCalibration(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_CALIBRATION, (), '', '2i 2i'))
 
     def get_adc_values(self):
@@ -231,6 +246,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         Returns the ADC values as given by the MCP3911 IC. This function
         is needed for proper calibration, see :func:`Set Calibration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_ADC_VALUES, (), '', '2i')
 
     def set_channel_led_config(self, channel, config):
@@ -244,6 +261,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
 
         By default all channel LEDs are configured as "Channel Status".
         """
+        self.check_validity()
+
         channel = int(channel)
         config = int(config)
 
@@ -253,6 +272,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         """
         Returns the channel LED configuration as set by :func:`Set Channel LED Config`
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 'B')
@@ -280,6 +301,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         min value is greater than the max value, the LED brightness is scaled the other
         way around.
         """
+        self.check_validity()
+
         channel = int(channel)
         min = int(min)
         max = int(max)
@@ -292,6 +315,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         Returns the channel LED status configuration as set by
         :func:`Set Channel LED Status Config`.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return GetChannelLEDStatusConfig(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_CHANNEL_LED_STATUS_CONFIG, (channel,), 'B', 'i i B'))
@@ -310,6 +335,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -324,6 +351,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -332,6 +361,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -343,6 +374,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -358,6 +391,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -372,6 +407,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -380,6 +417,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -391,6 +430,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -402,6 +443,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -412,6 +455,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -421,6 +466,8 @@ class BrickletIndustrialDualAnalogInV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

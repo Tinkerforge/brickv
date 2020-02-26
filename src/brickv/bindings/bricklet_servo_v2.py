@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-01-16.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -93,7 +93,7 @@ class BrickletServoV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletServoV2.DEVICE_IDENTIFIER, BrickletServoV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -134,11 +134,14 @@ class BrickletServoV2(Device):
         self.response_expected[BrickletServoV2.FUNCTION_GET_IDENTITY] = BrickletServoV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+        ipcon.add_device(self)
 
     def get_status(self):
         """
         TODO
         """
+        self.check_validity()
+
         return GetStatus(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_STATUS, (), '', '10! 10h 10h 10H H'))
 
     def set_enable(self, servo_channel, enable):
@@ -146,6 +149,8 @@ class BrickletServoV2(Device):
         Enables a servo (0 to 9). If a servo is enabled, the configured position,
         velocity, acceleration, etc. are applied immediately.
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
         enable = bool(enable)
 
@@ -155,6 +160,8 @@ class BrickletServoV2(Device):
         """
         Returns *true* if the specified servo is enabled, *false* otherwise.
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
 
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_ENABLED, (servo_channel,), 'H', '!')
@@ -170,6 +177,8 @@ class BrickletServoV2(Device):
         similar with the Servo Brick, you can also define lengths or speeds with
         :func:`Set Degree`.
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
         position = int(position)
 
@@ -179,6 +188,8 @@ class BrickletServoV2(Device):
         """
         Returns the position of the specified servo as set by :func:`Set Position`.
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
 
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_POSITION, (servo_channel,), 'H', 'h')
@@ -189,6 +200,8 @@ class BrickletServoV2(Device):
         value of :func:`Set Position` if the servo is currently approaching a
         position goal.
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
 
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_CURRENT_POSITION, (servo_channel,), 'H', 'h')
@@ -199,6 +212,8 @@ class BrickletServoV2(Device):
         value of TBD if the servo is currently approaching a
         velocity goal.
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
 
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_CURRENT_VELOCITY, (servo_channel,), 'H', 'H')
@@ -214,6 +229,8 @@ class BrickletServoV2(Device):
 
         The default value is 65535.
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
         velocity = int(velocity)
         acceleration = int(acceleration)
@@ -226,6 +243,8 @@ class BrickletServoV2(Device):
         TODO: Acc/Dec
         Returns the velocity of the specified servo as set by :func:`Set Motion Configuration`.
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
 
         return GetMotionConfiguration(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_MOTION_CONFIGURATION, (servo_channel,), 'H', 'H H H'))
@@ -250,6 +269,8 @@ class BrickletServoV2(Device):
         The default values are 1000µs (1ms) and 2000µs (2ms) for minimum and
         maximum pulse width.
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
         min = int(min)
         max = int(max)
@@ -261,6 +282,8 @@ class BrickletServoV2(Device):
         Returns the minimum and maximum pulse width for the specified servo as set by
         :func:`Set Pulse Width`.
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
 
         return GetPulseWidth(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_PULSE_WIDTH, (servo_channel,), 'H', 'I I'))
@@ -298,6 +321,8 @@ class BrickletServoV2(Device):
 
         The default values are -9000 and 9000 for the minimum and maximum degree.
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
         min = int(min)
         max = int(max)
@@ -309,6 +334,8 @@ class BrickletServoV2(Device):
         Returns the minimum and maximum degree for the specified servo as set by
         :func:`Set Degree`.
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
 
         return GetDegree(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_DEGREE, (servo_channel,), 'H', 'h h'))
@@ -331,6 +358,8 @@ class BrickletServoV2(Device):
 
         The default value is 19.5ms (19500µs).
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
         period = int(period)
 
@@ -340,6 +369,8 @@ class BrickletServoV2(Device):
         """
         Returns the period for the specified servo as set by :func:`Set Period`.
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
 
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_PERIOD, (servo_channel,), 'H', 'I')
@@ -348,6 +379,8 @@ class BrickletServoV2(Device):
         """
         Returns the current consumption of the specified servo in mA.
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
 
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_SERVO_CURRENT, (servo_channel,), 'H', 'H')
@@ -356,6 +389,8 @@ class BrickletServoV2(Device):
         """
         TODO
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
         averaging_duration = int(averaging_duration)
 
@@ -365,6 +400,8 @@ class BrickletServoV2(Device):
         """
         TODO
         """
+        self.check_validity()
+
         servo_channel = int(servo_channel)
 
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_SERVO_CURRENT_CONFIGURATION, (servo_channel,), 'H', 'B')
@@ -373,6 +410,8 @@ class BrickletServoV2(Device):
         """
         TODO
         """
+        self.check_validity()
+
         averaging_duration = int(averaging_duration)
 
         self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_INPUT_VOLTAGE_CONFIGURATION, (averaging_duration,), 'B', '')
@@ -381,12 +420,16 @@ class BrickletServoV2(Device):
         """
         TODO
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_INPUT_VOLTAGE_CONFIGURATION, (), '', 'B')
 
     def get_overall_current(self):
         """
         Returns the current consumption of all servos together in mA.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_OVERALL_CURRENT, (), '', 'H')
 
     def get_input_voltage(self):
@@ -394,12 +437,16 @@ class BrickletServoV2(Device):
         Returns the input voltage in mV. The input voltage is
         given via the black power input connector on the Servo Brick.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_INPUT_VOLTAGE, (), '', 'H')
 
     def calibrate_servo_current(self):
         """
         TODO
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletServoV2.FUNCTION_CALIBRATE_SERVO_CURRENT, (), '', '')
 
     def get_spitfp_error_count(self):
@@ -416,6 +463,8 @@ class BrickletServoV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -430,6 +479,8 @@ class BrickletServoV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -438,6 +489,8 @@ class BrickletServoV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -449,6 +502,8 @@ class BrickletServoV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -464,6 +519,8 @@ class BrickletServoV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -478,6 +535,8 @@ class BrickletServoV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -486,6 +545,8 @@ class BrickletServoV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -497,6 +558,8 @@ class BrickletServoV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -508,6 +571,8 @@ class BrickletServoV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletServoV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -518,6 +583,8 @@ class BrickletServoV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletServoV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -527,6 +594,8 @@ class BrickletServoV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

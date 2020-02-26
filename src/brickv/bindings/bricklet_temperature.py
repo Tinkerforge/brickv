@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -56,7 +56,7 @@ class BrickletTemperature(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletTemperature.DEVICE_IDENTIFIER, BrickletTemperature.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 1)
 
@@ -74,6 +74,7 @@ class BrickletTemperature(Device):
         self.callback_formats[BrickletTemperature.CALLBACK_TEMPERATURE] = 'h'
         self.callback_formats[BrickletTemperature.CALLBACK_TEMPERATURE_REACHED] = 'h'
 
+        ipcon.add_device(self)
 
     def get_temperature(self):
         """
@@ -83,6 +84,8 @@ class BrickletTemperature(Device):
         to use the :cb:`Temperature` callback and set the period with
         :func:`Set Temperature Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletTemperature.FUNCTION_GET_TEMPERATURE, (), '', 'h')
 
     def set_temperature_callback_period(self, period):
@@ -93,6 +96,8 @@ class BrickletTemperature(Device):
         The :cb:`Temperature` callback is only triggered if the temperature has changed
         since the last triggering.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickletTemperature.FUNCTION_SET_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -101,6 +106,8 @@ class BrickletTemperature(Device):
         """
         Returns the period as set by :func:`Set Temperature Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletTemperature.FUNCTION_GET_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_temperature_callback_threshold(self, option, min, max):
@@ -119,6 +126,8 @@ class BrickletTemperature(Device):
          "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
         """
+        self.check_validity()
+
         option = create_char(option)
         min = int(min)
         max = int(max)
@@ -129,6 +138,8 @@ class BrickletTemperature(Device):
         """
         Returns the threshold as set by :func:`Set Temperature Callback Threshold`.
         """
+        self.check_validity()
+
         return GetTemperatureCallbackThreshold(*self.ipcon.send_request(self, BrickletTemperature.FUNCTION_GET_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c h h'))
 
     def set_debounce_period(self, debounce):
@@ -143,6 +154,8 @@ class BrickletTemperature(Device):
 
         keeps being reached.
         """
+        self.check_validity()
+
         debounce = int(debounce)
 
         self.ipcon.send_request(self, BrickletTemperature.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -151,6 +164,8 @@ class BrickletTemperature(Device):
         """
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletTemperature.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def set_i2c_mode(self, mode):
@@ -169,6 +184,8 @@ class BrickletTemperature(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         mode = int(mode)
 
         self.ipcon.send_request(self, BrickletTemperature.FUNCTION_SET_I2C_MODE, (mode,), 'B', '')
@@ -179,6 +196,8 @@ class BrickletTemperature(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletTemperature.FUNCTION_GET_I2C_MODE, (), '', 'B')
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -70,7 +70,7 @@ class BrickletSolidStateRelayV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletSolidStateRelayV2.DEVICE_IDENTIFIER, BrickletSolidStateRelayV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -93,6 +93,7 @@ class BrickletSolidStateRelayV2(Device):
 
         self.callback_formats[BrickletSolidStateRelayV2.CALLBACK_MONOFLOP_DONE] = '!'
 
+        ipcon.add_device(self)
 
     def set_state(self, state):
         """
@@ -100,6 +101,8 @@ class BrickletSolidStateRelayV2(Device):
 
         A running monoflop timer will be aborted if this function is called.
         """
+        self.check_validity()
+
         state = bool(state)
 
         self.ipcon.send_request(self, BrickletSolidStateRelayV2.FUNCTION_SET_STATE, (state,), '!', '')
@@ -108,6 +111,8 @@ class BrickletSolidStateRelayV2(Device):
         """
         Returns the state of the relay, *true* means on and *false* means off.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSolidStateRelayV2.FUNCTION_GET_STATE, (), '', '!')
 
     def set_monoflop(self, state, time):
@@ -125,6 +130,8 @@ class BrickletSolidStateRelayV2(Device):
         of two seconds. The relay will be on all the time. If now the RS485
         connection is lost, the relay will turn off in at most two seconds.
         """
+        self.check_validity()
+
         state = bool(state)
         time = int(time)
 
@@ -138,6 +145,8 @@ class BrickletSolidStateRelayV2(Device):
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
+        self.check_validity()
+
         return GetMonoflop(*self.ipcon.send_request(self, BrickletSolidStateRelayV2.FUNCTION_GET_MONOFLOP, (), '', '! I I'))
 
     def get_spitfp_error_count(self):
@@ -154,6 +163,8 @@ class BrickletSolidStateRelayV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletSolidStateRelayV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -168,6 +179,8 @@ class BrickletSolidStateRelayV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletSolidStateRelayV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -176,6 +189,8 @@ class BrickletSolidStateRelayV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSolidStateRelayV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -187,6 +202,8 @@ class BrickletSolidStateRelayV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletSolidStateRelayV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -202,6 +219,8 @@ class BrickletSolidStateRelayV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletSolidStateRelayV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -216,6 +235,8 @@ class BrickletSolidStateRelayV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletSolidStateRelayV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -224,6 +245,8 @@ class BrickletSolidStateRelayV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSolidStateRelayV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -235,6 +258,8 @@ class BrickletSolidStateRelayV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSolidStateRelayV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -246,6 +271,8 @@ class BrickletSolidStateRelayV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletSolidStateRelayV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -256,6 +283,8 @@ class BrickletSolidStateRelayV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletSolidStateRelayV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -265,6 +294,8 @@ class BrickletSolidStateRelayV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSolidStateRelayV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

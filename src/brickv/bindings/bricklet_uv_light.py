@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -52,7 +52,7 @@ class BrickletUVLight(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletUVLight.DEVICE_IDENTIFIER, BrickletUVLight.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -68,6 +68,7 @@ class BrickletUVLight(Device):
         self.callback_formats[BrickletUVLight.CALLBACK_UV_LIGHT] = 'I'
         self.callback_formats[BrickletUVLight.CALLBACK_UV_LIGHT_REACHED] = 'I'
 
+        ipcon.add_device(self)
 
     def get_uv_light(self):
         """
@@ -82,6 +83,8 @@ class BrickletUVLight(Device):
         :cb:`UV Light` callback and set the period with
         :func:`Set UV Light Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_UV_LIGHT, (), '', 'I')
 
     def set_uv_light_callback_period(self, period):
@@ -92,6 +95,8 @@ class BrickletUVLight(Device):
         The :cb:`UV Light` callback is only triggered if the intensity has changed since
         the last triggering.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickletUVLight.FUNCTION_SET_UV_LIGHT_CALLBACK_PERIOD, (period,), 'I', '')
@@ -100,6 +105,8 @@ class BrickletUVLight(Device):
         """
         Returns the period as set by :func:`Set UV Light Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_UV_LIGHT_CALLBACK_PERIOD, (), '', 'I')
 
     def set_uv_light_callback_threshold(self, option, min, max):
@@ -118,6 +125,8 @@ class BrickletUVLight(Device):
          "'<'",    "Callback is triggered when the intensity is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the intensity is greater than the min value (max is ignored)"
         """
+        self.check_validity()
+
         option = create_char(option)
         min = int(min)
         max = int(max)
@@ -128,6 +137,8 @@ class BrickletUVLight(Device):
         """
         Returns the threshold as set by :func:`Set UV Light Callback Threshold`.
         """
+        self.check_validity()
+
         return GetUVLightCallbackThreshold(*self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_UV_LIGHT_CALLBACK_THRESHOLD, (), '', 'c I I'))
 
     def set_debounce_period(self, debounce):
@@ -142,6 +153,8 @@ class BrickletUVLight(Device):
 
         keep being reached.
         """
+        self.check_validity()
+
         debounce = int(debounce)
 
         self.ipcon.send_request(self, BrickletUVLight.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -150,6 +163,8 @@ class BrickletUVLight(Device):
         """
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def get_identity(self):

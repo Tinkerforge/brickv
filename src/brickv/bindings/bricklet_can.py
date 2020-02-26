@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -72,7 +72,7 @@ class BrickletCAN(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletCAN.DEVICE_IDENTIFIER, BrickletCAN.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -90,6 +90,7 @@ class BrickletCAN(Device):
 
         self.callback_formats[BrickletCAN.CALLBACK_FRAME_READ] = 'B I 8B B'
 
+        ipcon.add_device(self)
 
     def write_frame(self, frame_type, identifier, data, length):
         """
@@ -115,6 +116,8 @@ class BrickletCAN(Device):
         arbitration or because the CAN transceiver is currently disabled due to a high
         write error level (see :func:`Get Error Log`).
         """
+        self.check_validity()
+
         frame_type = int(frame_type)
         identifier = int(identifier)
         data = list(map(int, data))
@@ -142,6 +145,8 @@ class BrickletCAN(Device):
         Instead of polling with this function, you can also use callbacks. See the
         :func:`Enable Frame Read Callback` function and the :cb:`Frame Read` callback.
         """
+        self.check_validity()
+
         return ReadFrame(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_READ_FRAME, (), '', '! B I 8B B'))
 
     def enable_frame_read_callback(self):
@@ -150,6 +155,8 @@ class BrickletCAN(Device):
 
         By default the callback is disabled.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletCAN.FUNCTION_ENABLE_FRAME_READ_CALLBACK, (), '', '')
 
     def disable_frame_read_callback(self):
@@ -158,12 +165,16 @@ class BrickletCAN(Device):
 
         By default the callback is disabled.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletCAN.FUNCTION_DISABLE_FRAME_READ_CALLBACK, (), '', '')
 
     def is_frame_read_callback_enabled(self):
         """
         Returns *true* if the :cb:`Frame Read` callback is enabled, *false* otherwise.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletCAN.FUNCTION_IS_FRAME_READ_CALLBACK_ENABLED, (), '', '!')
 
     def set_configuration(self, baud_rate, transceiver_mode, write_timeout):
@@ -193,6 +204,8 @@ class BrickletCAN(Device):
           If the frame could not be transmitted successfully after the configured
           number of milliseconds then the frame is discarded.
         """
+        self.check_validity()
+
         baud_rate = int(baud_rate)
         transceiver_mode = int(transceiver_mode)
         write_timeout = int(write_timeout)
@@ -203,6 +216,8 @@ class BrickletCAN(Device):
         """
         Returns the configuration as set by :func:`Set Configuration`.
         """
+        self.check_validity()
+
         return GetConfiguration(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_CONFIGURATION, (), '', 'B B i'))
 
     def set_read_filter(self, mode, mask, filter1, filter2):
@@ -260,6 +275,8 @@ class BrickletCAN(Device):
         To accept identifier 0x123 and identifier 0x456 at the same time, just set
         filter 2 to 0x456 and keep mask and filter 1 unchanged.
         """
+        self.check_validity()
+
         mode = int(mode)
         mask = int(mask)
         filter1 = int(filter1)
@@ -271,6 +288,8 @@ class BrickletCAN(Device):
         """
         Returns the read filter as set by :func:`Set Read Filter`.
         """
+        self.check_validity()
+
         return GetReadFilter(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_READ_FILTER, (), '', 'B I I I'))
 
     def get_error_log(self):
@@ -309,6 +328,8 @@ class BrickletCAN(Device):
           function. Using the :cb:`Frame Read` callback ensures that the read buffer
           can not overflow.
         """
+        self.check_validity()
+
         return GetErrorLog(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_ERROR_LOG, (), '', 'B B ! I I I'))
 
     def get_identity(self):

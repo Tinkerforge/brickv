@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -91,7 +91,7 @@ class BrickletIO16V2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletIO16V2.DEVICE_IDENTIFIER, BrickletIO16V2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -126,6 +126,7 @@ class BrickletIO16V2(Device):
         self.callback_formats[BrickletIO16V2.CALLBACK_ALL_INPUT_VALUE] = '16! 16!'
         self.callback_formats[BrickletIO16V2.CALLBACK_MONOFLOP_DONE] = 'B !'
 
+        ipcon.add_device(self)
 
     def set_value(self, value):
         """
@@ -143,6 +144,8 @@ class BrickletIO16V2(Device):
          This function does nothing for channels that are configured as input. Pull-up
          resistors can be switched on with :func:`Set Configuration`.
         """
+        self.check_validity()
+
         value = list(map(bool, value))
 
         self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_VALUE, (value,), '16!', '')
@@ -153,6 +156,8 @@ class BrickletIO16V2(Device):
         This function works if the channel is configured as input as well as if it is
         configured as output.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_VALUE, (), '', '16!')
 
     def set_selected_value(self, channel, value):
@@ -166,6 +171,8 @@ class BrickletIO16V2(Device):
          This function does nothing for channels that are configured as input. Pull-up
          resistors can be switched on with :func:`Set Configuration`.
         """
+        self.check_validity()
+
         channel = int(channel)
         value = bool(value)
 
@@ -192,6 +199,8 @@ class BrickletIO16V2(Device):
         A running monoflop timer for the specific channel will be aborted if this
         function is called.
         """
+        self.check_validity()
+
         channel = int(channel)
         direction = create_char(direction)
         value = bool(value)
@@ -202,6 +211,8 @@ class BrickletIO16V2(Device):
         """
         Returns the channel configuration as set by :func:`Set Configuration`.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return GetConfiguration(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_CONFIGURATION, (channel,), 'B', 'c !'))
@@ -220,6 +231,8 @@ class BrickletIO16V2(Device):
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
         """
+        self.check_validity()
+
         channel = int(channel)
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
@@ -231,6 +244,8 @@ class BrickletIO16V2(Device):
         Returns the callback configuration as set by
         :func:`Set Input Value Callback Configuration`.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return GetInputValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_INPUT_VALUE_CALLBACK_CONFIGURATION, (channel,), 'B', 'I !'))
@@ -247,6 +262,8 @@ class BrickletIO16V2(Device):
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
@@ -257,6 +274,8 @@ class BrickletIO16V2(Device):
         Returns the callback configuration as set by
         :func:`Set All Input Value Callback Configuration`.
         """
+        self.check_validity()
+
         return GetAllInputValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_ALL_INPUT_VALUE_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
     def set_monoflop(self, channel, value, time):
@@ -279,6 +298,8 @@ class BrickletIO16V2(Device):
         time. If now the RS485 connection is lost, then channel 0 will be opened in at
         most two seconds.
         """
+        self.check_validity()
+
         channel = int(channel)
         value = bool(value)
         time = int(time)
@@ -293,6 +314,8 @@ class BrickletIO16V2(Device):
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return GetMonoflop(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_MONOFLOP, (channel,), 'B', '! I I'))
@@ -305,6 +328,8 @@ class BrickletIO16V2(Device):
         If you set the reset counter to *true*, the count is set back to 0
         directly after it is read.
         """
+        self.check_validity()
+
         channel = int(channel)
         reset_counter = bool(reset_counter)
 
@@ -326,6 +351,8 @@ class BrickletIO16V2(Device):
         If you don't know what any of this means, just leave it at default. The
         default configuration is very likely OK for you.
         """
+        self.check_validity()
+
         channel = int(channel)
         edge_type = int(edge_type)
         debounce = int(debounce)
@@ -337,6 +364,8 @@ class BrickletIO16V2(Device):
         Returns the edge type and debounce time for the selected channel as set by
         :func:`Set Edge Count Configuration`.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return GetEdgeCountConfiguration(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_EDGE_COUNT_CONFIGURATION, (channel,), 'B', 'B B'))
@@ -355,6 +384,8 @@ class BrickletIO16V2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -369,6 +400,8 @@ class BrickletIO16V2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -377,6 +410,8 @@ class BrickletIO16V2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -388,6 +423,8 @@ class BrickletIO16V2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -403,6 +440,8 @@ class BrickletIO16V2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -417,6 +456,8 @@ class BrickletIO16V2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -425,6 +466,8 @@ class BrickletIO16V2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -436,6 +479,8 @@ class BrickletIO16V2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -447,6 +492,8 @@ class BrickletIO16V2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -457,6 +504,8 @@ class BrickletIO16V2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -466,6 +515,8 @@ class BrickletIO16V2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -96,7 +96,7 @@ class BrickletXMC1400Breakout(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletXMC1400Breakout.DEVICE_IDENTIFIER, BrickletXMC1400Breakout.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -127,12 +127,15 @@ class BrickletXMC1400Breakout(Device):
         self.callback_formats[BrickletXMC1400Breakout.CALLBACK_ADC_VALUES] = '8H'
         self.callback_formats[BrickletXMC1400Breakout.CALLBACK_COUNT] = 'I'
 
+        ipcon.add_device(self)
 
     def set_gpio_config(self, port, pin, mode, input_hysteresis, output_level):
         """
         Example for a setter function. The values are the values that can be given to
         the XMC_GPIO_Init function. See communication.c in the firmware.
         """
+        self.check_validity()
+
         port = int(port)
         pin = int(pin)
         mode = int(mode)
@@ -146,6 +149,8 @@ class BrickletXMC1400Breakout(Device):
         Example for a getter function. Returns the result of a
         XMC_GPIO_GetInput call for the given port/pin.
         """
+        self.check_validity()
+
         port = int(port)
         pin = int(pin)
 
@@ -166,6 +171,8 @@ class BrickletXMC1400Breakout(Device):
         * Channel 6: P2_1
         * Channel 7: P2_2
         """
+        self.check_validity()
+
         channel = int(channel)
         enable = bool(enable)
 
@@ -175,6 +182,8 @@ class BrickletXMC1400Breakout(Device):
         """
         Returns the config for the given channel as set by :func:`Set ADC Channel Config`.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_CHANNEL_CONFIG, (channel,), 'B', '!')
@@ -183,6 +192,8 @@ class BrickletXMC1400Breakout(Device):
         """
         Returns the 12-bit value of the given ADC channel of the ADC driver example.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_CHANNEL_VALUE, (channel,), 'B', 'H')
@@ -195,6 +206,8 @@ class BrickletXMC1400Breakout(Device):
 
         See :func:`Set ADC Values Callback Configuration` and :cb:`ADC Values` callback.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_VALUES, (), '', '8H')
 
     def set_adc_values_callback_configuration(self, period, value_has_to_change):
@@ -209,6 +222,8 @@ class BrickletXMC1400Breakout(Device):
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
@@ -219,6 +234,8 @@ class BrickletXMC1400Breakout(Device):
         Returns the callback configuration as set by
         :func:`Set ADC Values Callback Configuration`.
         """
+        self.check_validity()
+
         return GetADCValuesCallbackConfiguration(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_VALUES_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
     def get_count(self):
@@ -234,6 +251,8 @@ class BrickletXMC1400Breakout(Device):
         :cb:`Count` callback. You can set the callback configuration
         with :func:`Set Count Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_COUNT, (), '', 'I')
 
     def set_count_callback_configuration(self, period, value_has_to_change, option, min, max):
@@ -266,6 +285,8 @@ class BrickletXMC1400Breakout(Device):
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
         option = create_char(option)
@@ -278,6 +299,8 @@ class BrickletXMC1400Breakout(Device):
         """
         Returns the callback configuration as set by :func:`Set Count Callback Configuration`.
         """
+        self.check_validity()
+
         return GetCountCallbackConfiguration(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_COUNT_CALLBACK_CONFIGURATION, (), '', 'I ! c I I'))
 
     def get_spitfp_error_count(self):
@@ -294,6 +317,8 @@ class BrickletXMC1400Breakout(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -308,6 +333,8 @@ class BrickletXMC1400Breakout(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -316,6 +343,8 @@ class BrickletXMC1400Breakout(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -327,6 +356,8 @@ class BrickletXMC1400Breakout(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -342,6 +373,8 @@ class BrickletXMC1400Breakout(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -356,6 +389,8 @@ class BrickletXMC1400Breakout(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -364,6 +399,8 @@ class BrickletXMC1400Breakout(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -375,6 +412,8 @@ class BrickletXMC1400Breakout(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -386,6 +425,8 @@ class BrickletXMC1400Breakout(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -396,6 +437,8 @@ class BrickletXMC1400Breakout(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -405,6 +448,8 @@ class BrickletXMC1400Breakout(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

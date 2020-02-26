@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -78,7 +78,7 @@ class BrickletPiezoSpeakerV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletPiezoSpeakerV2.DEVICE_IDENTIFIER, BrickletPiezoSpeakerV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -104,6 +104,7 @@ class BrickletPiezoSpeakerV2(Device):
         self.callback_formats[BrickletPiezoSpeakerV2.CALLBACK_BEEP_FINISHED] = ''
         self.callback_formats[BrickletPiezoSpeakerV2.CALLBACK_ALARM_FINISHED] = ''
 
+        ipcon.add_device(self)
 
     def set_beep(self, frequency, volume, duration):
         """
@@ -112,6 +113,8 @@ class BrickletPiezoSpeakerV2(Device):
         A duration of 0 stops the current beep if any is ongoing.
         A duration of 4294967295 results in an infinite beep.
         """
+        self.check_validity()
+
         frequency = int(frequency)
         volume = int(volume)
         duration = int(duration)
@@ -126,6 +129,8 @@ class BrickletPiezoSpeakerV2(Device):
         If the frequency or volume is updated during a beep (with :func:`Update Frequency`
         or :func:`Update Volume`) this function returns the updated value.
         """
+        self.check_validity()
+
         return GetBeep(*self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_BEEP, (), '', 'H B I I'))
 
     def set_alarm(self, start_frequency, end_frequency, step_size, step_delay, volume, duration):
@@ -171,6 +176,8 @@ class BrickletPiezoSpeakerV2(Device):
         * Step Size: has to be small enough to fit into the frequency range
         * Step Delay: has to be small enough to fit into the duration
         """
+        self.check_validity()
+
         start_frequency = int(start_frequency)
         end_frequency = int(end_frequency)
         step_size = int(step_size)
@@ -189,12 +196,16 @@ class BrickletPiezoSpeakerV2(Device):
         If the volume is updated during an alarm (with :func:`Update Volume`)
         this function returns the updated value.
         """
+        self.check_validity()
+
         return GetAlarm(*self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_ALARM, (), '', 'H H H H B I I H'))
 
     def update_volume(self, volume):
         """
         Updates the volume of an ongoing beep or alarm.
         """
+        self.check_validity()
+
         volume = int(volume)
 
         self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_UPDATE_VOLUME, (volume,), 'B', '')
@@ -203,6 +214,8 @@ class BrickletPiezoSpeakerV2(Device):
         """
         Updates the frequency of an ongoing beep.
         """
+        self.check_validity()
+
         frequency = int(frequency)
 
         self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_UPDATE_FREQUENCY, (frequency,), 'H', '')
@@ -221,6 +234,8 @@ class BrickletPiezoSpeakerV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -235,6 +250,8 @@ class BrickletPiezoSpeakerV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -243,6 +260,8 @@ class BrickletPiezoSpeakerV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -254,6 +273,8 @@ class BrickletPiezoSpeakerV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -269,6 +290,8 @@ class BrickletPiezoSpeakerV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -283,6 +306,8 @@ class BrickletPiezoSpeakerV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -291,6 +316,8 @@ class BrickletPiezoSpeakerV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -302,6 +329,8 @@ class BrickletPiezoSpeakerV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -313,6 +342,8 @@ class BrickletPiezoSpeakerV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -323,6 +354,8 @@ class BrickletPiezoSpeakerV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -332,6 +365,8 @@ class BrickletPiezoSpeakerV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

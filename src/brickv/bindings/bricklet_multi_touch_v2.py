@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -80,7 +80,7 @@ class BrickletMultiTouchV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletMultiTouchV2.DEVICE_IDENTIFIER, BrickletMultiTouchV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -109,6 +109,7 @@ class BrickletMultiTouchV2(Device):
 
         self.callback_formats[BrickletMultiTouchV2.CALLBACK_TOUCH_STATE] = '13!'
 
+        ipcon.add_device(self)
 
     def get_touch_state(self):
         """
@@ -132,6 +133,8 @@ class BrickletMultiTouchV2(Device):
         :cb:`Touch State` callback. You can set the callback configuration
         with :func:`Set Touch State Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_TOUCH_STATE, (), '', '13!')
 
     def set_touch_state_callback_configuration(self, period, value_has_to_change):
@@ -146,6 +149,8 @@ class BrickletMultiTouchV2(Device):
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
@@ -156,6 +161,8 @@ class BrickletMultiTouchV2(Device):
         Returns the callback configuration as set by
         :func:`Set Touch State Callback Configuration`.
         """
+        self.check_validity()
+
         return GetTouchStateCallbackConfiguration(*self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_TOUCH_STATE_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
     def recalibrate(self):
@@ -163,6 +170,8 @@ class BrickletMultiTouchV2(Device):
         Recalibrates the electrodes. Call this function whenever you changed
         or moved you electrodes.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_RECALIBRATE, (), '', '')
 
     def set_electrode_config(self, enabled_electrodes):
@@ -180,6 +189,8 @@ class BrickletMultiTouchV2(Device):
 
         Disabling electrodes will also reduce power consumption.
         """
+        self.check_validity()
+
         enabled_electrodes = list(map(bool, enabled_electrodes))
 
         self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_SET_ELECTRODE_CONFIG, (enabled_electrodes,), '13!', '')
@@ -188,6 +199,8 @@ class BrickletMultiTouchV2(Device):
         """
         Returns the electrode configuration, as set by :func:`Set Electrode Config`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_ELECTRODE_CONFIG, (), '', '13!')
 
     def set_electrode_sensitivity(self, sensitivity):
@@ -202,6 +215,8 @@ class BrickletMultiTouchV2(Device):
         After a new sensitivity is set, you likely want to call :func:`Recalibrate`
         to calibrate the electrodes with the newly defined sensitivity.
         """
+        self.check_validity()
+
         sensitivity = int(sensitivity)
 
         self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_SET_ELECTRODE_SENSITIVITY, (sensitivity,), 'B', '')
@@ -210,6 +225,8 @@ class BrickletMultiTouchV2(Device):
         """
         Returns the current sensitivity, as set by :func:`Set Electrode Sensitivity`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_ELECTRODE_SENSITIVITY, (), '', 'B')
 
     def set_touch_led_config(self, config):
@@ -217,6 +234,8 @@ class BrickletMultiTouchV2(Device):
         Configures the touch LED to be either turned off, turned on, blink in
         heartbeat mode or show the touch state (electrode touched = LED on).
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_SET_TOUCH_LED_CONFIG, (config,), 'B', '')
@@ -225,6 +244,8 @@ class BrickletMultiTouchV2(Device):
         """
         Returns the LED configuration as set by :func:`Set Touch LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_TOUCH_LED_CONFIG, (), '', 'B')
 
     def get_spitfp_error_count(self):
@@ -241,6 +262,8 @@ class BrickletMultiTouchV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -255,6 +278,8 @@ class BrickletMultiTouchV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -263,6 +288,8 @@ class BrickletMultiTouchV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -274,6 +301,8 @@ class BrickletMultiTouchV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -289,6 +318,8 @@ class BrickletMultiTouchV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -303,6 +334,8 @@ class BrickletMultiTouchV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -311,6 +344,8 @@ class BrickletMultiTouchV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -322,6 +357,8 @@ class BrickletMultiTouchV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -333,6 +370,8 @@ class BrickletMultiTouchV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -343,6 +382,8 @@ class BrickletMultiTouchV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -352,6 +393,8 @@ class BrickletMultiTouchV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMultiTouchV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

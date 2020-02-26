@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -83,7 +83,7 @@ class BrickletOneWire(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletOneWire.DEVICE_IDENTIFIER, BrickletOneWire.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -108,6 +108,7 @@ class BrickletOneWire(Device):
         self.response_expected[BrickletOneWire.FUNCTION_GET_IDENTITY] = BrickletOneWire.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+        ipcon.add_device(self)
 
     def search_bus_low_level(self):
         """
@@ -119,18 +120,24 @@ class BrickletOneWire(Device):
         `SEARCH ROM algorithm <https://www.maximintegrated.com/en/app-notes/index.mvp/id/187>`__,
         as defined by Maxim.
         """
+        self.check_validity()
+
         return SearchBusLowLevel(*self.ipcon.send_request(self, BrickletOneWire.FUNCTION_SEARCH_BUS_LOW_LEVEL, (), '', 'H H 7Q B'))
 
     def reset_bus(self):
         """
         Resets the bus with the 1-Wire reset operation.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_RESET_BUS, (), '', 'B')
 
     def write(self, data):
         """
         Writes a byte of data to the 1-Wire bus.
         """
+        self.check_validity()
+
         data = int(data)
 
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_WRITE, (data,), 'B', 'B')
@@ -139,6 +146,8 @@ class BrickletOneWire(Device):
         """
         Reads a byte of data from the 1-Wire bus.
         """
+        self.check_validity()
+
         return Read(*self.ipcon.send_request(self, BrickletOneWire.FUNCTION_READ, (), '', 'B B'))
 
     def write_command(self, identifier, command):
@@ -151,6 +160,8 @@ class BrickletOneWire(Device):
         you can set the identifier to 0. In this case the SKIP ROM operation is used to
         write the command.
         """
+        self.check_validity()
+
         identifier = int(identifier)
         command = int(command)
 
@@ -165,6 +176,8 @@ class BrickletOneWire(Device):
 
         If the Bricklet is in bootloader mode, the LED is off.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletOneWire.FUNCTION_SET_COMMUNICATION_LED_CONFIG, (config,), 'B', '')
@@ -173,6 +186,8 @@ class BrickletOneWire(Device):
         """
         Returns the configuration as set by :func:`Set Communication LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_GET_COMMUNICATION_LED_CONFIG, (), '', 'B')
 
     def get_spitfp_error_count(self):
@@ -189,6 +204,8 @@ class BrickletOneWire(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletOneWire.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -203,6 +220,8 @@ class BrickletOneWire(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -211,6 +230,8 @@ class BrickletOneWire(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -222,6 +243,8 @@ class BrickletOneWire(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletOneWire.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -237,6 +260,8 @@ class BrickletOneWire(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -251,6 +276,8 @@ class BrickletOneWire(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletOneWire.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -259,6 +286,8 @@ class BrickletOneWire(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -270,6 +299,8 @@ class BrickletOneWire(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -281,6 +312,8 @@ class BrickletOneWire(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletOneWire.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -291,6 +324,8 @@ class BrickletOneWire(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletOneWire.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -300,6 +335,8 @@ class BrickletOneWire(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

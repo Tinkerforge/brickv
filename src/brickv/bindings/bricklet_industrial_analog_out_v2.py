@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -89,7 +89,7 @@ class BrickletIndustrialAnalogOutV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletIndustrialAnalogOutV2.DEVICE_IDENTIFIER, BrickletIndustrialAnalogOutV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -119,11 +119,14 @@ class BrickletIndustrialAnalogOutV2(Device):
         self.response_expected[BrickletIndustrialAnalogOutV2.FUNCTION_GET_IDENTITY] = BrickletIndustrialAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+        ipcon.add_device(self)
 
     def set_enabled(self, enabled):
         """
         Enables/disables the output of voltage and current.
         """
+        self.check_validity()
+
         enabled = bool(enabled)
 
         self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_SET_ENABLED, (enabled,), '!', '')
@@ -132,6 +135,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         """
         Returns *true* if output of voltage and current is enabled, *false* otherwise.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_GET_ENABLED, (), '', '!')
 
     def set_voltage(self, voltage):
@@ -141,6 +146,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         The output voltage and output current are linked. Changing the output voltage
         also changes the output current.
         """
+        self.check_validity()
+
         voltage = int(voltage)
 
         self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_SET_VOLTAGE, (voltage,), 'H', '')
@@ -149,6 +156,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         """
         Returns the voltage as set by :func:`Set Voltage`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_GET_VOLTAGE, (), '', 'H')
 
     def set_current(self, current):
@@ -158,6 +167,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         The output current and output voltage are linked. Changing the output current
         also changes the output voltage.
         """
+        self.check_validity()
+
         current = int(current)
 
         self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_SET_CURRENT, (current,), 'H', '')
@@ -166,6 +177,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         """
         Returns the current as set by :func:`Set Current`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_GET_CURRENT, (), '', 'H')
 
     def set_configuration(self, voltage_range, current_range):
@@ -186,6 +199,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         The resolution will always be 12 bit. This means, that the
         precision is higher with a smaller range.
         """
+        self.check_validity()
+
         voltage_range = int(voltage_range)
         current_range = int(current_range)
 
@@ -195,6 +210,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         """
         Returns the configuration as set by :func:`Set Configuration`.
         """
+        self.check_validity()
+
         return GetConfiguration(*self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
     def set_out_led_config(self, config):
@@ -206,6 +223,8 @@ class BrickletIndustrialAnalogOutV2(Device):
 
         You can configure the channel status behavior with :func:`Set Out LED Status Config`.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_SET_OUT_LED_CONFIG, (config,), 'B', '')
@@ -214,6 +233,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         """
         Returns the Out LED configuration as set by :func:`Set Out LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_GET_OUT_LED_CONFIG, (), '', 'B')
 
     def set_out_led_status_config(self, min, max, config):
@@ -240,6 +261,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         If the min value is greater than the max value, the LED brightness is scaled the
         other way around.
         """
+        self.check_validity()
+
         min = int(min)
         max = int(max)
         config = int(config)
@@ -250,6 +273,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         """
         Returns the Out LED status configuration as set by :func:`Set Out LED Status Config`.
         """
+        self.check_validity()
+
         return GetOutLEDStatusConfig(*self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_GET_OUT_LED_STATUS_CONFIG, (), '', 'H H B'))
 
     def get_spitfp_error_count(self):
@@ -266,6 +291,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -280,6 +307,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -288,6 +317,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -299,6 +330,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -314,6 +347,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -328,6 +363,8 @@ class BrickletIndustrialAnalogOutV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -336,6 +373,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -347,6 +386,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -358,6 +399,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -368,6 +411,8 @@ class BrickletIndustrialAnalogOutV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -377,6 +422,8 @@ class BrickletIndustrialAnalogOutV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOutV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

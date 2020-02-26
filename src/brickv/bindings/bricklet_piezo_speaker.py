@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -44,7 +44,7 @@ class BrickletPiezoSpeaker(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletPiezoSpeaker.DEVICE_IDENTIFIER, BrickletPiezoSpeaker.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -56,6 +56,7 @@ class BrickletPiezoSpeaker(Device):
         self.callback_formats[BrickletPiezoSpeaker.CALLBACK_BEEP_FINISHED] = ''
         self.callback_formats[BrickletPiezoSpeaker.CALLBACK_MORSE_CODE_FINISHED] = ''
 
+        ipcon.add_device(self)
 
     def beep(self, duration, frequency):
         """
@@ -68,6 +69,8 @@ class BrickletPiezoSpeaker(Device):
         The Piezo Speaker Bricklet can only approximate the frequency, it will play
         the best possible match by applying the calibration (see :func:`Calibrate`).
         """
+        self.check_validity()
+
         duration = int(duration)
         frequency = int(frequency)
 
@@ -83,6 +86,8 @@ class BrickletPiezoSpeaker(Device):
         nine times with the durations "short short short long long long short
         short short".
         """
+        self.check_validity()
+
         morse = create_string(morse)
         frequency = int(frequency)
 
@@ -100,6 +105,8 @@ class BrickletPiezoSpeaker(Device):
 
         Returns *true* after the calibration finishes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_CALIBRATE, (), '', '!')
 
     def get_identity(self):

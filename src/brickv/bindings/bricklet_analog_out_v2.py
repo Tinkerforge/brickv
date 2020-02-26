@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -40,7 +40,7 @@ class BrickletAnalogOutV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletAnalogOutV2.DEVICE_IDENTIFIER, BrickletAnalogOutV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -50,11 +50,14 @@ class BrickletAnalogOutV2(Device):
         self.response_expected[BrickletAnalogOutV2.FUNCTION_GET_IDENTITY] = BrickletAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+        ipcon.add_device(self)
 
     def set_output_voltage(self, voltage):
         """
         Sets the voltage.
         """
+        self.check_validity()
+
         voltage = int(voltage)
 
         self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_SET_OUTPUT_VOLTAGE, (voltage,), 'H', '')
@@ -63,12 +66,16 @@ class BrickletAnalogOutV2(Device):
         """
         Returns the voltage as set by :func:`Set Output Voltage`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_GET_OUTPUT_VOLTAGE, (), '', 'H')
 
     def get_input_voltage(self):
         """
         Returns the input voltage.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_GET_INPUT_VOLTAGE, (), '', 'H')
 
     def get_identity(self):

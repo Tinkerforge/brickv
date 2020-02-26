@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -70,7 +70,7 @@ class BrickletAnalogIn(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletAnalogIn.DEVICE_IDENTIFIER, BrickletAnalogIn.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 3)
 
@@ -97,6 +97,7 @@ class BrickletAnalogIn(Device):
         self.callback_formats[BrickletAnalogIn.CALLBACK_VOLTAGE_REACHED] = 'H'
         self.callback_formats[BrickletAnalogIn.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
 
+        ipcon.add_device(self)
 
     def get_voltage(self):
         """
@@ -107,6 +108,8 @@ class BrickletAnalogIn(Device):
         :cb:`Voltage` callback and set the period with
         :func:`Set Voltage Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_VOLTAGE, (), '', 'H')
 
     def get_analog_value(self):
@@ -123,6 +126,8 @@ class BrickletAnalogIn(Device):
         :cb:`Analog Value` callback and set the period with
         :func:`Set Analog Value Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
 
     def set_voltage_callback_period(self, period):
@@ -133,6 +138,8 @@ class BrickletAnalogIn(Device):
         The :cb:`Voltage` callback is only triggered if the voltage has changed since
         the last triggering.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_VOLTAGE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -141,6 +148,8 @@ class BrickletAnalogIn(Device):
         """
         Returns the period as set by :func:`Set Voltage Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_VOLTAGE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_analog_value_callback_period(self, period):
@@ -151,6 +160,8 @@ class BrickletAnalogIn(Device):
         The :cb:`Analog Value` callback is only triggered if the analog value has
         changed since the last triggering.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -159,6 +170,8 @@ class BrickletAnalogIn(Device):
         """
         Returns the period as set by :func:`Set Analog Value Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_voltage_callback_threshold(self, option, min, max):
@@ -177,6 +190,8 @@ class BrickletAnalogIn(Device):
          "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
         """
+        self.check_validity()
+
         option = create_char(option)
         min = int(min)
         max = int(max)
@@ -187,6 +202,8 @@ class BrickletAnalogIn(Device):
         """
         Returns the threshold as set by :func:`Set Voltage Callback Threshold`.
         """
+        self.check_validity()
+
         return GetVoltageCallbackThreshold(*self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_VOLTAGE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
@@ -205,6 +222,8 @@ class BrickletAnalogIn(Device):
          "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
         """
+        self.check_validity()
+
         option = create_char(option)
         min = int(min)
         max = int(max)
@@ -215,6 +234,8 @@ class BrickletAnalogIn(Device):
         """
         Returns the threshold as set by :func:`Set Analog Value Callback Threshold`.
         """
+        self.check_validity()
+
         return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_debounce_period(self, debounce):
@@ -231,6 +252,8 @@ class BrickletAnalogIn(Device):
 
         keep being reached.
         """
+        self.check_validity()
+
         debounce = int(debounce)
 
         self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -239,6 +262,8 @@ class BrickletAnalogIn(Device):
         """
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def set_range(self, range):
@@ -254,6 +279,8 @@ class BrickletAnalogIn(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         range = int(range)
 
         self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_RANGE, (range,), 'B', '')
@@ -264,6 +291,8 @@ class BrickletAnalogIn(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_RANGE, (), '', 'B')
 
     def set_averaging(self, average):
@@ -276,6 +305,8 @@ class BrickletAnalogIn(Device):
 
         .. versionadded:: 2.0.3$nbsp;(Plugin)
         """
+        self.check_validity()
+
         average = int(average)
 
         self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_AVERAGING, (average,), 'B', '')
@@ -286,6 +317,8 @@ class BrickletAnalogIn(Device):
 
         .. versionadded:: 2.0.3$nbsp;(Plugin)
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_AVERAGING, (), '', 'B')
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -97,7 +97,7 @@ class BrickletThermocoupleV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletThermocoupleV2.DEVICE_IDENTIFIER, BrickletThermocoupleV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -123,6 +123,7 @@ class BrickletThermocoupleV2(Device):
         self.callback_formats[BrickletThermocoupleV2.CALLBACK_TEMPERATURE] = 'i'
         self.callback_formats[BrickletThermocoupleV2.CALLBACK_ERROR_STATE] = '! !'
 
+        ipcon.add_device(self)
 
     def get_temperature(self):
         """
@@ -138,6 +139,8 @@ class BrickletThermocoupleV2(Device):
         :cb:`Temperature` callback. You can set the callback configuration
         with :func:`Set Temperature Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_GET_TEMPERATURE, (), '', 'i')
 
     def set_temperature_callback_configuration(self, period, value_has_to_change, option, min, max):
@@ -170,6 +173,8 @@ class BrickletThermocoupleV2(Device):
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
         option = create_char(option)
@@ -182,6 +187,8 @@ class BrickletThermocoupleV2(Device):
         """
         Returns the callback configuration as set by :func:`Set Temperature Callback Configuration`.
         """
+        self.check_validity()
+
         return GetTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_GET_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
 
     def set_configuration(self, averaging, thermocouple_type, filter):
@@ -210,6 +217,8 @@ class BrickletThermocoupleV2(Device):
         * 60Hz: ``time = 82 + (samples - 1) * 16.67``
         * 50Hz: ``time = 98 + (samples - 1) * 20``
         """
+        self.check_validity()
+
         averaging = int(averaging)
         thermocouple_type = int(thermocouple_type)
         filter = int(filter)
@@ -220,6 +229,8 @@ class BrickletThermocoupleV2(Device):
         """
         Returns the configuration as set by :func:`Set Configuration`.
         """
+        self.check_validity()
+
         return GetConfiguration(*self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_GET_CONFIGURATION, (), '', 'B B B'))
 
     def get_error_state(self):
@@ -236,6 +247,8 @@ class BrickletThermocoupleV2(Device):
         You can use the :cb:`Error State` callback to automatically get triggered
         when the error state changes.
         """
+        self.check_validity()
+
         return GetErrorState(*self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_GET_ERROR_STATE, (), '', '! !'))
 
     def get_spitfp_error_count(self):
@@ -252,6 +265,8 @@ class BrickletThermocoupleV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -266,6 +281,8 @@ class BrickletThermocoupleV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -274,6 +291,8 @@ class BrickletThermocoupleV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -285,6 +304,8 @@ class BrickletThermocoupleV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -300,6 +321,8 @@ class BrickletThermocoupleV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -314,6 +337,8 @@ class BrickletThermocoupleV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -322,6 +347,8 @@ class BrickletThermocoupleV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -333,6 +360,8 @@ class BrickletThermocoupleV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -344,6 +373,8 @@ class BrickletThermocoupleV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -354,6 +385,8 @@ class BrickletThermocoupleV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -363,6 +396,8 @@ class BrickletThermocoupleV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletThermocoupleV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

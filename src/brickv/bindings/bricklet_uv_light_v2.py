@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -91,7 +91,7 @@ class BrickletUVLightV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletUVLightV2.DEVICE_IDENTIFIER, BrickletUVLightV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -123,6 +123,7 @@ class BrickletUVLightV2(Device):
         self.callback_formats[BrickletUVLightV2.CALLBACK_UVB] = 'i'
         self.callback_formats[BrickletUVLightV2.CALLBACK_UVI] = 'i'
 
+        ipcon.add_device(self)
 
     def get_uva(self):
         """
@@ -143,6 +144,8 @@ class BrickletUVLightV2(Device):
         :cb:`UVA` callback. You can set the callback configuration
         with :func:`Set UVA Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVA, (), '', 'i')
 
     def set_uva_callback_configuration(self, period, value_has_to_change, option, min, max):
@@ -175,6 +178,8 @@ class BrickletUVLightV2(Device):
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
         option = create_char(option)
@@ -187,6 +192,8 @@ class BrickletUVLightV2(Device):
         """
         Returns the callback configuration as set by :func:`Set UVA Callback Configuration`.
         """
+        self.check_validity()
+
         return GetUVACallbackConfiguration(*self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVA_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
 
     def get_uvb(self):
@@ -208,6 +215,8 @@ class BrickletUVLightV2(Device):
         :cb:`UVB` callback. You can set the callback configuration
         with :func:`Set UVB Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVB, (), '', 'i')
 
     def set_uvb_callback_configuration(self, period, value_has_to_change, option, min, max):
@@ -240,6 +249,8 @@ class BrickletUVLightV2(Device):
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
         option = create_char(option)
@@ -252,6 +263,8 @@ class BrickletUVLightV2(Device):
         """
         Returns the callback configuration as set by :func:`Set UVB Callback Configuration`.
         """
+        self.check_validity()
+
         return GetUVBCallbackConfiguration(*self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVB_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
 
     def get_uvi(self):
@@ -269,6 +282,8 @@ class BrickletUVLightV2(Device):
         :cb:`UVI` callback. You can set the callback configuration
         with :func:`Set UVI Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVI, (), '', 'i')
 
     def set_uvi_callback_configuration(self, period, value_has_to_change, option, min, max):
@@ -301,6 +316,8 @@ class BrickletUVLightV2(Device):
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
         option = create_char(option)
@@ -313,6 +330,8 @@ class BrickletUVLightV2(Device):
         """
         Returns the callback configuration as set by :func:`Set UVI Callback Configuration`.
         """
+        self.check_validity()
+
         return GetUVICallbackConfiguration(*self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_UVI_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
 
     def set_configuration(self, integration_time):
@@ -326,6 +345,8 @@ class BrickletUVLightV2(Device):
         sensor can be saturated. If this happens the UVA/UVB/UVI readings are all -1.
         In this case you need to choose a shorter integration time.
         """
+        self.check_validity()
+
         integration_time = int(integration_time)
 
         self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_SET_CONFIGURATION, (integration_time,), 'B', '')
@@ -334,6 +355,8 @@ class BrickletUVLightV2(Device):
         """
         Returns the configuration as set by :func:`Set Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_CONFIGURATION, (), '', 'B')
 
     def get_spitfp_error_count(self):
@@ -350,6 +373,8 @@ class BrickletUVLightV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -364,6 +389,8 @@ class BrickletUVLightV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -372,6 +399,8 @@ class BrickletUVLightV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -383,6 +412,8 @@ class BrickletUVLightV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -398,6 +429,8 @@ class BrickletUVLightV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -412,6 +445,8 @@ class BrickletUVLightV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -420,6 +455,8 @@ class BrickletUVLightV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -431,6 +468,8 @@ class BrickletUVLightV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -442,6 +481,8 @@ class BrickletUVLightV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -452,6 +493,8 @@ class BrickletUVLightV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -461,6 +504,8 @@ class BrickletUVLightV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletUVLightV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -70,7 +70,7 @@ class BrickletAmbientLightV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletAmbientLightV2.DEVICE_IDENTIFIER, BrickletAmbientLightV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 1)
 
@@ -88,6 +88,7 @@ class BrickletAmbientLightV2(Device):
         self.callback_formats[BrickletAmbientLightV2.CALLBACK_ILLUMINANCE] = 'I'
         self.callback_formats[BrickletAmbientLightV2.CALLBACK_ILLUMINANCE_REACHED] = 'I'
 
+        ipcon.add_device(self)
 
     def get_illuminance(self):
         """
@@ -102,6 +103,8 @@ class BrickletAmbientLightV2(Device):
         :cb:`Illuminance` callback and set the period with
         :func:`Set Illuminance Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_ILLUMINANCE, (), '', 'I')
 
     def set_illuminance_callback_period(self, period):
@@ -112,6 +115,8 @@ class BrickletAmbientLightV2(Device):
         The :cb:`Illuminance` callback is only triggered if the illuminance has changed
         since the last triggering.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -120,6 +125,8 @@ class BrickletAmbientLightV2(Device):
         """
         Returns the period as set by :func:`Set Illuminance Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_ILLUMINANCE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_illuminance_callback_threshold(self, option, min, max):
@@ -138,6 +145,8 @@ class BrickletAmbientLightV2(Device):
          "'<'",    "Callback is triggered when the illuminance is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the illuminance is greater than the min value (max is ignored)"
         """
+        self.check_validity()
+
         option = create_char(option)
         min = int(min)
         max = int(max)
@@ -148,6 +157,8 @@ class BrickletAmbientLightV2(Device):
         """
         Returns the threshold as set by :func:`Set Illuminance Callback Threshold`.
         """
+        self.check_validity()
+
         return GetIlluminanceCallbackThreshold(*self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_ILLUMINANCE_CALLBACK_THRESHOLD, (), '', 'c I I'))
 
     def set_debounce_period(self, debounce):
@@ -162,6 +173,8 @@ class BrickletAmbientLightV2(Device):
 
         keep being reached.
         """
+        self.check_validity()
+
         debounce = int(debounce)
 
         self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -170,6 +183,8 @@ class BrickletAmbientLightV2(Device):
         """
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def set_configuration(self, illuminance_range, integration_time):
@@ -198,6 +213,8 @@ class BrickletAmbientLightV2(Device):
         configure the next higher illuminance range. If the highest range is already
         in use, then start to reduce the integration time.
         """
+        self.check_validity()
+
         illuminance_range = int(illuminance_range)
         integration_time = int(integration_time)
 
@@ -207,6 +224,8 @@ class BrickletAmbientLightV2(Device):
         """
         Returns the configuration as set by :func:`Set Configuration`.
         """
+        self.check_validity()
+
         return GetConfiguration(*self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
     def get_identity(self):

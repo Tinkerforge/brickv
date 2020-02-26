@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -45,7 +45,7 @@ class BrickletTilt(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletTilt.DEVICE_IDENTIFIER, BrickletTilt.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -57,6 +57,7 @@ class BrickletTilt(Device):
 
         self.callback_formats[BrickletTilt.CALLBACK_TILT_STATE] = 'B'
 
+        ipcon.add_device(self)
 
     def get_tilt_state(self):
         """
@@ -72,24 +73,32 @@ class BrickletTilt(Device):
            :align: center
            :target: ../../_images/Bricklets/bricklet_tilt_mechanics.jpg
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletTilt.FUNCTION_GET_TILT_STATE, (), '', 'B')
 
     def enable_tilt_state_callback(self):
         """
         Enables the :cb:`Tilt State` callback.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletTilt.FUNCTION_ENABLE_TILT_STATE_CALLBACK, (), '', '')
 
     def disable_tilt_state_callback(self):
         """
         Disables the :cb:`Tilt State` callback.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletTilt.FUNCTION_DISABLE_TILT_STATE_CALLBACK, (), '', '')
 
     def is_tilt_state_callback_enabled(self):
         """
         Returns *true* if the :cb:`Tilt State` callback is enabled.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletTilt.FUNCTION_IS_TILT_STATE_CALLBACK_ENABLED, (), '', '!')
 
     def get_identity(self):

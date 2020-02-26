@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -129,7 +129,7 @@ class BrickletIndustrialCounter(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletIndustrialCounter.DEVICE_IDENTIFIER, BrickletIndustrialCounter.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -167,11 +167,14 @@ class BrickletIndustrialCounter(Device):
         self.callback_formats[BrickletIndustrialCounter.CALLBACK_ALL_COUNTER] = '4q'
         self.callback_formats[BrickletIndustrialCounter.CALLBACK_ALL_SIGNAL_DATA] = '4H 4Q 4I 4!'
 
+        ipcon.add_device(self)
 
     def get_counter(self, channel):
         """
         Returns the current counter value for the given channel.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_COUNTER, (channel,), 'B', 'q')
@@ -180,6 +183,8 @@ class BrickletIndustrialCounter(Device):
         """
         Returns the current counter values for all four channels.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_COUNTER, (), '', '4q')
 
     def set_counter(self, channel, counter):
@@ -188,6 +193,8 @@ class BrickletIndustrialCounter(Device):
 
         The default value for the counters on startup is 0.
         """
+        self.check_validity()
+
         channel = int(channel)
         counter = int(counter)
 
@@ -199,6 +206,8 @@ class BrickletIndustrialCounter(Device):
 
         The default value for the counters on startup is 0.
         """
+        self.check_validity()
+
         counter = list(map(int, counter))
 
         self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_ALL_COUNTER, (counter,), '4q', '')
@@ -208,6 +217,8 @@ class BrickletIndustrialCounter(Device):
         Returns the signal data (duty cycle, period, frequency and value) for the
         given channel.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return GetSignalData(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_SIGNAL_DATA, (channel,), 'B', 'H Q I !'))
@@ -217,6 +228,8 @@ class BrickletIndustrialCounter(Device):
         Returns the signal data (duty cycle, period, frequency and value) for all four
         channels.
         """
+        self.check_validity()
+
         return GetAllSignalData(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_SIGNAL_DATA, (), '', '4H 4Q 4I 4!'))
 
     def set_counter_active(self, channel, active):
@@ -227,6 +240,8 @@ class BrickletIndustrialCounter(Device):
 
         By default all channels are activated.
         """
+        self.check_validity()
+
         channel = int(channel)
         active = bool(active)
 
@@ -240,6 +255,8 @@ class BrickletIndustrialCounter(Device):
 
         By default all channels are activated.
         """
+        self.check_validity()
+
         active = list(map(bool, active))
 
         self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_ALL_COUNTER_ACTIVE, (active,), '4!', '')
@@ -250,6 +267,8 @@ class BrickletIndustrialCounter(Device):
 
         true = activated, false = deactivated.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_COUNTER_ACTIVE, (channel,), 'B', '!')
@@ -260,6 +279,8 @@ class BrickletIndustrialCounter(Device):
 
         true = activated, false = deactivated.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_COUNTER_ACTIVE, (), '', '4!')
 
     def set_counter_configuration(self, channel, count_edge, count_direction, duty_cycle_prescaler, frequency_integration_time):
@@ -279,6 +300,8 @@ class BrickletIndustrialCounter(Device):
           `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
           for details.
         """
+        self.check_validity()
+
         channel = int(channel)
         count_edge = int(count_edge)
         count_direction = int(count_direction)
@@ -291,6 +314,8 @@ class BrickletIndustrialCounter(Device):
         """
         Returns the counter configuration as set by :func:`Set Counter Configuration`.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return GetCounterConfiguration(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_COUNTER_CONFIGURATION, (channel,), 'B', 'B B B B'))
@@ -307,6 +332,8 @@ class BrickletIndustrialCounter(Device):
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
@@ -317,6 +344,8 @@ class BrickletIndustrialCounter(Device):
         Returns the callback configuration as set by
         :func:`Set All Counter Callback Configuration`.
         """
+        self.check_validity()
+
         return GetAllCounterCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_COUNTER_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
     def set_all_signal_data_callback_configuration(self, period, value_has_to_change):
@@ -331,6 +360,8 @@ class BrickletIndustrialCounter(Device):
         If it is set to false, the callback is continuously triggered with the period,
         independent of the value.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
@@ -341,6 +372,8 @@ class BrickletIndustrialCounter(Device):
         Returns the callback configuration as set by
         :func:`Set All Signal Data Callback Configuration`.
         """
+        self.check_validity()
+
         return GetAllSignalDataCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_SIGNAL_DATA_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
     def set_channel_led_config(self, channel, config):
@@ -349,6 +382,8 @@ class BrickletIndustrialCounter(Device):
         heartbeat. You can also set the LED to "Channel Status". In this mode the
         LED is on if the channel is high and off otherwise.
         """
+        self.check_validity()
+
         channel = int(channel)
         config = int(config)
 
@@ -358,6 +393,8 @@ class BrickletIndustrialCounter(Device):
         """
         Returns the channel LED configuration as set by :func:`Set Channel LED Config`
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 'B')
@@ -376,6 +413,8 @@ class BrickletIndustrialCounter(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -390,6 +429,8 @@ class BrickletIndustrialCounter(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -398,6 +439,8 @@ class BrickletIndustrialCounter(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -409,6 +452,8 @@ class BrickletIndustrialCounter(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -424,6 +469,8 @@ class BrickletIndustrialCounter(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -438,6 +485,8 @@ class BrickletIndustrialCounter(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -446,6 +495,8 @@ class BrickletIndustrialCounter(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -457,6 +508,8 @@ class BrickletIndustrialCounter(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -468,6 +521,8 @@ class BrickletIndustrialCounter(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -478,6 +533,8 @@ class BrickletIndustrialCounter(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -487,6 +544,8 @@ class BrickletIndustrialCounter(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

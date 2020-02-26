@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -52,7 +52,7 @@ class BrickletHallEffect(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletHallEffect.DEVICE_IDENTIFIER, BrickletHallEffect.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -69,11 +69,14 @@ class BrickletHallEffect(Device):
 
         self.callback_formats[BrickletHallEffect.CALLBACK_EDGE_COUNT] = 'I !'
 
+        ipcon.add_device(self)
 
     def get_value(self):
         """
         Returns *true* if a magnetic field of 3.5 millitesla or greater is detected.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_VALUE, (), '', '!')
 
     def get_edge_count(self, reset_counter):
@@ -85,6 +88,8 @@ class BrickletHallEffect(Device):
         If you set the reset counter to *true*, the count is set back to 0
         directly after it is read.
         """
+        self.check_validity()
+
         reset_counter = bool(reset_counter)
 
         return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT, (reset_counter,), '!', 'I')
@@ -109,6 +114,8 @@ class BrickletHallEffect(Device):
         If you don't know what any of this means, just leave it at default. The
         default configuration is very likely OK for you.
         """
+        self.check_validity()
+
         edge_type = int(edge_type)
         debounce = int(debounce)
 
@@ -118,6 +125,8 @@ class BrickletHallEffect(Device):
         """
         Returns the edge type and debounce time as set by :func:`Set Edge Count Config`.
         """
+        self.check_validity()
+
         return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT_CONFIG, (), '', 'B B'))
 
     def set_edge_interrupt(self, edges):
@@ -128,6 +137,8 @@ class BrickletHallEffect(Device):
 
         If *edges* is set to 0, the interrupt is disabled.
         """
+        self.check_validity()
+
         edges = int(edges)
 
         self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_INTERRUPT, (edges,), 'I', '')
@@ -136,6 +147,8 @@ class BrickletHallEffect(Device):
         """
         Returns the edges as set by :func:`Set Edge Interrupt`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_INTERRUPT, (), '', 'I')
 
     def set_edge_count_callback_period(self, period):
@@ -146,6 +159,8 @@ class BrickletHallEffect(Device):
         The :cb:`Edge Count` callback is only triggered if the edge count has changed
         since the last triggering.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_COUNT_CALLBACK_PERIOD, (period,), 'I', '')
@@ -154,6 +169,8 @@ class BrickletHallEffect(Device):
         """
         Returns the period as set by :func:`Set Edge Count Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT_CALLBACK_PERIOD, (), '', 'I')
 
     def edge_interrupt(self):
@@ -163,6 +180,8 @@ class BrickletHallEffect(Device):
         current count and the current value (see :func:`Get Value` and
         :func:`Get Edge Count`).
         """
+        self.check_validity()
+
         return EdgeInterrupt(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_EDGE_INTERRUPT, (), '', 'I !'))
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -89,6 +89,8 @@ class BrickIMU(Device):
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
+    FUNCTION_WRITE_BRICKLET_PLUGIN = 246
+    FUNCTION_READ_BRICKLET_PLUGIN = 247
     FUNCTION_GET_IDENTITY = 255
 
     CALIBRATION_TYPE_ACCELEROMETER_GAIN = 0
@@ -111,7 +113,7 @@ class BrickIMU(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickIMU.DEVICE_IDENTIFIER, BrickIMU.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 4)
 
@@ -160,6 +162,8 @@ class BrickIMU(Device):
         self.response_expected[BrickIMU.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_CHIP_TEMPERATURE] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_RESET] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_WRITE_BRICKLET_PLUGIN] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_READ_BRICKLET_PLUGIN] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_IDENTITY] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickIMU.CALLBACK_ACCELERATION] = 'h h h'
@@ -169,6 +173,7 @@ class BrickIMU(Device):
         self.callback_formats[BrickIMU.CALLBACK_ORIENTATION] = 'h h h'
         self.callback_formats[BrickIMU.CALLBACK_QUATERNION] = 'f f f f'
 
+        ipcon.add_device(self)
 
     def get_acceleration(self):
         """
@@ -179,6 +184,8 @@ class BrickIMU(Device):
         to use the :cb:`Acceleration` callback and set the period with
         :func:`Set Acceleration Period`.
         """
+        self.check_validity()
+
         return GetAcceleration(*self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_ACCELERATION, (), '', 'h h h'))
 
     def get_magnetic_field(self):
@@ -190,6 +197,8 @@ class BrickIMU(Device):
         to use the :cb:`Magnetic Field` callback and set the period with
         :func:`Set Magnetic Field Period`.
         """
+        self.check_validity()
+
         return GetMagneticField(*self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_MAGNETIC_FIELD, (), '', 'h h h'))
 
     def get_angular_velocity(self):
@@ -202,6 +211,8 @@ class BrickIMU(Device):
         to use the :cb:`Angular Velocity` callback and set the period with
         :func:`Set Angular Velocity Period`.
         """
+        self.check_validity()
+
         return GetAngularVelocity(*self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_ANGULAR_VELOCITY, (), '', 'h h h'))
 
     def get_all_data(self):
@@ -213,6 +224,8 @@ class BrickIMU(Device):
         to use the :cb:`All Data` callback and set the period with
         :func:`Set All Data Period`.
         """
+        self.check_validity()
+
         return GetAllData(*self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_ALL_DATA, (), '', 'h h h h h h h h h h'))
 
     def get_orientation(self):
@@ -230,6 +243,8 @@ class BrickIMU(Device):
         to use the :cb:`Orientation` callback and set the period with
         :func:`Set Orientation Period`.
         """
+        self.check_validity()
+
         return GetOrientation(*self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_ORIENTATION, (), '', 'h h h'))
 
     def get_quaternion(self):
@@ -266,24 +281,32 @@ class BrickIMU(Device):
         to use the :cb:`Quaternion` callback and set the period with
         :func:`Set Quaternion Period`.
         """
+        self.check_validity()
+
         return GetQuaternion(*self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_QUATERNION, (), '', 'f f f f'))
 
     def get_imu_temperature(self):
         """
         Returns the temperature of the IMU Brick.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_IMU_TEMPERATURE, (), '', 'h')
 
     def leds_on(self):
         """
         Turns the orientation and direction LEDs of the IMU Brick on.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickIMU.FUNCTION_LEDS_ON, (), '', '')
 
     def leds_off(self):
         """
         Turns the orientation and direction LEDs of the IMU Brick off.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickIMU.FUNCTION_LEDS_OFF, (), '', '')
 
     def are_leds_on(self):
@@ -291,12 +314,16 @@ class BrickIMU(Device):
         Returns *true* if the orientation and direction LEDs of the IMU Brick
         are on, *false* otherwise.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_ARE_LEDS_ON, (), '', '!')
 
     def set_acceleration_range(self, range):
         """
         Not implemented yet.
         """
+        self.check_validity()
+
         range = int(range)
 
         self.ipcon.send_request(self, BrickIMU.FUNCTION_SET_ACCELERATION_RANGE, (range,), 'B', '')
@@ -305,12 +332,16 @@ class BrickIMU(Device):
         """
         Not implemented yet.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_ACCELERATION_RANGE, (), '', 'B')
 
     def set_magnetometer_range(self, range):
         """
         Not implemented yet.
         """
+        self.check_validity()
+
         range = int(range)
 
         self.ipcon.send_request(self, BrickIMU.FUNCTION_SET_MAGNETOMETER_RANGE, (range,), 'B', '')
@@ -319,6 +350,8 @@ class BrickIMU(Device):
         """
         Not implemented yet.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_MAGNETOMETER_RANGE, (), '', 'B')
 
     def set_convergence_speed(self, speed):
@@ -349,6 +382,8 @@ class BrickIMU(Device):
         You might want to play around with the convergence speed in the Brick Viewer to
         get a feeling for a good value for your application.
         """
+        self.check_validity()
+
         speed = int(speed)
 
         self.ipcon.send_request(self, BrickIMU.FUNCTION_SET_CONVERGENCE_SPEED, (speed,), 'H', '')
@@ -357,6 +392,8 @@ class BrickIMU(Device):
         """
         Returns the convergence speed as set by :func:`Set Convergence Speed`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_CONVERGENCE_SPEED, (), '', 'H')
 
     def set_calibration(self, typ, data):
@@ -396,6 +433,8 @@ class BrickIMU(Device):
          We highly recommend that you use the Brick Viewer to calibrate your
          IMU Brick.
         """
+        self.check_validity()
+
         typ = int(typ)
         data = list(map(int, data))
 
@@ -405,6 +444,8 @@ class BrickIMU(Device):
         """
         Returns the calibration for a given type as set by :func:`Set Calibration`.
         """
+        self.check_validity()
+
         typ = int(typ)
 
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_CALIBRATION, (typ,), 'B', '10h')
@@ -414,6 +455,8 @@ class BrickIMU(Device):
         Sets the period with which the :cb:`Acceleration` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickIMU.FUNCTION_SET_ACCELERATION_PERIOD, (period,), 'I', '')
@@ -422,6 +465,8 @@ class BrickIMU(Device):
         """
         Returns the period as set by :func:`Set Acceleration Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_ACCELERATION_PERIOD, (), '', 'I')
 
     def set_magnetic_field_period(self, period):
@@ -429,6 +474,8 @@ class BrickIMU(Device):
         Sets the period with which the :cb:`Magnetic Field` callback is
         triggered periodically. A value of 0 turns the callback off.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickIMU.FUNCTION_SET_MAGNETIC_FIELD_PERIOD, (period,), 'I', '')
@@ -437,6 +484,8 @@ class BrickIMU(Device):
         """
         Returns the period as set by :func:`Set Magnetic Field Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_MAGNETIC_FIELD_PERIOD, (), '', 'I')
 
     def set_angular_velocity_period(self, period):
@@ -444,6 +493,8 @@ class BrickIMU(Device):
         Sets the period with which the :cb:`Angular Velocity` callback is
         triggered periodically. A value of 0 turns the callback off.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickIMU.FUNCTION_SET_ANGULAR_VELOCITY_PERIOD, (period,), 'I', '')
@@ -452,6 +503,8 @@ class BrickIMU(Device):
         """
         Returns the period as set by :func:`Set Angular Velocity Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_ANGULAR_VELOCITY_PERIOD, (), '', 'I')
 
     def set_all_data_period(self, period):
@@ -459,6 +512,8 @@ class BrickIMU(Device):
         Sets the period with which the :cb:`All Data` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickIMU.FUNCTION_SET_ALL_DATA_PERIOD, (period,), 'I', '')
@@ -467,6 +522,8 @@ class BrickIMU(Device):
         """
         Returns the period as set by :func:`Set All Data Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
 
     def set_orientation_period(self, period):
@@ -474,6 +531,8 @@ class BrickIMU(Device):
         Sets the period with which the :cb:`Orientation` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickIMU.FUNCTION_SET_ORIENTATION_PERIOD, (period,), 'I', '')
@@ -482,6 +541,8 @@ class BrickIMU(Device):
         """
         Returns the period as set by :func:`Set Orientation Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_ORIENTATION_PERIOD, (), '', 'I')
 
     def set_quaternion_period(self, period):
@@ -489,6 +550,8 @@ class BrickIMU(Device):
         Sets the period with which the :cb:`Quaternion` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickIMU.FUNCTION_SET_QUATERNION_PERIOD, (period,), 'I', '')
@@ -497,6 +560,8 @@ class BrickIMU(Device):
         """
         Returns the period as set by :func:`Set Quaternion Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_QUATERNION_PERIOD, (), '', 'I')
 
     def orientation_calculation_on(self):
@@ -507,6 +572,8 @@ class BrickIMU(Device):
 
         .. versionadded:: 2.0.2$nbsp;(Firmware)
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickIMU.FUNCTION_ORIENTATION_CALCULATION_ON, (), '', '')
 
     def orientation_calculation_off(self):
@@ -525,6 +592,8 @@ class BrickIMU(Device):
 
         .. versionadded:: 2.0.2$nbsp;(Firmware)
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickIMU.FUNCTION_ORIENTATION_CALCULATION_OFF, (), '', '')
 
     def is_orientation_calculation_on(self):
@@ -534,6 +603,8 @@ class BrickIMU(Device):
 
         .. versionadded:: 2.0.2$nbsp;(Firmware)
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_IS_ORIENTATION_CALCULATION_ON, (), '', '!')
 
     def set_spitfp_baudrate_config(self, enable_dynamic_baudrate, minimum_dynamic_baudrate):
@@ -542,8 +613,8 @@ class BrickIMU(Device):
         enabled, the Brick will try to adapt the baudrate for the communication
         between Bricks and Bricklets according to the amount of data that is transferred.
 
-        The baudrate will be increased exponentially if lots of data is send/received and
-        decreased linearly if little data is send/received.
+        The baudrate will be increased exponentially if lots of data is sent/received and
+        decreased linearly if little data is sent/received.
 
         This lowers the baudrate in applications where little data is transferred (e.g.
         a weather station) and increases the robustness. If there is lots of data to transfer
@@ -559,6 +630,8 @@ class BrickIMU(Device):
 
         .. versionadded:: 2.3.5$nbsp;(Firmware)
         """
+        self.check_validity()
+
         enable_dynamic_baudrate = bool(enable_dynamic_baudrate)
         minimum_dynamic_baudrate = int(minimum_dynamic_baudrate)
 
@@ -570,6 +643,8 @@ class BrickIMU(Device):
 
         .. versionadded:: 2.3.5$nbsp;(Firmware)
         """
+        self.check_validity()
+
         return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', '! I'))
 
     def get_send_timeout_count(self, communication_method):
@@ -583,6 +658,8 @@ class BrickIMU(Device):
 
         .. versionadded:: 2.3.3$nbsp;(Firmware)
         """
+        self.check_validity()
+
         communication_method = int(communication_method)
 
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
@@ -605,6 +682,8 @@ class BrickIMU(Device):
 
         .. versionadded:: 2.3.3$nbsp;(Firmware)
         """
+        self.check_validity()
+
         bricklet_port = create_char(bricklet_port)
         baudrate = int(baudrate)
 
@@ -616,6 +695,8 @@ class BrickIMU(Device):
 
         .. versionadded:: 2.3.3$nbsp;(Firmware)
         """
+        self.check_validity()
+
         bricklet_port = create_char(bricklet_port)
 
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
@@ -636,6 +717,8 @@ class BrickIMU(Device):
 
         .. versionadded:: 2.3.3$nbsp;(Firmware)
         """
+        self.check_validity()
+
         bricklet_port = create_char(bricklet_port)
 
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
@@ -651,6 +734,8 @@ class BrickIMU(Device):
 
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickIMU.FUNCTION_ENABLE_STATUS_LED, (), '', '')
 
     def disable_status_led(self):
@@ -664,6 +749,8 @@ class BrickIMU(Device):
 
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickIMU.FUNCTION_DISABLE_STATUS_LED, (), '', '')
 
     def is_status_led_enabled(self):
@@ -672,6 +759,8 @@ class BrickIMU(Device):
 
         .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '!')
 
     def get_protocol1_bricklet_name(self, port):
@@ -682,6 +771,8 @@ class BrickIMU(Device):
         This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
         plugins.
         """
+        self.check_validity()
+
         port = create_char(port)
 
         return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 'B 3B 40s'))
@@ -695,6 +786,8 @@ class BrickIMU(Device):
         accuracy of ±15%. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -706,7 +799,40 @@ class BrickIMU(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickIMU.FUNCTION_RESET, (), '', '')
+
+    def write_bricklet_plugin(self, port, offset, chunk):
+        """
+        Writes 32 bytes of firmware to the bricklet attached at the given port.
+        The bytes are written to the position offset * 32.
+
+        This function is used by Brick Viewer during flashing. It should not be
+        necessary to call it in a normal user program.
+        """
+        self.check_validity()
+
+        port = create_char(port)
+        offset = int(offset)
+        chunk = list(map(int, chunk))
+
+        self.ipcon.send_request(self, BrickIMU.FUNCTION_WRITE_BRICKLET_PLUGIN, (port, offset, chunk), 'c B 32B', '')
+
+    def read_bricklet_plugin(self, port, offset):
+        """
+        Reads 32 bytes of firmware from the bricklet attached at the given port.
+        The bytes are read starting at the position offset * 32.
+
+        This function is used by Brick Viewer during flashing. It should not be
+        necessary to call it in a normal user program.
+        """
+        self.check_validity()
+
+        port = create_char(port)
+        offset = int(offset)
+
+        return self.ipcon.send_request(self, BrickIMU.FUNCTION_READ_BRICKLET_PLUGIN, (port, offset), 'c B', '32B')
 
     def get_identity(self):
         """

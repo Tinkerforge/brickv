@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -52,7 +52,7 @@ class BrickletIndustrialAnalogOut(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletIndustrialAnalogOut.DEVICE_IDENTIFIER, BrickletIndustrialAnalogOut.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -68,6 +68,7 @@ class BrickletIndustrialAnalogOut(Device):
         self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_GET_IDENTITY] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+        ipcon.add_device(self)
 
     def enable(self):
         """
@@ -75,6 +76,8 @@ class BrickletIndustrialAnalogOut(Device):
 
         The default is disabled.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_ENABLE, (), '', '')
 
     def disable(self):
@@ -83,12 +86,16 @@ class BrickletIndustrialAnalogOut(Device):
 
         The default is disabled.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_DISABLE, (), '', '')
 
     def is_enabled(self):
         """
         Returns *true* if output of voltage and current is enabled, *false* otherwise.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_IS_ENABLED, (), '', '!')
 
     def set_voltage(self, voltage):
@@ -98,6 +105,8 @@ class BrickletIndustrialAnalogOut(Device):
         The output voltage and output current are linked. Changing the output voltage
         also changes the output current.
         """
+        self.check_validity()
+
         voltage = int(voltage)
 
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_VOLTAGE, (voltage,), 'H', '')
@@ -106,6 +115,8 @@ class BrickletIndustrialAnalogOut(Device):
         """
         Returns the voltage as set by :func:`Set Voltage`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_GET_VOLTAGE, (), '', 'H')
 
     def set_current(self, current):
@@ -115,6 +126,8 @@ class BrickletIndustrialAnalogOut(Device):
         The output current and output voltage are linked. Changing the output current
         also changes the output voltage.
         """
+        self.check_validity()
+
         current = int(current)
 
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_CURRENT, (current,), 'H', '')
@@ -123,6 +136,8 @@ class BrickletIndustrialAnalogOut(Device):
         """
         Returns the current as set by :func:`Set Current`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_GET_CURRENT, (), '', 'H')
 
     def set_configuration(self, voltage_range, current_range):
@@ -143,6 +158,8 @@ class BrickletIndustrialAnalogOut(Device):
         The resolution will always be 12 bit. This means, that the
         precision is higher with a smaller range.
         """
+        self.check_validity()
+
         voltage_range = int(voltage_range)
         current_range = int(current_range)
 
@@ -152,6 +169,8 @@ class BrickletIndustrialAnalogOut(Device):
         """
         Returns the configuration as set by :func:`Set Configuration`.
         """
+        self.check_validity()
+
         return GetConfiguration(*self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -74,7 +74,7 @@ class BrickletRGBLEDButton(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletRGBLEDButton.DEVICE_IDENTIFIER, BrickletRGBLEDButton.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -98,11 +98,14 @@ class BrickletRGBLEDButton(Device):
 
         self.callback_formats[BrickletRGBLEDButton.CALLBACK_BUTTON_STATE_CHANGED] = 'B'
 
+        ipcon.add_device(self)
 
     def set_color(self, red, green, blue):
         """
         Sets the color of the LED.
         """
+        self.check_validity()
+
         red = int(red)
         green = int(green)
         blue = int(blue)
@@ -113,12 +116,16 @@ class BrickletRGBLEDButton(Device):
         """
         Returns the LED color as set by :func:`Set Color`.
         """
+        self.check_validity()
+
         return GetColor(*self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_COLOR, (), '', 'B B B'))
 
     def get_button_state(self):
         """
         Returns the current state of the button (either pressed or released).
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_BUTTON_STATE, (), '', 'B')
 
     def set_color_calibration(self, red, green, blue):
@@ -129,6 +136,8 @@ class BrickletRGBLEDButton(Device):
         The calibration is saved in flash. You don't need to call this
         function on every startup.
         """
+        self.check_validity()
+
         red = int(red)
         green = int(green)
         blue = int(blue)
@@ -139,6 +148,8 @@ class BrickletRGBLEDButton(Device):
         """
         Returns the color calibration as set by :func:`Set Color Calibration`.
         """
+        self.check_validity()
+
         return GetColorCalibration(*self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_COLOR_CALIBRATION, (), '', 'B B B'))
 
     def get_spitfp_error_count(self):
@@ -155,6 +166,8 @@ class BrickletRGBLEDButton(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -169,6 +182,8 @@ class BrickletRGBLEDButton(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -177,6 +192,8 @@ class BrickletRGBLEDButton(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -188,6 +205,8 @@ class BrickletRGBLEDButton(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -203,6 +222,8 @@ class BrickletRGBLEDButton(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -217,6 +238,8 @@ class BrickletRGBLEDButton(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -225,6 +248,8 @@ class BrickletRGBLEDButton(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -236,6 +261,8 @@ class BrickletRGBLEDButton(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -247,6 +274,8 @@ class BrickletRGBLEDButton(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -257,6 +286,8 @@ class BrickletRGBLEDButton(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -266,6 +297,8 @@ class BrickletRGBLEDButton(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -45,7 +45,7 @@ class BrickletDualRelay(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletDualRelay.DEVICE_IDENTIFIER, BrickletDualRelay.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -58,6 +58,7 @@ class BrickletDualRelay(Device):
 
         self.callback_formats[BrickletDualRelay.CALLBACK_MONOFLOP_DONE] = 'B !'
 
+        ipcon.add_device(self)
 
     def set_state(self, relay1, relay2):
         """
@@ -70,6 +71,8 @@ class BrickletDualRelay(Device):
 
         All running monoflop timers will be aborted if this function is called.
         """
+        self.check_validity()
+
         relay1 = bool(relay1)
         relay2 = bool(relay2)
 
@@ -79,6 +82,8 @@ class BrickletDualRelay(Device):
         """
         Returns the state of the relays, *true* means on and *false* means off.
         """
+        self.check_validity()
+
         return GetState(*self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_GET_STATE, (), '', '! !'))
 
     def set_monoflop(self, relay, state, time):
@@ -97,6 +102,8 @@ class BrickletDualRelay(Device):
         of two seconds. The relay will be on all the time. If now the RS485
         connection is lost, the relay will turn off in at most two seconds.
         """
+        self.check_validity()
+
         relay = int(relay)
         state = bool(state)
         time = int(time)
@@ -111,6 +118,8 @@ class BrickletDualRelay(Device):
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
+        self.check_validity()
+
         relay = int(relay)
 
         return GetMonoflop(*self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_GET_MONOFLOP, (relay,), 'B', '! I I'))
@@ -123,6 +132,8 @@ class BrickletDualRelay(Device):
 
         The other relay remains untouched.
         """
+        self.check_validity()
+
         relay = int(relay)
         state = bool(state)
 

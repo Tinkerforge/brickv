@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -50,7 +50,7 @@ class BrickletLCD16x2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletLCD16x2.DEVICE_IDENTIFIER, BrickletLCD16x2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 1)
 
@@ -69,6 +69,7 @@ class BrickletLCD16x2(Device):
         self.callback_formats[BrickletLCD16x2.CALLBACK_BUTTON_PRESSED] = 'B'
         self.callback_formats[BrickletLCD16x2.CALLBACK_BUTTON_RELEASED] = 'B'
 
+        ipcon.add_device(self)
 
     def write_line(self, line, position, text):
         """
@@ -84,6 +85,8 @@ class BrickletLCD16x2(Device):
         for details. The Unicode example above shows how to specify non-ASCII characters
         and how to translate from Unicode to the LCD charset.
         """
+        self.check_validity()
+
         line = int(line)
         position = int(position)
         text = create_string(text)
@@ -94,24 +97,32 @@ class BrickletLCD16x2(Device):
         """
         Deletes all characters from the display.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_CLEAR_DISPLAY, (), '', '')
 
     def backlight_on(self):
         """
         Turns the backlight on.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_BACKLIGHT_ON, (), '', '')
 
     def backlight_off(self):
         """
         Turns the backlight off.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_BACKLIGHT_OFF, (), '', '')
 
     def is_backlight_on(self):
         """
         Returns *true* if the backlight is on and *false* otherwise.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_IS_BACKLIGHT_ON, (), '', '!')
 
     def set_config(self, cursor, blinking):
@@ -121,6 +132,8 @@ class BrickletLCD16x2(Device):
         is one character behind the the last text written with
         :func:`Write Line`.
         """
+        self.check_validity()
+
         cursor = bool(cursor)
         blinking = bool(blinking)
 
@@ -130,6 +143,8 @@ class BrickletLCD16x2(Device):
         """
         Returns the configuration as set by :func:`Set Config`.
         """
+        self.check_validity()
+
         return GetConfig(*self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_GET_CONFIG, (), '', '! !'))
 
     def is_button_pressed(self, button):
@@ -139,6 +154,8 @@ class BrickletLCD16x2(Device):
         If you want to react on button presses and releases it is recommended to use the
         :cb:`Button Pressed` and :cb:`Button Released` callbacks.
         """
+        self.check_validity()
+
         button = int(button)
 
         return self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_IS_BUTTON_PRESSED, (button,), 'B', '!')
@@ -160,7 +177,8 @@ class BrickletLCD16x2(Device):
         * ``character[7] = 0b00000000`` (decimal value 0)
 
         The characters can later be written with :func:`Write Line` by using the
-        characters with the byte representation 8 to 15.
+        characters with the byte representation 8 ("\\x08" or "\\u0008") to 15
+        ("\\x0F" or "\\u000F").
 
         You can play around with the custom characters in Brick Viewer since
         version 2.0.1.
@@ -170,6 +188,8 @@ class BrickletLCD16x2(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         index = int(index)
         character = list(map(int, character))
 
@@ -182,6 +202,8 @@ class BrickletLCD16x2(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         index = int(index)
 
         return self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_GET_CUSTOM_CHARACTER, (index,), 'B', '8B')

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -80,7 +80,7 @@ class BrickletIndustrialDigitalOut4V2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletIndustrialDigitalOut4V2.DEVICE_IDENTIFIER, BrickletIndustrialDigitalOut4V2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -108,6 +108,7 @@ class BrickletIndustrialDigitalOut4V2(Device):
 
         self.callback_formats[BrickletIndustrialDigitalOut4V2.CALLBACK_MONOFLOP_DONE] = 'B !'
 
+        ipcon.add_device(self)
 
     def set_value(self, value):
         """
@@ -121,6 +122,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         For example: (True, True, False, False) will turn the channels 0-1 high and the
         channels 2-3 low.
         """
+        self.check_validity()
+
         value = list(map(bool, value))
 
         self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_SET_VALUE, (value,), '4!', '')
@@ -129,6 +132,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         """
         Returns the logic levels that are currently output on the channels.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_GET_VALUE, (), '', '4!')
 
     def set_selected_value(self, channel, value):
@@ -138,6 +143,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         A running monoflop timer or PWM for the specified channel will be aborted if this
         function is called.
         """
+        self.check_validity()
+
         channel = int(channel)
         value = bool(value)
 
@@ -160,6 +167,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         of two seconds. The channel will be *high* all the time. If now the RS485
         connection is lost, the channel will turn *low* in at most two seconds.
         """
+        self.check_validity()
+
         channel = int(channel)
         value = bool(value)
         time = int(time)
@@ -174,6 +183,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return GetMonoflop(*self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_GET_MONOFLOP, (channel,), 'B', '! I I'))
@@ -186,6 +197,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
 
         By default all channel LEDs are configured as "Channel Status".
         """
+        self.check_validity()
+
         channel = int(channel)
         config = int(config)
 
@@ -195,6 +208,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         """
         Returns the channel LED configuration as set by :func:`Set Channel LED Config`
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 'B')
@@ -213,6 +228,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         A running monoflop timer for the given channel will be aborted if this function
         is called.
         """
+        self.check_validity()
+
         channel = int(channel)
         frequency = int(frequency)
         duty_cycle = int(duty_cycle)
@@ -223,6 +240,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         """
         Returns the PWM configuration as set by :func:`Set PWM Configuration`.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return GetPWMConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_GET_PWM_CONFIGURATION, (channel,), 'B', 'I H'))
@@ -241,6 +260,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -255,6 +276,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -263,6 +286,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -274,6 +299,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -289,6 +316,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -303,6 +332,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -311,6 +342,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -322,6 +355,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -333,6 +368,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -343,6 +380,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -352,6 +391,8 @@ class BrickletIndustrialDigitalOut4V2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4V2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

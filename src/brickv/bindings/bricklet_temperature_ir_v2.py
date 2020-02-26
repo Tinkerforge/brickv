@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -81,7 +81,7 @@ class BrickletTemperatureIRV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletTemperatureIRV2.DEVICE_IDENTIFIER, BrickletTemperatureIRV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 1)
 
@@ -109,6 +109,7 @@ class BrickletTemperatureIRV2(Device):
         self.callback_formats[BrickletTemperatureIRV2.CALLBACK_AMBIENT_TEMPERATURE] = 'h'
         self.callback_formats[BrickletTemperatureIRV2.CALLBACK_OBJECT_TEMPERATURE] = 'h'
 
+        ipcon.add_device(self)
 
     def get_ambient_temperature(self):
         """
@@ -119,6 +120,8 @@ class BrickletTemperatureIRV2(Device):
         :cb:`Ambient Temperature` callback. You can set the callback configuration
         with :func:`Set Ambient Temperature Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_GET_AMBIENT_TEMPERATURE, (), '', 'h')
 
     def set_ambient_temperature_callback_configuration(self, period, value_has_to_change, option, min, max):
@@ -151,6 +154,8 @@ class BrickletTemperatureIRV2(Device):
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
         option = create_char(option)
@@ -163,6 +168,8 @@ class BrickletTemperatureIRV2(Device):
         """
         Returns the callback configuration as set by :func:`Set Ambient Temperature Callback Configuration`.
         """
+        self.check_validity()
+
         return GetAmbientTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 'I ! c h h'))
 
     def get_object_temperature(self):
@@ -179,6 +186,8 @@ class BrickletTemperatureIRV2(Device):
         :cb:`Object Temperature` callback. You can set the callback configuration
         with :func:`Set Object Temperature Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_GET_OBJECT_TEMPERATURE, (), '', 'h')
 
     def set_object_temperature_callback_configuration(self, period, value_has_to_change, option, min, max):
@@ -211,6 +220,8 @@ class BrickletTemperatureIRV2(Device):
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
         option = create_char(option)
@@ -223,6 +234,8 @@ class BrickletTemperatureIRV2(Device):
         """
         Returns the callback configuration as set by :func:`Set Object Temperature Callback Configuration`.
         """
+        self.check_validity()
+
         return GetObjectTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 'I ! c h h'))
 
     def set_emissivity(self, emissivity):
@@ -246,6 +259,8 @@ class BrickletTemperatureIRV2(Device):
         The emissivity is stored in non-volatile memory and will still be
         used after a restart or power cycle of the Bricklet.
         """
+        self.check_validity()
+
         emissivity = int(emissivity)
 
         self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_SET_EMISSIVITY, (emissivity,), 'H', '')
@@ -254,6 +269,8 @@ class BrickletTemperatureIRV2(Device):
         """
         Returns the emissivity as set by :func:`Set Emissivity`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_GET_EMISSIVITY, (), '', 'H')
 
     def get_spitfp_error_count(self):
@@ -270,6 +287,8 @@ class BrickletTemperatureIRV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -284,6 +303,8 @@ class BrickletTemperatureIRV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -292,6 +313,8 @@ class BrickletTemperatureIRV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -303,6 +326,8 @@ class BrickletTemperatureIRV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -318,6 +343,8 @@ class BrickletTemperatureIRV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -332,6 +359,8 @@ class BrickletTemperatureIRV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -340,6 +369,8 @@ class BrickletTemperatureIRV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -351,6 +382,8 @@ class BrickletTemperatureIRV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -362,6 +395,8 @@ class BrickletTemperatureIRV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -372,6 +407,8 @@ class BrickletTemperatureIRV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -381,6 +418,8 @@ class BrickletTemperatureIRV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletTemperatureIRV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -91,7 +91,7 @@ class BrickletLoadCellV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletLoadCellV2.DEVICE_IDENTIFIER, BrickletLoadCellV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -121,6 +121,7 @@ class BrickletLoadCellV2(Device):
 
         self.callback_formats[BrickletLoadCellV2.CALLBACK_WEIGHT] = 'i'
 
+        ipcon.add_device(self)
 
     def get_weight(self):
         """
@@ -131,6 +132,8 @@ class BrickletLoadCellV2(Device):
         :cb:`Weight` callback. You can set the callback configuration
         with :func:`Set Weight Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_GET_WEIGHT, (), '', 'i')
 
     def set_weight_callback_configuration(self, period, value_has_to_change, option, min, max):
@@ -163,6 +166,8 @@ class BrickletLoadCellV2(Device):
 
         If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
         option = create_char(option)
@@ -175,6 +180,8 @@ class BrickletLoadCellV2(Device):
         """
         Returns the callback configuration as set by :func:`Set Weight Callback Configuration`.
         """
+        self.check_validity()
+
         return GetWeightCallbackConfiguration(*self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_GET_WEIGHT_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
 
     def set_moving_average(self, average):
@@ -185,6 +192,8 @@ class BrickletLoadCellV2(Device):
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
         """
+        self.check_validity()
+
         average = int(average)
 
         self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_SET_MOVING_AVERAGE, (average,), 'H', '')
@@ -193,6 +202,8 @@ class BrickletLoadCellV2(Device):
         """
         Returns the length moving average as set by :func:`Set Moving Average`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_GET_MOVING_AVERAGE, (), '', 'H')
 
     def set_info_led_config(self, config):
@@ -200,6 +211,8 @@ class BrickletLoadCellV2(Device):
         Configures the info LED to be either turned off, turned on, or blink in
         heartbeat mode.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_SET_INFO_LED_CONFIG, (config,), 'B', '')
@@ -208,6 +221,8 @@ class BrickletLoadCellV2(Device):
         """
         Returns the LED configuration as set by :func:`Set Info LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_GET_INFO_LED_CONFIG, (), '', 'B')
 
     def calibrate(self, weight):
@@ -223,6 +238,8 @@ class BrickletLoadCellV2(Device):
         We recommend to use the Brick Viewer for calibration, you don't need
         to call this function in your source code.
         """
+        self.check_validity()
+
         weight = int(weight)
 
         self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_CALIBRATE, (weight,), 'I', '')
@@ -231,6 +248,8 @@ class BrickletLoadCellV2(Device):
         """
         Sets the currently measured weight as tare weight.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_TARE, (), '', '')
 
     def set_configuration(self, rate, gain):
@@ -248,6 +267,8 @@ class BrickletLoadCellV2(Device):
         is best). If you don't know what all of this means you should keep it at
         128x, it will most likely be correct.
         """
+        self.check_validity()
+
         rate = int(rate)
         gain = int(gain)
 
@@ -257,6 +278,8 @@ class BrickletLoadCellV2(Device):
         """
         Returns the configuration as set by :func:`Set Configuration`.
         """
+        self.check_validity()
+
         return GetConfiguration(*self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
     def get_spitfp_error_count(self):
@@ -273,6 +296,8 @@ class BrickletLoadCellV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -287,6 +312,8 @@ class BrickletLoadCellV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -295,6 +322,8 @@ class BrickletLoadCellV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -306,6 +335,8 @@ class BrickletLoadCellV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -321,6 +352,8 @@ class BrickletLoadCellV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -335,6 +368,8 @@ class BrickletLoadCellV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -343,6 +378,8 @@ class BrickletLoadCellV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -354,6 +391,8 @@ class BrickletLoadCellV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -365,6 +404,8 @@ class BrickletLoadCellV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -375,6 +416,8 @@ class BrickletLoadCellV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -384,6 +427,8 @@ class BrickletLoadCellV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLoadCellV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

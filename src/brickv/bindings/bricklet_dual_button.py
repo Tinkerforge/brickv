@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -52,7 +52,7 @@ class BrickletDualButton(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletDualButton.DEVICE_IDENTIFIER, BrickletDualButton.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -64,6 +64,7 @@ class BrickletDualButton(Device):
 
         self.callback_formats[BrickletDualButton.CALLBACK_STATE_CHANGED] = 'B B B B'
 
+        ipcon.add_device(self)
 
     def set_led_state(self, led_l, led_r):
         """
@@ -80,6 +81,8 @@ class BrickletDualButton(Device):
         of the other LED, you can get the state with :func:`Get LED State` or you
         can use :func:`Set Selected LED State`.
         """
+        self.check_validity()
+
         led_l = int(led_l)
         led_r = int(led_r)
 
@@ -89,6 +92,8 @@ class BrickletDualButton(Device):
         """
         Returns the current state of the LEDs, as set by :func:`Set LED State`.
         """
+        self.check_validity()
+
         return GetLEDState(*self.ipcon.send_request(self, BrickletDualButton.FUNCTION_GET_LED_STATE, (), '', 'B B'))
 
     def get_button_state(self):
@@ -98,6 +103,8 @@ class BrickletDualButton(Device):
         * 0 = pressed
         * 1 = released
         """
+        self.check_validity()
+
         return GetButtonState(*self.ipcon.send_request(self, BrickletDualButton.FUNCTION_GET_BUTTON_STATE, (), '', 'B B'))
 
     def set_selected_led_state(self, led, state):
@@ -106,6 +113,8 @@ class BrickletDualButton(Device):
 
         The other LED remains untouched.
         """
+        self.check_validity()
+
         led = int(led)
         state = int(state)
 

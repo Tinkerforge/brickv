@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -40,7 +40,7 @@ class BrickletRGBLED(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletRGBLED.DEVICE_IDENTIFIER, BrickletRGBLED.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -49,11 +49,14 @@ class BrickletRGBLED(Device):
         self.response_expected[BrickletRGBLED.FUNCTION_GET_IDENTITY] = BrickletRGBLED.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
+        ipcon.add_device(self)
 
     def set_rgb_value(self, r, g, b):
         """
         Sets the *r*, *g* and *b* values for the LED.
         """
+        self.check_validity()
+
         r = int(r)
         g = int(g)
         b = int(b)
@@ -64,6 +67,8 @@ class BrickletRGBLED(Device):
         """
         Returns the *r*, *g* and *b* values of the LED as set by :func:`Set RGB Value`.
         """
+        self.check_validity()
+
         return GetRGBValue(*self.ipcon.send_request(self, BrickletRGBLED.FUNCTION_GET_RGB_VALUE, (), '', 'B B B'))
 
     def get_identity(self):

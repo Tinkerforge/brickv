@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletRS232V2(Device):
 
     CALLBACK_READ_LOW_LEVEL = 12
     CALLBACK_ERROR_COUNT = 13
+    CALLBACK_FRAME_READABLE = 16
 
     CALLBACK_READ = -12
 
@@ -49,6 +50,8 @@ class BrickletRS232V2(Device):
     FUNCTION_GET_BUFFER_CONFIG = 9
     FUNCTION_GET_BUFFER_STATUS = 10
     FUNCTION_GET_ERROR_COUNT = 11
+    FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION = 14
+    FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION = 15
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -95,9 +98,9 @@ class BrickletRS232V2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletRS232V2.DEVICE_IDENTIFIER, BrickletRS232V2.DEVICE_DISPLAY_NAME)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletRS232V2.FUNCTION_WRITE_LOW_LEVEL] = BrickletRS232V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232V2.FUNCTION_READ_LOW_LEVEL] = BrickletRS232V2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -110,6 +113,8 @@ class BrickletRS232V2(Device):
         self.response_expected[BrickletRS232V2.FUNCTION_GET_BUFFER_CONFIG] = BrickletRS232V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232V2.FUNCTION_GET_BUFFER_STATUS] = BrickletRS232V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232V2.FUNCTION_GET_ERROR_COUNT] = BrickletRS232V2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS232V2.FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION] = BrickletRS232V2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletRS232V2.FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION] = BrickletRS232V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232V2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletRS232V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232V2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletRS232V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232V2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletRS232V2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -125,8 +130,10 @@ class BrickletRS232V2(Device):
 
         self.callback_formats[BrickletRS232V2.CALLBACK_READ_LOW_LEVEL] = 'H H 60c'
         self.callback_formats[BrickletRS232V2.CALLBACK_ERROR_COUNT] = 'I I'
+        self.callback_formats[BrickletRS232V2.CALLBACK_FRAME_READABLE] = 'H'
 
         self.high_level_callbacks[BrickletRS232V2.CALLBACK_READ] = [('stream_length', 'stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': False}, None]
+        ipcon.add_device(self)
 
     def write_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
@@ -138,6 +145,8 @@ class BrickletRS232V2(Device):
         See :func:`Set Configuration` for configuration possibilities
         regarding baud rate, parity and so on.
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -153,16 +162,20 @@ class BrickletRS232V2(Device):
         data only when the read callback is disabled.
         See :func:`Enable Read Callback` and :cb:`Read` callback.
         """
+        self.check_validity()
+
         length = int(length)
 
         return ReadLowLevel(*self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_READ_LOW_LEVEL, (length,), 'H', 'H H 60c'))
 
     def enable_read_callback(self):
         """
-        Enables the :cb:`Read` callback.
+        Enables the :cb:`Read` callback. This will disable the :cb:`Frame Readable` callback.
 
         By default the callback is disabled.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_ENABLE_READ_CALLBACK, (), '', '')
 
     def disable_read_callback(self):
@@ -171,6 +184,8 @@ class BrickletRS232V2(Device):
 
         By default the callback is disabled.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_DISABLE_READ_CALLBACK, (), '', '')
 
     def is_read_callback_enabled(self):
@@ -178,12 +193,16 @@ class BrickletRS232V2(Device):
         Returns *true* if the :cb:`Read` callback is enabled,
         *false* otherwise.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_IS_READ_CALLBACK_ENABLED, (), '', '!')
 
     def set_configuration(self, baudrate, parity, stopbits, wordlength, flowcontrol):
         """
         Sets the configuration for the RS232 communication.
         """
+        self.check_validity()
+
         baudrate = int(baudrate)
         parity = int(parity)
         stopbits = int(stopbits)
@@ -196,6 +215,8 @@ class BrickletRS232V2(Device):
         """
         Returns the configuration as set by :func:`Set Configuration`.
         """
+        self.check_validity()
+
         return GetConfiguration(*self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_GET_CONFIGURATION, (), '', 'I B B B B'))
 
     def set_buffer_config(self, send_buffer_size, receive_buffer_size):
@@ -210,6 +231,8 @@ class BrickletRS232V2(Device):
         received through RS232 but could not yet be send to the
         user, either by :func:`Read` or through :cb:`Read` callback.
         """
+        self.check_validity()
+
         send_buffer_size = int(send_buffer_size)
         receive_buffer_size = int(receive_buffer_size)
 
@@ -219,6 +242,8 @@ class BrickletRS232V2(Device):
         """
         Returns the buffer configuration as set by :func:`Set Buffer Config`.
         """
+        self.check_validity()
+
         return GetBufferConfig(*self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_GET_BUFFER_CONFIG, (), '', 'H H'))
 
     def get_buffer_status(self):
@@ -227,13 +252,42 @@ class BrickletRS232V2(Device):
 
         See :func:`Set Buffer Config` for buffer size configuration.
         """
+        self.check_validity()
+
         return GetBufferStatus(*self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_GET_BUFFER_STATUS, (), '', 'H H'))
 
     def get_error_count(self):
         """
         Returns the current number of overrun and parity errors.
         """
+        self.check_validity()
+
         return GetErrorCount(*self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_GET_ERROR_COUNT, (), '', 'I I'))
+
+    def set_frame_readable_callback_configuration(self, frame_size):
+        """
+        Configures the :cb:`Frame Readable` callback. The frame size is the number of bytes, that have to be readable to trigger the callback.
+        A frame size of 0 disables the callback. A frame size greater than 0 enables the callback and disables the :cb:`Read` callback.
+
+        By default the callback is disabled.
+
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        frame_size = int(frame_size)
+
+        self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION, (frame_size,), 'H', '')
+
+    def get_frame_readable_callback_configuration(self):
+        """
+        Returns the callback configuration as set by :func:`Set Frame Readable Callback Configuration`.
+
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION, (), '', 'H')
 
     def get_spitfp_error_count(self):
         """
@@ -249,6 +303,8 @@ class BrickletRS232V2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -263,6 +319,8 @@ class BrickletRS232V2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -271,6 +329,8 @@ class BrickletRS232V2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -282,6 +342,8 @@ class BrickletRS232V2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -297,6 +359,8 @@ class BrickletRS232V2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -311,6 +375,8 @@ class BrickletRS232V2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -319,6 +385,8 @@ class BrickletRS232V2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -330,6 +398,8 @@ class BrickletRS232V2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -341,6 +411,8 @@ class BrickletRS232V2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -351,6 +423,8 @@ class BrickletRS232V2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -360,6 +434,8 @@ class BrickletRS232V2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRS232V2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

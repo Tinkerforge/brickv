@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -50,7 +50,7 @@ class BrickletRemoteSwitch(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletRemoteSwitch.DEVICE_IDENTIFIER, BrickletRemoteSwitch.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 1)
 
@@ -66,11 +66,14 @@ class BrickletRemoteSwitch(Device):
 
         self.callback_formats[BrickletRemoteSwitch.CALLBACK_SWITCHING_DONE] = ''
 
+        ipcon.add_device(self)
 
     def switch_socket(self, house_code, receiver_code, switch_to):
         """
         This function is deprecated, use :func:`Switch Socket A` instead.
         """
+        self.check_validity()
+
         house_code = int(house_code)
         receiver_code = int(receiver_code)
         switch_to = int(switch_to)
@@ -86,17 +89,21 @@ class BrickletRemoteSwitch(Device):
         How long the switching takes is dependent on the number of repeats, see
         :func:`Set Repeats`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_GET_SWITCHING_STATE, (), '', 'B')
 
     def set_repeats(self, repeats):
         """
-        Sets the number of times the code is send when of the :func:`Switch Socket`
+        Sets the number of times the code is sent when of the :func:`Switch Socket`
         functions is called. The repeats basically correspond to the amount of time
         that a button of the remote is pressed.
 
         Some dimmers are controlled by the length of a button pressed,
         this can be simulated by increasing the repeats.
         """
+        self.check_validity()
+
         repeats = int(repeats)
 
         self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SET_REPEATS, (repeats,), 'B', '')
@@ -105,6 +112,8 @@ class BrickletRemoteSwitch(Device):
         """
         Returns the number of repeats as set by :func:`Set Repeats`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_GET_REPEATS, (), '', 'B')
 
     def switch_socket_a(self, house_code, receiver_code, switch_to):
@@ -117,6 +126,8 @@ class BrickletRemoteSwitch(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         house_code = int(house_code)
         receiver_code = int(receiver_code)
         switch_to = int(switch_to)
@@ -135,6 +146,8 @@ class BrickletRemoteSwitch(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         address = int(address)
         unit = int(unit)
         switch_to = int(switch_to)
@@ -151,6 +164,8 @@ class BrickletRemoteSwitch(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         address = int(address)
         unit = int(unit)
         dim_value = int(dim_value)
@@ -167,6 +182,8 @@ class BrickletRemoteSwitch(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         system_code = create_char(system_code)
         device_code = int(device_code)
         switch_to = int(switch_to)

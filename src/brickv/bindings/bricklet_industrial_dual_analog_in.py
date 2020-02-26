@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -66,7 +66,7 @@ class BrickletIndustrialDualAnalogIn(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletIndustrialDualAnalogIn.DEVICE_IDENTIFIER, BrickletIndustrialDualAnalogIn.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -87,6 +87,7 @@ class BrickletIndustrialDualAnalogIn(Device):
         self.callback_formats[BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE] = 'B i'
         self.callback_formats[BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE_REACHED] = 'B i'
 
+        ipcon.add_device(self)
 
     def get_voltage(self, channel):
         """
@@ -96,6 +97,8 @@ class BrickletIndustrialDualAnalogIn(Device):
         :cb:`Voltage` callback and set the period with
         :func:`Set Voltage Callback Period`.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_VOLTAGE, (channel,), 'B', 'i')
@@ -108,6 +111,8 @@ class BrickletIndustrialDualAnalogIn(Device):
         The :cb:`Voltage` callback is only triggered if the voltage has changed since the
         last triggering.
         """
+        self.check_validity()
+
         channel = int(channel)
         period = int(period)
 
@@ -117,6 +122,8 @@ class BrickletIndustrialDualAnalogIn(Device):
         """
         Returns the period as set by :func:`Set Voltage Callback Period`.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_VOLTAGE_CALLBACK_PERIOD, (channel,), 'B', 'I')
@@ -138,6 +145,8 @@ class BrickletIndustrialDualAnalogIn(Device):
          "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
         """
+        self.check_validity()
+
         channel = int(channel)
         option = create_char(option)
         min = int(min)
@@ -149,6 +158,8 @@ class BrickletIndustrialDualAnalogIn(Device):
         """
         Returns the threshold as set by :func:`Set Voltage Callback Threshold`.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return GetVoltageCallbackThreshold(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_VOLTAGE_CALLBACK_THRESHOLD, (channel,), 'B', 'c i i'))
@@ -165,6 +176,8 @@ class BrickletIndustrialDualAnalogIn(Device):
 
         keeps being reached.
         """
+        self.check_validity()
+
         debounce = int(debounce)
 
         self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -173,6 +186,8 @@ class BrickletIndustrialDualAnalogIn(Device):
         """
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def set_sample_rate(self, rate):
@@ -181,6 +196,8 @@ class BrickletIndustrialDualAnalogIn(Device):
         and 976 samples per second. Decreasing the sample rate will also decrease the
         noise on the data.
         """
+        self.check_validity()
+
         rate = int(rate)
 
         self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_SAMPLE_RATE, (rate,), 'B', '')
@@ -189,6 +206,8 @@ class BrickletIndustrialDualAnalogIn(Device):
         """
         Returns the sample rate as set by :func:`Set Sample Rate`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_SAMPLE_RATE, (), '', 'B')
 
     def set_calibration(self, offset, gain):
@@ -199,6 +218,8 @@ class BrickletIndustrialDualAnalogIn(Device):
         is already factory calibrated by Tinkerforge. It should not be necessary
         for you to use this function
         """
+        self.check_validity()
+
         offset = list(map(int, offset))
         gain = list(map(int, gain))
 
@@ -208,6 +229,8 @@ class BrickletIndustrialDualAnalogIn(Device):
         """
         Returns the calibration as set by :func:`Set Calibration`.
         """
+        self.check_validity()
+
         return GetCalibration(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_CALIBRATION, (), '', '2i 2i'))
 
     def get_adc_values(self):
@@ -215,6 +238,8 @@ class BrickletIndustrialDualAnalogIn(Device):
         Returns the ADC values as given by the MCP3911 IC. This function
         is needed for proper calibration, see :func:`Set Calibration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_ADC_VALUES, (), '', '2i')
 
     def get_identity(self):

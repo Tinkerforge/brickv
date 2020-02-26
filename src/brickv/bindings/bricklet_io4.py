@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -61,7 +61,7 @@ class BrickletIO4(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletIO4.DEVICE_IDENTIFIER, BrickletIO4.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 1)
 
@@ -84,6 +84,7 @@ class BrickletIO4(Device):
         self.callback_formats[BrickletIO4.CALLBACK_INTERRUPT] = 'B B'
         self.callback_formats[BrickletIO4.CALLBACK_MONOFLOP_DONE] = 'B B'
 
+        ipcon.add_device(self)
 
     def set_value(self, value_mask):
         """
@@ -99,6 +100,8 @@ class BrickletIO4(Device):
          This function does nothing for pins that are configured as input.
          Pull-up resistors can be switched on with :func:`Set Configuration`.
         """
+        self.check_validity()
+
         value_mask = int(value_mask)
 
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_VALUE, (value_mask,), 'B', '')
@@ -109,6 +112,8 @@ class BrickletIO4(Device):
         This function works if the pin is configured to input
         as well as if it is configured to output.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_VALUE, (), '', 'B')
 
     def set_configuration(self, selection_mask, direction, value):
@@ -132,6 +137,8 @@ class BrickletIO4(Device):
         Running monoflop timers for the specified pins will be aborted if this
         function is called.
         """
+        self.check_validity()
+
         selection_mask = int(selection_mask)
         direction = create_char(direction)
         value = bool(value)
@@ -151,6 +158,8 @@ class BrickletIO4(Device):
         * pin 2 is configured as output high and
         * pin 3 is are configured as output low.
         """
+        self.check_validity()
+
         return GetConfiguration(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
     def set_debounce_period(self, debounce):
@@ -161,6 +170,8 @@ class BrickletIO4(Device):
         maximal every 100ms. This is necessary if something that bounces is
         connected to the IO-4 Bricklet, such as a button.
         """
+        self.check_validity()
+
         debounce = int(debounce)
 
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -169,6 +180,8 @@ class BrickletIO4(Device):
         """
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def set_interrupt(self, interrupt_mask):
@@ -182,6 +195,8 @@ class BrickletIO4(Device):
 
         The interrupt is delivered with the :cb:`Interrupt` callback.
         """
+        self.check_validity()
+
         interrupt_mask = int(interrupt_mask)
 
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_INTERRUPT, (interrupt_mask,), 'B', '')
@@ -190,6 +205,8 @@ class BrickletIO4(Device):
         """
         Returns the interrupt bitmask as set by :func:`Set Interrupt`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_INTERRUPT, (), '', 'B')
 
     def set_monoflop(self, selection_mask, value_mask, time):
@@ -214,6 +231,8 @@ class BrickletIO4(Device):
         of two seconds and pin 0 set to high. Pin 0 will be high all the time. If now
         the RS485 connection is lost, then pin 0 will get low in at most two seconds.
         """
+        self.check_validity()
+
         selection_mask = int(selection_mask)
         value_mask = int(value_mask)
         time = int(time)
@@ -228,6 +247,8 @@ class BrickletIO4(Device):
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
+        self.check_validity()
+
         pin = int(pin)
 
         return GetMonoflop(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_MONOFLOP, (pin,), 'B', 'B I I'))
@@ -248,6 +269,8 @@ class BrickletIO4(Device):
          This function does nothing for pins that are configured as input.
          Pull-up resistors can be switched on with :func:`Set Configuration`.
         """
+        self.check_validity()
+
         selection_mask = int(selection_mask)
         value_mask = int(value_mask)
 
@@ -263,6 +286,8 @@ class BrickletIO4(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         pin = int(pin)
         reset_counter = bool(reset_counter)
 
@@ -286,6 +311,8 @@ class BrickletIO4(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         selection_mask = int(selection_mask)
         edge_type = int(edge_type)
         debounce = int(debounce)
@@ -299,6 +326,8 @@ class BrickletIO4(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         pin = int(pin)
 
         return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_EDGE_COUNT_CONFIG, (pin,), 'B', 'B B'))

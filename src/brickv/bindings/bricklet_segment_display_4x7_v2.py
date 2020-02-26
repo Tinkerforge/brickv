@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -75,7 +75,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletSegmentDisplay4x7V2.DEVICE_IDENTIFIER, BrickletSegmentDisplay4x7V2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -103,6 +103,7 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         self.callback_formats[BrickletSegmentDisplay4x7V2.CALLBACK_COUNTER_FINISHED] = ''
 
+        ipcon.add_device(self)
 
     def set_segments(self, digit0, digit1, digit2, digit3, colon, tick):
         """
@@ -117,6 +118,8 @@ class BrickletSegmentDisplay4x7V2(Device):
            :alt: Indices of segments
            :align: center
         """
+        self.check_validity()
+
         digit0 = list(map(bool, digit0))
         digit1 = list(map(bool, digit1))
         digit2 = list(map(bool, digit2))
@@ -130,12 +133,16 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         Returns the segment data as set by :func:`Set Segments`.
         """
+        self.check_validity()
+
         return GetSegments(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SEGMENTS, (), '', '8! 8! 8! 8! 2! !'))
 
     def set_brightness(self, brightness):
         """
         The brightness can be set between 0 (dark) and 7 (bright).
         """
+        self.check_validity()
+
         brightness = int(brightness)
 
         self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_BRIGHTNESS, (brightness,), 'B', '')
@@ -144,6 +151,8 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         Returns the brightness as set by :func:`Set Brightness`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_BRIGHTNESS, (), '', 'B')
 
     def set_numeric_value(self, value):
@@ -162,6 +171,8 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         Example: A call with [-2, -1, 4, 2] will result in a display of "- 42".
         """
+        self.check_validity()
+
         value = list(map(int, value))
 
         self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_NUMERIC_VALUE, (value,), '4b', '')
@@ -177,6 +188,8 @@ class BrickletSegmentDisplay4x7V2(Device):
            :alt: Indices of selected segments
            :align: center
         """
+        self.check_validity()
+
         segment = int(segment)
         value = bool(value)
 
@@ -186,6 +199,8 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         Returns the value of a single segment.
         """
+        self.check_validity()
+
         segment = int(segment)
 
         return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SELECTED_SEGMENT, (segment,), 'B', '!')
@@ -205,6 +220,8 @@ class BrickletSegmentDisplay4x7V2(Device):
         You can stop the counter at every time by calling :func:`Set Segments`
         or :func:`Set Numeric Value`.
         """
+        self.check_validity()
+
         value_from = int(value_from)
         value_to = int(value_to)
         increment = int(increment)
@@ -218,6 +235,8 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         If there is no counter running a 0 will be returned.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_COUNTER_VALUE, (), '', 'H')
 
     def get_spitfp_error_count(self):
@@ -234,6 +253,8 @@ class BrickletSegmentDisplay4x7V2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -248,6 +269,8 @@ class BrickletSegmentDisplay4x7V2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -256,6 +279,8 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -267,6 +292,8 @@ class BrickletSegmentDisplay4x7V2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -282,6 +309,8 @@ class BrickletSegmentDisplay4x7V2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -296,6 +325,8 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -304,6 +335,8 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -315,6 +348,8 @@ class BrickletSegmentDisplay4x7V2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -326,6 +361,8 @@ class BrickletSegmentDisplay4x7V2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -336,6 +373,8 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -345,6 +384,8 @@ class BrickletSegmentDisplay4x7V2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

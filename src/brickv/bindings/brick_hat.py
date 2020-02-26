@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -75,7 +75,7 @@ class BrickHAT(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickHAT.DEVICE_IDENTIFIER, BrickHAT.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 1)
 
@@ -101,6 +101,7 @@ class BrickHAT(Device):
 
         self.callback_formats[BrickHAT.CALLBACK_VOLTAGES] = 'H H'
 
+        ipcon.add_device(self)
 
     def set_sleep_mode(self, power_off_delay, power_off_duration, raspberry_pi_off, bricklets_off, enable_sleep_indicator):
         """
@@ -127,6 +128,8 @@ class BrickHAT(Device):
         (10, 2, true, false, false). If the RPi crashes or gets stuck
         the HAT will reset the RPi after 10 seconds.
         """
+        self.check_validity()
+
         power_off_delay = int(power_off_delay)
         power_off_duration = int(power_off_duration)
         raspberry_pi_off = bool(raspberry_pi_off)
@@ -139,12 +142,16 @@ class BrickHAT(Device):
         """
         Returns the sleep mode settings as set by :func:`Set Sleep Mode`.
         """
+        self.check_validity()
+
         return GetSleepMode(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_SLEEP_MODE, (), '', 'I I ! ! !'))
 
     def set_bricklet_power(self, bricklet_power):
         """
         Set to true/false to turn the power supply of the connected Bricklets on/off.
         """
+        self.check_validity()
+
         bricklet_power = bool(bricklet_power)
 
         self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_BRICKLET_POWER, (bricklet_power,), '!', '')
@@ -153,6 +160,8 @@ class BrickHAT(Device):
         """
         Returns the power status of the connected Bricklets as set by :func:`Set Bricklet Power`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_BRICKLET_POWER, (), '', '!')
 
     def get_voltages(self):
@@ -172,6 +181,8 @@ class BrickHAT(Device):
           disconnect the DC input (or if the DC input voltage falls below the
           USB voltage).
         """
+        self.check_validity()
+
         return GetVoltages(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_VOLTAGES, (), '', 'H H'))
 
     def set_voltages_callback_configuration(self, period, value_has_to_change):
@@ -188,6 +199,8 @@ class BrickHAT(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
+        self.check_validity()
+
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
@@ -200,6 +213,8 @@ class BrickHAT(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
+        self.check_validity()
+
         return GetVoltagesCallbackConfiguration(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_VOLTAGES_CALLBACK_CONFIGURATION, (), '', 'I !'))
 
     def get_spitfp_error_count(self):
@@ -216,6 +231,8 @@ class BrickHAT(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -230,6 +247,8 @@ class BrickHAT(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -238,6 +257,8 @@ class BrickHAT(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -249,6 +270,8 @@ class BrickHAT(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -264,6 +287,8 @@ class BrickHAT(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickHAT.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -278,6 +303,8 @@ class BrickHAT(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -286,6 +313,8 @@ class BrickHAT(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -297,6 +326,8 @@ class BrickHAT(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -308,6 +339,8 @@ class BrickHAT(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickHAT.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -318,6 +351,8 @@ class BrickHAT(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickHAT.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -327,6 +362,8 @@ class BrickHAT(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickHAT.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -47,7 +47,7 @@ class BrickletMotionDetector(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletMotionDetector.DEVICE_IDENTIFIER, BrickletMotionDetector.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 1)
 
@@ -59,6 +59,7 @@ class BrickletMotionDetector(Device):
         self.callback_formats[BrickletMotionDetector.CALLBACK_MOTION_DETECTED] = ''
         self.callback_formats[BrickletMotionDetector.CALLBACK_DETECTION_CYCLE_ENDED] = ''
 
+        ipcon.add_device(self)
 
     def get_motion_detected(self):
         """
@@ -70,6 +71,8 @@ class BrickletMotionDetector(Device):
         There is also a blue LED on the Bricklet that is on as long as the Bricklet is
         in the "motion detected" state.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_MOTION_DETECTED, (), '', 'B')
 
     def set_status_led_config(self, config):
@@ -83,6 +86,8 @@ class BrickletMotionDetector(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -93,6 +98,8 @@ class BrickletMotionDetector(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_identity(self):

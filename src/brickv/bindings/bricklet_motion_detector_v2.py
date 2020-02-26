@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -74,7 +74,7 @@ class BrickletMotionDetectorV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletMotionDetectorV2.DEVICE_IDENTIFIER, BrickletMotionDetectorV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -99,6 +99,7 @@ class BrickletMotionDetectorV2(Device):
         self.callback_formats[BrickletMotionDetectorV2.CALLBACK_MOTION_DETECTED] = ''
         self.callback_formats[BrickletMotionDetectorV2.CALLBACK_DETECTION_CYCLE_ENDED] = ''
 
+        ipcon.add_device(self)
 
     def get_motion_detected(self):
         """
@@ -108,6 +109,8 @@ class BrickletMotionDetectorV2(Device):
         There is also a blue LED on the Bricklet that is on as long as the Bricklet is
         in the "motion detected" state.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_GET_MOTION_DETECTED, (), '', 'B')
 
     def set_sensitivity(self, sensitivity):
@@ -121,6 +124,8 @@ class BrickletMotionDetectorV2(Device):
 
         So you will have to find a good sensitivity for your application by trial and error.
         """
+        self.check_validity()
+
         sensitivity = int(sensitivity)
 
         self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_SET_SENSITIVITY, (sensitivity,), 'B', '')
@@ -129,6 +134,8 @@ class BrickletMotionDetectorV2(Device):
         """
         Returns the sensitivity as set by :func:`Set Sensitivity`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_GET_SENSITIVITY, (), '', 'B')
 
     def set_indicator(self, top_left, top_right, bottom):
@@ -138,6 +145,8 @@ class BrickletMotionDetectorV2(Device):
         (0-255). A value of 0 turns the LED off and a value of 255 turns the LED
         to full brightness.
         """
+        self.check_validity()
+
         top_left = int(top_left)
         top_right = int(top_right)
         bottom = int(bottom)
@@ -148,6 +157,8 @@ class BrickletMotionDetectorV2(Device):
         """
         Returns the indicator configuration as set by :func:`Set Indicator`.
         """
+        self.check_validity()
+
         return GetIndicator(*self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_GET_INDICATOR, (), '', 'B B B'))
 
     def get_spitfp_error_count(self):
@@ -164,6 +175,8 @@ class BrickletMotionDetectorV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -178,6 +191,8 @@ class BrickletMotionDetectorV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -186,6 +201,8 @@ class BrickletMotionDetectorV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -197,6 +214,8 @@ class BrickletMotionDetectorV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -212,6 +231,8 @@ class BrickletMotionDetectorV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -226,6 +247,8 @@ class BrickletMotionDetectorV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -234,6 +257,8 @@ class BrickletMotionDetectorV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -245,6 +270,8 @@ class BrickletMotionDetectorV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -256,6 +283,8 @@ class BrickletMotionDetectorV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -266,6 +295,8 @@ class BrickletMotionDetectorV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -275,6 +306,8 @@ class BrickletMotionDetectorV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletMotionDetectorV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

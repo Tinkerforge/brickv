@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -60,7 +60,7 @@ class BrickletHumidity(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletHumidity.DEVICE_IDENTIFIER, BrickletHumidity.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 1)
 
@@ -83,6 +83,7 @@ class BrickletHumidity(Device):
         self.callback_formats[BrickletHumidity.CALLBACK_HUMIDITY_REACHED] = 'H'
         self.callback_formats[BrickletHumidity.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
 
+        ipcon.add_device(self)
 
     def get_humidity(self):
         """
@@ -92,6 +93,8 @@ class BrickletHumidity(Device):
         :cb:`Humidity` callback and set the period with
         :func:`Set Humidity Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_HUMIDITY, (), '', 'H')
 
     def get_analog_value(self):
@@ -111,6 +114,8 @@ class BrickletHumidity(Device):
         :cb:`Analog Value` callback and set the period with
         :func:`Set Analog Value Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
 
     def set_humidity_callback_period(self, period):
@@ -121,6 +126,8 @@ class BrickletHumidity(Device):
         The :cb:`Humidity` callback is only triggered if the humidity has changed
         since the last triggering.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_HUMIDITY_CALLBACK_PERIOD, (period,), 'I', '')
@@ -129,6 +136,8 @@ class BrickletHumidity(Device):
         """
         Returns the period as set by :func:`Set Humidity Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_HUMIDITY_CALLBACK_PERIOD, (), '', 'I')
 
     def set_analog_value_callback_period(self, period):
@@ -139,6 +148,8 @@ class BrickletHumidity(Device):
         The :cb:`Analog Value` callback is only triggered if the analog value has
         changed since the last triggering.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -147,6 +158,8 @@ class BrickletHumidity(Device):
         """
         Returns the period as set by :func:`Set Analog Value Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_humidity_callback_threshold(self, option, min, max):
@@ -165,6 +178,8 @@ class BrickletHumidity(Device):
          "'<'",    "Callback is triggered when the humidity is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the humidity is greater than the min value (max is ignored)"
         """
+        self.check_validity()
+
         option = create_char(option)
         min = int(min)
         max = int(max)
@@ -175,6 +190,8 @@ class BrickletHumidity(Device):
         """
         Returns the threshold as set by :func:`Set Humidity Callback Threshold`.
         """
+        self.check_validity()
+
         return GetHumidityCallbackThreshold(*self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_HUMIDITY_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
@@ -193,6 +210,8 @@ class BrickletHumidity(Device):
          "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
         """
+        self.check_validity()
+
         option = create_char(option)
         min = int(min)
         max = int(max)
@@ -203,6 +222,8 @@ class BrickletHumidity(Device):
         """
         Returns the threshold as set by :func:`Set Analog Value Callback Threshold`.
         """
+        self.check_validity()
+
         return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_debounce_period(self, debounce):
@@ -219,6 +240,8 @@ class BrickletHumidity(Device):
 
         keep being reached.
         """
+        self.check_validity()
+
         debounce = int(debounce)
 
         self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -227,6 +250,8 @@ class BrickletHumidity(Device):
         """
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def get_identity(self):

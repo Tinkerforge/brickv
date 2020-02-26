@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -67,7 +67,7 @@ class BrickletNFCRFID(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletNFCRFID.DEVICE_IDENTIFIER, BrickletNFCRFID.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -82,6 +82,7 @@ class BrickletNFCRFID(Device):
 
         self.callback_formats[BrickletNFCRFID.CALLBACK_STATE_CHANGED] = 'B !'
 
+        ipcon.add_device(self)
 
     def request_tag_id(self, tag_type):
         """
@@ -114,6 +115,8 @@ class BrickletNFCRFID(Device):
         In case of any *Error* state the selection is lost and you have to
         start again by calling :func:`Request Tag ID`.
         """
+        self.check_validity()
+
         tag_type = int(tag_type)
 
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_TAG_ID, (tag_type,), 'B', '')
@@ -132,6 +135,8 @@ class BrickletNFCRFID(Device):
            :cb:`State Changed` callback)
         3. Call :func:`Get Tag ID`
         """
+        self.check_validity()
+
         return GetTagID(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_TAG_ID, (), '', 'B B 7B'))
 
     def get_state(self):
@@ -151,6 +156,8 @@ class BrickletNFCRFID(Device):
 
         The same approach is used analogously for the other API functions.
         """
+        self.check_validity()
+
         return GetState(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_STATE, (), '', 'B !'))
 
     def authenticate_mifare_classic_page(self, page, key_number, key):
@@ -174,6 +181,8 @@ class BrickletNFCRFID(Device):
            :func:`Get State` or :cb:`State Changed` callback)
         6. Call :func:`Request Page` or :func:`Write Page` to read/write page
         """
+        self.check_validity()
+
         page = int(page)
         key_number = int(key_number)
         key = list(map(int, key))
@@ -203,6 +212,8 @@ class BrickletNFCRFID(Device):
         If you use a Mifare Classic tag you have to authenticate a page before you
         can write to it. See :func:`Authenticate Mifare Classic Page`.
         """
+        self.check_validity()
+
         page = int(page)
         data = list(map(int, data))
 
@@ -234,6 +245,8 @@ class BrickletNFCRFID(Device):
         If you use a Mifare Classic tag you have to authenticate a page before you
         can read it. See :func:`Authenticate Mifare Classic Page`.
         """
+        self.check_validity()
+
         page = int(page)
 
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_PAGE, (page,), 'H', '')
@@ -243,6 +256,8 @@ class BrickletNFCRFID(Device):
         Returns 16 bytes of data from an internal buffer. To fill the buffer
         with specific pages you have to call :func:`Request Page` beforehand.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_PAGE, (), '', '16B')
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -77,7 +77,7 @@ class BrickletIndustrialQuadRelayV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletIndustrialQuadRelayV2.DEVICE_IDENTIFIER, BrickletIndustrialQuadRelayV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -103,6 +103,7 @@ class BrickletIndustrialQuadRelayV2(Device):
 
         self.callback_formats[BrickletIndustrialQuadRelayV2.CALLBACK_MONOFLOP_DONE] = 'B !'
 
+        ipcon.add_device(self)
 
     def set_value(self, value):
         """
@@ -113,6 +114,8 @@ class BrickletIndustrialQuadRelayV2(Device):
 
         All running monoflop timers will be aborted if this function is called.
         """
+        self.check_validity()
+
         value = list(map(bool, value))
 
         self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_VALUE, (value,), '4!', '')
@@ -121,6 +124,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         """
         Returns the values as set by :func:`Set Value`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_VALUE, (), '', '4!')
 
     def set_monoflop(self, channel, value, time):
@@ -143,6 +148,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         time. If now the RS485 connection is lost, then channel 0 will be opened in at
         most two seconds.
         """
+        self.check_validity()
+
         channel = int(channel)
         value = bool(value)
         time = int(time)
@@ -157,6 +164,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return GetMonoflop(*self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_MONOFLOP, (channel,), 'B', '! I I'))
@@ -169,6 +178,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         A running monoflop timer for the specified channel will be aborted if this
         function is called.
         """
+        self.check_validity()
+
         channel = int(channel)
         value = bool(value)
 
@@ -180,6 +191,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         heartbeat. You can also set the LED to "Channel Status". In this mode the
         LED is on if the channel is high and off otherwise.
         """
+        self.check_validity()
+
         channel = int(channel)
         config = int(config)
 
@@ -189,6 +202,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         """
         Returns the channel LED configuration as set by :func:`Set Channel LED Config`
         """
+        self.check_validity()
+
         channel = int(channel)
 
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 'B')
@@ -207,6 +222,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -221,6 +238,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -229,6 +248,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -240,6 +261,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -255,6 +278,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -269,6 +294,8 @@ class BrickletIndustrialQuadRelayV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -277,6 +304,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -288,6 +317,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -299,6 +330,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -309,6 +342,8 @@ class BrickletIndustrialQuadRelayV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -318,6 +353,8 @@ class BrickletIndustrialQuadRelayV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelayV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -47,7 +47,7 @@ class BrickletIndustrialQuadRelay(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletIndustrialQuadRelay.DEVICE_IDENTIFIER, BrickletIndustrialQuadRelay.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -63,6 +63,7 @@ class BrickletIndustrialQuadRelay(Device):
 
         self.callback_formats[BrickletIndustrialQuadRelay.CALLBACK_MONOFLOP_DONE] = 'H H'
 
+        ipcon.add_device(self)
 
     def set_value(self, value_mask):
         """
@@ -81,6 +82,8 @@ class BrickletIndustrialQuadRelay(Device):
 
         All running monoflop timers will be aborted if this function is called.
         """
+        self.check_validity()
+
         value_mask = int(value_mask)
 
         self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_SET_VALUE, (value_mask,), 'H', '')
@@ -89,6 +92,8 @@ class BrickletIndustrialQuadRelay(Device):
         """
         Returns the bitmask as set by :func:`Set Value`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_VALUE, (), '', 'H')
 
     def set_monoflop(self, selection_mask, value_mask, time):
@@ -112,6 +117,8 @@ class BrickletIndustrialQuadRelay(Device):
         of two seconds and pin 0 closed. Pin 0 will be closed all the time. If now
         the RS485 connection is lost, then pin 0 will be opened in at most two seconds.
         """
+        self.check_validity()
+
         selection_mask = int(selection_mask)
         value_mask = int(value_mask)
         time = int(time)
@@ -126,6 +133,8 @@ class BrickletIndustrialQuadRelay(Device):
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
+        self.check_validity()
+
         pin = int(pin)
 
         return GetMonoflop(*self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_MONOFLOP, (pin,), 'B', 'H I I'))
@@ -148,6 +157,8 @@ class BrickletIndustrialQuadRelay(Device):
         pins on the Quad Relay on port B are assigned to 4-7. It is now possible
         to call :func:`Set Value` and control two Bricklets at the same time.
         """
+        self.check_validity()
+
         group = create_char_list(group)
 
         self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_SET_GROUP, (group,), '4c', '')
@@ -156,6 +167,8 @@ class BrickletIndustrialQuadRelay(Device):
         """
         Returns the group as set by :func:`Set Group`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_GROUP, (), '', '4c')
 
     def get_available_for_group(self):
@@ -164,6 +177,8 @@ class BrickletIndustrialQuadRelay(Device):
         value 5 or 0b0101 means: Port A and port C are connected to Bricklets that
         can be grouped together.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_AVAILABLE_FOR_GROUP, (), '', 'B')
 
     def set_selected_values(self, selection_mask, value_mask):
@@ -185,6 +200,8 @@ class BrickletIndustrialQuadRelay(Device):
         Running monoflop timers for the selected relays will be aborted if this function
         is called.
         """
+        self.check_validity()
+
         selection_mask = int(selection_mask)
         value_mask = int(value_mask)
 

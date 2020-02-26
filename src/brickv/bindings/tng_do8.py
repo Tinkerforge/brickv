@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-11-27.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -48,7 +48,7 @@ class TNGDO8(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, TNGDO8.DEVICE_IDENTIFIER, TNGDO8.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -60,12 +60,15 @@ class TNGDO8(Device):
         self.response_expected[TNGDO8.FUNCTION_RESET] = TNGDO8.RESPONSE_EXPECTED_FALSE
 
 
+        ipcon.add_device(self)
 
     def set_value(self, timestamp, value):
         """
         Sets the output value of all four channels. A value of *true* or *false* outputs
         logic 1 or logic 0 respectively on the corresponding channel.
         """
+        self.check_validity()
+
         timestamp = int(timestamp)
         value = list(map(bool, value))
 
@@ -75,18 +78,24 @@ class TNGDO8(Device):
         """
         TODO
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, TNGDO8.FUNCTION_GET_TIMESTAMP, (), '', 'Q')
 
     def copy_firmware(self):
         """
         TODO
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, TNGDO8.FUNCTION_COPY_FIRMWARE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
         TODO
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, TNGDO8.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -95,6 +104,8 @@ class TNGDO8(Device):
         """
         TODO
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, TNGDO8.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -108,4 +119,6 @@ class TNGDO8(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, TNGDO8.FUNCTION_RESET, (), '', '')

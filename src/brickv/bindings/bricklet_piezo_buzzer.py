@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -41,7 +41,7 @@ class BrickletPiezoBuzzer(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletPiezoBuzzer.DEVICE_IDENTIFIER, BrickletPiezoBuzzer.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -52,11 +52,14 @@ class BrickletPiezoBuzzer(Device):
         self.callback_formats[BrickletPiezoBuzzer.CALLBACK_BEEP_FINISHED] = ''
         self.callback_formats[BrickletPiezoBuzzer.CALLBACK_MORSE_CODE_FINISHED] = ''
 
+        ipcon.add_device(self)
 
     def beep(self, duration):
         """
         Beeps for the given duration.
         """
+        self.check_validity()
+
         duration = int(duration)
 
         self.ipcon.send_request(self, BrickletPiezoBuzzer.FUNCTION_BEEP, (duration,), 'I', '')
@@ -71,6 +74,8 @@ class BrickletPiezoBuzzer(Device):
         nine times with the durations "short short short long long long short
         short short".
         """
+        self.check_validity()
+
         morse = create_string(morse)
 
         self.ipcon.send_request(self, BrickletPiezoBuzzer.FUNCTION_MORSE_CODE, (morse,), '60s', '')

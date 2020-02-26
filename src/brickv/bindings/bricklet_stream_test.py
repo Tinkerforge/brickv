@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -208,7 +208,7 @@ class BrickletStreamTest(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletStreamTest.DEVICE_IDENTIFIER, BrickletStreamTest.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -319,11 +319,14 @@ class BrickletStreamTest(Device):
         self.high_level_callbacks[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_SUFFIX_1] = [('stream_length', 'stream_chunk_data', None), {'fixed_length': None, 'single_chunk': True}, None]
         self.high_level_callbacks[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_SUFFIX_2] = [('stream_length', 'stream_chunk_data', None, None), {'fixed_length': None, 'single_chunk': True}, None]
         self.high_level_callbacks[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_FULL] = [(None, 'stream_length', None, 'stream_chunk_data', None), {'fixed_length': None, 'single_chunk': True}, None]
+        ipcon.add_device(self)
 
     def normal_write_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -334,6 +337,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra = int(extra)
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
@@ -345,6 +350,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
         message_length = int(message_length)
@@ -357,6 +364,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -368,6 +377,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -380,6 +391,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra_1 = int(extra_1)
         message_length = int(message_length)
         extra_2 = int(extra_2)
@@ -394,6 +407,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -404,6 +419,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -414,6 +431,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
@@ -423,6 +442,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra = int(extra)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -433,6 +454,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
         message_chunk_offset = int(message_chunk_offset)
@@ -444,6 +467,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
         extra = int(extra)
@@ -454,6 +479,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
         extra_1 = int(extra_1)
@@ -465,6 +492,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra_1 = int(extra_1)
         message_chunk_offset = int(message_chunk_offset)
         extra_2 = int(extra_2)
@@ -477,6 +506,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
@@ -486,6 +517,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
@@ -495,6 +528,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -505,6 +540,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra = int(extra)
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
@@ -516,6 +553,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
         message_length = int(message_length)
@@ -528,6 +567,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -539,6 +580,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -551,6 +594,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -561,6 +606,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -571,6 +618,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -581,6 +630,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -591,6 +642,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra_1 = int(extra_1)
         message_length = int(message_length)
         extra_2 = int(extra_2)
@@ -605,6 +658,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
@@ -614,6 +669,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra = int(extra)
         message_length = int(message_length)
         message_data = create_char_list(message_data)
@@ -624,6 +681,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
         message_length = int(message_length)
@@ -635,6 +694,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_data = create_char_list(message_data)
         extra = int(extra)
@@ -645,6 +706,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_data = create_char_list(message_data)
         extra_1 = int(extra_1)
@@ -656,6 +719,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra_1 = int(extra_1)
         message_length = int(message_length)
         extra_2 = int(extra_2)
@@ -668,6 +733,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
@@ -677,6 +744,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
@@ -686,6 +755,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
@@ -695,6 +766,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra = int(extra)
         message_length = int(message_length)
         message_data = create_char_list(message_data)
@@ -705,6 +778,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
         message_length = int(message_length)
@@ -716,6 +791,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_data = create_char_list(message_data)
         extra = int(extra)
@@ -726,6 +803,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_data = create_char_list(message_data)
         extra_1 = int(extra_1)
@@ -737,6 +816,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
@@ -746,6 +827,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
@@ -755,6 +838,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
@@ -764,6 +849,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
@@ -773,6 +860,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra_1 = int(extra_1)
         message_length = int(message_length)
         extra_2 = int(extra_2)
@@ -785,12 +874,16 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         return NormalReadLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_LOW_LEVEL, (), '', 'H H 60c'))
 
     def normal_read_extra_in_1_low_level(self, extra):
         """
 
         """
+        self.check_validity()
+
         extra = int(extra)
 
         return NormalReadExtraIn1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_IN_1_LOW_LEVEL, (extra,), 'B', 'H H 60c'))
@@ -799,6 +892,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
 
@@ -808,42 +903,56 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         return NormalReadExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (), '', 'B H H 59c'))
 
     def normal_read_extra_out_prefix_2_low_level(self):
         """
 
         """
+        self.check_validity()
+
         return NormalReadExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (), '', 'B B H H 58c'))
 
     def normal_read_extra_out_suffix_1_low_level(self):
         """
 
         """
+        self.check_validity()
+
         return NormalReadExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (), '', 'H H 59c B'))
 
     def normal_read_extra_out_suffix_2_low_level(self):
         """
 
         """
+        self.check_validity()
+
         return NormalReadExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (), '', 'H H 58c B B'))
 
     def normal_read_extra_out_full_low_level(self):
         """
 
         """
+        self.check_validity()
+
         return NormalReadExtraOutFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_FULL_LOW_LEVEL, (), '', 'B H B H B 56c B'))
 
     def fixed_read_low_level(self):
         """
 
         """
+        self.check_validity()
+
         return FixedReadLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_LOW_LEVEL, (), '', 'H 62c'))
 
     def fixed_read_extra_in_1_low_level(self, extra):
         """
 
         """
+        self.check_validity()
+
         extra = int(extra)
 
         return FixedReadExtraIn1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_IN_1_LOW_LEVEL, (extra,), 'B', 'H 62c'))
@@ -852,6 +961,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
 
@@ -861,42 +972,56 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         return FixedReadExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (), '', 'B H 61c'))
 
     def fixed_read_extra_out_prefix_2_low_level(self):
         """
 
         """
+        self.check_validity()
+
         return FixedReadExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (), '', 'B B H 60c'))
 
     def fixed_read_extra_out_suffix_1_low_level(self):
         """
 
         """
+        self.check_validity()
+
         return FixedReadExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (), '', 'H 61c B'))
 
     def fixed_read_extra_out_suffix_2_low_level(self):
         """
 
         """
+        self.check_validity()
+
         return FixedReadExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (), '', 'H 60c B B'))
 
     def fixed_read_extra_out_full_low_level(self):
         """
 
         """
+        self.check_validity()
+
         return FixedReadExtraOutFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_FULL_LOW_LEVEL, (), '', 'B H B 59c B'))
 
     def single_read_low_level(self):
         """
 
         """
+        self.check_validity()
+
         return SingleReadLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_LOW_LEVEL, (), '', 'B 63c'))
 
     def single_read_extra_in_1_low_level(self, extra):
         """
 
         """
+        self.check_validity()
+
         extra = int(extra)
 
         return SingleReadExtraIn1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_IN_1_LOW_LEVEL, (extra,), 'B', 'B 62c'))
@@ -905,6 +1030,8 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
 
@@ -914,30 +1041,40 @@ class BrickletStreamTest(Device):
         """
 
         """
+        self.check_validity()
+
         return SingleReadExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (), '', 'B B 62c'))
 
     def single_read_extra_out_prefix_2_low_level(self):
         """
 
         """
+        self.check_validity()
+
         return SingleReadExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (), '', 'B B B 61c'))
 
     def single_read_extra_out_suffix_1_low_level(self):
         """
 
         """
+        self.check_validity()
+
         return SingleReadExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (), '', 'B 62c B'))
 
     def single_read_extra_out_suffix_2_low_level(self):
         """
 
         """
+        self.check_validity()
+
         return SingleReadExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (), '', 'B 61c B B'))
 
     def single_read_extra_out_full_low_level(self):
         """
 
         """
+        self.check_validity()
+
         return SingleReadExtraOutFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_FULL_LOW_LEVEL, (), '', 'B B B 60c B'))
 
     def get_identity(self):

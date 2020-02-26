@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -75,7 +75,7 @@ class BrickletRGBLEDMatrix(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletRGBLEDMatrix.DEVICE_IDENTIFIER, BrickletRGBLEDMatrix.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -104,11 +104,14 @@ class BrickletRGBLEDMatrix(Device):
 
         self.callback_formats[BrickletRGBLEDMatrix.CALLBACK_FRAME_STARTED] = 'I'
 
+        ipcon.add_device(self)
 
     def set_red(self, red):
         """
         Sets the 64 red LED values of the matrix.
         """
+        self.check_validity()
+
         red = list(map(int, red))
 
         self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_RED, (red,), '64B', '')
@@ -117,12 +120,16 @@ class BrickletRGBLEDMatrix(Device):
         """
         Returns the red LED values as set by :func:`Set Red`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_RED, (), '', '64B')
 
     def set_green(self, green):
         """
         Sets the 64 green LED values of the matrix.
         """
+        self.check_validity()
+
         green = list(map(int, green))
 
         self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_GREEN, (green,), '64B', '')
@@ -131,12 +138,16 @@ class BrickletRGBLEDMatrix(Device):
         """
         Returns the green LED values as set by :func:`Set Green`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_GREEN, (), '', '64B')
 
     def set_blue(self, blue):
         """
         Sets the 64 blue LED values of the matrix.
         """
+        self.check_validity()
+
         blue = list(map(int, blue))
 
         self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_BLUE, (blue,), '64B', '')
@@ -145,6 +156,8 @@ class BrickletRGBLEDMatrix(Device):
         """
         Returns the blue LED values as set by :func:`Set Blue`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_BLUE, (), '', '64B')
 
     def set_frame_duration(self, frame_duration):
@@ -167,6 +180,8 @@ class BrickletRGBLEDMatrix(Device):
 
         For frame duration of 0 see :func:`Draw Frame`.
         """
+        self.check_validity()
+
         frame_duration = int(frame_duration)
 
         self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_FRAME_DURATION, (frame_duration,), 'H', '')
@@ -175,6 +190,8 @@ class BrickletRGBLEDMatrix(Device):
         """
         Returns the frame duration as set by :func:`Set Frame Duration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_FRAME_DURATION, (), '', 'H')
 
     def draw_frame(self):
@@ -193,12 +210,16 @@ class BrickletRGBLEDMatrix(Device):
         * Wait for :cb:`Frame Started` callback.
         * and so on.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_DRAW_FRAME, (), '', '')
 
     def get_supply_voltage(self):
         """
         Returns the current supply voltage of the Bricklet.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_SUPPLY_VOLTAGE, (), '', 'H')
 
     def get_spitfp_error_count(self):
@@ -215,6 +236,8 @@ class BrickletRGBLEDMatrix(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -229,6 +252,8 @@ class BrickletRGBLEDMatrix(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -237,6 +262,8 @@ class BrickletRGBLEDMatrix(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -248,6 +275,8 @@ class BrickletRGBLEDMatrix(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -263,6 +292,8 @@ class BrickletRGBLEDMatrix(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -277,6 +308,8 @@ class BrickletRGBLEDMatrix(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -285,6 +318,8 @@ class BrickletRGBLEDMatrix(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -296,6 +331,8 @@ class BrickletRGBLEDMatrix(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -307,6 +344,8 @@ class BrickletRGBLEDMatrix(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -317,6 +356,8 @@ class BrickletRGBLEDMatrix(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -326,6 +367,8 @@ class BrickletRGBLEDMatrix(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

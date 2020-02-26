@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -249,7 +249,7 @@ class BrickRED(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickRED.DEVICE_IDENTIFIER, BrickRED.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -322,11 +322,14 @@ class BrickRED(Device):
         self.callback_formats[BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED] = 'H'
         self.callback_formats[BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED] = 'H'
 
+        ipcon.add_device(self)
 
     def create_session(self, lifetime):
         """
 
         """
+        self.check_validity()
+
         lifetime = int(lifetime)
 
         return CreateSession(*self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_SESSION, (lifetime,), 'I', 'B H'))
@@ -335,6 +338,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         session_id = int(session_id)
 
         return self.ipcon.send_request(self, BrickRED.FUNCTION_EXPIRE_SESSION, (session_id,), 'H', 'B')
@@ -343,6 +348,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         session_id = int(session_id)
 
         self.ipcon.send_request(self, BrickRED.FUNCTION_EXPIRE_SESSION_UNCHECKED, (session_id,), 'H', '')
@@ -351,6 +358,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         session_id = int(session_id)
         lifetime = int(lifetime)
 
@@ -361,6 +370,8 @@ class BrickRED(Device):
         Decreases the reference count of an object by one and returns the resulting
         error code. If the reference count reaches zero the object gets destroyed.
         """
+        self.check_validity()
+
         object_id = int(object_id)
         session_id = int(session_id)
 
@@ -370,6 +381,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         object_id = int(object_id)
         session_id = int(session_id)
 
@@ -383,6 +396,8 @@ class BrickRED(Device):
 
         Returns the object ID of the new string object and the resulting error code.
         """
+        self.check_validity()
+
         length_to_reserve = int(length_to_reserve)
         buffer = create_string(buffer)
         session_id = int(session_id)
@@ -394,6 +409,8 @@ class BrickRED(Device):
         Truncates a string object to ``length`` bytes and returns the resulting
         error code.
         """
+        self.check_validity()
+
         string_id = int(string_id)
         length = int(length)
 
@@ -403,6 +420,8 @@ class BrickRED(Device):
         """
         Returns the length of a string object and the resulting error code.
         """
+        self.check_validity()
+
         string_id = int(string_id)
 
         return GetStringLength(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_STRING_LENGTH, (string_id,), 'H', 'B I'))
@@ -413,6 +432,8 @@ class BrickRED(Device):
 
         Returns the resulting error code.
         """
+        self.check_validity()
+
         string_id = int(string_id)
         offset = int(offset)
         buffer = create_string(buffer)
@@ -424,6 +445,8 @@ class BrickRED(Device):
         Returns a chunk up to 63 bytes from a string object beginning at ``offset`` and
         returns the resulting error code.
         """
+        self.check_validity()
+
         string_id = int(string_id)
         offset = int(offset)
 
@@ -440,6 +463,8 @@ class BrickRED(Device):
         When a list object gets destroyed then the reference count of each object in
         the list object is decreased by one.
         """
+        self.check_validity()
+
         length_to_reserve = int(length_to_reserve)
         session_id = int(session_id)
 
@@ -449,6 +474,8 @@ class BrickRED(Device):
         """
         Returns the length of a list object in items and the resulting error code.
         """
+        self.check_validity()
+
         list_id = int(list_id)
 
         return GetListLength(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LIST_LENGTH, (list_id,), 'H', 'B H'))
@@ -467,6 +494,8 @@ class BrickRED(Device):
         * Process = 4
         * Program = 5
         """
+        self.check_validity()
+
         list_id = int(list_id)
         index = int(index)
         session_id = int(session_id)
@@ -480,6 +509,8 @@ class BrickRED(Device):
 
         Returns the resulting error code.
         """
+        self.check_validity()
+
         list_id = int(list_id)
         item_object_id = int(item_object_id)
 
@@ -492,6 +523,8 @@ class BrickRED(Device):
 
         Returns the resulting error code.
         """
+        self.check_validity()
+
         list_id = int(list_id)
         index = int(index)
 
@@ -541,6 +574,8 @@ class BrickRED(Device):
 
         Returns the object ID of the new file object and the resulting error code.
         """
+        self.check_validity()
+
         name_string_id = int(name_string_id)
         flags = int(flags)
         permissions = int(permissions)
@@ -565,6 +600,8 @@ class BrickRED(Device):
 
         Returns the object ID of the new file object and the resulting error code.
         """
+        self.check_validity()
+
         flags = int(flags)
         length = int(length)
         session_id = int(session_id)
@@ -597,6 +634,8 @@ class BrickRED(Device):
 
         FIXME: everything except flags and length is invalid if file type is *Pipe*
         """
+        self.check_validity()
+
         file_id = int(file_id)
         session_id = int(session_id)
 
@@ -617,6 +656,8 @@ class BrickRED(Device):
         flag or by :func:`Create Pipe` without the *NonBlockingRead* flag then the
         error code *NotSupported* is returned.
         """
+        self.check_validity()
+
         file_id = int(file_id)
         length_to_read = int(length_to_read)
 
@@ -637,6 +678,8 @@ class BrickRED(Device):
         flag or by :func:`Create Pipe` without the *NonBlockingRead* flag then the error
         code *NotSupported* is reported via the :cb:`Async File Read` callback.
         """
+        self.check_validity()
+
         file_id = int(file_id)
         length_to_read = int(length_to_read)
 
@@ -650,6 +693,8 @@ class BrickRED(Device):
 
         On success the :cb:`Async File Read` callback will report *OperationAborted*.
         """
+        self.check_validity()
+
         file_id = int(file_id)
 
         return self.ipcon.send_request(self, BrickRED.FUNCTION_ABORT_ASYNC_FILE_READ, (file_id,), 'H', 'B')
@@ -664,6 +709,8 @@ class BrickRED(Device):
         flag or by :func:`Create Pipe` without the *NonBlockingWrite* flag then the
         error code *NotSupported* is returned.
         """
+        self.check_validity()
+
         file_id = int(file_id)
         buffer = list(map(int, buffer))
         length_to_write = int(length_to_write)
@@ -681,6 +728,8 @@ class BrickRED(Device):
         flag or by :func:`Create Pipe` without the *NonBlockingWrite* flag then the
         write operation will fail silently.
         """
+        self.check_validity()
+
         file_id = int(file_id)
         buffer = list(map(int, buffer))
         length_to_write = int(length_to_write)
@@ -698,6 +747,8 @@ class BrickRED(Device):
         flag or by :func:`Create Pipe` without the *NonBlockingWrite* flag then the
         error code *NotSupported* is reported via the :cb:`Async File Write` callback.
         """
+        self.check_validity()
+
         file_id = int(file_id)
         buffer = list(map(int, buffer))
         length_to_write = int(length_to_write)
@@ -719,6 +770,8 @@ class BrickRED(Device):
         If the file object was created by :func:`Create Pipe` then it has no seek
         position and the error code *InvalidSeek* is returned.
         """
+        self.check_validity()
+
         file_id = int(file_id)
         offset = int(offset)
         origin = int(origin)
@@ -733,6 +786,8 @@ class BrickRED(Device):
         If the file object was created by :func:`Create Pipe` then it has no seek
         position and the error code *InvalidSeek* is returned.
         """
+        self.check_validity()
+
         file_id = int(file_id)
 
         return GetFilePosition(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_POSITION, (file_id,), 'H', 'B Q'))
@@ -741,6 +796,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         file_id = int(file_id)
         events = int(events)
 
@@ -750,6 +807,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         file_id = int(file_id)
 
         return GetFileEvents(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_EVENTS, (file_id,), 'H', 'B H'))
@@ -767,6 +826,8 @@ class BrickRED(Device):
 
         Returns the object ID of the new directory object and the resulting error code.
         """
+        self.check_validity()
+
         name_string_id = int(name_string_id)
         session_id = int(session_id)
 
@@ -777,6 +838,8 @@ class BrickRED(Device):
         Returns the name of a directory object, as passed to :func:`Open Directory`, and
         the resulting error code.
         """
+        self.check_validity()
+
         directory_id = int(directory_id)
         session_id = int(session_id)
 
@@ -800,6 +863,8 @@ class BrickRED(Device):
         * Symlink = 6
         * Socket = 7
         """
+        self.check_validity()
+
         directory_id = int(directory_id)
         session_id = int(session_id)
 
@@ -809,6 +874,8 @@ class BrickRED(Device):
         """
         Rewinds a directory object and returns the resulting error code.
         """
+        self.check_validity()
+
         directory_id = int(directory_id)
 
         return self.ipcon.send_request(self, BrickRED.FUNCTION_REWIND_DIRECTORY, (directory_id,), 'H', 'B')
@@ -817,6 +884,8 @@ class BrickRED(Device):
         """
         FIXME: name has to be absolute
         """
+        self.check_validity()
+
         name_string_id = int(name_string_id)
         flags = int(flags)
         permissions = int(permissions)
@@ -829,6 +898,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         session_id = int(session_id)
 
         return GetProcesses(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESSES, (session_id,), 'H', 'B H'))
@@ -837,6 +908,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         executable_string_id = int(executable_string_id)
         arguments_list_id = int(arguments_list_id)
         environment_list_id = int(environment_list_id)
@@ -866,6 +939,8 @@ class BrickRED(Device):
         * Continue =  18
         * Stop = 19
         """
+        self.check_validity()
+
         process_id = int(process_id)
         signal = int(signal)
 
@@ -877,6 +952,8 @@ class BrickRED(Device):
         spawn a process object, as passed to :func:`Spawn Process`, and the resulting
         error code.
         """
+        self.check_validity()
+
         process_id = int(process_id)
         session_id = int(session_id)
 
@@ -890,6 +967,8 @@ class BrickRED(Device):
         The process ID is only valid if the state is *Running* or *Stopped*, see
         :func:`Get Process State`.
         """
+        self.check_validity()
+
         process_id = int(process_id)
 
         return GetProcessIdentity(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_IDENTITY, (process_id,), 'H', 'B I I I'))
@@ -899,6 +978,8 @@ class BrickRED(Device):
         Returns the stdin, stdout and stderr files used to spawn a process object, as
         passed to :func:`Spawn Process`, and the resulting error code.
         """
+        self.check_validity()
+
         process_id = int(process_id)
         session_id = int(session_id)
 
@@ -938,6 +1019,8 @@ class BrickRED(Device):
         The *CannotExecute* error can be caused by the executable being opened for
         writing.
         """
+        self.check_validity()
+
         process_id = int(process_id)
 
         return GetProcessState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STATE, (process_id,), 'H', 'B B Q B'))
@@ -946,6 +1029,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         session_id = int(session_id)
 
         return GetPrograms(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAMS, (session_id,), 'H', 'B H'))
@@ -954,6 +1039,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         identifier_string_id = int(identifier_string_id)
         session_id = int(session_id)
 
@@ -963,6 +1050,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         program_id = int(program_id)
         cookie = int(cookie)
 
@@ -972,6 +1061,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         program_id = int(program_id)
         session_id = int(session_id)
 
@@ -981,6 +1072,8 @@ class BrickRED(Device):
         """
         FIXME: root directory is absolute: <home>/programs/<identifier>
         """
+        self.check_validity()
+
         program_id = int(program_id)
         session_id = int(session_id)
 
@@ -990,6 +1083,8 @@ class BrickRED(Device):
         """
         FIXME: working directory is relative to <home>/programs/<identifier>/bin
         """
+        self.check_validity()
+
         program_id = int(program_id)
         executable_string_id = int(executable_string_id)
         arguments_list_id = int(arguments_list_id)
@@ -1002,6 +1097,8 @@ class BrickRED(Device):
         """
         FIXME: working directory is relative to <home>/programs/<identifier>/bin
         """
+        self.check_validity()
+
         program_id = int(program_id)
         session_id = int(session_id)
 
@@ -1011,6 +1108,8 @@ class BrickRED(Device):
         """
         FIXME: stdio file names are relative to <home>/programs/<identifier>/bin
         """
+        self.check_validity()
+
         program_id = int(program_id)
         stdin_redirection = int(stdin_redirection)
         stdin_file_name_string_id = int(stdin_file_name_string_id)
@@ -1025,6 +1124,8 @@ class BrickRED(Device):
         """
         FIXME: stdio file names are relative to <home>/programs/<identifier>/bin
         """
+        self.check_validity()
+
         program_id = int(program_id)
         session_id = int(session_id)
 
@@ -1034,6 +1135,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         program_id = int(program_id)
         start_mode = int(start_mode)
         continue_after_error = bool(continue_after_error)
@@ -1046,6 +1149,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         program_id = int(program_id)
         session_id = int(session_id)
 
@@ -1055,6 +1160,8 @@ class BrickRED(Device):
         """
         FIXME: message is currently valid in error-occurred state only
         """
+        self.check_validity()
+
         program_id = int(program_id)
         session_id = int(session_id)
 
@@ -1064,6 +1171,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         program_id = int(program_id)
 
         return self.ipcon.send_request(self, BrickRED.FUNCTION_CONTINUE_PROGRAM_SCHEDULE, (program_id,), 'H', 'B')
@@ -1072,6 +1181,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         program_id = int(program_id)
 
         return self.ipcon.send_request(self, BrickRED.FUNCTION_START_PROGRAM, (program_id,), 'H', 'B')
@@ -1080,6 +1191,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         program_id = int(program_id)
         session_id = int(session_id)
 
@@ -1089,6 +1202,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         program_id = int(program_id)
         session_id = int(session_id)
 
@@ -1098,6 +1213,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         program_id = int(program_id)
         name_string_id = int(name_string_id)
         value_string_id = int(value_string_id)
@@ -1108,6 +1225,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         program_id = int(program_id)
         name_string_id = int(name_string_id)
         session_id = int(session_id)
@@ -1118,6 +1237,8 @@ class BrickRED(Device):
         """
 
         """
+        self.check_validity()
+
         program_id = int(program_id)
         name_string_id = int(name_string_id)
 

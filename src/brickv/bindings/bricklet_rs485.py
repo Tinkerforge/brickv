@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -53,6 +53,7 @@ class BrickletRS485(Device):
     CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL = 56
     CALLBACK_MODBUS_SLAVE_READ_INPUT_REGISTERS_REQUEST = 57
     CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL = 58
+    CALLBACK_FRAME_READABLE = 61
 
     CALLBACK_READ = -41
     CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE = -44
@@ -102,6 +103,8 @@ class BrickletRS485(Device):
     FUNCTION_MODBUS_MASTER_READ_DISCRETE_INPUTS = 38
     FUNCTION_MODBUS_SLAVE_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL = 39
     FUNCTION_MODBUS_MASTER_READ_INPUT_REGISTERS = 40
+    FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION = 59
+    FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION = 60
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -169,9 +172,9 @@ class BrickletRS485(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletRS485.DEVICE_IDENTIFIER, BrickletRS485.DEVICE_DISPLAY_NAME)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletRS485.FUNCTION_WRITE_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_READ_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -213,6 +216,8 @@ class BrickletRS485(Device):
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_READ_DISCRETE_INPUTS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_READ_INPUT_REGISTERS_REQUEST_LOW_LEVEL] = BrickletRS485.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS485.FUNCTION_MODBUS_MASTER_READ_INPUT_REGISTERS] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION] = BrickletRS485.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletRS485.FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_SET_BOOTLOADER_MODE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS485.FUNCTION_GET_BOOTLOADER_MODE] = BrickletRS485.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -244,6 +249,7 @@ class BrickletRS485(Device):
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE_LOW_LEVEL] = 'B b H H 464!'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_SLAVE_READ_INPUT_REGISTERS_REQUEST] = 'B I H'
         self.callback_formats[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE_LOW_LEVEL] = 'B b H H 29H'
+        self.callback_formats[BrickletRS485.CALLBACK_FRAME_READABLE] = 'H'
 
         self.high_level_callbacks[BrickletRS485.CALLBACK_READ] = [('stream_length', 'stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': False}, None]
         self.high_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_COILS_RESPONSE] = [(None, None, 'stream_length', 'stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': False}, None]
@@ -252,6 +258,7 @@ class BrickletRS485(Device):
         self.high_level_callbacks[BrickletRS485.CALLBACK_MODBUS_SLAVE_WRITE_MULTIPLE_REGISTERS_REQUEST] = [(None, None, 'stream_length', 'stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': False}, None]
         self.high_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_DISCRETE_INPUTS_RESPONSE] = [(None, None, 'stream_length', 'stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': False}, None]
         self.high_level_callbacks[BrickletRS485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE] = [(None, None, 'stream_length', 'stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': False}, None]
+        ipcon.add_device(self)
 
     def write_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
@@ -263,6 +270,8 @@ class BrickletRS485(Device):
         See :func:`Set RS485 Configuration` for configuration possibilities
         regarding baudrate, parity and so on.
         """
+        self.check_validity()
+
         message_length = int(message_length)
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
@@ -278,16 +287,20 @@ class BrickletRS485(Device):
         data only when the read callback is disabled.
         See :func:`Enable Read Callback` and :cb:`Read` callback.
         """
+        self.check_validity()
+
         length = int(length)
 
         return ReadLowLevel(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_READ_LOW_LEVEL, (length,), 'H', 'H H 60c'))
 
     def enable_read_callback(self):
         """
-        Enables the :cb:`Read` callback.
+        Enables the :cb:`Read` callback. This will disable the :cb:`Frame Readable` callback.
 
         By default the callback is disabled.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_ENABLE_READ_CALLBACK, (), '', '')
 
     def disable_read_callback(self):
@@ -296,6 +309,8 @@ class BrickletRS485(Device):
 
         By default the callback is disabled.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_DISABLE_READ_CALLBACK, (), '', '')
 
     def is_read_callback_enabled(self):
@@ -303,12 +318,16 @@ class BrickletRS485(Device):
         Returns *true* if the :cb:`Read` callback is enabled,
         *false* otherwise.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_IS_READ_CALLBACK_ENABLED, (), '', '!')
 
     def set_rs485_configuration(self, baudrate, parity, stopbits, wordlength, duplex):
         """
         Sets the configuration for the RS485 communication.
         """
+        self.check_validity()
+
         baudrate = int(baudrate)
         parity = int(parity)
         stopbits = int(stopbits)
@@ -321,6 +340,8 @@ class BrickletRS485(Device):
         """
         Returns the configuration as set by :func:`Set RS485 Configuration`.
         """
+        self.check_validity()
+
         return GetRS485Configuration(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_RS485_CONFIGURATION, (), '', 'I B B B B'))
 
     def set_modbus_configuration(self, slave_address, master_request_timeout):
@@ -330,6 +351,8 @@ class BrickletRS485(Device):
         * Slave Address: Address to be used as the Modbus slave address in Modbus slave mode. Valid Modbus slave address range is 1 to 247.
         * Master Request Timeout: Specifies how long the master should wait for a response from a slave when in Modbus master mode.
         """
+        self.check_validity()
+
         slave_address = int(slave_address)
         master_request_timeout = int(master_request_timeout)
 
@@ -339,6 +362,8 @@ class BrickletRS485(Device):
         """
         Returns the configuration as set by :func:`Set Modbus Configuration`.
         """
+        self.check_validity()
+
         return GetModbusConfiguration(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_MODBUS_CONFIGURATION, (), '', 'B I'))
 
     def set_mode(self, mode):
@@ -349,6 +374,8 @@ class BrickletRS485(Device):
         * Modbus Master RTU and
         * Modbus Slave RTU.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_MODE, (mode,), 'B', '')
@@ -357,6 +384,8 @@ class BrickletRS485(Device):
         """
         Returns the configuration as set by :func:`Set Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_MODE, (), '', 'B')
 
     def set_communication_led_config(self, config):
@@ -368,6 +397,8 @@ class BrickletRS485(Device):
 
         If the Bricklet is in bootloader mode, the LED is off.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_COMMUNICATION_LED_CONFIG, (config,), 'B', '')
@@ -376,6 +407,8 @@ class BrickletRS485(Device):
         """
         Returns the configuration as set by :func:`Set Communication LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_COMMUNICATION_LED_CONFIG, (), '', 'B')
 
     def set_error_led_config(self, config):
@@ -390,6 +423,8 @@ class BrickletRS485(Device):
 
         If the Bricklet is in bootloader mode, the LED is off.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', '')
@@ -398,6 +433,8 @@ class BrickletRS485(Device):
         """
         Returns the configuration as set by :func:`Set Error LED Config`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 'B')
 
     def set_buffer_config(self, send_buffer_size, receive_buffer_size):
@@ -413,6 +450,8 @@ class BrickletRS485(Device):
         received through RS485 but could not yet be send to the
         user, either by :func:`Read` or through :cb:`Read` callback.
         """
+        self.check_validity()
+
         send_buffer_size = int(send_buffer_size)
         receive_buffer_size = int(receive_buffer_size)
 
@@ -422,6 +461,8 @@ class BrickletRS485(Device):
         """
         Returns the buffer configuration as set by :func:`Set Buffer Config`.
         """
+        self.check_validity()
+
         return GetBufferConfig(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_BUFFER_CONFIG, (), '', 'H H'))
 
     def get_buffer_status(self):
@@ -430,6 +471,8 @@ class BrickletRS485(Device):
 
         See :func:`Set Buffer Config` for buffer size configuration.
         """
+        self.check_validity()
+
         return GetBufferStatus(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_BUFFER_STATUS, (), '', 'H H'))
 
     def enable_error_count_callback(self):
@@ -438,6 +481,8 @@ class BrickletRS485(Device):
 
         By default the callback is disabled.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_ENABLE_ERROR_COUNT_CALLBACK, (), '', '')
 
     def disable_error_count_callback(self):
@@ -446,6 +491,8 @@ class BrickletRS485(Device):
 
         By default the callback is disabled.
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_DISABLE_ERROR_COUNT_CALLBACK, (), '', '')
 
     def is_error_count_callback_enabled(self):
@@ -453,12 +500,16 @@ class BrickletRS485(Device):
         Returns *true* if the :cb:`Error Count` callback is enabled,
         *false* otherwise.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_IS_ERROR_COUNT_CALLBACK_ENABLED, (), '', '!')
 
     def get_error_count(self):
         """
         Returns the current number of overrun and parity errors.
         """
+        self.check_validity()
+
         return GetErrorCount(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_ERROR_COUNT, (), '', 'I I'))
 
     def get_modbus_common_error_count(self):
@@ -473,6 +524,8 @@ class BrickletRS485(Device):
         * Illegal Data Value Error Count: Number of errors due to invalid data value. This corresponds to Modbus exception code 3.
         * Slave Device Failure Error Count: Number of errors occurred on the slave device which were unrecoverable. This corresponds to Modbus exception code 4.
         """
+        self.check_validity()
+
         return GetModbusCommonErrorCount(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_MODBUS_COMMON_ERROR_COUNT, (), '', 'I I I I I I I'))
 
     def modbus_slave_report_exception(self, request_id, exception_code):
@@ -483,6 +536,8 @@ class BrickletRS485(Device):
         * Request ID: Request ID of the request received by the slave.
         * Exception Code: Modbus exception code to report to the Modbus master.
         """
+        self.check_validity()
+
         request_id = int(request_id)
         exception_code = int(exception_code)
 
@@ -499,6 +554,8 @@ class BrickletRS485(Device):
         This function must be called from the :cb:`Modbus Slave Read Coils Request` callback
         with the Request ID as provided by the argument of the callback.
         """
+        self.check_validity()
+
         request_id = int(request_id)
         coils_length = int(coils_length)
         coils_chunk_offset = int(coils_chunk_offset)
@@ -524,6 +581,8 @@ class BrickletRS485(Device):
         matched with the Request ID returned from this function to verify that the callback
         is indeed for a particular request.
         """
+        self.check_validity()
+
         slave_address = int(slave_address)
         starting_address = int(starting_address)
         count = int(count)
@@ -541,6 +600,8 @@ class BrickletRS485(Device):
         This function must be called from the :cb:`Modbus Slave Read Holding Registers Request`
         callback with the Request ID as provided by the argument of the callback.
         """
+        self.check_validity()
+
         request_id = int(request_id)
         holding_registers_length = int(holding_registers_length)
         holding_registers_chunk_offset = int(holding_registers_chunk_offset)
@@ -566,6 +627,8 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
+        self.check_validity()
+
         slave_address = int(slave_address)
         starting_address = int(starting_address)
         count = int(count)
@@ -582,6 +645,8 @@ class BrickletRS485(Device):
         This function must be called from the :cb:`Modbus Slave Write Single Coil Request`
         callback with the Request ID as provided by the arguments of the callback.
         """
+        self.check_validity()
+
         request_id = int(request_id)
 
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_SINGLE_COIL_REQUEST, (request_id,), 'B', '')
@@ -604,6 +669,8 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
+        self.check_validity()
+
         slave_address = int(slave_address)
         coil_address = int(coil_address)
         coil_value = bool(coil_value)
@@ -621,6 +688,8 @@ class BrickletRS485(Device):
         callback with the Request ID, Register Address and Register Value as provided by
         the arguments of the callback.
         """
+        self.check_validity()
+
         request_id = int(request_id)
 
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_SINGLE_REGISTER_REQUEST, (request_id,), 'B', '')
@@ -643,6 +712,8 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
+        self.check_validity()
+
         slave_address = int(slave_address)
         register_address = int(register_address)
         register_value = int(register_value)
@@ -659,6 +730,8 @@ class BrickletRS485(Device):
         This function must be called from the :cb:`Modbus Slave Write Multiple Coils Request`
         callback with the Request ID of the callback.
         """
+        self.check_validity()
+
         request_id = int(request_id)
 
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_MULTIPLE_COILS_REQUEST, (request_id,), 'B', '')
@@ -680,6 +753,8 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
+        self.check_validity()
+
         slave_address = int(slave_address)
         starting_address = int(starting_address)
         coils_length = int(coils_length)
@@ -698,6 +773,8 @@ class BrickletRS485(Device):
         This function must be called from the :cb:`Modbus Slave Write Multiple Registers Request`
         callback with the Request ID of the callback.
         """
+        self.check_validity()
+
         request_id = int(request_id)
 
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_SLAVE_ANSWER_WRITE_MULTIPLE_REGISTERS_REQUEST, (request_id,), 'B', '')
@@ -719,6 +796,8 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
+        self.check_validity()
+
         slave_address = int(slave_address)
         starting_address = int(starting_address)
         registers_length = int(registers_length)
@@ -738,6 +817,8 @@ class BrickletRS485(Device):
         This function must be called from the :cb:`Modbus Slave Read Discrete Inputs Request`
         callback with the Request ID as provided by the argument of the callback.
         """
+        self.check_validity()
+
         request_id = int(request_id)
         discrete_inputs_length = int(discrete_inputs_length)
         discrete_inputs_chunk_offset = int(discrete_inputs_chunk_offset)
@@ -763,6 +844,8 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
+        self.check_validity()
+
         slave_address = int(slave_address)
         starting_address = int(starting_address)
         count = int(count)
@@ -780,6 +863,8 @@ class BrickletRS485(Device):
         This function must be called from the :cb:`Modbus Slave Read Input Registers Request` callback
         with the Request ID as provided by the argument of the callback.
         """
+        self.check_validity()
+
         request_id = int(request_id)
         input_registers_length = int(input_registers_length)
         input_registers_chunk_offset = int(input_registers_chunk_offset)
@@ -805,11 +890,38 @@ class BrickletRS485(Device):
         with the Request ID returned from this function to verify that the callback is indeed for a
         particular request.
         """
+        self.check_validity()
+
         slave_address = int(slave_address)
         starting_address = int(starting_address)
         count = int(count)
 
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_MODBUS_MASTER_READ_INPUT_REGISTERS, (slave_address, starting_address, count), 'B I H', 'B')
+
+    def set_frame_readable_callback_configuration(self, frame_size):
+        """
+        Configures the :cb:`Frame Readable` callback. The frame size is the number of bytes, that have to be readable to trigger the callback.
+        A frame size of 0 disables the callback. A frame size greater than 0 enables the callback and disables the :cb:`Read` callback.
+
+        By default the callback is disabled.
+
+        .. versionadded:: 2.0.5$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        frame_size = int(frame_size)
+
+        self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION, (frame_size,), 'H', '')
+
+    def get_frame_readable_callback_configuration(self):
+        """
+        Returns the callback configuration as set by :func:`Set Frame Readable Callback Configuration`.
+
+        .. versionadded:: 2.0.5$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION, (), '', 'H')
 
     def get_spitfp_error_count(self):
         """
@@ -825,6 +937,8 @@ class BrickletRS485(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -839,6 +953,8 @@ class BrickletRS485(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -847,6 +963,8 @@ class BrickletRS485(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -858,6 +976,8 @@ class BrickletRS485(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -873,6 +993,8 @@ class BrickletRS485(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -887,6 +1009,8 @@ class BrickletRS485(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -895,6 +1019,8 @@ class BrickletRS485(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -906,6 +1032,8 @@ class BrickletRS485(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -917,6 +1045,8 @@ class BrickletRS485(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -927,6 +1057,8 @@ class BrickletRS485(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletRS485.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -936,6 +1068,8 @@ class BrickletRS485(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletRS485.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -114,7 +114,7 @@ class BrickletLEDStripV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletLEDStripV2.DEVICE_IDENTIFIER, BrickletLEDStripV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -146,6 +146,7 @@ class BrickletLEDStripV2(Device):
 
         self.callback_formats[BrickletLEDStripV2.CALLBACK_FRAME_STARTED] = 'H'
 
+        ipcon.add_device(self)
 
     def set_led_values_low_level(self, index, value_length, value_chunk_offset, value_chunk_data):
         """
@@ -175,6 +176,8 @@ class BrickletLEDStripV2(Device):
 
         This approach ensures that you can change the LED colors with a fixed frame rate.
         """
+        self.check_validity()
+
         index = int(index)
         value_length = int(value_length)
         value_chunk_offset = int(value_chunk_offset)
@@ -192,6 +195,8 @@ class BrickletLEDStripV2(Device):
         sequence RGBWRGBWRGBW...
         (assuming you start at an index divisible by 3 (RGB) or 4 (RGBW)).
         """
+        self.check_validity()
+
         index = int(index)
         length = int(length)
 
@@ -208,6 +213,8 @@ class BrickletLEDStripV2(Device):
 
         Default value: 100ms (10 frames per second).
         """
+        self.check_validity()
+
         duration = int(duration)
 
         self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_FRAME_DURATION, (duration,), 'H', '')
@@ -216,12 +223,16 @@ class BrickletLEDStripV2(Device):
         """
         Returns the frame duration as set by :func:`Set Frame Duration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_FRAME_DURATION, (), '', 'H')
 
     def get_supply_voltage(self):
         """
         Returns the current supply voltage of the LEDs.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_SUPPLY_VOLTAGE, (), '', 'H')
 
     def set_clock_frequency(self, frequency):
@@ -239,6 +250,8 @@ class BrickletLEDStripV2(Device):
         With a decreasing frequency your maximum frames per second will decrease
         too.
         """
+        self.check_validity()
+
         frequency = int(frequency)
 
         self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_CLOCK_FREQUENCY, (frequency,), 'I', '')
@@ -247,6 +260,8 @@ class BrickletLEDStripV2(Device):
         """
         Returns the currently used clock frequency as set by :func:`Set Clock Frequency`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CLOCK_FREQUENCY, (), '', 'I')
 
     def set_chip_type(self, chip):
@@ -261,6 +276,8 @@ class BrickletLEDStripV2(Device):
         * LPD8806 and
         * APA102 / DotStar.
         """
+        self.check_validity()
+
         chip = int(chip)
 
         self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_CHIP_TYPE, (chip,), 'H', '')
@@ -269,6 +286,8 @@ class BrickletLEDStripV2(Device):
         """
         Returns the currently used chip type as set by :func:`Set Chip Type`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CHIP_TYPE, (), '', 'H')
 
     def set_channel_mapping(self, mapping):
@@ -289,6 +308,8 @@ class BrickletLEDStripV2(Device):
         channel, therefore one of the Wxyz channel mappings should be used. Then
         the W channel controls the brightness.
         """
+        self.check_validity()
+
         mapping = int(mapping)
 
         self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_CHANNEL_MAPPING, (mapping,), 'B', '')
@@ -297,12 +318,16 @@ class BrickletLEDStripV2(Device):
         """
         Returns the currently used channel mapping as set by :func:`Set Channel Mapping`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CHANNEL_MAPPING, (), '', 'B')
 
     def set_frame_started_callback_configuration(self, enable):
         """
         Enables/disables the :cb:`Frame Started` callback.
         """
+        self.check_validity()
+
         enable = bool(enable)
 
         self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_FRAME_STARTED_CALLBACK_CONFIGURATION, (enable,), '!', '')
@@ -312,6 +337,8 @@ class BrickletLEDStripV2(Device):
         Returns the configuration as set by
         :func:`Set Frame Started Callback Configuration`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_FRAME_STARTED_CALLBACK_CONFIGURATION, (), '', '!')
 
     def get_spitfp_error_count(self):
@@ -328,6 +355,8 @@ class BrickletLEDStripV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -342,6 +371,8 @@ class BrickletLEDStripV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -350,6 +381,8 @@ class BrickletLEDStripV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -361,6 +394,8 @@ class BrickletLEDStripV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -376,6 +411,8 @@ class BrickletLEDStripV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -390,6 +427,8 @@ class BrickletLEDStripV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -398,6 +437,8 @@ class BrickletLEDStripV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -409,6 +450,8 @@ class BrickletLEDStripV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -420,6 +463,8 @@ class BrickletLEDStripV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -430,6 +475,8 @@ class BrickletLEDStripV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -439,6 +486,8 @@ class BrickletLEDStripV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

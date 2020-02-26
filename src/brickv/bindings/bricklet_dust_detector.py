@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -54,7 +54,7 @@ class BrickletDustDetector(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletDustDetector.DEVICE_IDENTIFIER, BrickletDustDetector.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -72,6 +72,7 @@ class BrickletDustDetector(Device):
         self.callback_formats[BrickletDustDetector.CALLBACK_DUST_DENSITY] = 'H'
         self.callback_formats[BrickletDustDetector.CALLBACK_DUST_DENSITY_REACHED] = 'H'
 
+        ipcon.add_device(self)
 
     def get_dust_density(self):
         """
@@ -81,6 +82,8 @@ class BrickletDustDetector(Device):
         to use the :cb:`Dust Density` callback and set the period with
         :func:`Set Dust Density Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_GET_DUST_DENSITY, (), '', 'H')
 
     def set_dust_density_callback_period(self, period):
@@ -91,6 +94,8 @@ class BrickletDustDetector(Device):
         The :cb:`Dust Density` callback is only triggered if the dust density has
         changed since the last triggering.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_SET_DUST_DENSITY_CALLBACK_PERIOD, (period,), 'I', '')
@@ -99,6 +104,8 @@ class BrickletDustDetector(Device):
         """
         Returns the period as set by :func:`Set Dust Density Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_GET_DUST_DENSITY_CALLBACK_PERIOD, (), '', 'I')
 
     def set_dust_density_callback_threshold(self, option, min, max):
@@ -117,6 +124,8 @@ class BrickletDustDetector(Device):
          "'<'",    "Callback is triggered when the dust density value is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the dust density value is greater than the min value (max is ignored)"
         """
+        self.check_validity()
+
         option = create_char(option)
         min = int(min)
         max = int(max)
@@ -127,6 +136,8 @@ class BrickletDustDetector(Device):
         """
         Returns the threshold as set by :func:`Set Dust Density Callback Threshold`.
         """
+        self.check_validity()
+
         return GetDustDensityCallbackThreshold(*self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_GET_DUST_DENSITY_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_debounce_period(self, debounce):
@@ -141,6 +152,8 @@ class BrickletDustDetector(Device):
 
         keeps being reached.
         """
+        self.check_validity()
+
         debounce = int(debounce)
 
         self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -149,6 +162,8 @@ class BrickletDustDetector(Device):
         """
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def set_moving_average(self, average):
@@ -159,6 +174,8 @@ class BrickletDustDetector(Device):
         Setting the length to 0 will turn the averaging completely off. With less
         averaging, there is more noise on the data.
         """
+        self.check_validity()
+
         average = int(average)
 
         self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
@@ -167,6 +184,8 @@ class BrickletDustDetector(Device):
         """
         Returns the length moving average as set by :func:`Set Moving Average`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletDustDetector.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
 
     def get_identity(self):

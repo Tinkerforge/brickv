@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-05.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -112,7 +112,7 @@ class BrickletCANV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletCANV2.DEVICE_IDENTIFIER, BrickletCANV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
@@ -147,6 +147,7 @@ class BrickletCANV2(Device):
         self.callback_formats[BrickletCANV2.CALLBACK_FRAME_READ_LOW_LEVEL] = 'B I B 15B'
 
         self.high_level_callbacks[BrickletCANV2.CALLBACK_FRAME_READ] = [(None, None, 'stream_length', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': True}, None]
+        ipcon.add_device(self)
 
     def write_frame_low_level(self, frame_type, identifier, data_length, data_data):
         """
@@ -179,6 +180,8 @@ class BrickletCANV2(Device):
         arbitration or because the CAN transceiver is currently disabled due to a high
         write error level (see :func:`Get Error Log`).
         """
+        self.check_validity()
+
         frame_type = int(frame_type)
         identifier = int(identifier)
         data_length = int(data_length)
@@ -211,6 +214,8 @@ class BrickletCANV2(Device):
         :func:`Set Frame Read Callback Configuration` function and the :cb:`Frame Read`
         callback.
         """
+        self.check_validity()
+
         return ReadFrameLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_READ_FRAME_LOW_LEVEL, (), '', '! B I B 15B'))
 
     def set_frame_read_callback_configuration(self, enabled):
@@ -219,6 +224,8 @@ class BrickletCANV2(Device):
 
         By default the callback is disabled.
         """
+        self.check_validity()
+
         enabled = bool(enabled)
 
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_FRAME_READ_CALLBACK_CONFIGURATION, (enabled,), '!', '')
@@ -227,6 +234,8 @@ class BrickletCANV2(Device):
         """
         Returns *true* if the :cb:`Frame Read` callback is enabled, *false* otherwise.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_FRAME_READ_CALLBACK_CONFIGURATION, (), '', '!')
 
     def set_transceiver_configuration(self, baud_rate, sample_point, transceiver_mode):
@@ -243,6 +252,8 @@ class BrickletCANV2(Device):
           detection nor acknowledgement. Only the receiving part of the transceiver
           is connected to the CAN bus.
         """
+        self.check_validity()
+
         baud_rate = int(baud_rate)
         sample_point = int(sample_point)
         transceiver_mode = int(transceiver_mode)
@@ -253,6 +264,8 @@ class BrickletCANV2(Device):
         """
         Returns the configuration as set by :func:`Set Transceiver Configuration`.
         """
+        self.check_validity()
+
         return GetTransceiverConfiguration(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_TRANSCEIVER_CONFIGURATION, (), '', 'I H B'))
 
     def set_queue_configuration_low_level(self, write_buffer_size, write_buffer_timeout, write_backlog_size, read_buffer_sizes_length, read_buffer_sizes_data, read_backlog_size):
@@ -305,6 +318,8 @@ class BrickletCANV2(Device):
 
         The current content of the queues is lost when this function is called.
         """
+        self.check_validity()
+
         write_buffer_size = int(write_buffer_size)
         write_buffer_timeout = int(write_buffer_timeout)
         write_backlog_size = int(write_backlog_size)
@@ -318,6 +333,8 @@ class BrickletCANV2(Device):
         """
         Returns the queue configuration as set by :func:`Set Queue Configuration`.
         """
+        self.check_validity()
+
         return GetQueueConfigurationLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_QUEUE_CONFIGURATION_LOW_LEVEL, (), '', 'B i H B 32b H'))
 
     def set_read_filter_configuration(self, buffer_index, filter_mode, filter_mask, filter_identifier):
@@ -381,6 +398,8 @@ class BrickletCANV2(Device):
 
         The default mode is accept-all for all read buffers.
         """
+        self.check_validity()
+
         buffer_index = int(buffer_index)
         filter_mode = int(filter_mode)
         filter_mask = int(filter_mask)
@@ -392,6 +411,8 @@ class BrickletCANV2(Device):
         """
         Returns the read filter configuration as set by :func:`Set Read Filter Configuration`.
         """
+        self.check_validity()
+
         buffer_index = int(buffer_index)
 
         return GetReadFilterConfiguration(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_READ_FILTER_CONFIGURATION, (buffer_index,), 'B', 'B I I'))
@@ -433,6 +454,8 @@ class BrickletCANV2(Device):
         out from the read buffer overflow occurrence list
         (``read_buffer_overflow_error_occurred``).
         """
+        self.check_validity()
+
         return GetErrorLogLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_LOG_LOW_LEVEL, (), '', 'B B B I I I I I I I I B 32! I'))
 
     def set_communication_led_config(self, config):
@@ -444,6 +467,8 @@ class BrickletCANV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is off.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_COMMUNICATION_LED_CONFIG, (config,), 'B', '')
@@ -452,6 +477,8 @@ class BrickletCANV2(Device):
         """
         Returns the configuration as set by :func:`Set Communication LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_COMMUNICATION_LED_CONFIG, (), '', 'B')
 
     def set_error_led_config(self, config):
@@ -470,6 +497,8 @@ class BrickletCANV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is off.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', '')
@@ -478,6 +507,8 @@ class BrickletCANV2(Device):
         """
         Returns the configuration as set by :func:`Set Error LED Config`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 'B')
 
     def get_spitfp_error_count(self):
@@ -494,6 +525,8 @@ class BrickletCANV2(Device):
         The errors counts are for errors that occur on the Bricklet side. All
         Bricks have a similar function that returns the errors on the Brick side.
         """
+        self.check_validity()
+
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
 
     def set_bootloader_mode(self, mode):
@@ -508,6 +541,8 @@ class BrickletCANV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         mode = int(mode)
 
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
@@ -516,6 +551,8 @@ class BrickletCANV2(Device):
         """
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
 
     def set_write_firmware_pointer(self, pointer):
@@ -527,6 +564,8 @@ class BrickletCANV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         pointer = int(pointer)
 
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
@@ -542,6 +581,8 @@ class BrickletCANV2(Device):
         This function is used by Brick Viewer during flashing. It should not be
         necessary to call it in a normal user program.
         """
+        self.check_validity()
+
         data = list(map(int, data))
 
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
@@ -556,6 +597,8 @@ class BrickletCANV2(Device):
 
         If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.
         """
+        self.check_validity()
+
         config = int(config)
 
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
@@ -564,6 +607,8 @@ class BrickletCANV2(Device):
         """
         Returns the configuration as set by :func:`Set Status LED Config`
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
 
     def get_chip_temperature(self):
@@ -575,6 +620,8 @@ class BrickletCANV2(Device):
         accuracy. Practically it is only useful as an indicator for
         temperature changes.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
@@ -586,6 +633,8 @@ class BrickletCANV2(Device):
         calling functions on the existing ones will result in
         undefined behavior!
         """
+        self.check_validity()
+
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_RESET, (), '', '')
 
     def write_uid(self, uid):
@@ -596,6 +645,8 @@ class BrickletCANV2(Device):
 
         We recommend that you use Brick Viewer to change the UID.
         """
+        self.check_validity()
+
         uid = int(uid)
 
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
@@ -605,6 +656,8 @@ class BrickletCANV2(Device):
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_READ_UID, (), '', 'I')
 
     def get_identity(self):

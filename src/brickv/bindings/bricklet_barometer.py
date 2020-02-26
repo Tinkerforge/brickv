@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2019-12-03.      #
+# This file was automatically generated on 2020-02-26.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -66,7 +66,7 @@ class BrickletBarometer(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, BrickletBarometer.DEVICE_IDENTIFIER, BrickletBarometer.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 1)
 
@@ -94,6 +94,7 @@ class BrickletBarometer(Device):
         self.callback_formats[BrickletBarometer.CALLBACK_AIR_PRESSURE_REACHED] = 'i'
         self.callback_formats[BrickletBarometer.CALLBACK_ALTITUDE_REACHED] = 'i'
 
+        ipcon.add_device(self)
 
     def get_air_pressure(self):
         """
@@ -103,6 +104,8 @@ class BrickletBarometer(Device):
         :cb:`Air Pressure` callback and set the period with
         :func:`Set Air Pressure Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AIR_PRESSURE, (), '', 'i')
 
     def get_altitude(self):
@@ -115,6 +118,8 @@ class BrickletBarometer(Device):
         :cb:`Altitude` callback and set the period with
         :func:`Set Altitude Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_ALTITUDE, (), '', 'i')
 
     def set_air_pressure_callback_period(self, period):
@@ -125,6 +130,8 @@ class BrickletBarometer(Device):
         The :cb:`Air Pressure` callback is only triggered if the air pressure has
         changed since the last triggering.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_AIR_PRESSURE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -133,6 +140,8 @@ class BrickletBarometer(Device):
         """
         Returns the period as set by :func:`Set Air Pressure Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AIR_PRESSURE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_altitude_callback_period(self, period):
@@ -143,6 +152,8 @@ class BrickletBarometer(Device):
         The :cb:`Altitude` callback is only triggered if the altitude has changed since
         the last triggering.
         """
+        self.check_validity()
+
         period = int(period)
 
         self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD, (period,), 'I', '')
@@ -151,6 +162,8 @@ class BrickletBarometer(Device):
         """
         Returns the period as set by :func:`Set Altitude Callback Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_air_pressure_callback_threshold(self, option, min, max):
@@ -169,6 +182,8 @@ class BrickletBarometer(Device):
          "'<'",    "Callback is triggered when the air pressure is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the air pressure is greater than the min value (max is ignored)"
         """
+        self.check_validity()
+
         option = create_char(option)
         min = int(min)
         max = int(max)
@@ -179,6 +194,8 @@ class BrickletBarometer(Device):
         """
         Returns the threshold as set by :func:`Set Air Pressure Callback Threshold`.
         """
+        self.check_validity()
+
         return GetAirPressureCallbackThreshold(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AIR_PRESSURE_CALLBACK_THRESHOLD, (), '', 'c i i'))
 
     def set_altitude_callback_threshold(self, option, min, max):
@@ -197,6 +214,8 @@ class BrickletBarometer(Device):
          "'<'",    "Callback is triggered when the altitude is smaller than the min value (max is ignored)"
          "'>'",    "Callback is triggered when the altitude is greater than the min value (max is ignored)"
         """
+        self.check_validity()
+
         option = create_char(option)
         min = int(min)
         max = int(max)
@@ -207,6 +226,8 @@ class BrickletBarometer(Device):
         """
         Returns the threshold as set by :func:`Set Altitude Callback Threshold`.
         """
+        self.check_validity()
+
         return GetAltitudeCallbackThreshold(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_ALTITUDE_CALLBACK_THRESHOLD, (), '', 'c i i'))
 
     def set_debounce_period(self, debounce):
@@ -223,6 +244,8 @@ class BrickletBarometer(Device):
 
         keep being reached.
         """
+        self.check_validity()
+
         debounce = int(debounce)
 
         self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
@@ -231,6 +254,8 @@ class BrickletBarometer(Device):
         """
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def set_reference_air_pressure(self, air_pressure):
@@ -245,6 +270,8 @@ class BrickletBarometer(Device):
         `QFE <https://en.wikipedia.org/wiki/Mean_sea_level_pressure#Mean_sea_level_pressure>`__
         used in aviation.
         """
+        self.check_validity()
+
         air_pressure = int(air_pressure)
 
         self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_REFERENCE_AIR_PRESSURE, (air_pressure,), 'i', '')
@@ -257,12 +284,16 @@ class BrickletBarometer(Device):
         pressure measurement. It is not as accurate as the temperature measured by the
         :ref:`temperature_bricklet` or the :ref:`temperature_ir_bricklet`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def get_reference_air_pressure(self):
         """
         Returns the reference air pressure as set by :func:`Set Reference Air Pressure`.
         """
+        self.check_validity()
+
         return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_REFERENCE_AIR_PRESSURE, (), '', 'i')
 
     def set_averaging(self, moving_average_pressure, average_pressure, average_temperature):
@@ -282,6 +313,8 @@ class BrickletBarometer(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         moving_average_pressure = int(moving_average_pressure)
         average_pressure = int(average_pressure)
         average_temperature = int(average_temperature)
@@ -294,6 +327,8 @@ class BrickletBarometer(Device):
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
+        self.check_validity()
+
         return GetAveraging(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AVERAGING, (), '', 'B B B'))
 
     def get_identity(self):
