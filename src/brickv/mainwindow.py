@@ -780,13 +780,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                 IPConnection.ENUMERATION_TYPE_CONNECTED]:
             device_info = inventory.get_info(uid)
 
-            cached_device_info_valid = device_info is not None and (\
+            cached_device_info_invalid = device_info is not None and (\
                    device_info.connected_uid != connected_uid
-                or device_info.position != position
+                or device_info.position.lower() != position.lower()
                 or device_info.hardware_version != hardware_version
-                or device_info.device_identifier != device_identifier)
+                or device_info.device_identifier != device_identifier
+                or device_info.firmware_version_installed != firmware_version)
 
-            if cached_device_info_valid:
+            if cached_device_info_invalid:
                 self.remove_device_info(uid)
                 device_info = None
 
@@ -802,7 +803,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         self.show_status("Hot plugging is not supported! Please reset Brick with UID {} and reconnect Brick Viewer.".format(device_info.connected_uid), message_id='mainwindow_hotplug')
 
                     device_info.reverse_connection = connected_uid
-                elif device_info.position != position:
+                elif device_info.position.lower() != position.lower():
                     # Bricklet was connected to the same brick, but to another port
                     self.show_status("Hot plugging is not supported! Please reset Brick with UID {} and reconnect Brick Viewer.".format(device_info.connected_uid), message_id='mainwindow_hotplug')
 
