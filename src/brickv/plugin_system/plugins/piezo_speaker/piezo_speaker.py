@@ -27,6 +27,7 @@ from PyQt5.QtGui import QRegularExpressionValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
                         QLineEdit, QSpinBox, QApplication, QSizePolicy
 
+from brickv.async_call import async_call
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_piezo_speaker import BrickletPiezoSpeaker
@@ -137,18 +138,20 @@ class PiezoSpeaker(PluginBase):
         self.scale_button.setDisabled(False)
         self.status_label.setText('Status: Idle')
 
+    def calibrate_error_cb(self):
+        self.status_label.setText('Status: Calibration failed')
+        self.increase_error_count()
+
     def calibrate_clicked(self):
         self.status_label.setText('Status: Calibrating...')
-        self.status_label.repaint()
-        QApplication.processEvents()
-        self.ps.calibrate()
-        self.status_label.setText('Status: New calibration stored in EEPROM')
+        async_call(self.ps.calibrate, None, lambda x: self.status_label.setText('Status: New calibration stored in EEPROM'), self.calibrate_error_cb)
 
     def scale_timeout(self):
         try:
             self.status_label.setText(str(self.scale_time) + 'Hz')
             self.ps.beep(40, self.scale_time)
         except ip_connection.Error:
+            self.increase_error_count()
             return
 
         self.scale_time += 50
@@ -171,6 +174,7 @@ class PiezoSpeaker(PluginBase):
         try:
             self.ps.beep(duration, freq)
         except ip_connection.Error:
+            self.increase_error_count()
             return
 
         if duration > 0 or not self.has_stoppable_beep:
@@ -185,6 +189,7 @@ class PiezoSpeaker(PluginBase):
         try:
             self.ps.morse_code(morse, freq)
         except ip_connection.Error:
+            self.increase_error_count()
             return
 
         self.beep_button.setDisabled(True)
