@@ -366,7 +366,13 @@ class Inventory:
         self.info_changed.emit(info.uid)
 
     def remove_info(self, uid):
-        self._infos.pop(uid)
+        info = self._infos.pop(uid)
+        if isinstance(info, DeviceInfo):
+            if info.reverse_connection is not None:
+                info.reverse_connection.connections_remove_value(info)
+            for connection in info.connections_values():
+                connection.reverse_connection = None
+
         self.info_changed.emit(uid)
 
     def get_info(self, uid):
