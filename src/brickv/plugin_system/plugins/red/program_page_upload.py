@@ -412,7 +412,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             self.target_file = REDFile(self.wizard().session).open(self.target_path, flags,
                                                                    permissions, 1000, 1000) # FIXME: async_call
         except (Error, REDError) as e:
-            if e.error_code == REDError.E_ALREADY_EXISTS:
+            if isinstance(e, REDError) and e.error_code == REDError.E_ALREADY_EXISTS:
                 self.start_conflict_resolution()
             else:
                 self.upload_error('...error: Could not open target file {0}: {1}', self.target_path, e)

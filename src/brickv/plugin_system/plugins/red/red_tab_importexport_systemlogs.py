@@ -175,7 +175,7 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
                 done()
 
                 if result.error != None:
-                    if result.error.error_code != REDError.E_OPERATION_ABORTED:
+                    if not isinstance(result.error, REDError) or result.error.error_code != REDError.E_OPERATION_ABORTED:
                         log.log('Error: ' + html.escape(str(result.error)), bold=True)
 
                     return

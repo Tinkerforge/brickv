@@ -235,11 +235,12 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
                 self.update_ui_state()
 
                 if result.error != None:
-                    if result.error.error_code != REDError.E_OPERATION_ABORTED and \
-                       result.error.error_code != REDError.E_DOES_NOT_EXIST:
-                        self.log_error('Error while reading {0}: {1}'.format(config.display_name, result.error))
-                    else:
+                    if isinstance(result.error, REDError) and \
+                       (result.error.error_code == REDError.E_OPERATION_ABORTED or \
+                        result.error.error_code == REDError.E_DOES_NOT_EXIST):
                         config.set_content('')
+                    else:
+                        self.log_error('Error while reading {0}: {1}'.format(config.display_name, result.error))
                 else:
                     try:
                         content = result.data.decode('utf-8')
@@ -255,11 +256,12 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
 
         def cb_open_error(error):
             if isinstance(error, REDError) and \
-               error.error_code != REDError.E_OPERATION_ABORTED and \
-               error.error_code != REDError.E_DOES_NOT_EXIST:
-                self.log_error('Error while opening {0}: {1}'.format(config.display_name, error))
+               (error.error_code == REDError.E_OPERATION_ABORTED or \
+                error.error_code == REDError.E_DOES_NOT_EXIST):
+               config.set_content('')
             else:
-                config.set_content('')
+                self.log_error('Error while opening {0}: {1}'.format(config.display_name, error))
+
 
             self.refresh_config(index + 1, done_callback)
 
