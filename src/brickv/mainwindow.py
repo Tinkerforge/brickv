@@ -785,7 +785,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 or device_info.position.lower() != position.lower()
                 or device_info.hardware_version != hardware_version
                 or device_info.device_identifier != device_identifier
-                or device_info.firmware_version_installed != firmware_version)
+                or (device_info.firmware_version_installed != (0, 0, 0) and device_info.firmware_version_installed != firmware_version))
 
             if cached_device_info_invalid:
                 self.remove_device_info(uid)
