@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-03-04.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -37,6 +37,8 @@ class BrickletCANV2(Device):
     DEVICE_URL_PART = 'can_v2' # internal
 
     CALLBACK_FRAME_READ_LOW_LEVEL = 16
+    CALLBACK_FRAME_READABLE = 19
+    CALLBACK_ERROR_OCCURRED = 22
 
     CALLBACK_FRAME_READ = -16
 
@@ -55,6 +57,10 @@ class BrickletCANV2(Device):
     FUNCTION_GET_COMMUNICATION_LED_CONFIG = 13
     FUNCTION_SET_ERROR_LED_CONFIG = 14
     FUNCTION_GET_ERROR_LED_CONFIG = 15
+    FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION = 17
+    FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION = 18
+    FUNCTION_SET_ERROR_OCCURRED_CALLBACK_CONFIGURATION = 20
+    FUNCTION_GET_ERROR_OCCURRED_CALLBACK_CONFIGURATION = 21
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -114,7 +120,7 @@ class BrickletCANV2(Device):
         """
         Device.__init__(self, uid, ipcon, BrickletCANV2.DEVICE_IDENTIFIER, BrickletCANV2.DEVICE_DISPLAY_NAME)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletCANV2.FUNCTION_WRITE_FRAME_LOW_LEVEL] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCANV2.FUNCTION_READ_FRAME_LOW_LEVEL] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -131,6 +137,10 @@ class BrickletCANV2(Device):
         self.response_expected[BrickletCANV2.FUNCTION_GET_COMMUNICATION_LED_CONFIG] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCANV2.FUNCTION_SET_ERROR_LED_CONFIG] = BrickletCANV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletCANV2.FUNCTION_GET_ERROR_LED_CONFIG] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION] = BrickletCANV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_SET_ERROR_OCCURRED_CALLBACK_CONFIGURATION] = BrickletCANV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletCANV2.FUNCTION_GET_ERROR_OCCURRED_CALLBACK_CONFIGURATION] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCANV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCANV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCANV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -145,6 +155,8 @@ class BrickletCANV2(Device):
         self.response_expected[BrickletCANV2.FUNCTION_GET_IDENTITY] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletCANV2.CALLBACK_FRAME_READ_LOW_LEVEL] = 'B I B 15B'
+        self.callback_formats[BrickletCANV2.CALLBACK_FRAME_READABLE] = ''
+        self.callback_formats[BrickletCANV2.CALLBACK_ERROR_OCCURRED] = ''
 
         self.high_level_callbacks[BrickletCANV2.CALLBACK_FRAME_READ] = [(None, None, 'stream_length', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': True}, None]
         ipcon.add_device(self)
@@ -222,7 +234,7 @@ class BrickletCANV2(Device):
         """
         Enables and disables the :cb:`Frame Read` callback.
 
-        By default the callback is disabled.
+        By default the callback is disabled. Enabling this callback will disable the :cb:`Frame Readable` callback.
         """
         self.check_validity()
 
@@ -452,7 +464,8 @@ class BrickletCANV2(Device):
         The read buffer overflow counter counts the overflows of all configured read
         buffers. Which read buffer exactly suffered from an overflow can be figured
         out from the read buffer overflow occurrence list
-        (``read_buffer_overflow_error_occurred``).
+        (``read_buffer_overflow_error_occurred``). Reading the error log clears the
+        occurence list.
         """
         self.check_validity()
 
@@ -510,6 +523,54 @@ class BrickletCANV2(Device):
         self.check_validity()
 
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 'B')
+
+    def set_frame_readable_callback_configuration(self, enabled):
+        """
+        Enables and disables the :cb:`Frame Readable` callback.
+
+        By default the callback is disabled. Enabling this callback will disable the :cb:`Frame Read` callback.
+
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        enabled = bool(enabled)
+
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION, (enabled,), '!', '')
+
+    def get_frame_readable_callback_configuration(self):
+        """
+        Returns *true* if the :cb:`Frame Readable` callback is enabled, *false* otherwise.
+
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION, (), '', '!')
+
+    def set_error_occurred_callback_configuration(self, enabled):
+        """
+        Enables and disables the :cb:`Error Occurred` callback.
+
+        By default the callback is disabled.
+
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        enabled = bool(enabled)
+
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_ERROR_OCCURRED_CALLBACK_CONFIGURATION, (enabled,), '!', '')
+
+    def get_error_occurred_callback_configuration(self):
+        """
+        Returns *true* if the :cb:`Error Occurred` callback is enabled, *false* otherwise.
+
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_OCCURRED_CALLBACK_CONFIGURATION, (), '', '!')
 
     def get_spitfp_error_count(self):
         """
@@ -861,7 +922,8 @@ class BrickletCANV2(Device):
         The read buffer overflow counter counts the overflows of all configured read
         buffers. Which read buffer exactly suffered from an overflow can be figured
         out from the read buffer overflow occurrence list
-        (``read_buffer_overflow_error_occurred``).
+        (``read_buffer_overflow_error_occurred``). Reading the error log clears the
+        occurence list.
         """
         ret = self.get_error_log_low_level()
 

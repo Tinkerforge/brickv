@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-03-04.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -32,6 +32,7 @@ class BrickletCAN(Device):
     DEVICE_URL_PART = 'can' # internal
 
     CALLBACK_FRAME_READ = 11
+    CALLBACK_FRAME_READABLE = 14
 
 
     FUNCTION_WRITE_FRAME = 1
@@ -44,6 +45,8 @@ class BrickletCAN(Device):
     FUNCTION_SET_READ_FILTER = 8
     FUNCTION_GET_READ_FILTER = 9
     FUNCTION_GET_ERROR_LOG = 10
+    FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION = 12
+    FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION = 13
     FUNCTION_GET_IDENTITY = 255
 
     FRAME_TYPE_STANDARD_DATA = 0
@@ -74,7 +77,7 @@ class BrickletCAN(Device):
         """
         Device.__init__(self, uid, ipcon, BrickletCAN.DEVICE_IDENTIFIER, BrickletCAN.DEVICE_DISPLAY_NAME)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletCAN.FUNCTION_WRITE_FRAME] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCAN.FUNCTION_READ_FRAME] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -86,9 +89,12 @@ class BrickletCAN(Device):
         self.response_expected[BrickletCAN.FUNCTION_SET_READ_FILTER] = BrickletCAN.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletCAN.FUNCTION_GET_READ_FILTER] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCAN.FUNCTION_GET_ERROR_LOG] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCAN.FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION] = BrickletCAN.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletCAN.FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCAN.FUNCTION_GET_IDENTITY] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletCAN.CALLBACK_FRAME_READ] = 'B I 8B B'
+        self.callback_formats[BrickletCAN.CALLBACK_FRAME_READABLE] = ''
 
         ipcon.add_device(self)
 
@@ -153,7 +159,7 @@ class BrickletCAN(Device):
         """
         Enables the :cb:`Frame Read` callback.
 
-        By default the callback is disabled.
+        By default the callback is disabled. Enabling this callback will disable the :cb:`Frame Readable` callback.
         """
         self.check_validity()
 
@@ -331,6 +337,30 @@ class BrickletCAN(Device):
         self.check_validity()
 
         return GetErrorLog(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_ERROR_LOG, (), '', 'B B ! I I I'))
+
+    def set_frame_readable_callback_configuration(self, enabled):
+        """
+        Enables/disables the :cb:`Frame Readable` callback.
+
+        By default the callback is disabled. Enabling this callback will disable the :cb:`Frame Read` callback.
+
+        .. versionadded:: 2.0.1$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        enabled = bool(enabled)
+
+        self.ipcon.send_request(self, BrickletCAN.FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION, (enabled,), '!', '')
+
+    def get_frame_readable_callback_configuration(self):
+        """
+        Returns *true* if the :cb:`Frame Readable` callback is enabled, *false* otherwise.
+
+        .. versionadded:: 2.0.1$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION, (), '', '!')
 
     def get_identity(self):
         """
