@@ -29,8 +29,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtBoundSignal
 
 from brickv.bindings.ip_connection import IPConnection
-from brickv.bindings.bricklet_gps_v2 import GPSV2
-from brickv.bindings.tng_di8 import TNGDI8
+from brickv.bindings.bricklet_unknown import BrickletUnknown
+from brickv.bindings.tng_unknown import TNGUnknown
 from brickv.utils import get_main_window
 from brickv.tab_window import IconButton
 from brickv.load_pixmap import load_pixmap
@@ -70,17 +70,12 @@ class PluginBase(QWidget):
 
         if override_base_name != None:
             self.base_name = override_base_name
-            # This is a little bit of a hack, but as far as i can see has no problems.
-            # If a new Bricklet (with comcu) is enumerated and currently unknown,
-            # we still want to be able to flash a firmware on it.
-            # To be able to do this we instanciate the GPSV2 class. It has all of the
-            # functions necessary to flash (the FIDs are at the same position for all
-            # new Bricklets) and no other function is used during flashing.
+
             if override_base_name == 'Unknown':
                 if str(self.device_info.device_identifier).startswith('20'):
-                    self.device = TNGDI8(self.uid, self.ipcon)
+                    self.device = TNGUnknown(self.uid, self.ipcon)
                 else:
-                    self.device = GPSV2(self.uid, self.ipcon)
+                    self.device = BrickletUnknown(self.uid, self.ipcon)
 
         if self.is_hardware_version_relevant():
             self.name = '{0} {1}.{2}'.format(self.base_name,

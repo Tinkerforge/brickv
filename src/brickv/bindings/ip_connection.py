@@ -491,6 +491,9 @@ class Device(object):
         if self.replaced:
             raise Error(Error.DEVICE_REPLACED, 'Device has been replaced')
 
+        if self.device_identifier < 0:
+            return
+
         if self.device_identifier_check == Device.DEVICE_IDENTIFIER_CHECK_MATCH:
             return
 
