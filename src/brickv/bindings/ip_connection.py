@@ -401,8 +401,6 @@ class Device(object):
         self.response_expected[IPConnection.FUNCTION_GET_ADC_CALIBRATION] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_UID] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_UID] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
 
     def get_api_version(self):
         """
@@ -538,8 +536,6 @@ class IPConnection(object):
     FUNCTION_GET_ADC_CALIBRATION = 250
     FUNCTION_READ_BRICKLET_UID = 249
     FUNCTION_WRITE_BRICKLET_UID = 248
-    FUNCTION_READ_BRICKLET_PLUGIN = 247
-    FUNCTION_WRITE_BRICKLET_PLUGIN = 246
     FUNCTION_DISCONNECT_PROBE = 128
 
     CALLBACK_ENUMERATE = 253
@@ -1395,22 +1391,6 @@ class IPConnection(object):
                             sequence_number_and_options, 0),
                 bool(r_bit),
                 sequence_number)
-
-    # internal
-    def write_bricklet_plugin(self, device, port, position, plugin_chunk):
-        self.send_request(device,
-                          IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN,
-                          (port, position, plugin_chunk),
-                          'c B 32B',
-                          '')
-
-    # internal
-    def read_bricklet_plugin(self, device, port, position):
-        return self.send_request(device,
-                                 IPConnection.FUNCTION_READ_BRICKLET_PLUGIN,
-                                 (port, position),
-                                 'c B',
-                                 '32B')
 
     # internal
     def get_adc_calibration(self, device):

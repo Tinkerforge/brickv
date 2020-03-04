@@ -1495,7 +1495,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         for chunk in plugin_chunks:
             try:
-                self.parent.ipcon.write_bricklet_plugin(brick, port, position, chunk)
+                brick.write_bricklet_plugin(port, position, chunk)
             except Error as e:
                 progress.cancel()
                 self.popup_fail('Bricklet', 'Could not write Bricklet plugin: ' + error_to_name(e))
@@ -1520,7 +1520,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         for chunk in plugin_chunks:
             try:
-                read_chunk = bytes(self.parent.ipcon.read_bricklet_plugin(brick, port, position))
+                read_chunk = bytes(brick.read_bricklet_plugin(port, position))
             except Error as e:
                 progress.cancel()
                 self.popup_fail('Bricklet', 'Could not read Bricklet plugin back for verification: ' + error_to_name(e))
