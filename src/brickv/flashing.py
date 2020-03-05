@@ -1153,7 +1153,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if self.current_bricklet_is_tng():
             return self.write_bricklet_plugin_tng(plugin, bricklet, name, progress)
 
-        return self.write_bricklet_plugin_standard(plugin, brick, port, bricklet, name, progress)
+        return self.write_bricklet_plugin_classic(plugin, brick, port, bricklet, name, progress)
 
     def write_bricklet_plugin_tng(self, plugin, bricklet, name, progress):
         try:
@@ -1470,24 +1470,25 @@ class FlashingWindow(QDialog, Ui_Flashing):
             sys.excepthook(*sys.exc_info())
             return False
 
-    def write_bricklet_plugin_standard(self, plugin, brick, port, _bricklet, name, progress):
+    def write_bricklet_plugin_classic(self, plugin, brick, port, _bricklet, name, progress):
         # Write
         progress.setLabelText('Writing plugin: ' + name)
         progress.setMaximum(0)
         progress.setValue(0)
         progress.show()
 
+        plugin_chunk_size = 32
         plugin_chunks = []
         offset = 0
 
         while offset < len(plugin):
-            chunk = plugin[offset:offset + IPConnection.PLUGIN_CHUNK_SIZE]
+            chunk = plugin[offset:offset + plugin_chunk_size]
 
-            if len(chunk) < IPConnection.PLUGIN_CHUNK_SIZE:
-                chunk += bytes([0]) * (IPConnection.PLUGIN_CHUNK_SIZE - len(chunk))
+            if len(chunk) < plugin_chunk_size:
+                chunk += bytes([0]) * (plugin_chunk_size - len(chunk))
 
             plugin_chunks.append(chunk)
-            offset += IPConnection.PLUGIN_CHUNK_SIZE
+            offset += plugin_chunk_size
 
         progress.setMaximum(len(plugin_chunks))
 
