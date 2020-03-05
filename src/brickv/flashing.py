@@ -1481,6 +1481,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
         plugin_chunks = []
         offset = 0
 
+        # it's okay to use the Master Brick constant here, because this function
+        # is on the same function ID (246) for all Bricks.
+        brick.set_response_expected(BrickMaster.FUNCTION_WRITE_BRICKLET_PLUGIN, True)
+
         while offset < len(plugin):
             chunk = plugin[offset:offset + plugin_chunk_size]
 
