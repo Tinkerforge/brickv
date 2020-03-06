@@ -1566,30 +1566,37 @@ class FlashingWindow(QDialog, Ui_Flashing):
             plugin_info = self.plugin_infos[url_part]
             name = plugin_info.name
             version = self.combo_plugin_version.currentData()
-
             plugin = self.download_bricklet_plugin(progress, url_part, self.current_bricklet_has_comcu(), name, version)
 
             if plugin == None:
                 return
+
         progress.hideCancelButton()
+
         # Flash plugin
         port = self.current_bricklet_port()
         brick = self.current_parent_device()
         bricklet = self.current_bricklet_device()
+        has_comcu = self.current_bricklet_has_comcu()
 
         if current_text == CUSTOM:
-            if not self.write_bricklet_plugin(plugin, brick, port, bricklet, os.path.split(plugin_file_name)[-1], progress, self.current_bricklet_has_comcu()):
+            if not self.write_bricklet_plugin(plugin, brick, port, bricklet, os.path.split(plugin_file_name)[-1], progress, has_comcu):
                 return
         else:
-            if not self.write_bricklet_plugin(plugin, brick, port, bricklet, name, progress, self.current_bricklet_has_comcu()):
+            if not self.write_bricklet_plugin(plugin, brick, port, bricklet, name, progress, has_comcu):
                 return
 
         progress.cancel()
 
-        if current_text == CUSTOM:
-            self.popup_ok('Bricklet', 'Successfully flashed plugin.\nNew plugin will be used after reset of the connected Brick.')
+        if has_comcu:
+            message_tail = ''
         else:
-            self.popup_ok('Bricklet', 'Successfully flashed {0} Bricklet plugin {1}.{2}.{3}.\nNew plugin will be used after reset of the connected Brick.'.format(name, *version))
+            message_tail = '\nNew plugin will be used after reset of the connected Brick.'
+
+        if current_text == CUSTOM:
+            self.popup_ok('Bricklet', 'Successfully flashed plugin.{0}'.format(message_tail))
+        else:
+            self.popup_ok('Bricklet', 'Successfully flashed {0} Bricklet plugin {2}.{3}.{4}.{1}'.format(name, message_tail, *version))
 
     def current_bricklet_info(self):
         try:
