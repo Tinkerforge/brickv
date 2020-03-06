@@ -1048,8 +1048,10 @@ class IPConnection(object):
     # internal
     def dispatch_meta(self, function_id, parameter, socket_id):
         if function_id == IPConnection.CALLBACK_CONNECTED:
-            if IPConnection.CALLBACK_CONNECTED in self.registered_callbacks:
-                self.registered_callbacks[IPConnection.CALLBACK_CONNECTED](parameter)
+            cb = self.registered_callbacks.get(IPConnection.CALLBACK_CONNECTED)
+
+            if cb != None:
+                cb(parameter)
         elif function_id == IPConnection.CALLBACK_DISCONNECTED:
             if parameter != IPConnection.DISCONNECT_REASON_REQUEST:
                 # need to do this here, the receive_loop is not allowed to
@@ -1073,8 +1075,10 @@ class IPConnection(object):
             # socket. the first receive will then fail directly
             time.sleep(0.1)
 
-            if IPConnection.CALLBACK_DISCONNECTED in self.registered_callbacks:
-                self.registered_callbacks[IPConnection.CALLBACK_DISCONNECTED](parameter)
+            cb = self.registered_callbacks.get(IPConnection.CALLBACK_DISCONNECTED)
+
+            if cb != None:
+                cb(parameter)
 
             if parameter != IPConnection.DISCONNECT_REASON_REQUEST and \
                self.auto_reconnect and self.auto_reconnect_allowed:
@@ -1105,13 +1109,16 @@ class IPConnection(object):
         function_id = get_function_id_from_data(packet)
         payload = packet[8:]
 
-        if function_id == IPConnection.CALLBACK_ENUMERATE and \
-           IPConnection.CALLBACK_ENUMERATE in self.registered_callbacks:
+        if function_id == IPConnection.CALLBACK_ENUMERATE:
+            cb = self.registered_callbacks.get(IPConnection.CALLBACK_ENUMERATE)
+
+            if cb == None:
+                return
+
             uid, connected_uid, position, hardware_version, \
                 firmware_version, device_identifier, enumeration_type = \
                 unpack_payload(payload, '8s 8s c 3B 3B H B')
 
-            cb = self.registered_callbacks[IPConnection.CALLBACK_ENUMERATE]
             cb(uid, connected_uid, position, hardware_version,
                firmware_version, device_identifier, enumeration_type)
 
@@ -1169,7 +1176,9 @@ class IPConnection(object):
                         data = hlcb[2][:length]
                         hlcb[2] = None
 
-            if has_data and -function_id in device.registered_callbacks:
+            cb = device.registered_callbacks.get(-function_id)
+
+            if has_data and cb != None:
                 result = []
 
                 for role, llvalue in zip(hlcb[0], llvalues):
@@ -1178,13 +1187,16 @@ class IPConnection(object):
                     elif role == None:
                         result.append(llvalue)
 
-                device.registered_callbacks[-function_id](*tuple(result))
+                cb(*tuple(result))
 
-        if function_id in device.registered_callbacks:
-            cb = device.registered_callbacks[function_id]
-            form = device.callback_formats[function_id]
+        cb = device.registered_callbacks.get(function_id)
 
-            if len(form) == 0:
+        if cb != None:
+            form = device.callback_formats.get(function_id)
+
+            if form == None:
+                pass # silently ignore registered but unknown callback
+            elif len(form) == 0:
                 cb()
             elif len(form.split(' ')) == 1:
                 cb(unpack_payload(payload, form))
