@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-03-10.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -38,6 +38,7 @@ GetWifi2MeshConfiguration = namedtuple('Wifi2MeshConfiguration', ['enable', 'roo
 GetWifi2MeshCommonStatus = namedtuple('Wifi2MeshCommonStatus', ['status', 'root_node', 'root_candidate', 'connected_nodes', 'rx_count', 'tx_count'])
 GetWifi2MeshClientStatus = namedtuple('Wifi2MeshClientStatus', ['hostname', 'ip', 'subnet_mask', 'gateway', 'mac_address'])
 GetWifi2MeshAPStatus = namedtuple('Wifi2MeshAPStatus', ['ssid', 'ip', 'subnet_mask', 'gateway', 'mac_address'])
+SetBrickletXMCFlashConfig = namedtuple('SetBrickletXMCFlashConfig', ['return_value', 'return_data'])
 GetSPITFPBaudrateConfig = namedtuple('SPITFPBaudrateConfig', ['enable_dynamic_baudrate', 'minimum_dynamic_baudrate'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
@@ -164,6 +165,10 @@ class BrickMaster(Device):
     FUNCTION_GET_WIFI2_MESH_COMMON_STATUS = 108
     FUNCTION_GET_WIFI2_MESH_CLIENT_STATUS = 109
     FUNCTION_GET_WIFI2_MESH_AP_STATUS = 110
+    FUNCTION_SET_BRICKLET_XMC_FLASH_CONFIG = 111
+    FUNCTION_SET_BRICKLET_XMC_FLASH_DATA = 112
+    FUNCTION_SET_BRICKLETS_ENABLED = 113
+    FUNCTION_GET_BRICKLETS_ENABLED = 114
     FUNCTION_SET_SPITFP_BAUDRATE_CONFIG = 231
     FUNCTION_GET_SPITFP_BAUDRATE_CONFIG = 232
     FUNCTION_GET_SEND_TIMEOUT_COUNT = 233
@@ -275,7 +280,7 @@ class BrickMaster(Device):
         """
         Device.__init__(self, uid, ipcon, BrickMaster.DEVICE_IDENTIFIER, BrickMaster.DEVICE_DISPLAY_NAME)
 
-        self.api_version = (2, 0, 9)
+        self.api_version = (2, 0, 10)
 
         self.response_expected[BrickMaster.FUNCTION_GET_STACK_VOLTAGE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_STACK_CURRENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -381,6 +386,10 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_MESH_COMMON_STATUS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_MESH_CLIENT_STATUS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_MESH_AP_STATUS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_BRICKLET_XMC_FLASH_CONFIG] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_BRICKLET_XMC_FLASH_DATA] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_BRICKLETS_ENABLED] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_BRICKLETS_ENABLED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_SEND_TIMEOUT_COUNT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -2127,6 +2136,76 @@ class BrickMaster(Device):
         self.check_validity()
 
         return GetWifi2MeshAPStatus(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_MESH_AP_STATUS, (), '', '32s 4B 4B 4B 6B'))
+
+    def set_bricklet_xmc_flash_config(self, config, parameter1, parameter2, data):
+        """
+        This function is for internal use to flash the initial
+        bootstrapper and bootloader to the Bricklets.
+
+        If you need to flash a boostrapper/bootloader (for exmaple
+        because you made your own Bricklet from scratch) please
+        take a look at our open source flash and test tool at
+        `https://github.com/Tinkerforge/flash-test <https://github.com/Tinkerforge/flash-test>`__
+
+        Don't use this function directly.
+
+        .. versionadded:: 2.5.0$nbsp;(Firmware)
+        """
+        self.check_validity()
+
+        config = int(config)
+        parameter1 = int(parameter1)
+        parameter2 = int(parameter2)
+        data = list(map(int, data))
+
+        return SetBrickletXMCFlashConfig(*self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_BRICKLET_XMC_FLASH_CONFIG, (config, parameter1, parameter2, data), 'I I I 52B', 'I 60B'))
+
+    def set_bricklet_xmc_flash_data(self, data):
+        """
+        This function is for internal use to flash the initial
+        bootstrapper and bootloader to the Bricklets.
+
+        If you need to flash a boostrapper/bootloader (for exmaple
+        because you made your own Bricklet from scratch) please
+        take a look at our open source flash and test tool at
+        `https://github.com/Tinkerforge/flash-test <https://github.com/Tinkerforge/flash-test>`__
+
+        Don't use this function directly.
+
+        .. versionadded:: 2.5.0$nbsp;(Firmware)
+        """
+        self.check_validity()
+
+        data = list(map(int, data))
+
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_BRICKLET_XMC_FLASH_DATA, (data,), '64B', 'I')
+
+    def set_bricklets_enabled(self, bricklets_enabled):
+        """
+        This function is only available in Master Brick hardware version >= 3.0.
+
+        Enables/disables all four Bricklets if set to true/false.
+
+        If you disable the Bricklets the power supply to the Bricklets will be disconnected.
+        The Bricklets will lose all configurations if disabled.
+
+        .. versionadded:: 2.5.0$nbsp;(Firmware)
+        """
+        self.check_validity()
+
+        bricklets_enabled = bool(bricklets_enabled)
+
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_BRICKLETS_ENABLED, (bricklets_enabled,), '!', '')
+
+    def get_bricklets_enabled(self):
+        """
+        Returns *true* if the Bricklets are enabled, *false* otherwise.
+
+        .. versionadded:: 2.5.0$nbsp;(Firmware)
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_BRICKLETS_ENABLED, (), '', '!')
 
     def set_spitfp_baudrate_config(self, enable_dynamic_baudrate, minimum_dynamic_baudrate):
         """
