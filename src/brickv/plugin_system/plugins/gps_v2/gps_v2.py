@@ -268,7 +268,7 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
     def start(self):
         async_call(self.gps.get_fix_led_config, None, self.get_fix_led_config_async, self.increase_error_count)
 
-        self.cbe_universal.set_period(250)
+        self.cbe_universal.set_period(100)
         self.cbe_universal_gps.set_period(100)
         self.cbe_universal_glo.set_period(100)
 
@@ -392,6 +392,7 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
         date //= 100
         dd = date
 
+        us = (time % 1000) * 1000
         time //= 1000
         ss = time % 100
         time //= 100
@@ -400,7 +401,7 @@ class GPSV2(COMCUPluginBase, Ui_GPSV2):
         hh = time
 
         try:
-            date_str = str(datetime.datetime(yy, mm, dd, hh, mins, ss)) + " UTC"
+            date_str = datetime.datetime(yy, mm, dd, hh, mins, ss, us).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] + " UTC"
         except:
             date_str = "Unknown"
 
