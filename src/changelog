@@ -556,3 +556,17 @@
 2019-12-12: 2.4.11 (9928663)
 - Lower Hardened Runtime restrictions to make ctypes work again on macOS
 - Fix encoding issues in Server Monitoring script
+
+2020-03-23: 2.4.12 (<unknown>)
+- Fix Server Monitoring support for Ambient Light 3.0 and IO-4 Bricklet 2.0
+- Fix WIFI Extension 2.0 no-encryption configuration
+- Add checkbox for setting the WIFI Extension 2.0 mesh password, old password is
+  not shown anymore
+- Improve firmware update error handling
+- Fix RS485 Bricklet Modbus slave logic for write-multiple-registers function
+- Improve RS485 Bricklet input field history handling
+- Fix Data Logger support for Color Bricklet 2.0
+- Improve corner case handling in enumerate callback logic
+- Fix error handling for RED Brick file upload
+- Fix maximum number of LEDs for LED Strip Bricklet 2.0
+- Show milliseconds in GPS Bricklet 2.0 timestamp
