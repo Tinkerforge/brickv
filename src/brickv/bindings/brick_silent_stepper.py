@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-03-20.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -510,6 +510,14 @@ class BrickSilentStepper(Device):
         """
         Disables the driver chip. The configurations are kept (maximum velocity,
         acceleration, etc) but the motor is not driven until it is enabled again.
+
+        .. warning::
+         Disabling the driver chip while the motor is still turning can damage the
+         driver chip. The motor should be stopped calling :func:`Stop` function
+         before disabling the motor power. The :func:`Stop` function will **not**
+         wait until the motor is actually stopped. You have to explicitly wait for the
+         appropriate time after calling the :func:`Stop` function before calling
+         the :func:`Disable` function.
         """
         self.check_validity()
 

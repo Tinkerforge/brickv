@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-03-20.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -122,7 +122,7 @@ class BrickletAccelerometerV2(Device):
         self.response_expected[BrickletAccelerometerV2.FUNCTION_GET_ACCELERATION_CALLBACK_CONFIGURATION] = BrickletAccelerometerV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAccelerometerV2.FUNCTION_SET_INFO_LED_CONFIG] = BrickletAccelerometerV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletAccelerometerV2.FUNCTION_GET_INFO_LED_CONFIG] = BrickletAccelerometerV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAccelerometerV2.FUNCTION_SET_CONTINUOUS_ACCELERATION_CONFIGURATION] = BrickletAccelerometerV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAccelerometerV2.FUNCTION_SET_CONTINUOUS_ACCELERATION_CONFIGURATION] = BrickletAccelerometerV2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletAccelerometerV2.FUNCTION_GET_CONTINUOUS_ACCELERATION_CONFIGURATION] = BrickletAccelerometerV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAccelerometerV2.FUNCTION_SET_FILTER_CONFIGURATION] = BrickletAccelerometerV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletAccelerometerV2.FUNCTION_GET_FILTER_CONFIGURATION] = BrickletAccelerometerV2.RESPONSE_EXPECTED_ALWAYS_TRUE
