@@ -1471,6 +1471,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
             return False
 
     def write_bricklet_plugin_classic(self, plugin, brick, port, _bricklet, name, progress):
+        if len(plugin) > 4084:
+            progress.cancel()
+            self.popup_fail('Bricklet', 'Could not write Bricklet plugin: Plugin was larger than 4084 bytes (the maximum plugin size for classic bricklets).')
+            return
         # Write
         progress.setLabelText('Writing plugin: ' + name)
         progress.setMaximum(0)
