@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -62,7 +62,7 @@ class BrickletDualButton(Device):
         self.response_expected[BrickletDualButton.FUNCTION_SET_SELECTED_LED_STATE] = BrickletDualButton.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDualButton.FUNCTION_GET_IDENTITY] = BrickletDualButton.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletDualButton.CALLBACK_STATE_CHANGED] = 'B B B B'
+        self.callback_formats[BrickletDualButton.CALLBACK_STATE_CHANGED] = (12, 'B B B B')
 
         ipcon.add_device(self)
 
@@ -86,7 +86,7 @@ class BrickletDualButton(Device):
         led_l = int(led_l)
         led_r = int(led_r)
 
-        self.ipcon.send_request(self, BrickletDualButton.FUNCTION_SET_LED_STATE, (led_l, led_r), 'B B', '')
+        self.ipcon.send_request(self, BrickletDualButton.FUNCTION_SET_LED_STATE, (led_l, led_r), 'B B', 0, '')
 
     def get_led_state(self):
         """
@@ -94,7 +94,7 @@ class BrickletDualButton(Device):
         """
         self.check_validity()
 
-        return GetLEDState(*self.ipcon.send_request(self, BrickletDualButton.FUNCTION_GET_LED_STATE, (), '', 'B B'))
+        return GetLEDState(*self.ipcon.send_request(self, BrickletDualButton.FUNCTION_GET_LED_STATE, (), '', 10, 'B B'))
 
     def get_button_state(self):
         """
@@ -105,7 +105,7 @@ class BrickletDualButton(Device):
         """
         self.check_validity()
 
-        return GetButtonState(*self.ipcon.send_request(self, BrickletDualButton.FUNCTION_GET_BUTTON_STATE, (), '', 'B B'))
+        return GetButtonState(*self.ipcon.send_request(self, BrickletDualButton.FUNCTION_GET_BUTTON_STATE, (), '', 10, 'B B'))
 
     def set_selected_led_state(self, led, state):
         """
@@ -118,7 +118,7 @@ class BrickletDualButton(Device):
         led = int(led)
         state = int(state)
 
-        self.ipcon.send_request(self, BrickletDualButton.FUNCTION_SET_SELECTED_LED_STATE, (led, state), 'B B', '')
+        self.ipcon.send_request(self, BrickletDualButton.FUNCTION_SET_SELECTED_LED_STATE, (led, state), 'B B', 0, '')
 
     def get_identity(self):
         """
@@ -134,7 +134,7 @@ class BrickletDualButton(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletDualButton.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletDualButton.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

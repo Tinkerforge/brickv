@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-03-04.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -205,9 +205,9 @@ class BrickletNFC(Device):
         self.response_expected[BrickletNFC.FUNCTION_READ_UID] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletNFC.FUNCTION_GET_IDENTITY] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletNFC.CALLBACK_READER_STATE_CHANGED] = 'B !'
-        self.callback_formats[BrickletNFC.CALLBACK_CARDEMU_STATE_CHANGED] = 'B !'
-        self.callback_formats[BrickletNFC.CALLBACK_P2P_STATE_CHANGED] = 'B !'
+        self.callback_formats[BrickletNFC.CALLBACK_READER_STATE_CHANGED] = (10, 'B !')
+        self.callback_formats[BrickletNFC.CALLBACK_CARDEMU_STATE_CHANGED] = (10, 'B !')
+        self.callback_formats[BrickletNFC.CALLBACK_P2P_STATE_CHANGED] = (10, 'B !')
 
         ipcon.add_device(self)
 
@@ -228,7 +228,7 @@ class BrickletNFC(Device):
 
         mode = int(mode)
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_MODE, (mode,), 'B', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_MODE, (mode,), 'B', 0, '')
 
     def get_mode(self):
         """
@@ -236,7 +236,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_MODE, (), '', 9, 'B')
 
     def reader_request_tag_id(self):
         """
@@ -260,7 +260,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_REQUEST_TAG_ID, (), '', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_REQUEST_TAG_ID, (), '', 0, '')
 
     def reader_get_tag_id_low_level(self):
         """
@@ -277,7 +277,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return ReaderGetTagIDLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_GET_TAG_ID_LOW_LEVEL, (), '', 'B B 32B'))
+        return ReaderGetTagIDLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_GET_TAG_ID_LOW_LEVEL, (), '', 42, 'B B 32B'))
 
     def reader_get_state(self):
         """
@@ -300,7 +300,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return ReaderGetState(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_GET_STATE, (), '', 'B !'))
+        return ReaderGetState(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_GET_STATE, (), '', 10, 'B !'))
 
     def reader_write_ndef_low_level(self, ndef_length, ndef_chunk_offset, ndef_chunk_data):
         """
@@ -325,7 +325,7 @@ class BrickletNFC(Device):
         ndef_chunk_offset = int(ndef_chunk_offset)
         ndef_chunk_data = list(map(int, ndef_chunk_data))
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_WRITE_NDEF_LOW_LEVEL, (ndef_length, ndef_chunk_offset, ndef_chunk_data), 'H H 60B', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_WRITE_NDEF_LOW_LEVEL, (ndef_length, ndef_chunk_offset, ndef_chunk_data), 'H H 60B', 0, '')
 
     def reader_request_ndef(self):
         """
@@ -347,7 +347,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_REQUEST_NDEF, (), '', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_REQUEST_NDEF, (), '', 0, '')
 
     def reader_read_ndef_low_level(self):
         """
@@ -356,7 +356,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return ReaderReadNDEFLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_READ_NDEF_LOW_LEVEL, (), '', 'H H 60B'))
+        return ReaderReadNDEFLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_READ_NDEF_LOW_LEVEL, (), '', 72, 'H H 60B'))
 
     def reader_authenticate_mifare_classic_page(self, page, key_number, key):
         """
@@ -387,7 +387,7 @@ class BrickletNFC(Device):
         key_number = int(key_number)
         key = list(map(int, key))
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_AUTHENTICATE_MIFARE_CLASSIC_PAGE, (page, key_number, key), 'H B 6B', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_AUTHENTICATE_MIFARE_CLASSIC_PAGE, (page, key_number, key), 'H B 6B', 0, '')
 
     def reader_write_page_low_level(self, page, data_length, data_chunk_offset, data_chunk_data):
         """
@@ -426,7 +426,7 @@ class BrickletNFC(Device):
         data_chunk_offset = int(data_chunk_offset)
         data_chunk_data = list(map(int, data_chunk_data))
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_WRITE_PAGE_LOW_LEVEL, (page, data_length, data_chunk_offset, data_chunk_data), 'H H H 58B', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_WRITE_PAGE_LOW_LEVEL, (page, data_length, data_chunk_offset, data_chunk_data), 'H H H 58B', 0, '')
 
     def reader_request_page(self, page, length):
         """
@@ -466,7 +466,7 @@ class BrickletNFC(Device):
         page = int(page)
         length = int(length)
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_REQUEST_PAGE, (page, length), 'H H', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_REQUEST_PAGE, (page, length), 'H H', 0, '')
 
     def reader_read_page_low_level(self):
         """
@@ -475,7 +475,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return ReaderReadPageLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_READ_PAGE_LOW_LEVEL, (), '', 'H H 60B'))
+        return ReaderReadPageLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_READER_READ_PAGE_LOW_LEVEL, (), '', 72, 'H H 60B'))
 
     def cardemu_get_state(self):
         """
@@ -498,7 +498,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return CardemuGetState(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_CARDEMU_GET_STATE, (), '', 'B !'))
+        return CardemuGetState(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_CARDEMU_GET_STATE, (), '', 10, 'B !'))
 
     def cardemu_start_discovery(self):
         """
@@ -515,7 +515,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_CARDEMU_START_DISCOVERY, (), '', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_CARDEMU_START_DISCOVERY, (), '', 0, '')
 
     def cardemu_write_ndef_low_level(self, ndef_length, ndef_chunk_offset, ndef_chunk_data):
         """
@@ -533,7 +533,7 @@ class BrickletNFC(Device):
         ndef_chunk_offset = int(ndef_chunk_offset)
         ndef_chunk_data = list(map(int, ndef_chunk_data))
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_CARDEMU_WRITE_NDEF_LOW_LEVEL, (ndef_length, ndef_chunk_offset, ndef_chunk_data), 'H H 60B', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_CARDEMU_WRITE_NDEF_LOW_LEVEL, (ndef_length, ndef_chunk_offset, ndef_chunk_data), 'H H 60B', 0, '')
 
     def cardemu_start_transfer(self, transfer):
         """
@@ -550,7 +550,7 @@ class BrickletNFC(Device):
 
         transfer = int(transfer)
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_CARDEMU_START_TRANSFER, (transfer,), 'B', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_CARDEMU_START_TRANSFER, (transfer,), 'B', 0, '')
 
     def p2p_get_state(self):
         """
@@ -573,7 +573,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return P2PGetState(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_GET_STATE, (), '', 'B !'))
+        return P2PGetState(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_GET_STATE, (), '', 10, 'B !'))
 
     def p2p_start_discovery(self):
         """
@@ -590,7 +590,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_START_DISCOVERY, (), '', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_START_DISCOVERY, (), '', 0, '')
 
     def p2p_write_ndef_low_level(self, ndef_length, ndef_chunk_offset, ndef_chunk_data):
         """
@@ -608,7 +608,7 @@ class BrickletNFC(Device):
         ndef_chunk_offset = int(ndef_chunk_offset)
         ndef_chunk_data = list(map(int, ndef_chunk_data))
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_WRITE_NDEF_LOW_LEVEL, (ndef_length, ndef_chunk_offset, ndef_chunk_data), 'H H 60B', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_WRITE_NDEF_LOW_LEVEL, (ndef_length, ndef_chunk_offset, ndef_chunk_data), 'H H 60B', 0, '')
 
     def p2p_start_transfer(self, transfer):
         """
@@ -629,7 +629,7 @@ class BrickletNFC(Device):
 
         transfer = int(transfer)
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_START_TRANSFER, (transfer,), 'B', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_START_TRANSFER, (transfer,), 'B', 0, '')
 
     def p2p_read_ndef_low_level(self):
         """
@@ -640,7 +640,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return P2PReadNDEFLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_READ_NDEF_LOW_LEVEL, (), '', 'H H 60B'))
+        return P2PReadNDEFLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_P2P_READ_NDEF_LOW_LEVEL, (), '', 72, 'H H 60B'))
 
     def set_detection_led_config(self, config):
         """
@@ -655,7 +655,7 @@ class BrickletNFC(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_DETECTION_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_DETECTION_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_detection_led_config(self):
         """
@@ -663,7 +663,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_DETECTION_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_DETECTION_LED_CONFIG, (), '', 9, 'B')
 
     def set_maximum_timeout(self, timeout):
         """
@@ -691,7 +691,7 @@ class BrickletNFC(Device):
 
         timeout = int(timeout)
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_MAXIMUM_TIMEOUT, (timeout,), 'H', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_MAXIMUM_TIMEOUT, (timeout,), 'H', 0, '')
 
     def get_maximum_timeout(self):
         """
@@ -701,7 +701,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_MAXIMUM_TIMEOUT, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_MAXIMUM_TIMEOUT, (), '', 10, 'H')
 
     def get_spitfp_error_count(self):
         """
@@ -719,7 +719,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -737,7 +737,7 @@ class BrickletNFC(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -745,7 +745,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -760,7 +760,7 @@ class BrickletNFC(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -777,7 +777,7 @@ class BrickletNFC(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -793,7 +793,7 @@ class BrickletNFC(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -801,7 +801,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -814,7 +814,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -827,7 +827,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -841,7 +841,7 @@ class BrickletNFC(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletNFC.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletNFC.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -850,7 +850,7 @@ class BrickletNFC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletNFC.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -866,7 +866,7 @@ class BrickletNFC(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def reader_get_tag_id(self):
         """

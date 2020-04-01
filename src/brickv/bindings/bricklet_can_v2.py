@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-03-04.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -154,9 +154,9 @@ class BrickletCANV2(Device):
         self.response_expected[BrickletCANV2.FUNCTION_READ_UID] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCANV2.FUNCTION_GET_IDENTITY] = BrickletCANV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletCANV2.CALLBACK_FRAME_READ_LOW_LEVEL] = 'B I B 15B'
-        self.callback_formats[BrickletCANV2.CALLBACK_FRAME_READABLE] = ''
-        self.callback_formats[BrickletCANV2.CALLBACK_ERROR_OCCURRED] = ''
+        self.callback_formats[BrickletCANV2.CALLBACK_FRAME_READ_LOW_LEVEL] = (29, 'B I B 15B')
+        self.callback_formats[BrickletCANV2.CALLBACK_FRAME_READABLE] = (8, '')
+        self.callback_formats[BrickletCANV2.CALLBACK_ERROR_OCCURRED] = (8, '')
 
         self.high_level_callbacks[BrickletCANV2.CALLBACK_FRAME_READ] = [(None, None, 'stream_length', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': True}, None]
         ipcon.add_device(self)
@@ -199,7 +199,7 @@ class BrickletCANV2(Device):
         data_length = int(data_length)
         data_data = list(map(int, data_data))
 
-        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_WRITE_FRAME_LOW_LEVEL, (frame_type, identifier, data_length, data_data), 'B I B 15B', '!')
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_WRITE_FRAME_LOW_LEVEL, (frame_type, identifier, data_length, data_data), 'B I B 15B', 9, '!')
 
     def read_frame_low_level(self):
         """
@@ -228,7 +228,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        return ReadFrameLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_READ_FRAME_LOW_LEVEL, (), '', '! B I B 15B'))
+        return ReadFrameLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_READ_FRAME_LOW_LEVEL, (), '', 30, '! B I B 15B'))
 
     def set_frame_read_callback_configuration(self, enabled):
         """
@@ -240,7 +240,7 @@ class BrickletCANV2(Device):
 
         enabled = bool(enabled)
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_FRAME_READ_CALLBACK_CONFIGURATION, (enabled,), '!', '')
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_FRAME_READ_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
 
     def get_frame_read_callback_configuration(self):
         """
@@ -248,7 +248,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_FRAME_READ_CALLBACK_CONFIGURATION, (), '', '!')
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_FRAME_READ_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def set_transceiver_configuration(self, baud_rate, sample_point, transceiver_mode):
         """
@@ -270,7 +270,7 @@ class BrickletCANV2(Device):
         sample_point = int(sample_point)
         transceiver_mode = int(transceiver_mode)
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_TRANSCEIVER_CONFIGURATION, (baud_rate, sample_point, transceiver_mode), 'I H B', '')
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_TRANSCEIVER_CONFIGURATION, (baud_rate, sample_point, transceiver_mode), 'I H B', 0, '')
 
     def get_transceiver_configuration(self):
         """
@@ -278,7 +278,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        return GetTransceiverConfiguration(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_TRANSCEIVER_CONFIGURATION, (), '', 'I H B'))
+        return GetTransceiverConfiguration(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_TRANSCEIVER_CONFIGURATION, (), '', 15, 'I H B'))
 
     def set_queue_configuration_low_level(self, write_buffer_size, write_buffer_timeout, write_backlog_size, read_buffer_sizes_length, read_buffer_sizes_data, read_backlog_size):
         """
@@ -339,7 +339,7 @@ class BrickletCANV2(Device):
         read_buffer_sizes_data = list(map(int, read_buffer_sizes_data))
         read_backlog_size = int(read_backlog_size)
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_QUEUE_CONFIGURATION_LOW_LEVEL, (write_buffer_size, write_buffer_timeout, write_backlog_size, read_buffer_sizes_length, read_buffer_sizes_data, read_backlog_size), 'B i H B 32b H', '')
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_QUEUE_CONFIGURATION_LOW_LEVEL, (write_buffer_size, write_buffer_timeout, write_backlog_size, read_buffer_sizes_length, read_buffer_sizes_data, read_backlog_size), 'B i H B 32b H', 0, '')
 
     def get_queue_configuration_low_level(self):
         """
@@ -347,7 +347,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        return GetQueueConfigurationLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_QUEUE_CONFIGURATION_LOW_LEVEL, (), '', 'B i H B 32b H'))
+        return GetQueueConfigurationLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_QUEUE_CONFIGURATION_LOW_LEVEL, (), '', 50, 'B i H B 32b H'))
 
     def set_read_filter_configuration(self, buffer_index, filter_mode, filter_mask, filter_identifier):
         """
@@ -417,7 +417,7 @@ class BrickletCANV2(Device):
         filter_mask = int(filter_mask)
         filter_identifier = int(filter_identifier)
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_READ_FILTER_CONFIGURATION, (buffer_index, filter_mode, filter_mask, filter_identifier), 'B B I I', '')
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_READ_FILTER_CONFIGURATION, (buffer_index, filter_mode, filter_mask, filter_identifier), 'B B I I', 0, '')
 
     def get_read_filter_configuration(self, buffer_index):
         """
@@ -427,7 +427,7 @@ class BrickletCANV2(Device):
 
         buffer_index = int(buffer_index)
 
-        return GetReadFilterConfiguration(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_READ_FILTER_CONFIGURATION, (buffer_index,), 'B', 'B I I'))
+        return GetReadFilterConfiguration(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_READ_FILTER_CONFIGURATION, (buffer_index,), 'B', 17, 'B I I'))
 
     def get_error_log_low_level(self):
         """
@@ -469,7 +469,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        return GetErrorLogLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_LOG_LOW_LEVEL, (), '', 'B B B I I I I I I I I B 32! I'))
+        return GetErrorLogLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_LOG_LOW_LEVEL, (), '', 52, 'B B B I I I I I I I I B 32! I'))
 
     def set_communication_led_config(self, config):
         """
@@ -484,7 +484,7 @@ class BrickletCANV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_COMMUNICATION_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_COMMUNICATION_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_communication_led_config(self):
         """
@@ -492,7 +492,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_COMMUNICATION_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_COMMUNICATION_LED_CONFIG, (), '', 9, 'B')
 
     def set_error_led_config(self, config):
         """
@@ -514,7 +514,7 @@ class BrickletCANV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_error_led_config(self):
         """
@@ -522,7 +522,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 9, 'B')
 
     def set_frame_readable_callback_configuration(self, enabled):
         """
@@ -536,7 +536,7 @@ class BrickletCANV2(Device):
 
         enabled = bool(enabled)
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION, (enabled,), '!', '')
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
 
     def get_frame_readable_callback_configuration(self):
         """
@@ -546,7 +546,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION, (), '', '!')
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def set_error_occurred_callback_configuration(self, enabled):
         """
@@ -560,7 +560,7 @@ class BrickletCANV2(Device):
 
         enabled = bool(enabled)
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_ERROR_OCCURRED_CALLBACK_CONFIGURATION, (enabled,), '!', '')
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_ERROR_OCCURRED_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
 
     def get_error_occurred_callback_configuration(self):
         """
@@ -570,7 +570,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_OCCURRED_CALLBACK_CONFIGURATION, (), '', '!')
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_OCCURRED_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def get_spitfp_error_count(self):
         """
@@ -588,7 +588,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -606,7 +606,7 @@ class BrickletCANV2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -614,7 +614,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -629,7 +629,7 @@ class BrickletCANV2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -646,7 +646,7 @@ class BrickletCANV2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -662,7 +662,7 @@ class BrickletCANV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -670,7 +670,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -683,7 +683,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -696,7 +696,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -710,7 +710,7 @@ class BrickletCANV2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletCANV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -719,7 +719,7 @@ class BrickletCANV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -735,7 +735,7 @@ class BrickletCANV2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def write_frame(self, frame_type, identifier, data):
         """

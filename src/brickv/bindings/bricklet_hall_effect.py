@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -67,7 +67,7 @@ class BrickletHallEffect(Device):
         self.response_expected[BrickletHallEffect.FUNCTION_EDGE_INTERRUPT] = BrickletHallEffect.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHallEffect.FUNCTION_GET_IDENTITY] = BrickletHallEffect.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletHallEffect.CALLBACK_EDGE_COUNT] = 'I !'
+        self.callback_formats[BrickletHallEffect.CALLBACK_EDGE_COUNT] = (13, 'I !')
 
         ipcon.add_device(self)
 
@@ -77,7 +77,7 @@ class BrickletHallEffect(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_VALUE, (), '', '!')
+        return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_VALUE, (), '', 9, '!')
 
     def get_edge_count(self, reset_counter):
         """
@@ -92,7 +92,7 @@ class BrickletHallEffect(Device):
 
         reset_counter = bool(reset_counter)
 
-        return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT, (reset_counter,), '!', 'I')
+        return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT, (reset_counter,), '!', 12, 'I')
 
     def set_edge_count_config(self, edge_type, debounce):
         """
@@ -119,7 +119,7 @@ class BrickletHallEffect(Device):
         edge_type = int(edge_type)
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_COUNT_CONFIG, (edge_type, debounce), 'B B', '')
+        self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_COUNT_CONFIG, (edge_type, debounce), 'B B', 0, '')
 
     def get_edge_count_config(self):
         """
@@ -127,7 +127,7 @@ class BrickletHallEffect(Device):
         """
         self.check_validity()
 
-        return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT_CONFIG, (), '', 'B B'))
+        return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT_CONFIG, (), '', 10, 'B B'))
 
     def set_edge_interrupt(self, edges):
         """
@@ -141,7 +141,7 @@ class BrickletHallEffect(Device):
 
         edges = int(edges)
 
-        self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_INTERRUPT, (edges,), 'I', '')
+        self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_INTERRUPT, (edges,), 'I', 0, '')
 
     def get_edge_interrupt(self):
         """
@@ -149,7 +149,7 @@ class BrickletHallEffect(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_INTERRUPT, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_INTERRUPT, (), '', 12, 'I')
 
     def set_edge_count_callback_period(self, period):
         """
@@ -163,7 +163,7 @@ class BrickletHallEffect(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_COUNT_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_COUNT_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_edge_count_callback_period(self):
         """
@@ -171,7 +171,7 @@ class BrickletHallEffect(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def edge_interrupt(self):
         """
@@ -182,7 +182,7 @@ class BrickletHallEffect(Device):
         """
         self.check_validity()
 
-        return EdgeInterrupt(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_EDGE_INTERRUPT, (), '', 'I !'))
+        return EdgeInterrupt(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_EDGE_INTERRUPT, (), '', 13, 'I !'))
 
     def get_identity(self):
         """
@@ -198,7 +198,7 @@ class BrickletHallEffect(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

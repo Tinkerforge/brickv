@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -96,7 +96,7 @@ class BrickletRGBLEDButton(Device):
         self.response_expected[BrickletRGBLEDButton.FUNCTION_READ_UID] = BrickletRGBLEDButton.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDButton.FUNCTION_GET_IDENTITY] = BrickletRGBLEDButton.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletRGBLEDButton.CALLBACK_BUTTON_STATE_CHANGED] = 'B'
+        self.callback_formats[BrickletRGBLEDButton.CALLBACK_BUTTON_STATE_CHANGED] = (9, 'B')
 
         ipcon.add_device(self)
 
@@ -110,7 +110,7 @@ class BrickletRGBLEDButton(Device):
         green = int(green)
         blue = int(blue)
 
-        self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_COLOR, (red, green, blue), 'B B B', '')
+        self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_COLOR, (red, green, blue), 'B B B', 0, '')
 
     def get_color(self):
         """
@@ -118,7 +118,7 @@ class BrickletRGBLEDButton(Device):
         """
         self.check_validity()
 
-        return GetColor(*self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_COLOR, (), '', 'B B B'))
+        return GetColor(*self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_COLOR, (), '', 11, 'B B B'))
 
     def get_button_state(self):
         """
@@ -126,7 +126,7 @@ class BrickletRGBLEDButton(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_BUTTON_STATE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_BUTTON_STATE, (), '', 9, 'B')
 
     def set_color_calibration(self, red, green, blue):
         """
@@ -142,7 +142,7 @@ class BrickletRGBLEDButton(Device):
         green = int(green)
         blue = int(blue)
 
-        self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_COLOR_CALIBRATION, (red, green, blue), 'B B B', '')
+        self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_COLOR_CALIBRATION, (red, green, blue), 'B B B', 0, '')
 
     def get_color_calibration(self):
         """
@@ -150,7 +150,7 @@ class BrickletRGBLEDButton(Device):
         """
         self.check_validity()
 
-        return GetColorCalibration(*self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_COLOR_CALIBRATION, (), '', 'B B B'))
+        return GetColorCalibration(*self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_COLOR_CALIBRATION, (), '', 11, 'B B B'))
 
     def get_spitfp_error_count(self):
         """
@@ -168,7 +168,7 @@ class BrickletRGBLEDButton(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -186,7 +186,7 @@ class BrickletRGBLEDButton(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -194,7 +194,7 @@ class BrickletRGBLEDButton(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -209,7 +209,7 @@ class BrickletRGBLEDButton(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -226,7 +226,7 @@ class BrickletRGBLEDButton(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -242,7 +242,7 @@ class BrickletRGBLEDButton(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -250,7 +250,7 @@ class BrickletRGBLEDButton(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -263,7 +263,7 @@ class BrickletRGBLEDButton(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -276,7 +276,7 @@ class BrickletRGBLEDButton(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -290,7 +290,7 @@ class BrickletRGBLEDButton(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -299,7 +299,7 @@ class BrickletRGBLEDButton(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -315,7 +315,7 @@ class BrickletRGBLEDButton(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletRGBLEDButton.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

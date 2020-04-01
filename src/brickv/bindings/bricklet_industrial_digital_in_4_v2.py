@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -117,8 +117,8 @@ class BrickletIndustrialDigitalIn4V2(Device):
         self.response_expected[BrickletIndustrialDigitalIn4V2.FUNCTION_READ_UID] = BrickletIndustrialDigitalIn4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDigitalIn4V2.FUNCTION_GET_IDENTITY] = BrickletIndustrialDigitalIn4V2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletIndustrialDigitalIn4V2.CALLBACK_VALUE] = 'B ! !'
-        self.callback_formats[BrickletIndustrialDigitalIn4V2.CALLBACK_ALL_VALUE] = '4! 4!'
+        self.callback_formats[BrickletIndustrialDigitalIn4V2.CALLBACK_VALUE] = (11, 'B ! !')
+        self.callback_formats[BrickletIndustrialDigitalIn4V2.CALLBACK_ALL_VALUE] = (10, '4! 4!')
 
         ipcon.add_device(self)
 
@@ -128,7 +128,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_VALUE, (), '', '4!')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_VALUE, (), '', 9, '4!')
 
     def set_value_callback_configuration(self, channel, period, value_has_to_change):
         """
@@ -150,7 +150,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
-        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_VALUE_CALLBACK_CONFIGURATION, (channel, period, value_has_to_change), 'B I !', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_VALUE_CALLBACK_CONFIGURATION, (channel, period, value_has_to_change), 'B I !', 0, '')
 
     def get_value_callback_configuration(self, channel):
         """
@@ -161,7 +161,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
         channel = int(channel)
 
-        return GetValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_VALUE_CALLBACK_CONFIGURATION, (channel,), 'B', 'I !'))
+        return GetValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_VALUE_CALLBACK_CONFIGURATION, (channel,), 'B', 13, 'I !'))
 
     def set_all_value_callback_configuration(self, period, value_has_to_change):
         """
@@ -180,7 +180,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
-        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_ALL_VALUE_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_ALL_VALUE_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_all_value_callback_configuration(self):
         """
@@ -189,7 +189,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         """
         self.check_validity()
 
-        return GetAllValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_ALL_VALUE_CALLBACK_CONFIGURATION, (), '', 'I !'))
+        return GetAllValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_ALL_VALUE_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def get_edge_count(self, channel, reset_counter):
         """
@@ -204,7 +204,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         channel = int(channel)
         reset_counter = bool(reset_counter)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_EDGE_COUNT, (channel, reset_counter), 'B !', 'I')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_EDGE_COUNT, (channel, reset_counter), 'B !', 12, 'I')
 
     def set_edge_count_configuration(self, channel, edge_type, debounce):
         """
@@ -228,7 +228,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         edge_type = int(edge_type)
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_EDGE_COUNT_CONFIGURATION, (channel, edge_type, debounce), 'B B B', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_EDGE_COUNT_CONFIGURATION, (channel, edge_type, debounce), 'B B B', 0, '')
 
     def get_edge_count_configuration(self, channel):
         """
@@ -239,7 +239,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
         channel = int(channel)
 
-        return GetEdgeCountConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_EDGE_COUNT_CONFIGURATION, (channel,), 'B', 'B B'))
+        return GetEdgeCountConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_EDGE_COUNT_CONFIGURATION, (channel,), 'B', 10, 'B B'))
 
     def set_channel_led_config(self, channel, config):
         """
@@ -254,7 +254,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         channel = int(channel)
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_CHANNEL_LED_CONFIG, (channel, config), 'B B', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_CHANNEL_LED_CONFIG, (channel, config), 'B B', 0, '')
 
     def get_channel_led_config(self, channel):
         """
@@ -264,7 +264,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
         channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 9, 'B')
 
     def get_spitfp_error_count(self):
         """
@@ -282,7 +282,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -300,7 +300,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -308,7 +308,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -323,7 +323,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -340,7 +340,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -356,7 +356,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -364,7 +364,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -377,7 +377,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -390,7 +390,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -404,7 +404,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -413,7 +413,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -429,7 +429,7 @@ class BrickletIndustrialDigitalIn4V2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4V2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

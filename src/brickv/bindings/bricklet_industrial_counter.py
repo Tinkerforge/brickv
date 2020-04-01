@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -164,8 +164,8 @@ class BrickletIndustrialCounter(Device):
         self.response_expected[BrickletIndustrialCounter.FUNCTION_READ_UID] = BrickletIndustrialCounter.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialCounter.FUNCTION_GET_IDENTITY] = BrickletIndustrialCounter.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletIndustrialCounter.CALLBACK_ALL_COUNTER] = '4q'
-        self.callback_formats[BrickletIndustrialCounter.CALLBACK_ALL_SIGNAL_DATA] = '4H 4Q 4I 4!'
+        self.callback_formats[BrickletIndustrialCounter.CALLBACK_ALL_COUNTER] = (40, '4q')
+        self.callback_formats[BrickletIndustrialCounter.CALLBACK_ALL_SIGNAL_DATA] = (65, '4H 4Q 4I 4!')
 
         ipcon.add_device(self)
 
@@ -177,7 +177,7 @@ class BrickletIndustrialCounter(Device):
 
         channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_COUNTER, (channel,), 'B', 'q')
+        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_COUNTER, (channel,), 'B', 16, 'q')
 
     def get_all_counter(self):
         """
@@ -185,7 +185,7 @@ class BrickletIndustrialCounter(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_COUNTER, (), '', '4q')
+        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_COUNTER, (), '', 40, '4q')
 
     def set_counter(self, channel, counter):
         """
@@ -198,7 +198,7 @@ class BrickletIndustrialCounter(Device):
         channel = int(channel)
         counter = int(counter)
 
-        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_COUNTER, (channel, counter), 'B q', '')
+        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_COUNTER, (channel, counter), 'B q', 0, '')
 
     def set_all_counter(self, counter):
         """
@@ -210,7 +210,7 @@ class BrickletIndustrialCounter(Device):
 
         counter = list(map(int, counter))
 
-        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_ALL_COUNTER, (counter,), '4q', '')
+        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_ALL_COUNTER, (counter,), '4q', 0, '')
 
     def get_signal_data(self, channel):
         """
@@ -221,7 +221,7 @@ class BrickletIndustrialCounter(Device):
 
         channel = int(channel)
 
-        return GetSignalData(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_SIGNAL_DATA, (channel,), 'B', 'H Q I !'))
+        return GetSignalData(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_SIGNAL_DATA, (channel,), 'B', 23, 'H Q I !'))
 
     def get_all_signal_data(self):
         """
@@ -230,7 +230,7 @@ class BrickletIndustrialCounter(Device):
         """
         self.check_validity()
 
-        return GetAllSignalData(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_SIGNAL_DATA, (), '', '4H 4Q 4I 4!'))
+        return GetAllSignalData(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_SIGNAL_DATA, (), '', 65, '4H 4Q 4I 4!'))
 
     def set_counter_active(self, channel, active):
         """
@@ -245,7 +245,7 @@ class BrickletIndustrialCounter(Device):
         channel = int(channel)
         active = bool(active)
 
-        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_COUNTER_ACTIVE, (channel, active), 'B !', '')
+        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_COUNTER_ACTIVE, (channel, active), 'B !', 0, '')
 
     def set_all_counter_active(self, active):
         """
@@ -259,7 +259,7 @@ class BrickletIndustrialCounter(Device):
 
         active = list(map(bool, active))
 
-        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_ALL_COUNTER_ACTIVE, (active,), '4!', '')
+        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_ALL_COUNTER_ACTIVE, (active,), '4!', 0, '')
 
     def get_counter_active(self, channel):
         """
@@ -271,7 +271,7 @@ class BrickletIndustrialCounter(Device):
 
         channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_COUNTER_ACTIVE, (channel,), 'B', '!')
+        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_COUNTER_ACTIVE, (channel,), 'B', 9, '!')
 
     def get_all_counter_active(self):
         """
@@ -281,7 +281,7 @@ class BrickletIndustrialCounter(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_COUNTER_ACTIVE, (), '', '4!')
+        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_COUNTER_ACTIVE, (), '', 9, '4!')
 
     def set_counter_configuration(self, channel, count_edge, count_direction, duty_cycle_prescaler, frequency_integration_time):
         """
@@ -308,7 +308,7 @@ class BrickletIndustrialCounter(Device):
         duty_cycle_prescaler = int(duty_cycle_prescaler)
         frequency_integration_time = int(frequency_integration_time)
 
-        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_COUNTER_CONFIGURATION, (channel, count_edge, count_direction, duty_cycle_prescaler, frequency_integration_time), 'B B B B B', '')
+        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_COUNTER_CONFIGURATION, (channel, count_edge, count_direction, duty_cycle_prescaler, frequency_integration_time), 'B B B B B', 0, '')
 
     def get_counter_configuration(self, channel):
         """
@@ -318,7 +318,7 @@ class BrickletIndustrialCounter(Device):
 
         channel = int(channel)
 
-        return GetCounterConfiguration(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_COUNTER_CONFIGURATION, (channel,), 'B', 'B B B B'))
+        return GetCounterConfiguration(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_COUNTER_CONFIGURATION, (channel,), 'B', 12, 'B B B B'))
 
     def set_all_counter_callback_configuration(self, period, value_has_to_change):
         """
@@ -337,7 +337,7 @@ class BrickletIndustrialCounter(Device):
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
-        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_ALL_COUNTER_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_ALL_COUNTER_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_all_counter_callback_configuration(self):
         """
@@ -346,7 +346,7 @@ class BrickletIndustrialCounter(Device):
         """
         self.check_validity()
 
-        return GetAllCounterCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_COUNTER_CALLBACK_CONFIGURATION, (), '', 'I !'))
+        return GetAllCounterCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_COUNTER_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def set_all_signal_data_callback_configuration(self, period, value_has_to_change):
         """
@@ -365,7 +365,7 @@ class BrickletIndustrialCounter(Device):
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
-        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_ALL_SIGNAL_DATA_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_ALL_SIGNAL_DATA_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_all_signal_data_callback_configuration(self):
         """
@@ -374,7 +374,7 @@ class BrickletIndustrialCounter(Device):
         """
         self.check_validity()
 
-        return GetAllSignalDataCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_SIGNAL_DATA_CALLBACK_CONFIGURATION, (), '', 'I !'))
+        return GetAllSignalDataCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_ALL_SIGNAL_DATA_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def set_channel_led_config(self, channel, config):
         """
@@ -387,7 +387,7 @@ class BrickletIndustrialCounter(Device):
         channel = int(channel)
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_CHANNEL_LED_CONFIG, (channel, config), 'B B', '')
+        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_CHANNEL_LED_CONFIG, (channel, config), 'B B', 0, '')
 
     def get_channel_led_config(self, channel):
         """
@@ -397,7 +397,7 @@ class BrickletIndustrialCounter(Device):
 
         channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 9, 'B')
 
     def get_spitfp_error_count(self):
         """
@@ -415,7 +415,7 @@ class BrickletIndustrialCounter(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -433,7 +433,7 @@ class BrickletIndustrialCounter(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -441,7 +441,7 @@ class BrickletIndustrialCounter(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -456,7 +456,7 @@ class BrickletIndustrialCounter(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -473,7 +473,7 @@ class BrickletIndustrialCounter(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -489,7 +489,7 @@ class BrickletIndustrialCounter(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -497,7 +497,7 @@ class BrickletIndustrialCounter(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -510,7 +510,7 @@ class BrickletIndustrialCounter(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -523,7 +523,7 @@ class BrickletIndustrialCounter(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -537,7 +537,7 @@ class BrickletIndustrialCounter(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -546,7 +546,7 @@ class BrickletIndustrialCounter(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -562,7 +562,7 @@ class BrickletIndustrialCounter(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialCounter.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

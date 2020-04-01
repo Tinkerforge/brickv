@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-03-04.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -66,7 +66,7 @@ class TNGUnknown(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, TNGUnknown.FUNCTION_GET_TIMESTAMP, (), '', 'Q')
+        return self.ipcon.send_request(self, TNGUnknown.FUNCTION_GET_TIMESTAMP, (), '', 16, 'Q')
 
     def copy_firmware(self):
         """
@@ -74,7 +74,7 @@ class TNGUnknown(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, TNGUnknown.FUNCTION_COPY_FIRMWARE, (), '', 'B')
+        return self.ipcon.send_request(self, TNGUnknown.FUNCTION_COPY_FIRMWARE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -84,7 +84,7 @@ class TNGUnknown(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, TNGUnknown.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, TNGUnknown.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -94,7 +94,7 @@ class TNGUnknown(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, TNGUnknown.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, TNGUnknown.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def reset(self):
         """
@@ -107,4 +107,4 @@ class TNGUnknown(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, TNGUnknown.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, TNGUnknown.FUNCTION_RESET, (), '', 0, '')

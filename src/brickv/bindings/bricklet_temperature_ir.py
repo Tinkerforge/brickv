@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -82,10 +82,10 @@ class BrickletTemperatureIR(Device):
         self.response_expected[BrickletTemperatureIR.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletTemperatureIR.FUNCTION_GET_IDENTITY] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE] = 'h'
-        self.callback_formats[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE] = 'h'
-        self.callback_formats[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE_REACHED] = 'h'
-        self.callback_formats[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE_REACHED] = 'h'
+        self.callback_formats[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE] = (10, 'h')
+        self.callback_formats[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE] = (10, 'h')
+        self.callback_formats[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE_REACHED] = (10, 'h')
+        self.callback_formats[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE_REACHED] = (10, 'h')
 
         ipcon.add_device(self)
 
@@ -99,7 +99,7 @@ class BrickletTemperatureIR(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE, (), '', 10, 'h')
 
     def get_object_temperature(self):
         """
@@ -116,7 +116,7 @@ class BrickletTemperatureIR(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE, (), '', 10, 'h')
 
     def set_emissivity(self, emissivity):
         """
@@ -142,7 +142,7 @@ class BrickletTemperatureIR(Device):
 
         emissivity = int(emissivity)
 
-        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_EMISSIVITY, (emissivity,), 'H', '')
+        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_EMISSIVITY, (emissivity,), 'H', 0, '')
 
     def get_emissivity(self):
         """
@@ -150,7 +150,7 @@ class BrickletTemperatureIR(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_EMISSIVITY, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_EMISSIVITY, (), '', 10, 'H')
 
     def set_ambient_temperature_callback_period(self, period):
         """
@@ -164,7 +164,7 @@ class BrickletTemperatureIR(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_ambient_temperature_callback_period(self):
         """
@@ -172,7 +172,7 @@ class BrickletTemperatureIR(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_object_temperature_callback_period(self, period):
         """
@@ -186,7 +186,7 @@ class BrickletTemperatureIR(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_object_temperature_callback_period(self):
         """
@@ -194,7 +194,7 @@ class BrickletTemperatureIR(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_ambient_temperature_callback_threshold(self, option, min, max):
         """
@@ -218,7 +218,7 @@ class BrickletTemperatureIR(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', 0, '')
 
     def get_ambient_temperature_callback_threshold(self):
         """
@@ -226,7 +226,7 @@ class BrickletTemperatureIR(Device):
         """
         self.check_validity()
 
-        return GetAmbientTemperatureCallbackThreshold(*self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetAmbientTemperatureCallbackThreshold(*self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 13, 'c h h'))
 
     def set_object_temperature_callback_threshold(self, option, min, max):
         """
@@ -250,7 +250,7 @@ class BrickletTemperatureIR(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', 0, '')
 
     def get_object_temperature_callback_threshold(self):
         """
@@ -258,7 +258,7 @@ class BrickletTemperatureIR(Device):
         """
         self.check_validity()
 
-        return GetObjectTemperatureCallbackThreshold(*self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetObjectTemperatureCallbackThreshold(*self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 13, 'c h h'))
 
     def set_debounce_period(self, debounce):
         """
@@ -278,7 +278,7 @@ class BrickletTemperatureIR(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -286,7 +286,7 @@ class BrickletTemperatureIR(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -302,7 +302,7 @@ class BrickletTemperatureIR(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

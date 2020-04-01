@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -102,7 +102,7 @@ class BrickletRGBLEDMatrix(Device):
         self.response_expected[BrickletRGBLEDMatrix.FUNCTION_READ_UID] = BrickletRGBLEDMatrix.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRGBLEDMatrix.FUNCTION_GET_IDENTITY] = BrickletRGBLEDMatrix.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletRGBLEDMatrix.CALLBACK_FRAME_STARTED] = 'I'
+        self.callback_formats[BrickletRGBLEDMatrix.CALLBACK_FRAME_STARTED] = (12, 'I')
 
         ipcon.add_device(self)
 
@@ -114,7 +114,7 @@ class BrickletRGBLEDMatrix(Device):
 
         red = list(map(int, red))
 
-        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_RED, (red,), '64B', '')
+        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_RED, (red,), '64B', 0, '')
 
     def get_red(self):
         """
@@ -122,7 +122,7 @@ class BrickletRGBLEDMatrix(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_RED, (), '', '64B')
+        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_RED, (), '', 72, '64B')
 
     def set_green(self, green):
         """
@@ -132,7 +132,7 @@ class BrickletRGBLEDMatrix(Device):
 
         green = list(map(int, green))
 
-        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_GREEN, (green,), '64B', '')
+        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_GREEN, (green,), '64B', 0, '')
 
     def get_green(self):
         """
@@ -140,7 +140,7 @@ class BrickletRGBLEDMatrix(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_GREEN, (), '', '64B')
+        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_GREEN, (), '', 72, '64B')
 
     def set_blue(self, blue):
         """
@@ -150,7 +150,7 @@ class BrickletRGBLEDMatrix(Device):
 
         blue = list(map(int, blue))
 
-        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_BLUE, (blue,), '64B', '')
+        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_BLUE, (blue,), '64B', 0, '')
 
     def get_blue(self):
         """
@@ -158,7 +158,7 @@ class BrickletRGBLEDMatrix(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_BLUE, (), '', '64B')
+        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_BLUE, (), '', 72, '64B')
 
     def set_frame_duration(self, frame_duration):
         """
@@ -184,7 +184,7 @@ class BrickletRGBLEDMatrix(Device):
 
         frame_duration = int(frame_duration)
 
-        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_FRAME_DURATION, (frame_duration,), 'H', '')
+        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_FRAME_DURATION, (frame_duration,), 'H', 0, '')
 
     def get_frame_duration(self):
         """
@@ -192,7 +192,7 @@ class BrickletRGBLEDMatrix(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_FRAME_DURATION, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_FRAME_DURATION, (), '', 10, 'H')
 
     def draw_frame(self):
         """
@@ -212,7 +212,7 @@ class BrickletRGBLEDMatrix(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_DRAW_FRAME, (), '', '')
+        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_DRAW_FRAME, (), '', 0, '')
 
     def get_supply_voltage(self):
         """
@@ -220,7 +220,7 @@ class BrickletRGBLEDMatrix(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_SUPPLY_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_SUPPLY_VOLTAGE, (), '', 10, 'H')
 
     def get_spitfp_error_count(self):
         """
@@ -238,7 +238,7 @@ class BrickletRGBLEDMatrix(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -256,7 +256,7 @@ class BrickletRGBLEDMatrix(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -264,7 +264,7 @@ class BrickletRGBLEDMatrix(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -279,7 +279,7 @@ class BrickletRGBLEDMatrix(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -296,7 +296,7 @@ class BrickletRGBLEDMatrix(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -312,7 +312,7 @@ class BrickletRGBLEDMatrix(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -320,7 +320,7 @@ class BrickletRGBLEDMatrix(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -333,7 +333,7 @@ class BrickletRGBLEDMatrix(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -346,7 +346,7 @@ class BrickletRGBLEDMatrix(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -360,7 +360,7 @@ class BrickletRGBLEDMatrix(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -369,7 +369,7 @@ class BrickletRGBLEDMatrix(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -385,7 +385,7 @@ class BrickletRGBLEDMatrix(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletRGBLEDMatrix.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

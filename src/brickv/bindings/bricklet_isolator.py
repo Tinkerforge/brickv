@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -102,7 +102,7 @@ class BrickletIsolator(Device):
         self.response_expected[BrickletIsolator.FUNCTION_READ_UID] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIsolator.FUNCTION_GET_IDENTITY] = BrickletIsolator.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletIsolator.CALLBACK_STATISTICS] = 'I I H 8s'
+        self.callback_formats[BrickletIsolator.CALLBACK_STATISTICS] = (26, 'I I H 8s')
 
         ipcon.add_device(self)
 
@@ -112,7 +112,7 @@ class BrickletIsolator(Device):
         """
         self.check_validity()
 
-        return GetStatistics(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_STATISTICS, (), '', 'I I H 8s'))
+        return GetStatistics(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_STATISTICS, (), '', 26, 'I I H 8s'))
 
     def set_spitfp_baudrate_config(self, enable_dynamic_baudrate, minimum_dynamic_baudrate):
         """
@@ -143,7 +143,7 @@ class BrickletIsolator(Device):
         enable_dynamic_baudrate = bool(enable_dynamic_baudrate)
         minimum_dynamic_baudrate = int(minimum_dynamic_baudrate)
 
-        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', '')
+        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', 0, '')
 
     def get_spitfp_baudrate_config(self):
         """
@@ -151,7 +151,7 @@ class BrickletIsolator(Device):
         """
         self.check_validity()
 
-        return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', '! I'))
+        return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', 13, '! I'))
 
     def set_spitfp_baudrate(self, baudrate):
         """
@@ -175,7 +175,7 @@ class BrickletIsolator(Device):
 
         baudrate = int(baudrate)
 
-        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_SPITFP_BAUDRATE, (baudrate,), 'I', '')
+        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_SPITFP_BAUDRATE, (baudrate,), 'I', 0, '')
 
     def get_spitfp_baudrate(self):
         """
@@ -183,7 +183,7 @@ class BrickletIsolator(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_SPITFP_BAUDRATE, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_SPITFP_BAUDRATE, (), '', 12, 'I')
 
     def get_isolator_spitfp_error_count(self):
         """
@@ -200,7 +200,7 @@ class BrickletIsolator(Device):
         """
         self.check_validity()
 
-        return GetIsolatorSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_ISOLATOR_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetIsolatorSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_ISOLATOR_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_statistics_callback_configuration(self, period, value_has_to_change):
         """
@@ -221,7 +221,7 @@ class BrickletIsolator(Device):
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
-        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_STATISTICS_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_STATISTICS_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_statistics_callback_configuration(self):
         """
@@ -232,7 +232,7 @@ class BrickletIsolator(Device):
         """
         self.check_validity()
 
-        return GetStatisticsCallbackConfiguration(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_STATISTICS_CALLBACK_CONFIGURATION, (), '', 'I !'))
+        return GetStatisticsCallbackConfiguration(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_STATISTICS_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def get_spitfp_error_count(self):
         """
@@ -250,7 +250,7 @@ class BrickletIsolator(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -268,7 +268,7 @@ class BrickletIsolator(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -276,7 +276,7 @@ class BrickletIsolator(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -291,7 +291,7 @@ class BrickletIsolator(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -308,7 +308,7 @@ class BrickletIsolator(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -324,7 +324,7 @@ class BrickletIsolator(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -332,7 +332,7 @@ class BrickletIsolator(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -345,7 +345,7 @@ class BrickletIsolator(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -358,7 +358,7 @@ class BrickletIsolator(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -372,7 +372,7 @@ class BrickletIsolator(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletIsolator.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -381,7 +381,7 @@ class BrickletIsolator(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletIsolator.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -397,7 +397,7 @@ class BrickletIsolator(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletIsolator.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

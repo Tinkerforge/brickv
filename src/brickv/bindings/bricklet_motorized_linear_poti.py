@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -108,8 +108,8 @@ class BrickletMotorizedLinearPoti(Device):
         self.response_expected[BrickletMotorizedLinearPoti.FUNCTION_READ_UID] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMotorizedLinearPoti.FUNCTION_GET_IDENTITY] = BrickletMotorizedLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletMotorizedLinearPoti.CALLBACK_POSITION] = 'H'
-        self.callback_formats[BrickletMotorizedLinearPoti.CALLBACK_POSITION_REACHED] = 'H'
+        self.callback_formats[BrickletMotorizedLinearPoti.CALLBACK_POSITION] = (10, 'H')
+        self.callback_formats[BrickletMotorizedLinearPoti.CALLBACK_POSITION_REACHED] = (10, 'H')
 
         ipcon.add_device(self)
 
@@ -125,7 +125,7 @@ class BrickletMotorizedLinearPoti(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_POSITION, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_POSITION, (), '', 10, 'H')
 
     def set_position_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -165,7 +165,7 @@ class BrickletMotorizedLinearPoti(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_SET_POSITION_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', '')
+        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_SET_POSITION_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', 0, '')
 
     def get_position_callback_configuration(self):
         """
@@ -173,7 +173,7 @@ class BrickletMotorizedLinearPoti(Device):
         """
         self.check_validity()
 
-        return GetPositionCallbackConfiguration(*self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_POSITION_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
+        return GetPositionCallbackConfiguration(*self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_POSITION_CALLBACK_CONFIGURATION, (), '', 18, 'I ! c H H'))
 
     def set_motor_position(self, position, drive_mode, hold_position):
         """
@@ -197,7 +197,7 @@ class BrickletMotorizedLinearPoti(Device):
         drive_mode = int(drive_mode)
         hold_position = bool(hold_position)
 
-        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_SET_MOTOR_POSITION, (position, drive_mode, hold_position), 'H B !', '')
+        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_SET_MOTOR_POSITION, (position, drive_mode, hold_position), 'H B !', 0, '')
 
     def get_motor_position(self):
         """
@@ -210,7 +210,7 @@ class BrickletMotorizedLinearPoti(Device):
         """
         self.check_validity()
 
-        return GetMotorPosition(*self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_MOTOR_POSITION, (), '', 'H B ! !'))
+        return GetMotorPosition(*self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_MOTOR_POSITION, (), '', 13, 'H B ! !'))
 
     def calibrate(self):
         """
@@ -224,7 +224,7 @@ class BrickletMotorizedLinearPoti(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_CALIBRATE, (), '', '')
+        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_CALIBRATE, (), '', 0, '')
 
     def set_position_reached_callback_configuration(self, enabled):
         """
@@ -234,7 +234,7 @@ class BrickletMotorizedLinearPoti(Device):
 
         enabled = bool(enabled)
 
-        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_SET_POSITION_REACHED_CALLBACK_CONFIGURATION, (enabled,), '!', '')
+        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_SET_POSITION_REACHED_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
 
     def get_position_reached_callback_configuration(self):
         """
@@ -243,7 +243,7 @@ class BrickletMotorizedLinearPoti(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_POSITION_REACHED_CALLBACK_CONFIGURATION, (), '', '!')
+        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_POSITION_REACHED_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def get_spitfp_error_count(self):
         """
@@ -261,7 +261,7 @@ class BrickletMotorizedLinearPoti(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -279,7 +279,7 @@ class BrickletMotorizedLinearPoti(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -287,7 +287,7 @@ class BrickletMotorizedLinearPoti(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -302,7 +302,7 @@ class BrickletMotorizedLinearPoti(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -319,7 +319,7 @@ class BrickletMotorizedLinearPoti(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -335,7 +335,7 @@ class BrickletMotorizedLinearPoti(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -343,7 +343,7 @@ class BrickletMotorizedLinearPoti(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -356,7 +356,7 @@ class BrickletMotorizedLinearPoti(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -369,7 +369,7 @@ class BrickletMotorizedLinearPoti(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -383,7 +383,7 @@ class BrickletMotorizedLinearPoti(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -392,7 +392,7 @@ class BrickletMotorizedLinearPoti(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -408,7 +408,7 @@ class BrickletMotorizedLinearPoti(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletMotorizedLinearPoti.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

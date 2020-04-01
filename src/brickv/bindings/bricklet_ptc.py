@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -98,11 +98,11 @@ class BrickletPTC(Device):
         self.response_expected[BrickletPTC.FUNCTION_GET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPTC.FUNCTION_GET_IDENTITY] = BrickletPTC.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletPTC.CALLBACK_TEMPERATURE] = 'i'
-        self.callback_formats[BrickletPTC.CALLBACK_TEMPERATURE_REACHED] = 'i'
-        self.callback_formats[BrickletPTC.CALLBACK_RESISTANCE] = 'i'
-        self.callback_formats[BrickletPTC.CALLBACK_RESISTANCE_REACHED] = 'i'
-        self.callback_formats[BrickletPTC.CALLBACK_SENSOR_CONNECTED] = '!'
+        self.callback_formats[BrickletPTC.CALLBACK_TEMPERATURE] = (12, 'i')
+        self.callback_formats[BrickletPTC.CALLBACK_TEMPERATURE_REACHED] = (12, 'i')
+        self.callback_formats[BrickletPTC.CALLBACK_RESISTANCE] = (12, 'i')
+        self.callback_formats[BrickletPTC.CALLBACK_RESISTANCE_REACHED] = (12, 'i')
+        self.callback_formats[BrickletPTC.CALLBACK_SENSOR_CONNECTED] = (9, '!')
 
         ipcon.add_device(self)
 
@@ -116,7 +116,7 @@ class BrickletPTC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_TEMPERATURE, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_TEMPERATURE, (), '', 12, 'i')
 
     def get_resistance(self):
         """
@@ -133,7 +133,7 @@ class BrickletPTC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_RESISTANCE, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_RESISTANCE, (), '', 12, 'i')
 
     def set_temperature_callback_period(self, period):
         """
@@ -147,7 +147,7 @@ class BrickletPTC(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_temperature_callback_period(self):
         """
@@ -155,7 +155,7 @@ class BrickletPTC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_TEMPERATURE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_resistance_callback_period(self, period):
         """
@@ -169,7 +169,7 @@ class BrickletPTC(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_RESISTANCE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_RESISTANCE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_resistance_callback_period(self):
         """
@@ -177,7 +177,7 @@ class BrickletPTC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_RESISTANCE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_RESISTANCE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_temperature_callback_threshold(self, option, min, max):
         """
@@ -201,7 +201,7 @@ class BrickletPTC(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
+        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c i i', 0, '')
 
     def get_temperature_callback_threshold(self):
         """
@@ -209,7 +209,7 @@ class BrickletPTC(Device):
         """
         self.check_validity()
 
-        return GetTemperatureCallbackThreshold(*self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c i i'))
+        return GetTemperatureCallbackThreshold(*self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 17, 'c i i'))
 
     def set_resistance_callback_threshold(self, option, min, max):
         """
@@ -233,7 +233,7 @@ class BrickletPTC(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_RESISTANCE_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
+        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_RESISTANCE_CALLBACK_THRESHOLD, (option, min, max), 'c i i', 0, '')
 
     def get_resistance_callback_threshold(self):
         """
@@ -241,7 +241,7 @@ class BrickletPTC(Device):
         """
         self.check_validity()
 
-        return GetResistanceCallbackThreshold(*self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_RESISTANCE_CALLBACK_THRESHOLD, (), '', 'c i i'))
+        return GetResistanceCallbackThreshold(*self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_RESISTANCE_CALLBACK_THRESHOLD, (), '', 17, 'c i i'))
 
     def set_debounce_period(self, debounce):
         """
@@ -261,7 +261,7 @@ class BrickletPTC(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -269,7 +269,7 @@ class BrickletPTC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def set_noise_rejection_filter(self, filter):
         """
@@ -282,7 +282,7 @@ class BrickletPTC(Device):
 
         filter = int(filter)
 
-        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_NOISE_REJECTION_FILTER, (filter,), 'B', '')
+        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_NOISE_REJECTION_FILTER, (filter,), 'B', 0, '')
 
     def get_noise_rejection_filter(self):
         """
@@ -291,7 +291,7 @@ class BrickletPTC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_NOISE_REJECTION_FILTER, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_NOISE_REJECTION_FILTER, (), '', 9, 'B')
 
     def is_sensor_connected(self):
         """
@@ -303,7 +303,7 @@ class BrickletPTC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_IS_SENSOR_CONNECTED, (), '', '!')
+        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_IS_SENSOR_CONNECTED, (), '', 9, '!')
 
     def set_wire_mode(self, mode):
         """
@@ -315,7 +315,7 @@ class BrickletPTC(Device):
 
         mode = int(mode)
 
-        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_WIRE_MODE, (mode,), 'B', '')
+        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_WIRE_MODE, (mode,), 'B', 0, '')
 
     def get_wire_mode(self):
         """
@@ -323,7 +323,7 @@ class BrickletPTC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_WIRE_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_WIRE_MODE, (), '', 9, 'B')
 
     def set_sensor_connected_callback_configuration(self, enabled):
         """
@@ -336,7 +336,7 @@ class BrickletPTC(Device):
 
         enabled = bool(enabled)
 
-        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION, (enabled,), '!', '')
+        self.ipcon.send_request(self, BrickletPTC.FUNCTION_SET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
 
     def get_sensor_connected_callback_configuration(self):
         """
@@ -346,7 +346,7 @@ class BrickletPTC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION, (), '', '!')
+        return self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def get_identity(self):
         """
@@ -362,7 +362,7 @@ class BrickletPTC(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletPTC.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

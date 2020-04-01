@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -53,7 +53,7 @@ class BrickletSolidStateRelay(Device):
         self.response_expected[BrickletSolidStateRelay.FUNCTION_GET_MONOFLOP] = BrickletSolidStateRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletSolidStateRelay.FUNCTION_GET_IDENTITY] = BrickletSolidStateRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletSolidStateRelay.CALLBACK_MONOFLOP_DONE] = '!'
+        self.callback_formats[BrickletSolidStateRelay.CALLBACK_MONOFLOP_DONE] = (9, '!')
 
         ipcon.add_device(self)
 
@@ -67,7 +67,7 @@ class BrickletSolidStateRelay(Device):
 
         state = bool(state)
 
-        self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_SET_STATE, (state,), '!', '')
+        self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_SET_STATE, (state,), '!', 0, '')
 
     def get_state(self):
         """
@@ -75,7 +75,7 @@ class BrickletSolidStateRelay(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_GET_STATE, (), '', '!')
+        return self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_GET_STATE, (), '', 9, '!')
 
     def set_monoflop(self, state, time):
         """
@@ -97,7 +97,7 @@ class BrickletSolidStateRelay(Device):
         state = bool(state)
         time = int(time)
 
-        self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_SET_MONOFLOP, (state, time), '! I', '')
+        self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_SET_MONOFLOP, (state, time), '! I', 0, '')
 
     def get_monoflop(self):
         """
@@ -109,7 +109,7 @@ class BrickletSolidStateRelay(Device):
         """
         self.check_validity()
 
-        return GetMonoflop(*self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_GET_MONOFLOP, (), '', '! I I'))
+        return GetMonoflop(*self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_GET_MONOFLOP, (), '', 17, '! I I'))
 
     def get_identity(self):
         """
@@ -125,7 +125,7 @@ class BrickletSolidStateRelay(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

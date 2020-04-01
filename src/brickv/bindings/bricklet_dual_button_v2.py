@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -104,7 +104,7 @@ class BrickletDualButtonV2(Device):
         self.response_expected[BrickletDualButtonV2.FUNCTION_READ_UID] = BrickletDualButtonV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDualButtonV2.FUNCTION_GET_IDENTITY] = BrickletDualButtonV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletDualButtonV2.CALLBACK_STATE_CHANGED] = 'B B B B'
+        self.callback_formats[BrickletDualButtonV2.CALLBACK_STATE_CHANGED] = (12, 'B B B B')
 
         ipcon.add_device(self)
 
@@ -128,7 +128,7 @@ class BrickletDualButtonV2(Device):
         led_l = int(led_l)
         led_r = int(led_r)
 
-        self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_SET_LED_STATE, (led_l, led_r), 'B B', '')
+        self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_SET_LED_STATE, (led_l, led_r), 'B B', 0, '')
 
     def get_led_state(self):
         """
@@ -136,7 +136,7 @@ class BrickletDualButtonV2(Device):
         """
         self.check_validity()
 
-        return GetLEDState(*self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_LED_STATE, (), '', 'B B'))
+        return GetLEDState(*self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_LED_STATE, (), '', 10, 'B B'))
 
     def get_button_state(self):
         """
@@ -147,7 +147,7 @@ class BrickletDualButtonV2(Device):
         """
         self.check_validity()
 
-        return GetButtonState(*self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_BUTTON_STATE, (), '', 'B B'))
+        return GetButtonState(*self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_BUTTON_STATE, (), '', 10, 'B B'))
 
     def set_selected_led_state(self, led, state):
         """
@@ -160,7 +160,7 @@ class BrickletDualButtonV2(Device):
         led = int(led)
         state = int(state)
 
-        self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_SET_SELECTED_LED_STATE, (led, state), 'B B', '')
+        self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_SET_SELECTED_LED_STATE, (led, state), 'B B', 0, '')
 
     def set_state_changed_callback_configuration(self, enabled):
         """
@@ -171,7 +171,7 @@ class BrickletDualButtonV2(Device):
 
         enabled = bool(enabled)
 
-        self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_SET_STATE_CHANGED_CALLBACK_CONFIGURATION, (enabled,), '!', '')
+        self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_SET_STATE_CHANGED_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
 
     def get_state_changed_callback_configuration(self):
         """
@@ -179,7 +179,7 @@ class BrickletDualButtonV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_STATE_CHANGED_CALLBACK_CONFIGURATION, (), '', '!')
+        return self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_STATE_CHANGED_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def get_spitfp_error_count(self):
         """
@@ -197,7 +197,7 @@ class BrickletDualButtonV2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -215,7 +215,7 @@ class BrickletDualButtonV2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -223,7 +223,7 @@ class BrickletDualButtonV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -238,7 +238,7 @@ class BrickletDualButtonV2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -255,7 +255,7 @@ class BrickletDualButtonV2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -271,7 +271,7 @@ class BrickletDualButtonV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -279,7 +279,7 @@ class BrickletDualButtonV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -292,7 +292,7 @@ class BrickletDualButtonV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -305,7 +305,7 @@ class BrickletDualButtonV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -319,7 +319,7 @@ class BrickletDualButtonV2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -328,7 +328,7 @@ class BrickletDualButtonV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -344,7 +344,7 @@ class BrickletDualButtonV2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletDualButtonV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

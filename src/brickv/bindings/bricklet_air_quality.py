@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -144,11 +144,11 @@ class BrickletAirQuality(Device):
         self.response_expected[BrickletAirQuality.FUNCTION_READ_UID] = BrickletAirQuality.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAirQuality.FUNCTION_GET_IDENTITY] = BrickletAirQuality.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletAirQuality.CALLBACK_ALL_VALUES] = 'i B i i i'
-        self.callback_formats[BrickletAirQuality.CALLBACK_IAQ_INDEX] = 'i B'
-        self.callback_formats[BrickletAirQuality.CALLBACK_TEMPERATURE] = 'i'
-        self.callback_formats[BrickletAirQuality.CALLBACK_HUMIDITY] = 'i'
-        self.callback_formats[BrickletAirQuality.CALLBACK_AIR_PRESSURE] = 'i'
+        self.callback_formats[BrickletAirQuality.CALLBACK_ALL_VALUES] = (25, 'i B i i i')
+        self.callback_formats[BrickletAirQuality.CALLBACK_IAQ_INDEX] = (13, 'i B')
+        self.callback_formats[BrickletAirQuality.CALLBACK_TEMPERATURE] = (12, 'i')
+        self.callback_formats[BrickletAirQuality.CALLBACK_HUMIDITY] = (12, 'i')
+        self.callback_formats[BrickletAirQuality.CALLBACK_AIR_PRESSURE] = (12, 'i')
 
         ipcon.add_device(self)
 
@@ -166,7 +166,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return GetAllValues(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_ALL_VALUES, (), '', 'i B i i i'))
+        return GetAllValues(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_ALL_VALUES, (), '', 25, 'i B i i i'))
 
     def set_temperature_offset(self, offset):
         """
@@ -189,7 +189,7 @@ class BrickletAirQuality(Device):
 
         offset = int(offset)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_TEMPERATURE_OFFSET, (offset,), 'i', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_TEMPERATURE_OFFSET, (offset,), 'i', 0, '')
 
     def get_temperature_offset(self):
         """
@@ -198,7 +198,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_TEMPERATURE_OFFSET, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_TEMPERATURE_OFFSET, (), '', 12, 'i')
 
     def set_all_values_callback_configuration(self, period, value_has_to_change):
         """
@@ -217,7 +217,7 @@ class BrickletAirQuality(Device):
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_ALL_VALUES_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_ALL_VALUES_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_all_values_callback_configuration(self):
         """
@@ -226,7 +226,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return GetAllValuesCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_ALL_VALUES_CALLBACK_CONFIGURATION, (), '', 'I !'))
+        return GetAllValuesCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_ALL_VALUES_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def get_iaq_index(self):
         """
@@ -244,7 +244,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return GetIAQIndex(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_IAQ_INDEX, (), '', 'i B'))
+        return GetIAQIndex(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_IAQ_INDEX, (), '', 13, 'i B'))
 
     def set_iaq_index_callback_configuration(self, period, value_has_to_change):
         """
@@ -263,7 +263,7 @@ class BrickletAirQuality(Device):
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_IAQ_INDEX_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_IAQ_INDEX_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_iaq_index_callback_configuration(self):
         """
@@ -272,7 +272,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return GetIAQIndexCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_IAQ_INDEX_CALLBACK_CONFIGURATION, (), '', 'I !'))
+        return GetIAQIndexCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_IAQ_INDEX_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def get_temperature(self):
         """
@@ -285,7 +285,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_TEMPERATURE, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_TEMPERATURE, (), '', 12, 'i')
 
     def set_temperature_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -325,7 +325,7 @@ class BrickletAirQuality(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_TEMPERATURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_TEMPERATURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', 0, '')
 
     def get_temperature_callback_configuration(self):
         """
@@ -333,7 +333,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return GetTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
+        return GetTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 22, 'I ! c i i'))
 
     def get_humidity(self):
         """
@@ -346,7 +346,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_HUMIDITY, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_HUMIDITY, (), '', 12, 'i')
 
     def set_humidity_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -386,7 +386,7 @@ class BrickletAirQuality(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_HUMIDITY_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_HUMIDITY_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', 0, '')
 
     def get_humidity_callback_configuration(self):
         """
@@ -394,7 +394,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return GetHumidityCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_HUMIDITY_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
+        return GetHumidityCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_HUMIDITY_CALLBACK_CONFIGURATION, (), '', 22, 'I ! c i i'))
 
     def get_air_pressure(self):
         """
@@ -407,7 +407,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_AIR_PRESSURE, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_AIR_PRESSURE, (), '', 12, 'i')
 
     def set_air_pressure_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -447,7 +447,7 @@ class BrickletAirQuality(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_AIR_PRESSURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_AIR_PRESSURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', 0, '')
 
     def get_air_pressure_callback_configuration(self):
         """
@@ -455,7 +455,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return GetAirPressureCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_AIR_PRESSURE_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
+        return GetAirPressureCallbackConfiguration(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_AIR_PRESSURE_CALLBACK_CONFIGURATION, (), '', 22, 'I ! c i i'))
 
     def remove_calibration(self):
         """
@@ -472,7 +472,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_REMOVE_CALIBRATION, (), '', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_REMOVE_CALIBRATION, (), '', 0, '')
 
     def set_background_calibration_duration(self, duration):
         """
@@ -503,7 +503,7 @@ class BrickletAirQuality(Device):
 
         duration = int(duration)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_BACKGROUND_CALIBRATION_DURATION, (duration,), 'B', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_BACKGROUND_CALIBRATION_DURATION, (duration,), 'B', 0, '')
 
     def get_background_calibration_duration(self):
         """
@@ -514,7 +514,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_BACKGROUND_CALIBRATION_DURATION, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_BACKGROUND_CALIBRATION_DURATION, (), '', 9, 'B')
 
     def get_spitfp_error_count(self):
         """
@@ -532,7 +532,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -550,7 +550,7 @@ class BrickletAirQuality(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -558,7 +558,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -573,7 +573,7 @@ class BrickletAirQuality(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -590,7 +590,7 @@ class BrickletAirQuality(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -606,7 +606,7 @@ class BrickletAirQuality(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -614,7 +614,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -627,7 +627,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -640,7 +640,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -654,7 +654,7 @@ class BrickletAirQuality(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -663,7 +663,7 @@ class BrickletAirQuality(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -679,7 +679,7 @@ class BrickletAirQuality(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletAirQuality.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

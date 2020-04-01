@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -124,8 +124,8 @@ class BrickletXMC1400Breakout(Device):
         self.response_expected[BrickletXMC1400Breakout.FUNCTION_READ_UID] = BrickletXMC1400Breakout.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletXMC1400Breakout.FUNCTION_GET_IDENTITY] = BrickletXMC1400Breakout.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletXMC1400Breakout.CALLBACK_ADC_VALUES] = '8H'
-        self.callback_formats[BrickletXMC1400Breakout.CALLBACK_COUNT] = 'I'
+        self.callback_formats[BrickletXMC1400Breakout.CALLBACK_ADC_VALUES] = (24, '8H')
+        self.callback_formats[BrickletXMC1400Breakout.CALLBACK_COUNT] = (12, 'I')
 
         ipcon.add_device(self)
 
@@ -142,7 +142,7 @@ class BrickletXMC1400Breakout(Device):
         input_hysteresis = int(input_hysteresis)
         output_level = bool(output_level)
 
-        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_GPIO_CONFIG, (port, pin, mode, input_hysteresis, output_level), 'B B B B !', '')
+        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_GPIO_CONFIG, (port, pin, mode, input_hysteresis, output_level), 'B B B B !', 0, '')
 
     def get_gpio_input(self, port, pin):
         """
@@ -154,7 +154,7 @@ class BrickletXMC1400Breakout(Device):
         port = int(port)
         pin = int(pin)
 
-        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_GPIO_INPUT, (port, pin), 'B B', '!')
+        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_GPIO_INPUT, (port, pin), 'B B', 9, '!')
 
     def set_adc_channel_config(self, channel, enable):
         """
@@ -176,7 +176,7 @@ class BrickletXMC1400Breakout(Device):
         channel = int(channel)
         enable = bool(enable)
 
-        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_ADC_CHANNEL_CONFIG, (channel, enable), 'B !', '')
+        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_ADC_CHANNEL_CONFIG, (channel, enable), 'B !', 0, '')
 
     def get_adc_channel_config(self, channel):
         """
@@ -186,7 +186,7 @@ class BrickletXMC1400Breakout(Device):
 
         channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_CHANNEL_CONFIG, (channel,), 'B', '!')
+        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_CHANNEL_CONFIG, (channel,), 'B', 9, '!')
 
     def get_adc_channel_value(self, channel):
         """
@@ -196,7 +196,7 @@ class BrickletXMC1400Breakout(Device):
 
         channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_CHANNEL_VALUE, (channel,), 'B', 'H')
+        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_CHANNEL_VALUE, (channel,), 'B', 10, 'H')
 
     def get_adc_values(self):
         """
@@ -208,7 +208,7 @@ class BrickletXMC1400Breakout(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_VALUES, (), '', '8H')
+        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_VALUES, (), '', 24, '8H')
 
     def set_adc_values_callback_configuration(self, period, value_has_to_change):
         """
@@ -227,7 +227,7 @@ class BrickletXMC1400Breakout(Device):
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
-        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_ADC_VALUES_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_ADC_VALUES_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_adc_values_callback_configuration(self):
         """
@@ -236,7 +236,7 @@ class BrickletXMC1400Breakout(Device):
         """
         self.check_validity()
 
-        return GetADCValuesCallbackConfiguration(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_VALUES_CALLBACK_CONFIGURATION, (), '', 'I !'))
+        return GetADCValuesCallbackConfiguration(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_VALUES_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def get_count(self):
         """
@@ -253,7 +253,7 @@ class BrickletXMC1400Breakout(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_COUNT, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_COUNT, (), '', 12, 'I')
 
     def set_count_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -293,7 +293,7 @@ class BrickletXMC1400Breakout(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_COUNT_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c I I', '')
+        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_COUNT_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c I I', 0, '')
 
     def get_count_callback_configuration(self):
         """
@@ -301,7 +301,7 @@ class BrickletXMC1400Breakout(Device):
         """
         self.check_validity()
 
-        return GetCountCallbackConfiguration(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_COUNT_CALLBACK_CONFIGURATION, (), '', 'I ! c I I'))
+        return GetCountCallbackConfiguration(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_COUNT_CALLBACK_CONFIGURATION, (), '', 22, 'I ! c I I'))
 
     def get_spitfp_error_count(self):
         """
@@ -319,7 +319,7 @@ class BrickletXMC1400Breakout(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -337,7 +337,7 @@ class BrickletXMC1400Breakout(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -345,7 +345,7 @@ class BrickletXMC1400Breakout(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -360,7 +360,7 @@ class BrickletXMC1400Breakout(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -377,7 +377,7 @@ class BrickletXMC1400Breakout(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -393,7 +393,7 @@ class BrickletXMC1400Breakout(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -401,7 +401,7 @@ class BrickletXMC1400Breakout(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -414,7 +414,7 @@ class BrickletXMC1400Breakout(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -427,7 +427,7 @@ class BrickletXMC1400Breakout(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -441,7 +441,7 @@ class BrickletXMC1400Breakout(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -450,7 +450,7 @@ class BrickletXMC1400Breakout(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -466,7 +466,7 @@ class BrickletXMC1400Breakout(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

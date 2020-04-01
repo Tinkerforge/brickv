@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -69,8 +69,8 @@ class BrickletDistanceUS(Device):
         self.response_expected[BrickletDistanceUS.FUNCTION_GET_MOVING_AVERAGE] = BrickletDistanceUS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDistanceUS.FUNCTION_GET_IDENTITY] = BrickletDistanceUS.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletDistanceUS.CALLBACK_DISTANCE] = 'H'
-        self.callback_formats[BrickletDistanceUS.CALLBACK_DISTANCE_REACHED] = 'H'
+        self.callback_formats[BrickletDistanceUS.CALLBACK_DISTANCE] = (10, 'H')
+        self.callback_formats[BrickletDistanceUS.CALLBACK_DISTANCE_REACHED] = (10, 'H')
 
         ipcon.add_device(self)
 
@@ -89,7 +89,7 @@ class BrickletDistanceUS(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DISTANCE_VALUE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DISTANCE_VALUE, (), '', 10, 'H')
 
     def set_distance_callback_period(self, period):
         """
@@ -103,7 +103,7 @@ class BrickletDistanceUS(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_SET_DISTANCE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_SET_DISTANCE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_distance_callback_period(self):
         """
@@ -111,7 +111,7 @@ class BrickletDistanceUS(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_distance_callback_threshold(self, option, min, max):
         """
@@ -135,7 +135,7 @@ class BrickletDistanceUS(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
+        self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', 0, '')
 
     def get_distance_callback_threshold(self):
         """
@@ -143,7 +143,7 @@ class BrickletDistanceUS(Device):
         """
         self.check_validity()
 
-        return GetDistanceCallbackThreshold(*self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD, (), '', 'c H H'))
+        return GetDistanceCallbackThreshold(*self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD, (), '', 13, 'c H H'))
 
     def set_debounce_period(self, debounce):
         """
@@ -161,7 +161,7 @@ class BrickletDistanceUS(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -169,7 +169,7 @@ class BrickletDistanceUS(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def set_moving_average(self, average):
         """
@@ -183,7 +183,7 @@ class BrickletDistanceUS(Device):
 
         average = int(average)
 
-        self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
+        self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', 0, '')
 
     def get_moving_average(self):
         """
@@ -191,7 +191,7 @@ class BrickletDistanceUS(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_MOVING_AVERAGE, (), '', 9, 'B')
 
     def get_identity(self):
         """
@@ -207,7 +207,7 @@ class BrickletDistanceUS(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -129,7 +129,7 @@ class BrickletOLED128x64V2(Device):
         pixels_chunk_offset = int(pixels_chunk_offset)
         pixels_chunk_data = list(map(bool, pixels_chunk_data))
 
-        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_WRITE_PIXELS_LOW_LEVEL, (x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data), 'B B B B H H 448!', '')
+        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_WRITE_PIXELS_LOW_LEVEL, (x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data), 'B B B B H H 448!', 0, '')
 
     def read_pixels_low_level(self, x_start, y_start, x_end, y_end):
         """
@@ -154,7 +154,7 @@ class BrickletOLED128x64V2(Device):
         x_end = int(x_end)
         y_end = int(y_end)
 
-        return ReadPixelsLowLevel(*self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_READ_PIXELS_LOW_LEVEL, (x_start, y_start, x_end, y_end), 'B B B B', 'H H 480!'))
+        return ReadPixelsLowLevel(*self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_READ_PIXELS_LOW_LEVEL, (x_start, y_start, x_end, y_end), 'B B B B', 72, 'H H 480!'))
 
     def clear_display(self):
         """
@@ -172,7 +172,7 @@ class BrickletOLED128x64V2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_CLEAR_DISPLAY, (), '', '')
+        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_CLEAR_DISPLAY, (), '', 0, '')
 
     def set_display_configuration(self, contrast, invert, automatic_draw):
         """
@@ -192,7 +192,7 @@ class BrickletOLED128x64V2(Device):
         invert = bool(invert)
         automatic_draw = bool(automatic_draw)
 
-        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_SET_DISPLAY_CONFIGURATION, (contrast, invert, automatic_draw), 'B ! !', '')
+        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_SET_DISPLAY_CONFIGURATION, (contrast, invert, automatic_draw), 'B ! !', 0, '')
 
     def get_display_configuration(self):
         """
@@ -200,7 +200,7 @@ class BrickletOLED128x64V2(Device):
         """
         self.check_validity()
 
-        return GetDisplayConfiguration(*self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_GET_DISPLAY_CONFIGURATION, (), '', 'B ! !'))
+        return GetDisplayConfiguration(*self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_GET_DISPLAY_CONFIGURATION, (), '', 11, 'B ! !'))
 
     def write_line(self, line, position, text):
         """
@@ -231,7 +231,7 @@ class BrickletOLED128x64V2(Device):
         position = int(position)
         text = create_string(text)
 
-        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_WRITE_LINE, (line, position, text), 'B B 22s', '')
+        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_WRITE_LINE, (line, position, text), 'B B 22s', 0, '')
 
     def draw_buffered_frame(self, force_complete_redraw):
         """
@@ -249,7 +249,7 @@ class BrickletOLED128x64V2(Device):
 
         force_complete_redraw = bool(force_complete_redraw)
 
-        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_DRAW_BUFFERED_FRAME, (force_complete_redraw,), '!', '')
+        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_DRAW_BUFFERED_FRAME, (force_complete_redraw,), '!', 0, '')
 
     def get_spitfp_error_count(self):
         """
@@ -267,7 +267,7 @@ class BrickletOLED128x64V2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -285,7 +285,7 @@ class BrickletOLED128x64V2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -293,7 +293,7 @@ class BrickletOLED128x64V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -308,7 +308,7 @@ class BrickletOLED128x64V2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -325,7 +325,7 @@ class BrickletOLED128x64V2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -341,7 +341,7 @@ class BrickletOLED128x64V2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -349,7 +349,7 @@ class BrickletOLED128x64V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -362,7 +362,7 @@ class BrickletOLED128x64V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -375,7 +375,7 @@ class BrickletOLED128x64V2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -389,7 +389,7 @@ class BrickletOLED128x64V2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -398,7 +398,7 @@ class BrickletOLED128x64V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -414,7 +414,7 @@ class BrickletOLED128x64V2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletOLED128x64V2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def write_pixels(self, x_start, y_start, x_end, y_end, pixels):
         """

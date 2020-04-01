@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -85,7 +85,7 @@ class BrickletOLED64x48(Device):
 
         data = list(map(int, data))
 
-        self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_WRITE, (data,), '64B', '')
+        self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_WRITE, (data,), '64B', 0, '')
 
     def new_window(self, column_from, column_to, row_from, row_to):
         """
@@ -99,7 +99,7 @@ class BrickletOLED64x48(Device):
         row_from = int(row_from)
         row_to = int(row_to)
 
-        self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_NEW_WINDOW, (column_from, column_to, row_from, row_to), 'B B B B', '')
+        self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_NEW_WINDOW, (column_from, column_to, row_from, row_to), 'B B B B', 0, '')
 
     def clear_display(self):
         """
@@ -107,7 +107,7 @@ class BrickletOLED64x48(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_CLEAR_DISPLAY, (), '', '')
+        self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_CLEAR_DISPLAY, (), '', 0, '')
 
     def set_display_configuration(self, contrast, invert):
         """
@@ -121,7 +121,7 @@ class BrickletOLED64x48(Device):
         contrast = int(contrast)
         invert = bool(invert)
 
-        self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_SET_DISPLAY_CONFIGURATION, (contrast, invert), 'B !', '')
+        self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_SET_DISPLAY_CONFIGURATION, (contrast, invert), 'B !', 0, '')
 
     def get_display_configuration(self):
         """
@@ -129,7 +129,7 @@ class BrickletOLED64x48(Device):
         """
         self.check_validity()
 
-        return GetDisplayConfiguration(*self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_GET_DISPLAY_CONFIGURATION, (), '', 'B !'))
+        return GetDisplayConfiguration(*self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_GET_DISPLAY_CONFIGURATION, (), '', 10, 'B !'))
 
     def write_line(self, line, position, text):
         """
@@ -151,7 +151,7 @@ class BrickletOLED64x48(Device):
         position = int(position)
         text = create_string(text)
 
-        self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_WRITE_LINE, (line, position, text), 'B B 13s', '')
+        self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_WRITE_LINE, (line, position, text), 'B B 13s', 0, '')
 
     def get_identity(self):
         """
@@ -167,6 +167,6 @@ class BrickletOLED64x48(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
 OLED64x48 = BrickletOLED64x48 # for backward compatibility

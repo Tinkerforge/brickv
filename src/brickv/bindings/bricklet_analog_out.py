@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -67,7 +67,7 @@ class BrickletAnalogOut(Device):
 
         voltage = int(voltage)
 
-        self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_SET_VOLTAGE, (voltage,), 'H', '')
+        self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_SET_VOLTAGE, (voltage,), 'H', 0, '')
 
     def get_voltage(self):
         """
@@ -75,7 +75,7 @@ class BrickletAnalogOut(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_GET_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_GET_VOLTAGE, (), '', 10, 'H')
 
     def set_mode(self, mode):
         """
@@ -93,7 +93,7 @@ class BrickletAnalogOut(Device):
 
         mode = int(mode)
 
-        self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_SET_MODE, (mode,), 'B', '')
+        self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_SET_MODE, (mode,), 'B', 0, '')
 
     def get_mode(self):
         """
@@ -101,7 +101,7 @@ class BrickletAnalogOut(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_GET_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_GET_MODE, (), '', 9, 'B')
 
     def get_identity(self):
         """
@@ -117,6 +117,6 @@ class BrickletAnalogOut(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
 AnalogOut = BrickletAnalogOut # for backward compatibility

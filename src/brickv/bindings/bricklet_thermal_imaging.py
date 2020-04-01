@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -126,8 +126,8 @@ class BrickletThermalImaging(Device):
         self.response_expected[BrickletThermalImaging.FUNCTION_READ_UID] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_IDENTITY] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletThermalImaging.CALLBACK_HIGH_CONTRAST_IMAGE_LOW_LEVEL] = 'H 62B'
-        self.callback_formats[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = 'H 31H'
+        self.callback_formats[BrickletThermalImaging.CALLBACK_HIGH_CONTRAST_IMAGE_LOW_LEVEL] = (72, 'H 62B')
+        self.callback_formats[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE_LOW_LEVEL] = (72, 'H 31H')
 
         self.high_level_callbacks[BrickletThermalImaging.CALLBACK_HIGH_CONTRAST_IMAGE] = [('stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': 4800, 'single_chunk': False}, None]
         self.high_level_callbacks[BrickletThermalImaging.CALLBACK_TEMPERATURE_IMAGE] = [('stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': 4800, 'single_chunk': False}, None]
@@ -152,7 +152,7 @@ class BrickletThermalImaging(Device):
         """
         self.check_validity()
 
-        return GetHighContrastImageLowLevel(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_HIGH_CONTRAST_IMAGE_LOW_LEVEL, (), '', 'H 62B'))
+        return GetHighContrastImageLowLevel(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_HIGH_CONTRAST_IMAGE_LOW_LEVEL, (), '', 72, 'H 62B'))
 
     def get_temperature_image_low_level(self):
         """
@@ -172,7 +172,7 @@ class BrickletThermalImaging(Device):
         """
         self.check_validity()
 
-        return GetTemperatureImageLowLevel(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_TEMPERATURE_IMAGE_LOW_LEVEL, (), '', 'H 31H'))
+        return GetTemperatureImageLowLevel(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_TEMPERATURE_IMAGE_LOW_LEVEL, (), '', 72, 'H 31H'))
 
     def get_statistics(self):
         """
@@ -209,7 +209,7 @@ class BrickletThermalImaging(Device):
         """
         self.check_validity()
 
-        return GetStatistics(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_STATISTICS, (), '', '4H 4H B B 2!'))
+        return GetStatistics(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_STATISTICS, (), '', 27, '4H 4H B B 2!'))
 
     def set_resolution(self, resolution):
         """
@@ -225,7 +225,7 @@ class BrickletThermalImaging(Device):
 
         resolution = int(resolution)
 
-        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_RESOLUTION, (resolution,), 'B', '')
+        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_RESOLUTION, (resolution,), 'B', 0, '')
 
     def get_resolution(self):
         """
@@ -233,7 +233,7 @@ class BrickletThermalImaging(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_RESOLUTION, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_RESOLUTION, (), '', 9, 'B')
 
     def set_spotmeter_config(self, region_of_interest):
         """
@@ -250,7 +250,7 @@ class BrickletThermalImaging(Device):
 
         region_of_interest = list(map(int, region_of_interest))
 
-        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_SPOTMETER_CONFIG, (region_of_interest,), '4B', '')
+        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_SPOTMETER_CONFIG, (region_of_interest,), '4B', 0, '')
 
     def get_spotmeter_config(self):
         """
@@ -258,7 +258,7 @@ class BrickletThermalImaging(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_SPOTMETER_CONFIG, (), '', '4B')
+        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_SPOTMETER_CONFIG, (), '', 12, '4B')
 
     def set_high_contrast_config(self, region_of_interest, dampening_factor, clip_limit, empty_counts):
         """
@@ -308,7 +308,7 @@ class BrickletThermalImaging(Device):
         clip_limit = list(map(int, clip_limit))
         empty_counts = int(empty_counts)
 
-        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_HIGH_CONTRAST_CONFIG, (region_of_interest, dampening_factor, clip_limit, empty_counts), '4B H 2H H', '')
+        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_HIGH_CONTRAST_CONFIG, (region_of_interest, dampening_factor, clip_limit, empty_counts), '4B H 2H H', 0, '')
 
     def get_high_contrast_config(self):
         """
@@ -316,7 +316,7 @@ class BrickletThermalImaging(Device):
         """
         self.check_validity()
 
-        return GetHighContrastConfig(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_HIGH_CONTRAST_CONFIG, (), '', '4B H 2H H'))
+        return GetHighContrastConfig(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_HIGH_CONTRAST_CONFIG, (), '', 20, '4B H 2H H'))
 
     def set_image_transfer_config(self, config):
         """
@@ -335,7 +335,7 @@ class BrickletThermalImaging(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_IMAGE_TRANSFER_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_IMAGE_TRANSFER_CONFIG, (config,), 'B', 0, '')
 
     def get_image_transfer_config(self):
         """
@@ -343,7 +343,7 @@ class BrickletThermalImaging(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_IMAGE_TRANSFER_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_IMAGE_TRANSFER_CONFIG, (), '', 9, 'B')
 
     def set_flux_linear_parameters(self, scene_emissivity, temperature_background, tau_window, temperatur_window, tau_atmosphere, temperature_atmosphere, reflection_window, temperature_reflection):
         """
@@ -364,7 +364,7 @@ class BrickletThermalImaging(Device):
         reflection_window = int(reflection_window)
         temperature_reflection = int(temperature_reflection)
 
-        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_FLUX_LINEAR_PARAMETERS, (scene_emissivity, temperature_background, tau_window, temperatur_window, tau_atmosphere, temperature_atmosphere, reflection_window, temperature_reflection), 'H H H H H H H H', '')
+        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_FLUX_LINEAR_PARAMETERS, (scene_emissivity, temperature_background, tau_window, temperatur_window, tau_atmosphere, temperature_atmosphere, reflection_window, temperature_reflection), 'H H H H H H H H', 0, '')
 
     def get_flux_linear_parameters(self):
         """
@@ -374,7 +374,7 @@ class BrickletThermalImaging(Device):
         """
         self.check_validity()
 
-        return GetFluxLinearParameters(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_FLUX_LINEAR_PARAMETERS, (), '', 'H H H H H H H H'))
+        return GetFluxLinearParameters(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_FLUX_LINEAR_PARAMETERS, (), '', 24, 'H H H H H H H H'))
 
     def get_spitfp_error_count(self):
         """
@@ -392,7 +392,7 @@ class BrickletThermalImaging(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -410,7 +410,7 @@ class BrickletThermalImaging(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -418,7 +418,7 @@ class BrickletThermalImaging(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -433,7 +433,7 @@ class BrickletThermalImaging(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -450,7 +450,7 @@ class BrickletThermalImaging(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -466,7 +466,7 @@ class BrickletThermalImaging(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -474,7 +474,7 @@ class BrickletThermalImaging(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -487,7 +487,7 @@ class BrickletThermalImaging(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -500,7 +500,7 @@ class BrickletThermalImaging(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -514,7 +514,7 @@ class BrickletThermalImaging(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -523,7 +523,7 @@ class BrickletThermalImaging(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -539,7 +539,7 @@ class BrickletThermalImaging(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def get_high_contrast_image(self):
         """

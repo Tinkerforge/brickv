@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -149,9 +149,9 @@ class BrickServo(Device):
         self.response_expected[BrickServo.FUNCTION_READ_BRICKLET_PLUGIN] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickServo.FUNCTION_GET_IDENTITY] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickServo.CALLBACK_UNDER_VOLTAGE] = 'H'
-        self.callback_formats[BrickServo.CALLBACK_POSITION_REACHED] = 'B h'
-        self.callback_formats[BrickServo.CALLBACK_VELOCITY_REACHED] = 'B h'
+        self.callback_formats[BrickServo.CALLBACK_UNDER_VOLTAGE] = (10, 'H')
+        self.callback_formats[BrickServo.CALLBACK_POSITION_REACHED] = (11, 'B h')
+        self.callback_formats[BrickServo.CALLBACK_VELOCITY_REACHED] = (11, 'B h')
 
         ipcon.add_device(self)
 
@@ -164,7 +164,7 @@ class BrickServo(Device):
 
         servo_num = int(servo_num)
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE, (servo_num,), 'B', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE, (servo_num,), 'B', 0, '')
 
     def disable(self, servo_num):
         """
@@ -175,7 +175,7 @@ class BrickServo(Device):
 
         servo_num = int(servo_num)
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE, (servo_num,), 'B', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE, (servo_num,), 'B', 0, '')
 
     def is_enabled(self, servo_num):
         """
@@ -185,7 +185,7 @@ class BrickServo(Device):
 
         servo_num = int(servo_num)
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_ENABLED, (servo_num,), 'B', '!')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_ENABLED, (servo_num,), 'B', 9, '!')
 
     def set_position(self, servo_num, position):
         """
@@ -203,7 +203,7 @@ class BrickServo(Device):
         servo_num = int(servo_num)
         position = int(position)
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_POSITION, (servo_num, position), 'B h', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_POSITION, (servo_num, position), 'B h', 0, '')
 
     def get_position(self, servo_num):
         """
@@ -213,7 +213,7 @@ class BrickServo(Device):
 
         servo_num = int(servo_num)
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_POSITION, (servo_num,), 'B', 'h')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_POSITION, (servo_num,), 'B', 10, 'h')
 
     def get_current_position(self, servo_num):
         """
@@ -225,7 +225,7 @@ class BrickServo(Device):
 
         servo_num = int(servo_num)
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_CURRENT_POSITION, (servo_num,), 'B', 'h')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_CURRENT_POSITION, (servo_num,), 'B', 10, 'h')
 
     def set_velocity(self, servo_num, velocity):
         """
@@ -240,7 +240,7 @@ class BrickServo(Device):
         servo_num = int(servo_num)
         velocity = int(velocity)
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_VELOCITY, (servo_num, velocity), 'B H', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_VELOCITY, (servo_num, velocity), 'B H', 0, '')
 
     def get_velocity(self, servo_num):
         """
@@ -250,7 +250,7 @@ class BrickServo(Device):
 
         servo_num = int(servo_num)
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_VELOCITY, (servo_num,), 'B', 'H')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_VELOCITY, (servo_num,), 'B', 10, 'H')
 
     def get_current_velocity(self, servo_num):
         """
@@ -262,7 +262,7 @@ class BrickServo(Device):
 
         servo_num = int(servo_num)
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_CURRENT_VELOCITY, (servo_num,), 'B', 'H')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_CURRENT_VELOCITY, (servo_num,), 'B', 10, 'H')
 
     def set_acceleration(self, servo_num, acceleration):
         """
@@ -276,7 +276,7 @@ class BrickServo(Device):
         servo_num = int(servo_num)
         acceleration = int(acceleration)
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_ACCELERATION, (servo_num, acceleration), 'B H', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_ACCELERATION, (servo_num, acceleration), 'B H', 0, '')
 
     def get_acceleration(self, servo_num):
         """
@@ -287,7 +287,7 @@ class BrickServo(Device):
 
         servo_num = int(servo_num)
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_ACCELERATION, (servo_num,), 'B', 'H')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_ACCELERATION, (servo_num,), 'B', 10, 'H')
 
     def set_output_voltage(self, voltage):
         """
@@ -302,7 +302,7 @@ class BrickServo(Device):
 
         voltage = int(voltage)
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_OUTPUT_VOLTAGE, (voltage,), 'H', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_OUTPUT_VOLTAGE, (voltage,), 'H', 0, '')
 
     def get_output_voltage(self):
         """
@@ -310,7 +310,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_OUTPUT_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_OUTPUT_VOLTAGE, (), '', 10, 'H')
 
     def set_pulse_width(self, servo_num, min, max):
         """
@@ -334,7 +334,7 @@ class BrickServo(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_PULSE_WIDTH, (servo_num, min, max), 'B H H', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_PULSE_WIDTH, (servo_num, min, max), 'B H H', 0, '')
 
     def get_pulse_width(self, servo_num):
         """
@@ -345,7 +345,7 @@ class BrickServo(Device):
 
         servo_num = int(servo_num)
 
-        return GetPulseWidth(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_PULSE_WIDTH, (servo_num,), 'B', 'H H'))
+        return GetPulseWidth(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_PULSE_WIDTH, (servo_num,), 'B', 12, 'H H'))
 
     def set_degree(self, servo_num, min, max):
         """
@@ -383,7 +383,7 @@ class BrickServo(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_DEGREE, (servo_num, min, max), 'B h h', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_DEGREE, (servo_num, min, max), 'B h h', 0, '')
 
     def get_degree(self, servo_num):
         """
@@ -394,7 +394,7 @@ class BrickServo(Device):
 
         servo_num = int(servo_num)
 
-        return GetDegree(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_DEGREE, (servo_num,), 'B', 'h h'))
+        return GetDegree(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_DEGREE, (servo_num,), 'B', 12, 'h h'))
 
     def set_period(self, servo_num, period):
         """
@@ -415,7 +415,7 @@ class BrickServo(Device):
         servo_num = int(servo_num)
         period = int(period)
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_PERIOD, (servo_num, period), 'B H', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_PERIOD, (servo_num, period), 'B H', 0, '')
 
     def get_period(self, servo_num):
         """
@@ -425,7 +425,7 @@ class BrickServo(Device):
 
         servo_num = int(servo_num)
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_PERIOD, (servo_num,), 'B', 'H')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_PERIOD, (servo_num,), 'B', 10, 'H')
 
     def get_servo_current(self, servo_num):
         """
@@ -435,7 +435,7 @@ class BrickServo(Device):
 
         servo_num = int(servo_num)
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SERVO_CURRENT, (servo_num,), 'B', 'H')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SERVO_CURRENT, (servo_num,), 'B', 10, 'H')
 
     def get_overall_current(self):
         """
@@ -443,7 +443,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_OVERALL_CURRENT, (), '', 'H')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_OVERALL_CURRENT, (), '', 10, 'H')
 
     def get_stack_input_voltage(self):
         """
@@ -453,7 +453,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_STACK_INPUT_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_STACK_INPUT_VOLTAGE, (), '', 10, 'H')
 
     def get_external_input_voltage(self):
         """
@@ -472,7 +472,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 10, 'H')
 
     def set_minimum_voltage(self, voltage):
         """
@@ -486,7 +486,7 @@ class BrickServo(Device):
 
         voltage = int(voltage)
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', 0, '')
 
     def get_minimum_voltage(self):
         """
@@ -494,7 +494,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 10, 'H')
 
     def enable_position_reached_callback(self):
         """
@@ -506,7 +506,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_POSITION_REACHED_CALLBACK, (), '', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_POSITION_REACHED_CALLBACK, (), '', 0, '')
 
     def disable_position_reached_callback(self):
         """
@@ -516,7 +516,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_POSITION_REACHED_CALLBACK, (), '', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_POSITION_REACHED_CALLBACK, (), '', 0, '')
 
     def is_position_reached_callback_enabled(self):
         """
@@ -526,7 +526,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_POSITION_REACHED_CALLBACK_ENABLED, (), '', '!')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_POSITION_REACHED_CALLBACK_ENABLED, (), '', 9, '!')
 
     def enable_velocity_reached_callback(self):
         """
@@ -538,7 +538,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_VELOCITY_REACHED_CALLBACK, (), '', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_VELOCITY_REACHED_CALLBACK, (), '', 0, '')
 
     def disable_velocity_reached_callback(self):
         """
@@ -550,7 +550,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_VELOCITY_REACHED_CALLBACK, (), '', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_VELOCITY_REACHED_CALLBACK, (), '', 0, '')
 
     def is_velocity_reached_callback_enabled(self):
         """
@@ -560,7 +560,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED, (), '', '!')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED, (), '', 9, '!')
 
     def set_spitfp_baudrate_config(self, enable_dynamic_baudrate, minimum_dynamic_baudrate):
         """
@@ -590,7 +590,7 @@ class BrickServo(Device):
         enable_dynamic_baudrate = bool(enable_dynamic_baudrate)
         minimum_dynamic_baudrate = int(minimum_dynamic_baudrate)
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', 0, '')
 
     def get_spitfp_baudrate_config(self):
         """
@@ -600,7 +600,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', '! I'))
+        return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', 13, '! I'))
 
     def get_send_timeout_count(self, communication_method):
         """
@@ -617,7 +617,7 @@ class BrickServo(Device):
 
         communication_method = int(communication_method)
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 12, 'I')
 
     def set_spitfp_baudrate(self, bricklet_port, baudrate):
         """
@@ -642,7 +642,7 @@ class BrickServo(Device):
         bricklet_port = create_char(bricklet_port)
         baudrate = int(baudrate)
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', 0, '')
 
     def get_spitfp_baudrate(self, bricklet_port):
         """
@@ -654,7 +654,7 @@ class BrickServo(Device):
 
         bricklet_port = create_char(bricklet_port)
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 12, 'I')
 
     def get_spitfp_error_count(self, bricklet_port):
         """
@@ -676,7 +676,7 @@ class BrickServo(Device):
 
         bricklet_port = create_char(bricklet_port)
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 24, 'I I I I'))
 
     def enable_status_led(self):
         """
@@ -691,7 +691,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_STATUS_LED, (), '', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_STATUS_LED, (), '', 0, '')
 
     def disable_status_led(self):
         """
@@ -706,7 +706,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_STATUS_LED, (), '', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_STATUS_LED, (), '', 0, '')
 
     def is_status_led_enabled(self):
         """
@@ -716,7 +716,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '!')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_STATUS_LED_ENABLED, (), '', 9, '!')
 
     def get_protocol1_bricklet_name(self, port):
         """
@@ -730,7 +730,7 @@ class BrickServo(Device):
 
         port = create_char(port)
 
-        return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 'B 3B 40s'))
+        return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 52, 'B 3B 40s'))
 
     def get_chip_temperature(self):
         """
@@ -743,7 +743,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -756,7 +756,7 @@ class BrickServo(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_RESET, (), '', 0, '')
 
     def write_bricklet_plugin(self, port, offset, chunk):
         """
@@ -772,7 +772,7 @@ class BrickServo(Device):
         offset = int(offset)
         chunk = list(map(int, chunk))
 
-        self.ipcon.send_request(self, BrickServo.FUNCTION_WRITE_BRICKLET_PLUGIN, (port, offset, chunk), 'c B 32B', '')
+        self.ipcon.send_request(self, BrickServo.FUNCTION_WRITE_BRICKLET_PLUGIN, (port, offset, chunk), 'c B 32B', 0, '')
 
     def read_bricklet_plugin(self, port, offset):
         """
@@ -787,7 +787,7 @@ class BrickServo(Device):
         port = create_char(port)
         offset = int(offset)
 
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_READ_BRICKLET_PLUGIN, (port, offset), 'c B', '32B')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_READ_BRICKLET_PLUGIN, (port, offset), 'c B', 40, '32B')
 
     def get_identity(self):
         """
@@ -800,7 +800,7 @@ class BrickServo(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

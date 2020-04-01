@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -94,7 +94,7 @@ class BrickHATZero(Device):
         self.response_expected[BrickHATZero.FUNCTION_READ_UID] = BrickHATZero.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickHATZero.FUNCTION_GET_IDENTITY] = BrickHATZero.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickHATZero.CALLBACK_USB_VOLTAGE] = 'H'
+        self.callback_formats[BrickHATZero.CALLBACK_USB_VOLTAGE] = (10, 'H')
 
         ipcon.add_device(self)
 
@@ -109,7 +109,7 @@ class BrickHATZero(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_USB_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_USB_VOLTAGE, (), '', 10, 'H')
 
     def set_usb_voltage_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -151,7 +151,7 @@ class BrickHATZero(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickHATZero.FUNCTION_SET_USB_VOLTAGE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', '')
+        self.ipcon.send_request(self, BrickHATZero.FUNCTION_SET_USB_VOLTAGE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', 0, '')
 
     def get_usb_voltage_callback_configuration(self):
         """
@@ -161,7 +161,7 @@ class BrickHATZero(Device):
         """
         self.check_validity()
 
-        return GetUSBVoltageCallbackConfiguration(*self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_USB_VOLTAGE_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
+        return GetUSBVoltageCallbackConfiguration(*self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_USB_VOLTAGE_CALLBACK_CONFIGURATION, (), '', 18, 'I ! c H H'))
 
     def get_spitfp_error_count(self):
         """
@@ -179,7 +179,7 @@ class BrickHATZero(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -197,7 +197,7 @@ class BrickHATZero(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickHATZero.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickHATZero.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -205,7 +205,7 @@ class BrickHATZero(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -220,7 +220,7 @@ class BrickHATZero(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickHATZero.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickHATZero.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -237,7 +237,7 @@ class BrickHATZero(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickHATZero.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickHATZero.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -253,7 +253,7 @@ class BrickHATZero(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickHATZero.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickHATZero.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -261,7 +261,7 @@ class BrickHATZero(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -274,7 +274,7 @@ class BrickHATZero(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -287,7 +287,7 @@ class BrickHATZero(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickHATZero.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickHATZero.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -301,7 +301,7 @@ class BrickHATZero(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickHATZero.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickHATZero.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -310,7 +310,7 @@ class BrickHATZero(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickHATZero.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickHATZero.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -326,7 +326,7 @@ class BrickHATZero(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

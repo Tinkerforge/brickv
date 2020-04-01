@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -89,10 +89,10 @@ class BrickletBarometer(Device):
         self.response_expected[BrickletBarometer.FUNCTION_GET_AVERAGING] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletBarometer.FUNCTION_GET_IDENTITY] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletBarometer.CALLBACK_AIR_PRESSURE] = 'i'
-        self.callback_formats[BrickletBarometer.CALLBACK_ALTITUDE] = 'i'
-        self.callback_formats[BrickletBarometer.CALLBACK_AIR_PRESSURE_REACHED] = 'i'
-        self.callback_formats[BrickletBarometer.CALLBACK_ALTITUDE_REACHED] = 'i'
+        self.callback_formats[BrickletBarometer.CALLBACK_AIR_PRESSURE] = (12, 'i')
+        self.callback_formats[BrickletBarometer.CALLBACK_ALTITUDE] = (12, 'i')
+        self.callback_formats[BrickletBarometer.CALLBACK_AIR_PRESSURE_REACHED] = (12, 'i')
+        self.callback_formats[BrickletBarometer.CALLBACK_ALTITUDE_REACHED] = (12, 'i')
 
         ipcon.add_device(self)
 
@@ -106,7 +106,7 @@ class BrickletBarometer(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AIR_PRESSURE, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AIR_PRESSURE, (), '', 12, 'i')
 
     def get_altitude(self):
         """
@@ -120,7 +120,7 @@ class BrickletBarometer(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_ALTITUDE, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_ALTITUDE, (), '', 12, 'i')
 
     def set_air_pressure_callback_period(self, period):
         """
@@ -134,7 +134,7 @@ class BrickletBarometer(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_AIR_PRESSURE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_AIR_PRESSURE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_air_pressure_callback_period(self):
         """
@@ -142,7 +142,7 @@ class BrickletBarometer(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AIR_PRESSURE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AIR_PRESSURE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_altitude_callback_period(self, period):
         """
@@ -156,7 +156,7 @@ class BrickletBarometer(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_altitude_callback_period(self):
         """
@@ -164,7 +164,7 @@ class BrickletBarometer(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_air_pressure_callback_threshold(self, option, min, max):
         """
@@ -188,7 +188,7 @@ class BrickletBarometer(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_AIR_PRESSURE_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
+        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_AIR_PRESSURE_CALLBACK_THRESHOLD, (option, min, max), 'c i i', 0, '')
 
     def get_air_pressure_callback_threshold(self):
         """
@@ -196,7 +196,7 @@ class BrickletBarometer(Device):
         """
         self.check_validity()
 
-        return GetAirPressureCallbackThreshold(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AIR_PRESSURE_CALLBACK_THRESHOLD, (), '', 'c i i'))
+        return GetAirPressureCallbackThreshold(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AIR_PRESSURE_CALLBACK_THRESHOLD, (), '', 17, 'c i i'))
 
     def set_altitude_callback_threshold(self, option, min, max):
         """
@@ -220,7 +220,7 @@ class BrickletBarometer(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_ALTITUDE_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
+        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_ALTITUDE_CALLBACK_THRESHOLD, (option, min, max), 'c i i', 0, '')
 
     def get_altitude_callback_threshold(self):
         """
@@ -228,7 +228,7 @@ class BrickletBarometer(Device):
         """
         self.check_validity()
 
-        return GetAltitudeCallbackThreshold(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_ALTITUDE_CALLBACK_THRESHOLD, (), '', 'c i i'))
+        return GetAltitudeCallbackThreshold(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_ALTITUDE_CALLBACK_THRESHOLD, (), '', 17, 'c i i'))
 
     def set_debounce_period(self, debounce):
         """
@@ -248,7 +248,7 @@ class BrickletBarometer(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -256,7 +256,7 @@ class BrickletBarometer(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def set_reference_air_pressure(self, air_pressure):
         """
@@ -274,7 +274,7 @@ class BrickletBarometer(Device):
 
         air_pressure = int(air_pressure)
 
-        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_REFERENCE_AIR_PRESSURE, (air_pressure,), 'i', '')
+        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_REFERENCE_AIR_PRESSURE, (air_pressure,), 'i', 0, '')
 
     def get_chip_temperature(self):
         """
@@ -286,7 +286,7 @@ class BrickletBarometer(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def get_reference_air_pressure(self):
         """
@@ -294,7 +294,7 @@ class BrickletBarometer(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_REFERENCE_AIR_PRESSURE, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_REFERENCE_AIR_PRESSURE, (), '', 12, 'i')
 
     def set_averaging(self, moving_average_pressure, average_pressure, average_temperature):
         """
@@ -319,7 +319,7 @@ class BrickletBarometer(Device):
         average_pressure = int(average_pressure)
         average_temperature = int(average_temperature)
 
-        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_AVERAGING, (moving_average_pressure, average_pressure, average_temperature), 'B B B', '')
+        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_AVERAGING, (moving_average_pressure, average_pressure, average_temperature), 'B B B', 0, '')
 
     def get_averaging(self):
         """
@@ -329,7 +329,7 @@ class BrickletBarometer(Device):
         """
         self.check_validity()
 
-        return GetAveraging(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AVERAGING, (), '', 'B B B'))
+        return GetAveraging(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AVERAGING, (), '', 11, 'B B B'))
 
     def get_identity(self):
         """
@@ -345,7 +345,7 @@ class BrickletBarometer(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

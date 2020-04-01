@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -53,8 +53,8 @@ class BrickletPiezoSpeaker(Device):
         self.response_expected[BrickletPiezoSpeaker.FUNCTION_CALIBRATE] = BrickletPiezoSpeaker.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPiezoSpeaker.FUNCTION_GET_IDENTITY] = BrickletPiezoSpeaker.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletPiezoSpeaker.CALLBACK_BEEP_FINISHED] = ''
-        self.callback_formats[BrickletPiezoSpeaker.CALLBACK_MORSE_CODE_FINISHED] = ''
+        self.callback_formats[BrickletPiezoSpeaker.CALLBACK_BEEP_FINISHED] = (8, '')
+        self.callback_formats[BrickletPiezoSpeaker.CALLBACK_MORSE_CODE_FINISHED] = (8, '')
 
         ipcon.add_device(self)
 
@@ -74,7 +74,7 @@ class BrickletPiezoSpeaker(Device):
         duration = int(duration)
         frequency = int(frequency)
 
-        self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_BEEP, (duration, frequency), 'I H', '')
+        self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_BEEP, (duration, frequency), 'I H', 0, '')
 
     def morse_code(self, morse, frequency):
         """
@@ -91,7 +91,7 @@ class BrickletPiezoSpeaker(Device):
         morse = create_string(morse)
         frequency = int(frequency)
 
-        self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_MORSE_CODE, (morse, frequency), '60s H', '')
+        self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_MORSE_CODE, (morse, frequency), '60s H', 0, '')
 
     def calibrate(self):
         """
@@ -107,7 +107,7 @@ class BrickletPiezoSpeaker(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_CALIBRATE, (), '', '!')
+        return self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_CALIBRATE, (), '', 9, '!')
 
     def get_identity(self):
         """
@@ -123,7 +123,7 @@ class BrickletPiezoSpeaker(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

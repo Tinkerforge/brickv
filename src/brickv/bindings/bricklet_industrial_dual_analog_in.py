@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -84,8 +84,8 @@ class BrickletIndustrialDualAnalogIn(Device):
         self.response_expected[BrickletIndustrialDualAnalogIn.FUNCTION_GET_ADC_VALUES] = BrickletIndustrialDualAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualAnalogIn.FUNCTION_GET_IDENTITY] = BrickletIndustrialDualAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE] = 'B i'
-        self.callback_formats[BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE_REACHED] = 'B i'
+        self.callback_formats[BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE] = (13, 'B i')
+        self.callback_formats[BrickletIndustrialDualAnalogIn.CALLBACK_VOLTAGE_REACHED] = (13, 'B i')
 
         ipcon.add_device(self)
 
@@ -101,7 +101,7 @@ class BrickletIndustrialDualAnalogIn(Device):
 
         channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_VOLTAGE, (channel,), 'B', 'i')
+        return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_VOLTAGE, (channel,), 'B', 12, 'i')
 
     def set_voltage_callback_period(self, channel, period):
         """
@@ -116,7 +116,7 @@ class BrickletIndustrialDualAnalogIn(Device):
         channel = int(channel)
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_VOLTAGE_CALLBACK_PERIOD, (channel, period), 'B I', '')
+        self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_VOLTAGE_CALLBACK_PERIOD, (channel, period), 'B I', 0, '')
 
     def get_voltage_callback_period(self, channel):
         """
@@ -126,7 +126,7 @@ class BrickletIndustrialDualAnalogIn(Device):
 
         channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_VOLTAGE_CALLBACK_PERIOD, (channel,), 'B', 'I')
+        return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_VOLTAGE_CALLBACK_PERIOD, (channel,), 'B', 12, 'I')
 
     def set_voltage_callback_threshold(self, channel, option, min, max):
         """
@@ -152,7 +152,7 @@ class BrickletIndustrialDualAnalogIn(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD, (channel, option, min, max), 'B c i i', '')
+        self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD, (channel, option, min, max), 'B c i i', 0, '')
 
     def get_voltage_callback_threshold(self, channel):
         """
@@ -162,7 +162,7 @@ class BrickletIndustrialDualAnalogIn(Device):
 
         channel = int(channel)
 
-        return GetVoltageCallbackThreshold(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_VOLTAGE_CALLBACK_THRESHOLD, (channel,), 'B', 'c i i'))
+        return GetVoltageCallbackThreshold(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_VOLTAGE_CALLBACK_THRESHOLD, (channel,), 'B', 17, 'c i i'))
 
     def set_debounce_period(self, debounce):
         """
@@ -180,7 +180,7 @@ class BrickletIndustrialDualAnalogIn(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -188,7 +188,7 @@ class BrickletIndustrialDualAnalogIn(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def set_sample_rate(self, rate):
         """
@@ -200,7 +200,7 @@ class BrickletIndustrialDualAnalogIn(Device):
 
         rate = int(rate)
 
-        self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_SAMPLE_RATE, (rate,), 'B', '')
+        self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_SAMPLE_RATE, (rate,), 'B', 0, '')
 
     def get_sample_rate(self):
         """
@@ -208,7 +208,7 @@ class BrickletIndustrialDualAnalogIn(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_SAMPLE_RATE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_SAMPLE_RATE, (), '', 9, 'B')
 
     def set_calibration(self, offset, gain):
         """
@@ -223,7 +223,7 @@ class BrickletIndustrialDualAnalogIn(Device):
         offset = list(map(int, offset))
         gain = list(map(int, gain))
 
-        self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_CALIBRATION, (offset, gain), '2i 2i', '')
+        self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_CALIBRATION, (offset, gain), '2i 2i', 0, '')
 
     def get_calibration(self):
         """
@@ -231,7 +231,7 @@ class BrickletIndustrialDualAnalogIn(Device):
         """
         self.check_validity()
 
-        return GetCalibration(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_CALIBRATION, (), '', '2i 2i'))
+        return GetCalibration(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_CALIBRATION, (), '', 24, '2i 2i'))
 
     def get_adc_values(self):
         """
@@ -240,7 +240,7 @@ class BrickletIndustrialDualAnalogIn(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_ADC_VALUES, (), '', '2i')
+        return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_ADC_VALUES, (), '', 16, '2i')
 
     def get_identity(self):
         """
@@ -256,7 +256,7 @@ class BrickletIndustrialDualAnalogIn(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

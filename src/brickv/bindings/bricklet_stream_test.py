@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -282,24 +282,24 @@ class BrickletStreamTest(Device):
         self.response_expected[BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_FULL_LOW_LEVEL] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletStreamTest.FUNCTION_GET_IDENTITY] = BrickletStreamTest.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletStreamTest.CALLBACK_NORMAL_READ_LOW_LEVEL] = 'H H 60c'
-        self.callback_formats[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_PREFIX_1_LOW_LEVEL] = 'B H H 59c'
-        self.callback_formats[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_PREFIX_2_LOW_LEVEL] = 'B B H H 58c'
-        self.callback_formats[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_SUFFIX_1_LOW_LEVEL] = 'H H 59c B'
-        self.callback_formats[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_SUFFIX_2_LOW_LEVEL] = 'H H 58c B B'
-        self.callback_formats[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_FULL_LOW_LEVEL] = 'B H B H B 56c B'
-        self.callback_formats[BrickletStreamTest.CALLBACK_FIXED_READ_LOW_LEVEL] = 'H 62c'
-        self.callback_formats[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_PREFIX_1_LOW_LEVEL] = 'B H 61c'
-        self.callback_formats[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_PREFIX_2_LOW_LEVEL] = 'B B H 60c'
-        self.callback_formats[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_SUFFIX_1_LOW_LEVEL] = 'H 61c B'
-        self.callback_formats[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_SUFFIX_2_LOW_LEVEL] = 'H 60c B B'
-        self.callback_formats[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_FULL_LOW_LEVEL] = 'B H B 59c B'
-        self.callback_formats[BrickletStreamTest.CALLBACK_SINGLE_READ_LOW_LEVEL] = 'B 63c'
-        self.callback_formats[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_PREFIX_1_LOW_LEVEL] = 'B B 62c'
-        self.callback_formats[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_PREFIX_2_LOW_LEVEL] = 'B B B 61c'
-        self.callback_formats[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_SUFFIX_1_LOW_LEVEL] = 'B 62c B'
-        self.callback_formats[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_SUFFIX_2_LOW_LEVEL] = 'B 61c B B'
-        self.callback_formats[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_FULL_LOW_LEVEL] = 'B B B 60c B'
+        self.callback_formats[BrickletStreamTest.CALLBACK_NORMAL_READ_LOW_LEVEL] = (72, 'H H 60c')
+        self.callback_formats[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_PREFIX_1_LOW_LEVEL] = (72, 'B H H 59c')
+        self.callback_formats[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_PREFIX_2_LOW_LEVEL] = (72, 'B B H H 58c')
+        self.callback_formats[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_SUFFIX_1_LOW_LEVEL] = (72, 'H H 59c B')
+        self.callback_formats[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_SUFFIX_2_LOW_LEVEL] = (72, 'H H 58c B B')
+        self.callback_formats[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_FULL_LOW_LEVEL] = (72, 'B H B H B 56c B')
+        self.callback_formats[BrickletStreamTest.CALLBACK_FIXED_READ_LOW_LEVEL] = (72, 'H 62c')
+        self.callback_formats[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_PREFIX_1_LOW_LEVEL] = (72, 'B H 61c')
+        self.callback_formats[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_PREFIX_2_LOW_LEVEL] = (72, 'B B H 60c')
+        self.callback_formats[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_SUFFIX_1_LOW_LEVEL] = (72, 'H 61c B')
+        self.callback_formats[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_SUFFIX_2_LOW_LEVEL] = (72, 'H 60c B B')
+        self.callback_formats[BrickletStreamTest.CALLBACK_FIXED_READ_EXTRA_FULL_LOW_LEVEL] = (72, 'B H B 59c B')
+        self.callback_formats[BrickletStreamTest.CALLBACK_SINGLE_READ_LOW_LEVEL] = (72, 'B 63c')
+        self.callback_formats[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_PREFIX_1_LOW_LEVEL] = (72, 'B B 62c')
+        self.callback_formats[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_PREFIX_2_LOW_LEVEL] = (72, 'B B B 61c')
+        self.callback_formats[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_SUFFIX_1_LOW_LEVEL] = (72, 'B 62c B')
+        self.callback_formats[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_SUFFIX_2_LOW_LEVEL] = (72, 'B 61c B B')
+        self.callback_formats[BrickletStreamTest.CALLBACK_SINGLE_READ_EXTRA_FULL_LOW_LEVEL] = (72, 'B B B 60c B')
 
         self.high_level_callbacks[BrickletStreamTest.CALLBACK_NORMAL_READ] = [('stream_length', 'stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': False}, None]
         self.high_level_callbacks[BrickletStreamTest.CALLBACK_NORMAL_READ_EXTRA_PREFIX_1] = [(None, 'stream_length', 'stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': False}, None]
@@ -331,7 +331,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 0, '')
 
     def normal_write_extra_in_prefix_1_low_level(self, extra, message_length, message_chunk_offset, message_chunk_data):
         """
@@ -344,7 +344,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_length, message_chunk_offset, message_chunk_data), 'B H H 59c', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_length, message_chunk_offset, message_chunk_data), 'B H H 59c', 0, '')
 
     def normal_write_extra_in_prefix_2_low_level(self, extra_1, extra_2, message_length, message_chunk_offset, message_chunk_data):
         """
@@ -358,7 +358,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_length, message_chunk_offset, message_chunk_data), 'B B H H 58c', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_length, message_chunk_offset, message_chunk_data), 'B B H H 58c', 0, '')
 
     def normal_write_extra_in_suffix_1_low_level(self, message_length, message_chunk_offset, message_chunk_data, extra):
         """
@@ -371,7 +371,7 @@ class BrickletStreamTest(Device):
         message_chunk_data = create_char_list(message_chunk_data)
         extra = int(extra)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data, extra), 'H H 59c B', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data, extra), 'H H 59c B', 0, '')
 
     def normal_write_extra_in_suffix_2_low_level(self, message_length, message_chunk_offset, message_chunk_data, extra_1, extra_2):
         """
@@ -385,7 +385,7 @@ class BrickletStreamTest(Device):
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data, extra_1, extra_2), 'H H 58c B B', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data, extra_1, extra_2), 'H H 58c B B', 0, '')
 
     def normal_write_extra_in_full_low_level(self, extra_1, message_length, extra_2, message_chunk_offset, extra_3, message_chunk_data, extra_4):
         """
@@ -401,7 +401,7 @@ class BrickletStreamTest(Device):
         message_chunk_data = create_char_list(message_chunk_data)
         extra_4 = int(extra_4)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_FULL_LOW_LEVEL, (extra_1, message_length, extra_2, message_chunk_offset, extra_3, message_chunk_data, extra_4), 'B H B H B 56c B', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_IN_FULL_LOW_LEVEL, (extra_1, message_length, extra_2, message_chunk_offset, extra_3, message_chunk_data, extra_4), 'B H B H B 56c B', 0, '')
 
     def normal_write_extra_out_1_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
@@ -413,7 +413,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_OUT_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 'B')
+        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_OUT_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 9, 'B')
 
     def normal_write_extra_out_2_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
@@ -425,7 +425,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        return NormalWriteExtraOut2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_OUT_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 'B B'))
+        return NormalWriteExtraOut2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_WRITE_EXTRA_OUT_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 10, 'B B'))
 
     def fixed_write_low_level(self, message_chunk_offset, message_chunk_data):
         """
@@ -436,7 +436,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_LOW_LEVEL, (message_chunk_offset, message_chunk_data), 'H 62c', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_LOW_LEVEL, (message_chunk_offset, message_chunk_data), 'H 62c', 0, '')
 
     def fixed_write_extra_in_prefix_1_low_level(self, extra, message_chunk_offset, message_chunk_data):
         """
@@ -448,7 +448,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_chunk_offset, message_chunk_data), 'B H 61c', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_chunk_offset, message_chunk_data), 'B H 61c', 0, '')
 
     def fixed_write_extra_in_prefix_2_low_level(self, extra_1, extra_2, message_chunk_offset, message_chunk_data):
         """
@@ -461,7 +461,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_chunk_offset, message_chunk_data), 'B B H 60c', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_chunk_offset, message_chunk_data), 'B B H 60c', 0, '')
 
     def fixed_write_extra_in_suffix_1_low_level(self, message_chunk_offset, message_chunk_data, extra):
         """
@@ -473,7 +473,7 @@ class BrickletStreamTest(Device):
         message_chunk_data = create_char_list(message_chunk_data)
         extra = int(extra)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_chunk_offset, message_chunk_data, extra), 'H 61c B', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_chunk_offset, message_chunk_data, extra), 'H 61c B', 0, '')
 
     def fixed_write_extra_in_suffix_2_low_level(self, message_chunk_offset, message_chunk_data, extra_1, extra_2):
         """
@@ -486,7 +486,7 @@ class BrickletStreamTest(Device):
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_chunk_offset, message_chunk_data, extra_1, extra_2), 'H 60c B B', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_chunk_offset, message_chunk_data, extra_1, extra_2), 'H 60c B B', 0, '')
 
     def fixed_write_extra_in_full_low_level(self, extra_1, message_chunk_offset, extra_2, message_chunk_data, extra_3):
         """
@@ -500,7 +500,7 @@ class BrickletStreamTest(Device):
         message_chunk_data = create_char_list(message_chunk_data)
         extra_3 = int(extra_3)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_FULL_LOW_LEVEL, (extra_1, message_chunk_offset, extra_2, message_chunk_data, extra_3), 'B H B 59c B', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_IN_FULL_LOW_LEVEL, (extra_1, message_chunk_offset, extra_2, message_chunk_data, extra_3), 'B H B 59c B', 0, '')
 
     def fixed_write_extra_out_1_low_level(self, message_chunk_offset, message_chunk_data):
         """
@@ -511,7 +511,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_OUT_1_LOW_LEVEL, (message_chunk_offset, message_chunk_data), 'H 62c', 'B')
+        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_OUT_1_LOW_LEVEL, (message_chunk_offset, message_chunk_data), 'H 62c', 9, 'B')
 
     def fixed_write_extra_out_2_low_level(self, message_chunk_offset, message_chunk_data):
         """
@@ -522,7 +522,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        return FixedWriteExtraOut2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_OUT_2_LOW_LEVEL, (message_chunk_offset, message_chunk_data), 'H 62c', 'B B'))
+        return FixedWriteExtraOut2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_WRITE_EXTRA_OUT_2_LOW_LEVEL, (message_chunk_offset, message_chunk_data), 'H 62c', 10, 'B B'))
 
     def short_write_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
@@ -534,7 +534,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 'B')
+        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 9, 'B')
 
     def short_write_extra_in_prefix_1_low_level(self, extra, message_length, message_chunk_offset, message_chunk_data):
         """
@@ -547,7 +547,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_length, message_chunk_offset, message_chunk_data), 'B H H 59c', 'B')
+        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_length, message_chunk_offset, message_chunk_data), 'B H H 59c', 9, 'B')
 
     def short_write_extra_in_prefix_2_low_level(self, extra_1, extra_2, message_length, message_chunk_offset, message_chunk_data):
         """
@@ -561,7 +561,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_length, message_chunk_offset, message_chunk_data), 'B B H H 58c', 'B')
+        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_length, message_chunk_offset, message_chunk_data), 'B B H H 58c', 9, 'B')
 
     def short_write_extra_in_suffix_1_low_level(self, message_length, message_chunk_offset, message_chunk_data, extra):
         """
@@ -574,7 +574,7 @@ class BrickletStreamTest(Device):
         message_chunk_data = create_char_list(message_chunk_data)
         extra = int(extra)
 
-        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data, extra), 'H H 59c B', 'B')
+        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data, extra), 'H H 59c B', 9, 'B')
 
     def short_write_extra_in_suffix_2_low_level(self, message_length, message_chunk_offset, message_chunk_data, extra_1, extra_2):
         """
@@ -588,7 +588,7 @@ class BrickletStreamTest(Device):
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
 
-        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data, extra_1, extra_2), 'H H 58c B B', 'B')
+        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data, extra_1, extra_2), 'H H 58c B B', 9, 'B')
 
     def short_write_extra_out_prefix_1_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
@@ -600,7 +600,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        return ShortWriteExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 'B B'))
+        return ShortWriteExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 10, 'B B'))
 
     def short_write_extra_out_prefix_2_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
@@ -612,7 +612,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        return ShortWriteExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 'B B B'))
+        return ShortWriteExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 11, 'B B B'))
 
     def short_write_extra_out_suffix_1_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
@@ -624,7 +624,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        return ShortWriteExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 'B B'))
+        return ShortWriteExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 10, 'B B'))
 
     def short_write_extra_out_suffix_2_low_level(self, message_length, message_chunk_offset, message_chunk_data):
         """
@@ -636,7 +636,7 @@ class BrickletStreamTest(Device):
         message_chunk_offset = int(message_chunk_offset)
         message_chunk_data = create_char_list(message_chunk_data)
 
-        return ShortWriteExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 'B B B'))
+        return ShortWriteExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (message_length, message_chunk_offset, message_chunk_data), 'H H 60c', 11, 'B B B'))
 
     def short_write_extra_full_low_level(self, extra_1, message_length, extra_2, message_chunk_offset, extra_3, message_chunk_data, extra_4):
         """
@@ -652,7 +652,7 @@ class BrickletStreamTest(Device):
         message_chunk_data = create_char_list(message_chunk_data)
         extra_4 = int(extra_4)
 
-        return ShortWriteExtraFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_FULL_LOW_LEVEL, (extra_1, message_length, extra_2, message_chunk_offset, extra_3, message_chunk_data, extra_4), 'B H B H B 56c B', 'B B B'))
+        return ShortWriteExtraFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_WRITE_EXTRA_FULL_LOW_LEVEL, (extra_1, message_length, extra_2, message_chunk_offset, extra_3, message_chunk_data, extra_4), 'B H B H B 56c B', 11, 'B B B'))
 
     def single_write_low_level(self, message_length, message_data):
         """
@@ -663,7 +663,7 @@ class BrickletStreamTest(Device):
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_LOW_LEVEL, (message_length, message_data), 'B 63c', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_LOW_LEVEL, (message_length, message_data), 'B 63c', 0, '')
 
     def single_write_extra_in_prefix_1_low_level(self, extra, message_length, message_data):
         """
@@ -675,7 +675,7 @@ class BrickletStreamTest(Device):
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_length, message_data), 'B B 62c', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_length, message_data), 'B B 62c', 0, '')
 
     def single_write_extra_in_prefix_2_low_level(self, extra_1, extra_2, message_length, message_data):
         """
@@ -688,7 +688,7 @@ class BrickletStreamTest(Device):
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_length, message_data), 'B B B 61c', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_length, message_data), 'B B B 61c', 0, '')
 
     def single_write_extra_in_suffix_1_low_level(self, message_length, message_data, extra):
         """
@@ -700,7 +700,7 @@ class BrickletStreamTest(Device):
         message_data = create_char_list(message_data)
         extra = int(extra)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_length, message_data, extra), 'B 62c B', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_length, message_data, extra), 'B 62c B', 0, '')
 
     def single_write_extra_in_suffix_2_low_level(self, message_length, message_data, extra_1, extra_2):
         """
@@ -713,7 +713,7 @@ class BrickletStreamTest(Device):
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_length, message_data, extra_1, extra_2), 'B 61c B B', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_length, message_data, extra_1, extra_2), 'B 61c B B', 0, '')
 
     def single_write_extra_in_full_low_level(self, extra_1, message_length, extra_2, message_data, extra_3):
         """
@@ -727,7 +727,7 @@ class BrickletStreamTest(Device):
         message_data = create_char_list(message_data)
         extra_3 = int(extra_3)
 
-        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_FULL_LOW_LEVEL, (extra_1, message_length, extra_2, message_data, extra_3), 'B B B 60c B', '')
+        self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_IN_FULL_LOW_LEVEL, (extra_1, message_length, extra_2, message_data, extra_3), 'B B B 60c B', 0, '')
 
     def single_write_extra_out_1_low_level(self, message_length, message_data):
         """
@@ -738,7 +738,7 @@ class BrickletStreamTest(Device):
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
-        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_OUT_1_LOW_LEVEL, (message_length, message_data), 'B 63c', 'B')
+        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_OUT_1_LOW_LEVEL, (message_length, message_data), 'B 63c', 9, 'B')
 
     def single_write_extra_out_2_low_level(self, message_length, message_data):
         """
@@ -749,7 +749,7 @@ class BrickletStreamTest(Device):
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
-        return SingleWriteExtraOut2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_OUT_2_LOW_LEVEL, (message_length, message_data), 'B 63c', 'B B'))
+        return SingleWriteExtraOut2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_WRITE_EXTRA_OUT_2_LOW_LEVEL, (message_length, message_data), 'B 63c', 10, 'B B'))
 
     def short_single_write_low_level(self, message_length, message_data):
         """
@@ -760,7 +760,7 @@ class BrickletStreamTest(Device):
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
-        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_LOW_LEVEL, (message_length, message_data), 'B 63c', 'B')
+        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_LOW_LEVEL, (message_length, message_data), 'B 63c', 9, 'B')
 
     def short_single_write_extra_in_prefix_1_low_level(self, extra, message_length, message_data):
         """
@@ -772,7 +772,7 @@ class BrickletStreamTest(Device):
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
-        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_length, message_data), 'B B 62c', 'B')
+        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_IN_PREFIX_1_LOW_LEVEL, (extra, message_length, message_data), 'B B 62c', 9, 'B')
 
     def short_single_write_extra_in_prefix_2_low_level(self, extra_1, extra_2, message_length, message_data):
         """
@@ -785,7 +785,7 @@ class BrickletStreamTest(Device):
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
-        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_length, message_data), 'B B B 61c', 'B')
+        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_IN_PREFIX_2_LOW_LEVEL, (extra_1, extra_2, message_length, message_data), 'B B B 61c', 9, 'B')
 
     def short_single_write_extra_in_suffix_1_low_level(self, message_length, message_data, extra):
         """
@@ -797,7 +797,7 @@ class BrickletStreamTest(Device):
         message_data = create_char_list(message_data)
         extra = int(extra)
 
-        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_length, message_data, extra), 'B 62c B', 'B')
+        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_IN_SUFFIX_1_LOW_LEVEL, (message_length, message_data, extra), 'B 62c B', 9, 'B')
 
     def short_single_write_extra_in_suffix_2_low_level(self, message_length, message_data, extra_1, extra_2):
         """
@@ -810,7 +810,7 @@ class BrickletStreamTest(Device):
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
 
-        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_length, message_data, extra_1, extra_2), 'B 61c B B', 'B')
+        return self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_IN_SUFFIX_2_LOW_LEVEL, (message_length, message_data, extra_1, extra_2), 'B 61c B B', 9, 'B')
 
     def short_single_write_extra_out_prefix_1_low_level(self, message_length, message_data):
         """
@@ -821,7 +821,7 @@ class BrickletStreamTest(Device):
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
-        return ShortSingleWriteExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (message_length, message_data), 'B 62c', 'B B'))
+        return ShortSingleWriteExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (message_length, message_data), 'B 62c', 10, 'B B'))
 
     def short_single_write_extra_out_prefix_2_low_level(self, message_length, message_data):
         """
@@ -832,7 +832,7 @@ class BrickletStreamTest(Device):
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
-        return ShortSingleWriteExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (message_length, message_data), 'B 62c', 'B B B'))
+        return ShortSingleWriteExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (message_length, message_data), 'B 62c', 11, 'B B B'))
 
     def short_single_write_extra_out_suffix_1_low_level(self, message_length, message_data):
         """
@@ -843,7 +843,7 @@ class BrickletStreamTest(Device):
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
-        return ShortSingleWriteExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (message_length, message_data), 'B 63c', 'B B'))
+        return ShortSingleWriteExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (message_length, message_data), 'B 63c', 10, 'B B'))
 
     def short_single_write_extra_out_suffix_2_low_level(self, message_length, message_data):
         """
@@ -854,7 +854,7 @@ class BrickletStreamTest(Device):
         message_length = int(message_length)
         message_data = create_char_list(message_data)
 
-        return ShortSingleWriteExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (message_length, message_data), 'B 63c', 'B B B'))
+        return ShortSingleWriteExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (message_length, message_data), 'B 63c', 11, 'B B B'))
 
     def short_single_write_extra_full_low_level(self, extra_1, message_length, extra_2, message_data, extra_3):
         """
@@ -868,7 +868,7 @@ class BrickletStreamTest(Device):
         message_data = create_char_list(message_data)
         extra_3 = int(extra_3)
 
-        return ShortSingleWriteExtraFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_FULL_LOW_LEVEL, (extra_1, message_length, extra_2, message_data, extra_3), 'B B B 60c B', 'B B B'))
+        return ShortSingleWriteExtraFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SHORT_SINGLE_WRITE_EXTRA_FULL_LOW_LEVEL, (extra_1, message_length, extra_2, message_data, extra_3), 'B B B 60c B', 11, 'B B B'))
 
     def normal_read_low_level(self):
         """
@@ -876,7 +876,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return NormalReadLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_LOW_LEVEL, (), '', 'H H 60c'))
+        return NormalReadLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_LOW_LEVEL, (), '', 72, 'H H 60c'))
 
     def normal_read_extra_in_1_low_level(self, extra):
         """
@@ -886,7 +886,7 @@ class BrickletStreamTest(Device):
 
         extra = int(extra)
 
-        return NormalReadExtraIn1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_IN_1_LOW_LEVEL, (extra,), 'B', 'H H 60c'))
+        return NormalReadExtraIn1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_IN_1_LOW_LEVEL, (extra,), 'B', 72, 'H H 60c'))
 
     def normal_read_extra_in_2_low_level(self, extra_1, extra_2):
         """
@@ -897,7 +897,7 @@ class BrickletStreamTest(Device):
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
 
-        return NormalReadExtraIn2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_IN_2_LOW_LEVEL, (extra_1, extra_2), 'B B', 'H H 60c'))
+        return NormalReadExtraIn2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_IN_2_LOW_LEVEL, (extra_1, extra_2), 'B B', 72, 'H H 60c'))
 
     def normal_read_extra_out_prefix_1_low_level(self):
         """
@@ -905,7 +905,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return NormalReadExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (), '', 'B H H 59c'))
+        return NormalReadExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (), '', 72, 'B H H 59c'))
 
     def normal_read_extra_out_prefix_2_low_level(self):
         """
@@ -913,7 +913,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return NormalReadExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (), '', 'B B H H 58c'))
+        return NormalReadExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (), '', 72, 'B B H H 58c'))
 
     def normal_read_extra_out_suffix_1_low_level(self):
         """
@@ -921,7 +921,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return NormalReadExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (), '', 'H H 59c B'))
+        return NormalReadExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (), '', 72, 'H H 59c B'))
 
     def normal_read_extra_out_suffix_2_low_level(self):
         """
@@ -929,7 +929,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return NormalReadExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (), '', 'H H 58c B B'))
+        return NormalReadExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (), '', 72, 'H H 58c B B'))
 
     def normal_read_extra_out_full_low_level(self):
         """
@@ -937,7 +937,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return NormalReadExtraOutFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_FULL_LOW_LEVEL, (), '', 'B H B H B 56c B'))
+        return NormalReadExtraOutFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_NORMAL_READ_EXTRA_OUT_FULL_LOW_LEVEL, (), '', 72, 'B H B H B 56c B'))
 
     def fixed_read_low_level(self):
         """
@@ -945,7 +945,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return FixedReadLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_LOW_LEVEL, (), '', 'H 62c'))
+        return FixedReadLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_LOW_LEVEL, (), '', 72, 'H 62c'))
 
     def fixed_read_extra_in_1_low_level(self, extra):
         """
@@ -955,7 +955,7 @@ class BrickletStreamTest(Device):
 
         extra = int(extra)
 
-        return FixedReadExtraIn1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_IN_1_LOW_LEVEL, (extra,), 'B', 'H 62c'))
+        return FixedReadExtraIn1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_IN_1_LOW_LEVEL, (extra,), 'B', 72, 'H 62c'))
 
     def fixed_read_extra_in_2_low_level(self, extra_1, extra_2):
         """
@@ -966,7 +966,7 @@ class BrickletStreamTest(Device):
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
 
-        return FixedReadExtraIn2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_IN_2_LOW_LEVEL, (extra_1, extra_2), 'B B', 'H 62c'))
+        return FixedReadExtraIn2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_IN_2_LOW_LEVEL, (extra_1, extra_2), 'B B', 72, 'H 62c'))
 
     def fixed_read_extra_out_prefix_1_low_level(self):
         """
@@ -974,7 +974,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return FixedReadExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (), '', 'B H 61c'))
+        return FixedReadExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (), '', 72, 'B H 61c'))
 
     def fixed_read_extra_out_prefix_2_low_level(self):
         """
@@ -982,7 +982,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return FixedReadExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (), '', 'B B H 60c'))
+        return FixedReadExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (), '', 72, 'B B H 60c'))
 
     def fixed_read_extra_out_suffix_1_low_level(self):
         """
@@ -990,7 +990,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return FixedReadExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (), '', 'H 61c B'))
+        return FixedReadExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (), '', 72, 'H 61c B'))
 
     def fixed_read_extra_out_suffix_2_low_level(self):
         """
@@ -998,7 +998,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return FixedReadExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (), '', 'H 60c B B'))
+        return FixedReadExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (), '', 72, 'H 60c B B'))
 
     def fixed_read_extra_out_full_low_level(self):
         """
@@ -1006,7 +1006,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return FixedReadExtraOutFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_FULL_LOW_LEVEL, (), '', 'B H B 59c B'))
+        return FixedReadExtraOutFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_FIXED_READ_EXTRA_OUT_FULL_LOW_LEVEL, (), '', 72, 'B H B 59c B'))
 
     def single_read_low_level(self):
         """
@@ -1014,7 +1014,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return SingleReadLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_LOW_LEVEL, (), '', 'B 63c'))
+        return SingleReadLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_LOW_LEVEL, (), '', 72, 'B 63c'))
 
     def single_read_extra_in_1_low_level(self, extra):
         """
@@ -1024,7 +1024,7 @@ class BrickletStreamTest(Device):
 
         extra = int(extra)
 
-        return SingleReadExtraIn1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_IN_1_LOW_LEVEL, (extra,), 'B', 'B 62c'))
+        return SingleReadExtraIn1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_IN_1_LOW_LEVEL, (extra,), 'B', 71, 'B 62c'))
 
     def single_read_extra_in_2_low_level(self, extra_1, extra_2):
         """
@@ -1035,7 +1035,7 @@ class BrickletStreamTest(Device):
         extra_1 = int(extra_1)
         extra_2 = int(extra_2)
 
-        return SingleReadExtraIn2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_IN_2_LOW_LEVEL, (extra_1, extra_2), 'B B', 'B 62c'))
+        return SingleReadExtraIn2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_IN_2_LOW_LEVEL, (extra_1, extra_2), 'B B', 71, 'B 62c'))
 
     def single_read_extra_out_prefix_1_low_level(self):
         """
@@ -1043,7 +1043,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return SingleReadExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (), '', 'B B 62c'))
+        return SingleReadExtraOutPrefix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_PREFIX_1_LOW_LEVEL, (), '', 72, 'B B 62c'))
 
     def single_read_extra_out_prefix_2_low_level(self):
         """
@@ -1051,7 +1051,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return SingleReadExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (), '', 'B B B 61c'))
+        return SingleReadExtraOutPrefix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_PREFIX_2_LOW_LEVEL, (), '', 72, 'B B B 61c'))
 
     def single_read_extra_out_suffix_1_low_level(self):
         """
@@ -1059,7 +1059,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return SingleReadExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (), '', 'B 62c B'))
+        return SingleReadExtraOutSuffix1LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_SUFFIX_1_LOW_LEVEL, (), '', 72, 'B 62c B'))
 
     def single_read_extra_out_suffix_2_low_level(self):
         """
@@ -1067,7 +1067,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return SingleReadExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (), '', 'B 61c B B'))
+        return SingleReadExtraOutSuffix2LowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_SUFFIX_2_LOW_LEVEL, (), '', 72, 'B 61c B B'))
 
     def single_read_extra_out_full_low_level(self):
         """
@@ -1075,7 +1075,7 @@ class BrickletStreamTest(Device):
         """
         self.check_validity()
 
-        return SingleReadExtraOutFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_FULL_LOW_LEVEL, (), '', 'B B B 60c B'))
+        return SingleReadExtraOutFullLowLevel(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_SINGLE_READ_EXTRA_OUT_FULL_LOW_LEVEL, (), '', 72, 'B B B 60c B'))
 
     def get_identity(self):
         """
@@ -1091,7 +1091,7 @@ class BrickletStreamTest(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletStreamTest.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def normal_write(self, message):
         """

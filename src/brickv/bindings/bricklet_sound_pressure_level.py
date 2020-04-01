@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -118,8 +118,8 @@ class BrickletSoundPressureLevel(Device):
         self.response_expected[BrickletSoundPressureLevel.FUNCTION_READ_UID] = BrickletSoundPressureLevel.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletSoundPressureLevel.FUNCTION_GET_IDENTITY] = BrickletSoundPressureLevel.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletSoundPressureLevel.CALLBACK_DECIBEL] = 'H'
-        self.callback_formats[BrickletSoundPressureLevel.CALLBACK_SPECTRUM_LOW_LEVEL] = 'H H 30H'
+        self.callback_formats[BrickletSoundPressureLevel.CALLBACK_DECIBEL] = (10, 'H')
+        self.callback_formats[BrickletSoundPressureLevel.CALLBACK_SPECTRUM_LOW_LEVEL] = (72, 'H H 30H')
 
         self.high_level_callbacks[BrickletSoundPressureLevel.CALLBACK_SPECTRUM] = [('stream_length', 'stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': False}, None]
         ipcon.add_device(self)
@@ -140,7 +140,7 @@ class BrickletSoundPressureLevel(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_DECIBEL, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_DECIBEL, (), '', 10, 'H')
 
     def set_decibel_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -180,7 +180,7 @@ class BrickletSoundPressureLevel(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_DECIBEL_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', '')
+        self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_DECIBEL_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', 0, '')
 
     def get_decibel_callback_configuration(self):
         """
@@ -188,7 +188,7 @@ class BrickletSoundPressureLevel(Device):
         """
         self.check_validity()
 
-        return GetDecibelCallbackConfiguration(*self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_DECIBEL_CALLBACK_CONFIGURATION, (), '', 'I ! c H H'))
+        return GetDecibelCallbackConfiguration(*self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_DECIBEL_CALLBACK_CONFIGURATION, (), '', 18, 'I ! c H H'))
 
     def get_spectrum_low_level(self):
         """
@@ -213,7 +213,7 @@ class BrickletSoundPressureLevel(Device):
         """
         self.check_validity()
 
-        return GetSpectrumLowLevel(*self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_SPECTRUM_LOW_LEVEL, (), '', 'H H 30H'))
+        return GetSpectrumLowLevel(*self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_SPECTRUM_LOW_LEVEL, (), '', 72, 'H H 30H'))
 
     def set_spectrum_callback_configuration(self, period):
         """
@@ -227,7 +227,7 @@ class BrickletSoundPressureLevel(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_SPECTRUM_CALLBACK_CONFIGURATION, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_SPECTRUM_CALLBACK_CONFIGURATION, (period,), 'I', 0, '')
 
     def get_spectrum_callback_configuration(self):
         """
@@ -236,7 +236,7 @@ class BrickletSoundPressureLevel(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_SPECTRUM_CALLBACK_CONFIGURATION, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_SPECTRUM_CALLBACK_CONFIGURATION, (), '', 12, 'I')
 
     def set_configuration(self, fft_size, weighting):
         """
@@ -267,7 +267,7 @@ class BrickletSoundPressureLevel(Device):
         fft_size = int(fft_size)
         weighting = int(weighting)
 
-        self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_CONFIGURATION, (fft_size, weighting), 'B B', '')
+        self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_CONFIGURATION, (fft_size, weighting), 'B B', 0, '')
 
     def get_configuration(self):
         """
@@ -275,7 +275,7 @@ class BrickletSoundPressureLevel(Device):
         """
         self.check_validity()
 
-        return GetConfiguration(*self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_CONFIGURATION, (), '', 10, 'B B'))
 
     def get_spitfp_error_count(self):
         """
@@ -293,7 +293,7 @@ class BrickletSoundPressureLevel(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -311,7 +311,7 @@ class BrickletSoundPressureLevel(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -319,7 +319,7 @@ class BrickletSoundPressureLevel(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -334,7 +334,7 @@ class BrickletSoundPressureLevel(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -351,7 +351,7 @@ class BrickletSoundPressureLevel(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -367,7 +367,7 @@ class BrickletSoundPressureLevel(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -375,7 +375,7 @@ class BrickletSoundPressureLevel(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -388,7 +388,7 @@ class BrickletSoundPressureLevel(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -401,7 +401,7 @@ class BrickletSoundPressureLevel(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -415,7 +415,7 @@ class BrickletSoundPressureLevel(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -424,7 +424,7 @@ class BrickletSoundPressureLevel(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -440,7 +440,7 @@ class BrickletSoundPressureLevel(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletSoundPressureLevel.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def get_spectrum(self):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -120,8 +120,8 @@ class BrickletOutdoorWeather(Device):
         self.response_expected[BrickletOutdoorWeather.FUNCTION_READ_UID] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletOutdoorWeather.FUNCTION_GET_IDENTITY] = BrickletOutdoorWeather.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletOutdoorWeather.CALLBACK_STATION_DATA] = 'B h B I I I B !'
-        self.callback_formats[BrickletOutdoorWeather.CALLBACK_SENSOR_DATA] = 'B h B'
+        self.callback_formats[BrickletOutdoorWeather.CALLBACK_STATION_DATA] = (26, 'B h B I I I B !')
+        self.callback_formats[BrickletOutdoorWeather.CALLBACK_SENSOR_DATA] = (12, 'B h B')
 
         ipcon.add_device(self)
 
@@ -138,7 +138,7 @@ class BrickletOutdoorWeather(Device):
         """
         self.check_validity()
 
-        return GetStationIdentifiersLowLevel(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_IDENTIFIERS_LOW_LEVEL, (), '', 'H H 60B'))
+        return GetStationIdentifiersLowLevel(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_IDENTIFIERS_LOW_LEVEL, (), '', 72, 'H H 60B'))
 
     def get_sensor_identifiers_low_level(self):
         """
@@ -153,7 +153,7 @@ class BrickletOutdoorWeather(Device):
         """
         self.check_validity()
 
-        return GetSensorIdentifiersLowLevel(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_IDENTIFIERS_LOW_LEVEL, (), '', 'H H 60B'))
+        return GetSensorIdentifiersLowLevel(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_IDENTIFIERS_LOW_LEVEL, (), '', 72, 'H H 60B'))
 
     def get_station_data(self, identifier):
         """
@@ -175,7 +175,7 @@ class BrickletOutdoorWeather(Device):
 
         identifier = int(identifier)
 
-        return GetStationData(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_DATA, (identifier,), 'B', 'h B I I I B ! H'))
+        return GetStationData(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_DATA, (identifier,), 'B', 27, 'h B I I I B ! H'))
 
     def get_sensor_data(self, identifier):
         """
@@ -192,7 +192,7 @@ class BrickletOutdoorWeather(Device):
 
         identifier = int(identifier)
 
-        return GetSensorData(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_DATA, (identifier,), 'B', 'h B H'))
+        return GetSensorData(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_DATA, (identifier,), 'B', 13, 'h B H'))
 
     def set_station_callback_configuration(self, enable_callback):
         """
@@ -202,7 +202,7 @@ class BrickletOutdoorWeather(Device):
 
         enable_callback = bool(enable_callback)
 
-        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_STATION_CALLBACK_CONFIGURATION, (enable_callback,), '!', '')
+        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_STATION_CALLBACK_CONFIGURATION, (enable_callback,), '!', 0, '')
 
     def get_station_callback_configuration(self):
         """
@@ -210,7 +210,7 @@ class BrickletOutdoorWeather(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_CALLBACK_CONFIGURATION, (), '', '!')
+        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATION_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def set_sensor_callback_configuration(self, enable_callback):
         """
@@ -220,7 +220,7 @@ class BrickletOutdoorWeather(Device):
 
         enable_callback = bool(enable_callback)
 
-        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_SENSOR_CALLBACK_CONFIGURATION, (enable_callback,), '!', '')
+        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_SENSOR_CALLBACK_CONFIGURATION, (enable_callback,), '!', 0, '')
 
     def get_sensor_callback_configuration(self):
         """
@@ -228,7 +228,7 @@ class BrickletOutdoorWeather(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_CALLBACK_CONFIGURATION, (), '', '!')
+        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SENSOR_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def get_spitfp_error_count(self):
         """
@@ -246,7 +246,7 @@ class BrickletOutdoorWeather(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -264,7 +264,7 @@ class BrickletOutdoorWeather(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -272,7 +272,7 @@ class BrickletOutdoorWeather(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -287,7 +287,7 @@ class BrickletOutdoorWeather(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -304,7 +304,7 @@ class BrickletOutdoorWeather(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -320,7 +320,7 @@ class BrickletOutdoorWeather(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -328,7 +328,7 @@ class BrickletOutdoorWeather(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -341,7 +341,7 @@ class BrickletOutdoorWeather(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -354,7 +354,7 @@ class BrickletOutdoorWeather(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -368,7 +368,7 @@ class BrickletOutdoorWeather(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -377,7 +377,7 @@ class BrickletOutdoorWeather(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -393,7 +393,7 @@ class BrickletOutdoorWeather(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletOutdoorWeather.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def get_station_identifiers(self):
         """

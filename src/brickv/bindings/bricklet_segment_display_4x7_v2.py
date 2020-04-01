@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -101,7 +101,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_READ_UID] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletSegmentDisplay4x7V2.FUNCTION_GET_IDENTITY] = BrickletSegmentDisplay4x7V2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletSegmentDisplay4x7V2.CALLBACK_COUNTER_FINISHED] = ''
+        self.callback_formats[BrickletSegmentDisplay4x7V2.CALLBACK_COUNTER_FINISHED] = (8, '')
 
         ipcon.add_device(self)
 
@@ -127,7 +127,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         colon = list(map(bool, colon))
         tick = bool(tick)
 
-        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_SEGMENTS, (digit0, digit1, digit2, digit3, colon, tick), '8! 8! 8! 8! 2! !', '')
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_SEGMENTS, (digit0, digit1, digit2, digit3, colon, tick), '8! 8! 8! 8! 2! !', 0, '')
 
     def get_segments(self):
         """
@@ -135,7 +135,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         self.check_validity()
 
-        return GetSegments(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SEGMENTS, (), '', '8! 8! 8! 8! 2! !'))
+        return GetSegments(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SEGMENTS, (), '', 14, '8! 8! 8! 8! 2! !'))
 
     def set_brightness(self, brightness):
         """
@@ -145,7 +145,7 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         brightness = int(brightness)
 
-        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_BRIGHTNESS, (brightness,), 'B', '')
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_BRIGHTNESS, (brightness,), 'B', 0, '')
 
     def get_brightness(self):
         """
@@ -153,7 +153,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_BRIGHTNESS, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_BRIGHTNESS, (), '', 9, 'B')
 
     def set_numeric_value(self, value):
         """
@@ -175,7 +175,7 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         value = list(map(int, value))
 
-        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_NUMERIC_VALUE, (value,), '4b', '')
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_NUMERIC_VALUE, (value,), '4b', 0, '')
 
     def set_selected_segment(self, segment, value):
         """
@@ -193,7 +193,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         segment = int(segment)
         value = bool(value)
 
-        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_SELECTED_SEGMENT, (segment, value), 'B !', '')
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_SELECTED_SEGMENT, (segment, value), 'B !', 0, '')
 
     def get_selected_segment(self, segment):
         """
@@ -203,7 +203,7 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         segment = int(segment)
 
-        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SELECTED_SEGMENT, (segment,), 'B', '!')
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SELECTED_SEGMENT, (segment,), 'B', 9, '!')
 
     def start_counter(self, value_from, value_to, increment, length):
         """
@@ -227,7 +227,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         increment = int(increment)
         length = int(length)
 
-        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_START_COUNTER, (value_from, value_to, increment, length), 'h h h I', '')
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_START_COUNTER, (value_from, value_to, increment, length), 'h h h I', 0, '')
 
     def get_counter_value(self):
         """
@@ -237,7 +237,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_COUNTER_VALUE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_COUNTER_VALUE, (), '', 10, 'H')
 
     def get_spitfp_error_count(self):
         """
@@ -255,7 +255,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -273,7 +273,7 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -281,7 +281,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -296,7 +296,7 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -313,7 +313,7 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -329,7 +329,7 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -337,7 +337,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -350,7 +350,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -363,7 +363,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -377,7 +377,7 @@ class BrickletSegmentDisplay4x7V2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -386,7 +386,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -402,7 +402,7 @@ class BrickletSegmentDisplay4x7V2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7V2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

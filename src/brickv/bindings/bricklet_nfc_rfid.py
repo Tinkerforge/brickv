@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -80,7 +80,7 @@ class BrickletNFCRFID(Device):
         self.response_expected[BrickletNFCRFID.FUNCTION_GET_PAGE] = BrickletNFCRFID.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletNFCRFID.FUNCTION_GET_IDENTITY] = BrickletNFCRFID.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletNFCRFID.CALLBACK_STATE_CHANGED] = 'B !'
+        self.callback_formats[BrickletNFCRFID.CALLBACK_STATE_CHANGED] = (10, 'B !')
 
         ipcon.add_device(self)
 
@@ -119,7 +119,7 @@ class BrickletNFCRFID(Device):
 
         tag_type = int(tag_type)
 
-        self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_TAG_ID, (tag_type,), 'B', '')
+        self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_TAG_ID, (tag_type,), 'B', 0, '')
 
     def get_tag_id(self):
         """
@@ -137,7 +137,7 @@ class BrickletNFCRFID(Device):
         """
         self.check_validity()
 
-        return GetTagID(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_TAG_ID, (), '', 'B B 7B'))
+        return GetTagID(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_TAG_ID, (), '', 17, 'B B 7B'))
 
     def get_state(self):
         """
@@ -158,7 +158,7 @@ class BrickletNFCRFID(Device):
         """
         self.check_validity()
 
-        return GetState(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_STATE, (), '', 'B !'))
+        return GetState(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_STATE, (), '', 10, 'B !'))
 
     def authenticate_mifare_classic_page(self, page, key_number, key):
         """
@@ -187,7 +187,7 @@ class BrickletNFCRFID(Device):
         key_number = int(key_number)
         key = list(map(int, key))
 
-        self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_AUTHENTICATE_MIFARE_CLASSIC_PAGE, (page, key_number, key), 'H B 6B', '')
+        self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_AUTHENTICATE_MIFARE_CLASSIC_PAGE, (page, key_number, key), 'H B 6B', 0, '')
 
     def write_page(self, page, data):
         """
@@ -217,7 +217,7 @@ class BrickletNFCRFID(Device):
         page = int(page)
         data = list(map(int, data))
 
-        self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_WRITE_PAGE, (page, data), 'H 16B', '')
+        self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_WRITE_PAGE, (page, data), 'H 16B', 0, '')
 
     def request_page(self, page):
         """
@@ -249,7 +249,7 @@ class BrickletNFCRFID(Device):
 
         page = int(page)
 
-        self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_PAGE, (page,), 'H', '')
+        self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_PAGE, (page,), 'H', 0, '')
 
     def get_page(self):
         """
@@ -258,7 +258,7 @@ class BrickletNFCRFID(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_PAGE, (), '', '16B')
+        return self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_PAGE, (), '', 24, '16B')
 
     def get_identity(self):
         """
@@ -274,7 +274,7 @@ class BrickletNFCRFID(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

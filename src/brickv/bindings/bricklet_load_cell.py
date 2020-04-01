@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -89,8 +89,8 @@ class BrickletLoadCell(Device):
         self.response_expected[BrickletLoadCell.FUNCTION_GET_CONFIGURATION] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLoadCell.FUNCTION_GET_IDENTITY] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletLoadCell.CALLBACK_WEIGHT] = 'i'
-        self.callback_formats[BrickletLoadCell.CALLBACK_WEIGHT_REACHED] = 'i'
+        self.callback_formats[BrickletLoadCell.CALLBACK_WEIGHT] = (12, 'i')
+        self.callback_formats[BrickletLoadCell.CALLBACK_WEIGHT_REACHED] = (12, 'i')
 
         ipcon.add_device(self)
 
@@ -104,7 +104,7 @@ class BrickletLoadCell(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_WEIGHT, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_WEIGHT, (), '', 12, 'i')
 
     def set_weight_callback_period(self, period):
         """
@@ -118,7 +118,7 @@ class BrickletLoadCell(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_WEIGHT_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_WEIGHT_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_weight_callback_period(self):
         """
@@ -126,7 +126,7 @@ class BrickletLoadCell(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_WEIGHT_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_WEIGHT_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_weight_callback_threshold(self, option, min, max):
         """
@@ -150,7 +150,7 @@ class BrickletLoadCell(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_WEIGHT_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_WEIGHT_CALLBACK_THRESHOLD, (option, min, max), 'c i i', 0, '')
 
     def get_weight_callback_threshold(self):
         """
@@ -158,7 +158,7 @@ class BrickletLoadCell(Device):
         """
         self.check_validity()
 
-        return GetWeightCallbackThreshold(*self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_WEIGHT_CALLBACK_THRESHOLD, (), '', 'c i i'))
+        return GetWeightCallbackThreshold(*self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_WEIGHT_CALLBACK_THRESHOLD, (), '', 17, 'c i i'))
 
     def set_debounce_period(self, debounce):
         """
@@ -176,7 +176,7 @@ class BrickletLoadCell(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -184,7 +184,7 @@ class BrickletLoadCell(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def set_moving_average(self, average):
         """
@@ -198,7 +198,7 @@ class BrickletLoadCell(Device):
 
         average = int(average)
 
-        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', 0, '')
 
     def get_moving_average(self):
         """
@@ -206,7 +206,7 @@ class BrickletLoadCell(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_MOVING_AVERAGE, (), '', 9, 'B')
 
     def led_on(self):
         """
@@ -214,7 +214,7 @@ class BrickletLoadCell(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_LED_ON, (), '', '')
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_LED_ON, (), '', 0, '')
 
     def led_off(self):
         """
@@ -222,7 +222,7 @@ class BrickletLoadCell(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_LED_OFF, (), '', '')
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_LED_OFF, (), '', 0, '')
 
     def is_led_on(self):
         """
@@ -230,7 +230,7 @@ class BrickletLoadCell(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_IS_LED_ON, (), '', '!')
+        return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_IS_LED_ON, (), '', 9, '!')
 
     def calibrate(self, weight):
         """
@@ -249,7 +249,7 @@ class BrickletLoadCell(Device):
 
         weight = int(weight)
 
-        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_CALIBRATE, (weight,), 'I', '')
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_CALIBRATE, (weight,), 'I', 0, '')
 
     def tare(self):
         """
@@ -257,7 +257,7 @@ class BrickletLoadCell(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_TARE, (), '', '')
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_TARE, (), '', 0, '')
 
     def set_configuration(self, rate, gain):
         """
@@ -285,7 +285,7 @@ class BrickletLoadCell(Device):
         rate = int(rate)
         gain = int(gain)
 
-        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_CONFIGURATION, (rate, gain), 'B B', '')
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_CONFIGURATION, (rate, gain), 'B B', 0, '')
 
     def get_configuration(self):
         """
@@ -293,7 +293,7 @@ class BrickletLoadCell(Device):
         """
         self.check_validity()
 
-        return GetConfiguration(*self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_CONFIGURATION, (), '', 10, 'B B'))
 
     def get_identity(self):
         """
@@ -309,7 +309,7 @@ class BrickletLoadCell(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

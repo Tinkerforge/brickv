@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -101,8 +101,8 @@ class BrickletPiezoSpeakerV2(Device):
         self.response_expected[BrickletPiezoSpeakerV2.FUNCTION_READ_UID] = BrickletPiezoSpeakerV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPiezoSpeakerV2.FUNCTION_GET_IDENTITY] = BrickletPiezoSpeakerV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletPiezoSpeakerV2.CALLBACK_BEEP_FINISHED] = ''
-        self.callback_formats[BrickletPiezoSpeakerV2.CALLBACK_ALARM_FINISHED] = ''
+        self.callback_formats[BrickletPiezoSpeakerV2.CALLBACK_BEEP_FINISHED] = (8, '')
+        self.callback_formats[BrickletPiezoSpeakerV2.CALLBACK_ALARM_FINISHED] = (8, '')
 
         ipcon.add_device(self)
 
@@ -119,7 +119,7 @@ class BrickletPiezoSpeakerV2(Device):
         volume = int(volume)
         duration = int(duration)
 
-        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_SET_BEEP, (frequency, volume, duration), 'H B I', '')
+        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_SET_BEEP, (frequency, volume, duration), 'H B I', 0, '')
 
     def get_beep(self):
         """
@@ -131,7 +131,7 @@ class BrickletPiezoSpeakerV2(Device):
         """
         self.check_validity()
 
-        return GetBeep(*self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_BEEP, (), '', 'H B I I'))
+        return GetBeep(*self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_BEEP, (), '', 19, 'H B I I'))
 
     def set_alarm(self, start_frequency, end_frequency, step_size, step_delay, volume, duration):
         """
@@ -185,7 +185,7 @@ class BrickletPiezoSpeakerV2(Device):
         volume = int(volume)
         duration = int(duration)
 
-        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_SET_ALARM, (start_frequency, end_frequency, step_size, step_delay, volume, duration), 'H H H H B I', '')
+        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_SET_ALARM, (start_frequency, end_frequency, step_size, step_delay, volume, duration), 'H H H H B I', 0, '')
 
     def get_alarm(self):
         """
@@ -198,7 +198,7 @@ class BrickletPiezoSpeakerV2(Device):
         """
         self.check_validity()
 
-        return GetAlarm(*self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_ALARM, (), '', 'H H H H B I I H'))
+        return GetAlarm(*self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_ALARM, (), '', 27, 'H H H H B I I H'))
 
     def update_volume(self, volume):
         """
@@ -208,7 +208,7 @@ class BrickletPiezoSpeakerV2(Device):
 
         volume = int(volume)
 
-        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_UPDATE_VOLUME, (volume,), 'B', '')
+        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_UPDATE_VOLUME, (volume,), 'B', 0, '')
 
     def update_frequency(self, frequency):
         """
@@ -218,7 +218,7 @@ class BrickletPiezoSpeakerV2(Device):
 
         frequency = int(frequency)
 
-        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_UPDATE_FREQUENCY, (frequency,), 'H', '')
+        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_UPDATE_FREQUENCY, (frequency,), 'H', 0, '')
 
     def get_spitfp_error_count(self):
         """
@@ -236,7 +236,7 @@ class BrickletPiezoSpeakerV2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -254,7 +254,7 @@ class BrickletPiezoSpeakerV2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -262,7 +262,7 @@ class BrickletPiezoSpeakerV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -277,7 +277,7 @@ class BrickletPiezoSpeakerV2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -294,7 +294,7 @@ class BrickletPiezoSpeakerV2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -310,7 +310,7 @@ class BrickletPiezoSpeakerV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -318,7 +318,7 @@ class BrickletPiezoSpeakerV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -331,7 +331,7 @@ class BrickletPiezoSpeakerV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -344,7 +344,7 @@ class BrickletPiezoSpeakerV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -358,7 +358,7 @@ class BrickletPiezoSpeakerV2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -367,7 +367,7 @@ class BrickletPiezoSpeakerV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -383,7 +383,7 @@ class BrickletPiezoSpeakerV2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletPiezoSpeakerV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

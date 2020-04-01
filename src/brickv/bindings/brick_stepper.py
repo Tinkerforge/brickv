@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-03-20.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -172,10 +172,10 @@ class BrickStepper(Device):
         self.response_expected[BrickStepper.FUNCTION_READ_BRICKLET_PLUGIN] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickStepper.FUNCTION_GET_IDENTITY] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickStepper.CALLBACK_UNDER_VOLTAGE] = 'H'
-        self.callback_formats[BrickStepper.CALLBACK_POSITION_REACHED] = 'i'
-        self.callback_formats[BrickStepper.CALLBACK_ALL_DATA] = 'H i i H H H'
-        self.callback_formats[BrickStepper.CALLBACK_NEW_STATE] = 'B B'
+        self.callback_formats[BrickStepper.CALLBACK_UNDER_VOLTAGE] = (10, 'H')
+        self.callback_formats[BrickStepper.CALLBACK_POSITION_REACHED] = (12, 'i')
+        self.callback_formats[BrickStepper.CALLBACK_ALL_DATA] = (24, 'H i i H H H')
+        self.callback_formats[BrickStepper.CALLBACK_NEW_STATE] = (10, 'B B')
 
         ipcon.add_device(self)
 
@@ -191,7 +191,7 @@ class BrickStepper(Device):
 
         velocity = int(velocity)
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_MAX_VELOCITY, (velocity,), 'H', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_MAX_VELOCITY, (velocity,), 'H', 0, '')
 
     def get_max_velocity(self):
         """
@@ -199,7 +199,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_MAX_VELOCITY, (), '', 'H')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_MAX_VELOCITY, (), '', 10, 'H')
 
     def get_current_velocity(self):
         """
@@ -207,7 +207,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_CURRENT_VELOCITY, (), '', 'H')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_CURRENT_VELOCITY, (), '', 10, 'H')
 
     def set_speed_ramping(self, acceleration, deacceleration):
         """
@@ -227,7 +227,7 @@ class BrickStepper(Device):
         acceleration = int(acceleration)
         deacceleration = int(deacceleration)
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SPEED_RAMPING, (acceleration, deacceleration), 'H H', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SPEED_RAMPING, (acceleration, deacceleration), 'H H', 0, '')
 
     def get_speed_ramping(self):
         """
@@ -236,7 +236,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return GetSpeedRamping(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SPEED_RAMPING, (), '', 'H H'))
+        return GetSpeedRamping(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SPEED_RAMPING, (), '', 12, 'H H'))
 
     def full_brake(self):
         """
@@ -251,7 +251,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_FULL_BRAKE, (), '', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_FULL_BRAKE, (), '', 0, '')
 
     def set_current_position(self, position):
         """
@@ -263,7 +263,7 @@ class BrickStepper(Device):
 
         position = int(position)
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_CURRENT_POSITION, (position,), 'i', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_CURRENT_POSITION, (position,), 'i', 0, '')
 
     def get_current_position(self):
         """
@@ -275,7 +275,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_CURRENT_POSITION, (), '', 'i')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_CURRENT_POSITION, (), '', 12, 'i')
 
     def set_target_position(self, position):
         """
@@ -293,7 +293,7 @@ class BrickStepper(Device):
 
         position = int(position)
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_TARGET_POSITION, (position,), 'i', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_TARGET_POSITION, (position,), 'i', 0, '')
 
     def get_target_position(self):
         """
@@ -301,7 +301,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_TARGET_POSITION, (), '', 'i')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_TARGET_POSITION, (), '', 12, 'i')
 
     def set_steps(self, steps):
         """
@@ -314,7 +314,7 @@ class BrickStepper(Device):
 
         steps = int(steps)
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_STEPS, (steps,), 'i', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_STEPS, (steps,), 'i', 0, '')
 
     def get_steps(self):
         """
@@ -322,7 +322,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_STEPS, (), '', 'i')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_STEPS, (), '', 12, 'i')
 
     def get_remaining_steps(self):
         """
@@ -333,7 +333,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_REMAINING_STEPS, (), '', 'i')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_REMAINING_STEPS, (), '', 12, 'i')
 
     def set_step_mode(self, mode):
         """
@@ -351,7 +351,7 @@ class BrickStepper(Device):
 
         mode = int(mode)
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_STEP_MODE, (mode,), 'B', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_STEP_MODE, (mode,), 'B', 0, '')
 
     def get_step_mode(self):
         """
@@ -359,7 +359,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_STEP_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_STEP_MODE, (), '', 9, 'B')
 
     def drive_forward(self):
         """
@@ -369,7 +369,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_DRIVE_FORWARD, (), '', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_DRIVE_FORWARD, (), '', 0, '')
 
     def drive_backward(self):
         """
@@ -379,7 +379,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_DRIVE_BACKWARD, (), '', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_DRIVE_BACKWARD, (), '', 0, '')
 
     def stop(self):
         """
@@ -388,7 +388,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_STOP, (), '', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_STOP, (), '', 0, '')
 
     def get_stack_input_voltage(self):
         """
@@ -398,7 +398,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_STACK_INPUT_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_STACK_INPUT_VOLTAGE, (), '', 10, 'H')
 
     def get_external_input_voltage(self):
         """
@@ -417,7 +417,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 10, 'H')
 
     def get_current_consumption(self):
         """
@@ -425,7 +425,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_CURRENT_CONSUMPTION, (), '', 'H')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_CURRENT_CONSUMPTION, (), '', 10, 'H')
 
     def set_motor_current(self, current):
         """
@@ -439,7 +439,7 @@ class BrickStepper(Device):
 
         current = int(current)
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_MOTOR_CURRENT, (current,), 'H', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_MOTOR_CURRENT, (current,), 'H', 0, '')
 
     def get_motor_current(self):
         """
@@ -447,7 +447,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_MOTOR_CURRENT, (), '', 'H')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_MOTOR_CURRENT, (), '', 10, 'H')
 
     def enable(self):
         """
@@ -456,7 +456,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_ENABLE, (), '', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_ENABLE, (), '', 0, '')
 
     def disable(self):
         """
@@ -473,7 +473,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_DISABLE, (), '', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_DISABLE, (), '', 0, '')
 
     def is_enabled(self):
         """
@@ -481,7 +481,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_IS_ENABLED, (), '', '!')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_IS_ENABLED, (), '', 9, '!')
 
     def set_decay(self, decay):
         """
@@ -515,7 +515,7 @@ class BrickStepper(Device):
 
         decay = int(decay)
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_DECAY, (decay,), 'H', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_DECAY, (decay,), 'H', 0, '')
 
     def get_decay(self):
         """
@@ -523,7 +523,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_DECAY, (), '', 'H')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_DECAY, (), '', 10, 'H')
 
     def set_minimum_voltage(self, voltage):
         """
@@ -537,7 +537,7 @@ class BrickStepper(Device):
 
         voltage = int(voltage)
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', 0, '')
 
     def get_minimum_voltage(self):
         """
@@ -545,7 +545,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 10, 'H')
 
     def set_sync_rect(self, sync_rect):
         """
@@ -568,7 +568,7 @@ class BrickStepper(Device):
 
         sync_rect = bool(sync_rect)
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SYNC_RECT, (sync_rect,), '!', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SYNC_RECT, (sync_rect,), '!', 0, '')
 
     def is_sync_rect(self):
         """
@@ -576,7 +576,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_IS_SYNC_RECT, (), '', '!')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_IS_SYNC_RECT, (), '', 9, '!')
 
     def set_time_base(self, time_base):
         """
@@ -590,7 +590,7 @@ class BrickStepper(Device):
 
         time_base = int(time_base)
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_TIME_BASE, (time_base,), 'I', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_TIME_BASE, (time_base,), 'I', 0, '')
 
     def get_time_base(self):
         """
@@ -598,7 +598,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_TIME_BASE, (), '', 'I')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_TIME_BASE, (), '', 12, 'I')
 
     def get_all_data(self):
         """
@@ -610,7 +610,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return GetAllData(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_ALL_DATA, (), '', 'H i i H H H'))
+        return GetAllData(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_ALL_DATA, (), '', 24, 'H i i H H H'))
 
     def set_all_data_period(self, period):
         """
@@ -621,7 +621,7 @@ class BrickStepper(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_ALL_DATA_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_ALL_DATA_PERIOD, (period,), 'I', 0, '')
 
     def get_all_data_period(self):
         """
@@ -629,7 +629,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 12, 'I')
 
     def set_spitfp_baudrate_config(self, enable_dynamic_baudrate, minimum_dynamic_baudrate):
         """
@@ -659,7 +659,7 @@ class BrickStepper(Device):
         enable_dynamic_baudrate = bool(enable_dynamic_baudrate)
         minimum_dynamic_baudrate = int(minimum_dynamic_baudrate)
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', 0, '')
 
     def get_spitfp_baudrate_config(self):
         """
@@ -669,7 +669,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', '! I'))
+        return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', 13, '! I'))
 
     def get_send_timeout_count(self, communication_method):
         """
@@ -686,7 +686,7 @@ class BrickStepper(Device):
 
         communication_method = int(communication_method)
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 12, 'I')
 
     def set_spitfp_baudrate(self, bricklet_port, baudrate):
         """
@@ -711,7 +711,7 @@ class BrickStepper(Device):
         bricklet_port = create_char(bricklet_port)
         baudrate = int(baudrate)
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', 0, '')
 
     def get_spitfp_baudrate(self, bricklet_port):
         """
@@ -723,7 +723,7 @@ class BrickStepper(Device):
 
         bricklet_port = create_char(bricklet_port)
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 12, 'I')
 
     def get_spitfp_error_count(self, bricklet_port):
         """
@@ -745,7 +745,7 @@ class BrickStepper(Device):
 
         bricklet_port = create_char(bricklet_port)
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 24, 'I I I I'))
 
     def enable_status_led(self):
         """
@@ -760,7 +760,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_ENABLE_STATUS_LED, (), '', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_ENABLE_STATUS_LED, (), '', 0, '')
 
     def disable_status_led(self):
         """
@@ -775,7 +775,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_DISABLE_STATUS_LED, (), '', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_DISABLE_STATUS_LED, (), '', 0, '')
 
     def is_status_led_enabled(self):
         """
@@ -785,7 +785,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '!')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_IS_STATUS_LED_ENABLED, (), '', 9, '!')
 
     def get_protocol1_bricklet_name(self, port):
         """
@@ -799,7 +799,7 @@ class BrickStepper(Device):
 
         port = create_char(port)
 
-        return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 'B 3B 40s'))
+        return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 52, 'B 3B 40s'))
 
     def get_chip_temperature(self):
         """
@@ -812,7 +812,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -825,7 +825,7 @@ class BrickStepper(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_RESET, (), '', 0, '')
 
     def write_bricklet_plugin(self, port, offset, chunk):
         """
@@ -841,7 +841,7 @@ class BrickStepper(Device):
         offset = int(offset)
         chunk = list(map(int, chunk))
 
-        self.ipcon.send_request(self, BrickStepper.FUNCTION_WRITE_BRICKLET_PLUGIN, (port, offset, chunk), 'c B 32B', '')
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_WRITE_BRICKLET_PLUGIN, (port, offset, chunk), 'c B 32B', 0, '')
 
     def read_bricklet_plugin(self, port, offset):
         """
@@ -856,7 +856,7 @@ class BrickStepper(Device):
         port = create_char(port)
         offset = int(offset)
 
-        return self.ipcon.send_request(self, BrickStepper.FUNCTION_READ_BRICKLET_PLUGIN, (port, offset), 'c B', '32B')
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_READ_BRICKLET_PLUGIN, (port, offset), 'c B', 40, '32B')
 
     def get_identity(self):
         """
@@ -869,7 +869,7 @@ class BrickStepper(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -136,9 +136,9 @@ class BrickletVoltageCurrentV2(Device):
         self.response_expected[BrickletVoltageCurrentV2.FUNCTION_READ_UID] = BrickletVoltageCurrentV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletVoltageCurrentV2.FUNCTION_GET_IDENTITY] = BrickletVoltageCurrentV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletVoltageCurrentV2.CALLBACK_CURRENT] = 'i'
-        self.callback_formats[BrickletVoltageCurrentV2.CALLBACK_VOLTAGE] = 'i'
-        self.callback_formats[BrickletVoltageCurrentV2.CALLBACK_POWER] = 'i'
+        self.callback_formats[BrickletVoltageCurrentV2.CALLBACK_CURRENT] = (12, 'i')
+        self.callback_formats[BrickletVoltageCurrentV2.CALLBACK_VOLTAGE] = (12, 'i')
+        self.callback_formats[BrickletVoltageCurrentV2.CALLBACK_POWER] = (12, 'i')
 
         ipcon.add_device(self)
 
@@ -153,7 +153,7 @@ class BrickletVoltageCurrentV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_CURRENT, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_CURRENT, (), '', 12, 'i')
 
     def set_current_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -193,7 +193,7 @@ class BrickletVoltageCurrentV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_CURRENT_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
+        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_CURRENT_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', 0, '')
 
     def get_current_callback_configuration(self):
         """
@@ -201,7 +201,7 @@ class BrickletVoltageCurrentV2(Device):
         """
         self.check_validity()
 
-        return GetCurrentCallbackConfiguration(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_CURRENT_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
+        return GetCurrentCallbackConfiguration(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_CURRENT_CALLBACK_CONFIGURATION, (), '', 22, 'I ! c i i'))
 
     def get_voltage(self):
         """
@@ -214,7 +214,7 @@ class BrickletVoltageCurrentV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_VOLTAGE, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_VOLTAGE, (), '', 12, 'i')
 
     def set_voltage_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -254,7 +254,7 @@ class BrickletVoltageCurrentV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_VOLTAGE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
+        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_VOLTAGE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', 0, '')
 
     def get_voltage_callback_configuration(self):
         """
@@ -262,7 +262,7 @@ class BrickletVoltageCurrentV2(Device):
         """
         self.check_validity()
 
-        return GetVoltageCallbackConfiguration(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_VOLTAGE_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
+        return GetVoltageCallbackConfiguration(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_VOLTAGE_CALLBACK_CONFIGURATION, (), '', 22, 'I ! c i i'))
 
     def get_power(self):
         """
@@ -275,7 +275,7 @@ class BrickletVoltageCurrentV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_POWER, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_POWER, (), '', 12, 'i')
 
     def set_power_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -315,7 +315,7 @@ class BrickletVoltageCurrentV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_POWER_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
+        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_POWER_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', 0, '')
 
     def get_power_callback_configuration(self):
         """
@@ -323,7 +323,7 @@ class BrickletVoltageCurrentV2(Device):
         """
         self.check_validity()
 
-        return GetPowerCallbackConfiguration(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_POWER_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
+        return GetPowerCallbackConfiguration(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_POWER_CALLBACK_CONFIGURATION, (), '', 22, 'I ! c i i'))
 
     def set_configuration(self, averaging, voltage_conversion_time, current_conversion_time):
         """
@@ -337,7 +337,7 @@ class BrickletVoltageCurrentV2(Device):
         voltage_conversion_time = int(voltage_conversion_time)
         current_conversion_time = int(current_conversion_time)
 
-        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_CONFIGURATION, (averaging, voltage_conversion_time, current_conversion_time), 'B B B', '')
+        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_CONFIGURATION, (averaging, voltage_conversion_time, current_conversion_time), 'B B B', 0, '')
 
     def get_configuration(self):
         """
@@ -345,7 +345,7 @@ class BrickletVoltageCurrentV2(Device):
         """
         self.check_validity()
 
-        return GetConfiguration(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_CONFIGURATION, (), '', 'B B B'))
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_CONFIGURATION, (), '', 11, 'B B B'))
 
     def set_calibration(self, voltage_multiplier, voltage_divisor, current_multiplier, current_divisor):
         """
@@ -368,7 +368,7 @@ class BrickletVoltageCurrentV2(Device):
         current_multiplier = int(current_multiplier)
         current_divisor = int(current_divisor)
 
-        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_CALIBRATION, (voltage_multiplier, voltage_divisor, current_multiplier, current_divisor), 'H H H H', '')
+        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_CALIBRATION, (voltage_multiplier, voltage_divisor, current_multiplier, current_divisor), 'H H H H', 0, '')
 
     def get_calibration(self):
         """
@@ -376,7 +376,7 @@ class BrickletVoltageCurrentV2(Device):
         """
         self.check_validity()
 
-        return GetCalibration(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_CALIBRATION, (), '', 'H H H H'))
+        return GetCalibration(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_CALIBRATION, (), '', 16, 'H H H H'))
 
     def get_spitfp_error_count(self):
         """
@@ -394,7 +394,7 @@ class BrickletVoltageCurrentV2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -412,7 +412,7 @@ class BrickletVoltageCurrentV2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -420,7 +420,7 @@ class BrickletVoltageCurrentV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -435,7 +435,7 @@ class BrickletVoltageCurrentV2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -452,7 +452,7 @@ class BrickletVoltageCurrentV2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -468,7 +468,7 @@ class BrickletVoltageCurrentV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -476,7 +476,7 @@ class BrickletVoltageCurrentV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -489,7 +489,7 @@ class BrickletVoltageCurrentV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -502,7 +502,7 @@ class BrickletVoltageCurrentV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -516,7 +516,7 @@ class BrickletVoltageCurrentV2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -525,7 +525,7 @@ class BrickletVoltageCurrentV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -541,7 +541,7 @@ class BrickletVoltageCurrentV2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletVoltageCurrentV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -69,10 +69,10 @@ class BrickletRotaryEncoder(Device):
         self.response_expected[BrickletRotaryEncoder.FUNCTION_IS_PRESSED] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRotaryEncoder.FUNCTION_GET_IDENTITY] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletRotaryEncoder.CALLBACK_COUNT] = 'i'
-        self.callback_formats[BrickletRotaryEncoder.CALLBACK_COUNT_REACHED] = 'i'
-        self.callback_formats[BrickletRotaryEncoder.CALLBACK_PRESSED] = ''
-        self.callback_formats[BrickletRotaryEncoder.CALLBACK_RELEASED] = ''
+        self.callback_formats[BrickletRotaryEncoder.CALLBACK_COUNT] = (12, 'i')
+        self.callback_formats[BrickletRotaryEncoder.CALLBACK_COUNT_REACHED] = (12, 'i')
+        self.callback_formats[BrickletRotaryEncoder.CALLBACK_PRESSED] = (8, '')
+        self.callback_formats[BrickletRotaryEncoder.CALLBACK_RELEASED] = (8, '')
 
         ipcon.add_device(self)
 
@@ -91,7 +91,7 @@ class BrickletRotaryEncoder(Device):
 
         reset = bool(reset)
 
-        return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_COUNT, (reset,), '!', 'i')
+        return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_COUNT, (reset,), '!', 12, 'i')
 
     def set_count_callback_period(self, period):
         """
@@ -105,7 +105,7 @@ class BrickletRotaryEncoder(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_SET_COUNT_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_SET_COUNT_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_count_callback_period(self):
         """
@@ -113,7 +113,7 @@ class BrickletRotaryEncoder(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_COUNT_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_COUNT_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_count_callback_threshold(self, option, min, max):
         """
@@ -137,7 +137,7 @@ class BrickletRotaryEncoder(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_SET_COUNT_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
+        self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_SET_COUNT_CALLBACK_THRESHOLD, (option, min, max), 'c i i', 0, '')
 
     def get_count_callback_threshold(self):
         """
@@ -145,7 +145,7 @@ class BrickletRotaryEncoder(Device):
         """
         self.check_validity()
 
-        return GetCountCallbackThreshold(*self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_COUNT_CALLBACK_THRESHOLD, (), '', 'c i i'))
+        return GetCountCallbackThreshold(*self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_COUNT_CALLBACK_THRESHOLD, (), '', 17, 'c i i'))
 
     def set_debounce_period(self, debounce):
         """
@@ -163,7 +163,7 @@ class BrickletRotaryEncoder(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -171,7 +171,7 @@ class BrickletRotaryEncoder(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def is_pressed(self):
         """
@@ -182,7 +182,7 @@ class BrickletRotaryEncoder(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_IS_PRESSED, (), '', '!')
+        return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_IS_PRESSED, (), '', 9, '!')
 
     def get_identity(self):
         """
@@ -198,7 +198,7 @@ class BrickletRotaryEncoder(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -78,10 +78,10 @@ class BrickletHumidity(Device):
         self.response_expected[BrickletHumidity.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletHumidity.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHumidity.FUNCTION_GET_IDENTITY] = BrickletHumidity.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletHumidity.CALLBACK_HUMIDITY] = 'H'
-        self.callback_formats[BrickletHumidity.CALLBACK_ANALOG_VALUE] = 'H'
-        self.callback_formats[BrickletHumidity.CALLBACK_HUMIDITY_REACHED] = 'H'
-        self.callback_formats[BrickletHumidity.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
+        self.callback_formats[BrickletHumidity.CALLBACK_HUMIDITY] = (10, 'H')
+        self.callback_formats[BrickletHumidity.CALLBACK_ANALOG_VALUE] = (10, 'H')
+        self.callback_formats[BrickletHumidity.CALLBACK_HUMIDITY_REACHED] = (10, 'H')
+        self.callback_formats[BrickletHumidity.CALLBACK_ANALOG_VALUE_REACHED] = (10, 'H')
 
         ipcon.add_device(self)
 
@@ -95,7 +95,7 @@ class BrickletHumidity(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_HUMIDITY, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_HUMIDITY, (), '', 10, 'H')
 
     def get_analog_value(self):
         """
@@ -116,7 +116,7 @@ class BrickletHumidity(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_ANALOG_VALUE, (), '', 10, 'H')
 
     def set_humidity_callback_period(self, period):
         """
@@ -130,7 +130,7 @@ class BrickletHumidity(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_HUMIDITY_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_HUMIDITY_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_humidity_callback_period(self):
         """
@@ -138,7 +138,7 @@ class BrickletHumidity(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_HUMIDITY_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_HUMIDITY_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_analog_value_callback_period(self, period):
         """
@@ -152,7 +152,7 @@ class BrickletHumidity(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_analog_value_callback_period(self):
         """
@@ -160,7 +160,7 @@ class BrickletHumidity(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_humidity_callback_threshold(self, option, min, max):
         """
@@ -184,7 +184,7 @@ class BrickletHumidity(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_HUMIDITY_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
+        self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_HUMIDITY_CALLBACK_THRESHOLD, (option, min, max), 'c H H', 0, '')
 
     def get_humidity_callback_threshold(self):
         """
@@ -192,7 +192,7 @@ class BrickletHumidity(Device):
         """
         self.check_validity()
 
-        return GetHumidityCallbackThreshold(*self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_HUMIDITY_CALLBACK_THRESHOLD, (), '', 'c H H'))
+        return GetHumidityCallbackThreshold(*self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_HUMIDITY_CALLBACK_THRESHOLD, (), '', 13, 'c H H'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
         """
@@ -216,7 +216,7 @@ class BrickletHumidity(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
+        self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', 0, '')
 
     def get_analog_value_callback_threshold(self):
         """
@@ -224,7 +224,7 @@ class BrickletHumidity(Device):
         """
         self.check_validity()
 
-        return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
+        return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 13, 'c H H'))
 
     def set_debounce_period(self, debounce):
         """
@@ -244,7 +244,7 @@ class BrickletHumidity(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletHumidity.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -252,7 +252,7 @@ class BrickletHumidity(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -268,7 +268,7 @@ class BrickletHumidity(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletHumidity.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

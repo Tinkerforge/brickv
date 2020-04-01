@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -99,7 +99,7 @@ class BrickHAT(Device):
         self.response_expected[BrickHAT.FUNCTION_READ_UID] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickHAT.FUNCTION_GET_IDENTITY] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickHAT.CALLBACK_VOLTAGES] = 'H H'
+        self.callback_formats[BrickHAT.CALLBACK_VOLTAGES] = (12, 'H H')
 
         ipcon.add_device(self)
 
@@ -136,7 +136,7 @@ class BrickHAT(Device):
         bricklets_off = bool(bricklets_off)
         enable_sleep_indicator = bool(enable_sleep_indicator)
 
-        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_SLEEP_MODE, (power_off_delay, power_off_duration, raspberry_pi_off, bricklets_off, enable_sleep_indicator), 'I I ! ! !', '')
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_SLEEP_MODE, (power_off_delay, power_off_duration, raspberry_pi_off, bricklets_off, enable_sleep_indicator), 'I I ! ! !', 0, '')
 
     def get_sleep_mode(self):
         """
@@ -144,7 +144,7 @@ class BrickHAT(Device):
         """
         self.check_validity()
 
-        return GetSleepMode(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_SLEEP_MODE, (), '', 'I I ! ! !'))
+        return GetSleepMode(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_SLEEP_MODE, (), '', 19, 'I I ! ! !'))
 
     def set_bricklet_power(self, bricklet_power):
         """
@@ -154,7 +154,7 @@ class BrickHAT(Device):
 
         bricklet_power = bool(bricklet_power)
 
-        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_BRICKLET_POWER, (bricklet_power,), '!', '')
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_BRICKLET_POWER, (bricklet_power,), '!', 0, '')
 
     def get_bricklet_power(self):
         """
@@ -162,7 +162,7 @@ class BrickHAT(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_BRICKLET_POWER, (), '', '!')
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_BRICKLET_POWER, (), '', 9, '!')
 
     def get_voltages(self):
         """
@@ -183,7 +183,7 @@ class BrickHAT(Device):
         """
         self.check_validity()
 
-        return GetVoltages(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_VOLTAGES, (), '', 'H H'))
+        return GetVoltages(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_VOLTAGES, (), '', 12, 'H H'))
 
     def set_voltages_callback_configuration(self, period, value_has_to_change):
         """
@@ -204,7 +204,7 @@ class BrickHAT(Device):
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
-        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_VOLTAGES_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_VOLTAGES_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_voltages_callback_configuration(self):
         """
@@ -215,7 +215,7 @@ class BrickHAT(Device):
         """
         self.check_validity()
 
-        return GetVoltagesCallbackConfiguration(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_VOLTAGES_CALLBACK_CONFIGURATION, (), '', 'I !'))
+        return GetVoltagesCallbackConfiguration(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_VOLTAGES_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def get_spitfp_error_count(self):
         """
@@ -233,7 +233,7 @@ class BrickHAT(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -251,7 +251,7 @@ class BrickHAT(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -259,7 +259,7 @@ class BrickHAT(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -274,7 +274,7 @@ class BrickHAT(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -291,7 +291,7 @@ class BrickHAT(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickHAT.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -307,7 +307,7 @@ class BrickHAT(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -315,7 +315,7 @@ class BrickHAT(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -328,7 +328,7 @@ class BrickHAT(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -341,7 +341,7 @@ class BrickHAT(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickHAT.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -355,7 +355,7 @@ class BrickHAT(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickHAT.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -364,7 +364,7 @@ class BrickHAT(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickHAT.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -380,7 +380,7 @@ class BrickHAT(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

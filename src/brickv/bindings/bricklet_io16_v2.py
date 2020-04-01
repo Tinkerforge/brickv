@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -122,9 +122,9 @@ class BrickletIO16V2(Device):
         self.response_expected[BrickletIO16V2.FUNCTION_READ_UID] = BrickletIO16V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO16V2.FUNCTION_GET_IDENTITY] = BrickletIO16V2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletIO16V2.CALLBACK_INPUT_VALUE] = 'B ! !'
-        self.callback_formats[BrickletIO16V2.CALLBACK_ALL_INPUT_VALUE] = '16! 16!'
-        self.callback_formats[BrickletIO16V2.CALLBACK_MONOFLOP_DONE] = 'B !'
+        self.callback_formats[BrickletIO16V2.CALLBACK_INPUT_VALUE] = (11, 'B ! !')
+        self.callback_formats[BrickletIO16V2.CALLBACK_ALL_INPUT_VALUE] = (12, '16! 16!')
+        self.callback_formats[BrickletIO16V2.CALLBACK_MONOFLOP_DONE] = (10, 'B !')
 
         ipcon.add_device(self)
 
@@ -148,7 +148,7 @@ class BrickletIO16V2(Device):
 
         value = list(map(bool, value))
 
-        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_VALUE, (value,), '16!', '')
+        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_VALUE, (value,), '16!', 0, '')
 
     def get_value(self):
         """
@@ -158,7 +158,7 @@ class BrickletIO16V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_VALUE, (), '', '16!')
+        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_VALUE, (), '', 10, '16!')
 
     def set_selected_value(self, channel, value):
         """
@@ -176,7 +176,7 @@ class BrickletIO16V2(Device):
         channel = int(channel)
         value = bool(value)
 
-        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_SELECTED_VALUE, (channel, value), 'B !', '')
+        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_SELECTED_VALUE, (channel, value), 'B !', 0, '')
 
     def set_configuration(self, channel, direction, value):
         """
@@ -205,7 +205,7 @@ class BrickletIO16V2(Device):
         direction = create_char(direction)
         value = bool(value)
 
-        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_CONFIGURATION, (channel, direction, value), 'B c !', '')
+        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_CONFIGURATION, (channel, direction, value), 'B c !', 0, '')
 
     def get_configuration(self, channel):
         """
@@ -215,7 +215,7 @@ class BrickletIO16V2(Device):
 
         channel = int(channel)
 
-        return GetConfiguration(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_CONFIGURATION, (channel,), 'B', 'c !'))
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_CONFIGURATION, (channel,), 'B', 10, 'c !'))
 
     def set_input_value_callback_configuration(self, channel, period, value_has_to_change):
         """
@@ -237,7 +237,7 @@ class BrickletIO16V2(Device):
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
-        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_INPUT_VALUE_CALLBACK_CONFIGURATION, (channel, period, value_has_to_change), 'B I !', '')
+        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_INPUT_VALUE_CALLBACK_CONFIGURATION, (channel, period, value_has_to_change), 'B I !', 0, '')
 
     def get_input_value_callback_configuration(self, channel):
         """
@@ -248,7 +248,7 @@ class BrickletIO16V2(Device):
 
         channel = int(channel)
 
-        return GetInputValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_INPUT_VALUE_CALLBACK_CONFIGURATION, (channel,), 'B', 'I !'))
+        return GetInputValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_INPUT_VALUE_CALLBACK_CONFIGURATION, (channel,), 'B', 13, 'I !'))
 
     def set_all_input_value_callback_configuration(self, period, value_has_to_change):
         """
@@ -267,7 +267,7 @@ class BrickletIO16V2(Device):
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
-        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_ALL_INPUT_VALUE_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_ALL_INPUT_VALUE_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_all_input_value_callback_configuration(self):
         """
@@ -276,7 +276,7 @@ class BrickletIO16V2(Device):
         """
         self.check_validity()
 
-        return GetAllInputValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_ALL_INPUT_VALUE_CALLBACK_CONFIGURATION, (), '', 'I !'))
+        return GetAllInputValueCallbackConfiguration(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_ALL_INPUT_VALUE_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def set_monoflop(self, channel, value, time):
         """
@@ -304,7 +304,7 @@ class BrickletIO16V2(Device):
         value = bool(value)
         time = int(time)
 
-        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_MONOFLOP, (channel, value, time), 'B ! I', '')
+        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_MONOFLOP, (channel, value, time), 'B ! I', 0, '')
 
     def get_monoflop(self, channel):
         """
@@ -318,7 +318,7 @@ class BrickletIO16V2(Device):
 
         channel = int(channel)
 
-        return GetMonoflop(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_MONOFLOP, (channel,), 'B', '! I I'))
+        return GetMonoflop(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_MONOFLOP, (channel,), 'B', 17, '! I I'))
 
     def get_edge_count(self, channel, reset_counter):
         """
@@ -333,7 +333,7 @@ class BrickletIO16V2(Device):
         channel = int(channel)
         reset_counter = bool(reset_counter)
 
-        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_EDGE_COUNT, (channel, reset_counter), 'B !', 'I')
+        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_EDGE_COUNT, (channel, reset_counter), 'B !', 12, 'I')
 
     def set_edge_count_configuration(self, channel, edge_type, debounce):
         """
@@ -357,7 +357,7 @@ class BrickletIO16V2(Device):
         edge_type = int(edge_type)
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_EDGE_COUNT_CONFIGURATION, (channel, edge_type, debounce), 'B B B', '')
+        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_EDGE_COUNT_CONFIGURATION, (channel, edge_type, debounce), 'B B B', 0, '')
 
     def get_edge_count_configuration(self, channel):
         """
@@ -368,7 +368,7 @@ class BrickletIO16V2(Device):
 
         channel = int(channel)
 
-        return GetEdgeCountConfiguration(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_EDGE_COUNT_CONFIGURATION, (channel,), 'B', 'B B'))
+        return GetEdgeCountConfiguration(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_EDGE_COUNT_CONFIGURATION, (channel,), 'B', 10, 'B B'))
 
     def get_spitfp_error_count(self):
         """
@@ -386,7 +386,7 @@ class BrickletIO16V2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -404,7 +404,7 @@ class BrickletIO16V2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -412,7 +412,7 @@ class BrickletIO16V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -427,7 +427,7 @@ class BrickletIO16V2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -444,7 +444,7 @@ class BrickletIO16V2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -460,7 +460,7 @@ class BrickletIO16V2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -468,7 +468,7 @@ class BrickletIO16V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -481,7 +481,7 @@ class BrickletIO16V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -494,7 +494,7 @@ class BrickletIO16V2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -508,7 +508,7 @@ class BrickletIO16V2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -517,7 +517,7 @@ class BrickletIO16V2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -533,7 +533,7 @@ class BrickletIO16V2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletIO16V2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -86,12 +86,12 @@ class BrickletJoystick(Device):
         self.response_expected[BrickletJoystick.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletJoystick.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletJoystick.FUNCTION_GET_IDENTITY] = BrickletJoystick.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletJoystick.CALLBACK_POSITION] = 'h h'
-        self.callback_formats[BrickletJoystick.CALLBACK_ANALOG_VALUE] = 'H H'
-        self.callback_formats[BrickletJoystick.CALLBACK_POSITION_REACHED] = 'h h'
-        self.callback_formats[BrickletJoystick.CALLBACK_ANALOG_VALUE_REACHED] = 'H H'
-        self.callback_formats[BrickletJoystick.CALLBACK_PRESSED] = ''
-        self.callback_formats[BrickletJoystick.CALLBACK_RELEASED] = ''
+        self.callback_formats[BrickletJoystick.CALLBACK_POSITION] = (12, 'h h')
+        self.callback_formats[BrickletJoystick.CALLBACK_ANALOG_VALUE] = (12, 'H H')
+        self.callback_formats[BrickletJoystick.CALLBACK_POSITION_REACHED] = (12, 'h h')
+        self.callback_formats[BrickletJoystick.CALLBACK_ANALOG_VALUE_REACHED] = (12, 'H H')
+        self.callback_formats[BrickletJoystick.CALLBACK_PRESSED] = (8, '')
+        self.callback_formats[BrickletJoystick.CALLBACK_RELEASED] = (8, '')
 
         ipcon.add_device(self)
 
@@ -106,7 +106,7 @@ class BrickletJoystick(Device):
         """
         self.check_validity()
 
-        return GetPosition(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_POSITION, (), '', 'h h'))
+        return GetPosition(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_POSITION, (), '', 12, 'h h'))
 
     def is_pressed(self):
         """
@@ -117,7 +117,7 @@ class BrickletJoystick(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletJoystick.FUNCTION_IS_PRESSED, (), '', '!')
+        return self.ipcon.send_request(self, BrickletJoystick.FUNCTION_IS_PRESSED, (), '', 9, '!')
 
     def get_analog_value(self):
         """
@@ -135,7 +135,7 @@ class BrickletJoystick(Device):
         """
         self.check_validity()
 
-        return GetAnalogValue(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_ANALOG_VALUE, (), '', 'H H'))
+        return GetAnalogValue(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_ANALOG_VALUE, (), '', 12, 'H H'))
 
     def calibrate(self):
         """
@@ -148,7 +148,7 @@ class BrickletJoystick(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_CALIBRATE, (), '', '')
+        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_CALIBRATE, (), '', 0, '')
 
     def set_position_callback_period(self, period):
         """
@@ -162,7 +162,7 @@ class BrickletJoystick(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_POSITION_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_POSITION_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_position_callback_period(self):
         """
@@ -170,7 +170,7 @@ class BrickletJoystick(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_POSITION_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_POSITION_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_analog_value_callback_period(self, period):
         """
@@ -184,7 +184,7 @@ class BrickletJoystick(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_analog_value_callback_period(self):
         """
@@ -192,7 +192,7 @@ class BrickletJoystick(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_position_callback_threshold(self, option, min_x, max_x, min_y, max_y):
         """
@@ -218,7 +218,7 @@ class BrickletJoystick(Device):
         min_y = int(min_y)
         max_y = int(max_y)
 
-        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y), 'c h h h h', '')
+        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y), 'c h h h h', 0, '')
 
     def get_position_callback_threshold(self):
         """
@@ -226,7 +226,7 @@ class BrickletJoystick(Device):
         """
         self.check_validity()
 
-        return GetPositionCallbackThreshold(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_POSITION_CALLBACK_THRESHOLD, (), '', 'c h h h h'))
+        return GetPositionCallbackThreshold(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_POSITION_CALLBACK_THRESHOLD, (), '', 17, 'c h h h h'))
 
     def set_analog_value_callback_threshold(self, option, min_x, max_x, min_y, max_y):
         """
@@ -252,7 +252,7 @@ class BrickletJoystick(Device):
         min_y = int(min_y)
         max_y = int(max_y)
 
-        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y), 'c H H H H', '')
+        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y), 'c H H H H', 0, '')
 
     def get_analog_value_callback_threshold(self):
         """
@@ -260,7 +260,7 @@ class BrickletJoystick(Device):
         """
         self.check_validity()
 
-        return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H H H'))
+        return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 17, 'c H H H H'))
 
     def set_debounce_period(self, debounce):
         """
@@ -280,7 +280,7 @@ class BrickletJoystick(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -288,7 +288,7 @@ class BrickletJoystick(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -304,7 +304,7 @@ class BrickletJoystick(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-03-20.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -128,10 +128,10 @@ class BrickDC(Device):
         self.response_expected[BrickDC.FUNCTION_READ_BRICKLET_PLUGIN] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickDC.FUNCTION_GET_IDENTITY] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickDC.CALLBACK_UNDER_VOLTAGE] = 'H'
-        self.callback_formats[BrickDC.CALLBACK_EMERGENCY_SHUTDOWN] = ''
-        self.callback_formats[BrickDC.CALLBACK_VELOCITY_REACHED] = 'h'
-        self.callback_formats[BrickDC.CALLBACK_CURRENT_VELOCITY] = 'h'
+        self.callback_formats[BrickDC.CALLBACK_UNDER_VOLTAGE] = (10, 'H')
+        self.callback_formats[BrickDC.CALLBACK_EMERGENCY_SHUTDOWN] = (8, '')
+        self.callback_formats[BrickDC.CALLBACK_VELOCITY_REACHED] = (10, 'h')
+        self.callback_formats[BrickDC.CALLBACK_CURRENT_VELOCITY] = (10, 'h')
 
         ipcon.add_device(self)
 
@@ -151,7 +151,7 @@ class BrickDC(Device):
 
         velocity = int(velocity)
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_VELOCITY, (velocity,), 'h', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_VELOCITY, (velocity,), 'h', 0, '')
 
     def get_velocity(self):
         """
@@ -159,7 +159,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_VELOCITY, (), '', 'h')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_VELOCITY, (), '', 10, 'h')
 
     def get_current_velocity(self):
         """
@@ -169,7 +169,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_VELOCITY, (), '', 'h')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_VELOCITY, (), '', 10, 'h')
 
     def set_acceleration(self, acceleration):
         """
@@ -188,7 +188,7 @@ class BrickDC(Device):
 
         acceleration = int(acceleration)
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_ACCELERATION, (acceleration,), 'H', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_ACCELERATION, (acceleration,), 'H', 0, '')
 
     def get_acceleration(self):
         """
@@ -196,7 +196,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_ACCELERATION, (), '', 'H')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_ACCELERATION, (), '', 10, 'H')
 
     def set_pwm_frequency(self, frequency):
         """
@@ -213,7 +213,7 @@ class BrickDC(Device):
 
         frequency = int(frequency)
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_PWM_FREQUENCY, (frequency,), 'H', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_PWM_FREQUENCY, (frequency,), 'H', 0, '')
 
     def get_pwm_frequency(self):
         """
@@ -221,7 +221,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_PWM_FREQUENCY, (), '', 'H')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_PWM_FREQUENCY, (), '', 10, 'H')
 
     def full_brake(self):
         """
@@ -236,7 +236,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_FULL_BRAKE, (), '', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_FULL_BRAKE, (), '', 0, '')
 
     def get_stack_input_voltage(self):
         """
@@ -246,7 +246,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_STACK_INPUT_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_STACK_INPUT_VOLTAGE, (), '', 10, 'H')
 
     def get_external_input_voltage(self):
         """
@@ -265,7 +265,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 10, 'H')
 
     def get_current_consumption(self):
         """
@@ -273,7 +273,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_CONSUMPTION, (), '', 'H')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_CONSUMPTION, (), '', 10, 'H')
 
     def enable(self):
         """
@@ -282,7 +282,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_ENABLE, (), '', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_ENABLE, (), '', 0, '')
 
     def disable(self):
         """
@@ -299,7 +299,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_DISABLE, (), '', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_DISABLE, (), '', 0, '')
 
     def is_enabled(self):
         """
@@ -307,7 +307,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_IS_ENABLED, (), '', '!')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_IS_ENABLED, (), '', 9, '!')
 
     def set_minimum_voltage(self, voltage):
         """
@@ -321,7 +321,7 @@ class BrickDC(Device):
 
         voltage = int(voltage)
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', 0, '')
 
     def get_minimum_voltage(self):
         """
@@ -329,7 +329,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 10, 'H')
 
     def set_drive_mode(self, mode):
         """
@@ -353,7 +353,7 @@ class BrickDC(Device):
 
         mode = int(mode)
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_DRIVE_MODE, (mode,), 'B', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_DRIVE_MODE, (mode,), 'B', 0, '')
 
     def get_drive_mode(self):
         """
@@ -361,7 +361,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_DRIVE_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_DRIVE_MODE, (), '', 9, 'B')
 
     def set_current_velocity_period(self, period):
         """
@@ -372,7 +372,7 @@ class BrickDC(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_CURRENT_VELOCITY_PERIOD, (period,), 'H', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_CURRENT_VELOCITY_PERIOD, (period,), 'H', 0, '')
 
     def get_current_velocity_period(self):
         """
@@ -380,7 +380,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD, (), '', 'H')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD, (), '', 10, 'H')
 
     def set_spitfp_baudrate_config(self, enable_dynamic_baudrate, minimum_dynamic_baudrate):
         """
@@ -410,7 +410,7 @@ class BrickDC(Device):
         enable_dynamic_baudrate = bool(enable_dynamic_baudrate)
         minimum_dynamic_baudrate = int(minimum_dynamic_baudrate)
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', 0, '')
 
     def get_spitfp_baudrate_config(self):
         """
@@ -420,7 +420,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', '! I'))
+        return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', 13, '! I'))
 
     def get_send_timeout_count(self, communication_method):
         """
@@ -437,7 +437,7 @@ class BrickDC(Device):
 
         communication_method = int(communication_method)
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 12, 'I')
 
     def set_spitfp_baudrate(self, bricklet_port, baudrate):
         """
@@ -462,7 +462,7 @@ class BrickDC(Device):
         bricklet_port = create_char(bricklet_port)
         baudrate = int(baudrate)
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', 0, '')
 
     def get_spitfp_baudrate(self, bricklet_port):
         """
@@ -474,7 +474,7 @@ class BrickDC(Device):
 
         bricklet_port = create_char(bricklet_port)
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 12, 'I')
 
     def get_spitfp_error_count(self, bricklet_port):
         """
@@ -496,7 +496,7 @@ class BrickDC(Device):
 
         bricklet_port = create_char(bricklet_port)
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 24, 'I I I I'))
 
     def enable_status_led(self):
         """
@@ -511,7 +511,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_ENABLE_STATUS_LED, (), '', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_ENABLE_STATUS_LED, (), '', 0, '')
 
     def disable_status_led(self):
         """
@@ -526,7 +526,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_DISABLE_STATUS_LED, (), '', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_DISABLE_STATUS_LED, (), '', 0, '')
 
     def is_status_led_enabled(self):
         """
@@ -536,7 +536,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '!')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_IS_STATUS_LED_ENABLED, (), '', 9, '!')
 
     def get_protocol1_bricklet_name(self, port):
         """
@@ -550,7 +550,7 @@ class BrickDC(Device):
 
         port = create_char(port)
 
-        return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 'B 3B 40s'))
+        return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 52, 'B 3B 40s'))
 
     def get_chip_temperature(self):
         """
@@ -563,7 +563,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -576,7 +576,7 @@ class BrickDC(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_RESET, (), '', 0, '')
 
     def write_bricklet_plugin(self, port, offset, chunk):
         """
@@ -592,7 +592,7 @@ class BrickDC(Device):
         offset = int(offset)
         chunk = list(map(int, chunk))
 
-        self.ipcon.send_request(self, BrickDC.FUNCTION_WRITE_BRICKLET_PLUGIN, (port, offset, chunk), 'c B 32B', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_WRITE_BRICKLET_PLUGIN, (port, offset, chunk), 'c B 32B', 0, '')
 
     def read_bricklet_plugin(self, port, offset):
         """
@@ -607,7 +607,7 @@ class BrickDC(Device):
         port = create_char(port)
         offset = int(offset)
 
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_READ_BRICKLET_PLUGIN, (port, offset), 'c B', '32B')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_READ_BRICKLET_PLUGIN, (port, offset), 'c B', 40, '32B')
 
     def get_identity(self):
         """
@@ -620,7 +620,7 @@ class BrickDC(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -56,7 +56,7 @@ class BrickletDualRelay(Device):
         self.response_expected[BrickletDualRelay.FUNCTION_SET_SELECTED_STATE] = BrickletDualRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDualRelay.FUNCTION_GET_IDENTITY] = BrickletDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletDualRelay.CALLBACK_MONOFLOP_DONE] = 'B !'
+        self.callback_formats[BrickletDualRelay.CALLBACK_MONOFLOP_DONE] = (10, 'B !')
 
         ipcon.add_device(self)
 
@@ -76,7 +76,7 @@ class BrickletDualRelay(Device):
         relay1 = bool(relay1)
         relay2 = bool(relay2)
 
-        self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_SET_STATE, (relay1, relay2), '! !', '')
+        self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_SET_STATE, (relay1, relay2), '! !', 0, '')
 
     def get_state(self):
         """
@@ -84,7 +84,7 @@ class BrickletDualRelay(Device):
         """
         self.check_validity()
 
-        return GetState(*self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_GET_STATE, (), '', '! !'))
+        return GetState(*self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_GET_STATE, (), '', 10, '! !'))
 
     def set_monoflop(self, relay, state, time):
         """
@@ -108,7 +108,7 @@ class BrickletDualRelay(Device):
         state = bool(state)
         time = int(time)
 
-        self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_SET_MONOFLOP, (relay, state, time), 'B ! I', '')
+        self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_SET_MONOFLOP, (relay, state, time), 'B ! I', 0, '')
 
     def get_monoflop(self, relay):
         """
@@ -122,7 +122,7 @@ class BrickletDualRelay(Device):
 
         relay = int(relay)
 
-        return GetMonoflop(*self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_GET_MONOFLOP, (relay,), 'B', '! I I'))
+        return GetMonoflop(*self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_GET_MONOFLOP, (relay,), 'B', 17, '! I I'))
 
     def set_selected_state(self, relay, state):
         """
@@ -137,7 +137,7 @@ class BrickletDualRelay(Device):
         relay = int(relay)
         state = bool(state)
 
-        self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_SET_SELECTED_STATE, (relay, state), 'B !', '')
+        self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_SET_SELECTED_STATE, (relay, state), 'B !', 0, '')
 
     def get_identity(self):
         """
@@ -153,7 +153,7 @@ class BrickletDualRelay(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

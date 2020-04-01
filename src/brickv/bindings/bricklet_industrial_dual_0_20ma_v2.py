@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -125,7 +125,7 @@ class BrickletIndustrialDual020mAV2(Device):
         self.response_expected[BrickletIndustrialDual020mAV2.FUNCTION_READ_UID] = BrickletIndustrialDual020mAV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDual020mAV2.FUNCTION_GET_IDENTITY] = BrickletIndustrialDual020mAV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletIndustrialDual020mAV2.CALLBACK_CURRENT] = 'B i'
+        self.callback_formats[BrickletIndustrialDual020mAV2.CALLBACK_CURRENT] = (13, 'B i')
 
         ipcon.add_device(self)
 
@@ -149,7 +149,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
         channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_CURRENT, (channel,), 'B', 'i')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_CURRENT, (channel,), 'B', 12, 'i')
 
     def set_current_callback_configuration(self, channel, period, value_has_to_change, option, min, max):
         """
@@ -190,7 +190,7 @@ class BrickletIndustrialDual020mAV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_CURRENT_CALLBACK_CONFIGURATION, (channel, period, value_has_to_change, option, min, max), 'B I ! c i i', '')
+        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_CURRENT_CALLBACK_CONFIGURATION, (channel, period, value_has_to_change, option, min, max), 'B I ! c i i', 0, '')
 
     def get_current_callback_configuration(self, channel):
         """
@@ -200,7 +200,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
         channel = int(channel)
 
-        return GetCurrentCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_CURRENT_CALLBACK_CONFIGURATION, (channel,), 'B', 'I ! c i i'))
+        return GetCurrentCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_CURRENT_CALLBACK_CONFIGURATION, (channel,), 'B', 22, 'I ! c i i'))
 
     def set_sample_rate(self, rate):
         """
@@ -220,7 +220,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
         rate = int(rate)
 
-        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_SAMPLE_RATE, (rate,), 'B', '')
+        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_SAMPLE_RATE, (rate,), 'B', 0, '')
 
     def get_sample_rate(self):
         """
@@ -228,7 +228,7 @@ class BrickletIndustrialDual020mAV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_SAMPLE_RATE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_SAMPLE_RATE, (), '', 9, 'B')
 
     def set_gain(self, gain):
         """
@@ -242,7 +242,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
         gain = int(gain)
 
-        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_GAIN, (gain,), 'B', '')
+        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_GAIN, (gain,), 'B', 0, '')
 
     def get_gain(self):
         """
@@ -250,7 +250,7 @@ class BrickletIndustrialDual020mAV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_GAIN, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_GAIN, (), '', 9, 'B')
 
     def set_channel_led_config(self, channel, config):
         """
@@ -266,7 +266,7 @@ class BrickletIndustrialDual020mAV2(Device):
         channel = int(channel)
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_CHANNEL_LED_CONFIG, (channel, config), 'B B', '')
+        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_CHANNEL_LED_CONFIG, (channel, config), 'B B', 0, '')
 
     def get_channel_led_config(self, channel):
         """
@@ -276,7 +276,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
         channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 9, 'B')
 
     def set_channel_led_status_config(self, channel, min, max, config):
         """
@@ -308,7 +308,7 @@ class BrickletIndustrialDual020mAV2(Device):
         max = int(max)
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_CHANNEL_LED_STATUS_CONFIG, (channel, min, max, config), 'B i i B', '')
+        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_CHANNEL_LED_STATUS_CONFIG, (channel, min, max, config), 'B i i B', 0, '')
 
     def get_channel_led_status_config(self, channel):
         """
@@ -319,7 +319,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
         channel = int(channel)
 
-        return GetChannelLEDStatusConfig(*self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_CHANNEL_LED_STATUS_CONFIG, (channel,), 'B', 'i i B'))
+        return GetChannelLEDStatusConfig(*self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_CHANNEL_LED_STATUS_CONFIG, (channel,), 'B', 17, 'i i B'))
 
     def get_spitfp_error_count(self):
         """
@@ -337,7 +337,7 @@ class BrickletIndustrialDual020mAV2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -355,7 +355,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -363,7 +363,7 @@ class BrickletIndustrialDual020mAV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -378,7 +378,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -395,7 +395,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -411,7 +411,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -419,7 +419,7 @@ class BrickletIndustrialDual020mAV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -432,7 +432,7 @@ class BrickletIndustrialDual020mAV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -445,7 +445,7 @@ class BrickletIndustrialDual020mAV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -459,7 +459,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -468,7 +468,7 @@ class BrickletIndustrialDual020mAV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -484,7 +484,7 @@ class BrickletIndustrialDual020mAV2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDual020mAV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

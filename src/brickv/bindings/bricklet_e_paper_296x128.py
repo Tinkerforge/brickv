@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -136,7 +136,7 @@ class BrickletEPaper296x128(Device):
         self.response_expected[BrickletEPaper296x128.FUNCTION_READ_UID] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEPaper296x128.FUNCTION_GET_IDENTITY] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletEPaper296x128.CALLBACK_DRAW_STATUS] = 'B'
+        self.callback_formats[BrickletEPaper296x128.CALLBACK_DRAW_STATUS] = (9, 'B')
 
         ipcon.add_device(self)
 
@@ -149,7 +149,7 @@ class BrickletEPaper296x128(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_DRAW, (), '', '')
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_DRAW, (), '', 0, '')
 
     def get_draw_status(self):
         """
@@ -165,7 +165,7 @@ class BrickletEPaper296x128(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_DRAW_STATUS, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_DRAW_STATUS, (), '', 9, 'B')
 
     def write_black_white_low_level(self, x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data):
         """
@@ -192,7 +192,7 @@ class BrickletEPaper296x128(Device):
         pixels_chunk_offset = int(pixels_chunk_offset)
         pixels_chunk_data = list(map(bool, pixels_chunk_data))
 
-        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_WRITE_BLACK_WHITE_LOW_LEVEL, (x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data), 'H B H B H H 432!', '')
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_WRITE_BLACK_WHITE_LOW_LEVEL, (x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data), 'H B H B H H 432!', 0, '')
 
     def read_black_white_low_level(self, x_start, y_start, x_end, y_end):
         """
@@ -212,7 +212,7 @@ class BrickletEPaper296x128(Device):
         x_end = int(x_end)
         y_end = int(y_end)
 
-        return ReadBlackWhiteLowLevel(*self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_READ_BLACK_WHITE_LOW_LEVEL, (x_start, y_start, x_end, y_end), 'H B H B', 'H H 464!'))
+        return ReadBlackWhiteLowLevel(*self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_READ_BLACK_WHITE_LOW_LEVEL, (x_start, y_start, x_end, y_end), 'H B H B', 70, 'H H 464!'))
 
     def write_color_low_level(self, x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data):
         """
@@ -242,7 +242,7 @@ class BrickletEPaper296x128(Device):
         pixels_chunk_offset = int(pixels_chunk_offset)
         pixels_chunk_data = list(map(bool, pixels_chunk_data))
 
-        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_WRITE_COLOR_LOW_LEVEL, (x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data), 'H B H B H H 432!', '')
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_WRITE_COLOR_LOW_LEVEL, (x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data), 'H B H B H H 432!', 0, '')
 
     def read_color_low_level(self, x_start, y_start, x_end, y_end):
         """
@@ -262,7 +262,7 @@ class BrickletEPaper296x128(Device):
         x_end = int(x_end)
         y_end = int(y_end)
 
-        return ReadColorLowLevel(*self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_READ_COLOR_LOW_LEVEL, (x_start, y_start, x_end, y_end), 'H B H B', 'H H 464!'))
+        return ReadColorLowLevel(*self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_READ_COLOR_LOW_LEVEL, (x_start, y_start, x_end, y_end), 'H B H B', 70, 'H H 464!'))
 
     def fill_display(self, color):
         """
@@ -275,7 +275,7 @@ class BrickletEPaper296x128(Device):
 
         color = int(color)
 
-        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_FILL_DISPLAY, (color,), 'B', '')
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_FILL_DISPLAY, (color,), 'B', 0, '')
 
     def draw_text(self, position_x, position_y, font, color, orientation, text):
         """
@@ -296,7 +296,7 @@ class BrickletEPaper296x128(Device):
         orientation = int(orientation)
         text = create_string(text)
 
-        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_DRAW_TEXT, (position_x, position_y, font, color, orientation, text), 'H B B B B 50s', '')
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_DRAW_TEXT, (position_x, position_y, font, color, orientation, text), 'H B B B B 50s', 0, '')
 
     def draw_line(self, position_x_start, position_y_start, position_x_end, position_y_end, color):
         """
@@ -313,7 +313,7 @@ class BrickletEPaper296x128(Device):
         position_y_end = int(position_y_end)
         color = int(color)
 
-        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_DRAW_LINE, (position_x_start, position_y_start, position_x_end, position_y_end, color), 'H B H B B', '')
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_DRAW_LINE, (position_x_start, position_y_start, position_x_end, position_y_end, color), 'H B H B B', 0, '')
 
     def draw_box(self, position_x_start, position_y_start, position_x_end, position_y_end, fill, color):
         """
@@ -334,7 +334,7 @@ class BrickletEPaper296x128(Device):
         fill = bool(fill)
         color = int(color)
 
-        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_DRAW_BOX, (position_x_start, position_y_start, position_x_end, position_y_end, fill, color), 'H B H B ! B', '')
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_DRAW_BOX, (position_x_start, position_y_start, position_x_end, position_y_end, fill, color), 'H B H B ! B', 0, '')
 
     def set_update_mode(self, update_mode):
         """
@@ -377,7 +377,7 @@ class BrickletEPaper296x128(Device):
 
         update_mode = int(update_mode)
 
-        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_UPDATE_MODE, (update_mode,), 'B', '')
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_UPDATE_MODE, (update_mode,), 'B', 0, '')
 
     def get_update_mode(self):
         """
@@ -385,7 +385,7 @@ class BrickletEPaper296x128(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_UPDATE_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_UPDATE_MODE, (), '', 9, 'B')
 
     def set_display_type(self, display_type):
         """
@@ -398,7 +398,7 @@ class BrickletEPaper296x128(Device):
 
         display_type = int(display_type)
 
-        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_DISPLAY_TYPE, (display_type,), 'B', '')
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_DISPLAY_TYPE, (display_type,), 'B', 0, '')
 
     def get_display_type(self):
         """
@@ -407,7 +407,7 @@ class BrickletEPaper296x128(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_DISPLAY_TYPE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_DISPLAY_TYPE, (), '', 9, 'B')
 
     def get_spitfp_error_count(self):
         """
@@ -425,7 +425,7 @@ class BrickletEPaper296x128(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -443,7 +443,7 @@ class BrickletEPaper296x128(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -451,7 +451,7 @@ class BrickletEPaper296x128(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -466,7 +466,7 @@ class BrickletEPaper296x128(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -483,7 +483,7 @@ class BrickletEPaper296x128(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -499,7 +499,7 @@ class BrickletEPaper296x128(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -507,7 +507,7 @@ class BrickletEPaper296x128(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -520,7 +520,7 @@ class BrickletEPaper296x128(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -533,7 +533,7 @@ class BrickletEPaper296x128(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -547,7 +547,7 @@ class BrickletEPaper296x128(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -556,7 +556,7 @@ class BrickletEPaper296x128(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -572,7 +572,7 @@ class BrickletEPaper296x128(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def write_black_white(self, x_start, y_start, x_end, y_end, pixels):
         """

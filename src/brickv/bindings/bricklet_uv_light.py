@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -65,8 +65,8 @@ class BrickletUVLight(Device):
         self.response_expected[BrickletUVLight.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletUVLight.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletUVLight.FUNCTION_GET_IDENTITY] = BrickletUVLight.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletUVLight.CALLBACK_UV_LIGHT] = 'I'
-        self.callback_formats[BrickletUVLight.CALLBACK_UV_LIGHT_REACHED] = 'I'
+        self.callback_formats[BrickletUVLight.CALLBACK_UV_LIGHT] = (12, 'I')
+        self.callback_formats[BrickletUVLight.CALLBACK_UV_LIGHT_REACHED] = (12, 'I')
 
         ipcon.add_device(self)
 
@@ -85,7 +85,7 @@ class BrickletUVLight(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_UV_LIGHT, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_UV_LIGHT, (), '', 12, 'I')
 
     def set_uv_light_callback_period(self, period):
         """
@@ -99,7 +99,7 @@ class BrickletUVLight(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletUVLight.FUNCTION_SET_UV_LIGHT_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletUVLight.FUNCTION_SET_UV_LIGHT_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_uv_light_callback_period(self):
         """
@@ -107,7 +107,7 @@ class BrickletUVLight(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_UV_LIGHT_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_UV_LIGHT_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_uv_light_callback_threshold(self, option, min, max):
         """
@@ -131,7 +131,7 @@ class BrickletUVLight(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletUVLight.FUNCTION_SET_UV_LIGHT_CALLBACK_THRESHOLD, (option, min, max), 'c I I', '')
+        self.ipcon.send_request(self, BrickletUVLight.FUNCTION_SET_UV_LIGHT_CALLBACK_THRESHOLD, (option, min, max), 'c I I', 0, '')
 
     def get_uv_light_callback_threshold(self):
         """
@@ -139,7 +139,7 @@ class BrickletUVLight(Device):
         """
         self.check_validity()
 
-        return GetUVLightCallbackThreshold(*self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_UV_LIGHT_CALLBACK_THRESHOLD, (), '', 'c I I'))
+        return GetUVLightCallbackThreshold(*self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_UV_LIGHT_CALLBACK_THRESHOLD, (), '', 17, 'c I I'))
 
     def set_debounce_period(self, debounce):
         """
@@ -157,7 +157,7 @@ class BrickletUVLight(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletUVLight.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletUVLight.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -165,7 +165,7 @@ class BrickletUVLight(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -181,7 +181,7 @@ class BrickletUVLight(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletUVLight.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

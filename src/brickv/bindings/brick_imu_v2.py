@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -207,15 +207,15 @@ class BrickIMUV2(Device):
         self.response_expected[BrickIMUV2.FUNCTION_READ_BRICKLET_PLUGIN] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_GET_IDENTITY] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickIMUV2.CALLBACK_ACCELERATION] = 'h h h'
-        self.callback_formats[BrickIMUV2.CALLBACK_MAGNETIC_FIELD] = 'h h h'
-        self.callback_formats[BrickIMUV2.CALLBACK_ANGULAR_VELOCITY] = 'h h h'
-        self.callback_formats[BrickIMUV2.CALLBACK_TEMPERATURE] = 'b'
-        self.callback_formats[BrickIMUV2.CALLBACK_LINEAR_ACCELERATION] = 'h h h'
-        self.callback_formats[BrickIMUV2.CALLBACK_GRAVITY_VECTOR] = 'h h h'
-        self.callback_formats[BrickIMUV2.CALLBACK_ORIENTATION] = 'h h h'
-        self.callback_formats[BrickIMUV2.CALLBACK_QUATERNION] = 'h h h h'
-        self.callback_formats[BrickIMUV2.CALLBACK_ALL_DATA] = '3h 3h 3h 3h 4h 3h 3h b B'
+        self.callback_formats[BrickIMUV2.CALLBACK_ACCELERATION] = (14, 'h h h')
+        self.callback_formats[BrickIMUV2.CALLBACK_MAGNETIC_FIELD] = (14, 'h h h')
+        self.callback_formats[BrickIMUV2.CALLBACK_ANGULAR_VELOCITY] = (14, 'h h h')
+        self.callback_formats[BrickIMUV2.CALLBACK_TEMPERATURE] = (9, 'b')
+        self.callback_formats[BrickIMUV2.CALLBACK_LINEAR_ACCELERATION] = (14, 'h h h')
+        self.callback_formats[BrickIMUV2.CALLBACK_GRAVITY_VECTOR] = (14, 'h h h')
+        self.callback_formats[BrickIMUV2.CALLBACK_ORIENTATION] = (14, 'h h h')
+        self.callback_formats[BrickIMUV2.CALLBACK_QUATERNION] = (16, 'h h h h')
+        self.callback_formats[BrickIMUV2.CALLBACK_ALL_DATA] = (54, '3h 3h 3h 3h 4h 3h 3h b B')
 
         ipcon.add_device(self)
 
@@ -231,7 +231,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return GetAcceleration(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ACCELERATION, (), '', 'h h h'))
+        return GetAcceleration(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ACCELERATION, (), '', 14, 'h h h'))
 
     def get_magnetic_field(self):
         """
@@ -244,7 +244,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return GetMagneticField(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_MAGNETIC_FIELD, (), '', 'h h h'))
+        return GetMagneticField(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_MAGNETIC_FIELD, (), '', 14, 'h h h'))
 
     def get_angular_velocity(self):
         """
@@ -258,7 +258,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return GetAngularVelocity(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ANGULAR_VELOCITY, (), '', 'h h h'))
+        return GetAngularVelocity(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ANGULAR_VELOCITY, (), '', 14, 'h h h'))
 
     def get_temperature(self):
         """
@@ -268,7 +268,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_TEMPERATURE, (), '', 'b')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_TEMPERATURE, (), '', 9, 'b')
 
     def get_orientation(self):
         """
@@ -284,7 +284,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return GetOrientation(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ORIENTATION, (), '', 'h h h'))
+        return GetOrientation(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ORIENTATION, (), '', 14, 'h h h'))
 
     def get_linear_acceleration(self):
         """
@@ -304,7 +304,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return GetLinearAcceleration(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_LINEAR_ACCELERATION, (), '', 'h h h'))
+        return GetLinearAcceleration(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_LINEAR_ACCELERATION, (), '', 14, 'h h h'))
 
     def get_gravity_vector(self):
         """
@@ -323,7 +323,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return GetGravityVector(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_GRAVITY_VECTOR, (), '', 'h h h'))
+        return GetGravityVector(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_GRAVITY_VECTOR, (), '', 14, 'h h h'))
 
     def get_quaternion(self):
         """
@@ -339,7 +339,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return GetQuaternion(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_QUATERNION, (), '', 'h h h h'))
+        return GetQuaternion(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_QUATERNION, (), '', 16, 'h h h h'))
 
     def get_all_data(self):
         """
@@ -376,7 +376,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return GetAllData(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ALL_DATA, (), '', '3h 3h 3h 3h 4h 3h 3h b B'))
+        return GetAllData(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ALL_DATA, (), '', 54, '3h 3h 3h 3h 4h 3h 3h b B'))
 
     def leds_on(self):
         """
@@ -384,7 +384,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_LEDS_ON, (), '', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_LEDS_ON, (), '', 0, '')
 
     def leds_off(self):
         """
@@ -392,7 +392,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_LEDS_OFF, (), '', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_LEDS_OFF, (), '', 0, '')
 
     def are_leds_on(self):
         """
@@ -401,7 +401,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_ARE_LEDS_ON, (), '', '!')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_ARE_LEDS_ON, (), '', 9, '!')
 
     def save_calibration(self):
         """
@@ -418,7 +418,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SAVE_CALIBRATION, (), '', '!')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SAVE_CALIBRATION, (), '', 9, '!')
 
     def set_acceleration_period(self, period):
         """
@@ -429,7 +429,7 @@ class BrickIMUV2(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_ACCELERATION_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_ACCELERATION_PERIOD, (period,), 'I', 0, '')
 
     def get_acceleration_period(self):
         """
@@ -437,7 +437,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ACCELERATION_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ACCELERATION_PERIOD, (), '', 12, 'I')
 
     def set_magnetic_field_period(self, period):
         """
@@ -448,7 +448,7 @@ class BrickIMUV2(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_MAGNETIC_FIELD_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_MAGNETIC_FIELD_PERIOD, (period,), 'I', 0, '')
 
     def get_magnetic_field_period(self):
         """
@@ -456,7 +456,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_MAGNETIC_FIELD_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_MAGNETIC_FIELD_PERIOD, (), '', 12, 'I')
 
     def set_angular_velocity_period(self, period):
         """
@@ -467,7 +467,7 @@ class BrickIMUV2(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_ANGULAR_VELOCITY_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_ANGULAR_VELOCITY_PERIOD, (period,), 'I', 0, '')
 
     def get_angular_velocity_period(self):
         """
@@ -475,7 +475,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ANGULAR_VELOCITY_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ANGULAR_VELOCITY_PERIOD, (), '', 12, 'I')
 
     def set_temperature_period(self, period):
         """
@@ -486,7 +486,7 @@ class BrickIMUV2(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_TEMPERATURE_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_TEMPERATURE_PERIOD, (period,), 'I', 0, '')
 
     def get_temperature_period(self):
         """
@@ -494,7 +494,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_TEMPERATURE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_TEMPERATURE_PERIOD, (), '', 12, 'I')
 
     def set_orientation_period(self, period):
         """
@@ -505,7 +505,7 @@ class BrickIMUV2(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_ORIENTATION_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_ORIENTATION_PERIOD, (period,), 'I', 0, '')
 
     def get_orientation_period(self):
         """
@@ -513,7 +513,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ORIENTATION_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ORIENTATION_PERIOD, (), '', 12, 'I')
 
     def set_linear_acceleration_period(self, period):
         """
@@ -524,7 +524,7 @@ class BrickIMUV2(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_LINEAR_ACCELERATION_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_LINEAR_ACCELERATION_PERIOD, (period,), 'I', 0, '')
 
     def get_linear_acceleration_period(self):
         """
@@ -532,7 +532,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_LINEAR_ACCELERATION_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_LINEAR_ACCELERATION_PERIOD, (), '', 12, 'I')
 
     def set_gravity_vector_period(self, period):
         """
@@ -543,7 +543,7 @@ class BrickIMUV2(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_GRAVITY_VECTOR_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_GRAVITY_VECTOR_PERIOD, (period,), 'I', 0, '')
 
     def get_gravity_vector_period(self):
         """
@@ -551,7 +551,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_GRAVITY_VECTOR_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_GRAVITY_VECTOR_PERIOD, (), '', 12, 'I')
 
     def set_quaternion_period(self, period):
         """
@@ -562,7 +562,7 @@ class BrickIMUV2(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_QUATERNION_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_QUATERNION_PERIOD, (period,), 'I', 0, '')
 
     def get_quaternion_period(self):
         """
@@ -570,7 +570,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_QUATERNION_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_QUATERNION_PERIOD, (), '', 12, 'I')
 
     def set_all_data_period(self, period):
         """
@@ -581,7 +581,7 @@ class BrickIMUV2(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_ALL_DATA_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_ALL_DATA_PERIOD, (period,), 'I', 0, '')
 
     def get_all_data_period(self):
         """
@@ -589,7 +589,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 12, 'I')
 
     def set_sensor_configuration(self, magnetometer_rate, gyroscope_range, gyroscope_bandwidth, accelerometer_range, accelerometer_bandwidth):
         """
@@ -607,7 +607,7 @@ class BrickIMUV2(Device):
         accelerometer_range = int(accelerometer_range)
         accelerometer_bandwidth = int(accelerometer_bandwidth)
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_SENSOR_CONFIGURATION, (magnetometer_rate, gyroscope_range, gyroscope_bandwidth, accelerometer_range, accelerometer_bandwidth), 'B B B B B', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_SENSOR_CONFIGURATION, (magnetometer_rate, gyroscope_range, gyroscope_bandwidth, accelerometer_range, accelerometer_bandwidth), 'B B B B B', 0, '')
 
     def get_sensor_configuration(self):
         """
@@ -617,7 +617,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return GetSensorConfiguration(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SENSOR_CONFIGURATION, (), '', 'B B B B B'))
+        return GetSensorConfiguration(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SENSOR_CONFIGURATION, (), '', 13, 'B B B B B'))
 
     def set_sensor_fusion_mode(self, mode):
         """
@@ -642,7 +642,7 @@ class BrickIMUV2(Device):
 
         mode = int(mode)
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_SENSOR_FUSION_MODE, (mode,), 'B', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_SENSOR_FUSION_MODE, (mode,), 'B', 0, '')
 
     def get_sensor_fusion_mode(self):
         """
@@ -652,7 +652,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SENSOR_FUSION_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SENSOR_FUSION_MODE, (), '', 9, 'B')
 
     def set_spitfp_baudrate_config(self, enable_dynamic_baudrate, minimum_dynamic_baudrate):
         """
@@ -682,7 +682,7 @@ class BrickIMUV2(Device):
         enable_dynamic_baudrate = bool(enable_dynamic_baudrate)
         minimum_dynamic_baudrate = int(minimum_dynamic_baudrate)
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', 0, '')
 
     def get_spitfp_baudrate_config(self):
         """
@@ -692,7 +692,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', '! I'))
+        return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', 13, '! I'))
 
     def get_send_timeout_count(self, communication_method):
         """
@@ -709,7 +709,7 @@ class BrickIMUV2(Device):
 
         communication_method = int(communication_method)
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 'I')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 12, 'I')
 
     def set_spitfp_baudrate(self, bricklet_port, baudrate):
         """
@@ -734,7 +734,7 @@ class BrickIMUV2(Device):
         bricklet_port = create_char(bricklet_port)
         baudrate = int(baudrate)
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', 0, '')
 
     def get_spitfp_baudrate(self, bricklet_port):
         """
@@ -746,7 +746,7 @@ class BrickIMUV2(Device):
 
         bricklet_port = create_char(bricklet_port)
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 'I')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 12, 'I')
 
     def get_spitfp_error_count(self, bricklet_port):
         """
@@ -768,7 +768,7 @@ class BrickIMUV2(Device):
 
         bricklet_port = create_char(bricklet_port)
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 24, 'I I I I'))
 
     def enable_status_led(self):
         """
@@ -781,7 +781,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_ENABLE_STATUS_LED, (), '', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_ENABLE_STATUS_LED, (), '', 0, '')
 
     def disable_status_led(self):
         """
@@ -794,7 +794,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_DISABLE_STATUS_LED, (), '', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_DISABLE_STATUS_LED, (), '', 0, '')
 
     def is_status_led_enabled(self):
         """
@@ -802,7 +802,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '!')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_IS_STATUS_LED_ENABLED, (), '', 9, '!')
 
     def get_protocol1_bricklet_name(self, port):
         """
@@ -816,7 +816,7 @@ class BrickIMUV2(Device):
 
         port = create_char(port)
 
-        return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 'B 3B 40s'))
+        return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 52, 'B 3B 40s'))
 
     def get_chip_temperature(self):
         """
@@ -829,7 +829,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -842,7 +842,7 @@ class BrickIMUV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_bricklet_plugin(self, port, offset, chunk):
         """
@@ -858,7 +858,7 @@ class BrickIMUV2(Device):
         offset = int(offset)
         chunk = list(map(int, chunk))
 
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_WRITE_BRICKLET_PLUGIN, (port, offset, chunk), 'c B 32B', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_WRITE_BRICKLET_PLUGIN, (port, offset, chunk), 'c B 32B', 0, '')
 
     def read_bricklet_plugin(self, port, offset):
         """
@@ -873,7 +873,7 @@ class BrickIMUV2(Device):
         port = create_char(port)
         offset = int(offset)
 
-        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_READ_BRICKLET_PLUGIN, (port, offset), 'c B', '32B')
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_READ_BRICKLET_PLUGIN, (port, offset), 'c B', 40, '32B')
 
     def get_identity(self):
         """
@@ -886,7 +886,7 @@ class BrickIMUV2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

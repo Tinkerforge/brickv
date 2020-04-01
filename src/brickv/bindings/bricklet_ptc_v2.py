@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -127,9 +127,9 @@ class BrickletPTCV2(Device):
         self.response_expected[BrickletPTCV2.FUNCTION_READ_UID] = BrickletPTCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPTCV2.FUNCTION_GET_IDENTITY] = BrickletPTCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletPTCV2.CALLBACK_TEMPERATURE] = 'i'
-        self.callback_formats[BrickletPTCV2.CALLBACK_RESISTANCE] = 'i'
-        self.callback_formats[BrickletPTCV2.CALLBACK_SENSOR_CONNECTED] = '!'
+        self.callback_formats[BrickletPTCV2.CALLBACK_TEMPERATURE] = (12, 'i')
+        self.callback_formats[BrickletPTCV2.CALLBACK_RESISTANCE] = (12, 'i')
+        self.callback_formats[BrickletPTCV2.CALLBACK_SENSOR_CONNECTED] = (9, '!')
 
         ipcon.add_device(self)
 
@@ -144,7 +144,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_TEMPERATURE, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_TEMPERATURE, (), '', 12, 'i')
 
     def set_temperature_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -184,7 +184,7 @@ class BrickletPTCV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_TEMPERATURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
+        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_TEMPERATURE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', 0, '')
 
     def get_temperature_callback_configuration(self):
         """
@@ -192,7 +192,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        return GetTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
+        return GetTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 22, 'I ! c i i'))
 
     def get_resistance(self):
         """
@@ -210,7 +210,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_RESISTANCE, (), '', 'i')
+        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_RESISTANCE, (), '', 12, 'i')
 
     def set_resistance_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -250,7 +250,7 @@ class BrickletPTCV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_RESISTANCE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', '')
+        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_RESISTANCE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c i i', 0, '')
 
     def get_resistance_callback_configuration(self):
         """
@@ -258,7 +258,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        return GetResistanceCallbackConfiguration(*self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_RESISTANCE_CALLBACK_CONFIGURATION, (), '', 'I ! c i i'))
+        return GetResistanceCallbackConfiguration(*self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_RESISTANCE_CALLBACK_CONFIGURATION, (), '', 22, 'I ! c i i'))
 
     def set_noise_rejection_filter(self, filter):
         """
@@ -271,7 +271,7 @@ class BrickletPTCV2(Device):
 
         filter = int(filter)
 
-        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_NOISE_REJECTION_FILTER, (filter,), 'B', '')
+        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_NOISE_REJECTION_FILTER, (filter,), 'B', 0, '')
 
     def get_noise_rejection_filter(self):
         """
@@ -280,7 +280,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_NOISE_REJECTION_FILTER, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_NOISE_REJECTION_FILTER, (), '', 9, 'B')
 
     def is_sensor_connected(self):
         """
@@ -296,7 +296,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_IS_SENSOR_CONNECTED, (), '', '!')
+        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_IS_SENSOR_CONNECTED, (), '', 9, '!')
 
     def set_wire_mode(self, mode):
         """
@@ -308,7 +308,7 @@ class BrickletPTCV2(Device):
 
         mode = int(mode)
 
-        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_WIRE_MODE, (mode,), 'B', '')
+        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_WIRE_MODE, (mode,), 'B', 0, '')
 
     def get_wire_mode(self):
         """
@@ -316,7 +316,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_WIRE_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_WIRE_MODE, (), '', 9, 'B')
 
     def set_moving_average_configuration(self, moving_average_length_resistance, moving_average_length_temperature):
         """
@@ -337,7 +337,7 @@ class BrickletPTCV2(Device):
         moving_average_length_resistance = int(moving_average_length_resistance)
         moving_average_length_temperature = int(moving_average_length_temperature)
 
-        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_MOVING_AVERAGE_CONFIGURATION, (moving_average_length_resistance, moving_average_length_temperature), 'H H', '')
+        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_MOVING_AVERAGE_CONFIGURATION, (moving_average_length_resistance, moving_average_length_temperature), 'H H', 0, '')
 
     def get_moving_average_configuration(self):
         """
@@ -345,7 +345,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        return GetMovingAverageConfiguration(*self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_MOVING_AVERAGE_CONFIGURATION, (), '', 'H H'))
+        return GetMovingAverageConfiguration(*self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_MOVING_AVERAGE_CONFIGURATION, (), '', 12, 'H H'))
 
     def set_sensor_connected_callback_configuration(self, enabled):
         """
@@ -356,7 +356,7 @@ class BrickletPTCV2(Device):
 
         enabled = bool(enabled)
 
-        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION, (enabled,), '!', '')
+        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
 
     def get_sensor_connected_callback_configuration(self):
         """
@@ -364,7 +364,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION, (), '', '!')
+        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_SENSOR_CONNECTED_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def get_spitfp_error_count(self):
         """
@@ -382,7 +382,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -400,7 +400,7 @@ class BrickletPTCV2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -408,7 +408,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -423,7 +423,7 @@ class BrickletPTCV2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -440,7 +440,7 @@ class BrickletPTCV2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -456,7 +456,7 @@ class BrickletPTCV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -464,7 +464,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -477,7 +477,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -490,7 +490,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -504,7 +504,7 @@ class BrickletPTCV2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -513,7 +513,7 @@ class BrickletPTCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -529,7 +529,7 @@ class BrickletPTCV2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletPTCV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

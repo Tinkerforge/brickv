@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -53,7 +53,7 @@ class BrickletSegmentDisplay4x7(Device):
         self.response_expected[BrickletSegmentDisplay4x7.FUNCTION_GET_COUNTER_VALUE] = BrickletSegmentDisplay4x7.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletSegmentDisplay4x7.FUNCTION_GET_IDENTITY] = BrickletSegmentDisplay4x7.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletSegmentDisplay4x7.CALLBACK_COUNTER_FINISHED] = ''
+        self.callback_formats[BrickletSegmentDisplay4x7.CALLBACK_COUNTER_FINISHED] = (8, '')
 
         ipcon.add_device(self)
 
@@ -79,7 +79,7 @@ class BrickletSegmentDisplay4x7(Device):
         brightness = int(brightness)
         colon = bool(colon)
 
-        self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_SET_SEGMENTS, (segments, brightness, colon), '4B B !', '')
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_SET_SEGMENTS, (segments, brightness, colon), '4B B !', 0, '')
 
     def get_segments(self):
         """
@@ -88,7 +88,7 @@ class BrickletSegmentDisplay4x7(Device):
         """
         self.check_validity()
 
-        return GetSegments(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_SEGMENTS, (), '', '4B B !'))
+        return GetSegments(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_SEGMENTS, (), '', 14, '4B B !'))
 
     def start_counter(self, value_from, value_to, increment, length):
         """
@@ -111,7 +111,7 @@ class BrickletSegmentDisplay4x7(Device):
         increment = int(increment)
         length = int(length)
 
-        self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_START_COUNTER, (value_from, value_to, increment, length), 'h h h I', '')
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_START_COUNTER, (value_from, value_to, increment, length), 'h h h I', 0, '')
 
     def get_counter_value(self):
         """
@@ -121,7 +121,7 @@ class BrickletSegmentDisplay4x7(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_COUNTER_VALUE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_COUNTER_VALUE, (), '', 10, 'H')
 
     def get_identity(self):
         """
@@ -137,7 +137,7 @@ class BrickletSegmentDisplay4x7(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

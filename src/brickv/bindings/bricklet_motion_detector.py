@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -56,8 +56,8 @@ class BrickletMotionDetector(Device):
         self.response_expected[BrickletMotionDetector.FUNCTION_GET_STATUS_LED_CONFIG] = BrickletMotionDetector.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMotionDetector.FUNCTION_GET_IDENTITY] = BrickletMotionDetector.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletMotionDetector.CALLBACK_MOTION_DETECTED] = ''
-        self.callback_formats[BrickletMotionDetector.CALLBACK_DETECTION_CYCLE_ENDED] = ''
+        self.callback_formats[BrickletMotionDetector.CALLBACK_MOTION_DETECTED] = (8, '')
+        self.callback_formats[BrickletMotionDetector.CALLBACK_DETECTION_CYCLE_ENDED] = (8, '')
 
         ipcon.add_device(self)
 
@@ -73,7 +73,7 @@ class BrickletMotionDetector(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_MOTION_DETECTED, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_MOTION_DETECTED, (), '', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -90,7 +90,7 @@ class BrickletMotionDetector(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -100,7 +100,7 @@ class BrickletMotionDetector(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_identity(self):
         """
@@ -116,7 +116,7 @@ class BrickletMotionDetector(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

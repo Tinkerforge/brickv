@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -65,8 +65,8 @@ class BrickletSoundIntensity(Device):
         self.response_expected[BrickletSoundIntensity.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletSoundIntensity.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletSoundIntensity.FUNCTION_GET_IDENTITY] = BrickletSoundIntensity.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletSoundIntensity.CALLBACK_INTENSITY] = 'H'
-        self.callback_formats[BrickletSoundIntensity.CALLBACK_INTENSITY_REACHED] = 'H'
+        self.callback_formats[BrickletSoundIntensity.CALLBACK_INTENSITY] = (10, 'H')
+        self.callback_formats[BrickletSoundIntensity.CALLBACK_INTENSITY_REACHED] = (10, 'H')
 
         ipcon.add_device(self)
 
@@ -84,7 +84,7 @@ class BrickletSoundIntensity(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_INTENSITY, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_INTENSITY, (), '', 10, 'H')
 
     def set_intensity_callback_period(self, period):
         """
@@ -98,7 +98,7 @@ class BrickletSoundIntensity(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_SET_INTENSITY_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_SET_INTENSITY_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_intensity_callback_period(self):
         """
@@ -106,7 +106,7 @@ class BrickletSoundIntensity(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_INTENSITY_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_INTENSITY_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_intensity_callback_threshold(self, option, min, max):
         """
@@ -130,7 +130,7 @@ class BrickletSoundIntensity(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_SET_INTENSITY_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
+        self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_SET_INTENSITY_CALLBACK_THRESHOLD, (option, min, max), 'c H H', 0, '')
 
     def get_intensity_callback_threshold(self):
         """
@@ -138,7 +138,7 @@ class BrickletSoundIntensity(Device):
         """
         self.check_validity()
 
-        return GetIntensityCallbackThreshold(*self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_INTENSITY_CALLBACK_THRESHOLD, (), '', 'c H H'))
+        return GetIntensityCallbackThreshold(*self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_INTENSITY_CALLBACK_THRESHOLD, (), '', 13, 'c H H'))
 
     def set_debounce_period(self, debounce):
         """
@@ -156,7 +156,7 @@ class BrickletSoundIntensity(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -164,7 +164,7 @@ class BrickletSoundIntensity(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -180,7 +180,7 @@ class BrickletSoundIntensity(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -72,7 +72,7 @@ class TNGDO8(Device):
         timestamp = int(timestamp)
         value = list(map(bool, value))
 
-        self.ipcon.send_request(self, TNGDO8.FUNCTION_SET_VALUE, (timestamp, value), 'Q 8!', '')
+        self.ipcon.send_request(self, TNGDO8.FUNCTION_SET_VALUE, (timestamp, value), 'Q 8!', 0, '')
 
     def get_timestamp(self):
         """
@@ -80,7 +80,7 @@ class TNGDO8(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, TNGDO8.FUNCTION_GET_TIMESTAMP, (), '', 'Q')
+        return self.ipcon.send_request(self, TNGDO8.FUNCTION_GET_TIMESTAMP, (), '', 16, 'Q')
 
     def copy_firmware(self):
         """
@@ -88,7 +88,7 @@ class TNGDO8(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, TNGDO8.FUNCTION_COPY_FIRMWARE, (), '', 'B')
+        return self.ipcon.send_request(self, TNGDO8.FUNCTION_COPY_FIRMWARE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -98,7 +98,7 @@ class TNGDO8(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, TNGDO8.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, TNGDO8.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -108,7 +108,7 @@ class TNGDO8(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, TNGDO8.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, TNGDO8.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def reset(self):
         """
@@ -121,4 +121,4 @@ class TNGDO8(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, TNGDO8.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, TNGDO8.FUNCTION_RESET, (), '', 0, '')

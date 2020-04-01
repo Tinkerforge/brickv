@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -78,10 +78,10 @@ class BrickletLinearPoti(Device):
         self.response_expected[BrickletLinearPoti.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLinearPoti.FUNCTION_GET_IDENTITY] = BrickletLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletLinearPoti.CALLBACK_POSITION] = 'H'
-        self.callback_formats[BrickletLinearPoti.CALLBACK_ANALOG_VALUE] = 'H'
-        self.callback_formats[BrickletLinearPoti.CALLBACK_POSITION_REACHED] = 'H'
-        self.callback_formats[BrickletLinearPoti.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
+        self.callback_formats[BrickletLinearPoti.CALLBACK_POSITION] = (10, 'H')
+        self.callback_formats[BrickletLinearPoti.CALLBACK_ANALOG_VALUE] = (10, 'H')
+        self.callback_formats[BrickletLinearPoti.CALLBACK_POSITION_REACHED] = (10, 'H')
+        self.callback_formats[BrickletLinearPoti.CALLBACK_ANALOG_VALUE_REACHED] = (10, 'H')
 
         ipcon.add_device(self)
 
@@ -96,7 +96,7 @@ class BrickletLinearPoti(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_POSITION, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_POSITION, (), '', 10, 'H')
 
     def get_analog_value(self):
         """
@@ -114,7 +114,7 @@ class BrickletLinearPoti(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_ANALOG_VALUE, (), '', 10, 'H')
 
     def set_position_callback_period(self, period):
         """
@@ -128,7 +128,7 @@ class BrickletLinearPoti(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_SET_POSITION_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_SET_POSITION_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_position_callback_period(self):
         """
@@ -136,7 +136,7 @@ class BrickletLinearPoti(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_POSITION_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_POSITION_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_analog_value_callback_period(self, period):
         """
@@ -150,7 +150,7 @@ class BrickletLinearPoti(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_analog_value_callback_period(self):
         """
@@ -158,7 +158,7 @@ class BrickletLinearPoti(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_position_callback_threshold(self, option, min, max):
         """
@@ -182,7 +182,7 @@ class BrickletLinearPoti(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
+        self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD, (option, min, max), 'c H H', 0, '')
 
     def get_position_callback_threshold(self):
         """
@@ -190,7 +190,7 @@ class BrickletLinearPoti(Device):
         """
         self.check_validity()
 
-        return GetPositionCallbackThreshold(*self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_POSITION_CALLBACK_THRESHOLD, (), '', 'c H H'))
+        return GetPositionCallbackThreshold(*self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_POSITION_CALLBACK_THRESHOLD, (), '', 13, 'c H H'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
         """
@@ -214,7 +214,7 @@ class BrickletLinearPoti(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
+        self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', 0, '')
 
     def get_analog_value_callback_threshold(self):
         """
@@ -222,7 +222,7 @@ class BrickletLinearPoti(Device):
         """
         self.check_validity()
 
-        return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
+        return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 13, 'c H H'))
 
     def set_debounce_period(self, debounce):
         """
@@ -242,7 +242,7 @@ class BrickletLinearPoti(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -250,7 +250,7 @@ class BrickletLinearPoti(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -266,7 +266,7 @@ class BrickletLinearPoti(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletLinearPoti.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

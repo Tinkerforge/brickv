@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -98,8 +98,8 @@ class BrickletAccelerometer(Device):
         self.response_expected[BrickletAccelerometer.FUNCTION_IS_LED_ON] = BrickletAccelerometer.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAccelerometer.FUNCTION_GET_IDENTITY] = BrickletAccelerometer.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletAccelerometer.CALLBACK_ACCELERATION] = 'h h h'
-        self.callback_formats[BrickletAccelerometer.CALLBACK_ACCELERATION_REACHED] = 'h h h'
+        self.callback_formats[BrickletAccelerometer.CALLBACK_ACCELERATION] = (14, 'h h h')
+        self.callback_formats[BrickletAccelerometer.CALLBACK_ACCELERATION_REACHED] = (14, 'h h h')
 
         ipcon.add_device(self)
 
@@ -115,7 +115,7 @@ class BrickletAccelerometer(Device):
         """
         self.check_validity()
 
-        return GetAcceleration(*self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_ACCELERATION, (), '', 'h h h'))
+        return GetAcceleration(*self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_ACCELERATION, (), '', 14, 'h h h'))
 
     def set_acceleration_callback_period(self, period):
         """
@@ -129,7 +129,7 @@ class BrickletAccelerometer(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_ACCELERATION_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_ACCELERATION_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_acceleration_callback_period(self):
         """
@@ -137,7 +137,7 @@ class BrickletAccelerometer(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_ACCELERATION_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_ACCELERATION_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_acceleration_callback_threshold(self, option, min_x, max_x, min_y, max_y, min_z, max_z):
         """
@@ -165,7 +165,7 @@ class BrickletAccelerometer(Device):
         min_z = int(min_z)
         max_z = int(max_z)
 
-        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_ACCELERATION_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y, min_z, max_z), 'c h h h h h h', '')
+        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_ACCELERATION_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y, min_z, max_z), 'c h h h h h h', 0, '')
 
     def get_acceleration_callback_threshold(self):
         """
@@ -173,7 +173,7 @@ class BrickletAccelerometer(Device):
         """
         self.check_validity()
 
-        return GetAccelerationCallbackThreshold(*self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_ACCELERATION_CALLBACK_THRESHOLD, (), '', 'c h h h h h h'))
+        return GetAccelerationCallbackThreshold(*self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_ACCELERATION_CALLBACK_THRESHOLD, (), '', 21, 'c h h h h h h'))
 
     def set_debounce_period(self, debounce):
         """
@@ -191,7 +191,7 @@ class BrickletAccelerometer(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -199,7 +199,7 @@ class BrickletAccelerometer(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def get_temperature(self):
         """
@@ -207,7 +207,7 @@ class BrickletAccelerometer(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_TEMPERATURE, (), '', 10, 'h')
 
     def set_configuration(self, data_rate, full_scale, filter_bandwidth):
         """
@@ -227,7 +227,7 @@ class BrickletAccelerometer(Device):
         full_scale = int(full_scale)
         filter_bandwidth = int(filter_bandwidth)
 
-        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_CONFIGURATION, (data_rate, full_scale, filter_bandwidth), 'B B B', '')
+        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_CONFIGURATION, (data_rate, full_scale, filter_bandwidth), 'B B B', 0, '')
 
     def get_configuration(self):
         """
@@ -235,7 +235,7 @@ class BrickletAccelerometer(Device):
         """
         self.check_validity()
 
-        return GetConfiguration(*self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_CONFIGURATION, (), '', 'B B B'))
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_CONFIGURATION, (), '', 11, 'B B B'))
 
     def led_on(self):
         """
@@ -243,7 +243,7 @@ class BrickletAccelerometer(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_LED_ON, (), '', '')
+        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_LED_ON, (), '', 0, '')
 
     def led_off(self):
         """
@@ -251,7 +251,7 @@ class BrickletAccelerometer(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_LED_OFF, (), '', '')
+        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_LED_OFF, (), '', 0, '')
 
     def is_led_on(self):
         """
@@ -259,7 +259,7 @@ class BrickletAccelerometer(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_IS_LED_ON, (), '', '!')
+        return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_IS_LED_ON, (), '', 9, '!')
 
     def get_identity(self):
         """
@@ -275,7 +275,7 @@ class BrickletAccelerometer(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -85,8 +85,8 @@ class BrickletAmbientLightV2(Device):
         self.response_expected[BrickletAmbientLightV2.FUNCTION_GET_CONFIGURATION] = BrickletAmbientLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAmbientLightV2.FUNCTION_GET_IDENTITY] = BrickletAmbientLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletAmbientLightV2.CALLBACK_ILLUMINANCE] = 'I'
-        self.callback_formats[BrickletAmbientLightV2.CALLBACK_ILLUMINANCE_REACHED] = 'I'
+        self.callback_formats[BrickletAmbientLightV2.CALLBACK_ILLUMINANCE] = (12, 'I')
+        self.callback_formats[BrickletAmbientLightV2.CALLBACK_ILLUMINANCE_REACHED] = (12, 'I')
 
         ipcon.add_device(self)
 
@@ -105,7 +105,7 @@ class BrickletAmbientLightV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_ILLUMINANCE, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_ILLUMINANCE, (), '', 12, 'I')
 
     def set_illuminance_callback_period(self, period):
         """
@@ -119,7 +119,7 @@ class BrickletAmbientLightV2(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_illuminance_callback_period(self):
         """
@@ -127,7 +127,7 @@ class BrickletAmbientLightV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_ILLUMINANCE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_ILLUMINANCE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_illuminance_callback_threshold(self, option, min, max):
         """
@@ -151,7 +151,7 @@ class BrickletAmbientLightV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_ILLUMINANCE_CALLBACK_THRESHOLD, (option, min, max), 'c I I', '')
+        self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_ILLUMINANCE_CALLBACK_THRESHOLD, (option, min, max), 'c I I', 0, '')
 
     def get_illuminance_callback_threshold(self):
         """
@@ -159,7 +159,7 @@ class BrickletAmbientLightV2(Device):
         """
         self.check_validity()
 
-        return GetIlluminanceCallbackThreshold(*self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_ILLUMINANCE_CALLBACK_THRESHOLD, (), '', 'c I I'))
+        return GetIlluminanceCallbackThreshold(*self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_ILLUMINANCE_CALLBACK_THRESHOLD, (), '', 17, 'c I I'))
 
     def set_debounce_period(self, debounce):
         """
@@ -177,7 +177,7 @@ class BrickletAmbientLightV2(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -185,7 +185,7 @@ class BrickletAmbientLightV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def set_configuration(self, illuminance_range, integration_time):
         """
@@ -218,7 +218,7 @@ class BrickletAmbientLightV2(Device):
         illuminance_range = int(illuminance_range)
         integration_time = int(integration_time)
 
-        self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_CONFIGURATION, (illuminance_range, integration_time), 'B B', '')
+        self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_CONFIGURATION, (illuminance_range, integration_time), 'B B', 0, '')
 
     def get_configuration(self):
         """
@@ -226,7 +226,7 @@ class BrickletAmbientLightV2(Device):
         """
         self.check_validity()
 
-        return GetConfiguration(*self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_CONFIGURATION, (), '', 10, 'B B'))
 
     def get_identity(self):
         """
@@ -242,7 +242,7 @@ class BrickletAmbientLightV2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

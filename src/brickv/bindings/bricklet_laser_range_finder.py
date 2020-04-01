@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -107,10 +107,10 @@ class BrickletLaserRangeFinder(Device):
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_CONFIGURATION] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_IDENTITY] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletLaserRangeFinder.CALLBACK_DISTANCE] = 'H'
-        self.callback_formats[BrickletLaserRangeFinder.CALLBACK_VELOCITY] = 'h'
-        self.callback_formats[BrickletLaserRangeFinder.CALLBACK_DISTANCE_REACHED] = 'H'
-        self.callback_formats[BrickletLaserRangeFinder.CALLBACK_VELOCITY_REACHED] = 'h'
+        self.callback_formats[BrickletLaserRangeFinder.CALLBACK_DISTANCE] = (10, 'H')
+        self.callback_formats[BrickletLaserRangeFinder.CALLBACK_VELOCITY] = (10, 'h')
+        self.callback_formats[BrickletLaserRangeFinder.CALLBACK_DISTANCE_REACHED] = (10, 'H')
+        self.callback_formats[BrickletLaserRangeFinder.CALLBACK_VELOCITY_REACHED] = (10, 'h')
 
         ipcon.add_device(self)
 
@@ -130,7 +130,7 @@ class BrickletLaserRangeFinder(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE, (), '', 10, 'H')
 
     def get_velocity(self):
         """
@@ -150,7 +150,7 @@ class BrickletLaserRangeFinder(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY, (), '', 10, 'h')
 
     def set_distance_callback_period(self, period):
         """
@@ -164,7 +164,7 @@ class BrickletLaserRangeFinder(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_DISTANCE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_DISTANCE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_distance_callback_period(self):
         """
@@ -172,7 +172,7 @@ class BrickletLaserRangeFinder(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_velocity_callback_period(self, period):
         """
@@ -186,7 +186,7 @@ class BrickletLaserRangeFinder(Device):
 
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_velocity_callback_period(self):
         """
@@ -194,7 +194,7 @@ class BrickletLaserRangeFinder(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_distance_callback_threshold(self, option, min, max):
         """
@@ -218,7 +218,7 @@ class BrickletLaserRangeFinder(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', 0, '')
 
     def get_distance_callback_threshold(self):
         """
@@ -226,7 +226,7 @@ class BrickletLaserRangeFinder(Device):
         """
         self.check_validity()
 
-        return GetDistanceCallbackThreshold(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD, (), '', 'c H H'))
+        return GetDistanceCallbackThreshold(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD, (), '', 13, 'c H H'))
 
     def set_velocity_callback_threshold(self, option, min, max):
         """
@@ -250,7 +250,7 @@ class BrickletLaserRangeFinder(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CALLBACK_THRESHOLD, (option, min, max), 'c h h', 0, '')
 
     def get_velocity_callback_threshold(self):
         """
@@ -258,7 +258,7 @@ class BrickletLaserRangeFinder(Device):
         """
         self.check_validity()
 
-        return GetVelocityCallbackThreshold(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetVelocityCallbackThreshold(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY_CALLBACK_THRESHOLD, (), '', 13, 'c h h'))
 
     def set_debounce_period(self, debounce):
         """
@@ -278,7 +278,7 @@ class BrickletLaserRangeFinder(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -286,7 +286,7 @@ class BrickletLaserRangeFinder(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def set_moving_average(self, distance_average_length, velocity_average_length):
         """
@@ -301,7 +301,7 @@ class BrickletLaserRangeFinder(Device):
         distance_average_length = int(distance_average_length)
         velocity_average_length = int(velocity_average_length)
 
-        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_MOVING_AVERAGE, (distance_average_length, velocity_average_length), 'B B', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_MOVING_AVERAGE, (distance_average_length, velocity_average_length), 'B B', 0, '')
 
     def get_moving_average(self):
         """
@@ -309,7 +309,7 @@ class BrickletLaserRangeFinder(Device):
         """
         self.check_validity()
 
-        return GetMovingAverage(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B B'))
+        return GetMovingAverage(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_MOVING_AVERAGE, (), '', 10, 'B B'))
 
     def set_mode(self, mode):
         """
@@ -334,7 +334,7 @@ class BrickletLaserRangeFinder(Device):
 
         mode = int(mode)
 
-        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_MODE, (mode,), 'B', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_MODE, (mode,), 'B', 0, '')
 
     def get_mode(self):
         """
@@ -342,7 +342,7 @@ class BrickletLaserRangeFinder(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_MODE, (), '', 9, 'B')
 
     def enable_laser(self):
         """
@@ -353,7 +353,7 @@ class BrickletLaserRangeFinder(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_ENABLE_LASER, (), '', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_ENABLE_LASER, (), '', 0, '')
 
     def disable_laser(self):
         """
@@ -361,7 +361,7 @@ class BrickletLaserRangeFinder(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_DISABLE_LASER, (), '', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_DISABLE_LASER, (), '', 0, '')
 
     def is_laser_enabled(self):
         """
@@ -369,7 +369,7 @@ class BrickletLaserRangeFinder(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_IS_LASER_ENABLED, (), '', '!')
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_IS_LASER_ENABLED, (), '', 9, '!')
 
     def get_sensor_hardware_version(self):
         """
@@ -379,7 +379,7 @@ class BrickletLaserRangeFinder(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_SENSOR_HARDWARE_VERSION, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_SENSOR_HARDWARE_VERSION, (), '', 9, 'B')
 
     def set_configuration(self, acquisition_count, enable_quick_termination, threshold_value, measurement_frequency):
         """
@@ -422,7 +422,7 @@ class BrickletLaserRangeFinder(Device):
         threshold_value = int(threshold_value)
         measurement_frequency = int(measurement_frequency)
 
-        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_CONFIGURATION, (acquisition_count, enable_quick_termination, threshold_value, measurement_frequency), 'B ! B H', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_CONFIGURATION, (acquisition_count, enable_quick_termination, threshold_value, measurement_frequency), 'B ! B H', 0, '')
 
     def get_configuration(self):
         """
@@ -432,7 +432,7 @@ class BrickletLaserRangeFinder(Device):
         """
         self.check_validity()
 
-        return GetConfiguration(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_CONFIGURATION, (), '', 'B ! B H'))
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_CONFIGURATION, (), '', 13, 'B ! B H'))
 
     def get_identity(self):
         """
@@ -448,7 +448,7 @@ class BrickletLaserRangeFinder(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

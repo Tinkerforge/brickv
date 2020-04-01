@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -142,7 +142,7 @@ class BrickletServoV2(Device):
         """
         self.check_validity()
 
-        return GetStatus(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_STATUS, (), '', '10! 10h 10h 10H H'))
+        return GetStatus(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_STATUS, (), '', 72, '10! 10h 10h 10H H'))
 
     def set_enable(self, servo_channel, enable):
         """
@@ -154,7 +154,7 @@ class BrickletServoV2(Device):
         servo_channel = int(servo_channel)
         enable = bool(enable)
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_ENABLE, (servo_channel, enable), 'H !', '')
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_ENABLE, (servo_channel, enable), 'H !', 0, '')
 
     def get_enabled(self, servo_channel):
         """
@@ -164,7 +164,7 @@ class BrickletServoV2(Device):
 
         servo_channel = int(servo_channel)
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_ENABLED, (servo_channel,), 'H', '!')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_ENABLED, (servo_channel,), 'H', 9, '!')
 
     def set_position(self, servo_channel, position):
         """
@@ -182,7 +182,7 @@ class BrickletServoV2(Device):
         servo_channel = int(servo_channel)
         position = int(position)
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_POSITION, (servo_channel, position), 'H h', '')
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_POSITION, (servo_channel, position), 'H h', 0, '')
 
     def get_position(self, servo_channel):
         """
@@ -192,7 +192,7 @@ class BrickletServoV2(Device):
 
         servo_channel = int(servo_channel)
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_POSITION, (servo_channel,), 'H', 'h')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_POSITION, (servo_channel,), 'H', 10, 'h')
 
     def get_current_position(self, servo_channel):
         """
@@ -204,7 +204,7 @@ class BrickletServoV2(Device):
 
         servo_channel = int(servo_channel)
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_CURRENT_POSITION, (servo_channel,), 'H', 'h')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_CURRENT_POSITION, (servo_channel,), 'H', 10, 'h')
 
     def get_current_velocity(self, servo_channel):
         """
@@ -216,7 +216,7 @@ class BrickletServoV2(Device):
 
         servo_channel = int(servo_channel)
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_CURRENT_VELOCITY, (servo_channel,), 'H', 'H')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_CURRENT_VELOCITY, (servo_channel,), 'H', 10, 'H')
 
     def set_motion_configuration(self, servo_channel, velocity, acceleration, deceleration):
         """
@@ -236,7 +236,7 @@ class BrickletServoV2(Device):
         acceleration = int(acceleration)
         deceleration = int(deceleration)
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_MOTION_CONFIGURATION, (servo_channel, velocity, acceleration, deceleration), 'H H H H', '')
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_MOTION_CONFIGURATION, (servo_channel, velocity, acceleration, deceleration), 'H H H H', 0, '')
 
     def get_motion_configuration(self, servo_channel):
         """
@@ -247,7 +247,7 @@ class BrickletServoV2(Device):
 
         servo_channel = int(servo_channel)
 
-        return GetMotionConfiguration(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_MOTION_CONFIGURATION, (servo_channel,), 'H', 'H H H'))
+        return GetMotionConfiguration(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_MOTION_CONFIGURATION, (servo_channel,), 'H', 14, 'H H H'))
 
     def set_pulse_width(self, servo_channel, min, max):
         """
@@ -275,7 +275,7 @@ class BrickletServoV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_PULSE_WIDTH, (servo_channel, min, max), 'H I I', '')
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_PULSE_WIDTH, (servo_channel, min, max), 'H I I', 0, '')
 
     def get_pulse_width(self, servo_channel):
         """
@@ -286,7 +286,7 @@ class BrickletServoV2(Device):
 
         servo_channel = int(servo_channel)
 
-        return GetPulseWidth(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_PULSE_WIDTH, (servo_channel,), 'H', 'I I'))
+        return GetPulseWidth(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_PULSE_WIDTH, (servo_channel,), 'H', 16, 'I I'))
 
     def set_degree(self, servo_channel, min, max):
         """
@@ -327,7 +327,7 @@ class BrickletServoV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_DEGREE, (servo_channel, min, max), 'H h h', '')
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_DEGREE, (servo_channel, min, max), 'H h h', 0, '')
 
     def get_degree(self, servo_channel):
         """
@@ -338,7 +338,7 @@ class BrickletServoV2(Device):
 
         servo_channel = int(servo_channel)
 
-        return GetDegree(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_DEGREE, (servo_channel,), 'H', 'h h'))
+        return GetDegree(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_DEGREE, (servo_channel,), 'H', 12, 'h h'))
 
     def set_period(self, servo_channel, period):
         """
@@ -363,7 +363,7 @@ class BrickletServoV2(Device):
         servo_channel = int(servo_channel)
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_PERIOD, (servo_channel, period), 'H I', '')
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_PERIOD, (servo_channel, period), 'H I', 0, '')
 
     def get_period(self, servo_channel):
         """
@@ -373,7 +373,7 @@ class BrickletServoV2(Device):
 
         servo_channel = int(servo_channel)
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_PERIOD, (servo_channel,), 'H', 'I')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_PERIOD, (servo_channel,), 'H', 12, 'I')
 
     def get_servo_current(self, servo_channel):
         """
@@ -383,7 +383,7 @@ class BrickletServoV2(Device):
 
         servo_channel = int(servo_channel)
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_SERVO_CURRENT, (servo_channel,), 'H', 'H')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_SERVO_CURRENT, (servo_channel,), 'H', 10, 'H')
 
     def set_servo_current_configuration(self, servo_channel, averaging_duration):
         """
@@ -394,7 +394,7 @@ class BrickletServoV2(Device):
         servo_channel = int(servo_channel)
         averaging_duration = int(averaging_duration)
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_SERVO_CURRENT_CONFIGURATION, (servo_channel, averaging_duration), 'H B', '')
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_SERVO_CURRENT_CONFIGURATION, (servo_channel, averaging_duration), 'H B', 0, '')
 
     def get_servo_current_configuration(self, servo_channel):
         """
@@ -404,7 +404,7 @@ class BrickletServoV2(Device):
 
         servo_channel = int(servo_channel)
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_SERVO_CURRENT_CONFIGURATION, (servo_channel,), 'H', 'B')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_SERVO_CURRENT_CONFIGURATION, (servo_channel,), 'H', 9, 'B')
 
     def set_input_voltage_configuration(self, averaging_duration):
         """
@@ -414,7 +414,7 @@ class BrickletServoV2(Device):
 
         averaging_duration = int(averaging_duration)
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_INPUT_VOLTAGE_CONFIGURATION, (averaging_duration,), 'B', '')
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_INPUT_VOLTAGE_CONFIGURATION, (averaging_duration,), 'B', 0, '')
 
     def get_input_voltage_configuration(self):
         """
@@ -422,7 +422,7 @@ class BrickletServoV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_INPUT_VOLTAGE_CONFIGURATION, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_INPUT_VOLTAGE_CONFIGURATION, (), '', 9, 'B')
 
     def get_overall_current(self):
         """
@@ -430,7 +430,7 @@ class BrickletServoV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_OVERALL_CURRENT, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_OVERALL_CURRENT, (), '', 10, 'H')
 
     def get_input_voltage(self):
         """
@@ -439,7 +439,7 @@ class BrickletServoV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_INPUT_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_INPUT_VOLTAGE, (), '', 10, 'H')
 
     def calibrate_servo_current(self):
         """
@@ -447,7 +447,7 @@ class BrickletServoV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_CALIBRATE_SERVO_CURRENT, (), '', '')
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_CALIBRATE_SERVO_CURRENT, (), '', 0, '')
 
     def get_spitfp_error_count(self):
         """
@@ -465,7 +465,7 @@ class BrickletServoV2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -483,7 +483,7 @@ class BrickletServoV2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -491,7 +491,7 @@ class BrickletServoV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -506,7 +506,7 @@ class BrickletServoV2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -523,7 +523,7 @@ class BrickletServoV2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -539,7 +539,7 @@ class BrickletServoV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -547,7 +547,7 @@ class BrickletServoV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -560,7 +560,7 @@ class BrickletServoV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -573,7 +573,7 @@ class BrickletServoV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -587,7 +587,7 @@ class BrickletServoV2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -596,7 +596,7 @@ class BrickletServoV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -612,6 +612,6 @@ class BrickletServoV2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
 ServoV2 = BrickletServoV2 # for backward compatibility

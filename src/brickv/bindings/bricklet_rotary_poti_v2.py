@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -94,7 +94,7 @@ class BrickletRotaryPotiV2(Device):
         self.response_expected[BrickletRotaryPotiV2.FUNCTION_READ_UID] = BrickletRotaryPotiV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRotaryPotiV2.FUNCTION_GET_IDENTITY] = BrickletRotaryPotiV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletRotaryPotiV2.CALLBACK_POSITION] = 'h'
+        self.callback_formats[BrickletRotaryPotiV2.CALLBACK_POSITION] = (10, 'h')
 
         ipcon.add_device(self)
 
@@ -110,7 +110,7 @@ class BrickletRotaryPotiV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_GET_POSITION, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_GET_POSITION, (), '', 10, 'h')
 
     def set_position_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -150,7 +150,7 @@ class BrickletRotaryPotiV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_SET_POSITION_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c h h', '')
+        self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_SET_POSITION_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c h h', 0, '')
 
     def get_position_callback_configuration(self):
         """
@@ -158,7 +158,7 @@ class BrickletRotaryPotiV2(Device):
         """
         self.check_validity()
 
-        return GetPositionCallbackConfiguration(*self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_GET_POSITION_CALLBACK_CONFIGURATION, (), '', 'I ! c h h'))
+        return GetPositionCallbackConfiguration(*self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_GET_POSITION_CALLBACK_CONFIGURATION, (), '', 18, 'I ! c h h'))
 
     def get_spitfp_error_count(self):
         """
@@ -176,7 +176,7 @@ class BrickletRotaryPotiV2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -194,7 +194,7 @@ class BrickletRotaryPotiV2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -202,7 +202,7 @@ class BrickletRotaryPotiV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -217,7 +217,7 @@ class BrickletRotaryPotiV2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -234,7 +234,7 @@ class BrickletRotaryPotiV2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -250,7 +250,7 @@ class BrickletRotaryPotiV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -258,7 +258,7 @@ class BrickletRotaryPotiV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -271,7 +271,7 @@ class BrickletRotaryPotiV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -284,7 +284,7 @@ class BrickletRotaryPotiV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -298,7 +298,7 @@ class BrickletRotaryPotiV2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -307,7 +307,7 @@ class BrickletRotaryPotiV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -323,7 +323,7 @@ class BrickletRotaryPotiV2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletRotaryPotiV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

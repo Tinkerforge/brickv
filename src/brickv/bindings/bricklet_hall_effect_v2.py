@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -107,8 +107,8 @@ class BrickletHallEffectV2(Device):
         self.response_expected[BrickletHallEffectV2.FUNCTION_READ_UID] = BrickletHallEffectV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHallEffectV2.FUNCTION_GET_IDENTITY] = BrickletHallEffectV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletHallEffectV2.CALLBACK_MAGNETIC_FLUX_DENSITY] = 'h'
-        self.callback_formats[BrickletHallEffectV2.CALLBACK_COUNTER] = 'I'
+        self.callback_formats[BrickletHallEffectV2.CALLBACK_MAGNETIC_FLUX_DENSITY] = (10, 'h')
+        self.callback_formats[BrickletHallEffectV2.CALLBACK_COUNTER] = (12, 'I')
 
         ipcon.add_device(self)
 
@@ -123,7 +123,7 @@ class BrickletHallEffectV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_MAGNETIC_FLUX_DENSITY, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_MAGNETIC_FLUX_DENSITY, (), '', 10, 'h')
 
     def set_magnetic_flux_density_callback_configuration(self, period, value_has_to_change, option, min, max):
         """
@@ -163,7 +163,7 @@ class BrickletHallEffectV2(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_MAGNETIC_FLUX_DENSITY_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c h h', '')
+        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_MAGNETIC_FLUX_DENSITY_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c h h', 0, '')
 
     def get_magnetic_flux_density_callback_configuration(self):
         """
@@ -171,7 +171,7 @@ class BrickletHallEffectV2(Device):
         """
         self.check_validity()
 
-        return GetMagneticFluxDensityCallbackConfiguration(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_MAGNETIC_FLUX_DENSITY_CALLBACK_CONFIGURATION, (), '', 'I ! c h h'))
+        return GetMagneticFluxDensityCallbackConfiguration(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_MAGNETIC_FLUX_DENSITY_CALLBACK_CONFIGURATION, (), '', 18, 'I ! c h h'))
 
     def get_counter(self, reset_counter):
         """
@@ -191,7 +191,7 @@ class BrickletHallEffectV2(Device):
 
         reset_counter = bool(reset_counter)
 
-        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_COUNTER, (reset_counter,), '!', 'I')
+        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_COUNTER, (reset_counter,), '!', 12, 'I')
 
     def set_counter_config(self, high_threshold, low_threshold, debounce):
         """
@@ -208,7 +208,7 @@ class BrickletHallEffectV2(Device):
         low_threshold = int(low_threshold)
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_COUNTER_CONFIG, (high_threshold, low_threshold, debounce), 'h h I', '')
+        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_COUNTER_CONFIG, (high_threshold, low_threshold, debounce), 'h h I', 0, '')
 
     def get_counter_config(self):
         """
@@ -216,7 +216,7 @@ class BrickletHallEffectV2(Device):
         """
         self.check_validity()
 
-        return GetCounterConfig(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_COUNTER_CONFIG, (), '', 'h h I'))
+        return GetCounterConfig(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_COUNTER_CONFIG, (), '', 16, 'h h I'))
 
     def set_counter_callback_configuration(self, period, value_has_to_change):
         """
@@ -235,7 +235,7 @@ class BrickletHallEffectV2(Device):
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
-        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_COUNTER_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', '')
+        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_COUNTER_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_counter_callback_configuration(self):
         """
@@ -244,7 +244,7 @@ class BrickletHallEffectV2(Device):
         """
         self.check_validity()
 
-        return GetCounterCallbackConfiguration(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_COUNTER_CALLBACK_CONFIGURATION, (), '', 'I !'))
+        return GetCounterCallbackConfiguration(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_COUNTER_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def get_spitfp_error_count(self):
         """
@@ -262,7 +262,7 @@ class BrickletHallEffectV2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -280,7 +280,7 @@ class BrickletHallEffectV2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -288,7 +288,7 @@ class BrickletHallEffectV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -303,7 +303,7 @@ class BrickletHallEffectV2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -320,7 +320,7 @@ class BrickletHallEffectV2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -336,7 +336,7 @@ class BrickletHallEffectV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -344,7 +344,7 @@ class BrickletHallEffectV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -357,7 +357,7 @@ class BrickletHallEffectV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -370,7 +370,7 @@ class BrickletHallEffectV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -384,7 +384,7 @@ class BrickletHallEffectV2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -393,7 +393,7 @@ class BrickletHallEffectV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -409,7 +409,7 @@ class BrickletHallEffectV2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletHallEffectV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """

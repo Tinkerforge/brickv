@@ -336,6 +336,7 @@ class Error(Exception):
     NON_ASCII_CHAR_IN_SECRET = -14
     WRONG_DEVICE_TYPE = -15
     DEVICE_REPLACED = -16
+    WRONG_RESPONSE_LENGTH = -17
 
     def __init__(self, value, description, suppress_context=False):
         Exception.__init__(self, '{0} ({1})'.format(description, value))
@@ -497,7 +498,7 @@ class Device(object):
 
         with self.device_identifier_lock:
             if self.device_identifier_check == Device.DEVICE_IDENTIFIER_CHECK_PENDING:
-                device_identifier = self.ipcon.send_request(self, 255, (), '', '8s 8s c 3B 3B H')[5] # <device>.get_identity
+                device_identifier = self.ipcon.send_request(self, 255, (), '', 33, '8s 8s c 3B 3B H')[5] # <device>.get_identity
 
                 if device_identifier == self.device_identifier:
                     self.device_identifier_check = Device.DEVICE_IDENTIFIER_CHECK_MATCH
@@ -525,10 +526,10 @@ class BrickDaemon(Device):
         ipcon.add_device(self)
 
     def get_authentication_nonce(self):
-        return self.ipcon.send_request(self, BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE, (), '', '4B')
+        return self.ipcon.send_request(self, BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE, (), '', 12, '4B')
 
     def authenticate(self, client_nonce, digest):
-        self.ipcon.send_request(self, BrickDaemon.FUNCTION_AUTHENTICATE, (client_nonce, digest), '4B 20B', '')
+        self.ipcon.send_request(self, BrickDaemon.FUNCTION_AUTHENTICATE, (client_nonce, digest), '4B 20B', 0, '')
 
 class IPConnection(object):
     FUNCTION_ENUMERATE = 254
@@ -1115,6 +1116,9 @@ class IPConnection(object):
             if cb == None:
                 return
 
+            if len(packet) != 34:
+                return # silently ignoring callback with wrong length
+
             uid, connected_uid, position, hardware_version, \
                 firmware_version, device_identifier, enumeration_type = \
                 unpack_payload(payload, '8s 8s c 3B 3B H B')
@@ -1132,11 +1136,15 @@ class IPConnection(object):
         try:
             device.check_validity()
         except Error:
-            return # silently ignoring callbacks for invalid devices
+            return # silently ignoring callback for invalid device
 
         if -function_id in device.high_level_callbacks:
             hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]
-            form = device.callback_formats[function_id] # FIXME: currently assuming that form is longer than 1
+            length, form = device.callback_formats[function_id] # FIXME: currently assuming that low-level callback has more than one element
+
+            if len(packet) != length:
+                return # silently ignoring callback with wrong length
+
             llvalues = unpack_payload(payload, form)
             has_data = False
             data = None
@@ -1192,13 +1200,17 @@ class IPConnection(object):
         cb = device.registered_callbacks.get(function_id)
 
         if cb != None:
-            form = device.callback_formats.get(function_id)
+            length, form = device.callback_formats.get(function_id, (None, None))
 
-            if form == None:
-                pass # silently ignore registered but unknown callback
-            elif len(form) == 0:
+            if length == None:
+                return # silently ignore registered but unknown callback
+
+            if len(packet) != length:
+                return # silently ignoring callback with wrong length
+
+            if len(form) == 0:
                 cb()
-            elif len(form.split(' ')) == 1:
+            elif ' ' not in form:
                 cb(unpack_payload(payload, form))
             else:
                 cb(*unpack_payload(payload, form))
@@ -1271,24 +1283,10 @@ class IPConnection(object):
             self.disconnect_probe_flag = False
 
     # internal
-    def send_request(self, device, function_id, data, form, form_ret):
-        patched_from = []
-
-        for f in form.split(' '):
-            if '!' in f:
-                if len(f) > 1:
-                    patched_from.append('{0}B'.format(int(math.ceil(int(f.replace('!', '')) / 8.0))))
-                else:
-                    patched_from.append('?')
-            else:
-                patched_from.append(f)
-
-        patched_from = '<' + ' '.join(patched_from)
-        length = 8 + struct.calcsize(patched_from)
-        request, response_expected, sequence_number = \
-            self.create_packet_header(device, length, function_id)
-
-        request += pack_payload(data, form)
+    def send_request(self, device, function_id, data, form, length_ret, form_ret):
+        payload = pack_payload(data, form)
+        header, response_expected, sequence_number = self.create_packet_header(device, 8 + len(payload), function_id)
+        request = header + payload
 
         if response_expected:
             with device.request_lock:
@@ -1316,8 +1314,13 @@ class IPConnection(object):
             error_code = get_error_code_from_data(response)
 
             if error_code == 0:
-                # no error
-                pass
+                if length_ret == 0:
+                    length_ret = 8 # setter with response-expected enabled
+
+                if len(response) != length_ret:
+                    msg = 'Expected response of {0} byte for function ID {1}, got {2} byte instead' \
+                          .format(length_ret, function_id, len(response))
+                    raise Error(Error.WRONG_RESPONSE_LENGTH, msg)
             elif error_code == 1:
                 msg = 'Got invalid parameter for function {0}'.format(function_id)
                 raise Error(Error.INVALID_PARAMETER, msg)
@@ -1411,7 +1414,7 @@ class IPConnection(object):
                                  IPConnection.FUNCTION_GET_ADC_CALIBRATION,
                                  (),
                                  '',
-                                 'h h')
+                                 12, 'h h')
 
     # internal
     def adc_calibrate(self, device, port):
@@ -1419,7 +1422,7 @@ class IPConnection(object):
                           IPConnection.FUNCTION_ADC_CALIBRATE,
                           (port,),
                           'c',
-                          '')
+                          0, '')
 
     # internal
     def write_bricklet_uid(self, device, port, uid):
@@ -1429,7 +1432,7 @@ class IPConnection(object):
                           IPConnection.FUNCTION_WRITE_BRICKLET_UID,
                           (port, uid_int),
                           'c I',
-                          '')
+                          0, '')
 
     # internal
     def read_bricklet_uid(self, device, port):
@@ -1437,6 +1440,6 @@ class IPConnection(object):
                                     IPConnection.FUNCTION_READ_BRICKLET_UID,
                                     (port,),
                                     'c',
-                                    'I')
+                                    12, 'I')
 
         return base58encode(uid_int)

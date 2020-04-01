@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -126,10 +126,10 @@ class BrickletDMX(Device):
         self.response_expected[BrickletDMX.FUNCTION_READ_UID] = BrickletDMX.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDMX.FUNCTION_GET_IDENTITY] = BrickletDMX.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletDMX.CALLBACK_FRAME_STARTED] = ''
-        self.callback_formats[BrickletDMX.CALLBACK_FRAME_AVAILABLE] = 'I'
-        self.callback_formats[BrickletDMX.CALLBACK_FRAME_LOW_LEVEL] = 'H H 56B I'
-        self.callback_formats[BrickletDMX.CALLBACK_FRAME_ERROR_COUNT] = 'I I'
+        self.callback_formats[BrickletDMX.CALLBACK_FRAME_STARTED] = (8, '')
+        self.callback_formats[BrickletDMX.CALLBACK_FRAME_AVAILABLE] = (12, 'I')
+        self.callback_formats[BrickletDMX.CALLBACK_FRAME_LOW_LEVEL] = (72, 'H H 56B I')
+        self.callback_formats[BrickletDMX.CALLBACK_FRAME_ERROR_COUNT] = (16, 'I I')
 
         self.high_level_callbacks[BrickletDMX.CALLBACK_FRAME] = [('stream_length', 'stream_chunk_offset', 'stream_chunk_data', None), {'fixed_length': None, 'single_chunk': False}, None]
         ipcon.add_device(self)
@@ -144,7 +144,7 @@ class BrickletDMX(Device):
 
         dmx_mode = int(dmx_mode)
 
-        self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_DMX_MODE, (dmx_mode,), 'B', '')
+        self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_DMX_MODE, (dmx_mode,), 'B', 0, '')
 
     def get_dmx_mode(self):
         """
@@ -152,7 +152,7 @@ class BrickletDMX(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_DMX_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_DMX_MODE, (), '', 9, 'B')
 
     def write_frame_low_level(self, frame_length, frame_chunk_offset, frame_chunk_data):
         """
@@ -183,7 +183,7 @@ class BrickletDMX(Device):
         frame_chunk_offset = int(frame_chunk_offset)
         frame_chunk_data = list(map(int, frame_chunk_data))
 
-        self.ipcon.send_request(self, BrickletDMX.FUNCTION_WRITE_FRAME_LOW_LEVEL, (frame_length, frame_chunk_offset, frame_chunk_data), 'H H 60B', '')
+        self.ipcon.send_request(self, BrickletDMX.FUNCTION_WRITE_FRAME_LOW_LEVEL, (frame_length, frame_chunk_offset, frame_chunk_data), 'H H 60B', 0, '')
 
     def read_frame_low_level(self):
         """
@@ -209,7 +209,7 @@ class BrickletDMX(Device):
         """
         self.check_validity()
 
-        return ReadFrameLowLevel(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_READ_FRAME_LOW_LEVEL, (), '', 'H H 56B I'))
+        return ReadFrameLowLevel(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_READ_FRAME_LOW_LEVEL, (), '', 72, 'H H 56B I'))
 
     def set_frame_duration(self, frame_duration):
         """
@@ -227,7 +227,7 @@ class BrickletDMX(Device):
 
         frame_duration = int(frame_duration)
 
-        self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_FRAME_DURATION, (frame_duration,), 'H', '')
+        self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_FRAME_DURATION, (frame_duration,), 'H', 0, '')
 
     def get_frame_duration(self):
         """
@@ -235,7 +235,7 @@ class BrickletDMX(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_FRAME_DURATION, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_FRAME_DURATION, (), '', 10, 'H')
 
     def get_frame_error_count(self):
         """
@@ -243,7 +243,7 @@ class BrickletDMX(Device):
         """
         self.check_validity()
 
-        return GetFrameErrorCount(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_FRAME_ERROR_COUNT, (), '', 'I I'))
+        return GetFrameErrorCount(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_FRAME_ERROR_COUNT, (), '', 16, 'I I'))
 
     def set_communication_led_config(self, config):
         """
@@ -258,7 +258,7 @@ class BrickletDMX(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_COMMUNICATION_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_COMMUNICATION_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_communication_led_config(self):
         """
@@ -266,7 +266,7 @@ class BrickletDMX(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_COMMUNICATION_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_COMMUNICATION_LED_CONFIG, (), '', 9, 'B')
 
     def set_error_led_config(self, config):
         """
@@ -284,7 +284,7 @@ class BrickletDMX(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_error_led_config(self):
         """
@@ -292,7 +292,7 @@ class BrickletDMX(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 9, 'B')
 
     def set_frame_callback_config(self, frame_started_callback_enabled, frame_available_callback_enabled, frame_callback_enabled, frame_error_count_callback_enabled):
         """
@@ -311,7 +311,7 @@ class BrickletDMX(Device):
         frame_callback_enabled = bool(frame_callback_enabled)
         frame_error_count_callback_enabled = bool(frame_error_count_callback_enabled)
 
-        self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_FRAME_CALLBACK_CONFIG, (frame_started_callback_enabled, frame_available_callback_enabled, frame_callback_enabled, frame_error_count_callback_enabled), '! ! ! !', '')
+        self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_FRAME_CALLBACK_CONFIG, (frame_started_callback_enabled, frame_available_callback_enabled, frame_callback_enabled, frame_error_count_callback_enabled), '! ! ! !', 0, '')
 
     def get_frame_callback_config(self):
         """
@@ -319,7 +319,7 @@ class BrickletDMX(Device):
         """
         self.check_validity()
 
-        return GetFrameCallbackConfig(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_FRAME_CALLBACK_CONFIG, (), '', '! ! ! !'))
+        return GetFrameCallbackConfig(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_FRAME_CALLBACK_CONFIG, (), '', 12, '! ! ! !'))
 
     def get_spitfp_error_count(self):
         """
@@ -337,7 +337,7 @@ class BrickletDMX(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -355,7 +355,7 @@ class BrickletDMX(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -363,7 +363,7 @@ class BrickletDMX(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -378,7 +378,7 @@ class BrickletDMX(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -395,7 +395,7 @@ class BrickletDMX(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -411,7 +411,7 @@ class BrickletDMX(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -419,7 +419,7 @@ class BrickletDMX(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -432,7 +432,7 @@ class BrickletDMX(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -445,7 +445,7 @@ class BrickletDMX(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletDMX.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletDMX.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -459,7 +459,7 @@ class BrickletDMX(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletDMX.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletDMX.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -468,7 +468,7 @@ class BrickletDMX(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletDMX.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -484,7 +484,7 @@ class BrickletDMX(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def write_frame(self, frame):
         """

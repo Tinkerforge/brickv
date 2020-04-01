@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -144,7 +144,7 @@ class BrickletLEDStripV2(Device):
         self.response_expected[BrickletLEDStripV2.FUNCTION_READ_UID] = BrickletLEDStripV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLEDStripV2.FUNCTION_GET_IDENTITY] = BrickletLEDStripV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletLEDStripV2.CALLBACK_FRAME_STARTED] = 'H'
+        self.callback_formats[BrickletLEDStripV2.CALLBACK_FRAME_STARTED] = (10, 'H')
 
         ipcon.add_device(self)
 
@@ -183,7 +183,7 @@ class BrickletLEDStripV2(Device):
         value_chunk_offset = int(value_chunk_offset)
         value_chunk_data = list(map(int, value_chunk_data))
 
-        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_LED_VALUES_LOW_LEVEL, (index, value_length, value_chunk_offset, value_chunk_data), 'H H H 58B', '')
+        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_LED_VALUES_LOW_LEVEL, (index, value_length, value_chunk_offset, value_chunk_data), 'H H H 58B', 0, '')
 
     def get_led_values_low_level(self, index, length):
         """
@@ -200,7 +200,7 @@ class BrickletLEDStripV2(Device):
         index = int(index)
         length = int(length)
 
-        return GetLEDValuesLowLevel(*self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_LED_VALUES_LOW_LEVEL, (index, length), 'H H', 'H H 60B'))
+        return GetLEDValuesLowLevel(*self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_LED_VALUES_LOW_LEVEL, (index, length), 'H H', 72, 'H H 60B'))
 
     def set_frame_duration(self, duration):
         """
@@ -217,7 +217,7 @@ class BrickletLEDStripV2(Device):
 
         duration = int(duration)
 
-        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_FRAME_DURATION, (duration,), 'H', '')
+        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_FRAME_DURATION, (duration,), 'H', 0, '')
 
     def get_frame_duration(self):
         """
@@ -225,7 +225,7 @@ class BrickletLEDStripV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_FRAME_DURATION, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_FRAME_DURATION, (), '', 10, 'H')
 
     def get_supply_voltage(self):
         """
@@ -233,7 +233,7 @@ class BrickletLEDStripV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_SUPPLY_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_SUPPLY_VOLTAGE, (), '', 10, 'H')
 
     def set_clock_frequency(self, frequency):
         """
@@ -254,7 +254,7 @@ class BrickletLEDStripV2(Device):
 
         frequency = int(frequency)
 
-        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_CLOCK_FREQUENCY, (frequency,), 'I', '')
+        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_CLOCK_FREQUENCY, (frequency,), 'I', 0, '')
 
     def get_clock_frequency(self):
         """
@@ -262,7 +262,7 @@ class BrickletLEDStripV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CLOCK_FREQUENCY, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CLOCK_FREQUENCY, (), '', 12, 'I')
 
     def set_chip_type(self, chip):
         """
@@ -280,7 +280,7 @@ class BrickletLEDStripV2(Device):
 
         chip = int(chip)
 
-        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_CHIP_TYPE, (chip,), 'H', '')
+        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_CHIP_TYPE, (chip,), 'H', 0, '')
 
     def get_chip_type(self):
         """
@@ -288,7 +288,7 @@ class BrickletLEDStripV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CHIP_TYPE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CHIP_TYPE, (), '', 10, 'H')
 
     def set_channel_mapping(self, mapping):
         """
@@ -312,7 +312,7 @@ class BrickletLEDStripV2(Device):
 
         mapping = int(mapping)
 
-        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_CHANNEL_MAPPING, (mapping,), 'B', '')
+        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_CHANNEL_MAPPING, (mapping,), 'B', 0, '')
 
     def get_channel_mapping(self):
         """
@@ -320,7 +320,7 @@ class BrickletLEDStripV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CHANNEL_MAPPING, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CHANNEL_MAPPING, (), '', 9, 'B')
 
     def set_frame_started_callback_configuration(self, enable):
         """
@@ -330,7 +330,7 @@ class BrickletLEDStripV2(Device):
 
         enable = bool(enable)
 
-        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_FRAME_STARTED_CALLBACK_CONFIGURATION, (enable,), '!', '')
+        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_FRAME_STARTED_CALLBACK_CONFIGURATION, (enable,), '!', 0, '')
 
     def get_frame_started_callback_configuration(self):
         """
@@ -339,7 +339,7 @@ class BrickletLEDStripV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_FRAME_STARTED_CALLBACK_CONFIGURATION, (), '', '!')
+        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_FRAME_STARTED_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def get_spitfp_error_count(self):
         """
@@ -357,7 +357,7 @@ class BrickletLEDStripV2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -375,7 +375,7 @@ class BrickletLEDStripV2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -383,7 +383,7 @@ class BrickletLEDStripV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -398,7 +398,7 @@ class BrickletLEDStripV2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', '')
+        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -415,7 +415,7 @@ class BrickletLEDStripV2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 'B')
+        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -431,7 +431,7 @@ class BrickletLEDStripV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', '')
+        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -439,7 +439,7 @@ class BrickletLEDStripV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -452,7 +452,7 @@ class BrickletLEDStripV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -465,7 +465,7 @@ class BrickletLEDStripV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -479,7 +479,7 @@ class BrickletLEDStripV2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_WRITE_UID, (uid,), 'I', '')
+        self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -488,7 +488,7 @@ class BrickletLEDStripV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_READ_UID, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -504,7 +504,7 @@ class BrickletLEDStripV2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletLEDStripV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def set_led_values(self, index, value):
         """

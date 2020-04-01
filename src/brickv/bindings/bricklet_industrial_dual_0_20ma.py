@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-02-26.      #
+# This file was automatically generated on 2020-04-01.      #
 #                                                           #
 # Python Bindings Version 2.1.24                            #
 #                                                           #
@@ -73,8 +73,8 @@ class BrickletIndustrialDual020mA(Device):
         self.response_expected[BrickletIndustrialDual020mA.FUNCTION_GET_SAMPLE_RATE] = BrickletIndustrialDual020mA.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDual020mA.FUNCTION_GET_IDENTITY] = BrickletIndustrialDual020mA.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletIndustrialDual020mA.CALLBACK_CURRENT] = 'B i'
-        self.callback_formats[BrickletIndustrialDual020mA.CALLBACK_CURRENT_REACHED] = 'B i'
+        self.callback_formats[BrickletIndustrialDual020mA.CALLBACK_CURRENT] = (13, 'B i')
+        self.callback_formats[BrickletIndustrialDual020mA.CALLBACK_CURRENT_REACHED] = (13, 'B i')
 
         ipcon.add_device(self)
 
@@ -97,7 +97,7 @@ class BrickletIndustrialDual020mA(Device):
 
         sensor = int(sensor)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_CURRENT, (sensor,), 'B', 'i')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_CURRENT, (sensor,), 'B', 12, 'i')
 
     def set_current_callback_period(self, sensor, period):
         """
@@ -112,7 +112,7 @@ class BrickletIndustrialDual020mA(Device):
         sensor = int(sensor)
         period = int(period)
 
-        self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_CURRENT_CALLBACK_PERIOD, (sensor, period), 'B I', '')
+        self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_CURRENT_CALLBACK_PERIOD, (sensor, period), 'B I', 0, '')
 
     def get_current_callback_period(self, sensor):
         """
@@ -122,7 +122,7 @@ class BrickletIndustrialDual020mA(Device):
 
         sensor = int(sensor)
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_CURRENT_CALLBACK_PERIOD, (sensor,), 'B', 'I')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_CURRENT_CALLBACK_PERIOD, (sensor,), 'B', 12, 'I')
 
     def set_current_callback_threshold(self, sensor, option, min, max):
         """
@@ -148,7 +148,7 @@ class BrickletIndustrialDual020mA(Device):
         min = int(min)
         max = int(max)
 
-        self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_CURRENT_CALLBACK_THRESHOLD, (sensor, option, min, max), 'B c i i', '')
+        self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_CURRENT_CALLBACK_THRESHOLD, (sensor, option, min, max), 'B c i i', 0, '')
 
     def get_current_callback_threshold(self, sensor):
         """
@@ -158,7 +158,7 @@ class BrickletIndustrialDual020mA(Device):
 
         sensor = int(sensor)
 
-        return GetCurrentCallbackThreshold(*self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_CURRENT_CALLBACK_THRESHOLD, (sensor,), 'B', 'c i i'))
+        return GetCurrentCallbackThreshold(*self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_CURRENT_CALLBACK_THRESHOLD, (sensor,), 'B', 17, 'c i i'))
 
     def set_debounce_period(self, debounce):
         """
@@ -176,7 +176,7 @@ class BrickletIndustrialDual020mA(Device):
 
         debounce = int(debounce)
 
-        self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
         """
@@ -184,7 +184,7 @@ class BrickletIndustrialDual020mA(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def set_sample_rate(self, rate):
         """
@@ -204,7 +204,7 @@ class BrickletIndustrialDual020mA(Device):
 
         rate = int(rate)
 
-        self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_SAMPLE_RATE, (rate,), 'B', '')
+        self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_SAMPLE_RATE, (rate,), 'B', 0, '')
 
     def get_sample_rate(self):
         """
@@ -212,7 +212,7 @@ class BrickletIndustrialDual020mA(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_SAMPLE_RATE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_SAMPLE_RATE, (), '', 9, 'B')
 
     def get_identity(self):
         """
@@ -228,7 +228,7 @@ class BrickletIndustrialDual020mA(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
         """
