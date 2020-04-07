@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-04-01.      #
+# This file was automatically generated on 2020-04-07.      #
 #                                                           #
-# Python Bindings Version 2.1.24                            #
+# Python Bindings Version 2.1.25                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -132,8 +132,7 @@ class BrickletRS232(Device):
     def read(self):
         """
         Returns the currently buffered message. The maximum length
-        of message is 60. If the length is given as 0, there was no
-        new data available.
+        of message is 60. If the returned length is 0, no new data was available.
 
         Instead of polling with this function, you can also use
         callbacks. See :func:`Enable Read Callback` and :cb:`Read` callback.
@@ -238,8 +237,7 @@ class BrickletRS232(Device):
         """
         Returns up to one frame of bytes from the read buffer.
         The frame size is configured with :func:`Set Frame Readable Callback Configuration`.
-        If the length is given as 0, there was no
-        new data available.
+        If the returned length is 0, no new data was available.
 
         .. versionadded:: 2.0.4$nbsp;(Plugin)
         """

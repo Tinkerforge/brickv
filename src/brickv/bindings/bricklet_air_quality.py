@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-04-01.      #
+# This file was automatically generated on 2020-04-07.      #
 #                                                           #
-# Python Bindings Version 2.1.24                            #
+# Python Bindings Version 2.1.25                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -182,7 +182,7 @@ class BrickletAirQuality(Device):
 
         This temperature offset is used to calculate the relative humidity and
         IAQ index measurements. In case the Bricklet is installed in an enclosure, we
-        recommend to measure and set the temperature offset to imporve the accuracy of
+        recommend to measure and set the temperature offset to improve the accuracy of
         the measurements.
         """
         self.check_validity()
