@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2020 Matthias Bolte <matthias@tinkerforge.com>
 
 api.py: RED Brick API wrapper
 
@@ -742,6 +742,9 @@ class REDFileBase(REDObject):
         self._write_async_data = None
 
     def _cb_async_write(self, file_id, error_code, length_written):
+        if self._cb_async_write_cookie == None:
+            return
+
         if self.object_id != file_id:
             return
 
@@ -810,6 +813,9 @@ class REDFileBase(REDObject):
         self._read_async_data = None
 
     def _cb_async_read(self, file_id, error_code, buf, length_read):
+        if self._cb_async_read_cookie == None:
+            return
+
         if self.object_id != file_id:
             return
 
@@ -867,6 +873,9 @@ class REDFileBase(REDObject):
         self._qtcb_events_occurred.emit(events)
 
     def _cb_events_occurred(self, events):
+        if self._cb_events_occurred_cookie == None:
+            return
+
         events_occurred_callback = self.events_occurred_callback
 
         if events_occurred_callback != None:
@@ -1289,6 +1298,9 @@ class REDProcessBase(REDObject):
         self._qtcb_state_changed.emit(state, timestamp, exit_code)
 
     def _cb_state_changed(self, state, timestamp, exit_code):
+        if self._cb_state_changed_emit_cookie == None:
+            return
+
         self._state     = state
         self._timestamp = timestamp
         self._exit_code = exit_code
@@ -1818,6 +1830,9 @@ class REDProgram(REDProgramBase):
         self._qtcb_scheduler_state_changed.emit()
 
     def _cb_scheduler_state_changed(self):
+        if self._cb_scheduler_state_changed_emit_cookie == None:
+            return
+
         try:
             error_code, state, timestamp, message_string_id = self._session._brick.get_program_scheduler_state(self.object_id, self._session._session_id)
         except Error:
@@ -1855,6 +1870,9 @@ class REDProgram(REDProgramBase):
         self._qtcb_lite_scheduler_state_changed.emit()
 
     def _cb_lite_scheduler_state_changed(self):
+        if self._cb_lite_scheduler_state_changed_emit_cookie == None:
+            return
+
         try:
             error_code, state, timestamp, message_string_id = self._session._brick.get_program_scheduler_state(self.object_id, self._session._session_id)
         except Error:
@@ -1888,6 +1906,9 @@ class REDProgram(REDProgramBase):
         self._qtcb_process_spawned.emit()
 
     def _cb_process_spawned(self):
+        if self._cb_process_spawned_emit_cookie == None:
+            return
+
         try:
             error_code, process_id, timestamp = self._session._brick.get_last_spawned_program_process(self.object_id, self._session._session_id)
         except Error:
@@ -1931,6 +1952,9 @@ class REDProgram(REDProgramBase):
         self._qtcb_lite_process_spawned.emit()
 
     def _cb_lite_process_spawned(self):
+        if self._cb_lite_process_spawned_emit_cookie == None:
+            return
+
         try:
             error_code, process_id, timestamp = self._session._brick.get_last_spawned_program_process(self.object_id, self._session._session_id)
         except Error:
