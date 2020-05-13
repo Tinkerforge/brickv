@@ -189,7 +189,7 @@ class SAMBA:
                 else:
                     raise SAMBAException("No permission to open serial port")
             else:
-                raise e
+                raise SAMBAException('Could not open serial port: {0}'.format(e))
 
         try:
             self.change_mode('T')
