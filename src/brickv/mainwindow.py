@@ -469,12 +469,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.data_logger_window.show()
 
-    def connect_error(self):
+    def connect_error(self, error):
         self.setDisabled(False)
         self.button_connect.setText("Connect")
         QMessageBox.critical(self, 'Connection',
                              'Could not connect. Please check host, check ' +
-                             'port and ensure that Brick Daemon is running.')
+                             'port and ensure that Brick Daemon is running. ({})'.format(error))
 
     def connect_clicked(self):
         if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_DISCONNECTED:
@@ -482,7 +482,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.setDisabled(True)
             self.button_connect.setText("Connecting...")
 
-            async_call(self.ipcon.connect, (self.last_host, self.spinbox_port.value()), None, self.connect_error)
+            async_call(self.ipcon.connect, (self.last_host, self.spinbox_port.value()), None, self.connect_error, pass_exception_to_error_callback=True)
         else:
             self.do_disconnect()
 
