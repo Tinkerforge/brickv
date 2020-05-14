@@ -65,7 +65,7 @@ def prepare_package(package_name):
 
 prepare_package('brickv')
 
-from PyQt5.QtCore import QEvent, pyqtSignal, Qt
+from PyQt5.QtCore import QEvent, pyqtSignal, Qt, QSysInfo, QOperatingSystemVersion
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTextBrowser, \
                             QPushButton, QWidget, QLabel, QCheckBox, QHBoxLayout, \
@@ -126,6 +126,26 @@ class ExceptionReporter:
             result.append(template.format(thread_id, name, stack_trace))
         return result
 
+    def get_os_name(self):
+        try:
+            ver = QOperatingSystemVersion.current()
+            os_name = ver.name() + " "
+            if ver.segmentCount() > 2:
+                os_name += '{}.{}.{}'.format(ver.majorVersion(), ver.minorVersion(), ver.microVersion())
+            elif ver.segmentCount == 2:
+                os_name += '{}.{}'.format(ver.majorVersion(), ver.minorVersion())
+            elif ver.segmentCount == 1:
+                os_name += '{}'.format(ver.majorVersion())
+            else:
+                os_name = QSysInfo.prettyProductName()
+
+            kernel_name = QSysInfo.kernelType() + ' ' + QSysInfo.kernelVersion()
+            if os_name != kernel_name:
+                os_name += ' ({})'.format(kernel_name)
+            return os_name
+        except Exception as e:
+            return 'unknown OS - PLEASE EXPLAIN IF SENDING REPORT.'
+
     def error_spawner(self):
         ignored = []
         while True:
@@ -136,7 +156,7 @@ class ExceptionReporter:
             if hash_ in ignored:
                 continue
 
-            prefix = 'Brick Viewer {} on {}\nException raised at {}'.format(config.BRICKV_FULL_VERSION, sys.platform, time_occured)
+            prefix = 'Brick Viewer {} on {}\nException raised at {}'.format(config.BRICKV_FULL_VERSION, self.get_os_name(), time_occured)
             if thread is not None:
                 prefix += ' by Thread {}'.format(thread.ident)
                 if thread.name is not None:
