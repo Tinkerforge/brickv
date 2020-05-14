@@ -62,7 +62,7 @@ from brickv.bindings.bricklet_isolator import BrickletIsolator
 from brickv import config
 from brickv.infos import DeviceInfo, BrickMasterInfo, BrickREDInfo, BrickHATInfo, \
                          BrickHATZeroInfo, BrickletIsolatorInfo, BrickInfo, \
-                         BrickletInfo, TNGInfo, get_version_string, inventory
+                         BrickletInfo, TNGInfo, get_version_string, inventory, UID_BRICKV
 from brickv.tab_window import TabWindow, IconButton
 from brickv.plugin_system.comcu_bootloader import COMCUBootloader
 from brickv.load_pixmap import load_pixmap
@@ -74,9 +74,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     qtcb_connected = pyqtSignal(int)
     qtcb_disconnected = pyqtSignal(int)
 
-    def __init__(self, parent=None):
+    def __init__(self, brickv_version_ref, parent=None):
         QMainWindow.__init__(self, parent)
 
+        self.brickv_version_ref = brickv_version_ref
         self.setupUi(self)
 
         # Setting the minimum width of the setup tab ensures, that other tabs can grow
@@ -1212,3 +1213,5 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.hide_status('fw_versions_fetched_error')
             inventory.update_latest_fws(firmware_info)
+            self.brickv_version_ref[0] = inventory.get_info(UID_BRICKV).firmware_version_installed
+            self.brickv_version_ref[1] = inventory.get_info(UID_BRICKV).firmware_version_latest

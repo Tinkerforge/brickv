@@ -79,6 +79,8 @@ logging.basicConfig(level=config.LOGGING_LEVEL,
                     format=config.LOGGING_FORMAT,
                     datefmt=config.LOGGING_DATEFMT)
 
+brickv_version = [(0, 0, 0), (0, 0, 0)]
+
 class ExceptionReporter:
     def __init__(self, argv):
         self.argv = argv
@@ -156,12 +158,23 @@ class ExceptionReporter:
             if hash_ in ignored:
                 continue
 
+            label_suffix = ''
+
+            if brickv_version[1] == (0, 0, 0):
+                label_suffix += '<br/><br/><b>Your Brick Viewer version is {}, however it is unknown if a newer version is available.</b> Please <a href="https://www.tinkerforge.com/en/doc/Downloads.html#tools">check for updates</a> before reporting this error.'.format(config.BRICKV_FULL_VERSION)
+
+            elif brickv_version[0] < brickv_version[1]:
+                label_suffix += '<br/><br/><b>Your Brick Viewer version is {}, however {}.{}.{} is available.</b> Please update and try again before reporting this error.'.format(config.BRICKV_FULL_VERSION, *brickv_version[1])
+
             prefix = 'Brick Viewer {} on {}\nException raised at {}'.format(config.BRICKV_FULL_VERSION, self.get_os_name(), time_occured)
             if thread is not None:
                 prefix += ' by Thread {}'.format(thread.ident)
                 if thread.name is not None:
                     prefix += ' (Name: {})'.format(thread.name)
             print(prefix)
+
+            prefix = label_suffix + '!!!' + prefix
+
             traceback.print_exception(etype=exctype, value=value, tb=tb)
 
             report_message = prefix + '\n\n' + error + '\nActive Threads:\n\n' + '\n\n'.join(self.get_python_thread_stack_traces())
@@ -200,6 +213,7 @@ class BrickViewer(QApplication):
 
 def error_report_main():
     error_message = sys.stdin.read()
+    label_suffix, error_message = error_message.split('!!!')
     error_message = "<pre>{}</pre>".format(html.escape(error_message).replace("\n", "<br>"))
 
     app = QApplication(sys.argv)
@@ -228,7 +242,7 @@ def error_report_main():
 
     label = QLabel("Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>.<br/>" +
                    "Please also report what you tried to do, when the error was reported.<br/><br/>" +
-                   "If you know what caused the error and could work around it, please report it anyway. This allows us to improve the error messages.")
+                   "If you know what caused the error and could work around it, please report it anyway. This allows us to improve the error messages.{}".format(label_suffix))
     label.setWordWrap(True)
     label.setOpenExternalLinks(True)
     right_widget.layout().addWidget(label)
@@ -303,7 +317,7 @@ def main():
 
         from brickv.mainwindow import MainWindow
 
-        main_window = MainWindow()
+        main_window = MainWindow(brickv_version)
         main_window.show()
 
         splash.finish(main_window)
@@ -313,7 +327,7 @@ def main():
 
         etype, value, tb = sys.exc_info()
         error = "".join(traceback.format_exception(etype, value, tb))
-        error = "The following error is fatal. Exiting now.\n\n" + error
+        error = "!!!The following error is fatal. Exiting now.\n\n" + error
 
         traceback.print_exception(etype, value, tb)
 
