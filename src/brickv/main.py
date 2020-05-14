@@ -226,7 +226,8 @@ def error_report_main():
     right_widget.setLayout(QVBoxLayout())
     right_widget.layout().setContentsMargins(0, 0, 0, 0)
 
-    label = QLabel("Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>.<br/><br/>" +
+    label = QLabel("Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>.<br/>" +
+                   "Please also report what you tried to do, when the error was reported.<br/><br/>" +
                    "If you know what caused the error and could work around it, please report it anyway. This allows us to improve the error messages.")
     label.setWordWrap(True)
     label.setOpenExternalLinks(True)
