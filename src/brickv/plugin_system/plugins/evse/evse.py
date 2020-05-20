@@ -34,7 +34,7 @@ from brickv.slider_spin_syncer import SliderSpinSyncer
 
 IEC61851_STATE = ['A', 'B', 'C', 'D', 'EF']
 LED_STATE = ['Off', 'On', 'Blinking', 'Breathing']
-CONTACTOR_STATE = ['Input Not Live, Output Not Live', 'Input Live, Output Not Live', 'Input Not Live, Output Live', 'Input Live, Output Live']
+CONTACTOR_STATE = ['Not Live', 'Live']
 LOCK_STATE = ['Init', 'Open', 'Closing', 'Close', 'Opening', 'Error']
 JUMPER_CONFIGURATON = ['6A', '10A', '13A', '16A', '20A', '25A', '32A', 'Software', 'Unconfigured']
 GPIO = ['Low', 'High']
@@ -68,7 +68,8 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
         self.label_resistance_pp_pe.setText(res_pp)
         self.label_cp_pwm_duty_cycle.setText('{0} %'.format(state.cp_pwm_duty_cycle/10))
         self.label_contactor.setText(CONTACTOR[state.gpio[3]])
-        self.label_contactor_state.setText(CONTACTOR_STATE[state.contactor_state])
+        self.label_contactor_input.setText(CONTACTOR_STATE[state.contactor_state in (1, 3)])
+        self.label_contactor_output.setText(CONTACTOR_STATE[state.contactor_state in (2, 3)])
         self.label_contactor_error.setText(str(state.contactor_error))
         self.label_gpio_enable.setText(GPIO[state.gpio[0]])
         self.label_gpio_led.setText(GPIO[state.gpio[1]])

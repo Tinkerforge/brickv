@@ -23,6 +23,13 @@
        </property>
       </widget>
      </item>
+     <item row="5" column="1">
+      <widget class="QLabel" name="label_contactor">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
      <item row="2" column="2">
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -35,6 +42,13 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_14">
+       <property name="text">
+        <string>Contactor</string>
+       </property>
+      </widget>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_2">
@@ -57,21 +71,21 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="0">
+     <item row="9" column="0">
       <widget class="QLabel" name="label_8">
        <property name="text">
         <string>GPIO Enable</string>
        </property>
       </widget>
      </item>
-     <item row="11" column="0">
+     <item row="12" column="0">
       <widget class="QLabel" name="label_9">
        <property name="text">
         <string>Lock State</string>
        </property>
       </widget>
      </item>
-     <item row="9" column="0">
+     <item row="10" column="0">
       <widget class="QLabel" name="label_10">
        <property name="text">
         <string>GPIO LED</string>
@@ -81,11 +95,11 @@
      <item row="6" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Contactor Check State</string>
+        <string>Contactor Check Input</string>
        </property>
       </widget>
      </item>
-     <item row="7" column="0">
+     <item row="8" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
         <string>Contactor Check Error</string>
@@ -99,7 +113,7 @@
        </property>
       </widget>
      </item>
-     <item row="13" column="0">
+     <item row="14" column="0">
       <widget class="QLabel" name="label_13">
        <property name="text">
         <string>Lock Switch</string>
@@ -127,14 +141,14 @@
        </property>
       </widget>
      </item>
-     <item row="10" column="0">
+     <item row="11" column="0">
       <widget class="QLabel" name="label_11">
        <property name="text">
         <string>GPIO Motor Switch</string>
        </property>
       </widget>
      </item>
-     <item row="12" column="0">
+     <item row="13" column="0">
       <widget class="QLabel" name="label_12">
        <property name="text">
         <string>Jumper Configuration</string>
@@ -156,70 +170,70 @@
       </widget>
      </item>
      <item row="6" column="1">
-      <widget class="QLabel" name="label_contactor_state">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="1">
-      <widget class="QLabel" name="label_contactor_error">
+      <widget class="QLabel" name="label_contactor_input">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
      <item row="8" column="1">
-      <widget class="QLabel" name="label_gpio_enable">
+      <widget class="QLabel" name="label_contactor_error">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
      <item row="9" column="1">
-      <widget class="QLabel" name="label_gpio_led">
+      <widget class="QLabel" name="label_gpio_enable">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
      <item row="10" column="1">
-      <widget class="QLabel" name="label_gpio_motor_switch">
+      <widget class="QLabel" name="label_gpio_led">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
      <item row="11" column="1">
-      <widget class="QLabel" name="label_lock_state">
+      <widget class="QLabel" name="label_gpio_motor_switch">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
      <item row="12" column="1">
-      <widget class="QLabel" name="label_jumper_configuration">
+      <widget class="QLabel" name="label_lock_state">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
      <item row="13" column="1">
+      <widget class="QLabel" name="label_jumper_configuration">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="1">
       <widget class="QLabel" name="label_lock_switch">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_14">
+     <item row="7" column="0">
+      <widget class="QLabel" name="label_15">
        <property name="text">
-        <string>Contactor</string>
+        <string>Contactor Check Output</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
-      <widget class="QLabel" name="label_contactor">
+     <item row="7" column="1">
+      <widget class="QLabel" name="label_contactor_output">
        <property name="text">
         <string>TBD</string>
        </property>
