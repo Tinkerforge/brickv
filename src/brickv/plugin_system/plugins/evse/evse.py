@@ -38,6 +38,7 @@ CONTACTOR_STATE = ['Input Not Live, Output Not Live', 'Input Live, Output Not Li
 LOCK_STATE = ['Init', 'Open', 'Closing', 'Close', 'Opening', 'Error']
 JUMPER_CONFIGURATON = ['6A', '10A', '13A', '16A', '20A', '25A', '32A', 'Software', 'Unconfigured']
 GPIO = ['Low', 'High']
+CONTACTOR = ['Inactive', 'Active']
 LOCK_SWITCH = ['Not Available', 'Available']
 
 class EVSE(COMCUPluginBase, Ui_EVSE):
@@ -66,6 +67,7 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
         self.label_resistance_cp_pe.setText(res_cp)
         self.label_resistance_pp_pe.setText(res_pp)
         self.label_cp_pwm_duty_cycle.setText('{0} %'.format(state.cp_pwm_duty_cycle/10))
+        self.label_contactor.setText(CONTACTOR[state.gpio[3]])
         self.label_contactor_state.setText(CONTACTOR_STATE[state.contactor_state])
         self.label_contactor_error.setText(str(state.contactor_error))
         self.label_gpio_enable.setText(GPIO[state.gpio[0]])
