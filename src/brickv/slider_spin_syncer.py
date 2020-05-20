@@ -2,6 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Olaf Lüke <olaf@tinkerforge.com>
 
 slider_spin_syncer.py: Sync QSlider and QSpinBox
 
@@ -30,6 +31,15 @@ class SliderSpinSyncer:
         self.slider.valueChanged.connect(self.set_spinbox_from_slider_value)
         self.slider.sliderMoved.connect(self.set_spinbox_from_slider_position)
         getattr(self.spin, spin_signal).connect(self.set_slider_from_spinbox)
+
+    def set_value(self, value):
+        old_state = self.slider.blockSignals(True)
+        self.slider.setValue(value)
+        self.slider.blockSignals(old_state)
+
+        old_state = self.spin.blockSignals(True)
+        self.spin.setValue(value)
+        self.spin.blockSignals(old_state)
 
     def set_spinbox_from_slider_value(self):
         value = self.slider.value()
