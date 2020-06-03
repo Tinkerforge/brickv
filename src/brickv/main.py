@@ -311,7 +311,11 @@ def main():
 
         message = 'Starting Brick Viewer ' + config.BRICKV_FULL_VERSION
 
-        splash.showMessage(message, Qt.AlignHCenter | Qt.AlignBottom, Qt.white)
+        # FIXME: Need int cast for alignment here, because of an API design bug
+        #        in Qt. The alignment parameter has type int but should have type
+        #        Qt.Alignment. Because of this Python 3.8 reports a deprecation
+        #        warning about implicit int casts being removed in the future.
+        splash.showMessage(message, int(Qt.AlignHCenter | Qt.AlignBottom), Qt.white)
 
         brick_viewer.processEvents()
 
