@@ -242,6 +242,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         event.accept()
         async_stop_thread()
 
+        # Stop firmware fetcher thread.
+        self.disable_auto_search_for_updates()
+        # Instead of calling .quit() on the thread, the firmware version fetcher could call
+        # QThread.currentThread().exit(0). Both variants will stop the event loop of the
+        # formware fetcher's QThread. However the fetcher currently does not
+        # know if it is running in a QThread or a threading.Thread. So we stop it here instead.
+        self.fw_version_fetcher_thread.quit()
+        # Will wait for ~ 20 seconds if the fetcher just started downloading new versions.
+        self.fw_version_fetcher_thread.wait()
+
         # Without this, the quit event seems to not reach the main loop under OSX.
         QApplication.quit()
 
