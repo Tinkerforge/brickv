@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-05-14.      #
+# This file was automatically generated on 2020-06-05.      #
 #                                                           #
-# Python Bindings Version 2.1.25                            #
+# Python Bindings Version 2.1.26                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -79,8 +79,8 @@ class BrickletDCV2(Device):
     GPIO_ACTION_NONE = 0
     GPIO_ACTION_NORMAL_STOP_RISING_EDGE = 1
     GPIO_ACTION_NORMAL_STOP_FALLING_EDGE = 2
-    GPIO_ACTION_FULL_BREAK_RISING_EDGE = 4
-    GPIO_ACTION_FULL_BREAK_FALLING_EDGE = 8
+    GPIO_ACTION_FULL_BRAKE_RISING_EDGE = 4
+    GPIO_ACTION_FULL_BRAKE_FALLING_EDGE = 8
     GPIO_ACTION_CALLBACK_RISING_EDGE = 16
     GPIO_ACTION_CALLBACK_FALLING_EDGE = 32
     ERROR_LED_CONFIG_OFF = 0
@@ -331,24 +331,27 @@ class BrickletDCV2(Device):
 
         return GetPowerStatistics(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_POWER_STATISTICS, (), '', 12, 'H H'))
 
-    def set_gpio_configuration(self, debounce, stop_deceleration):
+    def set_gpio_configuration(self, channel, debounce, stop_deceleration):
         """
         TBD
         """
         self.check_validity()
 
+        channel = int(channel)
         debounce = int(debounce)
         stop_deceleration = int(stop_deceleration)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_GPIO_CONFIGURATION, (debounce, stop_deceleration), 'H i', 0, '')
+        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_GPIO_CONFIGURATION, (channel, debounce, stop_deceleration), 'B H H', 0, '')
 
-    def get_gpio_configuration(self):
+    def get_gpio_configuration(self, channel):
         """
         TBD
         """
         self.check_validity()
 
-        return GetGPIOConfiguration(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_GPIO_CONFIGURATION, (), '', 14, 'H i'))
+        channel = int(channel)
+
+        return GetGPIOConfiguration(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_GPIO_CONFIGURATION, (channel,), 'B', 12, 'H H'))
 
     def set_gpio_action(self, channel, action):
         """

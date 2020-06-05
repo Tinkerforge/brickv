@@ -45,6 +45,19 @@ class DCV2(COMCUPluginBase, Ui_DCV2):
         self.radio_mode_brake.toggled.connect(self.brake_value_changed)
         self.radio_mode_coast.toggled.connect(self.coast_value_changed)
 
+        self.gpio0_stop_rising_check.stateChanged.connect(lambda: self.gpio_action_changed(0))
+        self.gpio0_stop_falling_check.stateChanged.connect(lambda: self.gpio_action_changed(0))
+        self.gpio0_brake_rising_check.stateChanged.connect(lambda: self.gpio_action_changed(0))
+        self.gpio0_brake_falling_check.stateChanged.connect(lambda: self.gpio_action_changed(0))
+        self.gpio1_stop_rising_check.stateChanged.connect(lambda: self.gpio_action_changed(1))
+        self.gpio1_stop_falling_check.stateChanged.connect(lambda: self.gpio_action_changed(1))
+        self.gpio1_brake_rising_check.stateChanged.connect(lambda: self.gpio_action_changed(1))
+        self.gpio1_brake_falling_check.stateChanged.connect(lambda: self.gpio_action_changed(1))
+        self.gpio0_debounce_spin.valueChanged.connect(lambda: self.gpio_configuration_changed(0))
+        self.gpio0_stop_deceleration_spin.valueChanged.connect(lambda: self.gpio_configuration_changed(0))
+        self.gpio1_debounce_spin.valueChanged.connect(lambda: self.gpio_configuration_changed(1))
+        self.gpio1_stop_deceleration_spin.valueChanged.connect(lambda: self.gpio_configuration_changed(1))
+
         self.velocity_syncer      = SliderSpinSyncer(self.velocity_slider,     self.velocity_spin,     self.velocity_changed)
         self.acceleration_syncer  = SliderSpinSyncer(self.acceleration_slider, self.acceleration_spin, self.motion_changed)
         self.deceleration_syncer  = SliderSpinSyncer(self.deceleration_slider, self.deceleration_spin, self.motion_changed)
@@ -52,6 +65,7 @@ class DCV2(COMCUPluginBase, Ui_DCV2):
 
         self.cbe_power_statistics = CallbackEmulator(self.dc.get_power_statistics, None, self.get_power_statistics_async, self.increase_error_count)
         self.cbe_current_velocity = CallbackEmulator(self.dc.get_current_velocity, None, self.get_current_velocity_async, self.increase_error_count)
+        self.cbe_gpio_state       = CallbackEmulator(self.dc.get_gpio_state,       None, self.get_gpio_state_async,       self.increase_error_count)
 
     def start(self):
         async_call(self.dc.get_drive_mode,    None, self.get_drive_mode_async,    self.increase_error_count)
@@ -60,10 +74,17 @@ class DCV2(COMCUPluginBase, Ui_DCV2):
         async_call(self.dc.get_pwm_frequency, None, self.get_pwm_frequency_async, self.increase_error_count)
         async_call(self.dc.get_enabled,       None, self.get_enabled_async,       self.increase_error_count)
 
+        async_call(self.dc.get_gpio_configuration, 0, lambda x: self.get_gpio_configuration_async(0, x), self.increase_error_count)
+        async_call(self.dc.get_gpio_configuration, 1, lambda x: self.get_gpio_configuration_async(1, x), self.increase_error_count)
+        async_call(self.dc.get_gpio_action,        0, lambda x: self.get_gpio_action_async(0, x),        self.increase_error_count)
+        async_call(self.dc.get_gpio_action,        1, lambda x: self.get_gpio_action_async(1, x),        self.increase_error_count)
+
+        self.cbe_gpio_state.set_period(200)
         self.cbe_power_statistics.set_period(100)
         self.cbe_current_velocity.set_period(50)
 
     def stop(self):
+        self.cbe_gpio_state.set_period(0)
         self.cbe_power_statistics.set_period(0)
         self.cbe_current_velocity.set_period(0)
 
@@ -75,7 +96,6 @@ class DCV2(COMCUPluginBase, Ui_DCV2):
         return device_identifier == BrickletDCV2.DEVICE_IDENTIFIER
 
     def brake_value_changed(self, checked):
-        print('brake_value_changed', checked)
         if checked:
             try:
                 self.dc.set_drive_mode(0)
@@ -83,7 +103,6 @@ class DCV2(COMCUPluginBase, Ui_DCV2):
                 return
 
     def coast_value_changed(self, checked):
-        print('coast_value_changed', checked)
         if checked:
             try:
                 self.dc.set_drive_mode(1)
@@ -91,7 +110,6 @@ class DCV2(COMCUPluginBase, Ui_DCV2):
                 return
 
     def full_brake_clicked(self):
-        print("full brake!")
         try:
             self.dc.full_brake()
             self.velocity_syncer.set_value(0)
@@ -99,7 +117,6 @@ class DCV2(COMCUPluginBase, Ui_DCV2):
             return
 
     def get_drive_mode_async(self, dm):
-        print('get_drive_mode_async', dm)
         if dm == 0:
             self.radio_mode_brake.setChecked(True)
             self.radio_mode_coast.setChecked(False)
@@ -108,8 +125,6 @@ class DCV2(COMCUPluginBase, Ui_DCV2):
             self.radio_mode_coast.setChecked(True)
 
     def get_power_statistics_async(self, ps):
-#        print('get_power_statistics_async', ps)
-
         if ps.current >= 1000:
             current_str = "{0}A".format(round(ps.current / 1000.0, 1))
         else:
@@ -124,29 +139,54 @@ class DCV2(COMCUPluginBase, Ui_DCV2):
         self.input_voltage_label.setText(voltage_str)
 
     def get_current_velocity_async(self, velocity):
-#        print('get_current_velocity_async', velocity)
         self.speedometer.set_velocity(velocity)
         self.current_velocity_label.setText('{0} ({1}%)'.format(velocity, round(abs(velocity) * 100 / 32768.0, 1)))
 
     def get_velocity_async(self, velocity):
-        print('get_velocity_async', velocity)
         self.velocity_syncer.set_value(velocity)
 
     def get_motion_async(self, motion):
-        print('get_motion_async', motion)
         self.acceleration_syncer.set_value(motion.acceleration)
         self.deceleration_syncer.set_value(motion.deceleration)
 
     def get_pwm_frequency_async(self, frequency):
-        print('get_pwm_frequency_async', frequency)
         self.frequency_syncer.set_value(frequency)
 
     def get_enabled_async(self, enabled):
-        print('get_enabled_async', enabled)
         self.enable_checkbox.setChecked(enabled)
 
+    def get_gpio_configuration_async(self, channel, conf):
+        if channel == 0:
+            self.gpio0_debounce_spin.setValue(conf.debounce)
+            self.gpio0_stop_deceleration_spin.setValue(conf.stop_deceleration)
+        elif channel == 1:
+            self.gpio1_debounce_spin.setValue(conf.debounce)
+            self.gpio1_stop_deceleration_spin.setValue(conf.stop_deceleration)
+
+    def get_gpio_action_async(self, channel, action):
+        if channel == 0:
+            self.gpio0_stop_rising_check.setChecked((action & self.dc.GPIO_ACTION_NORMAL_STOP_RISING_EDGE) != 0)
+            self.gpio0_stop_falling_check.setChecked((action & self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE) != 0)
+            self.gpio0_brake_rising_check.setChecked((action & self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE) != 0)
+            self.gpio0_brake_falling_check.setChecked((action & self.dc.GPIO_ACTION_FULL_BRAKE_FALLING_EDGE) != 0)
+        elif channel == 1:
+            self.gpio1_stop_rising_check.setChecked((action & self.dc.GPIO_ACTION_NORMAL_STOP_RISING_EDGE) != 0)
+            self.gpio1_stop_falling_check.setChecked((action & self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE) != 0)
+            self.gpio1_brake_rising_check.setChecked((action & self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE) != 0)
+            self.gpio1_brake_falling_check.setChecked((action & self.dc.GPIO_ACTION_FULL_BRAKE_FALLING_EDGE) != 0)
+
+    def get_gpio_state_async(self, state):
+        if state[0]:
+            self.gpio0_state_label.setText('High')
+        else:
+            self.gpio0_state_label.setText('Low')
+
+        if state[1]:
+            self.gpio1_state_label.setText('High')
+        else:
+            self.gpio1_state_label.setText('Low')
+
     def enable_state_changed(self, state):
-        print('enable_state_changed', state)
         try:
             self.dc.set_enabled(state == Qt.Checked)
         except ip_connection.Error:
@@ -155,24 +195,45 @@ class DCV2(COMCUPluginBase, Ui_DCV2):
     def motion_changed(self, _):
         acceleration = self.acceleration_spin.value()
         deceleration = self.deceleration_spin.value()
-        print('motion_changed', acceleration, deceleration)
         try:
             self.dc.set_motion(acceleration, deceleration)
         except ip_connection.Error:
             return
 
     def velocity_changed(self, value):
-        print('velocity_changed', value)
         try:
             self.dc.set_velocity(value)
         except ip_connection.Error:
-            import traceback
-            traceback.print_exc()
             return
 
     def frequency_changed(self, value):
-        print('frequency_changed', value)
         try:
             self.dc.set_pwm_frequency(value)
         except ip_connection.Error:
             return
+
+    def gpio_action_changed(self, channel):
+        action = 0
+        if channel == 0:
+            if self.gpio0_stop_rising_check.isChecked():   action = action | self.dc.GPIO_ACTION_NORMAL_STOP_RISING_EDGE
+            if self.gpio0_stop_falling_check.isChecked():  action = action | self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE
+            if self.gpio0_brake_rising_check.isChecked():  action = action | self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE
+            if self.gpio0_brake_falling_check.isChecked(): action = action | self.dc.GPIO_ACTION_FULL_BRAKE_FALLING_EDGE
+        elif channel == 1:
+            if self.gpio1_stop_rising_check.isChecked():   action = action | self.dc.GPIO_ACTION_NORMAL_STOP_RISING_EDGE
+            if self.gpio1_stop_falling_check.isChecked():  action = action | self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE
+            if self.gpio1_brake_rising_check.isChecked():  action = action | self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE
+            if self.gpio1_brake_falling_check.isChecked(): action = action | self.dc.GPIO_ACTION_FULL_BRAKE_FALLING_EDGE
+        
+        # TODO: Retain callback configuration
+        self.dc.set_gpio_action(channel, action)
+
+    def gpio_configuration_changed(self, channel):
+        if channel == 0:
+            debounce          = self.gpio0_debounce_spin.value()
+            stop_deceleration = self.gpio0_stop_deceleration_spin.value()
+        elif channel == 1:
+            debounce          = self.gpio1_debounce_spin.value()
+            stop_deceleration = self.gpio1_stop_deceleration_spin.value()
+
+        self.dc.set_gpio_configuration(channel, debounce, stop_deceleration)
