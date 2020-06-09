@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-06-08.      #
+# This file was automatically generated on 2020-06-09.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -19,6 +19,7 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetValue = namedtuple('Value', ['timestamp', 'value'])
+GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class TNGDI8(Device):
     """
@@ -37,6 +38,7 @@ class TNGDI8(Device):
     FUNCTION_SET_WRITE_FIRMWARE_POINTER = 237
     FUNCTION_WRITE_FIRMWARE = 238
     FUNCTION_RESET = 243
+    FUNCTION_GET_IDENTITY = 255
 
     COPY_STATUS_OK = 0
     COPY_STATUS_DEVICE_IDENTIFIER_INCORRECT = 1
@@ -59,6 +61,7 @@ class TNGDI8(Device):
         self.response_expected[TNGDI8.FUNCTION_SET_WRITE_FIRMWARE_POINTER] = TNGDI8.RESPONSE_EXPECTED_FALSE
         self.response_expected[TNGDI8.FUNCTION_WRITE_FIRMWARE] = TNGDI8.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[TNGDI8.FUNCTION_RESET] = TNGDI8.RESPONSE_EXPECTED_FALSE
+        self.response_expected[TNGDI8.FUNCTION_GET_IDENTITY] = TNGDI8.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
         ipcon.add_device(self)
@@ -119,3 +122,16 @@ class TNGDI8(Device):
         self.check_validity()
 
         self.ipcon.send_request(self, TNGDI8.FUNCTION_RESET, (), '', 0, '')
+
+    def get_identity(self):
+        """
+        Returns the UID, the UID where the Brick is connected to,
+        the position, the hardware and firmware version as well as the
+        device identifier.
+
+        The position is the position in the stack from '0' (bottom) to '8' (top).
+
+        The device identifier numbers can be found :ref:`here <device_identifier>`.
+        |device_identifier_constant|
+        """
+        return GetIdentity(*self.ipcon.send_request(self, TNGDI8.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))

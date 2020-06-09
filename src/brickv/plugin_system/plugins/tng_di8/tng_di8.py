@@ -44,12 +44,12 @@ class TNGDI8(TNGPluginBase, Ui_TNGDI8):
 
     def cb_value(self, value):
         s = ''
-        for x in value:
+        for x in value.value:
             if x:
                 s += '1'
             else:
                 s += '0'
-        self.label.setText(s)
+        self.label.setText('{0}: {1}'.format(value.timestamp, s))
 
     def start(self):
         self.cbe_value.set_period(50)
