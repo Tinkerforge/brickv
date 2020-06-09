@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>235</width>
-    <height>332</height>
+    <width>241</width>
+    <height>376</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -234,6 +234,20 @@
      </item>
      <item row="7" column="1">
       <widget class="QLabel" name="label_contactor_output">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="0">
+      <widget class="QLabel" name="label_16">
+       <property name="text">
+        <string>Uptime</string>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="1">
+      <widget class="QLabel" name="label_uptime">
        <property name="text">
         <string>TBD</string>
        </property>

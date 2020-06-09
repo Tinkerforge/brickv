@@ -57,7 +57,7 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
         else:
             res_cp = '{0} Ohm'.format(state.resistance[0])
 
-        if state.resistance[0] > 100000:
+        if state.resistance[1] > 100000:
             res_pp = 'Open'
         else:
             res_pp = '{0} Ohm'.format(state.resistance[1])
@@ -77,6 +77,15 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
         self.label_lock_state.setText(LOCK_STATE[state.lock_state])
         self.label_jumper_configuration.setText(JUMPER_CONFIGURATON[state.jumper_configuration])
         self.label_lock_switch.setText(LOCK_SWITCH[state.has_lock_switch])
+        m, s = divmod(int(state.uptime/1000), 60)
+        h, m = divmod(m, 60)
+        d, h = divmod(h, 24)
+        if d == 0:
+            self.label_uptime.setText('{0:d}:{1:02d}:{2:02d}'.format(h, m, s))
+        elif d == 1:
+            self.label_uptime.setText('1 Day, {0:d}:{1:02d}:{2:02d}'.format(h, m, s))
+        else:
+            self.label_uptime.setText('{0} Day, {1:d}:{2:02d}:{3:02d}'.format(d, h, m, s))
 
     def start(self):
         self.cbe_state.set_period(100)
