@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-DC Plugin
+DC 2.0 Plugin
 Copyright (C) 2020 Olaf Lüke <olaf@tinkerforge.com>
 
 dc_v2.py: DC 2.0 Plugin implementation
