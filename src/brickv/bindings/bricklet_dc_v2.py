@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-06-05.      #
+# This file was automatically generated on 2020-06-09.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -245,7 +245,7 @@ class BrickletDCV2(Device):
 
     def get_motion(self):
         """
-        Returns the acceleration as set by :func:`Set Acceleration`.
+        Returns the acceleration as set by :func:`Set Motion`.
         """
         self.check_validity()
 

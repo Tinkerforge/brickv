@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-04-07.      #
+# This file was automatically generated on 2020-06-08.      #
 #                                                           #
-# Python Bindings Version 2.1.25                            #
+# Python Bindings Version 2.1.26                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -152,7 +152,7 @@ class BrickletCO2V2(Device):
 
     def set_air_pressure(self, air_pressure):
         """
-        The CO2 concentration (among other things) depends on the ambient air pressure.
+        The CO2 concentration depends (among other things) on the ambient air pressure.
 
         To increase the accuracy of the CO2 Bricklet 2.0 you can set the current air pressure.
         You use the :ref:`Barometer Bricklet 2.0 <barometer_v2_bricklet>` or the

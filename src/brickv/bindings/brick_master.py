@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-04-07.      #
+# This file was automatically generated on 2020-06-08.      #
 #                                                           #
-# Python Bindings Version 2.1.25                            #
+# Python Bindings Version 2.1.26                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -420,6 +420,9 @@ class BrickMaster(Device):
         Returns the stack voltage. The stack voltage is the
         voltage that is supplied via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
+
+        .. note::
+         It is not possible to measure voltages supplied per PoE or USB with this function.
         """
         self.check_validity()
 
@@ -430,6 +433,9 @@ class BrickMaster(Device):
         Returns the stack current. The stack current is the
         current that is drawn via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
+
+        .. note::
+         It is not possible to measure the current drawn via PoE or USB with this function.
         """
         self.check_validity()
 

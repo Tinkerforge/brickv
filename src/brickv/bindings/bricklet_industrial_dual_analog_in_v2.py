@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-04-07.      #
+# This file was automatically generated on 2020-06-08.      #
 #                                                           #
-# Python Bindings Version 2.1.25                            #
+# Python Bindings Version 2.1.26                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -19,6 +19,7 @@ except ValueError:
 GetVoltageCallbackConfiguration = namedtuple('VoltageCallbackConfiguration', ['period', 'value_has_to_change', 'option', 'min', 'max'])
 GetCalibration = namedtuple('Calibration', ['offset', 'gain'])
 GetChannelLEDStatusConfig = namedtuple('ChannelLEDStatusConfig', ['min', 'max', 'config'])
+GetAllVoltagesCallbackConfiguration = namedtuple('AllVoltagesCallbackConfiguration', ['period', 'value_has_to_change'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -32,6 +33,7 @@ class BrickletIndustrialDualAnalogInV2(Device):
     DEVICE_URL_PART = 'industrial_dual_analog_in_v2' # internal
 
     CALLBACK_VOLTAGE = 4
+    CALLBACK_ALL_VOLTAGES = 17
 
 
     FUNCTION_GET_VOLTAGE = 1
@@ -46,6 +48,9 @@ class BrickletIndustrialDualAnalogInV2(Device):
     FUNCTION_GET_CHANNEL_LED_CONFIG = 11
     FUNCTION_SET_CHANNEL_LED_STATUS_CONFIG = 12
     FUNCTION_GET_CHANNEL_LED_STATUS_CONFIG = 13
+    FUNCTION_GET_ALL_VOLTAGES = 14
+    FUNCTION_SET_ALL_VOLTAGES_CALLBACK_CONFIGURATION = 15
+    FUNCTION_GET_ALL_VOLTAGES_CALLBACK_CONFIGURATION = 16
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -101,7 +106,7 @@ class BrickletIndustrialDualAnalogInV2(Device):
         """
         Device.__init__(self, uid, ipcon, BrickletIndustrialDualAnalogInV2.DEVICE_IDENTIFIER, BrickletIndustrialDualAnalogInV2.DEVICE_DISPLAY_NAME)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletIndustrialDualAnalogInV2.FUNCTION_GET_VOLTAGE] = BrickletIndustrialDualAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualAnalogInV2.FUNCTION_SET_VOLTAGE_CALLBACK_CONFIGURATION] = BrickletIndustrialDualAnalogInV2.RESPONSE_EXPECTED_TRUE
@@ -115,6 +120,9 @@ class BrickletIndustrialDualAnalogInV2(Device):
         self.response_expected[BrickletIndustrialDualAnalogInV2.FUNCTION_GET_CHANNEL_LED_CONFIG] = BrickletIndustrialDualAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualAnalogInV2.FUNCTION_SET_CHANNEL_LED_STATUS_CONFIG] = BrickletIndustrialDualAnalogInV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDualAnalogInV2.FUNCTION_GET_CHANNEL_LED_STATUS_CONFIG] = BrickletIndustrialDualAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialDualAnalogInV2.FUNCTION_GET_ALL_VOLTAGES] = BrickletIndustrialDualAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialDualAnalogInV2.FUNCTION_SET_ALL_VOLTAGES_CALLBACK_CONFIGURATION] = BrickletIndustrialDualAnalogInV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletIndustrialDualAnalogInV2.FUNCTION_GET_ALL_VOLTAGES_CALLBACK_CONFIGURATION] = BrickletIndustrialDualAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualAnalogInV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletIndustrialDualAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualAnalogInV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletIndustrialDualAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualAnalogInV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletIndustrialDualAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -129,6 +137,7 @@ class BrickletIndustrialDualAnalogInV2(Device):
         self.response_expected[BrickletIndustrialDualAnalogInV2.FUNCTION_GET_IDENTITY] = BrickletIndustrialDualAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletIndustrialDualAnalogInV2.CALLBACK_VOLTAGE] = (13, 'B i')
+        self.callback_formats[BrickletIndustrialDualAnalogInV2.CALLBACK_ALL_VOLTAGES] = (16, '2i')
 
         ipcon.add_device(self)
 
@@ -320,6 +329,52 @@ class BrickletIndustrialDualAnalogInV2(Device):
         channel = int(channel)
 
         return GetChannelLEDStatusConfig(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_CHANNEL_LED_STATUS_CONFIG, (channel,), 'B', 17, 'i i B'))
+
+    def get_all_voltages(self):
+        """
+        Returns the voltages for all channels.
+
+        If you want to get the value periodically, it is recommended to use the
+        :cb:`All Voltages` callback. You can set the callback configuration
+        with :func:`Set All Voltages Callback Configuration`.
+
+        .. versionadded:: 2.0.6$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_ALL_VOLTAGES, (), '', 16, '2i')
+
+    def set_all_voltages_callback_configuration(self, period, value_has_to_change):
+        """
+        The period is the period with which the :cb:`All Voltages`
+        callback is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after at least one of the values has changed. If the values didn't
+        change within the period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+
+        .. versionadded:: 2.0.6$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+
+        self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_SET_ALL_VOLTAGES_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
+
+    def get_all_voltages_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set All Voltages Callback Configuration`.
+
+        .. versionadded:: 2.0.6$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        return GetAllVoltagesCallbackConfiguration(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogInV2.FUNCTION_GET_ALL_VOLTAGES_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def get_spitfp_error_count(self):
         """

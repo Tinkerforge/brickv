@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-04-07.      #
+# This file was automatically generated on 2020-06-08.      #
 #                                                           #
-# Python Bindings Version 2.1.25                            #
+# Python Bindings Version 2.1.26                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -53,6 +53,8 @@ class BrickletBarometer(Device):
     FUNCTION_GET_REFERENCE_AIR_PRESSURE = 19
     FUNCTION_SET_AVERAGING = 20
     FUNCTION_GET_AVERAGING = 21
+    FUNCTION_SET_I2C_MODE = 22
+    FUNCTION_GET_I2C_MODE = 23
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -60,6 +62,8 @@ class BrickletBarometer(Device):
     THRESHOLD_OPTION_INSIDE = 'i'
     THRESHOLD_OPTION_SMALLER = '<'
     THRESHOLD_OPTION_GREATER = '>'
+    I2C_MODE_FAST = 0
+    I2C_MODE_SLOW = 1
 
     def __init__(self, uid, ipcon):
         """
@@ -68,7 +72,7 @@ class BrickletBarometer(Device):
         """
         Device.__init__(self, uid, ipcon, BrickletBarometer.DEVICE_IDENTIFIER, BrickletBarometer.DEVICE_DISPLAY_NAME)
 
-        self.api_version = (2, 0, 1)
+        self.api_version = (2, 0, 2)
 
         self.response_expected[BrickletBarometer.FUNCTION_GET_AIR_PRESSURE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletBarometer.FUNCTION_GET_ALTITUDE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -87,6 +91,8 @@ class BrickletBarometer(Device):
         self.response_expected[BrickletBarometer.FUNCTION_GET_REFERENCE_AIR_PRESSURE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletBarometer.FUNCTION_SET_AVERAGING] = BrickletBarometer.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletBarometer.FUNCTION_GET_AVERAGING] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletBarometer.FUNCTION_SET_I2C_MODE] = BrickletBarometer.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletBarometer.FUNCTION_GET_I2C_MODE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletBarometer.FUNCTION_GET_IDENTITY] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletBarometer.CALLBACK_AIR_PRESSURE] = (12, 'i')
@@ -330,6 +336,38 @@ class BrickletBarometer(Device):
         self.check_validity()
 
         return GetAveraging(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AVERAGING, (), '', 11, 'B B B'))
+
+    def set_i2c_mode(self, mode):
+        """
+        Sets the I2C mode. Possible modes are:
+
+        * 0: Fast (400kHz)
+        * 1: Slow (100kHz)
+
+        If you have problems with obvious outliers in the
+        Barometer Bricklet measurements, they may be caused by EMI issues.
+        In this case it may be helpful to lower the I2C speed.
+
+        It is however not recommended to lower the I2C speed in applications where
+        a high throughput needs to be achieved.
+
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        mode = int(mode)
+
+        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_I2C_MODE, (mode,), 'B', 0, '')
+
+    def get_i2c_mode(self):
+        """
+        Returns the I2C mode as set by :func:`Set I2C Mode`.
+
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_I2C_MODE, (), '', 9, 'B')
 
     def get_identity(self):
         """

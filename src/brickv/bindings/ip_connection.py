@@ -260,6 +260,9 @@ def pack_payload(data, form):
 
     return packed
 
+# Mark start and end of the unpack_payload funtion, so that the
+# saleae bindings can extract it
+# UNPACK_PAYLOAD_CUT_HERE
 # internal
 def unpack_payload(data, form):
     ret = []
@@ -322,6 +325,8 @@ def unpack_payload(data, form):
         return ret[0]
     else:
         return ret
+
+# UNPACK_PAYLOAD_CUT_HERE
 
 class Error(Exception):
     TIMEOUT = -1

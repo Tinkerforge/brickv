@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-04-07.      #
+# This file was automatically generated on 2020-06-08.      #
 #                                                           #
-# Python Bindings Version 2.1.25                            #
+# Python Bindings Version 2.1.26                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -306,7 +306,7 @@ class BrickletCAN(Device):
         acknowledgement, form, bit and stuffing errors during CAN bus write and read
         operations.
 
-        When the write error level extends 255 then the CAN transceiver gets disabled
+        When the write error level exceeds 255 then the CAN transceiver gets disabled
         and no frames can be transmitted or received anymore. The CAN transceiver will
         automatically be activated again after the CAN bus is idle for a while.
 
