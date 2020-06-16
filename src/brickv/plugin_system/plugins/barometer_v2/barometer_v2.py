@@ -49,6 +49,7 @@ class Calibration(QDialog, Ui_Calibration):
 
         self.btn_cal_remove.clicked.connect(self.btn_cal_remove_clicked)
         self.btn_cal_calibrate.clicked.connect(self.btn_cal_calibrate_clicked)
+        self.btn_close.clicked.connect(self.close)
 
         self.cbe_air_pressure = CallbackEmulator(self.parent.barometer.get_air_pressure,
                                                  None,

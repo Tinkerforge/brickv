@@ -212,6 +212,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.btn_start_logging.clicked.connect(self.btn_start_logging_clicked)
         self.btn_save_config.clicked.connect(self.btn_save_config_clicked)
         self.btn_load_config.clicked.connect(self.btn_load_config_clicked)
+        self.btn_close.clicked.connect(self.hide)
         self.combo_data_time_format.currentIndexChanged.connect(self.update_ui_state)
         self.edit_data_time_format_strftime.textChanged.connect(self.edit_data_time_format_strftime_changed)
         self.check_data_to_csv_file.stateChanged.connect(self.update_ui_state)

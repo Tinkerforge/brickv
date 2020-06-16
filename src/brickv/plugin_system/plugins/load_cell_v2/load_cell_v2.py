@@ -57,6 +57,8 @@ class Calibration(QDialog, Ui_Calibration):
         self.label_step2.setStyleSheet('')
         self.label_status.setText('Calibration in progress...')
 
+        self.button_close.clicked.connect(self.close)
+
     def button_zero_clicked(self):
         self.lc.calibrate(0)
         self.button_weight.setEnabled(True)

@@ -87,6 +87,7 @@ during stabilization.</p>""")
         self.grid.addWidget(self.sys_color, 5, 2)
 
         self.save_calibration.clicked.connect(self.save_calibration_clicked)
+        self.button_close.clicked.connect(self.close)
 
     def save_calibration_clicked(self):
         async_call(self.imu.save_calibration, None, self.save_calibration_async, self.parent.increase_error_count)

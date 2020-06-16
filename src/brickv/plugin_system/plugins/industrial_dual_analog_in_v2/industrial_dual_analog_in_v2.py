@@ -52,6 +52,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.button_cal_remove.clicked.connect(self.remove_clicked)
         self.button_cal_offset.clicked.connect(self.offset_clicked)
         self.button_cal_gain.clicked.connect(self.gain_clicked)
+        self.button_close.clicked.connect(self.close)
 
         self.cbe_adc_values = CallbackEmulator(self.parent.analog_in.get_adc_values,
                                                None,

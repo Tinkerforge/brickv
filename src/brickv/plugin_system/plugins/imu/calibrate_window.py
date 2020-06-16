@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtWidgets import QDialog, QTabWidget
+from PyQt5.QtWidgets import QDialog, QTabWidget, QPushButton
 
 from brickv.plugin_system.plugins.imu.ui_calibrate import Ui_Calibrate
 from brickv.plugin_system.plugins.imu.calibrate_accelerometer import CalibrateAccelerometer
@@ -56,7 +56,6 @@ class CalibrateWindow(QDialog, Ui_Calibrate):
         self.cal_gyr_gain = CalibrateGyroscopeGain(self)
         self.cal_imex = CalibrateImportExport(self)
 
-
         self.tab_widget = QTabWidget()
         self.tab_widget.currentChanged.connect(self.current_tab_changed)
         self.tab_widget.addTab(self.cal_acc, "Accelerometer")
@@ -66,6 +65,11 @@ class CalibrateWindow(QDialog, Ui_Calibrate):
         self.tab_widget.addTab(self.cal_imex, "Import/Export")
 
         self.vlayout.addWidget(self.tab_widget)
+
+        self.button_close = QPushButton('Close')
+        self.button_close.clicked.connect(self.close)
+
+        self.vlayout.addWidget(self.button_close)
 
         self.refresh_values()
 

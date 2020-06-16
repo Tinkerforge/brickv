@@ -224,6 +224,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.edit_custom_plugin.textChanged.connect(self.update_ui_state)
         self.edit_custom_extension_firmware.textChanged.connect(self.update_ui_state)
 
+        self.button_close.clicked.connect(self.hide)
+
         get_main_window().fw_version_fetcher.fw_versions_avail.connect(self.fw_versions_fetched)
 
         self.refresh_update_tree_view()

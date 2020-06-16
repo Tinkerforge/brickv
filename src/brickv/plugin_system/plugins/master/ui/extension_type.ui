@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>280</width>
-    <height>78</height>
+    <width>276</width>
+    <height>123</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,7 +42,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="1" column="1" colspan="2">
     <widget class="QComboBox" name="type_box">
      <item>
       <property name="text">
@@ -76,10 +76,24 @@
      </item>
     </widget>
    </item>
-   <item row="1" column="2">
+   <item row="2" column="0" colspan="3">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
     <widget class="QPushButton" name="button_type_save">
      <property name="text">
       <string>Save</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QPushButton" name="button_close">
+     <property name="text">
+      <string>Close</string>
      </property>
     </widget>
    </item>

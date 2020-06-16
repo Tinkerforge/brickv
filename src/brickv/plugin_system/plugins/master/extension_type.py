@@ -41,6 +41,8 @@ class ExtensionType(QDialog, Ui_ExtensionType):
 
         self.index_changed(0)
 
+        self.button_close.clicked.connect(self.close)
+
     def popup_ok(self):
         QMessageBox.information(get_main_window(), "Extension Type", "Successfully saved extension type", QMessageBox.Ok)
 

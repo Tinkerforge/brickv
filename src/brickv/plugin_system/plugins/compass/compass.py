@@ -131,6 +131,8 @@ class Calibration(QDialog, Ui_Calibration):
 
         self.button_calibration_save.setEnabled(False)
 
+        self.button_close.clicked.connect(self.close)
+
     def show(self):
         QDialog.show(self)
 

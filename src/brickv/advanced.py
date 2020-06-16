@@ -50,6 +50,8 @@ class AdvancedWindow(QDialog, Ui_Advanced):
 
         inventory.info_changed.connect(self.update_bricks)
 
+        self.button_close.clicked.connect(self.hide)
+
         self.update_bricks()
 
     def update_bricks(self):

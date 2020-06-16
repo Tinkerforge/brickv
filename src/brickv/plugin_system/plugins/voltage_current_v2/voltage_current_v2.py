@@ -62,6 +62,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.btn_cal_v.clicked.connect(self.cal_v_clicked)
         self.btn_cal_c.clicked.connect(self.cal_c_clicked)
         self.btn_cal_rst.clicked.connect(self.cal_rst_clicked)
+        self.btn_close.clicked.connect(self.close)
 
         self.cbe_voltage = CallbackEmulator(self.parent.vc.get_voltage,
                                             None,

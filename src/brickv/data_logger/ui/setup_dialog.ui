@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>752</width>
-    <height>657</height>
+    <height>673</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -528,6 +528,13 @@
        </property>
        <property name="text">
         <string>Save Config</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_close">
+       <property name="text">
+        <string>Close</string>
        </property>
       </widget>
      </item>
