@@ -1,17 +1,43 @@
 Brick Viewer
 ============
 
-This repository contains the source code of Brick Viewer.
+This repository contains the source code of Brick Viewer. Prebuild
+installers/packages for various platforms are provided here::
 
-Platforms
----------
+ https://www.tinkerforge.com/en/doc/Downloads.html
+
+Supported Platforms
+-------------------
 
 * Linux
-* macOS 10.11 or newer
 * Windows 7 or newer
+* macOS 10.11 (El Capitan) or newer
 
-Usage
------
+Using the Tinkerforge APT Repository
+------------------------------------
+
+We provide prebuild `.deb` packages for Debian based Linux distributions.
+
+Follow the steps in the readme for your distribution to set up the repository:
+
+* Debian::
+
+   https://download.tinkerforge.com/apt/debian/readme.txt
+
+* Ubuntu::
+
+   https://download.tinkerforge.com/apt/ubuntu/readme.txt
+
+* Raspberry Pi OS (Raspbian)::
+
+   https://download.tinkerforge.com/apt/raspbian/readme.txt
+
+Install Brick Viewer package::
+
+ sudo apt install brickv
+
+Running the Source Code (instead of using prebuild installer/package)
+---------------------------------------------------------------------
 
 The following libraries are required:
 
@@ -50,20 +76,14 @@ To build an installer (Windows) or disk image (macOS),
 a virtual environment is required.
 
 Linux
-~~~~~
+^^^^^
 
 To build the Debian package, you need to install setuptools.
 To build the package run ``python3 build_pkg.py``
 or continue with "Building inside a virtual environment".
 
-macOS
-~~~~~
-
-Building the macOS disk image requires python3 installed with homebrew.
-Then continue with "Building inside a virtual environment".
-
 Windows
-~~~~~~~
+^^^^^^^
 
 Under Windows ensure, that python3 is in the PATH, e.g. by creating
 a python3.bat file with the content::
@@ -75,8 +95,14 @@ To build an installer, NSIS and the Universal CRT (available as a part of the
 Windows 10 SDK) is required.
 Then continue with "Building inside a virtual environment".
 
+macOS
+^^^^^
+
+Building the macOS disk image requires python3 installed with homebrew.
+Then continue with "Building inside a virtual environment".
+
 Building inside a virtual environment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The virtual environment is created with::
 
