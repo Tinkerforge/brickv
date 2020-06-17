@@ -772,11 +772,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if index > 0 and self.tab_widget.isTabEnabled(index):
             self.tab_widget.setCurrentIndex(index)
 
-        QApplication.setActiveWindow(tab_window)
+        widget = tab_window.toplevel_window
 
-        tab_window.show()
-        tab_window.activateWindow()
-        tab_window.raise_()
+        if widget == None:
+            widget = tab_window
+
+        QApplication.setActiveWindow(widget)
+
+        if widget.isMinimized():
+            widget.showNormal()
+        else:
+            widget.show()
+
+        widget.activateWindow()
+        widget.raise_()
 
         return device_info.plugin
 

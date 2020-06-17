@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QDialog, QAbstractButton, QTabBar, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QDialog, QAbstractButton, QTabBar, QVBoxLayout
 from PyQt5.QtGui import QPainter, QIcon
 
 from brickv import config
@@ -64,27 +64,22 @@ class IconButton(QAbstractButton):
     def set_normal_icon(self):
         self.setIcon(self.normal_icon)
 
-class TabWidget(QDialog):
+class ToplevelWindow(QWidget):
     def __init__(self, tab_window, name):
         super().__init__(None)
         super().setWindowTitle(name)
         self.tab_window = tab_window
 
-     # overrides QDialog.closeEvent
+    # overrides QWidget.closeEvent
     def closeEvent(self, event):
         self.tab_window.tab()
         event.accept()
 
-    # overrides QDialog.reject
-    def reject(self):
-        pass # ignore escape key, because QDialog.reject would hide the widget
-
-
-class TabWindow(QDialog):
-    """Detachable widget usable in a TabWidget. The widget can be detached
-    from the TabWidget by calling untab(), added to it by calling tab(). If tabbed,
+class TabWindow(QWidget):
+    """Detachable widget usable in a QTabWidget. The widget can be detached
+    from the QTabWidget by calling untab(), added to it by calling tab(). If tabbed,
     it has a clickable icon visualizing mouseOver events; on click the button_handler
-    of this class is called with the current index in the TabWidget.
+    of this class is called with the current index in the QTabWidget.
     Callbacks called after the tabbing and before the  untabbing events
     can be registered."""
 
@@ -101,7 +96,7 @@ class TabWindow(QDialog):
         self.cb_on_untab = {}
         self.cb_post_tab = {}
         self.cb_post_untab = {}
-        self.parent_dialog = None
+        self.toplevel_window = None
         self.update_button = None
         self.tabbed = True
 
@@ -114,12 +109,12 @@ class TabWindow(QDialog):
             self.tabbed = False
             self.tab_widget.removeTab(index)
 
-            self.parent_dialog = TabWidget(self, self.name + " - " + "Brick Viewer " + config.BRICKV_VERSION)
-            layout = QVBoxLayout(self.parent_dialog)
+            self.toplevel_window = ToplevelWindow(self, self.name + " - " + "Brick Viewer " + config.BRICKV_VERSION)
+            layout = QVBoxLayout(self.toplevel_window)
             layout.addWidget(self)
             layout.setContentsMargins(0, 0, 0, 0)
 
-            self.parent_dialog.show()
+            self.toplevel_window.show()
             self.show()
 
             for cb in self.cb_post_untab.values():

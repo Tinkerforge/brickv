@@ -231,10 +231,10 @@ class PluginBase(QWidget):
                         except:
                             pass
 
-        # If the plugin's tab is detached, we need to close the containing dialog
-        # explicitly, or else all widgets are removed, but the window stays open.
-        if self.device_info.tab_window.parent_dialog is not None:
-            self.device_info.tab_window.parent_dialog.close()
+        # If the plugin's tab is detached, we need to close the containing toplevel
+        # window explicitly, or else all widgets are removed, but the window stays open.
+        if self.device_info.tab_window.toplevel_window is not None:
+            self.device_info.tab_window.toplevel_window.close()
 
         # ensure that the widgets gets correctly destroyed. otherwise QWidgets
         # tend to leak as Python is not able to collect their PyQt object
