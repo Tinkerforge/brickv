@@ -4,6 +4,7 @@
 brickv (Brick Viewer)
 Copyright (C) 2009-2013 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2013-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 main.py: Entry file for Brick Viewer
 
@@ -65,11 +66,18 @@ def prepare_package(package_name):
 
 prepare_package('brickv')
 
-from PyQt5.QtCore import QEvent, pyqtSignal, Qt, QSysInfo, QOperatingSystemVersion
+from PyQt5.QtCore import QEvent, pyqtSignal, Qt, QSysInfo
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTextBrowser, \
                             QPushButton, QWidget, QLabel, QCheckBox, QHBoxLayout, \
                             QMessageBox, QSplashScreen
+
+# QOperatingSystemVersion is only available sice Qt 5.9
+try:
+    from PyQt5.QtCore import QOperatingSystemVersion
+    q_os_version_available = True
+except:
+    q_os_version_available = False
 
 from brickv import config
 from brickv.async_call import ASYNC_EVENT, async_event_handler
@@ -129,17 +137,20 @@ class ExceptionReporter:
         return result
 
     def get_os_name(self):
+        global q_os_version_available
         try:
-            ver = QOperatingSystemVersion.current()
-            os_name = ver.name() + " "
-            if ver.segmentCount() > 2:
-                os_name += '{}.{}.{}'.format(ver.majorVersion(), ver.minorVersion(), ver.microVersion())
-            elif ver.segmentCount == 2:
-                os_name += '{}.{}'.format(ver.majorVersion(), ver.minorVersion())
-            elif ver.segmentCount == 1:
-                os_name += '{}'.format(ver.majorVersion())
-            else:
-                os_name = QSysInfo.prettyProductName()
+            os_name = QSysInfo.prettyProductName()
+
+            if q_os_version_available:
+                ver = QOperatingSystemVersion.current()
+                if ver.name() != '':
+                    os_name += ' {} '.format(ver.name())
+                if ver.segmentCount() > 2:
+                    os_name += '{}.{}.{}'.format(ver.majorVersion(), ver.minorVersion(), ver.microVersion())
+                elif ver.segmentCount == 2:
+                    os_name += '{}.{}'.format(ver.majorVersion(), ver.minorVersion())
+                elif ver.segmentCount == 1:
+                    os_name += '{}'.format(ver.majorVersion())
 
             kernel_name = QSysInfo.kernelType() + ' ' + QSysInfo.kernelVersion()
             if os_name != kernel_name:
