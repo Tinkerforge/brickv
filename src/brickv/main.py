@@ -66,13 +66,14 @@ def prepare_package(package_name):
 
 prepare_package('brickv')
 
-from PyQt5.QtCore import QEvent, pyqtSignal, Qt, QSysInfo
+from PyQt5.Qt import PYQT_VERSION_STR
+from PyQt5.QtCore import QEvent, pyqtSignal, Qt, QSysInfo, QT_VERSION_STR
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTextBrowser, \
                             QPushButton, QWidget, QLabel, QCheckBox, QHBoxLayout, \
                             QMessageBox, QSplashScreen
 
-# QOperatingSystemVersion is only available sice Qt 5.9
+# QOperatingSystemVersion is only available since Qt 5.9
 try:
     from PyQt5.QtCore import QOperatingSystemVersion
     q_os_version_available = True
@@ -139,7 +140,10 @@ class ExceptionReporter:
     def get_os_name(self):
         global q_os_version_available
         try:
-            os_name = QSysInfo.prettyProductName()
+            try:
+                os_name = QSysInfo.prettyProductName()
+            except:
+                os_name = "PyQt older than 5.6"
 
             if q_os_version_available:
                 ver = QOperatingSystemVersion.current()
@@ -177,7 +181,7 @@ class ExceptionReporter:
             elif brickv_version[0] < brickv_version[1]:
                 label_suffix += '<br/><br/><b>Your Brick Viewer version is {}, however {}.{}.{} is available.</b> Please update and try again before reporting this error.'.format(config.BRICKV_FULL_VERSION, *brickv_version[1])
 
-            prefix = 'Brick Viewer {} on {}\nException raised at {}'.format(config.BRICKV_FULL_VERSION, self.get_os_name(), time_occured)
+            prefix = 'Brick Viewer {} on {} (PyQt {}, Qt {})\nException raised at {}'.format(config.BRICKV_FULL_VERSION, self.get_os_name(), PYQT_VERSION_STR, QT_VERSION_STR, time_occured)
             if thread is not None:
                 prefix += ' by Thread {}'.format(thread.ident)
                 if thread.name is not None:
