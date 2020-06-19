@@ -40,6 +40,7 @@ import queue
 import threading
 import subprocess
 from copy import deepcopy
+import platform
 
 def prepare_package(package_name):
     # from http://www.py2exe.org/index.cgi/WhereAmI
@@ -140,10 +141,7 @@ class ExceptionReporter:
     def get_os_name(self):
         global q_os_version_available
         try:
-            try:
-                os_name = QSysInfo.prettyProductName()
-            except:
-                os_name = "PyQt older than 5.6"
+            os_name = QSysInfo.prettyProductName()
 
             if q_os_version_available:
                 ver = QOperatingSystemVersion.current()
@@ -161,7 +159,7 @@ class ExceptionReporter:
                 os_name += ' ({})'.format(kernel_name)
             return os_name
         except Exception as e:
-            return 'unknown OS - PLEASE EXPLAIN IF SENDING REPORT.'
+            return platform.platform()
 
     def error_spawner(self):
         ignored = []
