@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-06-08.      #
+# This file was automatically generated on 2020-06-22.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -30,6 +30,7 @@ class BrickletUnknown(Device):
     DEVICE_DISPLAY_NAME = 'Unknown Bricklet'
     DEVICE_URL_PART = 'unknown' # internal
 
+    CALLBACK_COMCU_ENUMERATE = 253
 
 
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
@@ -43,6 +44,7 @@ class BrickletUnknown(Device):
     FUNCTION_RESET = 243
     FUNCTION_WRITE_UID = 248
     FUNCTION_READ_UID = 249
+    FUNCTION_COMCU_ENUMERATE = 252
     FUNCTION_GET_IDENTITY = 255
 
     BOOTLOADER_MODE_BOOTLOADER = 0
@@ -81,8 +83,10 @@ class BrickletUnknown(Device):
         self.response_expected[BrickletUnknown.FUNCTION_RESET] = BrickletUnknown.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletUnknown.FUNCTION_WRITE_UID] = BrickletUnknown.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletUnknown.FUNCTION_READ_UID] = BrickletUnknown.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletUnknown.FUNCTION_COMCU_ENUMERATE] = BrickletUnknown.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletUnknown.FUNCTION_GET_IDENTITY] = BrickletUnknown.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletUnknown.CALLBACK_COMCU_ENUMERATE] = (34, '8s 8s c 3B 3B H B')
 
         ipcon.add_device(self)
 
@@ -235,6 +239,14 @@ class BrickletUnknown(Device):
 
         return self.ipcon.send_request(self, BrickletUnknown.FUNCTION_READ_UID, (), '', 12, 'I')
 
+    def comcu_enumerate(self):
+        """
+
+        """
+        self.check_validity()
+
+        self.ipcon.send_request(self, BrickletUnknown.FUNCTION_COMCU_ENUMERATE, (), '', 0, '')
+
     def get_identity(self):
         """
         Returns the UID, the UID where the Bricklet is connected to,
@@ -250,5 +262,14 @@ class BrickletUnknown(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletUnknown.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
+
+    def register_callback(self, callback_id, function):
+        """
+        Registers the given *function* with the given *callback_id*.
+        """
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
+        else:
+            self.registered_callbacks[callback_id] = function
 
 Unknown = BrickletUnknown # for backward compatibility
