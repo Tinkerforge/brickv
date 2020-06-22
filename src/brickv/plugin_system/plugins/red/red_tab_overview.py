@@ -3,6 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 red_tab_overview.py: RED overview tab implementation
 
@@ -50,7 +51,7 @@ class ProcessesProxyModel(QSortFilterProxyModel):
     def lessThan(self, left, right):
         # cpu and mem
         if left.column() in [3, 4]:
-            if right.data(Qt.UserRole + 1) is None:
+            if left.data(Qt.UserRole + 1) is None or right.data(Qt.UserRole + 1) is None:
                 return QSortFilterProxyModel.lessThan(self, left, right)
             return left.data(Qt.UserRole + 1) < right.data(Qt.UserRole + 1)
 
