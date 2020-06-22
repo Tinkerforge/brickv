@@ -484,8 +484,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setDisabled(False)
         self.button_connect.setText("Connect")
         QMessageBox.critical(self, 'Connection',
-                             'Could not connect. Please check host, check ' +
-                             'port and ensure that Brick Daemon is running. ({})'.format(error))
+                             'An connection error occurred. Please check host, check ' +
+                             'port and ensure that Brick Daemon is running:\n\n{}'.format(error))
 
     def connect_clicked(self):
         if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_DISCONNECTED:
