@@ -51,8 +51,8 @@ class IndustrialDual020mA(PluginBase):
 
         self.dual020 = self.device
 
-        self.str_connected = 'Sensor {0} is <font color="green">connected</font>'
-        self.str_not_connected = 'Sensor {0} is <font color="red">not connected</font>'
+        self.str_connected = 'Sensor {0} is <font color="green">connected (&gt;= 3.9 mA)</font>'
+        self.str_not_connected = 'Sensor {0} is <font color="red">not connected (&lt; 3.9 mA)</font>'
 
         self.cbe_current0 = CallbackEmulator(self.dual020.get_current,
                                              0,
