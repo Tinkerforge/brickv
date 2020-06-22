@@ -579,4 +579,4 @@
   selecting the Server Monitoring tab)
 - Ensure that all dialogs have proper close buttons
 - Fix close buttons for for detached tabs
-- Fix race condition in RED Brick process sorting
+- Fix race condition in RED Brick overview sorting
