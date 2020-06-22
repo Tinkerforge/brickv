@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>709</width>
-    <height>450</height>
+    <width>710</width>
+    <height>475</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -78,26 +78,6 @@
             <widget class="QPushButton" name="update_button_bricklets">
              <property name="text">
               <string>Auto-Update all Bricklets</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="button_close">
-             <property name="text">
-              <string>Close</string>
              </property>
             </widget>
            </item>
@@ -608,6 +588,13 @@
        </item>
       </layout>
      </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="button_close">
+     <property name="text">
+      <string>Close</string>
+     </property>
     </widget>
    </item>
   </layout>
