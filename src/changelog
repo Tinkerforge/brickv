@@ -572,7 +572,7 @@
 - Fix maximum number of LEDs for LED Strip Bricklet 2.0
 - Show milliseconds in GPS Bricklet 2.0 timestamp
 
-2020-06-22: 2.4.13 (<unknown>)
+2020-06-22: 2.4.13 (2e3a080)
 - Fix race condition in RED Brick program state tracking
 - Report actual cause for connection errors
 - Don't reset RED Brick tab on every enumerate callback (fixes tab reset on
