@@ -25,7 +25,7 @@ Boston, MA 02111-1307, USA.
 import functools
 
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QSpinBox, QComboBox
+from PyQt5.QtWidgets import QDoubleSpinBox, QComboBox
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.io16.ui_io16 import Ui_IO16
@@ -134,9 +134,7 @@ class IO16(PluginBase, Ui_IO16):
                 self.monoflop_values[port].append(monoflop_value)
                 self.monoflop_value_stack.addWidget(monoflop_value)
 
-                monoflop_time = QSpinBox()
-                monoflop_time.setRange(1, (1 << 31) - 1)
-                monoflop_time.setValue(1000)
+                monoflop_time = QDoubleSpinBox()
 
                 self.monoflop_times[port].append(monoflop_time)
                 self.monoflop_time_stack.addWidget(monoflop_time)

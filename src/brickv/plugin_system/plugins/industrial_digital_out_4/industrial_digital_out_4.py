@@ -25,7 +25,7 @@ Boston, MA 02111-1307, USA.
 import functools
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QSpinBox, QComboBox
+from PyQt5.QtWidgets import QDoubleSpinBox, QComboBox
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.industrial_digital_out_4.ui_industrial_digital_out_4 import Ui_IndustrialDigitalOut4
@@ -79,9 +79,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
             self.monoflop_states.append(monoflop_state)
             self.monoflop_state_stack.addWidget(monoflop_state)
 
-            monoflop_time = QSpinBox()
-            monoflop_time.setRange(1, (1 << 31) - 1)
-            monoflop_time.setValue(1000)
+            monoflop_time = QDoubleSpinBox()
 
             self.monoflop_times.append(monoflop_time)
             self.monoflop_time_stack.addWidget(monoflop_time)

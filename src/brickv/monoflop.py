@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import pyqtSignal, QTimer, QObject
+from PyQt5.QtWidgets import QDoubleSpinBox
 
 from brickv.async_call import async_call
 from brickv.bindings.ip_connection import Error
@@ -42,6 +43,14 @@ class Monoflop(QObject):
         elif time_remaining_labels == None:
             time_remaining_labels = [None] * len(channels)
 
+        for time_spinbox in time_spinboxes:
+            assert isinstance(time_spinbox, QDoubleSpinBox), time_spinbox
+
+            time_spinbox.setRange(1, (1 << 32) - 1)
+            time_spinbox.setDecimals(0)
+            time_spinbox.setSingleStep(1)
+            time_spinbox.setValue(1000)
+
         self.device = device
         self.channels = channels
         self.value_comboboxes = value_comboboxes
@@ -52,7 +61,7 @@ class Monoflop(QObject):
         self.setter_uses_bitmasks = setter_uses_bitmasks
         self.callback_uses_bitmasks = callback_uses_bitmasks
         self.handle_get_monoflop_invalid_parameter_as_abort = handle_get_monoflop_invalid_parameter_as_abort
-        self.times = [time_spinbox.value() for time_spinbox in time_spinboxes]
+        self.times = [int(time_spinbox.value()) for time_spinbox in time_spinboxes]
         self.running = [False] * len(channels)
 
         self.qtcb_monoflop_done.connect(self.cb_monoflop_done)
@@ -127,7 +136,7 @@ class Monoflop(QObject):
         time_spinbox = self.time_spinboxes[channel_index]
 
         if not self.running[channel_index]:
-            self.times[channel_index] = time_spinbox.value()
+            self.times[channel_index] = int(time_spinbox.value())
 
         value = value_combobox.itemData(value_combobox.currentIndex())
         time = self.times[channel_index]
