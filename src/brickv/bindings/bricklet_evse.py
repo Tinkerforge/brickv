@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-05-20.      #
+# This file was automatically generated on 2020-06-09.      #
 #                                                           #
-# Python Bindings Version 2.1.25                            #
+# Python Bindings Version 2.1.26                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -18,7 +18,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
-GetState = namedtuple('State', ['iec61851_state', 'led_state', 'resistance', 'cp_pwm_duty_cycle', 'contactor_state', 'contactor_error', 'gpio', 'lock_state', 'jumper_configuration', 'has_lock_switch'])
+GetState = namedtuple('State', ['iec61851_state', 'led_state', 'resistance', 'cp_pwm_duty_cycle', 'contactor_state', 'contactor_error', 'gpio', 'lock_state', 'jumper_configuration', 'has_lock_switch', 'uptime'])
 GetLowLevelStatus = namedtuple('LowLevelStatus', ['low_level_mode_enabled', 'cp_duty_cycle', 'motor_direction', 'motor_duty_cycle', 'relay_enabled', 'cp_voltage', 'pp_voltage', 'ac_input', 'gp_input', 'motor_fault', 'motor_switch'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -128,7 +128,7 @@ class BrickletEVSE(Device):
         """
         self.check_validity()
 
-        return GetState(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_STATE, (), '', 26, 'B B 2I H B B 4! B B !'))
+        return GetState(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_STATE, (), '', 30, 'B B 2I H B B 4! B B ! I'))
 
     def set_low_level_output(self, low_level_mode_enabled, cp_duty_cycle, motor_direction, motor_duty_cycle, relay_enabled, password):
         """
