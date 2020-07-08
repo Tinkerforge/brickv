@@ -220,6 +220,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_update_pixmap_normal = load_pixmap('update-icon-normal.png')
         self.button_update_pixmap_hover = load_pixmap('update-icon-hover.png')
 
+        self.stacked_widget.setCurrentWidget(self.page_not_connected)
+
         self.last_status_message_id = ''
 
     def disable_auto_search_for_updates(self):
@@ -1063,25 +1065,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.checkbox_authentication.setDisabled(False)
             self.edit_secret.setDisabled(False)
             self.button_advanced.setDisabled(True)
+            self.stacked_widget.setCurrentWidget(self.page_not_connected)
         elif connection_state == IPConnection.CONNECTION_STATE_CONNECTED:
             self.button_connect.setText("Disconnect")
             self.combo_host.setDisabled(True)
             self.spinbox_port.setDisabled(True)
             self.checkbox_authentication.setDisabled(True)
             self.edit_secret.setDisabled(True)
+            self.stacked_widget.setCurrentWidget(self.page_connected)
             self.update_advanced_window()
 
             # restart all pause plugins
             for info in inventory.get_device_infos():
                 info.plugin.resume_plugin()
         elif connection_state == IPConnection.CONNECTION_STATE_PENDING:
-            self.button_connect.setText('Abort Pending Automatic Reconnect')
+            self.button_connect.setText('Abort Auto-Reconnect')
             self.combo_host.setDisabled(True)
             self.spinbox_port.setDisabled(True)
             self.checkbox_authentication.setDisabled(True)
             self.edit_secret.setDisabled(True)
             self.button_advanced.setDisabled(True)
             self.button_flashing.setDisabled(True)
+            self.stacked_widget.setCurrentWidget(self.page_auto_reconnect)
 
             # pause all running plugins
             for info in inventory.get_device_infos():

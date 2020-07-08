@@ -48,19 +48,6 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="2" rowspan="14">
-           <widget class="QTreeView" name="tree_view">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>1</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="indentation">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="1">
            <widget class="QComboBox" name="combo_host">
             <property name="editable">
@@ -78,13 +65,6 @@
            <widget class="QPushButton" name="button_data_logger">
             <property name="text">
              <string>Data Logger</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="3">
-           <widget class="QPushButton" name="button_connect">
-            <property name="text">
-             <string>Connect</string>
             </property>
            </widget>
           </item>
@@ -202,6 +182,101 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="0" colspan="3">
+           <widget class="QPushButton" name="button_connect">
+            <property name="text">
+             <string>Connect</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" rowspan="14">
+           <widget class="QStackedWidget" name="stacked_widget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
+            <widget class="QWidget" name="page_not_connected">
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="label_3">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <property name="text">
+                 <string>&lt;h3&gt;Brick Viewer is not connected!&lt;/h3&gt;Click the &lt;strong&gt;Connect&lt;/strong&gt; button above to establish the connection.</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_connected">
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QTreeView" name="tree_view">
+                <property name="indentation">
+                 <number>10</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_auto_reconnect">
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="label_4">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <property name="text">
+                 <string>&lt;h3&gt;Brick Viewer lost the connection and tries to auto-reconnect!&lt;/h3&gt;Click the &lt;strong&gt;Abort&lt;/strong&gt; button above if you want to abort the auto-reconnect attempt.</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>
@@ -225,6 +300,8 @@
   <tabstop>edit_secret</tabstop>
   <tabstop>checkbox_secret_show</tabstop>
   <tabstop>checkbox_remember_secret</tabstop>
+  <tabstop>check_fusion_gui_style</tabstop>
+  <tabstop>checkbox_auto_search_for_updates</tabstop>
   <tabstop>button_flashing</tabstop>
   <tabstop>button_advanced</tabstop>
   <tabstop>button_data_logger</tabstop>
