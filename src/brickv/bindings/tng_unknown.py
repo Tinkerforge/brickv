@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-06-09.      #
+# This file was automatically generated on 2020-07-07.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -36,6 +36,8 @@ class TNGUnknown(Device):
     FUNCTION_SET_WRITE_FIRMWARE_POINTER = 237
     FUNCTION_WRITE_FIRMWARE = 238
     FUNCTION_RESET = 243
+    FUNCTION_WRITE_UID = 248
+    FUNCTION_READ_UID = 249
     FUNCTION_GET_IDENTITY = 255
 
     COPY_STATUS_OK = 0
@@ -58,6 +60,8 @@ class TNGUnknown(Device):
         self.response_expected[TNGUnknown.FUNCTION_SET_WRITE_FIRMWARE_POINTER] = TNGUnknown.RESPONSE_EXPECTED_FALSE
         self.response_expected[TNGUnknown.FUNCTION_WRITE_FIRMWARE] = TNGUnknown.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[TNGUnknown.FUNCTION_RESET] = TNGUnknown.RESPONSE_EXPECTED_FALSE
+        self.response_expected[TNGUnknown.FUNCTION_WRITE_UID] = TNGUnknown.RESPONSE_EXPECTED_FALSE
+        self.response_expected[TNGUnknown.FUNCTION_READ_UID] = TNGUnknown.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[TNGUnknown.FUNCTION_GET_IDENTITY] = TNGUnknown.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
@@ -111,6 +115,29 @@ class TNGUnknown(Device):
         self.check_validity()
 
         self.ipcon.send_request(self, TNGUnknown.FUNCTION_RESET, (), '', 0, '')
+
+    def write_uid(self, uid):
+        """
+        Writes a new UID into flash. If you want to set a new UID
+        you have to decode the Base58 encoded UID string into an
+        integer first.
+
+        We recommend that you use Brick Viewer to change the UID.
+        """
+        self.check_validity()
+
+        uid = int(uid)
+
+        self.ipcon.send_request(self, TNGUnknown.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
+
+    def read_uid(self):
+        """
+        Returns the current UID as an integer. Encode as
+        Base58 to get the usual string version.
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, TNGUnknown.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-06-09.      #
+# This file was automatically generated on 2020-07-07.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -18,6 +18,8 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
+GetValues = namedtuple('Values', ['timestamp', 'values'])
+GetSelectedValue = namedtuple('SelectedValue', ['timestamp', 'value'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class TNGDO8(Device):
@@ -25,18 +27,23 @@ class TNGDO8(Device):
     TBD
     """
 
-    DEVICE_IDENTIFIER = 202
+    DEVICE_IDENTIFIER = 205
     DEVICE_DISPLAY_NAME = 'TNG DO8'
     DEVICE_URL_PART = 'do8' # internal
 
 
 
-    FUNCTION_SET_VALUE = 1
+    FUNCTION_SET_VALUES = 1
+    FUNCTION_GET_VALUES = 2
+    FUNCTION_SET_SELECTED_VALUE = 3
+    FUNCTION_GET_SELECTED_VALUE = 4
     FUNCTION_GET_TIMESTAMP = 234
     FUNCTION_COPY_FIRMWARE = 235
     FUNCTION_SET_WRITE_FIRMWARE_POINTER = 237
     FUNCTION_WRITE_FIRMWARE = 238
     FUNCTION_RESET = 243
+    FUNCTION_WRITE_UID = 248
+    FUNCTION_READ_UID = 249
     FUNCTION_GET_IDENTITY = 255
 
     COPY_STATUS_OK = 0
@@ -54,28 +61,62 @@ class TNGDO8(Device):
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[TNGDO8.FUNCTION_SET_VALUE] = TNGDO8.RESPONSE_EXPECTED_FALSE
+        self.response_expected[TNGDO8.FUNCTION_SET_VALUES] = TNGDO8.RESPONSE_EXPECTED_FALSE
+        self.response_expected[TNGDO8.FUNCTION_GET_VALUES] = TNGDO8.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[TNGDO8.FUNCTION_SET_SELECTED_VALUE] = TNGDO8.RESPONSE_EXPECTED_FALSE
+        self.response_expected[TNGDO8.FUNCTION_GET_SELECTED_VALUE] = TNGDO8.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[TNGDO8.FUNCTION_GET_TIMESTAMP] = TNGDO8.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[TNGDO8.FUNCTION_COPY_FIRMWARE] = TNGDO8.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[TNGDO8.FUNCTION_SET_WRITE_FIRMWARE_POINTER] = TNGDO8.RESPONSE_EXPECTED_FALSE
         self.response_expected[TNGDO8.FUNCTION_WRITE_FIRMWARE] = TNGDO8.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[TNGDO8.FUNCTION_RESET] = TNGDO8.RESPONSE_EXPECTED_FALSE
+        self.response_expected[TNGDO8.FUNCTION_WRITE_UID] = TNGDO8.RESPONSE_EXPECTED_FALSE
+        self.response_expected[TNGDO8.FUNCTION_READ_UID] = TNGDO8.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[TNGDO8.FUNCTION_GET_IDENTITY] = TNGDO8.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
         ipcon.add_device(self)
 
-    def set_value(self, timestamp, value):
+    def set_values(self, timestamp, values):
         """
-        Sets the output value of all four channels. A value of *true* or *false* outputs
-        logic 1 or logic 0 respectively on the corresponding channel.
+        timestamp = 0 => now
         """
         self.check_validity()
 
         timestamp = int(timestamp)
+        values = list(map(bool, values))
+
+        self.ipcon.send_request(self, TNGDO8.FUNCTION_SET_VALUES, (timestamp, values), 'Q 8!', 0, '')
+
+    def get_values(self):
+        """
+
+        """
+        self.check_validity()
+
+        return GetValues(*self.ipcon.send_request(self, TNGDO8.FUNCTION_GET_VALUES, (), '', 17, 'Q 8!'))
+
+    def set_selected_value(self, channel, timestamp, value):
+        """
+        timestamp = 0 => now
+        """
+        self.check_validity()
+
+        channel = int(channel)
+        timestamp = int(timestamp)
         value = list(map(bool, value))
 
-        self.ipcon.send_request(self, TNGDO8.FUNCTION_SET_VALUE, (timestamp, value), 'Q 8!', 0, '')
+        self.ipcon.send_request(self, TNGDO8.FUNCTION_SET_SELECTED_VALUE, (channel, timestamp, value), 'B Q 8!', 0, '')
+
+    def get_selected_value(self, channel):
+        """
+
+        """
+        self.check_validity()
+
+        channel = int(channel)
+
+        return GetSelectedValue(*self.ipcon.send_request(self, TNGDO8.FUNCTION_GET_SELECTED_VALUE, (channel,), 'B', 17, 'Q !'))
 
     def get_timestamp(self):
         """
@@ -125,6 +166,29 @@ class TNGDO8(Device):
         self.check_validity()
 
         self.ipcon.send_request(self, TNGDO8.FUNCTION_RESET, (), '', 0, '')
+
+    def write_uid(self, uid):
+        """
+        Writes a new UID into flash. If you want to set a new UID
+        you have to decode the Base58 encoded UID string into an
+        integer first.
+
+        We recommend that you use Brick Viewer to change the UID.
+        """
+        self.check_validity()
+
+        uid = int(uid)
+
+        self.ipcon.send_request(self, TNGDO8.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
+
+    def read_uid(self):
+        """
+        Returns the current UID as an integer. Encode as
+        Base58 to get the usual string version.
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, TNGDO8.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 TNG Base Plugin
-Copyright (C) 2019 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Olaf Lüke <olaf@tinkerforge.com>
 
-tng_di8.py: TNG DI8 Plugin Implementation
+tng_hub.py: TNG HUB Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -28,38 +28,30 @@ from PyQt5.QtWidgets import QWidget, QApplication
 from PyQt5.QtGui import QImage, QPainter, QPen, QColor
 
 from brickv.plugin_system.tng_plugin_base import TNGPluginBase
-from brickv.plugin_system.plugins.tng_di8.ui_tng_di8 import Ui_TNGDI8
-from brickv.bindings.tng_di8 import TNGDI8 as TNGDI8Bindings
+from brickv.plugin_system.plugins.tng_hub.ui_tng_hub import Ui_TNGHUB
+from brickv.bindings.tng_hub import TNGHUB as TNGHUBBindings
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 
-class TNGDI8(TNGPluginBase, Ui_TNGDI8):
+class TNGHUB(TNGPluginBase, Ui_TNGHUB):
     def __init__(self, *args):
-        TNGPluginBase.__init__(self, TNGDI8Bindings, *args)
+        TNGPluginBase.__init__(self, TNGHUBBindings, *args)
 
         self.setupUi(self)
-        self.di8 = self.device
+        self.hub = self.device
 
-        self.cbe_values = CallbackEmulator(self.di8.get_values, None, self.cb_values, self.increase_error_count)
 
-    def cb_values(self, values):
-        s = ''
-        for x in values.values:
-            if x:
-                s += '1'
-            else:
-                s += '0'
-        self.label.setText('{0}: {1}'.format(values.timestamp, s))
+        self.label.setText('Hello, i am TNG-HUB')
 
     def start(self):
-        self.cbe_values.set_period(50)
+        pass
 
     def stop(self):
-        self.cbe_values.set_period(0)
+        pass
 
     def destroy(self):
         pass
 
     @staticmethod
     def has_device_identifier(device_identifier):
-        return device_identifier == TNGDI8Bindings.DEVICE_IDENTIFIER
+        return device_identifier == TNGHUBBindings.DEVICE_IDENTIFIER

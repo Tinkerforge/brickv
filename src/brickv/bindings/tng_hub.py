@@ -18,23 +18,19 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
-GetValues = namedtuple('Values', ['timestamp', 'values'])
-GetSelectedValue = namedtuple('SelectedValue', ['timestamp', 'value'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
-class TNGDI8(Device):
+class TNGHUB(Device):
     """
     TBD
     """
 
-    DEVICE_IDENTIFIER = 201
-    DEVICE_DISPLAY_NAME = 'TNG DI8'
-    DEVICE_URL_PART = 'di8' # internal
+    DEVICE_IDENTIFIER = 204
+    DEVICE_DISPLAY_NAME = 'TNG HUB'
+    DEVICE_URL_PART = 'hub' # internal
 
 
 
-    FUNCTION_GET_VALUES = 1
-    FUNCTION_GET_SELECTED_VALUE = 2
     FUNCTION_GET_TIMESTAMP = 234
     FUNCTION_COPY_FIRMWARE = 235
     FUNCTION_SET_WRITE_FIRMWARE_POINTER = 237
@@ -55,41 +51,21 @@ class TNGDI8(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon, TNGDI8.DEVICE_IDENTIFIER, TNGDI8.DEVICE_DISPLAY_NAME)
+        Device.__init__(self, uid, ipcon, TNGHUB.DEVICE_IDENTIFIER, TNGHUB.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[TNGDI8.FUNCTION_GET_VALUES] = TNGDI8.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[TNGDI8.FUNCTION_GET_SELECTED_VALUE] = TNGDI8.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[TNGDI8.FUNCTION_GET_TIMESTAMP] = TNGDI8.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[TNGDI8.FUNCTION_COPY_FIRMWARE] = TNGDI8.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[TNGDI8.FUNCTION_SET_WRITE_FIRMWARE_POINTER] = TNGDI8.RESPONSE_EXPECTED_FALSE
-        self.response_expected[TNGDI8.FUNCTION_WRITE_FIRMWARE] = TNGDI8.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[TNGDI8.FUNCTION_RESET] = TNGDI8.RESPONSE_EXPECTED_FALSE
-        self.response_expected[TNGDI8.FUNCTION_WRITE_UID] = TNGDI8.RESPONSE_EXPECTED_FALSE
-        self.response_expected[TNGDI8.FUNCTION_READ_UID] = TNGDI8.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[TNGDI8.FUNCTION_GET_IDENTITY] = TNGDI8.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[TNGHUB.FUNCTION_GET_TIMESTAMP] = TNGHUB.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[TNGHUB.FUNCTION_COPY_FIRMWARE] = TNGHUB.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[TNGHUB.FUNCTION_SET_WRITE_FIRMWARE_POINTER] = TNGHUB.RESPONSE_EXPECTED_FALSE
+        self.response_expected[TNGHUB.FUNCTION_WRITE_FIRMWARE] = TNGHUB.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[TNGHUB.FUNCTION_RESET] = TNGHUB.RESPONSE_EXPECTED_FALSE
+        self.response_expected[TNGHUB.FUNCTION_WRITE_UID] = TNGHUB.RESPONSE_EXPECTED_FALSE
+        self.response_expected[TNGHUB.FUNCTION_READ_UID] = TNGHUB.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[TNGHUB.FUNCTION_GET_IDENTITY] = TNGHUB.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
         ipcon.add_device(self)
-
-    def get_values(self):
-        """
-        Returns the input values as bools, *true* refers to high and *false* refers to low.
-        """
-        self.check_validity()
-
-        return GetValues(*self.ipcon.send_request(self, TNGDI8.FUNCTION_GET_VALUES, (), '', 17, 'Q 8!'))
-
-    def get_selected_value(self, channel):
-        """
-        Returns the selected input value as bool, *true* refers to high and *false* refers to low.
-        """
-        self.check_validity()
-
-        channel = int(channel)
-
-        return GetSelectedValue(*self.ipcon.send_request(self, TNGDI8.FUNCTION_GET_SELECTED_VALUE, (channel,), 'B', 17, 'Q !'))
 
     def get_timestamp(self):
         """
@@ -97,7 +73,7 @@ class TNGDI8(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, TNGDI8.FUNCTION_GET_TIMESTAMP, (), '', 16, 'Q')
+        return self.ipcon.send_request(self, TNGHUB.FUNCTION_GET_TIMESTAMP, (), '', 16, 'Q')
 
     def copy_firmware(self):
         """
@@ -105,7 +81,7 @@ class TNGDI8(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, TNGDI8.FUNCTION_COPY_FIRMWARE, (), '', 9, 'B')
+        return self.ipcon.send_request(self, TNGHUB.FUNCTION_COPY_FIRMWARE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -115,7 +91,7 @@ class TNGDI8(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, TNGDI8.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
+        self.ipcon.send_request(self, TNGHUB.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -125,7 +101,7 @@ class TNGDI8(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, TNGDI8.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
+        return self.ipcon.send_request(self, TNGHUB.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def reset(self):
         """
@@ -138,7 +114,7 @@ class TNGDI8(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, TNGDI8.FUNCTION_RESET, (), '', 0, '')
+        self.ipcon.send_request(self, TNGHUB.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -152,7 +128,7 @@ class TNGDI8(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, TNGDI8.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
+        self.ipcon.send_request(self, TNGHUB.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -161,7 +137,7 @@ class TNGDI8(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, TNGDI8.FUNCTION_READ_UID, (), '', 12, 'I')
+        return self.ipcon.send_request(self, TNGHUB.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -174,4 +150,4 @@ class TNGDI8(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, TNGDI8.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, TNGHUB.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))

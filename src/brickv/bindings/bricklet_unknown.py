@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-06-22.      #
+# This file was automatically generated on 2020-07-07.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -30,7 +30,7 @@ class BrickletUnknown(Device):
     DEVICE_DISPLAY_NAME = 'Unknown Bricklet'
     DEVICE_URL_PART = 'unknown' # internal
 
-    CALLBACK_COMCU_ENUMERATE = 253
+    CALLBACK_ENUMERATE = 253
 
 
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
@@ -45,8 +45,12 @@ class BrickletUnknown(Device):
     FUNCTION_WRITE_UID = 248
     FUNCTION_READ_UID = 249
     FUNCTION_COMCU_ENUMERATE = 252
+    FUNCTION_ENUMERATE = 254
     FUNCTION_GET_IDENTITY = 255
 
+    ENUMERATION_TYPE_AVAILABLE = 0
+    ENUMERATION_TYPE_CONNECTED = 1
+    ENUMERATION_TYPE_DISCONNECTED = 2
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -84,9 +88,10 @@ class BrickletUnknown(Device):
         self.response_expected[BrickletUnknown.FUNCTION_WRITE_UID] = BrickletUnknown.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletUnknown.FUNCTION_READ_UID] = BrickletUnknown.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletUnknown.FUNCTION_COMCU_ENUMERATE] = BrickletUnknown.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletUnknown.FUNCTION_ENUMERATE] = BrickletUnknown.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletUnknown.FUNCTION_GET_IDENTITY] = BrickletUnknown.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletUnknown.CALLBACK_COMCU_ENUMERATE] = (34, '8s 8s c 3B 3B H B')
+        self.callback_formats[BrickletUnknown.CALLBACK_ENUMERATE] = (34, '8s 8s c 3B 3B H B')
 
         ipcon.add_device(self)
 
@@ -241,11 +246,21 @@ class BrickletUnknown(Device):
 
     def comcu_enumerate(self):
         """
-
+        This function is equivalent to the normal enumerate function.
+        It is used to trigger the initial enumeration of CoMCU-Bricklets.
+        See :cb:`Enumerate`.
         """
         self.check_validity()
 
         self.ipcon.send_request(self, BrickletUnknown.FUNCTION_COMCU_ENUMERATE, (), '', 0, '')
+
+    def enumerate(self):
+        """
+        Broadcasts an enumerate request. All devices will respond with an :cb:`Enumerate` callback.
+        """
+        self.check_validity()
+
+        self.ipcon.send_request(self, BrickletUnknown.FUNCTION_ENUMERATE, (), '', 0, '')
 
     def get_identity(self):
         """
