@@ -47,6 +47,7 @@ class PluginBase(QWidget):
         self.has_comcu = False # Will be overwritten if plugin has comcu
         self.is_tng = False # Will be overwritten if plugin is tng
         self.plugin_state = PluginBase.PLUGIN_STATE_STOPPED
+        self.label_timeouts_title = None
         self.label_timeouts = None
         self.label_version = None
         self.button_parent = None
@@ -250,12 +251,22 @@ class PluginBase(QWidget):
 
     def increase_error_count(self):
         self.error_count += 1
-        if self.label_timeouts:
+
+        # as this function might be called after the plugin tab is
+        # already destroyed this can raise a
+        #
+        # RuntimeError: underlying C/C++ object has been deleted
+        #
+        # therefore, wrap all Qt calls into try/except blocks
+        if self.label_timeouts_title != None:
             try:
-                # as this method might be called after the plugin tab
-                # is already done this can raise a
-                #
-                # RuntimeError: underlying C/C++ object has been deleted
+                self.label_timeouts_title.setStyleSheet('QLabel { color: red; font: bold; }')
+            except:
+                pass
+
+        if self.label_timeouts != None:
+            try:
+                self.label_timeouts.setStyleSheet('QLabel { color: red; font: bold; }')
                 self.label_timeouts.setText('{0}'.format(self.error_count))
             except:
                 pass

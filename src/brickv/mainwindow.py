@@ -591,10 +591,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         info_bars[0].addSpacerItem(QSpacerItem(20, 1, QSizePolicy.Preferred))
 
         # timeouts
-        info_bars[0].addWidget(QLabel('Timeouts:'))
-
+        label_timeouts_title = QLabel('Timeouts:')
+        label_timeouts_title.setToolTip('Number of Timeout Errors')
         label_timeouts = QLabel('0')
 
+        info_bars[0].addWidget(label_timeouts_title)
         info_bars[0].addWidget(label_timeouts)
         info_bars[0].addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
@@ -700,6 +701,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 
+        device_info.plugin.label_timeouts_title = label_timeouts_title
         device_info.plugin.label_timeouts = label_timeouts
         device_info.plugin.label_version = label_version
         device_info.plugin.layout().setContentsMargins(0, 0, 0, 0)
