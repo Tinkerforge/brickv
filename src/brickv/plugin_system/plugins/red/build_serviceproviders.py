@@ -3,6 +3,7 @@
 """
 Copyright (C) 2015 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 build_serviceproviders.py: Generate python dicts for mobile internet feature
 
@@ -39,7 +40,7 @@ def main():
     try:
         ISO3166_URL = 'file://{0}'.format(os.environ['ISOCODES_JSON_PATH'])
     except KeyError:
-        ISO3166_URL = 'https://salsa.debian.org/iso-codes-team/iso-codes/raw/master/data/iso_3166-1.json'
+        ISO3166_URL = 'https://salsa.debian.org/iso-codes-team/iso-codes/-/raw/master/data/iso_3166-1.json'
     DATA_FILE = 'serviceprovider_data.py'
 
     print('[*] Downloading provider database')
