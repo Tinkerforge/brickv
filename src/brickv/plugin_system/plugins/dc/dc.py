@@ -3,6 +3,7 @@
 DC Plugin
 Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 dc.py: DC Plugin implementation
 
@@ -269,24 +270,15 @@ class DC(PluginBase, Ui_DC):
         self.current_velocity_label.setText('{0} ({1}%)'.format(velocity, round(abs(velocity) * 100 / 32768.0, 1)))
 
     def get_velocity_async(self, velocity):
-        if not self.velocity_slider.isSliderDown():
-            if velocity != self.velocity_slider.sliderPosition():
-                self.velocity_slider.setSliderPosition(velocity)
-                self.velocity_spin.setValue(velocity)
+        self.velocity_syncer.set_value(velocity)
 
         self.update_velocity(velocity)
 
     def get_acceleration_async(self, acceleration):
-        if not self.acceleration_slider.isSliderDown():
-            if acceleration != self.acceleration_slider.sliderPosition():
-                self.acceleration_slider.setSliderPosition(acceleration)
-                self.acceleration_spin.setValue(acceleration)
+        self.acceleration_syncer.set_value(acceleration)
 
     def get_pwm_frequency_async(self, frequency):
-        if not self.frequency_slider.isSliderDown():
-            if frequency != self.frequency_slider.sliderPosition():
-                self.frequency_slider.setSliderPosition(frequency)
-                self.frequency_spin.setValue(frequency)
+        self.frequency_syncer.set_value(frequency)
 
     def is_enabled_async(self, enabled):
         self.enable_checkbox.setChecked(enabled)
