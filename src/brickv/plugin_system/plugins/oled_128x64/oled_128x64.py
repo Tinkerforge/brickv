@@ -2,6 +2,7 @@
 """
 OLED128x64 Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 oled_128x64.py: OLED 128x64 Plugin Implementation
 
@@ -42,8 +43,8 @@ class OLED128x64(PluginBase, Ui_OLED128x64):
         self.scribble_widget = ScribbleWidget(128, 64, 5, QColor(Qt.white), QColor(Qt.black), enable_grid=False)
         self.image_button_layout.insertWidget(0, self.scribble_widget)
 
-        self.contrast_syncer = SliderSpinSyncer(self.contrast_slider, self.contrast_spin, lambda value: self.new_configuration())
-        self.char_syncer = SliderSpinSyncer(self.char_slider, self.char_spin, self.char_slider_changed)
+        self.contrast_syncer = SliderSpinSyncer(self.contrast_slider, self.contrast_spin, lambda value: self.new_configuration(), spin_signal='valueChanged')
+        self.char_syncer = SliderSpinSyncer(self.char_slider, self.char_spin, self.char_slider_changed, spin_signal='valueChanged')
 
         self.draw_button.clicked.connect(self.draw_clicked)
         self.clear_button.clicked.connect(self.clear_clicked)

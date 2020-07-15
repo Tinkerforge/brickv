@@ -2,6 +2,7 @@
 """
 LCD128x64 Plugin
 Copyright (C) 2018 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 lcd_128x64.py: LCD 128x64 Plugin Implementation
 
@@ -103,9 +104,9 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
         self.scribble_widget = TouchScribbleWidget(128, 64, 5, QColor(Qt.black), QColor(Qt.white), enable_grid=False)
         self.image_button_layout.insertWidget(0, self.scribble_widget)
 
-        self.contrast_syncer = SliderSpinSyncer(self.contrast_slider, self.contrast_spin, lambda value: self.new_configuration())
-        self.backlight_syncer = SliderSpinSyncer(self.backlight_slider, self.backlight_spin, lambda value: self.new_configuration())
-        self.char_syncer = SliderSpinSyncer(self.char_slider, self.char_spin, self.char_slider_changed)
+        self.contrast_syncer = SliderSpinSyncer(self.contrast_slider, self.contrast_spin, lambda value: self.new_configuration(), spin_signal='valueChanged')
+        self.backlight_syncer = SliderSpinSyncer(self.backlight_slider, self.backlight_spin, lambda value: self.new_configuration(), spin_signal='valueChanged')
+        self.char_syncer = SliderSpinSyncer(self.char_slider, self.char_spin, self.char_slider_changed, spin_signal='valueChanged')
 
         self.draw_button.clicked.connect(self.draw_clicked)
         self.clear_button.clicked.connect(self.clear_clicked)
