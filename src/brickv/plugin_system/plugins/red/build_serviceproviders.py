@@ -40,7 +40,7 @@ def main():
     try:
         ISO3166_URL = 'file://{0}'.format(os.environ['ISOCODES_JSON_PATH'])
     except KeyError:
-        ISO3166_URL = 'https://salsa.debian.org/iso-codes-team/iso-codes/-/raw/master/data/iso_3166-1.json'
+        ISO3166_URL = 'https://salsa.debian.org/iso-codes-team/iso-codes/-/raw/main/data/iso_3166-1.json'
     DATA_FILE = 'serviceprovider_data.py'
 
     print('[*] Downloading provider database')
