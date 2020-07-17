@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>632</width>
-    <height>182</height>
+    <width>690</width>
+    <height>172</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,7 +53,7 @@
         </spacer>
        </item>
        <item row="1" column="2">
-        <widget class="QLabel" name="label_current">
+        <widget class="FixedSizeLabel" name="label_current">
          <property name="text">
           <string>TBD</string>
          </property>
@@ -63,7 +63,7 @@
         </widget>
        </item>
        <item row="0" column="2">
-        <widget class="QLabel" name="label_voltage">
+        <widget class="FixedSizeLabel" name="label_voltage">
          <property name="text">
           <string>TBD</string>
          </property>
@@ -73,7 +73,7 @@
         </widget>
        </item>
        <item row="2" column="2">
-        <widget class="QLabel" name="label_power_factor">
+        <widget class="FixedSizeLabel" name="label_power_factor">
          <property name="text">
           <string>TBD</string>
          </property>
@@ -96,21 +96,21 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="11" colspan="2">
+       <item row="0" column="10" colspan="2">
         <widget class="QPushButton" name="button_energy">
          <property name="text">
           <string>Reset Energy</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="11">
+       <item row="2" column="10">
         <widget class="QLabel" name="label_12">
          <property name="text">
           <string>Transformer Current Ratio:</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="9">
+       <item row="2" column="8">
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -130,10 +130,10 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="12">
+       <item row="2" column="11">
         <widget class="QDoubleSpinBox" name="spinbox_current_ratio"/>
        </item>
-       <item row="3" column="11" colspan="2">
+       <item row="3" column="10" colspan="2">
         <widget class="QPushButton" name="button_transformer_settings">
          <property name="text">
           <string>Save Transformer Settings</string>
@@ -148,7 +148,7 @@
         </widget>
        </item>
        <item row="3" column="2">
-        <widget class="QLabel" name="label_frequency">
+        <widget class="FixedSizeLabel" name="label_frequency">
          <property name="text">
           <string>TBD</string>
          </property>
@@ -157,7 +157,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="11">
+       <item row="1" column="10">
         <widget class="QLabel" name="label_10">
          <property name="text">
           <string>Transformer Voltage Ratio:</string>
@@ -184,15 +184,15 @@
          </property>
         </spacer>
        </item>
-       <item row="0" column="8">
+       <item row="0" column="7">
         <widget class="QLabel" name="label_11">
          <property name="text">
           <string>Wh</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="7">
-        <widget class="QLabel" name="label_real_power">
+       <item row="1" column="6">
+        <widget class="FixedSizeLabel" name="label_real_power">
          <property name="text">
           <string>TBD</string>
          </property>
@@ -201,7 +201,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="12">
+       <item row="1" column="11">
         <widget class="QDoubleSpinBox" name="spinbox_voltage_ratio"/>
        </item>
        <item row="1" column="5">
@@ -211,15 +211,15 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="8">
+       <item row="1" column="7">
         <widget class="QLabel" name="label_15">
          <property name="text">
           <string>W</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="7">
-        <widget class="QLabel" name="label_energy">
+       <item row="0" column="6">
+        <widget class="FixedSizeLabel" name="label_energy">
          <property name="text">
           <string>TBD</string>
          </property>
@@ -228,7 +228,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="13">
+       <item row="2" column="12">
         <spacer name="horizontalSpacer_4">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -248,7 +248,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="10" rowspan="4">
+       <item row="0" column="9" rowspan="4">
         <widget class="Line" name="line_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -262,8 +262,18 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="7">
-        <widget class="QLabel" name="label_reactive_power">
+       <item row="3" column="6">
+        <widget class="FixedSizeLabel" name="label_reactive_power">
+         <property name="text">
+          <string>TBD</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="6">
+        <widget class="FixedSizeLabel" name="label_apparent_power">
          <property name="text">
           <string>TBD</string>
          </property>
@@ -273,26 +283,16 @@
         </widget>
        </item>
        <item row="2" column="7">
-        <widget class="QLabel" name="label_apparent_power">
-         <property name="text">
-          <string>TBD</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="8">
         <widget class="QLabel" name="label_16">
          <property name="text">
           <string>VA</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="8">
+       <item row="3" column="7">
         <widget class="QLabel" name="label_17">
          <property name="text">
-          <string>VAR</string>
+          <string>var</string>
          </property>
         </widget>
        </item>
@@ -327,6 +327,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FixedSizeLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">brickv.fixed_size_label</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

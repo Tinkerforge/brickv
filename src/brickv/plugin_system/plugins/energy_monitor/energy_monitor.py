@@ -31,6 +31,7 @@ from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plot_widget import PlotWidget
 
 ENERGY_MONITOR_MS_PER_TICK = 0.07185
+NOT_CONNECTED = 'Not Connected'
 
 class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
     def __init__(self, *args):
@@ -99,13 +100,20 @@ class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
 
     def cb_energy_data(self, data):
         if self.voltage_connected:
+            if self.label_voltage.text() == NOT_CONNECTED:
+                self.label_voltage.maximum_size_hint = None
+
             self.label_voltage.setText('{0:.2f}'.format(data.voltage / 100))
         else:
-            self.label_voltage.setText('Not Connected')
+            self.label_voltage.setText(NOT_CONNECTED)
+
         if self.current_connected:
+            if self.label_current.text() == NOT_CONNECTED:
+                self.label_current.maximum_size_hint = None
+
             self.label_current.setText('{0:.2f}'.format(data.current / 100))
         else:
-            self.label_current.setText('Not Connected')
+            self.label_current.setText(NOT_CONNECTED)
 
         self.label_energy.setText('{0:.2f}'.format(data.energy / 100))
         self.label_real_power.setText('{0:.2f}'.format(data.real_power / 100))
@@ -119,10 +127,10 @@ class EnergyMonitor(COMCUPluginBase, Ui_EnergyMonitor):
         self.current_connected = status.current_transformer_connected
 
         if not self.voltage_connected:
-            self.label_voltage.setText('Not Connected')
+            self.label_voltage.setText(NOT_CONNECTED)
 
         if not self.current_connected:
-            self.label_current.setText('Not Connected')
+            self.label_current.setText(NOT_CONNECTED)
 
     def cb_transformer_calibration(self, cal):
         self.spinbox_voltage_ratio.setValue(cal.voltage_ratio/100.0)

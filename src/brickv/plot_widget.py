@@ -35,6 +35,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
                             QSizePolicy, QLabel, QSpinBox
 
 from brickv.utils import draw_rect
+from brickv.fixed_size_label import FixedSizeLabel
 
 CurveConfig = namedtuple('CurveConfig', 'title color value_wrapper value_formatter')
 MovingAverageConfig = namedtuple('MovingAverageConfig', 'min_length max_length callback')
@@ -1042,20 +1043,6 @@ class FixedSizeToolButton(QToolButton):
 
     def sizeHint(self):
         hint = QToolButton.sizeHint(self)
-
-        if self.maximum_size_hint != None:
-            hint = QSize(max(hint.width(), self.maximum_size_hint.width()),
-                         max(hint.height(), self.maximum_size_hint.height()))
-
-        self.maximum_size_hint = hint
-
-        return hint
-
-class FixedSizeLabel(QLabel):
-    maximum_size_hint = None
-
-    def sizeHint(self):
-        hint = QLabel.sizeHint(self)
 
         if self.maximum_size_hint != None:
             hint = QSize(max(hint.width(), self.maximum_size_hint.width()),
