@@ -178,9 +178,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.combo_host.installEventFilter(self)
         self.combo_host.currentIndexChanged.connect(self.host_index_changed)
 
+        self.spinbox_port.hide()
         self.spinbox_port.setValue(self.host_infos[0].port)
         self.spinbox_port.valueChanged.connect(self.port_changed)
         self.spinbox_port.installEventFilter(self)
+
+        self.checkbox_different_port.stateChanged.connect(self.different_port_state_changed)
+        self.checkbox_different_port.setChecked(self.host_infos[0].port != config.DEFAULT_PORT)
 
         self.checkbox_authentication.stateChanged.connect(self.authentication_state_changed)
 
@@ -289,6 +293,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.host_index_changing = True
 
         self.spinbox_port.setValue(self.host_infos[i].port)
+        self.checkbox_different_port.setChecked(self.host_infos[i].port != config.DEFAULT_PORT)
         self.checkbox_authentication.setChecked(self.host_infos[i].use_authentication)
         self.edit_secret.setText(self.host_infos[i].secret)
         self.checkbox_remember_secret.setChecked(self.host_infos[i].remember_secret)
@@ -298,13 +303,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def port_changed(self, _value):
         self.update_current_host_info()
 
-    def authentication_state_changed(self, state):
-        visible = state == Qt.Checked
+    def different_port_state_changed(self, state):
+        use_different_port = state == Qt.Checked
 
-        self.label_secret.setVisible(visible)
-        self.edit_secret.setVisible(visible)
-        self.checkbox_secret_show.setVisible(visible)
-        self.checkbox_remember_secret.setVisible(visible)
+        self.label_default_port.setVisible(not use_different_port)
+        self.spinbox_port.setVisible(use_different_port)
+
+        if not use_different_port:
+            self.spinbox_port.setValue(config.DEFAULT_PORT)
+
+        self.update_current_host_info()
+
+    def authentication_state_changed(self, state):
+        use_authentication = state == Qt.Checked
+
+        self.label_secret.setVisible(use_authentication)
+        self.edit_secret.setVisible(use_authentication)
+        self.checkbox_secret_show.setVisible(use_authentication)
+        self.checkbox_remember_secret.setVisible(use_authentication)
 
         self.update_current_host_info()
 
@@ -1064,6 +1080,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.button_connect.setText('Connect')
             self.combo_host.setDisabled(False)
             self.spinbox_port.setDisabled(False)
+            self.checkbox_different_port.setDisabled(False)
             self.checkbox_authentication.setDisabled(False)
             self.edit_secret.setDisabled(False)
             self.button_advanced.setDisabled(True)
@@ -1072,6 +1089,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.button_connect.setText("Disconnect")
             self.combo_host.setDisabled(True)
             self.spinbox_port.setDisabled(True)
+            self.checkbox_different_port.setDisabled(True)
             self.checkbox_authentication.setDisabled(True)
             self.edit_secret.setDisabled(True)
             self.stacked_widget.setCurrentWidget(self.page_connected)
@@ -1084,6 +1102,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.button_connect.setText('Abort Auto-Reconnect')
             self.combo_host.setDisabled(True)
             self.spinbox_port.setDisabled(True)
+            self.checkbox_different_port.setDisabled(True)
             self.checkbox_authentication.setDisabled(True)
             self.edit_secret.setDisabled(True)
             self.button_advanced.setDisabled(True)
