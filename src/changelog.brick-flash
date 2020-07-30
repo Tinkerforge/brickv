@@ -6,5 +6,5 @@
 - Add --version argument
 - Rename to brick-flash
 
-2020-07-30: 1.0.2 (<unknown>)
+2020-07-30: 1.0.2 (4f077e9)
 - Add support for SAM4S (used by Master Brick) and SAM4E
