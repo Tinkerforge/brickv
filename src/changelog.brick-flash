@@ -5,3 +5,6 @@
 - Port to Python 3
 - Add --version argument
 - Rename to brick-flash
+
+2020-07-30: 1.0.2 (<unknown>)
+- Add support for SAM4S (used by Master Brick) and SAM4E

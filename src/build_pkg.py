@@ -132,7 +132,7 @@ def build_pyinstaller_pkg():
                                 pre_pyinstaller=lambda: write_marker_files_and_patch_plugins(utils))
     utils.copy_build_artifact()
 
-BRICK_FLASH_VERSION = '1.0.1'
+BRICK_FLASH_VERSION = '1.0.2'
 
 def build_linux_flash_pkg():
     print('building brick-flash Debian package')

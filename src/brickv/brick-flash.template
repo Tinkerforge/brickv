@@ -4,7 +4,7 @@
 """
 brick-flash
 Copyright (C) 2013 Jan Sandbrink
-Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2016, 2020 Matthias Bolte <matthias@tinkerforge.com>
 
 Atmel SAM-BA flash protocol implementation
 
@@ -23,6 +23,11 @@ License along with this program; if not, write to the
 Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
+
+import sys
+if (sys.hexversion & 0xFF000000) != 0x03000000:
+    print('Error: Python 3.x required')
+    exit(1)
 
 try:
     import argparse
