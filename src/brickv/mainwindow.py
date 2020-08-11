@@ -3,6 +3,7 @@
 brickv (Brick Viewer)
 Copyright (C) 2009-2012, 2018 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 mainwindow.py: New/Removed Bricks are handled here and plugins shown if clicked
 
@@ -1252,6 +1253,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if firmware_info == 1:
                     message = 'Update information could not be downloaded from tinkerforge.com.<br/>' + \
                               'Is your computer connected to the Internet?'
+                elif firmware_info == 6:
+                    message = 'Update information could not be downloaded from tinkerforge.com.<br/>' + \
+                              'Will retry later.'
                 else:
                     message = ("Update information on tinkerforge.com is malformed " +
                                "(error code {0}).<br/>Please report this error to " +

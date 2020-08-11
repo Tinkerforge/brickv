@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2019-2020 Erik Fleckstein <erik@tinkerforge.com>
 
 firmware_fetch.py: General latest_versions.txt handling
 
@@ -39,6 +39,7 @@ ERROR_PARSE_SPLIT = 2
 ERROR_PARSE_VERSION_SPLIT = 3
 ERROR_PARSE_VERSION_INTS = 4
 ERROR_SERVER_ERROR = 5
+ERROR_UNKNOWN_WHILE_DOWNLOADING = 6
 
 def refresh_firmware_info(url_part, latest_version):
     name = url_part
@@ -200,16 +201,25 @@ def parse_versions_line(line, report_error_fn):
 def fetch_latest_fw_versions(report_error_fn):
     result = LatestFirmwares({}, {}, {}, {}, {}, {})
 
-    try:
-        with urlopen(LATEST_VERSIONS_URL, timeout=10) as response:
-            latest_versions_data = response.read().decode('utf-8')
-        with urlopen(ALL_VERSIONS_URL, timeout=10) as response:
-            all_versions_data = response.read().decode('utf-8')
-    except urllib.error.HTTPError:
+    exception = None
+    for i in range(3):
+        try:
+            with urlopen(LATEST_VERSIONS_URL, timeout=10) as response:
+                latest_versions_data = response.read().decode('utf-8')
+            with urlopen(ALL_VERSIONS_URL, timeout=10) as response:
+                all_versions_data = response.read().decode('utf-8')
+                break
+        except Exception as e:
+            exception = e
+
+    if isinstance(exception, urllib.error.HTTPError):
         report_error_fn(ERROR_SERVER_ERROR)
         return None
-    except urllib.error.URLError:
+    elif isinstance(exception, urllib.error.URLError):
         report_error_fn(ERROR_DOWNLOAD)
+        return None
+    elif exception is not None:
+        report_error_fn(ERROR_UNKNOWN_WHILE_DOWNLOADING)
         return None
 
     for line in latest_versions_data.split('\n'):
