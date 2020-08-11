@@ -1104,6 +1104,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         elif connection_state == IPConnection.CONNECTION_STATE_PENDING:
             self.button_connect.setText('Abort Auto-Reconnect')
             self.combo_host.setDisabled(True)
+            self.label_default_port.setDisabled(True)
             self.spinbox_port.setDisabled(True)
             self.checkbox_different_port.setDisabled(True)
             self.checkbox_authentication.setDisabled(True)
