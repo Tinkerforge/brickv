@@ -1080,6 +1080,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if connection_state == IPConnection.CONNECTION_STATE_DISCONNECTED:
             self.button_connect.setText('Connect')
             self.combo_host.setDisabled(False)
+            self.label_default_port.setDisabled(False)
             self.spinbox_port.setDisabled(False)
             self.checkbox_different_port.setDisabled(False)
             self.checkbox_authentication.setDisabled(False)
@@ -1089,6 +1090,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         elif connection_state == IPConnection.CONNECTION_STATE_CONNECTED:
             self.button_connect.setText("Disconnect")
             self.combo_host.setDisabled(True)
+            self.label_default_port.setDisabled(True)
             self.spinbox_port.setDisabled(True)
             self.checkbox_different_port.setDisabled(True)
             self.checkbox_authentication.setDisabled(True)
