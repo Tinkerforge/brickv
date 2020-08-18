@@ -28,6 +28,7 @@ import sys
 import subprocess
 import plistlib
 import time
+import pprint
 
 import PyInstaller.config
 
@@ -222,7 +223,15 @@ class PyinstallerUtils:
             print('notarize app')
             system(['ditto', '-c', '-k', '--keepParent', app_path, app_path + '.zip'])
             output = subprocess.check_output(['xcrun', 'altool', '--notarize-app', '--primary-bundle-id', 'com.tinkerforge.' + self.underscore_name, '--username', 'olaf@tinkerforge.com', '--password', '@keychain:Notarization', '--output-format', 'xml', '--file', app_path + '.zip'])
-            request_uuid = plistlib.loads(output)['notarization-upload']['RequestUUID']
+            plist = plistlib.loads(output)
+
+            try:
+                request_uuid = plist['notarization-upload']['RequestUUID']
+            except:
+                print('error: notarization output does not contain expected fields')
+                pprint.pprint(output)
+                pprint.pprint(plist)
+                sys.exit(1)
 
             print('notarize request uuid', request_uuid)
             notarization_info = None
