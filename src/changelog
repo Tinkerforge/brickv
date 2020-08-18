@@ -581,7 +581,7 @@
 - Fix close buttons for for detached tabs
 - Fix race condition in RED Brick overview sorting
 
-2020-08-18: 2.4.14 (<unknown>)
+2020-08-18: 2.4.14 (3f1bcd6)
 - Fix monoflop handling to cover full uint32 duration range
 - Better indicate disconnected state
 - Highlight timeout error counter > 0 in bold red
