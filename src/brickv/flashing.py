@@ -1287,6 +1287,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             if regular_plugin_upto == -1:
                 progress.cancel()
                 self.popup_fail('Bricklet', 'Could not find magic number in firmware')
+                return False
 
             bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_BOOTLOADER)
             counter = 0
