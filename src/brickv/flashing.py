@@ -1447,7 +1447,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         error_str = 'Error ' + str(mode_ret)
 
                     progress.cancel()
-                    self.popup_fail('Bricklet', 'Coud not change from bootloader mode to firmware mode: ' + error_str)
+                    self.popup_fail('Bricklet', 'Could not change from bootloader mode to firmware mode: ' + error_str)
                     return False
 
             counter = 0
@@ -1476,8 +1476,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def write_bricklet_plugin_classic(self, plugin, brick, port, _bricklet, name, progress):
         if len(plugin) > 4084:
             progress.cancel()
-            self.popup_fail('Bricklet', 'Could not write Bricklet plugin: Plugin was larger than 4084 bytes (the maximum plugin size for classic bricklets).')
+            self.popup_fail('Bricklet', 'Could not write Bricklet plugin: Plugin is larger than 4084 bytes (the maximum plugin size for classic Bricklets).')
             return
+
         # Write
         progress.setLabelText('Writing plugin: ' + name)
         progress.setMaximum(0)
