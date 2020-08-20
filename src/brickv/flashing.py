@@ -1352,9 +1352,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             mode_ret = bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_FIRMWARE)
 
-            if mode_ret != 0 and mode_ret != 2: # 0 = ok, 2 = no change
-                error_str = ''
 
+            if mode_ret != 0 and mode_ret != 2: # 0 = ok, 2 = no change
                 if mode_ret == 1:
                     error_str = 'Invalid mode (Error 1)'
                 elif mode_ret == 3:
@@ -1432,9 +1431,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 mode_ret = bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_FIRMWARE)
 
-                if mode_ret != 0 and mode_ret != 2: # 0 = ok, 2 = no change
-                    error_str = ''
 
+                if mode_ret != 0 and mode_ret != 2: # 0 = ok, 2 = no change
                     if mode_ret == 1:
                         error_str = 'Invalid mode (Error 1, second try)'
                     elif mode_ret == 3:
