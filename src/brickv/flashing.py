@@ -1246,6 +1246,41 @@ class FlashingWindow(QDialog, Ui_Flashing):
             sys.excepthook(*sys.exc_info())
             return False
 
+    def set_comcu_bootloader_mode(self, bricklet, mode):
+        counter = 0
+
+        while True:
+            try:
+                return bricklet.set_bootloader_mode(mode)
+            except:
+                pass
+
+            if counter == 10:
+                break
+
+            time.sleep(0.25)
+            counter += 1
+
+        return None
+
+    def wait_for_comcu_bootloader_mode(self, bricklet, mode):
+        counter = 0
+
+        while True:
+            try:
+                if bricklet.get_bootloader_mode() == mode:
+                    return True
+            except:
+                pass
+
+            if counter == 10:
+                break
+
+            time.sleep(0.25)
+            counter += 1
+
+        return False
+
     def write_bricklet_plugin_comcu(self, plugin, bricklet, name, progress):
         try:
             progress.setLabelText('Starting bootloader mode')
@@ -1289,23 +1324,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 self.popup_fail('Bricklet', 'Could not find magic number in firmware')
                 return False
 
-            bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_BOOTLOADER)
-            counter = 0
-
-            while True:
-                try:
-                    if bricklet.get_bootloader_mode() == bricklet.BOOTLOADER_MODE_BOOTLOADER:
-                        break
-                except:
-                    pass
-
-                if counter == 10:
-                    progress.cancel()
-                    self.popup_fail('Bricklet', 'Device did not enter bootloader mode in 2.5 seconds')
-                    return False
-
-                time.sleep(0.25)
-                counter += 1
+            if self.set_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_BOOTLOADER) == None or \
+               not self.wait_for_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_BOOTLOADER):
+                progress.cancel()
+                self.popup_fail('Bricklet', 'Device did not enter bootloader mode in 2.5 seconds')
+                return False
 
             num_packets = len(plugin) // 64
 
@@ -1350,8 +1373,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.setValue(0)
             progress.show()
 
-            mode_ret = bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_FIRMWARE)
+            mode_ret = self.set_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_FIRMWARE)
 
+            if mode_ret == None:
+                progress.cancel()
+                self.popup_fail('Bricklet', 'Device did not enter firmware mode in 2.5 seconds')
+                return False
 
             if mode_ret != 0 and mode_ret != 2: # 0 = ok, 2 = no change
                 if mode_ret == 1:
@@ -1376,23 +1403,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     self.popup_fail('Bricklet', 'Could not change from bootloader mode to firmware mode: ' + error_str)
                     return False
 
-                bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_BOOTLOADER)
-                counter = 0
-
-                while True:
-                    try:
-                        if bricklet.get_bootloader_mode() == bricklet.BOOTLOADER_MODE_BOOTLOADER:
-                            break
-                    except:
-                        pass
-
-                    if counter == 10:
-                        progress.cancel()
-                        self.popup_fail('Bricklet', 'Device did not enter bootloader mode in 2.5s (second try)')
-                        return False
-
-                    time.sleep(0.25)
-                    counter += 1
+                if self.set_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_BOOTLOADER) == None or \
+                   not self.wait_for_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_BOOTLOADER):
+                    progress.cancel()
+                    self.popup_fail('Bricklet', 'Device did not enter bootloader mode in 2.5 seconds (second try)')
+                    return False
 
                 num_packets = len(plugin) // 64
                 index_list = list(range(num_packets))
@@ -1429,8 +1444,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 progress.setValue(0)
                 progress.show()
 
-                mode_ret = bricklet.set_bootloader_mode(bricklet.BOOTLOADER_MODE_FIRMWARE)
+                mode_ret = self.set_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_FIRMWARE)
 
+                if mode_ret == None:
+                    progress.cancel()
+                    self.popup_fail('Bricklet', 'Device did not enter firmware mode in 2.5 seconds')
+                    return False
 
                 if mode_ret != 0 and mode_ret != 2: # 0 = ok, 2 = no change
                     if mode_ret == 1:
@@ -1448,22 +1467,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     self.popup_fail('Bricklet', 'Could not change from bootloader mode to firmware mode: ' + error_str)
                     return False
 
-            counter = 0
-
-            while True:
-                try:
-                    if bricklet.get_bootloader_mode() == bricklet.BOOTLOADER_MODE_FIRMWARE:
-                        break
-                except:
-                    pass
-
-                if counter == 10:
-                    progress.cancel()
-                    self.popup_fail('Bricklet', 'Device did not enter firmware mode in 2.5s')
-                    return False
-
-                time.sleep(0.25)
-                counter += 1
+            if not self.wait_for_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_FIRMWARE):
+                progress.cancel()
+                self.popup_fail('Bricklet', 'Device did not enter firmware mode in 2.5 seconds')
+                return False
 
             return True
         except:
