@@ -56,10 +56,10 @@ class IndustrialDualACRelay(COMCUPluginBase, Ui_IndustrialDualACRelay):
         self.go0_button.clicked.connect(self.go0_clicked)
         self.go1_button.clicked.connect(self.go1_clicked)
 
-        self.a0_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_ac_relay/channel0_a.bmp')
-        self.a1_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_ac_relay/channel1_a.bmp')
-        self.b0_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_ac_relay/channel0_b.bmp')
-        self.b1_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_ac_relay/channel1_b.bmp')
+        self.a0_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_ac_relay/relay_close.bmp')
+        self.a1_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_ac_relay/relay_close.bmp')
+        self.b0_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_ac_relay/relay_open.bmp')
+        self.b1_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_ac_relay/relay_open.bmp')
 
     def get_value_async(self, value):
         width = self.ch0_button.width()
