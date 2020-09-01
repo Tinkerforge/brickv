@@ -56,10 +56,19 @@ class IndustrialDualACRelay(COMCUPluginBase, Ui_IndustrialDualACRelay):
         self.go0_button.clicked.connect(self.go0_clicked)
         self.go1_button.clicked.connect(self.go1_clicked)
 
+        self.combobox_led0.currentIndexChanged.connect(self.combobox_led0_changed)
+        self.combobox_led1.currentIndexChanged.connect(self.combobox_led1_changed)
+
         self.a0_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_ac_relay/relay_close.bmp')
         self.a1_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_ac_relay/relay_close.bmp')
         self.b0_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_ac_relay/relay_open.bmp')
         self.b1_pixmap = load_masked_pixmap('plugin_system/plugins/industrial_dual_ac_relay/relay_open.bmp')
+
+    def combobox_led0_changed(self, value):
+        self.idr.set_channel_led_config(0, value)
+
+    def combobox_led1_changed(self, value):
+        self.idr.set_channel_led_config(1, value)
 
     def get_value_async(self, value):
         width = self.ch0_button.width()
@@ -88,8 +97,16 @@ class IndustrialDualACRelay(COMCUPluginBase, Ui_IndustrialDualACRelay):
             self.ch1_button.setText('Switch On')
             self.ch1_image.setPixmap(self.b1_pixmap)
 
+    def get_channel_led_config_async(self, index, config):
+        if index == 0:
+            self.combobox_led0.setCurrentIndex(config)
+        elif index == 1:
+            self.combobox_led1.setCurrentIndex(config)
+
     def start(self):
         async_call(self.idr.get_value, None, self.get_value_async, self.increase_error_count)
+        for channel in range(2):
+            async_call(self.idr.get_channel_led_config, channel, self.get_channel_led_config_async, self.increase_error_count, pass_arguments_to_result_callback=True)
 
         self.monoflop.start()
 
