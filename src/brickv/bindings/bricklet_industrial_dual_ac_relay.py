@@ -32,14 +32,16 @@ class BrickletIndustrialDualACRelay(Device):
     DEVICE_DISPLAY_NAME = 'Industrial Dual AC Relay Bricklet'
     DEVICE_URL_PART = 'industrial_dual_ac_relay' # internal
 
-    CALLBACK_MONOFLOP_DONE = 5
+    CALLBACK_MONOFLOP_DONE = 7
 
 
     FUNCTION_SET_VALUE = 1
     FUNCTION_GET_VALUE = 2
-    FUNCTION_SET_MONOFLOP = 3
-    FUNCTION_GET_MONOFLOP = 4
-    FUNCTION_SET_SELECTED_VALUE = 6
+    FUNCTION_SET_CHANNEL_LED_CONFIG = 3
+    FUNCTION_GET_CHANNEL_LED_CONFIG = 4
+    FUNCTION_SET_MONOFLOP = 5
+    FUNCTION_GET_MONOFLOP = 6
+    FUNCTION_SET_SELECTED_VALUE = 8
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -53,6 +55,10 @@ class BrickletIndustrialDualACRelay(Device):
     FUNCTION_READ_UID = 249
     FUNCTION_GET_IDENTITY = 255
 
+    CHANNEL_LED_CONFIG_OFF = 0
+    CHANNEL_LED_CONFIG_ON = 1
+    CHANNEL_LED_CONFIG_SHOW_HEARTBEAT = 2
+    CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS = 3
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -80,6 +86,8 @@ class BrickletIndustrialDualACRelay(Device):
 
         self.response_expected[BrickletIndustrialDualACRelay.FUNCTION_SET_VALUE] = BrickletIndustrialDualACRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDualACRelay.FUNCTION_GET_VALUE] = BrickletIndustrialDualACRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialDualACRelay.FUNCTION_SET_CHANNEL_LED_CONFIG] = BrickletIndustrialDualACRelay.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialDualACRelay.FUNCTION_GET_CHANNEL_LED_CONFIG] = BrickletIndustrialDualACRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualACRelay.FUNCTION_SET_MONOFLOP] = BrickletIndustrialDualACRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDualACRelay.FUNCTION_GET_MONOFLOP] = BrickletIndustrialDualACRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDualACRelay.FUNCTION_SET_SELECTED_VALUE] = BrickletIndustrialDualACRelay.RESPONSE_EXPECTED_FALSE
@@ -125,6 +133,29 @@ class BrickletIndustrialDualACRelay(Device):
         self.check_validity()
 
         return GetValue(*self.ipcon.send_request(self, BrickletIndustrialDualACRelay.FUNCTION_GET_VALUE, (), '', 10, '! !'))
+
+    def set_channel_led_config(self, channel, config):
+        """
+        Each channel has a corresponding LED. You can turn the LED off, on or show a
+        heartbeat. You can also set the LED to "Channel Status". In this mode the
+        LED is on if the channel is high and off otherwise.
+        """
+        self.check_validity()
+
+        channel = int(channel)
+        config = int(config)
+
+        self.ipcon.send_request(self, BrickletIndustrialDualACRelay.FUNCTION_SET_CHANNEL_LED_CONFIG, (channel, config), 'B B', 0, '')
+
+    def get_channel_led_config(self, channel):
+        """
+        Returns the channel LED configuration as set by :func:`Set Channel LED Config`
+        """
+        self.check_validity()
+
+        channel = int(channel)
+
+        return self.ipcon.send_request(self, BrickletIndustrialDualACRelay.FUNCTION_GET_CHANNEL_LED_CONFIG, (channel,), 'B', 9, 'B')
 
     def set_monoflop(self, channel, value, time):
         """
