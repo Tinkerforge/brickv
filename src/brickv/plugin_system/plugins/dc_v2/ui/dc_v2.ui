@@ -462,6 +462,27 @@
      <item>
       <layout class="QVBoxLayout" name="vertical_layout_right">
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLabel" name="label_18">
+           <property name="text">
+            <string>Temperature:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="temperature_label">
+           <property name="text">
+            <string>0°C</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QLabel" name="label_3">

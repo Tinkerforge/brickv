@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-06-09.      #
+# This file was automatically generated on 2020-09-08.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -19,7 +19,7 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetMotion = namedtuple('Motion', ['acceleration', 'deceleration'])
-GetPowerStatistics = namedtuple('PowerStatistics', ['voltage', 'current'])
+GetPowerStatistics = namedtuple('PowerStatistics', ['voltage', 'current', 'temperature'])
 GetGPIOConfiguration = namedtuple('GPIOConfiguration', ['debounce', 'stop_deceleration'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -329,7 +329,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return GetPowerStatistics(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_POWER_STATISTICS, (), '', 12, 'H H'))
+        return GetPowerStatistics(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_POWER_STATISTICS, (), '', 14, 'H H h'))
 
     def set_gpio_configuration(self, channel, debounce, stop_deceleration):
         """
@@ -621,8 +621,7 @@ class BrickletDCV2(Device):
         device identifier.
 
         The position can be 'a', 'b', 'c', 'd', 'e', 'f', 'g' or 'h' (Bricklet Port).
-        The Raspberry Pi HAT (Zero) Brick is always at position 'i' and the Bricklet
-        connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
+        A Bricklet connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
         position 'z'.
 
         The device identifier numbers can be found :ref:`here <device_identifier>`.

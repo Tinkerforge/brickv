@@ -135,8 +135,11 @@ class DCV2(COMCUPluginBase, Ui_DCV2):
         else:
             voltage_str = "{0}mV".format(ps.voltage)
 
+        temperature_str = "{0}°C".format(round(ps.temperature / 10.0, 1))
+
         self.current_label.setText(current_str)
         self.input_voltage_label.setText(voltage_str)
+        self.temperature_label.setText(temperature_str)
 
     def get_current_velocity_async(self, velocity):
         self.speedometer.set_velocity(velocity)
