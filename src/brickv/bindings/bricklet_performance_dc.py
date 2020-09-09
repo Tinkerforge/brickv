@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-09-08.      #
+# This file was automatically generated on 2020-09-09.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -24,14 +24,14 @@ GetGPIOConfiguration = namedtuple('GPIOConfiguration', ['debounce', 'stop_decele
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
-class BrickletDCV2(Device):
+class BrickletPerformanceDC(Device):
     """
     TBD
     """
 
     DEVICE_IDENTIFIER = 2156
-    DEVICE_DISPLAY_NAME = 'DC Bricklet 2.0'
-    DEVICE_URL_PART = 'dc_v2' # internal
+    DEVICE_DISPLAY_NAME = 'Performance DC Bricklet'
+    DEVICE_URL_PART = 'performance_dc' # internal
 
 
 
@@ -123,48 +123,48 @@ class BrickletDCV2(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon, BrickletDCV2.DEVICE_IDENTIFIER, BrickletDCV2.DEVICE_DISPLAY_NAME)
+        Device.__init__(self, uid, ipcon, BrickletPerformanceDC.DEVICE_IDENTIFIER, BrickletPerformanceDC.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[BrickletDCV2.FUNCTION_SET_ENABLED] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_ENABLED] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_SET_VELOCITY] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_VELOCITY] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_CURRENT_VELOCITY] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_SET_MOTION] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_MOTION] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_FULL_BRAKE] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_SET_DRIVE_MODE] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_DRIVE_MODE] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_SET_PWM_FREQUENCY] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_PWM_FREQUENCY] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_POWER_STATISTICS] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_SET_GPIO_CONFIGURATION] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_GPIO_CONFIGURATION] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_SET_GPIO_ACTION] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_GPIO_ACTION] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_GPIO_STATE] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_SET_ERROR_LED_CONFIG] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_ERROR_LED_CONFIG] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_SET_CW_LED_CONFIG] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_CW_LED_CONFIG] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_SET_CCW_LED_CONFIG] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_CCW_LED_CONFIG] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_SET_GPIO_LED_CONFIG] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_GPIO_LED_CONFIG] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_WRITE_FIRMWARE] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_SET_STATUS_LED_CONFIG] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_STATUS_LED_CONFIG] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_CHIP_TEMPERATURE] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_RESET] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_WRITE_UID] = BrickletDCV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDCV2.FUNCTION_READ_UID] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDCV2.FUNCTION_GET_IDENTITY] = BrickletDCV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_ENABLED] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_ENABLED] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_VELOCITY] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_VELOCITY] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_CURRENT_VELOCITY] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_MOTION] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_MOTION] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_FULL_BRAKE] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_DRIVE_MODE] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_DRIVE_MODE] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_PWM_FREQUENCY] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_PWM_FREQUENCY] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_POWER_STATISTICS] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_GPIO_CONFIGURATION] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_GPIO_CONFIGURATION] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_GPIO_ACTION] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_GPIO_ACTION] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_GPIO_STATE] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_ERROR_LED_CONFIG] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_ERROR_LED_CONFIG] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_CW_LED_CONFIG] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_CW_LED_CONFIG] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_CCW_LED_CONFIG] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_CCW_LED_CONFIG] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_GPIO_LED_CONFIG] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_GPIO_LED_CONFIG] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_BOOTLOADER_MODE] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_BOOTLOADER_MODE] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_WRITE_FIRMWARE_POINTER] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_WRITE_FIRMWARE] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_STATUS_LED_CONFIG] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_STATUS_LED_CONFIG] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_CHIP_TEMPERATURE] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_RESET] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_WRITE_UID] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_READ_UID] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_IDENTITY] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
         ipcon.add_device(self)
@@ -177,7 +177,7 @@ class BrickletDCV2(Device):
 
         enabled = bool(enabled)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_ENABLED, (enabled,), '!', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_ENABLED, (enabled,), '!', 0, '')
 
     def get_enabled(self):
         """
@@ -185,7 +185,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_ENABLED, (), '', 9, '!')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_ENABLED, (), '', 9, '!')
 
     def set_velocity(self, velocity):
         """
@@ -203,7 +203,7 @@ class BrickletDCV2(Device):
 
         velocity = int(velocity)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_VELOCITY, (velocity,), 'h', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_VELOCITY, (velocity,), 'h', 0, '')
 
     def get_velocity(self):
         """
@@ -211,7 +211,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_VELOCITY, (), '', 10, 'h')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_VELOCITY, (), '', 10, 'h')
 
     def get_current_velocity(self):
         """
@@ -221,7 +221,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_CURRENT_VELOCITY, (), '', 10, 'h')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_CURRENT_VELOCITY, (), '', 10, 'h')
 
     def set_motion(self, acceleration, deceleration):
         """
@@ -241,7 +241,7 @@ class BrickletDCV2(Device):
         acceleration = int(acceleration)
         deceleration = int(deceleration)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_MOTION, (acceleration, deceleration), 'H H', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_MOTION, (acceleration, deceleration), 'H H', 0, '')
 
     def get_motion(self):
         """
@@ -249,7 +249,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return GetMotion(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_MOTION, (), '', 12, 'H H'))
+        return GetMotion(*self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_MOTION, (), '', 12, 'H H'))
 
     def full_brake(self):
         """
@@ -264,7 +264,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_FULL_BRAKE, (), '', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_FULL_BRAKE, (), '', 0, '')
 
     def set_drive_mode(self, mode):
         """
@@ -288,7 +288,7 @@ class BrickletDCV2(Device):
 
         mode = int(mode)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_DRIVE_MODE, (mode,), 'B', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_DRIVE_MODE, (mode,), 'B', 0, '')
 
     def get_drive_mode(self):
         """
@@ -296,7 +296,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_DRIVE_MODE, (), '', 9, 'B')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_DRIVE_MODE, (), '', 9, 'B')
 
     def set_pwm_frequency(self, frequency):
         """
@@ -313,7 +313,7 @@ class BrickletDCV2(Device):
 
         frequency = int(frequency)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_PWM_FREQUENCY, (frequency,), 'H', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_PWM_FREQUENCY, (frequency,), 'H', 0, '')
 
     def get_pwm_frequency(self):
         """
@@ -321,7 +321,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_PWM_FREQUENCY, (), '', 10, 'H')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_PWM_FREQUENCY, (), '', 10, 'H')
 
     def get_power_statistics(self):
         """
@@ -329,7 +329,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return GetPowerStatistics(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_POWER_STATISTICS, (), '', 14, 'H H h'))
+        return GetPowerStatistics(*self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_POWER_STATISTICS, (), '', 14, 'H H h'))
 
     def set_gpio_configuration(self, channel, debounce, stop_deceleration):
         """
@@ -341,7 +341,7 @@ class BrickletDCV2(Device):
         debounce = int(debounce)
         stop_deceleration = int(stop_deceleration)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_GPIO_CONFIGURATION, (channel, debounce, stop_deceleration), 'B H H', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_GPIO_CONFIGURATION, (channel, debounce, stop_deceleration), 'B H H', 0, '')
 
     def get_gpio_configuration(self, channel):
         """
@@ -351,7 +351,7 @@ class BrickletDCV2(Device):
 
         channel = int(channel)
 
-        return GetGPIOConfiguration(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_GPIO_CONFIGURATION, (channel,), 'B', 12, 'H H'))
+        return GetGPIOConfiguration(*self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_GPIO_CONFIGURATION, (channel,), 'B', 12, 'H H'))
 
     def set_gpio_action(self, channel, action):
         """
@@ -362,7 +362,7 @@ class BrickletDCV2(Device):
         channel = int(channel)
         action = int(action)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_GPIO_ACTION, (channel, action), 'B I', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_GPIO_ACTION, (channel, action), 'B I', 0, '')
 
     def get_gpio_action(self, channel):
         """
@@ -372,7 +372,7 @@ class BrickletDCV2(Device):
 
         channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_GPIO_ACTION, (channel,), 'B', 12, 'I')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_GPIO_ACTION, (channel,), 'B', 12, 'I')
 
     def get_gpio_state(self):
         """
@@ -380,7 +380,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_GPIO_STATE, (), '', 9, '2!')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_GPIO_STATE, (), '', 9, '2!')
 
     def set_error_led_config(self, config):
         """
@@ -397,7 +397,7 @@ class BrickletDCV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_error_led_config(self):
         """
@@ -405,7 +405,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 9, 'B')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 9, 'B')
 
     def set_cw_led_config(self, config):
         """
@@ -415,7 +415,7 @@ class BrickletDCV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_CW_LED_CONFIG, (config,), 'B', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_CW_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_cw_led_config(self):
         """
@@ -423,7 +423,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_CW_LED_CONFIG, (), '', 9, 'B')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_CW_LED_CONFIG, (), '', 9, 'B')
 
     def set_ccw_led_config(self, config):
         """
@@ -433,7 +433,7 @@ class BrickletDCV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_CCW_LED_CONFIG, (config,), 'B', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_CCW_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_ccw_led_config(self):
         """
@@ -441,7 +441,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_CCW_LED_CONFIG, (), '', 9, 'B')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_CCW_LED_CONFIG, (), '', 9, 'B')
 
     def set_gpio_led_config(self, channel, config):
         """
@@ -453,7 +453,7 @@ class BrickletDCV2(Device):
         channel = int(channel)
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_GPIO_LED_CONFIG, (channel, config), 'B B', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_GPIO_LED_CONFIG, (channel, config), 'B B', 0, '')
 
     def get_gpio_led_config(self, channel):
         """
@@ -463,7 +463,7 @@ class BrickletDCV2(Device):
 
         channel = int(channel)
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_GPIO_LED_CONFIG, (channel,), 'B', 9, 'B')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_GPIO_LED_CONFIG, (channel,), 'B', 9, 'B')
 
     def get_spitfp_error_count(self):
         """
@@ -481,7 +481,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
+        return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
         """
@@ -499,7 +499,7 @@ class BrickletDCV2(Device):
 
         mode = int(mode)
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
         """
@@ -507,7 +507,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
         """
@@ -522,7 +522,7 @@ class BrickletDCV2(Device):
 
         pointer = int(pointer)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
         """
@@ -539,7 +539,7 @@ class BrickletDCV2(Device):
 
         data = list(map(int, data))
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
         """
@@ -555,7 +555,7 @@ class BrickletDCV2(Device):
 
         config = int(config)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
         """
@@ -563,7 +563,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
         """
@@ -576,7 +576,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
         """
@@ -589,7 +589,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_RESET, (), '', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
         """
@@ -603,7 +603,7 @@ class BrickletDCV2(Device):
 
         uid = int(uid)
 
-        self.ipcon.send_request(self, BrickletDCV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
         """
@@ -612,7 +612,7 @@ class BrickletDCV2(Device):
         """
         self.check_validity()
 
-        return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_READ_UID, (), '', 12, 'I')
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
         """
@@ -627,6 +627,6 @@ class BrickletDCV2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
-DCV2 = BrickletDCV2 # for backward compatibility
+PerformanceDC = BrickletPerformanceDC # for backward compatibility

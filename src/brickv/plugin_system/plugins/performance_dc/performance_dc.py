@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-DC 2.0 Plugin
+Performance DC Plugin
 Copyright (C) 2020 Olaf Lüke <olaf@tinkerforge.com>
 
-dc_v2.py: DC 2.0 Plugin implementation
+performance_dc.py: Performance DC Plugin implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -25,16 +25,16 @@ from PyQt5.QtWidgets import QErrorMessage, QInputDialog, QAction
 from PyQt5.QtCore import QTimer, Qt, pyqtSignal
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
-from brickv.plugin_system.plugins.dc_v2.ui_dc_v2 import Ui_DCV2
+from brickv.plugin_system.plugins.performance_dc.ui_performance_dc import Ui_PerformanceDC
 from brickv.bindings import ip_connection
-from brickv.bindings.bricklet_dc_v2 import BrickletDCV2
+from brickv.bindings.bricklet_performance_dc import BrickletPerformanceDC
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.slider_spin_syncer import SliderSpinSyncer
 
-class DCV2(COMCUPluginBase, Ui_DCV2):
+class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
     def __init__(self, *args):
-        COMCUPluginBase.__init__(self, BrickletDCV2, *args)
+        COMCUPluginBase.__init__(self, BrickletPerformanceDC, *args)
 
         self.setupUi(self)
 
@@ -93,7 +93,7 @@ class DCV2(COMCUPluginBase, Ui_DCV2):
 
     @staticmethod
     def has_device_identifier(device_identifier):
-        return device_identifier == BrickletDCV2.DEVICE_IDENTIFIER
+        return device_identifier == BrickletPerformanceDC.DEVICE_IDENTIFIER
 
     def brake_value_changed(self, checked):
         if checked:

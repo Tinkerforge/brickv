@@ -22,6 +22,6 @@ Boston, MA 02111-1307, USA.
 """
 
 
-from brickv.plugin_system.plugins.dc_v2.dc_v2 import DCV2
+from brickv.plugin_system.plugins.performance_dc.performance_dc import PerformanceDC
 
-device_class = DCV2
+device_class = PerformanceDC
