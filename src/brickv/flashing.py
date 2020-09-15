@@ -4,6 +4,7 @@ brickv (Brick Viewer)
 Copyright (C) 2011-2015, 2018 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
 Copyright (C) 2012-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 flashing.py: GUI for flashing features
 
@@ -329,11 +330,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         progress.setMaximum(1)
                         progress.setValue(1)
 
-                    if filename is not None:
-                        os.replace(filename + '.part', filename)
-                    else:
+                    if filename is None:
                         file.seek(0)
                         return file.read()
+
+                # Do this outside the file context manager:
+                # The file should be closed before renaming it.
+                os.replace(filename + '.part', filename)
+
+
         except BrickletKindMismatchError as e:
             progress.cancel()
             self.popup_fail('Updates / Flashing', html.escape(str(e)))
